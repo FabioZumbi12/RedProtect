@@ -1,0 +1,112 @@
+name: RedProtect
+main: br.net.fabiozumbi12.RedProtect.RedProtect
+version: 5.3.0
+author: ikillforeyou, FabioZumbi12
+description: Allows players to define fields to protect their houses.
+softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO]
+url: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/
+commands:
+  RedProtect:
+    description: "Main command for redprotect."
+    usage: "Error, use '/rp ?' to see the commands."
+    aliases: [rp, redp, rprotect, regionprotect, regionp]
+permissions:
+  redprotect.*:
+    description: "All redprotect commands."
+    default: op
+    children:
+      redprotect.user: true
+      redprotect.admin: true
+  redprotect.user:
+    description: "Recommended User permissions."
+    default: true
+    children:
+      redprotect.create: true
+      redprotect.near: true
+      redprotect.own.addmember: true
+      redprotect.own.delete: true
+      redprotect.own.info: true
+      redprotect.own.addowner: true
+      redprotect.own.removemember: true
+      redprotect.own.removeowner: true
+      redprotect.own.rename: true
+      redprotect.own.welcome: true
+      redprotect.own.limit: true
+      redprotect.own.list: true
+      redprotect.own.priority: true
+      redprotect.own.panel: true
+      redprotect.infowand: true
+  redprotect.flag.all:
+    description: "Access to edit all flags."
+    default: true
+    children:
+      redprotect.flag.pvp: true
+      redprotect.flag.chest: true
+      redprotect.flag.lever: true
+      redprotect.flag.button: true
+      redprotect.flag.door: true
+      redprotect.flag.spawn-monsters: true
+      redprotect.flag.passives: true
+      redprotect.flag.flow: true
+      redprotect.flag.fire: true
+      redprotect.flag.spawn-animals: true
+      redprotect.flag.minecart: true
+      redprotect.flag.allow-home: true
+  redprotect.vip:
+    description: "Recommended Vip permissions."
+    default: false
+    children:
+      redprotect.user: true
+      redprotect.own.tp: true
+      redprotect.unlimited: true
+  redprotect.ranked:
+    description: "Recommended Ranked permissions."
+    default: false
+    children:
+      redprotect.user: true
+      redprotect.limit.amount.10000: true
+  redprotect.flag.special:
+    description: "Access to edit all admin flags."
+    default: op
+    children:
+      redprotect.admin.flag.player-enter-command: true
+      redprotect.admin.flag.server-enter-command: true
+      redprotect.admin.flag.player-exit-command: true
+      redprotect.admin.flag.server-exit-command: true
+      redprotect.admin.flag.invincible: true
+      redprotect.admin.flag.effects: true
+      redprotect.admin.flag.minefarm: true
+      redprotect.admin.flag.treefarm: true
+      redprotect.admin.flag.sign: true
+      redprotect.admin.flag.enter: true
+      redprotect.admin.flag.mcmmo: true
+      redprotect.admin.flag.death-back: true
+      redprotect.admin.flag.enderpearl: true
+  redprotect.admin:
+    description: "Recommended Admin permsisions."
+    default: op
+    children:
+      redprotect.admin.delete: true
+      redprotect.admin.removeowner: true
+      redprotect.admin.addowner: true
+      redprotect.admin.addmember: true
+      redprotect.admin.removemember: true
+      redprotect.admin.info: true
+      redprotect.admin.priority: true
+      redprotect.admin.rename: true
+      redprotect.admin.welcome: true
+      redprotect.admin.define: true
+      redprotect.admin.reload: true
+      redprotect.admin.save-all: true
+      redprotect.admin.load-all: true
+      redprotect.admin.tp: true
+      redprotect.admin.copyflag: true
+      redprotect.admin.setconfig: true
+      redprotect.admin.setcreator: true
+      redprotect.admin.panel: true
+      redprotect.flag.special: true
+      redprotect.other.limit: true
+      redprotect.bypass: true
+      redprotect.unlimited: true
+      redprotect.magicwand: true
+      redprotect.update: true

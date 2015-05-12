@@ -1,0 +1,84 @@
+gui-flags:
+  door:
+    material: WOOD_DOOR
+    name: '&e=> Permite Abrir Portas'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermite qualquer player'
+    description2: '&aabrir as portas nesta região.'
+  chest:
+    material: CHEST
+    name: '&e=> Permite Abrir Baús'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermite qualquer player'
+    description1: '&acolocar e tirar itens de Baús'
+    description2: '&anesta região.'
+  allow-home:
+    material: BED
+    name: '&e=> Permitir /sethome'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermitir qualquer player'
+    description1: '&ausar o comando /sethome nesta região.'
+    description2: ''
+  pvp:
+    material: DIAMOND_SWORD
+    name: '&e=> Habilitar PvP'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aHabilita o PvP pra qualquer'
+    description1: '&aplayer dentro desta região.'
+    description2: ''
+  lever:
+    material: LEVER
+    name: '&e=> Usar Alavancas'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermite qualquer player'
+    description1: '&ausar alavancas nesta região.'
+    description2: ''
+  spawn-animals:
+    material: EGG
+    name: '&e=> Spawnar Animais'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aHabilita nascer animais'
+    description1: '&apassivos naturalmente ou de spawners'
+    description2: '&anesta região.'
+  passives:
+    material: SADDLE
+    name: '&e=> Interagir com Animais'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermitr qualquer player'
+    description1: '&ainteragir, dar dano ou matar animais'
+    description2: '&anesta região.'
+  button:
+    material: WOOD_BUTTON
+    name: '&e=> Usar Botões'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermite qualquer player'
+    description1: '&aa usar botões nesta região'
+    description2: ''
+  minecart:
+    material: MINECART
+    name: '&e=> Permitir Minecarts'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermite qualquer player'
+    description1: '&acolocar, entrar ou quebrar minecarts'
+    description2: '&anesta região.'
+  spawn-monsters:
+    material: MONSTER_EGG
+    name: '&e=> Spawnar Monstros'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aHabilitar nascer monstros'
+    description1: '&anaturalmente ou de spawners nesta região.'
+    description2: ''
+  fire:
+    material: BLAZE_POWDER
+    name: '&e=> Permitir Dano de Fogo'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermitr fogo e explosões'
+    description1: '&adestruirem blocos e o fogo se espalhar.'
+    description2: ''
+  flow:
+    material: WATER_BUCKET
+    name: '&e=> Permitir Agua e lava Escorrerem'
+    value-string: '&bValor: &7'
+    description: '&6Descrição: &aPermite que agua e lava'
+    description1: '&aescorram nesta região.'
+    description2: ''
