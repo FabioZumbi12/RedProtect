@@ -127,7 +127,7 @@ public class RedProtect extends JavaPlugin {
             if (RPConfig.getBool("update-check.enable")){
             	RedProtect.logger.info("Checking for update..."); 
             	if (CheckUpdate()){
-            		RedProtect.logger.sucess("Update available!"); 
+            		RedProtect.logger.sucess("Update available! Use /rp update to download."); 
             	} else {
             		RedProtect.logger.info("No update available.");
             	}

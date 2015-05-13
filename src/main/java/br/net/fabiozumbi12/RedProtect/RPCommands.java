@@ -98,8 +98,9 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		}
         		if (args[0].equalsIgnoreCase("update")) {
         			if (RedProtect.Update){
-            			RedProtect.logger.warning(ChatColor.AQUA + "Starting download update...");
+            			RedProtect.logger.info(ChatColor.AQUA + "Starting download update...");
             			new Updater(RedProtect.plugin, 87463, RedProtect.JarFile, Updater.UpdateType.NO_VERSION_CHECK, true);
+            			RedProtect.logger.sucess("Download completed! Restart your server to use the new version.");
             			return true;
             		} else {
             			RedProtect.logger.info(ChatColor.AQUA + "No updates to download!");

@@ -1,7 +1,6 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -82,10 +81,15 @@ public class RPConfig{
     	            	RedProtect.logger.severe("Old config file detected and copied to 'configBKP.yml'. Remember to check your old config file and set the new as you want!");
     	            	File bkpfile = new File(RedProtect.pathMain + File.separator + "configBKP.yml");
     	            	FileUtil.copy(config, bkpfile);
-    	            	plugin.saveResource("config.yml", true);    	            	  	            	    	            	
-    	            } 
-    	            	
-    	            RedProtect.plugin.getConfig();  
+    	            	plugin.saveResource("config.yml", true);  
+    	            	RedProtect.plugin.getConfig();
+    	            } else {
+    	            	try {
+    						RedProtect.plugin.getConfig().load(config);
+    					} catch (IOException | InvalidConfigurationException e) {
+    						e.printStackTrace();
+    					}
+    	            }
     	            
     	            configs = inputLoader(plugin.getResource("config.yml"));  
                     for (String key:configs.getKeys(true)){
@@ -243,18 +247,10 @@ public class RPConfig{
 		RPYaml file = new RPYaml();
 		try {
 			file.load(new InputStreamReader(inp, StandardCharsets.UTF_8));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (InvalidConfigurationException e3) {
-			e3.printStackTrace();
-		}
-		try {
 			inp.close();
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 		
 		return file;
 	}
 	
