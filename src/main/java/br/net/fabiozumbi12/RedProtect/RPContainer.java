@@ -10,13 +10,13 @@ import org.bukkit.entity.Player;
 class RPContainer {
 
 	public boolean canOpen(Block b, Player p) {
-    	if (!RPConfig.getBool("use-private")){
+    	if (!RPConfig.getBool("private.use")){
     		return true;
     	}
     	
         Boolean Final = true;
     	
-        if (RPConfig.getStringList("allowed-private-blocks").contains(b.getType().name())){
+        if (RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){
         	int x = b.getX();
             int y = b.getY();
             int z = b.getZ();
@@ -42,7 +42,7 @@ class RPContainer {
             		}
             	}
             	            	
-            	if (RPConfig.getStringList("allowed-private-blocks").contains(signb.getType().name())){
+            	if (RPConfig.getStringList("private.allowed-blocks").contains(signb.getType().name())){
             		x = signb.getX();
                     y = signb.getY();
                     z = signb.getZ();                
@@ -72,11 +72,11 @@ class RPContainer {
     }
 
 	public boolean canBreak(Player p, Block b){
-    	if (!RPConfig.getBool("use-private")){
+    	if (!RPConfig.getBool("private.use")){
     		return true;
     	}
     	Region reg = RedProtect.rm.getTopRegion(b.getLocation());
-    	if (reg == null && !RPConfig.getBool("allow-private-outside")){
+    	if (reg == null && !RPConfig.getBool("private.allow-outside")){
     		return true;
     	}
     	int x = b.getX();
@@ -100,7 +100,7 @@ class RPContainer {
     		}
     	}   		
            		
-        if (RPConfig.getStringList("allowed-private-blocks").contains(b.getType().name())){
+        if (RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){
             for (Block signb:blocks){ 
             	if (signb.getType().equals(Material.WALL_SIGN)){
             		Sign s = (Sign) signb.getState();
@@ -131,7 +131,7 @@ class RPContainer {
 	    	container = b.getRelative(BlockFace.WEST);
 	    }    	    
 	    
-	    if (RPConfig.getStringList("allowed-private-blocks").contains(container.getType().name())){
+	    if (RPConfig.getStringList("private.allowed-blocks").contains(container.getType().name())){
 	    	return true;
 	    }
 	    return false;

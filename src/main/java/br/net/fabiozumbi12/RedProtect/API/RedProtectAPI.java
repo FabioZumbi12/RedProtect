@@ -116,7 +116,7 @@ public class RedProtectAPI {
 	 * @see  #equals(Object)
 	 */
 	public static void setRegionFlag(Region region, String flag, Object value){
-		RedProtect.rm.setFlag(region, flag, value);
+		region.setFlag(flag, value);
 	}
 	
 	/**

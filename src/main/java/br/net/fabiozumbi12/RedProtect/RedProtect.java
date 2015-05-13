@@ -132,7 +132,10 @@ public class RedProtect extends JavaPlugin {
             		RedProtect.logger.info("No update available.");
             	}
             }
-            AutoSaveHandler();  
+            if (RPConfig.getString("file-type").equals("yml")){
+            	AutoSaveHandler(); 
+            }
+             
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -156,15 +159,15 @@ public class RedProtect extends JavaPlugin {
 
 	private void AutoSaveHandler() {
 		Bukkit.getScheduler().cancelTask(taskid);
-		if (RPConfig.getInt("auto-save-interval-seconds") != 0){
-			RedProtect.logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database every " + RPConfig.getInt("auto-save-interval-seconds")/60 + " minutes!");  
+		if (RPConfig.getInt("flat-file.auto-save-interval-seconds") != 0){
+			RedProtect.logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");  
 			
 			taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() { 
 				public void run() {
 					RedProtect.logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
 					rm.saveAll();					
 					} 
-				},RPConfig.getInt("auto-save-interval-seconds")*20, RPConfig.getInt("auto-save-interval-seconds")*20);	
+				},RPConfig.getInt("flat-file.auto-save-interval-seconds")*20, RPConfig.getInt("flat-file.auto-save-interval-seconds")*20);	
 			
 		} else {
         	RedProtect.logger.info("Auto-save Scheduler: Disabled");

@@ -131,10 +131,6 @@ public class RegionManager{
         }
     }
     
-    public boolean canBuild(Player p, Block b, World w) {
-        return this.regionManagers.get(w).canBuild(p, b);
-    }
-    
     public Region isSurroundingRegion(Region r, World w) {
         return this.regionManagers.get(w).isSurroundingRegion(r);
     }
@@ -150,43 +146,11 @@ public class RegionManager{
     public Set<Region> getPossibleIntersectingRegions(Region r, World w) {
         return this.regionManagers.get(w).getPossibleIntersectingRegions(r);
     }
-    
-    public void rename(Region r, String newname, World world) {
-        WorldRegionManager rm = this.regionManagers.get(world);
-        if (!rm.regionExists(r)) {
-            return;
-        }
-        rm.setRegionName(r, newname);
-    }
-    
-    public void setFlag(Region r, String flag, Object value) {
-        WorldRegionManager rm = this.regionManagers.get(RedProtect.serv.getWorld(r.getWorld()));
-        if (!rm.regionExists(r)) {
-            return;
-        }
-        rm.setFlagValue(r, flag, value);
-    }
-    
-    public void setWelcome(Region r, String wMessage, World world){
-    	WorldRegionManager rm = this.regionManagers.get(world);
-        if (!rm.regionExists(r)) {
-            return;
-        }
-        rm.setWelcome(r, wMessage);
-    }
-    
+      
     public Set<Region> getRegions(Player p, int x, int z){
     	return this.regionManagers.get(p.getWorld()).getRegions(x, z);    	
     }
-    
-    public void setPrior(Region r, int prior, World w){
-    	WorldRegionManager rm = this.regionManagers.get(w);
-        if (!rm.regionExists(r)) {
-            return;
-        }
-        rm.setPrior(r, prior);
-    }
-    
+
     public Region getTopRegion(Location loc){
     	if (!this.regionManagers.containsKey(loc.getWorld())){
     		return null;
@@ -234,17 +198,7 @@ public class RegionManager{
     	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());    	
 		return rm.getGroupRegion(loc.getBlockX(), loc.getBlockZ());
     }
-    
-    public void setDate(World w, Region r, String date){
-    	WorldRegionManager rm = this.regionManagers.get(w);    	
-		rm.setDate(r, date);
-    }
-    
-    public String getDate(World w, Region r){
-    	WorldRegionManager rm = this.regionManagers.get(w);    	
-		return rm.getDate(r);
-    }
-    
+        
     public Set<Region> getAllRegions(){
     	Set<Region> regions = new HashSet<Region>();
     	for (World w:RedProtect.serv.getWorlds()){
@@ -269,9 +223,19 @@ public class RegionManager{
     	this.regionManagers.clear();
     }
 
-	public void updateLiveRegion(Region r) {
+	public void updateLiveRegion(Region r, String columm, String value) {
 		WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));    	
-		rm.updateLiveRegion(r);
+		rm.updateLiveRegion(r.getName(), columm, value);
+	}
+	
+	public void updateLiveFlags(Region r, String flag, String value) {
+		WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));    	
+		rm.updateLiveFlags(r.getName(), flag, value);
+	}
+	
+	public void removeLiveFlags(Region r, String flag) {
+		WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));    	
+		rm.removeLiveFlags(r.getName(), flag);
 	}
 
 	public int getTotalRegionsNum() {

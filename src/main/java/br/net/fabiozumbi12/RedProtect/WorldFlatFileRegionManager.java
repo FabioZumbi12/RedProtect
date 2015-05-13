@@ -49,18 +49,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         }
     }
     
-    @Override
-    public boolean canBuild(Player p, Block b) {
-    	int bx = b.getX();
-        int bz = b.getZ();
-        for (Region poly : this.getRegionsIntersecting(bx, bz)) {
-            if (poly.intersects(bx, bz)) {
-                return poly.canBuild(p);
-            }
-        }
-		return true;
-    }
-    
     public Set<Region> getRegionsIntersecting(int bx, int bz) {
 		Set<Region> ret = new HashSet<Region>();
 		for (Region r:regions.values()){
@@ -228,7 +216,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     }
     
     private void backupRegions(File datf) {
-        if (!RPConfig.getBool("backup")) {
+        if (!RPConfig.getBool("flat-file.backup")) {
             return;
         }
         File dataBackup = new File(RedProtect.pathData, "data_" + this.getWorld().getName() + ".backup");
@@ -387,7 +375,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                 }
                 
             } else {
-                if (RPConfig.getBool("backup") && this.backupExists() && !path.equalsIgnoreCase(datbackf)) {
+                if (RPConfig.getBool("flat-file.backup") && this.backupExists() && !path.equalsIgnoreCase(datbackf)) {
                     this.load(datbackf);
                     RedProtect.logger.info("Data file is blank, Reading from " + datbackf);
                     return;
@@ -400,7 +388,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             e2.printStackTrace();
         }
         catch (ZipException e5) {
-            if (RPConfig.getBool("backup") && this.backupExists() && !path.equalsIgnoreCase(datbackf)) {
+            if (RPConfig.getBool("flat-file.backup") && this.backupExists() && !path.equalsIgnoreCase(datbackf)) {
                 this.load(datbackf);
                 RedProtect.logger.info("The data file is corrupt. Loading from " + datbackf);
             }
@@ -451,16 +439,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     }
     
     @Override
-    public void setFlagValue(Region region, String flag, Object value) {
-        region.setFlag(flag, value);
-    }
-    
-    @Override
-    public void setRegionName(Region region, String name) {
-        region.setName(name);
-    }
-    
-    @Override
     public Set<Region> getPossibleIntersectingRegions(Region r) {
     	Set<Region> ret = new HashSet<Region>();
 		int cmaxX = LargeChunkObject.convertBlockToLCO(r.getMaxMbrX());
@@ -497,17 +475,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         return ret;
     }
     
-    
-    @Override
-	public void setWelcome(Region p0, String msg) {
-		p0.setWelcome(msg);
-	}
-
-	@Override
-	public String getWelcome(Region p0) {
-		return p0.getWelcome();
-	}
-
 	@Override
 	public Set<Region> getRegions(int x, int z) {
 		Set<Region> regionl = new HashSet<Region>();
@@ -517,16 +484,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 			}
 		}
 		return regionl;
-	}
-
-	@Override
-	public void setPrior(Region r, int prior) {
-		r.setPrior(prior);		
-	}
-
-	@Override
-	public int getPrior(Region r) {		
-		return r.getPrior();
 	}
 
 	@Override
@@ -570,27 +527,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	}
 
 	@Override
-	public void setWorld(Region r, String w) {
-		r.setWorld(w);
-	}
-
-	@Override
-	public String getWorld(Region r) {
-		return r.getWorld();
-	}
-
-	@Override
-	public void setDate(Region r, String date) {
-		r.setDate(date);
-		
-	}
-
-	@Override
-	public String getDate(Region r) {
-		return r.getDate();
-	}
-
-	@Override
 	public Set<Region> getAllRegions() {
 		Set<Region> allregions = new HashSet<Region>();
 		allregions.addAll(regions.values());
@@ -603,7 +539,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	}
 
 	@Override
-	public void updateLiveRegion(Region r) {}
+	public void updateLiveRegion(String rname, String columm, String value) {}
 
 	@Override
 	public void closeConn() {
@@ -611,8 +547,13 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
 	@Override
 	public int getTotalRegionNum() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public void updateLiveFlags(String rname, String flag, String value) {}
+
+	@Override
+	public void removeLiveFlags(String rname, String flag) {}
 	
 }

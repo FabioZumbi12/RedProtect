@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -137,18 +138,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             }
         }
     }
-
-	@Override
-    public boolean canBuild(Player p, Block b) {
-    	int bx = b.getX();
-        int bz = b.getZ();
-        for (Region poly : this.getRegionsIntersecting(bx, bz)) {
-            if (poly.intersects(bx, bz)) {
-                return poly.canBuild(p);
-            }
-        }
-		return true;
-    }
     
     public Set<Region> getRegionsIntersecting(int bx, int bz) {
 		Set<Region> ret = new HashSet<Region>();
@@ -262,8 +251,11 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
     
     @Override
-    public Region getRegion(String rname) {
+    public Region getRegion(final String rname) {
     	if (!regions.containsKey(rname)){
+    		if (rname == null){
+    			return null;
+    		}
     		try {
                 Statement st = this.dbcon.createStatement();
                 ResultSet rs = st.executeQuery("SELECT * FROM region WHERE name='"+rname+"'");            
@@ -305,6 +297,17 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 }    
                 st.close(); 
                 rs.close();
+                RedProtect.logger.debug("Adding region to cache: "+rname);
+                Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
+                		@Override
+                		public void run(){
+                		if (regions.containsKey(rname)){
+                			regions.remove(rname);
+                			RedProtect.logger.debug("Removed cached region: "+rname);
+                		}
+                		}                	
+                }, (20*60)*RPConfig.getInt("mysql.region-cache-minutes"));
+                
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -363,42 +366,49 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
     
     @Override
-    public void updateLiveRegion(Region r){
-    	try {                
-            Statement st = this.dbcon.createStatement();      
-        	st.executeUpdate("DELETE FROM region_flags WHERE region='"+r.getName()+"'");
+    public void updateLiveFlags(String rname, String flag, String value){
+    	try{
+    	Statement st = null;      
+    	if (flagExists(rname,flag)){
+    		st = this.dbcon.createStatement();       
+        	st.executeUpdate("UPDATE region_flags SET value='"+value+"' WHERE region='"+rname+"' AND flag ='"+flag+"'");
         	st.close();
-            for (String flag:r.flags.keySet()){                    	
-            	if (flagExists(r,flag)){
-            		st = this.dbcon.createStatement();       
-                	st.executeUpdate("UPDATE region_flags SET value='"+r.flags.get(flag).toString()+"' WHERE region='"+r.getName()+"' AND flag ='"+flag+"'");
-                	st.close();
-            	} else {
-            		st = this.dbcon.createStatement();       
-                	st.executeUpdate("INSERT INTO region_flags (region,flag,value) VALUES ('"+r.getName()+"', '"+flag+"', '"+r.flags.get(flag).toString()+"')");
-                	st.close();
-            	}                    	
-            }          
+    	} else {
+    		st = this.dbcon.createStatement();       
+        	st.executeUpdate("INSERT INTO region_flags (region,flag,value) VALUES ('"+rname+"', '"+flag+"', '"+value+"')");
+        	st.close();
+    	}
+    	} catch (SQLException e){
+    		RedProtect.logger.severe("RedProtect can't update the region " + rname + ", please verify the Mysql Connection and table structures.");
+            e.printStackTrace();
+    	}        
+    }
+    
+    @Override
+    public void removeLiveFlags(String rname, String flag){
+    	try{
+    	Statement st = null;      
+    	if (flagExists(rname,flag)){
+    		st = this.dbcon.createStatement();
+            st.executeUpdate("DELETE FROM region_flags WHERE region = '" + rname + "' AND flag = '"+flag+"'");
+            st.close();
+    	} 
+    	} catch (SQLException e){
+    		RedProtect.logger.severe("RedProtect can't remove flag " + flag + " from " + rname + ", please verify the Mysql Connection and table structures.");
+            e.printStackTrace();
+    	}        
+    }
+    
+    @Override
+    public void updateLiveRegion(String rname, String columm, String value){
+    	try {                
+            Statement st = this.dbcon.createStatement();
             st = this.dbcon.createStatement();
-            st.executeUpdate("UPDATE region SET "
-            		+ "creator='"+r.getCreator()+"',"
-            		+ "owners='"+r.getOwners().toString().replace("[", "").replace("]", "")+"',"
-            		+ "members='"+r.getMembers().toString().replace("[", "").replace("]", "")+"',"
-            		+ "maxMbrX='"+r.getMaxMbrX()+"',"
-            		+ "minMbrX='"+r.getMinMbrX()+"',"
-            		+ "maxMbrZ='"+r.getMaxMbrZ()+"',"
-            		+ "minMbrZ='"+r.getMinMbrZ()+"',"
-            		+ "centerX='"+r.getCenterX()+"',"
-            		+ "centerZ='"+r.getCenterZ()+"',"
-            		+ "date='"+r.getDate()+"',"
-            		+ "wel='"+r.getWelcome()+"',"
-            		+ "prior='"+r.getPrior()+"',"
-            		+ "world='"+r.getWorld()+"'"
-            				+ " WHERE name='" + r.getName() + "'");
+            st.executeUpdate("UPDATE region SET "+columm+"='"+value+"' WHERE name='" + rname + "'");
             st.close();
         }
         catch (SQLException e) {
-        	RedProtect.logger.severe("RedProtect can't save the region " + r.getName() + ", please verify the Mysql Connection and table structures.");
+        	RedProtect.logger.severe("RedProtect can't save the region " + rname + ", please verify the Mysql Connection and table structures.");
             e.printStackTrace();
         } 
     }
@@ -528,11 +538,11 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         return total > 0;
     }
     
-    private boolean flagExists(Region r, String flag) {
+    private boolean flagExists(String rname, String flag) {
         int total = 0;
         try {
             Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region_flags WHERE region = '"+r.getName()+"' AND flag='"+flag+"'");
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region_flags WHERE region = '"+rname+"' AND flag='"+flag+"'");
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
             }
@@ -552,17 +562,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     
     public World getWorld() {
         return this.world;
-    }
-    
-    @Override
-    public void setFlagValue(Region region, String flag, Object value) {
-        region.setFlag(flag, value);
-    }
-    
-    @Override
-    public void setRegionName(Region region, String name) {
-        region.setName(name);
-    }
+    }    
     
     @Override
     public Set<Region> getPossibleIntersectingRegions(Region r) {
@@ -601,17 +601,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         return ret;
     }
     
-    
-    @Override
-	public void setWelcome(Region p0, String msg) {
-		p0.setWelcome(msg);
-	}
-
-	@Override
-	public String getWelcome(Region p0) {
-		return p0.getWelcome();
-	}
-
 	@Override
 	public Set<Region> getRegions(int x, int z) {
 		Set<Region> regionl = new HashSet<Region>();		
@@ -634,16 +623,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 			}
 		}*/
 		return regionl;
-	}
-
-	@Override
-	public void setPrior(Region r, int prior) {
-		r.setPrior(prior);		
-	}
-
-	@Override
-	public int getPrior(Region r) {		
-		return r.getPrior();
 	}
 
 	@Override
@@ -684,27 +663,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	    }
 		return regionlist;
 	}
-
-	@Override
-	public void setWorld(Region r, String w) {
-		r.setWorld(w);
-	}
-
-	@Override
-	public String getWorld(Region r) {
-		return r.getWorld();
-	}
-
-	@Override
-	public void setDate(Region r, String date) {
-		r.setDate(date);		
-	}
-
-	@Override
-	public String getDate(Region r) {
-		return r.getDate();
-	}
-
+	
 	@Override
 	public Set<Region> getAllRegions() {		
 		Set<Region> allregions = new HashSet<Region>();		

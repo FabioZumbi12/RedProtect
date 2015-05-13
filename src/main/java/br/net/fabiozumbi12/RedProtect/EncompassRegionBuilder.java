@@ -60,14 +60,14 @@ class EncompassRegionBuilder extends RegionBuilder{
             return;
         }
             	
-        for (int i = 0; i < RPConfig.getInt("max-scan"); ++i) {
+        for (int i = 0; i < RPConfig.getInt("region-settings.max-scan"); ++i) {
             int nearbyCount = 0;
             int x = current.getX();
             int y = current.getY();
             int z = current.getZ();
             int blockSize = 6;
             Block[] block;
-            if (RPConfig.getString("block-id").equalsIgnoreCase("REDSTONE") ) {
+            if (RPConfig.getString("region-settings.block-id").equalsIgnoreCase("REDSTONE") ) {
                 block = new Block[12];
                 blockSize = 12;
                 block[0] = w.getBlockAt(x + 1, y, z);
@@ -83,7 +83,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                 block[10] = w.getBlockAt(x, y - 1, z + 1);
                 block[11] = w.getBlockAt(x, y - 1, z - 1);
             }
-            else if (RPConfig.getString("block-id").equalsIgnoreCase("FENCE")) {
+            else if (RPConfig.getString("region-settings.block-id").equalsIgnoreCase("FENCE")) {
                 block = new Block[6];
                 blockSize = 6;
                 block[0] = w.getBlockAt(x + 1, y, z);
@@ -106,7 +106,7 @@ class EncompassRegionBuilder extends RegionBuilder{
             for (int bi = 0; bi < blockSize; ++bi) {
                 boolean validBlock = false;            	
                 
-                validBlock = (block[bi].getType().name().contains(RPConfig.getString("block-id")));               
+                validBlock = (block[bi].getType().name().contains(RPConfig.getString("region-settings.block-id")));               
                 
                 if (validBlock && !block[bi].getLocation().equals((Object)last.getLocation())) {
                     ++nearbyCount;
@@ -225,13 +225,13 @@ class EncompassRegionBuilder extends RegionBuilder{
                         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         }
                         
-                        if (RPConfig.getDropType("drop-type").equals(RedProtect.DROP_TYPE.drop)) {
+                        if (RPConfig.getDropType("region-settings.drop-type").equals(RedProtect.DROP_TYPE.drop)) {
                             b.breakNaturally();
                             for (Block rb : blocks) {
                                 rb.breakNaturally();
                             }
                         }
-                        else if (RPConfig.getDropType("drop-type").equals(RedProtect.DROP_TYPE.remove)) {
+                        else if (RPConfig.getDropType("region-settings.drop-type").equals(RedProtect.DROP_TYPE.remove)) {
                             b.breakNaturally();
                             for (Block rb : blocks) {
                                 rb.setType(Material.AIR);

@@ -24,7 +24,7 @@ public class RPPermissionHandler{
     }
     
     private int LimitHandler(Player p){
-    	int limit = RPConfig.getInt("limit-amount");   	
+    	int limit = RPConfig.getInt("region-settings.limit-amount");   	
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
     	if (limit > 0 && !p.hasPermission("redprotect.unlimited")){
     		for (PermissionAttachmentInfo perm:perms){

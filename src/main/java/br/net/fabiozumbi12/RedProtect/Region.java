@@ -35,19 +35,19 @@ public class Region implements Serializable{
         
     public void setFlag(String Name, Object value) {
     	this.flags.put(Name, value);
-    	updateDB();
+    	RedProtect.rm.updateLiveFlags(this, Name, value.toString());
     }
     
     public void removeFlag(String Name) {
     	if (this.flags.containsKey(Name)){
     		this.flags.remove(Name); 
-    		updateDB();
+    		RedProtect.rm.removeLiveFlags(this, Name);
     	}    	               
     }
     
-    public void setDate(String date) {
-        this.date = date;
-        updateDB();
+    public void setDate(String value) {
+        this.date = value;
+        RedProtect.rm.updateLiveRegion(this, "date", value);
     }    
     
     public String getDate() {
@@ -56,7 +56,7 @@ public class Region implements Serializable{
     
     public void setWorld(String w) {
         this.world = w;
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "world", w);
     }    
     
     public String getWorld() {
@@ -65,7 +65,7 @@ public class Region implements Serializable{
     
     public void setPrior(int prior) {
         this.prior = prior;
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "prior", ""+prior);
     }
     
     public int getPrior() {
@@ -74,7 +74,7 @@ public class Region implements Serializable{
     
     public void setWelcome(String s){
     	this.wMessage = s;
-    	updateDB();
+    	RedProtect.rm.updateLiveRegion(this, "wel", s);
     }
     
     public String getWelcome(){
@@ -86,22 +86,20 @@ public class Region implements Serializable{
     
     public void setX(int[] x) {
         this.x = x;
-        updateDB();
     }
     
     public void setZ(int[] z) {
         this.z = z;
-        updateDB();
     }
     
     public void setOwners(List<String> owners) {
         this.owners = owners;
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "owners", owners.toString().replace("[", "").replace("]", ""));
     }
     
     public void setMembers(List<String> members) {
         this.members = members;
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
     }
     
     public void setCreator(String uuid) {
@@ -109,7 +107,7 @@ public class Region implements Serializable{
     		uuid = uuid.toLowerCase();
     	}
         this.creator = uuid;
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "creator", uuid);
     }
     
     public int[] getX() {
@@ -362,12 +360,12 @@ public class Region implements Serializable{
 
     public void clearOwners(){
     	this.owners.clear();
-    	updateDB();
+    	RedProtect.rm.updateLiveRegion(this, "owners", "");
     }
     
     public void clearMembers(){
     	this.members.clear();
-    	updateDB();
+    	RedProtect.rm.updateLiveRegion(this, "members", "");
     }
     
     public void delete() {
@@ -433,9 +431,9 @@ public class Region implements Serializable{
     		pinfo = uuid.toLowerCase();
     	}
         if (!this.members.contains(pinfo) && !this.owners.contains(pinfo)) {
-            this.members.add(pinfo);
+            this.members.add(pinfo);            
         }
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
     public void addOwner(String uuid) {
@@ -447,9 +445,10 @@ public class Region implements Serializable{
             this.members.remove(pinfo);
         }
         if (!this.owners.contains(pinfo)) {
-            this.owners.add(pinfo);
+            this.owners.add(pinfo);            
         }
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "owners", this.owners.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
     public void removeMember(String uuid) {
@@ -463,7 +462,8 @@ public class Region implements Serializable{
         if (this.owners.contains(pinfo)) {
             this.owners.remove(pinfo);
         }
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "owners", this.owners.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
     public void removeOwner(String uuid) {
@@ -474,7 +474,7 @@ public class Region implements Serializable{
         if (this.owners.contains(pinfo)) {
             this.owners.remove(pinfo);
         }
-        updateDB();
+        RedProtect.rm.updateLiveRegion(this, "owners", this.owners.toString().replace("[", "").replace("]", ""));
     }
     
     public boolean getFlagBool(String key) {
@@ -496,7 +496,7 @@ public class Region implements Serializable{
     	if (!RedProtect.OnlineMode){
     		uuid = p.getName().toLowerCase();
     	}
-        return p.getLocation().getY() < RPConfig.getInt("height-start") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return p.getLocation().getY() < RPConfig.getInt("region-settings.height-start") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canPVP(Player p) {
@@ -578,8 +578,8 @@ public class Region implements Serializable{
     }
     
     public void setName(String name) {
-        this.name = name;
-        updateDB();
+    	RedProtect.rm.updateLiveRegion(this, "name", name);
+        this.name = name;        
     }
     
     public boolean isOnTop(){
@@ -682,9 +682,5 @@ public class Region implements Serializable{
     	}
 		return getFlagBool("allow-home") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
-	
-	private void updateDB(){
-		RedProtect.rm.updateLiveRegion(this);
-	}
-    
+	    
 }

@@ -74,7 +74,7 @@ class RPPlayerListener implements Listener{
         Region r = RedProtect.rm.getTopRegion(l);
         Material itemInHand = p.getItemInHand().getType();   
                 
-        if (p.getItemInHand().getTypeId() == RPConfig.getInt("adminWandID") && p.hasPermission("redprotect.magicwand")) {
+        if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
             if (event.getAction().equals((Object)Action.RIGHT_CLICK_BLOCK)) {
             	RedProtect.secondLocationSelections.put(p, b.getLocation());
                 p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + b.getLocation().getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockZ() + RPLang.get("general.color") + ").");
@@ -88,7 +88,7 @@ class RPPlayerListener implements Listener{
                 return;
             }
         }
-        if (p.getItemInHand().getTypeId() == RPConfig.getInt("infoWandID")) {
+        if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.infoWandID")) {
             if (event.getAction().equals((Object)Action.RIGHT_CLICK_AIR)) {
             	Location lp = p.getLocation();
                 r = RedProtect.rm.getTopRegion(lp);
@@ -210,6 +210,7 @@ class RPPlayerListener implements Listener{
         } 
         else if ((itemInHand.equals(Material.FLINT_AND_STEEL) || 
         		itemInHand.equals(Material.WATER_BUCKET) || 
+        		itemInHand.equals(Material.BUCKET) || 
         		itemInHand.equals(Material.LAVA_BUCKET) || 
         		itemInHand.equals(Material.ITEM_FRAME) || 
         		itemInHand.equals(Material.PAINTING) ||
@@ -469,7 +470,7 @@ class RPPlayerListener implements Listener{
     	}
         
         //update region owner or member visit
-        if (RPConfig.getString("record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")){
+        if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")){
     		String uuid = p.getUniqueId().toString();        	
     		if (!RedProtect.OnlineMode){
     			uuid = p.getName().toLowerCase();
@@ -534,7 +535,7 @@ class RPPlayerListener implements Listener{
     		RPLang.sendMessage(p, ChatColor.AQUA + "Use /rp update to download and automatically install this update.");
     	}
     	
-    	if (RPConfig.getString("record-player-visit-method").equalsIgnoreCase("ON-LOGIN")){    		
+    	if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")){    		
         	String uuid = p.getUniqueId().toString();
         	if (!RedProtect.OnlineMode){
         		uuid = p.getName().toLowerCase();
@@ -579,28 +580,28 @@ class RPPlayerListener implements Listener{
         
     public void SendNotifyMsg(Player p, String notify){
     	if (!notify.equals("")){
-    		if (RPConfig.getString("notify-region-enter-mode").equalsIgnoreCase("BOSSBAR")){
+    		if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
     			if (RedProtect.BossBar){
     				BossbarAPI.setMessage(p,notify);
     			} else {
     				p.sendMessage(notify);
     			}
     		} 
-    		if (RPConfig.getString("notify-region-enter-mode").equalsIgnoreCase("CHAT")){
+    		if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
     			p.sendMessage(notify);
     		}
     	}
     }
 
     public void SendWelcomeMsg(Player p, String wel){
-		if (RPConfig.getString("welcome-notify-mode").equalsIgnoreCase("BOSSBAR")){
+		if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("BOSSBAR")){
 			if (RedProtect.BossBar){
 				BossbarAPI.setMessage(p,wel);
 			} else {
 				p.sendMessage(wel);
 			}
 		} 
-		if (RPConfig.getString("welcome-notify-mode").equalsIgnoreCase("CHAT")){
+		if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("CHAT")){
 			p.sendMessage(wel);
 		}
     }
@@ -716,7 +717,7 @@ class RPPlayerListener implements Listener{
     }
     
     private void EnterExitNotify(Region r, Player p){
-    	if (!RPConfig.getBool("notify-region-enter")){
+    	if (!RPConfig.getBool("notify.region-enter")){
     		return;
     	}
     	
@@ -724,8 +725,8 @@ class RPPlayerListener implements Listener{
     	String m = "";
     	//Enter-Exit notifications    
         if (r.getWelcome().equals("")){
-			if (RPConfig.getString("notify-region-enter-mode").equalsIgnoreCase("BOSSBAR")
-	    			|| RPConfig.getString("notify-region-enter-mode").equalsIgnoreCase("CHAT")){
+			if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")
+	    			|| RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
 				for (int i = 0; i < r.getOwners().size(); ++i) {
     				ownerstring = ownerstring + ", " + RPUtil.UUIDtoPlayer(r.getOwners().get(i)); 
     	        }

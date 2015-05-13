@@ -64,9 +64,9 @@ class RPBlockListener implements Listener{
             this.setErrorSign(e, p, RPLang.get("blocklistener.region.nopem"));
             return;
         }
-        if ((RPConfig.getBool("use-private") && b.getType().equals(Material.WALL_SIGN)) && (line1.equalsIgnoreCase("[private]") || line1.equalsIgnoreCase("private") || line1.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
+        if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN)) && (line1.equalsIgnoreCase("[private]") || line1.equalsIgnoreCase("private") || line1.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
         	Region r = RedProtect.rm.getTopRegion(b.getLocation());        
-        	Boolean out = RPConfig.getBool("allow-private-outside");
+        	Boolean out = RPConfig.getBool("private.allow-outside");
         	if (out || r != null){
         		if (cont.isContainer(b)){
             		int length = p.getName().length();
@@ -118,7 +118,7 @@ class RPBlockListener implements Listener{
         Player p = e.getPlayer();
         World w = p.getWorld();
         Material m = p.getItemInHand().getType();
-        Boolean antih = RPConfig.getBool("anti-hopper");
+        Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
         
     	if (r != null && !r.canMinecart(p) && p.getItemInHand().getType().name().contains("MINECART")){
@@ -160,7 +160,7 @@ class RPBlockListener implements Listener{
         Player p = e.getPlayer();
         Block b = e.getBlock();
         World w = p.getWorld();
-        Boolean antih = RPConfig.getBool("anti-hopper");
+        Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
         
         if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")){

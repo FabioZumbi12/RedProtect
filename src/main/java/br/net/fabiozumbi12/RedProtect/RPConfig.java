@@ -21,6 +21,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.FileUtil;
 
 import br.net.fabiozumbi12.RedProtect.RedProtect.DROP_TYPE;
 
@@ -32,7 +33,7 @@ public class RPConfig{
 	static YamlConfiguration GuiItems = new RPYaml();
 	public static List<String> AdminFlags = Arrays.asList("player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "mcmmo", "death-back");	
 			
-    static void init(RedProtect plugin) {
+	static void init(RedProtect plugin) {
 
     	            File main = new File(RedProtect.pathMain);
     	            File data = new File(RedProtect.pathData);
@@ -68,23 +69,32 @@ public class RPConfig{
     	            if (!gui.exists()) {
     	            	plugin.saveResource("guiconfig.yml", false);//create config file    	            	
     	                RedProtect.logger.info("Created guiconfig file: " + RedProtect.pathGui);
-    	            } 
-    	                	            
-    	            //load and update config
-    	            try {
-						plugin.getConfig().load(config);
-					} catch (IOException | InvalidConfigurationException e) {
-						e.printStackTrace();
-					}    	     
+    	            }
     	            
-    	            configs = inputLoader(RedProtect.class.getClassLoader().getResourceAsStream("config.yml"));  
+    	            FileConfiguration temp = new RPYaml();
+    	            try {
+    	            	temp.load(config);
+					} catch (Exception e) {
+						e.printStackTrace();
+					} 
+    	            
+    	            if (!temp.contains("config-version")){
+    	            	RedProtect.logger.severe("Old config file detected and copied to 'configBKP.yml'. Remember to check your old config file and set the new as you want!");
+    	            	File bkpfile = new File(RedProtect.pathMain + File.separator + "configBKP.yml");
+    	            	FileUtil.copy(config, bkpfile);
+    	            	plugin.saveResource("config.yml", true);    	            	  	            	    	            	
+    	            } 
+    	            	
+    	            RedProtect.plugin.getConfig();  
+    	            
+    	            configs = inputLoader(plugin.getResource("config.yml"));  
                     for (String key:configs.getKeys(true)){
     	            	configs.set(key, RedProtect.plugin.getConfig().get(key));    	            	   	            	
     	            }                        
                     for (String key:configs.getKeys(false)){
                     	RedProtect.plugin.getConfig().set(key, configs.get(key));
                     	RedProtect.logger.debug("Set key: "+key);
-                    }
+                    }  
                     
                     if (RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0){
                     	List<String> ops = RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players");
@@ -94,14 +104,14 @@ public class RPConfig{
                         RedProtect.plugin.getConfig().set("purge.ignore-regions-from-players", ops);
                     }
                     
-    	            if (RedProtect.plugin.getConfig().getString("drop-type") != null) {
-    	                if (RedProtect.plugin.getConfig().getString("drop-type").equalsIgnoreCase("keep")) {
+    	            if (RedProtect.plugin.getConfig().getString("region-settings.drop-type") != null) {
+    	                if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("keep")) {
     	                    DropType.put("drop-type", DROP_TYPE.keep);
     	                }
-    	                else if (RedProtect.plugin.getConfig().getString("drop-type").equalsIgnoreCase("remove")) {
+    	                else if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("remove")) {
     	                	DropType.put("drop-type", DROP_TYPE.remove);
     	                }
-    	                else if (RedProtect.plugin.getConfig().getString("drop-type").equalsIgnoreCase("drop")) {
+    	                else if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("drop")) {
     	                	DropType.put("drop-type", DROP_TYPE.drop);
     	                }
     	                else {
@@ -154,8 +164,8 @@ public class RPConfig{
                     
                     
         			String v = RedProtect.serv.getBukkitVersion();
-        			if (RedProtect.plugin.getConfig().getString("notify-region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
-        				RedProtect.plugin.getConfig().set("notify-region-enter-mode", "CHAT");
+        			if (RedProtect.plugin.getConfig().getString("notify.region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
+        				RedProtect.plugin.getConfig().set("notify.region-enter-mode", "CHAT");
 	                    RedProtect.logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");
         			}
 

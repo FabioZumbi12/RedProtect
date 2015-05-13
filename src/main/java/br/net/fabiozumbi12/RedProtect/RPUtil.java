@@ -106,7 +106,7 @@ class RPUtil {
     }
     
     static String DateNow(){
-    	DateFormat df = new SimpleDateFormat(RPConfig.getString("date-format"));
+    	DateFormat df = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
         Date today = Calendar.getInstance().getTime(); 
         String now = df.format(today);
 		return now;    	
@@ -130,7 +130,7 @@ class RPUtil {
     	int purged = 0;
     	Date now = null;
     	
-    	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("date-format"));
+    	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
 
 		try {
 			now = dateformat.parse(DateNow());

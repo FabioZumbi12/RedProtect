@@ -57,7 +57,6 @@ public class EnterExitRegionEvent extends Event implements Cancellable{
 
 	@Override
 	public boolean isCancelled() {
-		// TODO Auto-generated method stub
 		return this.cancelled;
 	}
 

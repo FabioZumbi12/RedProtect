@@ -7,50 +7,55 @@
 # <       configuration file in this link: http://goo.gl/EAepC7        > #
 # +--------------------------------------------------------------------+ #
 
+config-version: 5.0
+debug-messages: false
 file-type: yml
-auto-save-interval-seconds: 1200
+flat-file:
+  auto-save-interval-seconds: 1200
+  backup: true
 mysql:
   db-name: redprotect
   user-name: root
   user-pass: redprotect
   host: localhost
-  max-connections-limit: 1000
+  region-cache-minutes: 2
+region-settings:
+  anti-hopper: true
+  drop-type: keep
+  limit-amount: 8000
+  height-start: 0
+  block-id: FENCE
+  max-scan: 600
+  date-format: dd/MM/yyyy
+  record-player-visit-method: ON-LOGIN
 allowed-claim-worlds:
 - example_world
-drop-type: keep
-debug-messages: false
-preferred-permissions: Detect
-limit-amount: 8000
-height-start: 0
-block-id: FENCE
-max-scan: 600
-backup: true
-adminWandID: 374
-infoWandID: 339
-use-private: true
-allowed-private-blocks:
-- DISPENSER
-- NOTE_BLOCK
-- BED_BLOCK
-- CHEST
-- WORKBENCH
-- FURNACE
-- JUKEBOX
-- ENCHANTMENT_TABLE
-- BREWING_STAND
-- CAULDRON
-- ENDER_CHEST
-- BEACON
-- TRAPPED_CHEST
-- HOPPER
-- DROPPER
-allow-private-outside: false
-anti-hopper: true
-notify-region-enter: true
-notify-region-enter-mode: BOSSBAR
-welcome-notify-mode: BOSSBAR
-date-format: dd/MM/yyyy
-record-player-visit-method: ON-LOGIN
+wands:
+  adminWandID: 374
+  infoWandID: 339
+private:
+  use: true
+  allow-outside: false
+  allowed-blocks:
+  - DISPENSER
+  - NOTE_BLOCK
+  - BED_BLOCK
+  - CHEST
+  - WORKBENCH
+  - FURNACE
+  - JUKEBOX
+  - ENCHANTMENT_TABLE
+  - BREWING_STAND
+  - CAULDRON
+  - ENDER_CHEST
+  - BEACON
+  - TRAPPED_CHEST
+  - HOPPER
+  - DROPPER
+notify:
+  region-enter: true
+  region-enter-mode: BOSSBAR
+  welcome-mode: BOSSBAR
 netherProtection:
   maxYsize: 128
   execute-cmd: spawn {player}

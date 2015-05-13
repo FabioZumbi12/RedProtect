@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -264,7 +265,22 @@ class RPEntityListener implements Listener{
     	Location l = e.getBlockClicked().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
     	if (r != null && !r.canBuild(p) && 
-    			(p.getItemInHand().getType().equals(Material.LAVA_BUCKET) || p.getItemInHand().getType().equals(Material.WATER_BUCKET))) {
+    			(p.getItemInHand().getType().name().contains("BUCKET"))) {
+    			e.setCancelled(true);
+    			return;
+    		}
+    }
+    
+    @EventHandler
+	public void onBucketFill(PlayerBucketFillEvent e){
+    	if (e.isCancelled()) {
+            return;
+        }
+    	Player p = e.getPlayer();
+    	Location l = e.getBlockClicked().getLocation();
+		Region r = RedProtect.rm.getTopRegion(l);	
+    	if (r != null && !r.canBuild(p) && 
+    			(p.getItemInHand().getType().name().contains("BUCKET"))) {
     			e.setCancelled(true);
     			return;
     		}
