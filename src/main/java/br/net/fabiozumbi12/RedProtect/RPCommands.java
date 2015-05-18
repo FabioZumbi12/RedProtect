@@ -230,7 +230,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
         				if (r.isOwner(RPUtil.PlayerToUUID(player.getName())) || player.hasPermission("redprotect.admin.panel")){
-        					RPGui gui = new RPGui(r.getName() + " flags", player, r, RedProtect.plugin);
+        					RPGui gui = new RPGui(ChatColor.AQUA + r.getName() + " flags", player, r, RedProtect.plugin);
             				gui.open();
                 			return true;
         				} else {
@@ -300,7 +300,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	}
         	if (args[0].equalsIgnoreCase("wand") && player.hasPermission("redprotect.magicwand")) {
         		Inventory inv = player.getInventory();
-        		ItemStack item = new ItemStack(Material.getMaterial(RPConfig.getInt("adminWandID")));
+        		ItemStack item = new ItemStack(Material.getMaterial(RPConfig.getInt("wands.adminWandID")));
                 inv.addItem(item);
                 if (inv.contains(item)){
             		RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.given").replace("{item}", item.getType().name()));
@@ -351,7 +351,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
         				if (r.isOwner(RPUtil.PlayerToUUID(player.getName())) || player.hasPermission("redprotect.admin.panel")){
-        					RPGui gui = new RPGui(r.getName() + " flags", player, r, RedProtect.plugin);
+        					RPGui gui = new RPGui(ChatColor.AQUA + r.getName() + " flags", player, r, RedProtect.plugin);
             				gui.open();
                 			return true;
         				} else {
@@ -707,18 +707,46 @@ class RPCommands implements CommandExecutor, TabCompleter{
             return true;
         }
         if (args[0].equalsIgnoreCase("fl") || args[0].equalsIgnoreCase("flag")) {
-            if (args.length == 2) {
-                handleFlag(player, args[1], "");
+        	Region r = RedProtect.rm.getTopRegion(player.getLocation());
+        	
+            if (args.length == 2) {            	
+            	if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
+            		if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])){
+            			if (!RedProtect.changeWait.contains(r.getName()+args[1])){
+            				RPUtil.startFlagChanger(r.getName(), args[1], player);
+            				handleFlag(player, args[1], "", r);
+            				return true;
+            			} else {
+            				RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RPConfig.getString("flags-configuration.change-flag-delay.seconds")));	
+							return true;
+            			}
+            		}
+            	}            	
+                handleFlag(player, args[1], "", r);
                 return true;
             }
+            
             if (args.length >= 3) {
             	String text = "";
             	for (int i = 2; i < args.length; i++){
             		text = text + " " + args[i];
-            	}
-                handleFlag(player, args[1], text.substring(1));
+            	}            	
+            	if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
+            		if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])){
+            			if (!RedProtect.changeWait.contains(r.getName()+args[1])){
+            				RPUtil.startFlagChanger(r.getName(), args[1], player);
+            				handleFlag(player, args[1], text.substring(1), r);
+            				return true;
+            			} else {
+            				RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RPConfig.getString("flags-configuration.change-flag-delay.seconds")));	
+							return true;
+            			}
+            		}
+            	}             	
+                handleFlag(player, args[1], text.substring(1), r);
                 return true;
-            }            
+            }         
+            
             RPLang.sendMessage(player,RPLang.get("correct.usage") + " " + RPLang.get("cmdmanager.help.flag"));
             return true;
         }
@@ -745,7 +773,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         RPLang.sendMessage(player,RPLang.get("correct.command") + " " + ChatColor.YELLOW + "/rp ?");   
         return true;
     }
-
+	
 	private static void handlePrioritySingle(Player p, int prior, String region) {
     	Region r = RedProtect.rm.getRegion(region, p.getWorld());
     	if (RedProtect.ph.hasRegionPerm(p, "delete", r)) {
@@ -1017,8 +1045,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
     }
     
-	private static void handleFlag(Player p, String flag, String value) {
-    	Region r = RedProtect.rm.getTopRegion(p.getLocation());    	
+	private static void handleFlag(Player p, String flag, String value, Region r) {  	
     	if (flag.equalsIgnoreCase("?")){
     		sendFlagHelp(p); 
     		return;

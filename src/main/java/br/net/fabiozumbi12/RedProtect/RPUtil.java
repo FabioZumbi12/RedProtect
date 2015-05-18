@@ -485,9 +485,10 @@ class RPUtil {
 		                	st.close();
 		                }          
 		                st = dbcon.createStatement();
+		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Creator:" + r.getCreator() + "(Size: "+r.getCreator().length()+")");
 		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,world) VALUES "
 		                		+ "('" +r.getName() + "', '" + 
-		                		r.getCreator() + "', '" + 
+		                		r.getCreator().substring(0,16) + "', '" + 
 		                		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
 		                		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
 		                		r.getMaxMbrX() + "', '" + 
@@ -496,10 +497,10 @@ class RPUtil {
 		                		r.getMinMbrZ() + "', '" + 
 		                		r.getCenterX() + "', '" + 
 		                		r.getCenterZ() + "', '" + 
-		                		r.getDate() + "', '" +
-		                		r.getWelcome() + "', '" + 
+		                		r.getDate().toString() + "', '" +
+		                		r.getWelcome().toString() + "', '" + 
 		                		r.getPrior() + "', '" + 
-		                		r.getWorld()+"')");                    
+		                		r.getWorld().toString()+"')");                    
 		                st.close();
 		                RedProtect.logger.sucess("["+counter+"]Converted region to Mysql: " + r.getName());
 		                counter++;
@@ -545,12 +546,12 @@ class RPUtil {
 	                st = null;
 	                con = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(16) PRIMARY KEY NOT NULL, creator varchar(16), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(20), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region_flags(region varchar(16) NOT NULL, flag varchar(20) NOT NULL, value varchar(255) NOT NULL)");
+	                st.executeUpdate("CREATE TABLE region_flags(region varchar(20) NOT NULL, flag varchar(20) NOT NULL, value varchar(255) NOT NULL)");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region Flags'!"); 
@@ -611,4 +612,18 @@ class RPUtil {
         }        
         return false;
     }
+	
+	public static void startFlagChanger(final String r, final String flag, final Player p){
+		RedProtect.changeWait.add(r+flag);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
+			public void run() {
+				if (RedProtect.changeWait.contains(r+flag)){
+					/*if (p != null && p.isOnline()){
+						RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
+					}*/
+					RedProtect.changeWait.remove(r+flag);				
+				} 
+			}
+			}, RPConfig.getInt("flags-configuration.change-flag-delay.seconds")*20);
+	}
 }

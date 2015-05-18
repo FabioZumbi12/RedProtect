@@ -67,12 +67,12 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = null;
                 con = DriverManager.getConnection(String.valueOf(WorldMySQLRegionManager.url) + WorldMySQLRegionManager.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(16) PRIMARY KEY NOT NULL, creator varchar(16), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
+                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(20), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region'!");    
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region_flags(region varchar(16) NOT NULL, flag varchar(20) NOT NULL, value varchar(255) NOT NULL)");
+                st.executeUpdate("CREATE TABLE region_flags(region varchar(20) NOT NULL, flag varchar(20) NOT NULL, value varchar(255) NOT NULL)");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region Flags'!"); 
@@ -344,7 +344,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = this.dbcon.createStatement();
                 st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,world) VALUES "
                 		+ "('" +r.getName() + "', '" + 
-                		r.getCreator() + "', '" + 
+                		r.getCreator().substring(0,16) + "', '" + 
                 		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
                 		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
                 		r.getMaxMbrX() + "', '" + 

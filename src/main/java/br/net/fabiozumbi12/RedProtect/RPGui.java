@@ -100,7 +100,7 @@ public class RPGui implements Listener{
 	}
 	
 	@EventHandler
-	void onInventoryClick(InventoryClickEvent event){	  
+	void onInventoryClick(InventoryClickEvent event){	
 		if (event.getInventory().getTitle().equals(this.name)){
 			event.setCancelled(true);	
 			ItemStack item = event.getCurrentItem();
@@ -110,18 +110,39 @@ public class RPGui implements Listener{
 			if (!item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
 				ItemMeta itemMeta = item.getItemMeta();
 				String flag = itemMeta.getLore().get(1).replace("§0", "");
-				this.region.setFlag(flag, !this.region.getFlagBool(flag));
-				player.sendMessage(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + this.region.getFlagBool(flag));
-				if (this.region.getFlagBool(flag)){
-					itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+				if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
+					if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)){
+							if (!RedProtect.changeWait.contains(this.region.getName()+flag)){								
+								applyFlag(flag, itemMeta, event);	
+								RPUtil.startFlagChanger(this.region.getName(), flag, player);
+								return;
+							} else {
+								RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RPConfig.getString("flags-configuration.change-flag-delay.seconds")));	
+								return;
+							}
+						} else {
+							applyFlag(flag, itemMeta, event);
+							return;
+						}					
 				} else {
-					itemMeta.removeEnchant(Enchantment.DURABILITY);
-				}				
-				itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-				itemMeta.setLore(Arrays.asList(RPConfig.getGuiString(flag,"value-string")+region.flags.get(flag).toString(),"§0"+flag,RPConfig.getGuiString(flag,"description"),RPConfig.getGuiString(flag,"description1"),RPConfig.getGuiString(flag,"description2")));
-				event.getCurrentItem().setItemMeta(itemMeta);
+					applyFlag(flag, itemMeta, event);
+					return;
+				}
 			}			
 	    }
+	}
+	
+	private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event){
+		this.region.setFlag(flag, !this.region.getFlagBool(flag));
+		RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + this.region.getFlagBool(flag));
+		if (this.region.getFlagBool(flag)){
+			itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+		} else {
+			itemMeta.removeEnchant(Enchantment.DURABILITY);
+		}				
+		itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString(flag,"value-string")+region.flags.get(flag).toString(),"§0"+flag,RPConfig.getGuiString(flag,"description"),RPConfig.getGuiString(flag,"description1"),RPConfig.getGuiString(flag,"description2")));
+		event.getCurrentItem().setItemMeta(itemMeta);
 	}
 	
 	public void close(){

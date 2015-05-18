@@ -72,6 +72,12 @@ flags:
   fire: false
   minecart: false
   allow-home: false
+flags-configuration:
+  change-flag-delay:
+    enable: true
+    seconds: 10
+    flags:
+    - pvp
 purge:
   enabled: false
   remove-oldest: 90

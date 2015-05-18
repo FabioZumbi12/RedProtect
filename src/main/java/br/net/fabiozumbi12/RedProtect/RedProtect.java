@@ -1,7 +1,9 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,6 +33,7 @@ public class RedProtect extends JavaPlugin {
 	public static String UptVersion;
 	public static String UptLink;
     public static RegionManager rm;
+    public static List<String> changeWait = new ArrayList<String>();
     static RPPermissionHandler ph;
     static RPLogger logger = new RPLogger();
     static String lineSeparator = System.getProperty("line.separator");

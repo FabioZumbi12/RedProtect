@@ -110,16 +110,16 @@ public class RPConfig{
                     
     	            if (RedProtect.plugin.getConfig().getString("region-settings.drop-type") != null) {
     	                if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("keep")) {
-    	                    DropType.put("drop-type", DROP_TYPE.keep);
+    	                    DropType.put("region-settings.drop-type", DROP_TYPE.keep);
     	                }
     	                else if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("remove")) {
-    	                	DropType.put("drop-type", DROP_TYPE.remove);
+    	                	DropType.put("region-settings.drop-type", DROP_TYPE.remove);
     	                }
     	                else if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("drop")) {
-    	                	DropType.put("drop-type", DROP_TYPE.drop);
+    	                	DropType.put("region-settings.drop-type", DROP_TYPE.drop);
     	                }
     	                else {
-    	                	DropType.put("drop-type", DROP_TYPE.keep);
+    	                	DropType.put("region-settings.drop-type", DROP_TYPE.keep);
     	                    RedProtect.logger.warning("There is an error in your configuration: drop-type! Defaulting to 'Keep'.");
     	                }
     	            } 

@@ -481,14 +481,14 @@ public class Region implements Serializable{
     	if (!flagExists(key)){
     		return (boolean) RPConfig.getDefFlagsValues().get(key);
     	}
-        return (boolean)this.flags.get(key);
+        return this.flags.get(key) instanceof Boolean && (boolean)this.flags.get(key);
     }
     
     public String getFlagString(String key) {
     	if (!flagExists(key)){
     		return (String) RPConfig.getDefFlagsValues().get(key);
     	}
-        return (String)this.flags.get(key);
+        return this.flags.get(key).toString();
     }
     
     public boolean canBuild(Player p) {
