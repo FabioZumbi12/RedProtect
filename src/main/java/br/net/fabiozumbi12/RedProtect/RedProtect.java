@@ -63,7 +63,7 @@ public class RedProtect extends JavaPlugin {
     public void onDisable() {
         RedProtect.rm.saveAll();
         RedProtect.rm.unloadAll();
-        Bukkit.getScheduler().cancelAllTasks();
+        Bukkit.getScheduler().cancelTasks(this);
         RedProtect.logger.severe(RedProtect.pdf.getFullName() + " disabled.");
     }
     

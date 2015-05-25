@@ -158,7 +158,6 @@ public class Region implements Serializable{
         return this.minMbrZ;
     }
     
-    @SuppressWarnings("deprecation")
 	public String info() {
         String ownerstring = "";
         String memberstring = "";

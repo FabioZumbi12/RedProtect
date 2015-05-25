@@ -146,7 +146,9 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		if  (args[0].equalsIgnoreCase("setconfig") && args[1].equalsIgnoreCase("list")){           		
         			sender.sendMessage(ChatColor.AQUA + "=========== Config Sections: ===========");
             		for (String section:RedProtect.plugin.getConfig().getValues(false).keySet()){
-            			sender.sendMessage(ChatColor.GOLD + section + " : " + ChatColor.GREEN + RedProtect.plugin.getConfig().get(section).toString());
+            			if (section.contains("debug-messages") || section.contains("file-type")){
+            				sender.sendMessage(ChatColor.GOLD + section + " : " + ChatColor.GREEN + RedProtect.plugin.getConfig().get(section).toString());
+            			}            			
             		} 
             		sender.sendMessage(ChatColor.AQUA + "====================================");
             		return true;
@@ -155,7 +157,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                
         	if (args.length == 3){
         		if  (args[0].equalsIgnoreCase("setconfig")){
-        			if (RedProtect.plugin.getConfig().contains(args[1])){
+        			if (args[1].contains("debug-messages") || args[1].contains("file-type")){
         				Object from = RedProtect.plugin.getConfig().get(args[1]); 
             			if (args[2].equals("true") || args[2].equals("false")){
             				RedProtect.plugin.getConfig().set(args[1], Boolean.parseBoolean(args[2]));
@@ -300,9 +302,10 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	}
         	if (args[0].equalsIgnoreCase("wand") && player.hasPermission("redprotect.magicwand")) {
         		Inventory inv = player.getInventory();
-        		ItemStack item = new ItemStack(Material.getMaterial(RPConfig.getInt("wands.adminWandID")));
-                inv.addItem(item);
-                if (inv.contains(item)){
+        		Material mat = Material.getMaterial(RPConfig.getInt("wands.adminWandID"));
+        		ItemStack item = new ItemStack(mat);                
+                if (!inv.contains(mat) && inv.firstEmpty() != -1){                	
+                	inv.addItem(item);
             		RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.given").replace("{item}", item.getType().name()));
                 } else {
                 	RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.nospace").replace("{item}", item.getType().name()));
@@ -873,7 +876,6 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }        
     }
     
-	@SuppressWarnings("deprecation")
 	private static void handleAddMember(Player p, String sVictim) {
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());
         if (RedProtect.ph.hasRegionPerm(p, "addmember", r)) {
@@ -910,7 +912,6 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
     }
     
-	@SuppressWarnings("deprecation")
 	private static void handleAddOwner(Player p, String sVictim) {
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());
         if (RedProtect.ph.hasRegionPerm(p, "addowner", r)) {
@@ -942,7 +943,6 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
     }
     
-	@SuppressWarnings("deprecation")
 	private static void handleRemoveMember(Player p, String sVictim) {
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());
         if (RedProtect.ph.hasRegionPerm(p, "removemember", r)) {
@@ -973,7 +973,6 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
     }
     
-	@SuppressWarnings("deprecation")
 	private static void handleRemoveOwner(Player p, String sVictim) {
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());
 		Region rLow = RedProtect.rm.getLowRegion(p.getLocation());

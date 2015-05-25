@@ -416,7 +416,7 @@ class RPPlayerListener implements Listener{
     
     @EventHandler
     public void onPlayerMovement(PlayerMoveEvent e){
-    	if (e.isCancelled()) {
+    	if (e.isCancelled() || RPConfig.getBool("performance.disable-onPlayerMoveEvent-handler")) {
             return;
         }
     	

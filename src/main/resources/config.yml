@@ -85,3 +85,6 @@ purge:
 update-check:
   enable: true
   auto-update: false
+performance:
+  disable-onPlayerMoveEvent-handler: false
+  disable-PistonEvent-handler: false

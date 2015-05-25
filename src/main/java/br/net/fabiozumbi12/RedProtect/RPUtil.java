@@ -319,7 +319,6 @@ class RPUtil {
 		return uuid;    	
     }
     
-    @SuppressWarnings("deprecation")
 	static String UUIDtoPlayer(String uuid){
     	if (uuid == null){
     		return null;

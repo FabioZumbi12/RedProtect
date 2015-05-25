@@ -5,11 +5,12 @@
   <packaging>jar</packaging>
   <name>RedProtect</name>
   <dependencies>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>[1.8.3,)</version>
-		</dependency>	
+		<!--Spigot-API-->
+        <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <version>1.8.4-R0.1-SNAPSHOT</version>
+        </dependency>	
 		<dependency>
 			<groupId>BossbarAPI</groupId>
 			<artifactId>BossbarAPI</artifactId>
@@ -46,6 +47,12 @@
 			<systemPath>D:/ProjetosBukkit/APIs/SkillApi.jar</systemPath>
 		</dependency>
   </dependencies>
+  <repositories>
+     <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+     </repository>
+  </repositories>
   <build>
     <finalName>${project.name}</finalName>
     <defaultGoal>clean package install</defaultGoal>
@@ -61,5 +68,5 @@
       </plugin>
     </plugins>
   </build>
-  <version>3.1</version>
+  <version>5.3</version>
 </project>

@@ -1,5 +1,7 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -16,6 +18,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -192,7 +196,12 @@ class RPBlockListener implements Listener{
 		Block b = p.getLocation().getBlock();
 		Location l = e.getClickedBlock().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);
-		if ((b.getType().equals(Material.CROPS)) && r != null && !r.canBuild(p)){
+		if ((b.getType().equals(Material.CROPS) 
+				|| b.getType().equals(Material.CARROT)
+				|| b.getType().equals(Material.POTATO)
+				|| b.getType().equals(Material.CARROT)
+				 || b.getType().equals(Material.PUMPKIN_STEM)
+				 || b.getType().equals(Material.MELON_STEM)) && r != null && !r.canBuild(p)){
 			p.sendMessage(RPLang.get("blocklistener.region.cantbreak"));
 			e.setCancelled(true);
 			return;
@@ -329,6 +338,39 @@ class RPBlockListener implements Listener{
 			p.sendMessage(RPLang.get("blocklistener.region.cantbreak"));
 			e.setCancelled(true);
 			return;
+		}
+	}
+	
+	@EventHandler
+	public void onPistonExtend(BlockPistonExtendEvent e){
+		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
+			return;
+		}
+		Block piston = e.getBlock();
+		List<Block> blocks = e.getBlocks();
+		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
+		for (Block b:blocks){
+			Region br = RedProtect.rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
+			if (pr == null && br != null || (pr != null && br != null && pr != br)){
+				e.setCancelled(true);
+			}
+		}	
+		
+	}
+	
+	@EventHandler
+	public void onPistonRetract(BlockPistonRetractEvent e){
+		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
+			return;
+		}
+		Block piston = e.getBlock();
+		List<Block> blocks = e.getBlocks();
+		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
+		for (Block b:blocks){
+			Region br = RedProtect.rm.getTopRegion(b.getLocation());
+			if (pr == null && br != null || (pr != null && br != null && pr != br)){
+				e.setCancelled(true);				
+			}
 		}
 	}
 }
