@@ -29,7 +29,7 @@ public class RPConfig{
 	static HashMap<String, DROP_TYPE> DropType = new HashMap<String, DROP_TYPE>();
 	static FileConfiguration configs = new RPYaml();
 	static YamlConfiguration gflags = new RPYaml();
-	static YamlConfiguration GuiItems = new RPYaml();
+	static RPYaml GuiItems = new RPYaml();
 	public static List<String> AdminFlags = Arrays.asList("player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "mcmmo", "death-back");	
 			
 	static void init(RedProtect plugin) {
@@ -155,7 +155,11 @@ public class RPConfig{
                     }      
                     
                   //load and write GuiItems to guiconfig file
-                    GuiItems = RPYaml.loadConfiguration(gui);
+                    try {
+						GuiItems.load(gui);
+					} catch (IOException | InvalidConfigurationException e) {
+						e.printStackTrace();
+					}
                     
                     for (String key:getDefFlagsValues().keySet()){
                     	GuiItems.set("gui-flags."+key+".material", GuiItems.get("gui-flags."+key+".material", "GOLDEN_APPLE"));

@@ -51,6 +51,7 @@ public class RedProtect extends JavaPlugin {
     static boolean MyPet;
     static boolean McMMo;
     static boolean OnlineMode;
+	static boolean Mc;
     
     
     static enum DROP_TYPE
@@ -74,6 +75,7 @@ public class RedProtect extends JavaPlugin {
             MyChunk = checkMyChunk();
             MyPet = checkMyPet(); 
             McMMo = checkMcMMo();
+            Mc = checkMc();
             JarFile = this.getFile();
             initVars();
             RPUtil.init(this);
@@ -108,6 +110,9 @@ public class RedProtect extends JavaPlugin {
             	RedProtect.logger.sucess("MyChunk found. Ready to convert!");
             	RedProtect.logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
             } 
+            if (Mc){
+            	RedProtect.logger.info("MagicCarpet found. Hooked.");
+            }
             
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
             	RPUtil.ReadAllDB(RedProtect.rm.getAllRegions());
@@ -238,6 +243,15 @@ public class RedProtect extends JavaPlugin {
     private boolean checkMcMMo(){
     	Plugin pMMO = Bukkit.getPluginManager().getPlugin("mcMMO");
     	if (pMMO != null){
+    		return true;
+    	}
+    	return false;
+    }
+    
+  //check if plugin McMMo is installed
+    private boolean checkMc(){
+    	Plugin pMC = Bukkit.getPluginManager().getPlugin("MagicCarpet");
+    	if (pMC != null){
     		return true;
     	}
     	return false;

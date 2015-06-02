@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import me.mgone.bossbarapi.BossbarAPI;
+import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -402,6 +403,20 @@ class RPPlayerListener implements Listener{
     		p.sendMessage(RPLang.get("playerlistener.region.canthome"));
     		e.setCancelled(true);
     	}    	
+    	
+    	if (RedProtect.Mc && r != null && r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && !r.isOwner(RPUtil.PlayerToUUID(p.getName()))){
+    		if (msg.startsWith("/magiccarpet")){
+    			e.setCancelled(true);
+    			RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantmc"));
+    		} else {
+    			for (String cmd:MagicCarpet.getPlugin(MagicCarpet.class).getCommand("MagicCarpet").getAliases()){
+        			if (msg.startsWith("/"+cmd)){
+        				e.setCancelled(true);
+        				RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantmc"));
+        			}
+        		}
+    		}      	
+        }
     }
      
     
@@ -643,6 +658,14 @@ class RPPlayerListener implements Listener{
             	}
             	RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
         	}                	
+        }
+        
+        //Enter MagicCarpet
+        if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.Mc){
+        	if (MagicCarpet.getCarpets().getCarpet(p) != null){
+        		MagicCarpet.getCarpets().remove(p);
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantmc"));
+        	}        	
         }
         
         if (er != null){                	
