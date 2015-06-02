@@ -41,8 +41,8 @@ class RPCommands implements CommandExecutor, TabCompleter{
     public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args){
     	List<String> tab = new ArrayList<String>();    
     	if (sender instanceof Player){
-    		List<String> cmds = Arrays.asList("tutorial", "limit", "list", "delete", "info", "flag", "addmember", "addowner", "removemember", "removeowner", "rename", "welcome", "priority", "near", "panel");
-    		List<String> admcmds = Arrays.asList("wand", "tp", "define", "redefine", "setconfig", "reload", "copyflags");
+    		List<String> cmds = Arrays.asList("tutorial", "limit", "claimlimit", "list", "delete", "info", "flag", "addmember", "addowner", "removemember", "removeowner", "rename", "welcome", "priority", "near", "panel");
+    		List<String> admcmds = Arrays.asList("wand", "tp", "define", "redefine", "setconfig", "reload", "copyflag");
     		if (args.length == 1){
     			for (String command:cmds){
     				if (sender.hasPermission("redprotect.user") && command.startsWith(args[0])){
@@ -94,6 +94,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
+						return true;
 					}
         		}
         		if (args[0].equalsIgnoreCase("update")) {
@@ -350,10 +351,10 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 return true;
             }
             if (args[0].equalsIgnoreCase("flag")) {
-            	if (player.hasPermission("redprotect.own.panel")) {
+            	if (player.hasPermission("redprotect.own.flag")) {
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				if (r.isOwner(RPUtil.PlayerToUUID(player.getName())) || player.hasPermission("redprotect.admin.panel")){
+        				if (r.isOwner(RPUtil.PlayerToUUID(player.getName())) || player.hasPermission("redprotect.admin.flag")){
         					RPGui gui = new RPGui(ChatColor.AQUA + r.getName() + " flags", player, r, RedProtect.plugin);
             				gui.open();
                 			return true;
@@ -531,7 +532,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	}
         }   
         
-        if (args[0].equalsIgnoreCase("limit") || args[0].equalsIgnoreCase("limitremaining") || args[0].equalsIgnoreCase("remaining")) {
+        if (args[0].equalsIgnoreCase("limit") || args[0].equalsIgnoreCase("limitremaining") || args[0].equalsIgnoreCase("remaining") || args[0].equalsIgnoreCase("l")) {
             if (!RedProtect.ph.hasPerm(player, "redprotect.own.limit")) {
                 RPLang.sendMessage(player,RPLang.get("no.permission"));
                 return true;
@@ -579,7 +580,51 @@ class RPCommands implements CommandExecutor, TabCompleter{
             }
             RPLang.sendMessage(player,RPLang.get("correct.usage") + " " + RPLang.get("cmdmanager.help.limit"));
             return true;
-        }          
+        }        
+        
+        if (args[0].equalsIgnoreCase("claimlimit") || args[0].equalsIgnoreCase("claimremaining")  || args[0].equalsIgnoreCase("cl")) {
+            if (!RedProtect.ph.hasPerm(player, "redprotect.own.claimlimit")) {
+                RPLang.sendMessage(player,RPLang.get("no.permission"));
+                return true;
+            }
+            
+            if (args.length == 1) {
+            	int limit = RedProtect.ph.getPlayerClaimLimit(player);
+                if (limit < 0 || RedProtect.ph.hasPerm(player, "redprotect.claimunlimited")) {
+                    RPLang.sendMessage(player,RPLang.get("cmdmanager.nolimit"));
+                    return true;
+                }
+
+                int currentUsed = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(player.getName()), player.getWorld()).size();
+                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourclaims") + " (" + ChatColor.GOLD + currentUsed + RPLang.get("general.color") + " / " + ChatColor.GOLD + limit + RPLang.get("general.color") + ").");
+                return true;
+            }            
+
+            if (!RedProtect.ph.hasPerm(player, "redprotect.other.claimlimit")) {
+                RPLang.sendMessage(player,RPLang.get("no.permission"));
+                return true;
+            }
+            
+            if (args.length == 2) {          	
+            	Player offp = RedProtect.serv.getOfflinePlayer(args[1]).getPlayer();
+            	if (offp == null){
+            		RPLang.sendMessage(player,RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+            		return true;
+            	}
+            	int limit = RedProtect.ph.getPlayerClaimLimit(offp);
+                if (limit < 0 || RedProtect.ph.hasPerm(offp, "redprotect.claimunlimited")) {
+                    RPLang.sendMessage(player,RPLang.get("cmdmanager.nolimit"));
+                    return true;
+                }
+                
+                int currentUsed = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), player.getWorld()).size();
+                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourclaims") + " (" + ChatColor.GOLD + currentUsed + RPLang.get("general.color") + " / " + ChatColor.GOLD + limit + RPLang.get("general.color") + ").");
+                return true;
+            }
+            RPLang.sendMessage(player,RPLang.get("correct.usage") + " " + RPLang.get("cmdmanager.help.claimlimit"));
+            return true;
+        }      
+        
         if (args[0].equalsIgnoreCase("welcome") || args[0].equalsIgnoreCase("wel")) {
             if (args.length >= 2) {
             	String wMessage = "";
@@ -1374,7 +1419,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 					} 
 					if (i > page*5){
 						sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
-						player.sendMessage(ChatColor.GOLD + "- Use " + ChatColor.YELLOW + "/rp ? " + (page+1) + ChatColor.GOLD + " for more.");
+						player.sendMessage(RPLang.get("cmdmanager.page").replace("{page}", ""+(page+1)));
 						break;
 					}
 				}
@@ -1384,6 +1429,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 			sender.sendMessage(ChatColor.GOLD + "/rp setconfig list");
 			sender.sendMessage(ChatColor.GOLD + "/rp setconfig <Config-Section> <Value>");
 			sender.sendMessage(ChatColor.GOLD + "/rp flag <regionName> <World> <Flag> <Value>");
+			sender.sendMessage(ChatColor.GOLD + "/rp ymlTomysql");
 			sender.sendMessage(ChatColor.GOLD + "/rp save-all");
 			sender.sendMessage(ChatColor.GOLD + "/rp load-all");
 			sender.sendMessage(ChatColor.GOLD + "/rp reload");

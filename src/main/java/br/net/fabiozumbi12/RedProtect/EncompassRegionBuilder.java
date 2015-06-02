@@ -39,6 +39,12 @@ class EncompassRegionBuilder extends RegionBuilder{
             return;
         }
         
+        int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
+        if (RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()),w).size() >= claimLimit && claimLimit != -1  && !p.hasPermission("redprotect.claimunlimited")) {
+            this.setErrorSign(e, RPLang.get("regionbuilder.claim.limit"));
+            return;
+        }
+        
         if (regionName == null || regionName.equals("")) {
         	regionName = RPUtil.nameGen(p);
         	if (regionName.length() > 16) {

@@ -431,6 +431,7 @@ class RPPlayerListener implements Listener{
     		p.sendMessage(RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     	}
     	
+    	//Enter flag
         Region r = RedProtect.rm.getTopRegion(lto);
         World w = lfrom.getWorld();
         if (r != null && !r.canEnter(p)){

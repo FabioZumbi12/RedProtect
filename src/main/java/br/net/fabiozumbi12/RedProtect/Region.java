@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -617,7 +618,7 @@ public class Region implements Serializable{
 		if (!flags.containsKey("enter")){
     		return true;
     	}
-        return getFlagBool("enter") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("enter") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 	
 	public boolean canEnderPearl(Player p) {
@@ -636,7 +637,10 @@ public class Region implements Serializable{
     	if (!flags.containsKey("minefarm")){
     		return false;
     	}
-		if (b.getType().toString().contains("_ORE")){
+		if (b.getType().toString().contains("_ORE") ||
+				b.getType().equals(Material.STONE) || 
+				b.getType().equals(Material.GRASS)||
+				b.getType().equals(Material.DIRT)){
 			return getFlagBool("minefarm");
 		}
 		return false;

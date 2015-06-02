@@ -24,23 +24,18 @@ import org.bukkit.entity.Player;
 
 class WorldMySQLRegionManager implements WorldRegionManager{
 
-	static String url;
-    static String baseurl = "jdbc:mysql://";
-    static String driver = "com.mysql.jdbc.Driver";
-    static String dbname;
-    static boolean dbexists;
+	String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
+    String baseurl = "jdbc:mysql://";
+    String driver = "com.mysql.jdbc.Driver";
+    String dbname;
+    boolean dbexists = false;
     Connection dbcon;
-    
-    static {
-        WorldMySQLRegionManager.url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
-        WorldMySQLRegionManager.dbexists = false;
-    }
-    
+
     HashMap<String, Region> regions;
     World world;
     //HashMap<Long, LargeChunkObject> regionslco;
     
-    public WorldMySQLRegionManager(World world) throws Exception{
+    public WorldMySQLRegionManager(World world){
         super();
         //this.regionslco = new HashMap<Long, LargeChunkObject>(100);
         this.regions = new HashMap<String, Region>();
@@ -55,17 +50,17 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             RedProtect.plugin.disable();
             return;
         }
-        WorldMySQLRegionManager.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
+        this.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
         Statement st = null;
         try {
             if (!this.checkDBExists()) {
-                Connection con = DriverManager.getConnection(WorldMySQLRegionManager.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+                Connection con = DriverManager.getConnection(this.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE DATABASE " + WorldMySQLRegionManager.dbname);
-                RedProtect.logger.info("Created database '" + WorldMySQLRegionManager.dbname + "'!");
+                st.executeUpdate("CREATE DATABASE " + this.dbname);
+                RedProtect.logger.info("Created database '" + this.dbname + "'!");
                 st.close();
                 st = null;
-                con = DriverManager.getConnection(String.valueOf(WorldMySQLRegionManager.url) + WorldMySQLRegionManager.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+                con = DriverManager.getConnection(String.valueOf(this.url) + this.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
                 st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(20), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
                 st.close();
@@ -76,39 +71,47 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region Flags'!"); 
+                con.close();
             }
-            this.dbcon = DriverManager.getConnection(WorldMySQLRegionManager.url + WorldMySQLRegionManager.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+            ConnectDB();
         }
         catch (CommandException e3) {
-            RedProtect.logger.severe("Couldn't connect to mysql! Make sure you have mysql turned on and installed properly, and the service is started.");
-            throw new Exception("Couldn't connect to mysql!");
+            RedProtect.logger.severe("Couldn't connect to mysql! Make sure you have mysql turned on and installed properly, and the service is started. Reload the Redprotect plugin after you fix or change your DB configurations");
         }
         catch (SQLException e) {
             e.printStackTrace();
-            RedProtect.logger.severe("There was an error while parsing SQL, redProtect will shut down to avoid further damage.");
-            throw new Exception("SQLException!");
         }
         finally {
             if (st != null) {
-                st.close();
+                try {
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
             }
         }
     }
     
-    private boolean checkDBExists() throws SQLException {
-        if (WorldMySQLRegionManager.dbexists) {
+	private boolean checkDBExists() {
+        if (this.dbexists) {
             return true;
         }
-        try {
-        	Connection con = DriverManager.getConnection(WorldMySQLRegionManager.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-            DatabaseMetaData meta = con.getMetaData();
+        if (!ConnectDB()){
+        	return false;
+        }
+        try {        	
+            DatabaseMetaData meta = this.dbcon.getMetaData();
             ResultSet rs = meta.getCatalogs();
             while (rs.next()) {
                 String listOfDatabases = rs.getString("TABLE_CAT");
-                if (listOfDatabases.equalsIgnoreCase(WorldMySQLRegionManager.dbname)) {
-                    return WorldMySQLRegionManager.dbexists = true;
+                if (listOfDatabases.equalsIgnoreCase(this.dbname)) {
+                	this.dbcon.close();
+                	rs.close();
+                    return this.dbexists = true;
                 }
             }
+            this.dbcon.close();
+        	rs.close();
         } catch (SQLException e){
         	e.printStackTrace();
         }        
@@ -251,7 +254,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
     
     @Override
-    public Region getRegion(final String rname) {
+    public Region getRegion(final String rname){
+    	if (this.dbcon == null){
+    		ConnectDB();
+    	}
     	if (!regions.containsKey(rname)){
     		if (rname == null){
     			return null;
@@ -344,7 +350,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = this.dbcon.createStatement();
                 st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,world) VALUES "
                 		+ "('" +r.getName() + "', '" + 
-                		r.getCreator().substring(0,16) + "', '" + 
+                		r.getCreator() + "', '" + 
                 		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
                 		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
                 		r.getMaxMbrX() + "', '" + 
@@ -690,10 +696,29 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	@Override
 	public void closeConn() {
 		try {
-			this.dbcon.close();
+			if (this.dbcon != null && !this.dbcon.isClosed()){
+				this.dbcon.close();				
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			RedProtect.logger.severe("No connections to close! Forget this message ;)");
 		}
+	}
+	
+    private boolean ConnectDB() {
+    	try {
+			this.dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+			RedProtect.logger.info("Conected to "+dbname+" via Mysql!");
+			return true;
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			RedProtect.logger.severe("["+dbname+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
+			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
+					public void run() {
+						ConnectDB(); 
+						} 
+					}, 300);
+			return false;
+		}		
 	}
 	
 	@Override

@@ -58,7 +58,7 @@ public class RPGlobalListener implements Listener{
 			return;
 		}
 		
-		if (item.name().contains("MINECART")){
+		if (item.name().contains("MINECART") || item.name().contains("BOAT")){
 			if (!RPConfig.getGlobalFlag(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
 	            e.setCancelled(true);
 	            return;
@@ -98,7 +98,7 @@ public class RPGlobalListener implements Listener{
 			return;
 		}
 		
-		if (b.getType().name().contains("RAIL")){
+		if (b.getType().name().contains("RAIL") || b.getType().name().contains("WATER")){
             if (!RPConfig.getGlobalFlag(b.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
         		e.setUseItemInHand(Event.Result.DENY);
         		e.setCancelled(true);
@@ -125,7 +125,7 @@ public class RPGlobalListener implements Listener{
 			return;
 		}
         
-        if (ent.getType().name().contains("MINECART")){
+        if (ent.getType().name().contains("MINECART") || ent.getType().name().contains("BOAT")){
         	if (!RPConfig.getGlobalFlag(l.getWorld().getName()+".use-minecart") && !e.getPlayer().hasPermission("redprotect.bypass")) {
                 e.setCancelled(true);
                 return;
@@ -222,7 +222,7 @@ public class RPGlobalListener implements Listener{
             		return;
             	}
             }
-        	if (e1.getType().name().contains("MINECART") && !RPConfig.getGlobalFlag(loc.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
+        	if ((e1.getType().name().contains("MINECART") || e1.getType().name().contains("BOAT")) && !RPConfig.getGlobalFlag(loc.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
                 e.setCancelled(true);
             	return;
             }
@@ -463,7 +463,10 @@ public class RPGlobalListener implements Listener{
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r == null && 
-            (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL) || event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER))) {
+            		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
                 event.setCancelled(true);
             }
         }
@@ -471,7 +474,10 @@ public class RPGlobalListener implements Listener{
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r == null && 
-            (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL) || event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER))) {
+            		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
                 event.setCancelled(true);
             }
         }

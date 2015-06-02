@@ -23,12 +23,29 @@ public class RPPermissionHandler{
         return LimitHandler(p);
     }
     
+    public int getPlayerClaimLimit(Player p) {
+        return ClaimLimitHandler(p);
+    }
+    
     private int LimitHandler(Player p){
     	int limit = RPConfig.getInt("region-settings.limit-amount");   	
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
     	if (limit > 0 && !p.hasPermission("redprotect.unlimited")){
     		for (PermissionAttachmentInfo perm:perms){
     			if (perm.getPermission().startsWith("redprotect.limit.amount.")){
+        			limit = Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", ""));    				
+    			}  
+    		}
+    	}
+		return limit;
+    }
+    
+    private int ClaimLimitHandler(Player p){
+    	int limit = RPConfig.getInt("region-settings.claim-amount-per-world");   	
+    	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
+    	if (limit > 0 && !p.hasPermission("redprotect.unlimited")){
+    		for (PermissionAttachmentInfo perm:perms){
+    			if (perm.getPermission().startsWith("redprotect.claim.limit.")){
         			limit = Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", ""));    				
     			}  
     		}

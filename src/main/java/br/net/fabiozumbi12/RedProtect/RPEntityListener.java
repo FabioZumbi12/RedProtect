@@ -48,7 +48,11 @@ class RPEntityListener implements Listener{
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnMonsters() && 
-            (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL) || event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER))) {
+            (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
+            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
+            	RedProtect.logger.debug("Cancelled spawn of monster " + event.getEntityType().name());
                 event.setCancelled(true);
             }
         }
@@ -56,7 +60,11 @@ class RPEntityListener implements Listener{
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives() && 
-            (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL) || event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER))) {
+            		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
+            	RedProtect.logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
             }
         }

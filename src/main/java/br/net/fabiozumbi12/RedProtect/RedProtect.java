@@ -141,9 +141,11 @@ public class RedProtect extends JavaPlugin {
              
         }
         catch (Exception e) {
-            e.printStackTrace();
-            RedProtect.logger.severe("Error enabling RedProtect, plugin will shut down.");
-            this.disable();
+    		e.printStackTrace();
+        	if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
+                RedProtect.logger.severe("Error enabling RedProtect, plugin will shut down.");
+                this.disable();
+        	}
         }
     }
     

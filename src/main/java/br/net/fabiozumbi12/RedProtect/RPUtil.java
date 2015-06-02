@@ -487,7 +487,7 @@ class RPUtil {
 		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Creator:" + r.getCreator() + "(Size: "+r.getCreator().length()+")");
 		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,world) VALUES "
 		                		+ "('" +r.getName() + "', '" + 
-		                		r.getCreator().substring(0,16) + "', '" + 
+		                		r.getCreator().toString() + "', '" + 
 		                		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
 		                		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
 		                		r.getMaxMbrX() + "', '" + 
@@ -554,6 +554,7 @@ class RPUtil {
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region Flags'!"); 
+	                con.close();
 	            }
 	        }
 	        catch (CommandException e3) {
@@ -562,7 +563,7 @@ class RPUtil {
 	        }
 	        catch (SQLException e) {
 	            e.printStackTrace();
-	            RedProtect.logger.severe("There was an error while parsing SQL, redProtect will shut down to avoid further damage.");
+	            RedProtect.logger.severe("There was an error while parsing SQL, redProtect will still with actual DB setting until you change the connection options or check if a Mysql service is running. Use /rp reload to try again");
 	            throw new Exception("SQLException!");
 	        }
 	        finally {
