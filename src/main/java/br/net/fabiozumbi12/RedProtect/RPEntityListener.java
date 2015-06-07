@@ -255,7 +255,7 @@ class RPEntityListener implements Listener{
 		if (r != null && !r.canHurtPassives(p) && (et instanceof Animals || et instanceof Villager)) {
 			if (et instanceof Tameable){
 				Tameable tam = (Tameable) et;
-				if (tam.isTamed() && tam.getOwner().getName().equals(p.getName())){
+				if (tam.isTamed() && tam.getOwner() != null && tam.getOwner().getName().equals(p.getName())){
 					return;
 				}
 			}

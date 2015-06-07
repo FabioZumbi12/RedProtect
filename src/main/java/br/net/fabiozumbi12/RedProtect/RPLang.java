@@ -132,7 +132,7 @@ public class RPLang {
 	  }
 	
 
-	static String get(String key){		
+	public static String get(String key){		
 		String FMsg = "";
 
 		if (Lang.get(key) == null){

@@ -60,6 +60,11 @@ notify:
 netherProtection:
   maxYsize: 128
   execute-cmd: spawn {player}
+server-protection:
+  deny-potions:
+  - INVISIBILITY
+  deny-playerdeath-by:
+  - SUFFOCATION
 flags:
   pvp: false
   chest: false
@@ -73,7 +78,7 @@ flags:
   fire: false
   minecart: false
   allow-home: false
-  allow-magiccarpet: false
+  allow-magiccarpet: true
 flags-configuration:
   change-flag-delay:
     enable: true

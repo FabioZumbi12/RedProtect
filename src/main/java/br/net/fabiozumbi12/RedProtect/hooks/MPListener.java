@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.hooks;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
@@ -12,13 +12,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
+import br.net.fabiozumbi12.RedProtect.RPLang;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
 import de.Keyle.MyPet.api.entity.MyPetEntity;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
 import de.Keyle.MyPet.skill.skills.implementation.Fire;
 import de.Keyle.MyPet.skill.skills.implementation.Poison;
 import de.Keyle.MyPet.skill.skills.implementation.Ranged;
 
-class MPListener implements Listener{
+public class MPListener implements Listener{
 	
     RedProtect plugin;
         

@@ -30,7 +30,7 @@ public class RPConfig{
 	static FileConfiguration configs = new RPYaml();
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "mcmmo", "death-back");	
+	public static List<String> AdminFlags = Arrays.asList("player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back");	
 			
 	static void init(RedProtect plugin) {
 

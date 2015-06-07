@@ -1,12 +1,17 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.hooks;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import br.net.fabiozumbi12.RedProtect.RPLang;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+
 import com.gmail.nossr50.events.experience.McMMOPlayerExperienceEvent;
 import com.gmail.nossr50.events.skills.abilities.McMMOPlayerAbilityActivateEvent;
 import com.gmail.nossr50.events.skills.secondaryabilities.SecondaryAbilityWeightedActivationCheckEvent;
+import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 
 public class McMMoListener implements Listener{
 
@@ -27,7 +32,7 @@ public class McMMoListener implements Listener{
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
 		
-		if (r != null && !r.canMcMMo(p)){
+		if (r != null && !r.canSkill(p)){
 			e.setCancelled(true);
 		}
 	}
@@ -43,7 +48,7 @@ public class McMMoListener implements Listener{
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
 		
-		if (r != null && !r.canMcMMo(p)){
+		if (r != null && !r.canSkill(p)){
 			p.sendMessage(RPLang.get("mcmmolistener.notallowed"));
 			e.setCancelled(true);
 		}
@@ -56,7 +61,19 @@ public class McMMoListener implements Listener{
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
 		
-		if (r != null && !r.canMcMMo(p)){
+		if (r != null && !r.canSkill(p)){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerUnarmed(McMMOPlayerDisarmEvent e){
+		RedProtect.logger.debug("Mcmmo McMMOPlayerDisarmEvent event.");
+		
+		Player p = e.getPlayer();
+		Region r = RedProtect.rm.getTopRegion(e.getDefender().getLocation());
+		
+		if (r != null && !r.canSkill(p)){
 			e.setCancelled(true);
 		}
 	}

@@ -24,20 +24,17 @@ import org.bukkit.entity.Player;
 
 class WorldMySQLRegionManager implements WorldRegionManager{
 
-	String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
-    String baseurl = "jdbc:mysql://";
-    String driver = "com.mysql.jdbc.Driver";
-    String dbname;
-    boolean dbexists = false;
-    Connection dbcon;
+	private String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
+	private String reconnect = "?autoReconnect=true";
+	private String dbname;
+	private boolean dbexists = false;
+    private Connection dbcon;
 
-    HashMap<String, Region> regions;
-    World world;
-    //HashMap<Long, LargeChunkObject> regionslco;
+    private HashMap<String, Region> regions;
+    private World world;
     
     public WorldMySQLRegionManager(World world){
         super();
-        //this.regionslco = new HashMap<Long, LargeChunkObject>(100);
         this.regions = new HashMap<String, Region>();
         this.world = world;
         
@@ -60,9 +57,9 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 RedProtect.logger.info("Created database '" + this.dbname + "'!");
                 st.close();
                 st = null;
-                con = DriverManager.getConnection(String.valueOf(this.url) + this.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+                con = DriverManager.getConnection(String.valueOf(this.url) + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(20), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
+                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region'!");    
@@ -706,8 +703,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	
     private boolean ConnectDB() {
     	try {
-			this.dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-			RedProtect.logger.info("Conected to "+dbname+" via Mysql!");
+			this.dbcon = DriverManager.getConnection(this.url + this.dbname+ this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+			RedProtect.logger.info("Conected to "+this.dbname+" via Mysql!");
 			return true;
 		} catch (SQLException e) {			
 			e.printStackTrace();

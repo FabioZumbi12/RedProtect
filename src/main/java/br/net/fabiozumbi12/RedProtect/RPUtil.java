@@ -525,6 +525,7 @@ class RPUtil {
 			
 		    String dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
 		    String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
+		    String reconnect = "?autoReconnect=true";
 		    
 	        try {
 	            Class.forName("com.mysql.jdbc.Driver");
@@ -543,9 +544,9 @@ class RPUtil {
 	                RedProtect.logger.info("Created database '" + dbname + "'!");
 	                st.close();
 	                st = null;
-	                con = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(20), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
@@ -564,7 +565,6 @@ class RPUtil {
 	        catch (SQLException e) {
 	            e.printStackTrace();
 	            RedProtect.logger.severe("There was an error while parsing SQL, redProtect will still with actual DB setting until you change the connection options or check if a Mysql service is running. Use /rp reload to try again");
-	            throw new Exception("SQLException!");
 	        }
 	        finally {
 	            if (st != null) {
@@ -577,8 +577,9 @@ class RPUtil {
 	
 	private static boolean regionExists(String name, String dbname) {
         int total = 0;
+        String reconnect = "?autoReconnect=true";
         try {
-        	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+dbname,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+        	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+dbname+reconnect,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
             Statement st = dbcon.createStatement();
             ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name = '" + name + "'");
             if (rs.next()) {

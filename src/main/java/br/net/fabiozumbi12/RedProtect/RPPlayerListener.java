@@ -29,18 +29,23 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
 
@@ -59,6 +64,32 @@ class RPPlayerListener implements Listener{
     }
     
     @EventHandler
+    public void onConsume(PlayerItemConsumeEvent e){
+        if(e.getItem() == null){
+            return;
+        }
+        
+    	Player p = e.getPlayer();
+        //deny potion
+        List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
+        if(e.getItem().getType().equals(Material.POTION) && Pots.size() > 0){
+        	Potion pot = Potion.fromItemStack(e.getItem());
+        	for (String potion:Pots){
+        		potion = potion.toUpperCase();
+        		try{
+        			if (pot.getType().equals(PotionType.valueOf(potion)) && !p.hasPermission("redprotect.bypass")){
+            			e.setCancelled(true);
+            			RPLang.sendMessage(p, RPLang.get("playerlistener.denypotion"));
+            		}
+        		} catch(IllegalArgumentException ex){
+        			RPLang.sendMessage(p, "The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
+        			RedProtect.logger.severe("The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
+        		}        		
+        	}                    
+        }
+    }
+    
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
     	RedProtect.logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
     	
@@ -73,8 +104,8 @@ class RPPlayerListener implements Listener{
         
         Location l = b.getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
-        Material itemInHand = p.getItemInHand().getType();   
-                
+        Material itemInHand = p.getItemInHand().getType(); 
+        
         if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
             if (event.getAction().equals((Object)Action.RIGHT_CLICK_BLOCK)) {
             	RedProtect.secondLocationSelections.put(p, b.getLocation());
@@ -255,6 +286,28 @@ class RPPlayerListener implements Listener{
     }
     
     @EventHandler
+    public void onEntityDamageEvent(EntityDamageEvent e) { 
+    	if (!(e.getEntity() instanceof Player)){
+    		return;
+    	}
+
+        //deny damagecauses
+        List<String> Causes = RPConfig.getStringList("server-protection.deny-playerdeath-by");
+        if(Causes.size() > 0){
+        	for (String cause:Causes){
+        		cause = cause.toUpperCase();
+        		try{
+        			if (e.getCause().equals(DamageCause.valueOf(cause))){
+            			e.setCancelled(true);
+            		}
+        		} catch(IllegalArgumentException ex){
+        			RedProtect.logger.severe("The config 'deny-playerdeath-by' have a unknow damage cause type. Change to a valid damage cause type.");
+        		}        		
+        	}                    
+        }        
+    }
+    
+    @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {                
         Player p = null;        
         if (e.getDamager() instanceof Player){
@@ -368,7 +421,6 @@ class RPPlayerListener implements Listener{
         	}
     		PlayerCmd.remove(p);    		
     	}
-    	
     	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
@@ -577,15 +629,36 @@ class RPPlayerListener implements Listener{
     }
     
     @EventHandler
-    public void PlayerTrownPotion(PotionSplashEvent e){
+    public void PlayerTrownPotion(PotionSplashEvent e){    	
+    	//deny potion
+        List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
+        if(Pots.size() > 0){
+        	Potion pot = Potion.fromItemStack(e.getPotion().getItem());
+        	for (String potion:Pots){
+        		try{
+        			if (pot.getType().equals(PotionType.valueOf(potion))){
+            			e.setCancelled(true);
+            			if (e.getPotion().getShooter() instanceof Player){
+            				RPLang.sendMessage((Player)e.getPotion().getShooter(), RPLang.get("playerlistener.denypotion"));
+            			}            			
+            		}
+        		} catch(IllegalArgumentException ex){
+        			RedProtect.logger.severe("The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
+        		}
+        	}                    
+        }
+        
     	if (!(e.getPotion().getShooter() instanceof Player)){
     		return;
     	}
     	
-    	RedProtect.logger.debug("Is PotionSplashEvent event.");
-    	
     	Player p = (Player)e.getPotion().getShooter();
     	Entity ent = e.getEntity();
+    	
+    	RedProtect.logger.debug("Is PotionSplashEvent event.");
+    	
+    	
+        
     	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
     	if (r != null && !r.canBuild(p)){
     		p.sendMessage(RPLang.get("playerlistener.region.cantuse"));
@@ -593,7 +666,7 @@ class RPPlayerListener implements Listener{
     		return;
     	}    	
     }
-        
+            
     public void SendNotifyMsg(Player p, String notify){
     	if (!notify.equals("")){
     		if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){

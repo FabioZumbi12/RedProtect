@@ -14,20 +14,25 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
+import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
+import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
+
 public class RedProtect extends JavaPlugin {
 	static File JarFile = null;
 	public static PluginDescriptionFile pdf;
-    PluginManager pm;
+    private PluginManager pm;
     public static RedProtect plugin;
-    RPGlobalListener gListener;
-    RPBlockListener bListener;
-    RPPlayerListener pListener;
-    RPEntityListener eListener;
-    RPWorldListener wListener;
-    RPArmorStand aListener;
-    MPListener mpListener;
-    McMMoListener mcmmoListener;
-    RPCommands cManager;
+    private RPGlobalListener gListener;
+    private RPBlockListener bListener;
+    private RPPlayerListener pListener;
+    private RPEntityListener eListener;
+    private RPWorldListener wListener;
+    private RPArmorStand aListener;
+    private MPListener mpListener;
+    private McMMoListener mcmmoListener;
+    private SkillAPIListener skilstener;
+    private RPCommands cManager;
 	private int taskid;
 	public static boolean Update;
 	public static String UptVersion;
@@ -35,8 +40,7 @@ public class RedProtect extends JavaPlugin {
     public static RegionManager rm;
     public static List<String> changeWait = new ArrayList<String>();
     static RPPermissionHandler ph;
-    static RPLogger logger = new RPLogger();
-    static String lineSeparator = System.getProperty("line.separator");
+    public static RPLogger logger = new RPLogger();
     static Server serv;
     static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
     static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
@@ -52,6 +56,7 @@ public class RedProtect extends JavaPlugin {
     static boolean McMMo;
     static boolean OnlineMode;
 	static boolean Mc;
+	static boolean SkillAPI;
     
     
     static enum DROP_TYPE
@@ -76,6 +81,7 @@ public class RedProtect extends JavaPlugin {
             MyPet = checkMyPet(); 
             McMMo = checkMcMMo();
             Mc = checkMc();
+            SkillAPI = checkSkillAPI();
             JarFile = this.getFile();
             initVars();
             RPUtil.init(this);
@@ -105,6 +111,10 @@ public class RedProtect extends JavaPlugin {
             if (McMMo){
             	this.pm.registerEvents(this.mcmmoListener, this);
             	RedProtect.logger.info("McMMo found. Hooked.");
+            }
+            if (SkillAPI){
+            	this.pm.registerEvents(this.skilstener, this);
+            	RedProtect.logger.info("SkillAPI found. Hooked.");
             }
             if (MyChunk){
             	RedProtect.logger.sucess("MyChunk found. Ready to convert!");
@@ -153,7 +163,7 @@ public class RedProtect extends JavaPlugin {
         	}
         }
     }
-    
+
 	private boolean CheckUpdate() {
 		Updater updater = null;
 		if (RPConfig.getBool("update-check.auto-update")){
@@ -207,6 +217,9 @@ public class RedProtect extends JavaPlugin {
         if (McMMo){
         	this.mcmmoListener = new McMMoListener(this);
         }
+        if (SkillAPI){
+        	this.skilstener = new SkillAPIListener(this);
+        }
         this.cManager = new RPCommands();
         ph = new RPPermissionHandler();
         rm = new RegionManager();
@@ -215,7 +228,7 @@ public class RedProtect extends JavaPlugin {
     //check if plugin BossbarAPI is installed
     private boolean checkBM(){
     	Plugin pBM = Bukkit.getPluginManager().getPlugin("BossbarAPI");
-    	if (pBM != null){
+    	if (pBM != null && pBM.isEnabled()){
     		return true;
     	}
     	return false;
@@ -224,7 +237,7 @@ public class RedProtect extends JavaPlugin {
   //check if plugin MyChunk is installed
     private boolean checkMyChunk(){
     	Plugin pMC = Bukkit.getPluginManager().getPlugin("MyChunk");
-    	if (pMC != null){
+    	if (pMC != null && pMC.isEnabled()){
     		return true;
     	}
     	return false;
@@ -233,7 +246,7 @@ public class RedProtect extends JavaPlugin {
   //check if plugin MyPet is installed
     private boolean checkMyPet(){
     	Plugin pMP = Bukkit.getPluginManager().getPlugin("MyPet");
-    	if (pMP != null){
+    	if (pMP != null && pMP.isEnabled()){
     		return true;
     	}
     	return false;
@@ -242,19 +255,28 @@ public class RedProtect extends JavaPlugin {
   //check if plugin McMMo is installed
     private boolean checkMcMMo(){
     	Plugin pMMO = Bukkit.getPluginManager().getPlugin("mcMMO");
-    	if (pMMO != null){
+    	if (pMMO != null && pMMO.isEnabled()){
     		return true;
     	}
     	return false;
     }
     
-  //check if plugin McMMo is installed
+  //check if plugin MagicCarpet is installed
     private boolean checkMc(){
     	Plugin pMC = Bukkit.getPluginManager().getPlugin("MagicCarpet");
-    	if (pMC != null){
+    	if (pMC != null && pMC.isEnabled()){
     		return true;
     	}
     	return false;
     }
-        
+    
+    //check if plugin SkillAPI is installed
+    private boolean checkSkillAPI(){
+    	Plugin pSK = Bukkit.getPluginManager().getPlugin("SkillAPI");
+    	if (pSK != null && pSK.isEnabled()){
+    		return true;
+    	}
+    	return false;
+    }
+            
 }
