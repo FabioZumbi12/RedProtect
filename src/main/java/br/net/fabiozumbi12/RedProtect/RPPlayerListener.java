@@ -73,11 +73,12 @@ class RPPlayerListener implements Listener{
         //deny potion
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
         if(e.getItem().getType().equals(Material.POTION) && Pots.size() > 0){
-        	Potion pot = Potion.fromItemStack(e.getItem());
+        	Potion pot = Potion.fromItemStack(e.getItem());        	
         	for (String potion:Pots){
         		potion = potion.toUpperCase();
+        		PotionType ptype = PotionType.valueOf(potion);
         		try{
-        			if (pot.getType().equals(PotionType.valueOf(potion)) && !p.hasPermission("redprotect.bypass")){
+        			if (pot.getType().equals(ptype) && !p.hasPermission("redprotect.bypass")){
             			e.setCancelled(true);
             			RPLang.sendMessage(p, RPLang.get("playerlistener.denypotion"));
             		}

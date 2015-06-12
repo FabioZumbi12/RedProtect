@@ -18,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.FileUtil;
@@ -30,6 +31,7 @@ public class RPConfig{
 	static FileConfiguration configs = new RPYaml();
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
+	static RPYaml BlockValues = new RPYaml();
 	public static List<String> AdminFlags = Arrays.asList("player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back");	
 			
 	static void init(RedProtect plugin) {
@@ -38,6 +40,7 @@ public class RPConfig{
     	            File data = new File(RedProtect.pathData);
     	            File gui = new File(RedProtect.pathGui);
     	            File config = new File(RedProtect.pathConfig);
+    	            File bvalues = new File(RedProtect.pathBlockValues);
     	            File globalflags = new File(RedProtect.pathglobalFlags);
 
     	            
@@ -58,7 +61,7 @@ public class RPConfig{
     	            
     	            if (!globalflags.exists()) {
     	            	try {
-							globalflags.createNewFile();//create config file
+							globalflags.createNewFile();//create globalflags file
 	    	                RedProtect.logger.info("Created globalflags file: " + RedProtect.pathglobalFlags);
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -66,8 +69,13 @@ public class RPConfig{
     	            }
     	            
     	            if (!gui.exists()) {
-    	            	plugin.saveResource("guiconfig.yml", false);//create config file    	            	
+    	            	plugin.saveResource("guiconfig.yml", false);//create guiconfig file    	            	
     	                RedProtect.logger.info("Created guiconfig file: " + RedProtect.pathGui);
+    	            }
+    	            
+    	            if (!bvalues.exists()) {
+    	            	plugin.saveResource("economy.yml", false);//create blockvalues file    	            	
+    	                RedProtect.logger.info("Created economy file: " + RedProtect.pathBlockValues);
     	            }
     	            
     	            FileConfiguration temp = new RPYaml();
@@ -171,6 +179,27 @@ public class RPConfig{
                     }
                     
                     
+                    //load blockvalues file
+                    try {
+						BlockValues.load(bvalues);
+					} catch (IOException | InvalidConfigurationException e) {
+						e.printStackTrace();
+					}
+                    
+                    for (Material mat:Material.values()){
+                    	if (BlockValues.getString("items.values."+mat.name()) == null){
+                    		BlockValues.set("items.values."+mat.name(), 0.0);                		
+                    	}
+                    }                    
+                    for (Enchantment ench:Enchantment.values()){
+                    	if (BlockValues.getString("enchanements.values."+ench.getName()) == null){
+                    		BlockValues.set("enchantments.values."+ench.getName(), 0.0);                		
+                    	}
+                    }
+                    
+                    
+                    //////////////////////
+                    
         			String v = RedProtect.serv.getBukkitVersion();
         			if (RedProtect.plugin.getConfig().getString("notify.region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
         				RedProtect.plugin.getConfig().set("notify.region-enter-mode", "CHAT");
@@ -236,10 +265,12 @@ public class RPConfig{
     public static void save(){
     	File globalflags = new File(RedProtect.pathglobalFlags);  
     	File guiconfig = new File(RedProtect.pathGui);
+    	File blockvalues = new File(RedProtect.pathBlockValues);
     	try {
 			RedProtect.plugin.saveConfig();
 			gflags.save(globalflags);
 			GuiItems.save(guiconfig);
+			BlockValues.save(blockvalues);
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
 			e.printStackTrace();
@@ -266,6 +297,18 @@ public class RPConfig{
 		SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());
 		values.addAll(new TreeSet<String>(AdminFlags));
 		return values;
+	}
+
+	public static double getBlockCost(String itemName) {
+		return BlockValues.getDouble("items.values."+itemName);
+	}
+	
+	public static double getEnchantCost(String enchantment) {
+		return BlockValues.getDouble("enchantments.values."+enchantment);
+	}
+	
+	public static String getEcoInfo(String key){
+		return BlockValues.getString(key);
 	}
     
 }

@@ -128,6 +128,7 @@ class RPUtil {
     	int flags = 0;
     	int origupdt = 0;
     	int purged = 0;
+    	int sell = 0;
     	Date now = null;
     	
     	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
@@ -139,6 +140,8 @@ class RPUtil {
 		}
 		
         for (Region r:regions){ 
+        	
+        	//RedProtect.logger.severe("Region " + r.getName() + " has a value of " +RPShop.getRegionValue(r));
         	
         	//purge regions
         	if (RPConfig.getBool("purge.enabled")){
@@ -157,11 +160,35 @@ class RPUtil {
     			}           	
             	
             	if (days > RPConfig.getInt("purge.remove-oldest") && !players.contains(r.getCreator())){        
-                	RedProtect.logger.warning(r.getName() + " - Days: " + days);
+                	RedProtect.logger.warning("Purging" + r.getName() + " - Days: " + days);
             		r.delete();
             		purged++;
+            		continue;
             	}
-        	}       	        	
+        	}    
+        	
+        	//sell rergions
+        	if (RPConfig.getBool("sell.enabled")){
+        		Date regiondate = null;
+            	try {
+    				regiondate = dateformat.parse(r.getDate());
+    			} catch (ParseException e) {
+    				RedProtect.logger.severe("The 'date-format' don't match with region date!!");
+    				e.printStackTrace();
+    			}
+            	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+            	
+            	List<String> players = new ArrayList<String>();
+            	for (String play:RPConfig.getStringList("sell.ignore-regions-from-players")){
+            		players.add(RPUtil.PlayerToUUID(play));
+    			}           	
+            	
+            	if (days > RPConfig.getInt("sell.sell-oldest") && !players.contains(r.getCreator())){        
+                	RedProtect.logger.warning("Selling " + r.getName() + " - Days: " + days);
+            		RPEconomy.putToSell(r);
+            		sell++;
+            	}
+        	}
         	
         	//Update player names
         	if (RedProtect.OnlineMode){
@@ -261,6 +288,10 @@ class RPUtil {
         
         if (purged > 0){
         	RedProtect.logger.warning("Purged a total of §6§l" + purged + "§a§l regions!");
+        }
+        
+        if (sell > 0){
+        	RedProtect.logger.warning("Put to sell a total of §6§l" + sell + "§a§l regions!");
         }
         regions.clear();   
 	}

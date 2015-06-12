@@ -89,6 +89,10 @@ purge:
   enabled: false
   remove-oldest: 90
   ignore-regions-from-players:
+sell:
+  enabled: true
+  sell-oldest: 60
+  ignore-regions-from-players:
 update-check:
   enable: true
   auto-update: false

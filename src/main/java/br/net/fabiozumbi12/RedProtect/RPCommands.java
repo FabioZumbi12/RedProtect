@@ -228,6 +228,17 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		}
         	}
         	
+        	if (args[0].equalsIgnoreCase("value") && RedProtect.ph.hasPerm(player, "redprotect.admin.value")){
+        		Region r = RedProtect.rm.getTopRegion(player.getLocation());
+        		if (r != null){
+        			RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPConfig.getEcoInfo("economy-symbol") + RPEconomy.getRegionValue(r) + " " +RPConfig.getEcoInfo("economy-name")));
+        			return true;
+        		} else {
+    				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+    				return true;
+    			} 
+        	}
+        	
         	if (args[0].equalsIgnoreCase("panel") || args[0].equalsIgnoreCase("p")) {   
         		if (player.hasPermission("redprotect.own.panel")) {
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
@@ -236,10 +247,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         					RPGui gui = new RPGui(ChatColor.AQUA + r.getName() + " flags", player, r, RedProtect.plugin);
             				gui.open();
                 			return true;
-        				} else {
-        					sendNoPermissionMessage(player);
-        					return true;
-        				}
+        				} 
         			} else {
         				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
         				return true;

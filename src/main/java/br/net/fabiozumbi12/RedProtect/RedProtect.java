@@ -50,13 +50,14 @@ public class RedProtect extends JavaPlugin {
     static String pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang.ini"; 
     static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
     static String pathGui = String.valueOf(RedProtect.pathMain) + File.separator + "guiconfig.yml"; 
+    static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";;
     static boolean BossBar;
     static boolean MyChunk;
     static boolean MyPet;
     static boolean McMMo;
     static boolean OnlineMode;
 	static boolean Mc;
-	static boolean SkillAPI;
+	static boolean SkillAPI;	
     
     
     static enum DROP_TYPE
