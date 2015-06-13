@@ -180,6 +180,48 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		}
         	}
         	
+        	if (args.length == 4) {
+        		if (args[0].equalsIgnoreCase("tp")){
+        			// /rp tp <player> <region> <world>
+                	Player play = RedProtect.serv.getPlayer(args[1]);
+                	if (play != null){                		
+                		World w = RedProtect.serv.getWorld(args[3]);                		
+                		if (w == null) {
+                            sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+                            return true;
+                        }
+                    	Region region = RedProtect.rm.getRegion(args[2], w);
+                    	if (region == null) {
+                    		sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist"));
+                            return true;
+                        } 
+                    	
+                		Location loc = null;
+                    	int limit = w.getMaxHeight();
+                    	if (w.getEnvironment().equals(Environment.NETHER)){
+                    		limit = 124;
+                    	}
+                    	for (int i = limit; i > 0; i--){
+                    		Material mat = w.getBlockAt(region.getCenterX(), i, region.getCenterZ()).getType();
+                    		Material mat1 = w.getBlockAt(region.getCenterX(), i+1, region.getCenterZ()).getType();
+                    		Material mat2 = w.getBlockAt(region.getCenterX(), i+2, region.getCenterZ()).getType();
+                    		if ((!mat.equals(Material.LAVA) || !mat.equals(Material.STATIONARY_LAVA)) && !mat.equals(Material.AIR) && mat1.equals(Material.AIR) && mat2.equals(Material.AIR)){
+                    			loc = new Location(w, region.getCenterX(), i+1, region.getCenterZ());            			
+                    			break;
+                    		}
+                    	}                    	
+                    	play.teleport(loc);
+            			RPLang.sendMessage(play,RPLang.get("cmdmanager.region.tp") + " " + args[2]);     
+            			sender.sendMessage(ChatColor.AQUA + "Player teleported to " + args[2]);
+                		return true;
+                	} else {
+                		sender.sendMessage(RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                		HandleHelPage(sender, 1);
+                		return true;
+                	}
+        		}            	
+            }
+        	
     		if (args.length == 5){
     			/*/rp flag <regionName> <world> <flag> <value>*/
     			if  (args[0].equalsIgnoreCase("flag")){
@@ -231,8 +273,13 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	if (args[0].equalsIgnoreCase("value") && RedProtect.ph.hasPerm(player, "redprotect.admin.value")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r != null){
-        			RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPConfig.getEcoInfo("economy-symbol") + RPEconomy.getRegionValue(r) + " " +RPConfig.getEcoInfo("economy-name")));
-        			return true;
+        			if (r.getArea() < RPConfig.getEcoInt("max-area-toget-value")){
+        				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPConfig.getEcoString("economy-symbol") + RPEconomy.getRegionValue(r) + " " +RPConfig.getEcoString("economy-name")));
+            			return true;
+        			} else {
+        				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-value").toString()));
+        				return true;
+        			}
         		} else {
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
     				return true;
@@ -428,12 +475,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 }
                 return true;
             }
-            
-            if (args[0].equalsIgnoreCase("tp")) {
-            	handletp(player, args[1], player.getWorld().getName());
-            	return true;
-        	}
-            
+                        
             if  (args[0].equalsIgnoreCase("setconfig") && args[1].equalsIgnoreCase("list")){
         		if (!player.hasPermission("redprotect.admin.setconfig")) {
                     RPLang.sendMessage(player,RPLang.get("no.permission"));
@@ -442,10 +484,9 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		
     			RPLang.sendMessage(player,ChatColor.AQUA + "=========== Config Sections: ===========");
         		for (String section:RedProtect.plugin.getConfig().getValues(false).keySet()){
-        			if (section.contains("flags.") || section.contains("netherProtection.") || section.contains("allowed-private-blocks")){
-        				continue;
-        			}
-        			RPLang.sendMessage(player,ChatColor.GOLD + section + " : " + ChatColor.GREEN + RedProtect.plugin.getConfig().get(section).toString());
+        			if (section.contains("debug-messages") || section.contains("file-type")){
+        				RPLang.sendMessage(player,ChatColor.GOLD + section + " : " + ChatColor.GREEN + RedProtect.plugin.getConfig().get(section).toString());
+        			}         			
         		} 
         		RPLang.sendMessage(player,ChatColor.AQUA + "====================================");
         		return true;
@@ -463,11 +504,6 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
         
         if (args.length == 3) {        	
-        	if (args[0].equalsIgnoreCase("tp")) {
-            	handletp(player, args[1], args[2]);
-            	return true;
-        	}
-        	
         	if (args[0].equalsIgnoreCase("define")){
         		if (!player.hasPermission("redprotect.admin.define")) {
                     RPLang.sendMessage(player,RPLang.get("no.permission"));
@@ -539,6 +575,35 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		}
         	}
         }   
+        
+        if (args[0].equalsIgnoreCase("tp")) {
+        	if (args.length == 1) {
+        		RPLang.sendMessage(player, RPLang.get("cmdmanager.help.tp"));
+        		return true;
+        	}
+        	
+            if (args.length == 2) {
+            	handletp(player, args[1], player.getWorld().getName(), null);
+            	return true;
+        	}
+
+            if (args.length == 3) {
+            	handletp(player, args[1], args[2], null);
+            	return true;
+            }
+            if (args.length == 4) {
+            	// /rp tp <player> <region> <world>
+            	Player play = RedProtect.serv.getPlayer(args[1]);
+            	if (play != null){
+            		handletp(player, args[2], args[3], play);
+            		return true;
+            	} else {
+            		RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+            		RPLang.sendMessage(player, RPLang.get("cmdmanager.help.tp"));
+            		return true;
+            	}
+            }
+        }
         
         if (args[0].equalsIgnoreCase("limit") || args[0].equalsIgnoreCase("limitremaining") || args[0].equalsIgnoreCase("remaining") || args[0].equalsIgnoreCase("l")) {
             if (!RedProtect.ph.hasPerm(player, "redprotect.own.limit")) {
@@ -1322,7 +1387,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         RPLang.sendMessage(p,RPLang.get("no.permission"));
     }
 	
-	private static void handletp(Player p, String rname, String wname){
+	private static void handletp(Player p, String rname, String wname, Player play){
 		World w = RedProtect.serv.getWorld(wname);
 		if (w == null) {
             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.invalidworld"));
@@ -1332,11 +1397,20 @@ class RPCommands implements CommandExecutor, TabCompleter{
     	if (region == null) {
     		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.doesntexist"));
             return;
-        }            	
-    	if (!RedProtect.ph.hasRegionPerm(p, "tp", region)) {
-    		RPLang.sendMessage(p,RPLang.get("no.permission"));
-            return;
-        }            	
+        }          
+    	
+    	if (play == null) {
+    		if (!RedProtect.ph.hasRegionPerm(p, "tp", region)){
+    			RPLang.sendMessage(p,RPLang.get("no.permission"));
+                return;
+    		}
+    	} else {
+    		if (!RedProtect.ph.hasPerm(p, "redprotect.tp.other")) {
+        		RPLang.sendMessage(p,RPLang.get("no.permission"));
+                return;
+            }    		
+        }    
+
     	Location loc = null;
     	int limit = w.getMaxHeight();
     	if (w.getEnvironment().equals(Environment.NETHER)){
@@ -1352,8 +1426,14 @@ class RPCommands implements CommandExecutor, TabCompleter{
     		}
     	}
     	if (loc != null){
-    		p.teleport(loc); 
-    		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.tp") + " " + rname);
+    		if (play != null){
+    			play.teleport(loc);
+    			RPLang.sendMessage(play,RPLang.get("cmdmanager.region.tp") + " " + rname);
+    			RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpother") + " " + rname);
+    		} else {
+    			p.teleport(loc);
+    			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.tp") + " " + rname);
+    		}      		
 			return;
     	}
     	return;
@@ -1432,17 +1512,17 @@ class RPCommands implements CommandExecutor, TabCompleter{
 					}
 				}
 			}
-	        sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
 		} else {
 			sender.sendMessage(ChatColor.GOLD + "/rp setconfig list");
 			sender.sendMessage(ChatColor.GOLD + "/rp setconfig <Config-Section> <Value>");
 			sender.sendMessage(ChatColor.GOLD + "/rp flag <regionName> <World> <Flag> <Value>");
+			sender.sendMessage(ChatColor.GOLD + "/rp tp <playerName> <regionName> <World>");
 			sender.sendMessage(ChatColor.GOLD + "/rp ymlTomysql");
 			sender.sendMessage(ChatColor.GOLD + "/rp save-all");
 			sender.sendMessage(ChatColor.GOLD + "/rp load-all");
 			sender.sendMessage(ChatColor.GOLD + "/rp reload");
 		}
-		
+		sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
 	}
     
 }

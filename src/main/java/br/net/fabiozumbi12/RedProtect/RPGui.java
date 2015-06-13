@@ -28,6 +28,7 @@ public class RPGui implements Listener{
 	private ItemStack[] guiItens;
 	private Player player;
 	private Region region;
+	private boolean allowEnchant;
 
 	public RPGui(String name, Player player, Region region,Plugin plugin){
 		this.name = name;
@@ -46,6 +47,8 @@ public class RPGui implements Listener{
 			this.size = 27;
 			this.guiItens = new ItemStack[this.size];
 		}
+				
+		allowEnchant = Bukkit.getVersion().contains("1.8");		
 		
 		int i = 0;
 		Set<String> RegionsSorted = new TreeSet<String>(region.flags.keySet());
@@ -55,12 +58,15 @@ public class RPGui implements Listener{
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiString(flag,"name"));
 				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString(flag,"value-string")+region.flags.get(flag).toString(),"§0"+flag,RPConfig.getGuiString(flag,"description"),RPConfig.getGuiString(flag,"description1"),RPConfig.getGuiString(flag,"description2")));
-				if (this.region.getFlagBool(flag)){
-					guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-				} else {
-					guiMeta.removeEnchant(Enchantment.DURABILITY);
+				if (allowEnchant){
+					if (this.region.getFlagBool(flag)){
+						guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+					} else {
+						guiMeta.removeEnchant(Enchantment.DURABILITY);
+					}
+					guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);	
 				}
-				guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);				
+							
 				this.guiItens[i].setType(Material.getMaterial(RPConfig.getGuiString(flag,"material")));
 				this.guiItens[i].setItemMeta(guiMeta);
 				i++;
@@ -135,12 +141,14 @@ public class RPGui implements Listener{
 	private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event){
 		this.region.setFlag(flag, !this.region.getFlagBool(flag));
 		RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + this.region.getFlagBool(flag));
-		if (this.region.getFlagBool(flag)){
-			itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-		} else {
-			itemMeta.removeEnchant(Enchantment.DURABILITY);
-		}				
-		itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		if (allowEnchant){
+			if (this.region.getFlagBool(flag)){
+				itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+			} else {
+				itemMeta.removeEnchant(Enchantment.DURABILITY);
+			}
+			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		}								
 		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString(flag,"value-string")+region.flags.get(flag).toString(),"§0"+flag,RPConfig.getGuiString(flag,"description"),RPConfig.getGuiString(flag,"description1"),RPConfig.getGuiString(flag,"description2")));
 		event.getCurrentItem().setItemMeta(itemMeta);
 	}

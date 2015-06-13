@@ -57,8 +57,7 @@ public class RedProtect extends JavaPlugin {
     static boolean McMMo;
     static boolean OnlineMode;
 	static boolean Mc;
-	static boolean SkillAPI;	
-    
+	static boolean SkillAPI;	    
     
     static enum DROP_TYPE
     {

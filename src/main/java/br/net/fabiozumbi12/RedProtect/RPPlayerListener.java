@@ -426,7 +426,7 @@ class RPPlayerListener implements Listener{
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
     	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass")){
-    		p.sendMessage(RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
+    		RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     		e.setCancelled(true); 
     	}
     	
@@ -495,7 +495,9 @@ class RPPlayerListener implements Listener{
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
     	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass")){
-    		RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("netherProtection.execute-cmd").replace("{player}", p.getName()));
+    		for (String cmd:RPConfig.getStringList("netherProtection.execute-cmd")){
+        		RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), cmd.replace("{player}", p.getName()));
+    		}
     		p.sendMessage(RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     	}
     	
@@ -583,7 +585,7 @@ class RPPlayerListener implements Listener{
     			}
     			//---
     			noRegionFlags(er, p);    	
-    			if (er != null && !er.getWelcome().equalsIgnoreCase("hide ")){
+    			if (er != null && !er.getWelcome().equalsIgnoreCase("hide ") && RPConfig.getBool("notify.region-exit")){
     				SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"));
     			}    			
         	}

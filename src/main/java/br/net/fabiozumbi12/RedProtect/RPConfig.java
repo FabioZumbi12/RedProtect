@@ -186,13 +186,20 @@ public class RPConfig{
 						e.printStackTrace();
 					}
                     
+                    RPYaml tempEco = inputLoader(plugin.getResource("economy.yml"));
+                    for (String key:tempEco.getKeys(false)){
+                    	if (BlockValues.get(key) == null){
+                    		BlockValues.set(key, tempEco.get(key));
+                    	}
+                    }
+                    
                     for (Material mat:Material.values()){
                     	if (BlockValues.getString("items.values."+mat.name()) == null){
                     		BlockValues.set("items.values."+mat.name(), 0.0);                		
                     	}
                     }                    
                     for (Enchantment ench:Enchantment.values()){
-                    	if (BlockValues.getString("enchanements.values."+ench.getName()) == null){
+                    	if (BlockValues.getString("enchantments.values."+ench.getName()) == null){
                     		BlockValues.set("enchantments.values."+ench.getName(), 0.0);                		
                     	}
                     }
@@ -307,8 +314,12 @@ public class RPConfig{
 		return BlockValues.getDouble("enchantments.values."+enchantment);
 	}
 	
-	public static String getEcoInfo(String key){
+	public static String getEcoString(String key){
 		return BlockValues.getString(key);
+	}
+	
+	public static Integer getEcoInt(String key){
+		return BlockValues.getInt(key);
 	}
     
 }

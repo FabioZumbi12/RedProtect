@@ -110,6 +110,7 @@ permissions:
       redprotect.admin.panel: true
       redprotect.admin.flag: true
       redprotect.admin.value: true
+      redprotect.tp.other: true
       redprotect.region.allow-enter.all: true
       redprotect.flag.special: true
       redprotect.other.limit: true

@@ -55,11 +55,13 @@ private:
   - DROPPER
 notify:
   region-enter: true
+  region-exit: true
   region-enter-mode: BOSSBAR
   welcome-mode: BOSSBAR
 netherProtection:
   maxYsize: 128
-  execute-cmd: spawn {player}
+  execute-cmd: 
+  - spawn {player}
 server-protection:
   deny-potions:
   - INVISIBILITY
