@@ -50,7 +50,7 @@ class DefineRegionBuilder extends RegionBuilder{
         if (!pName.equals(creator)) {
             owners.add(pName);
         }
-        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "");
+        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0.0);
         
         int regionarea = region.getArea();                        
         Region topRegion = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterZ());
@@ -65,14 +65,9 @@ class DefineRegionBuilder extends RegionBuilder{
         		region.setPrior(topRegion.getPrior() + 1);
         	} 
         }              
-        
-        String uuid = p.getUniqueId().toString();
-    	if (!RedProtect.OnlineMode){
-    		uuid = p.getName().toLowerCase();
-    	}
-    	
+            	
         for (Region reg:RedProtect.rm.getPossibleIntersectingRegions(region, RedProtect.serv.getWorld(region.getWorld()))){        	
-        	if (!reg.isOwner(uuid) || !p.hasPermission("redprotect.admin")){
+        	if (!reg.isOwner(p) || !p.hasPermission("redprotect.admin")){
         		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(reg.getCreator())));
                 return;
         	}

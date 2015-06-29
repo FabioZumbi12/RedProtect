@@ -48,7 +48,16 @@ public class RPGui implements Listener{
 			this.guiItens = new ItemStack[this.size];
 		}
 				
-		allowEnchant = Bukkit.getVersion().contains("1.8");		
+		allowEnchant = false;
+		String bukkitv = Bukkit.getVersion();
+		for (int i = 3; i < 8; i++){
+			RedProtect.logger.debug("Finding bukkit version 1.8."+i);
+			if (bukkitv.contains("1.8."+i)){
+				allowEnchant = true;
+				RedProtect.logger.debug("Found version 1.8."+i);
+				break;
+			}			
+		}	
 		
 		int i = 0;
 		Set<String> RegionsSorted = new TreeSet<String>(region.flags.keySet());

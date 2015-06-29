@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 5.4.0
+version: 5.4.3
 author: ikillforeyou, FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet]
@@ -111,12 +111,22 @@ permissions:
       redprotect.admin.flag: true
       redprotect.admin.value: true
       redprotect.tp.other: true
-      redprotect.region.allow-enter.all: true
       redprotect.flag.special: true
       redprotect.other.limit: true
       redprotect.other.claimlimit: true
-      redprotect.claimunlimited: true
+      redprotect.limit.claim.unlimited: true
+      redprotect.limit.blocks.unlimited: true
       redprotect.bypass: true
-      redprotect.unlimited: true
       redprotect.magicwand: true
       redprotect.update: true
+      redprotect.eco.use: true
+      redprotect.eco.admin: true
+      redprotect.eco.setvalue: true
+      redprotect.eco.others: true
+  redprotect.eco.use:
+    description: "Economy permissions."
+    default: false
+    children:
+      redprotect.eco.buy: true
+      redprotect.eco.sell: true
+      redprotect.eco.cancelbuy: true

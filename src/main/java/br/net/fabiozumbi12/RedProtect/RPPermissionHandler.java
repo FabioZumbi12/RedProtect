@@ -30,9 +30,9 @@ public class RPPermissionHandler{
     private int LimitHandler(Player p){
     	int limit = RPConfig.getInt("region-settings.limit-amount");   	
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
-    	if (limit > 0 && !p.hasPermission("redprotect.unlimited")){
+    	if (limit > 0 && !p.hasPermission("redprotect.limit.blocks.unlimited")){
     		for (PermissionAttachmentInfo perm:perms){
-    			if (perm.getPermission().startsWith("redprotect.limit.amount.")){
+    			if (perm.getPermission().startsWith("redprotect.limit.blocks.")){
         			limit = Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", ""));    				
     			}  
     		}
@@ -43,9 +43,9 @@ public class RPPermissionHandler{
     private int ClaimLimitHandler(Player p){
     	int limit = RPConfig.getInt("region-settings.claim-amount-per-world");   	
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
-    	if (limit > 0 && !p.hasPermission("redprotect.unlimited")){
+    	if (limit > 0 && !p.hasPermission("redprotect.limit.claim.unlimited")){
     		for (PermissionAttachmentInfo perm:perms){
-    			if (perm.getPermission().startsWith("redprotect.claim.limit.")){
+    			if (perm.getPermission().startsWith("redprotect.limit.claim.")){
         			limit = Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", ""));    				
     			}  
     		}
@@ -54,16 +54,12 @@ public class RPPermissionHandler{
     }
     
     private boolean regionPermHandler(Player p, String s, Region poly){
-    	String puuid = p.getUniqueId().toString();
-    	if (!RedProtect.OnlineMode){
-    		puuid = p.getName().toLowerCase();
-    	} 
     	String adminperm = "redprotect.admin." + s;
         String userperm = "redprotect.own." + s;
         if (poly == null) {
             return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
         }
-        return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isOwner(puuid)));
+        return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isOwner(p)));
     }
     
     private boolean HelpPermHandler(Player p, String s) {

@@ -33,6 +33,7 @@ public class Region implements Serializable{
     private String date;
     protected Map<String, Object> flags = new HashMap<String,Object>();
     protected boolean[] f = new boolean[10];
+	private Double value;
         
     public void setFlag(String Name, Object value) {
     	this.flags.put(Name, value);
@@ -173,16 +174,14 @@ public class Region implements Serializable{
         	}
         	ownerstring = ownerstring + ", " +  RPUtil.UUIDtoPlayer(this.owners.get(i));   
         	
-        }
-        
+        }        
         for (int i = 0; i < this.members.size(); ++i) {
         	if (this.members.get(i) == null){
         		this.members.remove(i);
         	}
         	memberstring = memberstring + ", " +  RPUtil.UUIDtoPlayer(this.members.get(i));   
         	
-        }
-        
+        }        
         if (this.owners.size() > 0) {
             ownerstring = ownerstring.substring(2);
         }
@@ -213,18 +212,17 @@ public class Region implements Serializable{
         for (String pname:this.owners){
         	Player play = RedProtect.serv.getPlayer(pname);
             if (RedProtect.OnlineMode && pname != null){
-            	play = RedProtect.serv.getPlayer(UUID.fromString(pname));
+            	play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
         	}            
         	if (pname != null && play != null && play.isOnline()){
         		today = ChatColor.GREEN + "Online!";
         		break;
-        	}
-        	
+        	}        	
         } 
         for (String pname:this.members){        	
         	Player play = RedProtect.serv.getPlayer(pname);
             if (RedProtect.OnlineMode && pname != null){
-            	play = RedProtect.serv.getPlayer(UUID.fromString(pname));
+            	play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
         	}             
         	if (pname != null && play != null && play.isOnline()){
         		today = ChatColor.GREEN + "Online!";
@@ -233,7 +231,7 @@ public class Region implements Serializable{
         } 
         
         return RPLang.get("region.name") + " " + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.creator") + " " + RPUtil.UUIDtoPlayer(this.creator) + "\n" +      
-        RPLang.get("region.priority") + " " + this.prior + RPLang.get("general.color") + " | " + RPLang.get("region.priority.top") + " "  + IsTops + "\n" +
+        RPLang.get("region.priority") + " " + this.prior + RPLang.get("general.color") + " | " + RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPConfig.getEcoString("economy-symbol") + this.value + "\n" +
         RPLang.get("region.world") + " " + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + RPLang.get("general.color") +  " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
         RPLang.get("region.owners") + " " + ownerstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
         RPLang.get("region.date") + " " + today + "\n" +
@@ -258,8 +256,9 @@ public class Region implements Serializable{
      * @param prior Priority of region.
      * @param worldName Name of world for this region.
      * @param date Date of latest visit of an owner or member.
+     * @param value Last value of this region.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, Double value) {
     	super();
     	this.minMbrX = 0;
         this.maxMbrX = 0;
@@ -277,6 +276,7 @@ public class Region implements Serializable{
         this.members = members;
         this.creator = creator;    
         this.flags = flags;
+        this.value = value;
         
         if (worldName != null){
             this.world = worldName;
@@ -308,7 +308,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an owner or member.
      * @param welcome 
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int prior, String worldName, String date, Map<String, Object> flags, String welcome) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int prior, String worldName, String date, Map<String, Object> flags, String welcome, Double value) {
     	super();
         this.minMbrX = 0;
         this.maxMbrX = 0;
@@ -321,6 +321,7 @@ public class Region implements Serializable{
         this.flags = flags;
         this.wMessage = welcome;
         int size = x.length;
+        this.value = value;
           	    
         if (size != z.length) {
             throw new Error(RPLang.get("region.xy"));
@@ -409,20 +410,12 @@ public class Region implements Serializable{
         return ret;
     }
     
-	public boolean isOwner(String uuid) {
-		String player = uuid;
-    	if (!RedProtect.OnlineMode){
-    		player = uuid.toLowerCase();
-    	}
-        return this.owners.contains(player);
+	public boolean isOwner(Player player) {
+        return this.owners.contains(RPUtil.PlayerToUUID(player.getName()));
     }
     
-	public boolean isMember(String uuid) {
-		String player = uuid;
-    	if (!RedProtect.OnlineMode){
-    		player = uuid.toLowerCase();
-    	}
-        return this.members.contains(player);
+	public boolean isMember(Player player) {
+        return this.members.contains(RPUtil.PlayerToUUID(player.getName()));
     }
     
     public void addMember(String uuid) {
@@ -492,8 +485,7 @@ public class Region implements Serializable{
     }
     
     public boolean canBuild(Player p) {
-    	String uuid = RPUtil.PlayerToUUID(p.getName());
-        return p.getLocation().getY() < RPConfig.getInt("region-settings.height-start") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return p.getLocation().getY() < RPConfig.getInt("region-settings.height-start") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canPVP(Player p) {
@@ -501,23 +493,19 @@ public class Region implements Serializable{
     }
     
     public boolean canChest(Player p) {
-    	String uuid = RPUtil.PlayerToUUID(p.getName());
-        return getFlagBool("chest") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("chest") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canLever(Player p) {
-    	String uuid = RPUtil.PlayerToUUID(p.getName());
-        return getFlagBool("lever") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("lever") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canButton(Player p) {
-    	String uuid = RPUtil.PlayerToUUID(p.getName());
-        return getFlagBool("button") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("button") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canDoor(Player p) {
-    	String uuid = RPUtil.PlayerToUUID(p.getName());
-        return getFlagBool("door") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("door") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canSpawnMonsters() {
@@ -525,8 +513,7 @@ public class Region implements Serializable{
     }
     
     public boolean canHurtPassives(Player p) {
-    	String uuid = RPUtil.PlayerToUUID(p.getName());
-        return getFlagBool("passives") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("passives") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canFlow() {
@@ -560,8 +547,15 @@ public class Region implements Serializable{
     }
     
     public void setName(String name) {
+    	Map<String,Object> rflags = this.flags;
+    	for (String flag:this.flags.keySet()){
+    		RedProtect.rm.removeLiveFlags(this, flag);
+    	}    	
     	RedProtect.rm.updateLiveRegion(this, "name", name);
-        this.name = name;        
+        this.name = name;   
+        for (String flag:rflags.keySet()){
+        	RedProtect.rm.updateLiveFlags(this, flag, rflags.get(flag).toString());
+    	}
     }
     
     public boolean isOnTop(){
@@ -574,32 +568,28 @@ public class Region implements Serializable{
     }
 
 	public boolean canSign(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
 		if (!flags.containsKey("sign")){
-    		return this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     	}		
-        return getFlagBool("sign") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("sign") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 	
 	public boolean canMinecart(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
-        return getFlagBool("minecart") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("minecart") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 	
 	public boolean canEnter(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
 		if (!flags.containsKey("enter")){
     		return true;
     	}
-        return getFlagBool("enter") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("enter") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 	
 	public boolean canEnderPearl(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
 		if (!flags.containsKey("enderpearl")){
     		return true;
     	}
-        return getFlagBool("enderpearl") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("enderpearl") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 	
     
@@ -627,24 +617,37 @@ public class Region implements Serializable{
 	}
 	
 	public boolean canSkill(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
 		if (!flags.containsKey("up-skills")){
     		return true;
     	}
-        return getFlagBool("up-skills") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("up-skills") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 
 	public boolean canDeathBack(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
 		if (!flags.containsKey("death-back")){
     		return true;
     	}
-        return getFlagBool("death-back") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("death-back") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 
 	public boolean AllowHome(Player p) {
-		String uuid = RPUtil.PlayerToUUID(p.getName());
-		return getFlagBool("allow-home") || this.isOwner(uuid) || this.isMember(uuid) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+		return getFlagBool("allow-home") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+	}
+	
+	public boolean isForSale() {
+		if (!flagExists("for-sale")){
+			return false;
+		}
+		return getFlagBool("for-sale");
+	}
+
+	public Double getValue() {	
+		return this.value;
+	}
+	
+	public void setValue(Double value) {	
+		RedProtect.rm.updateLiveRegion(this, "value", value.toString());
+		this.value = value;
 	}
 	    
 }

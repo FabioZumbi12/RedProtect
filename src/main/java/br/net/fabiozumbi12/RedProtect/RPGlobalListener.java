@@ -27,6 +27,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -526,5 +527,23 @@ public class RPGlobalListener implements Listener{
     		return;
 		}
     	return;
+    }
+    
+    @EventHandler
+    public void WitherBlockBreak(EntityChangeBlockEvent event) {
+    	if (event.isCancelled()) {
+            return;
+        }
+    	RedProtect.logger.debug("Is EntityChangeBlockEvent event");
+    	Entity e = event.getEntity();    	
+    	if (e instanceof Monster) {
+            Region r = RedProtect.rm.getTopRegion(event.getEntity().getLocation());
+            if (r != null){
+         	   return;
+            }
+            if (!RPConfig.getGlobalFlag(e.getWorld().getName()+".entity-block-damage")){
+            	event.setCancelled(true);
+            }
+    	}
     }
 }

@@ -13,14 +13,10 @@ class RedefineRegionBuilder extends RegionBuilder{
             return;
         }
         World w = p.getWorld();
-        Region region = new Region(old.getName(), old.getOwners(), old.getMembers(), old.getCreator(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome());
-        String uuid = p.getUniqueId().toString();
-    	if (!RedProtect.OnlineMode){
-    		uuid = p.getName().toLowerCase();
-    	}
+        Region region = new Region(old.getName(), old.getOwners(), old.getMembers(), old.getCreator(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome(), old.getValue());
     	
         for (Region reg:RedProtect.rm.getPossibleIntersectingRegions(region, w)){
-        	if (!reg.isOwner(uuid) || !p.hasPermission("redprotect.admin")){
+        	if (!reg.isOwner(p) || !p.hasPermission("redprotect.admin")){
         		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(reg.getCreator())));
                 return;
         	}

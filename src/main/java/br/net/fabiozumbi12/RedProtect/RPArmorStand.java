@@ -117,6 +117,10 @@ class RPArmorStand implements Listener{
         	return;
         }         
 
+        if (p == null){
+        	return;
+        }
+        
 		Region r1 = RedProtect.rm.getTopRegion(loc);
 		
 		if (r1 == null){

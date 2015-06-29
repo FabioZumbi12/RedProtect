@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandException;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -33,24 +32,19 @@ import org.bukkit.entity.Player;
 import com.google.common.io.Files;
 
 class RPUtil {
-    public static RedProtect plugin;
     static int backup = 0;
-    
-    public static void init(RedProtect plugin) {
-        RPUtil.plugin = plugin;
-    }
-    
-    static String nameGen(Player p){
+        
+    static String nameGen(String p, String World){
     	String rname = "";
-    	World w = p.getWorld();    	
+    	World w = RedProtect.serv.getWorld(World);    	
             int i = 0;
             while (true) {
             	int is = String.valueOf(i).length();
-                if (p.getName().length() > 13) {
-                	rname = p.getName().substring(0, 14-is) + "_" + i;
+                if (p.length() > 13) {
+                	rname = p.substring(0, 14-is) + "_" + i;
                 }
                 else {
-                	rname = p.getName() + "_" + i;
+                	rname = p + "_" + i;
                 }
                 if (RedProtect.rm.getRegion(rname, w) == null) {
                     break;
@@ -90,10 +84,6 @@ class RPUtil {
         String ret = String.valueOf(fs) + s;
         ret = ret.replace("_", " ");
         return ret;
-    }
-    
-    static Server getServer() {
-        return RPUtil.plugin.getServer();
     }
     
     static int[] toIntArray(List<Integer> list) {
@@ -185,13 +175,13 @@ class RPUtil {
             	
             	if (days > RPConfig.getInt("sell.sell-oldest") && !players.contains(r.getCreator())){        
                 	RedProtect.logger.warning("Selling " + r.getName() + " - Days: " + days);
-            		RPEconomy.putToSell(r);
+            		RPEconomy.putToSell(r, "server", RPEconomy.getRegionValue(r));
             		sell++;
             	}
         	}
         	
         	//Update player names
-        	if (RedProtect.OnlineMode){
+        	if (RedProtect.OnlineMode && !r.isForSale()){
         		if (!isUUID(r.getCreator()) && r.getCreator() != null){
         			backup(); 
             		RedProtect.logger.warning("Creator from: " + r.getCreator());

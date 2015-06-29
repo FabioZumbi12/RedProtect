@@ -23,6 +23,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -71,6 +72,10 @@ class RPPlayerListener implements Listener{
         
     	Player p = e.getPlayer();
         //deny potion
+    	if (p == null){
+    		return;
+    	}
+    	
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
         if(e.getItem().getType().equals(Material.POTION) && Pots.size() > 0){
         	Potion pot = Potion.fromItemStack(e.getItem());        	
@@ -78,7 +83,7 @@ class RPPlayerListener implements Listener{
         		potion = potion.toUpperCase();
         		PotionType ptype = PotionType.valueOf(potion);
         		try{
-        			if (pot.getType().equals(ptype) && !p.hasPermission("redprotect.bypass")){
+        			if (ptype != null && pot.getType() != null && pot.getType().equals(ptype) && !p.hasPermission("redprotect.bypass")){
             			e.setCancelled(true);
             			RPLang.sendMessage(p, RPLang.get("playerlistener.denypotion"));
             		}
@@ -292,6 +297,11 @@ class RPPlayerListener implements Listener{
     		return;
     	}
 
+    	if (RedProtect.tpWait.contains(e.getEntity().getName())){
+    		RedProtect.tpWait.remove(e.getEntity().getName());
+    		RPLang.sendMessage((Player) e.getEntity(), RPLang.get("cmdmanager.region.tpcancelled"));
+    	}
+    	
         //deny damagecauses
         List<String> Causes = RPConfig.getStringList("server-protection.deny-playerdeath-by");
         if(Causes.size() > 0){
@@ -356,6 +366,11 @@ class RPPlayerListener implements Listener{
         	return;
         }
         
+        if (RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpcancelled"));
+    	}
+        
         if (e.getEntityType().equals(EntityType.PLAYER) && r.flagExists("pvp") && !r.canPVP(p)){
         	p.sendMessage(RPLang.get("entitylistener.region.cantpvp"));
             e.setCancelled(true);
@@ -381,7 +396,14 @@ class RPPlayerListener implements Listener{
     	if (e.isCancelled()) {
             return;
         }
+    	
     	final Player p = e.getPlayer();
+    	
+    	if (RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpcancelled"));
+    	}
+    	
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
     	final Region rfrom = RedProtect.rm.getTopRegion(lfrom);
@@ -445,6 +467,12 @@ class RPPlayerListener implements Listener{
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent e){
     	Player p = e.getPlayer();
+    	
+    	if (RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpcancelled"));
+    	}
+    	
     	String msg = e.getMessage();
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());
     	    	
@@ -457,7 +485,7 @@ class RPPlayerListener implements Listener{
     		e.setCancelled(true);
     	}    	
     	
-    	if (RedProtect.Mc && r != null && r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && !r.isOwner(RPUtil.PlayerToUUID(p.getName()))){
+    	if (RedProtect.Mc && r != null && r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && !r.isOwner(p)){
     		if (msg.startsWith("/magiccarpet")){
     			e.setCancelled(true);
     			RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantmc"));
@@ -476,6 +504,12 @@ class RPPlayerListener implements Listener{
     @EventHandler
     public void onPlayerDie(PlayerDeathEvent e){
     	Player p = e.getEntity();
+    	
+    	if (RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpcancelled"));
+    	}
+    	
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());    	
     	if (r != null){
     		LastDeath.put(p, r);
@@ -489,6 +523,12 @@ class RPPlayerListener implements Listener{
         }
     	
     	Player p = e.getPlayer();
+    	
+    	if (e.getFrom() != e.getTo() && RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpcancelled"));
+    	}
+    	
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
     	
@@ -542,11 +582,7 @@ class RPPlayerListener implements Listener{
         
         //update region owner or member visit
         if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")){
-    		String uuid = p.getUniqueId().toString();        	
-    		if (!RedProtect.OnlineMode){
-    			uuid = p.getName().toLowerCase();
-    		}
-    		if (r != null && (r.isMember(uuid) || r.isOwner(uuid))){
+    		if (r != null && (r.isMember(p) || r.isOwner(p))){
             	if (r.getDate() == null || (r.getDate() != RPUtil.DateNow())){
             		r.setDate(RPUtil.DateNow());
             	}        	
@@ -595,6 +631,9 @@ class RPPlayerListener implements Listener{
     @EventHandler
     public void onPlayerLogout(PlayerQuitEvent e){
     	stopTaskPlayer(e.getPlayer());
+    	if (RedProtect.tpWait.contains(e.getPlayer().getName())){
+    		RedProtect.tpWait.remove(e.getPlayer().getName());
+    	}
     }
     
     @EventHandler
@@ -636,10 +675,10 @@ class RPPlayerListener implements Listener{
     	//deny potion
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
         if(Pots.size() > 0){
-        	Potion pot = Potion.fromItemStack(e.getPotion().getItem());
+        	ThrownPotion pot = e.getPotion();
         	for (String potion:Pots){
         		try{
-        			if (pot.getType().equals(PotionType.valueOf(potion))){
+        			if (pot != null && pot.getType().equals(PotionType.valueOf(potion))){
             			e.setCancelled(true);
             			if (e.getPotion().getShooter() instanceof Player){
             				RPLang.sendMessage((Player)e.getPotion().getShooter(), RPLang.get("playerlistener.denypotion"));
@@ -659,8 +698,6 @@ class RPPlayerListener implements Listener{
     	Entity ent = e.getEntity();
     	
     	RedProtect.logger.debug("Is PotionSplashEvent event.");
-    	
-    	
         
     	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
     	if (r != null && !r.canBuild(p)){

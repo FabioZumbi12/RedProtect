@@ -52,10 +52,43 @@ public class RPEconomy {
 		    }
 		  }
 		}
+		r.setValue(regionCost);
 		return regionCost;		
 	}
 
-	public static void putToSell(Region r) {
-		// TODO Auto-generated method stub		
+	public static String getCostMessage(Region r){
+		return RPLang.get("economy.forsale") + " &6" + RPConfig.getEcoString("economy-symbol") + r.getValue() +" &2"+ RPConfig.getEcoString("economy-name");
+	}
+	
+	public static boolean putToSell(Region r, String uuid, Double value) {
+		try {			
+			r.setCreator(uuid);
+			r.clearMembers();
+			r.clearOwners();
+			r.setValue(value);
+			r.setWelcome(getCostMessage(r));			
+			r.setFlag("for-sale", true);
+			r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()));
+			return true;
+		} catch (Exception e){
+			return false;
+		}		
+	}
+	
+	public static boolean BuyRegion(Region r, String uuid) {
+		try {			
+			r.clearMembers();
+			r.clearOwners();
+			r.setCreator(uuid);
+			r.addOwner(uuid);
+			r.setDate(RPUtil.DateNow());
+			r.setWelcome("");
+			r.flags = RPConfig.getDefFlagsValues();
+			r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()));
+			r.setFlag("for-sale", false);
+			return true;
+		} catch (Exception e){
+			return false;
+		}		
 	}
 }

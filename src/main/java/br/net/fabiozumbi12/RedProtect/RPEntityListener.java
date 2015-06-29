@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -40,10 +41,12 @@ class RPEntityListener implements Listener{
     	if (event.isCancelled()) {
             return;
         }
+    	
         Entity e = (Entity)event.getEntity();
         if (e == null) {
             return;
         }
+                
         if (e instanceof Monster) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
@@ -195,7 +198,7 @@ class RPEntityListener implements Listener{
     	if (e.isCancelled()) {
             return;
         }
-    	
+    	RedProtect.logger.debug("Is Entity Listener - HangingBreakByEntityEvent event");
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
         Region r = RedProtect.rm.getTopRegion(loc);
@@ -249,6 +252,9 @@ class RPEntityListener implements Listener{
             return;
         }
 		Player p = e.getPlayer();
+		if (p == null){
+			return;
+		}
 		Location l = e.getRightClicked().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
 		Entity et = e.getRightClicked();
@@ -292,6 +298,21 @@ class RPEntityListener implements Listener{
     			e.setCancelled(true);
     			return;
     		}
+    }
+      
+    @EventHandler
+    public void WitherBlockBreak(EntityChangeBlockEvent event) {
+    	if (event.isCancelled()) {
+            return;
+        }
+    	RedProtect.logger.debug("Is EntityChangeBlockEvent event");
+    	Entity e = event.getEntity();    	
+    	if (e instanceof Monster) {
+            Region r = RedProtect.rm.getTopRegion(event.getEntity().getLocation());
+            if (r != null && !r.canFire()){
+         	   event.setCancelled(true);
+            }
+    	}
     }
 
 }

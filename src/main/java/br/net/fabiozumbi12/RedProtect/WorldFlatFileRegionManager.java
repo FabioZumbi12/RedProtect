@@ -78,7 +78,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getMemberRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.isMember(uuid) || r.isOwner(uuid)){
+			if (r.getMembers().contains(uuid) || r.getOwners().contains(uuid)){
 				regionsp.add(r);
 			}
 		}
@@ -191,6 +191,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         			fileDB.set(rname+".minX",r.getMinMbrX());
         			fileDB.set(rname+".minZ",r.getMinMbrZ());				
         			fileDB.set(rname+".flags",r.flags);	
+        			fileDB.set(rname+".value",r.getValue());	
         		}	 
 
         		try {
@@ -352,11 +353,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             	    	  String welcome = fileDB.getString(rname+".welcome");
             	    	  int prior = fileDB.getInt(rname+".priority");
             	    	  String date = fileDB.getString(rname+".lastvisit");
+            	    	  Double value = fileDB.getDouble(rname+".value");
             	    	  if (owners.size() == 0){
             	    		  owners.add(creator);
             	    	  }			    	
             	    	  fileDB = RPUtil.fixdbFlags(fileDB, rname);
-            	    	  Region newr = new Region(name, owners, members, creator, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, prior, world, date, RPConfig.getDefFlagsValues(), welcome);
+            	    	  Region newr = new Region(name, owners, members, creator, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, prior, world, date, RPConfig.getDefFlagsValues(), welcome, value);
             	    	for (String flag:RPConfig.getDefFlags()){
             	    		  if (fileDB.get(rname+".flags."+flag) != null){
             	    			newr.flags.put(flag,fileDB.get(rname+".flags."+flag)); 

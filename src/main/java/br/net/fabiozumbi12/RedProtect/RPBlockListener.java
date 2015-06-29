@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -24,6 +25,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -213,8 +215,9 @@ class RPBlockListener implements Listener{
     	if (e.isCancelled()){
     		return;
     	}
-        for (Block block : e.blockList()) {
-        	Location l = block.getLocation();
+    	RedProtect.logger.debug("Is BlockListener - EntityExplodeEvent event");
+        for (int i = 0; i < e.blockList().size(); i++) {
+        	Location l = e.blockList().get(i).getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
         	if (r != null && !r.canFire()){
         		e.setCancelled(true);
@@ -224,16 +227,17 @@ class RPBlockListener implements Listener{
     }
     
     @EventHandler
-    public void onFrameBrake(HangingBreakEvent e) {
+    public void onFrameBrake(HangingBreakByEntityEvent e) {
     	if (e.isCancelled()){
     		return;
     	}
-
+    	RedProtect.logger.debug("Is BlockListener - HangingBreakByEntityEvent event");
+    	Entity remover = e.getRemover();
     	Entity ent = e.getEntity();
     	Location l = e.getEntity().getLocation();
-		Region r = RedProtect.rm.getTopRegion(l);
-    	
-    	if ((ent instanceof ItemFrame || ent instanceof Painting) && (e.getCause().toString().equals("ENTITY") || e.getCause().toString().equals("EXPLOSION"))) {
+    	    	
+    	if ((ent instanceof ItemFrame || ent instanceof Painting) && remover instanceof Monster) {
+    		Region r = RedProtect.rm.getTopRegion(l);
     		if (r != null && !r.canFire()){
     			e.setCancelled(true);
         		return;
@@ -241,6 +245,24 @@ class RPBlockListener implements Listener{
         }    
     }
     
+    @EventHandler
+    public void onFrameBrake(HangingBreakEvent e) {
+    	if (e.isCancelled()){
+    		return;
+    	}
+    	RedProtect.logger.debug("Is BlockListener - HangingBreakEvent event");
+    	Entity ent = e.getEntity();
+    	Location l = e.getEntity().getLocation();		
+    	
+    	if ((ent instanceof ItemFrame || ent instanceof Painting) && (e.getCause().toString().equals("EXPLOSION"))) {
+    		Region r = RedProtect.rm.getTopRegion(l);
+    		if (r != null && !r.canFire()){
+    			e.setCancelled(true);
+        		return;
+    		}
+        }    
+    }
+        
     @EventHandler
     public void onBlockStartBurn(BlockIgniteEvent e){
     	if (e.isCancelled()){

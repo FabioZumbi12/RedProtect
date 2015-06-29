@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
@@ -39,9 +42,11 @@ public class RedProtect extends JavaPlugin {
 	public static String UptLink;
     public static RegionManager rm;
     public static List<String> changeWait = new ArrayList<String>();
+    public static List<String> tpWait = new ArrayList<String>();
     static RPPermissionHandler ph;
     public static RPLogger logger = new RPLogger();
     static Server serv;
+	public static Economy econ;	    
     static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
     static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
     static String pathMain = "plugins" + File.separator + "RedProtect" + File.separator;
@@ -57,7 +62,8 @@ public class RedProtect extends JavaPlugin {
     static boolean McMMo;
     static boolean OnlineMode;
 	static boolean Mc;
-	static boolean SkillAPI;	    
+	static boolean SkillAPI;
+	static boolean Vault;
     
     static enum DROP_TYPE
     {
@@ -81,10 +87,10 @@ public class RedProtect extends JavaPlugin {
             MyPet = checkMyPet(); 
             McMMo = checkMcMMo();
             Mc = checkMc();
+            Vault = checkVault();
             SkillAPI = checkSkillAPI();
             JarFile = this.getFile();
             initVars();
-            RPUtil.init(this);
             RPConfig.init(this);
             RPLang.init(this);
             rm.loadAll();
@@ -100,6 +106,17 @@ public class RedProtect extends JavaPlugin {
             	this.pm.registerEvents(this.aListener, this);
             }  
             getCommand("RedProtect").setExecutor(this.cManager);
+            
+            if (Vault){
+            	RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+                if (rsp == null) {
+                	RedProtect.logger.warning("Vault found, but for some reason cant be used with RedProtect.");
+                	Vault = false;
+                } else {
+                	econ = rsp.getProvider();
+                	RedProtect.logger.info("Vault found. Hooked.");                	
+                }
+            }
             
             if (BossBar){
             	RedProtect.logger.info("BossbarAPI found. Hooked.");
@@ -274,6 +291,15 @@ public class RedProtect extends JavaPlugin {
     private boolean checkSkillAPI(){
     	Plugin pSK = Bukkit.getPluginManager().getPlugin("SkillAPI");
     	if (pSK != null && pSK.isEnabled()){
+    		return true;
+    	}
+    	return false;
+    }
+    
+  //check if plugin Vault is installed
+    private boolean checkVault(){
+    	Plugin pVT = Bukkit.getPluginManager().getPlugin("Vault");
+    	if (pVT != null && pVT.isEnabled()){
     		return true;
     	}
     	return false;

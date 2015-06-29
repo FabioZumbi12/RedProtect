@@ -61,6 +61,6 @@ public interface WorldRegionManager {
 
 	void updateLiveFlags(String rname, String flag, String value);
 
-	void removeLiveFlags(String rname, String flag);
+	void removeLiveFlags(String rname, String flag);	
 
 }
