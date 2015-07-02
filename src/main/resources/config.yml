@@ -82,6 +82,7 @@ flags:
   allow-home: false
   allow-magiccarpet: true
 flags-configuration:
+  pvparena-nopvp-kick-cmd: spawn {player}
   change-flag-delay:
     enable: true
     seconds: 10

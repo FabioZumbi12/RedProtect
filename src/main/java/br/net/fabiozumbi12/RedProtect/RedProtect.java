@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import me.NoChance.PvPManager.PvPManager;
+import me.NoChance.PvPManager.Managers.PlayerHandler;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -45,8 +47,7 @@ public class RedProtect extends JavaPlugin {
     public static List<String> tpWait = new ArrayList<String>();
     static RPPermissionHandler ph;
     public static RPLogger logger = new RPLogger();
-    static Server serv;
-	public static Economy econ;	    
+    static Server serv;    
     static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
     static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
     static String pathMain = "plugins" + File.separator + "RedProtect" + File.separator;
@@ -64,6 +65,9 @@ public class RedProtect extends JavaPlugin {
 	static boolean Mc;
 	static boolean SkillAPI;
 	static boolean Vault;
+	static boolean PvPm;
+	public static PlayerHandler PvPmanager;
+	public static Economy econ;
     
     static enum DROP_TYPE
     {
@@ -89,6 +93,7 @@ public class RedProtect extends JavaPlugin {
             Mc = checkMc();
             Vault = checkVault();
             SkillAPI = checkSkillAPI();
+            PvPm = checkPvPm();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
@@ -116,6 +121,14 @@ public class RedProtect extends JavaPlugin {
                 	econ = rsp.getProvider();
                 	RedProtect.logger.info("Vault found. Hooked.");                	
                 }
+            }
+            
+            if (PvPm){
+            	PvPManager pvp = (PvPManager) Bukkit.getPluginManager().getPlugin("PvPManager");
+                if (pvp.getPlayerHandler() != null) {
+                	PvPmanager = pvp.getPlayerHandler();
+                	RedProtect.logger.info("PvPManager found. Hooked.");  
+                } 
             }
             
             if (BossBar){
@@ -296,10 +309,19 @@ public class RedProtect extends JavaPlugin {
     	return false;
     }
     
-  //check if plugin Vault is installed
+    //check if plugin Vault is installed
     private boolean checkVault(){
     	Plugin pVT = Bukkit.getPluginManager().getPlugin("Vault");
     	if (pVT != null && pVT.isEnabled()){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    //check if plugin PvPManager is installed
+    private boolean checkPvPm(){
+    	Plugin pPvp = Bukkit.getPluginManager().getPlugin("PvPManager");
+    	if (pPvp != null && pPvp.isEnabled()){
     		return true;
     	}
     	return false;

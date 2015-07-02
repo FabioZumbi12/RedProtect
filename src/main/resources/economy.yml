@@ -1,6 +1,7 @@
 economy-symbol: $
 economy-name: Coins
-max-area-toget-value: 20000
+max-area-toget-value: 100000
+rename-region: true
 items:
   values:
     AIR: 0.0

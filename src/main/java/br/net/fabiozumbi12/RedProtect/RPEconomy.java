@@ -68,7 +68,9 @@ public class RPEconomy {
 			r.setValue(value);
 			r.setWelcome(getCostMessage(r));			
 			r.setFlag("for-sale", true);
-			r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()));
+			if (RPConfig.getEcoBool("rename-region")){
+				r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()));
+			}			
 			return true;
 		} catch (Exception e){
 			return false;
@@ -84,7 +86,9 @@ public class RPEconomy {
 			r.setDate(RPUtil.DateNow());
 			r.setWelcome("");
 			r.flags = RPConfig.getDefFlagsValues();
-			r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()));
+			if (RPConfig.getEcoBool("rename-region")){
+				r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()));
+			}	
 			r.setFlag("for-sale", false);
 			return true;
 		} catch (Exception e){

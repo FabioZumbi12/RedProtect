@@ -14,7 +14,7 @@ import org.bukkit.event.block.SignChangeEvent;
 class EncompassRegionBuilder extends RegionBuilder{
 
     public EncompassRegionBuilder(SignChangeEvent e) {
-        super();
+        super();    	
         String owner1 = RPUtil.PlayerToUUID(e.getLine(2));
         String owner2 = RPUtil.PlayerToUUID(e.getLine(3));
         Block b = e.getBlock();

@@ -31,8 +31,8 @@ public class RPConfig{
 	static FileConfiguration configs = new RPYaml();
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
-	static RPYaml BlockValues = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back","for-sale");	
+	static RPYaml EconomyConfig = new RPYaml();
+	public static List<String> AdminFlags = Arrays.asList("pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back", "for-sale");	
 			
 	static void init(RedProtect plugin) {
 
@@ -181,26 +181,26 @@ public class RPConfig{
                     
                     //load blockvalues file
                     try {
-						BlockValues.load(bvalues);
+                    	EconomyConfig.load(bvalues);
 					} catch (IOException | InvalidConfigurationException e) {
 						e.printStackTrace();
 					}
                     
                     RPYaml tempEco = inputLoader(plugin.getResource("economy.yml"));
                     for (String key:tempEco.getKeys(false)){
-                    	if (BlockValues.get(key) == null){
-                    		BlockValues.set(key, tempEco.get(key));
+                    	if (EconomyConfig.get(key) == null){
+                    		EconomyConfig.set(key, tempEco.get(key));
                     	}
                     }
                     
                     for (Material mat:Material.values()){
-                    	if (BlockValues.getString("items.values."+mat.name()) == null){
-                    		BlockValues.set("items.values."+mat.name(), 0.0);                		
+                    	if (EconomyConfig.getString("items.values."+mat.name()) == null){
+                    		EconomyConfig.set("items.values."+mat.name(), 0.0);                		
                     	}
                     }                    
                     for (Enchantment ench:Enchantment.values()){
-                    	if (BlockValues.getString("enchantments.values."+ench.getName()) == null){
-                    		BlockValues.set("enchantments.values."+ench.getName(), 0.0);                		
+                    	if (EconomyConfig.getString("enchantments.values."+ench.getName()) == null){
+                    		EconomyConfig.set("enchantments.values."+ench.getName(), 0.0);                		
                     	}
                     }
                     
@@ -277,7 +277,7 @@ public class RPConfig{
 			RedProtect.plugin.saveConfig();
 			gflags.save(globalflags);
 			GuiItems.save(guiconfig);
-			BlockValues.save(blockvalues);
+			EconomyConfig.save(blockvalues);
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
 			e.printStackTrace();
@@ -307,19 +307,23 @@ public class RPConfig{
 	}
 
 	public static double getBlockCost(String itemName) {
-		return BlockValues.getDouble("items.values."+itemName);
+		return EconomyConfig.getDouble("items.values."+itemName);
 	}
 	
 	public static double getEnchantCost(String enchantment) {
-		return BlockValues.getDouble("enchantments.values."+enchantment);
+		return EconomyConfig.getDouble("enchantments.values."+enchantment);
 	}
 	
 	public static String getEcoString(String key){
-		return BlockValues.getString(key);
+		return EconomyConfig.getString(key);
 	}
 	
 	public static Integer getEcoInt(String key){
-		return BlockValues.getInt(key);
+		return EconomyConfig.getInt(key);
+	}
+
+	public static boolean getEcoBool(String key) {
+		return EconomyConfig.getBoolean(key);
 	}
     
 }

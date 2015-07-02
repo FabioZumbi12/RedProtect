@@ -52,14 +52,20 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/MagicCarpet.jar</systemPath>
-		</dependency>
-		
+		</dependency>		
 		<dependency>
            <groupId>net.milkbowl.vault</groupId>
            <artifactId>Vault</artifactId>
            <version>LATEST</version>
            <scope>provided</scope>
         </dependency>    
+        <dependency>
+			<groupId>PvPManager</groupId>
+			<artifactId>PvPManager</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/PvPManager.jar</systemPath>
+		</dependency>
     
   </dependencies>
   <repositories>

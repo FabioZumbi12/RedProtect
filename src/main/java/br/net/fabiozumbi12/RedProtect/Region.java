@@ -640,6 +640,13 @@ public class Region implements Serializable{
 		}
 		return getFlagBool("for-sale");
 	}
+	
+	public boolean isPvPArena() {
+		if (!flagExists("pvparena")){
+			return false;
+		}
+		return getFlagBool("pvparena");
+	}
 
 	public Double getValue() {	
 		return this.value;

@@ -1079,16 +1079,17 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		Double money = RedProtect.econ.getBalance(player);
 		if (money >= value){
 			String creator = r.getCreator();
+			String rname = r.getName();
 			if (RPEconomy.BuyRegion(r, RPUtil.PlayerToUUID(player.getName()))){
 				RedProtect.econ.withdrawPlayer(player, value);
 				OfflinePlayer offp = RedProtect.serv.getOfflinePlayer(RPUtil.UUIDtoPlayer(creator));
 				if (!creator.equals("server") && offp != null){
 					RedProtect.econ.depositPlayer(offp, value);
 					if (offp.isOnline()){
-						RPLang.sendMessage((Player) offp, RPLang.get("economy.region.buy.bought").replace("{player}", player.getName()).replace("{region}", r.getName()).replace("{world}", r.getWorld()));
+						RPLang.sendMessage((Player) offp, RPLang.get("economy.region.buy.bought").replace("{player}", player.getName()).replace("{region}", rname).replace("{world}", r.getWorld()));
 					}
 				}
-				RPLang.sendMessage(player, RPLang.get("economy.region.buy.success").replace("{region}", r.getName()).replace("{value}", value.toString()));
+				RPLang.sendMessage(player, RPLang.get("economy.region.buy.success").replace("{region}", r.getName()).replace("{value}", value.toString()).replace("{ecosymbol}", RPConfig.getEcoString("economy-name")));
 				return;
 			} else {
 				RPLang.sendMessage(player, RPLang.get("economy.region.error"));

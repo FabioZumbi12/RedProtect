@@ -426,10 +426,18 @@ class RPPlayerListener implements Listener{
 			}    		
     	}, 40L);
     	
+    	if (RedProtect.PvPm){
+    		if (rto != null && rto.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !rto.canBuild(p)){
+    			RPLang.sendMessage(p, RPLang.get("playerlistener.region.pvpenabled"));
+        		e.setCancelled(true); 
+        		return;
+        	}
+    	}    	
     	
     	if (rto != null && !rto.canEnter(p)){
     		p.sendMessage(RPLang.get("playerlistener.region.cantregionenter"));
     		e.setCancelled(true); 
+    		return;
     	}
     	
     	if (PlayerCmd.containsKey(p)){
@@ -541,9 +549,21 @@ class RPPlayerListener implements Listener{
     		p.sendMessage(RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     	}
     	
-    	//Enter flag
+    	
         Region r = RedProtect.rm.getTopRegion(lto);
+        
+        //Pvp check to enter on region
+        if (RedProtect.PvPm){
+    		if (r != null && r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
+    			RPLang.sendMessage(p, RPLang.get("playerlistener.region.pvpenabled"));
+    			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
+    			return;
+        	}
+    	} 
+        
         World w = lfrom.getWorld();
+        
+      //Enter flag
         if (r != null && !r.canEnter(p)){
     		for (int i = 0; i < 100; i++){
         		Region r1 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX()+i, lfrom.getBlockZ());
