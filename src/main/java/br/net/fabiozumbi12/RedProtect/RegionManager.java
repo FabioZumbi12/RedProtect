@@ -246,5 +246,12 @@ public class RegionManager{
 		}
 		return total;
 	}
+	
+	public void renameRegion(String newName, Region old){
+		Region newr = new Region(newName, old.getOwners(), old.getMembers(), old.getCreator(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
+				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue());
+		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));
+		this.remove(old);		
+	}
     
 }

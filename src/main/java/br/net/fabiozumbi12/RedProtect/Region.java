@@ -260,11 +260,6 @@ public class Region implements Serializable{
      */
     public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, Double value) {
     	super();
-    	this.minMbrX = 0;
-        this.maxMbrX = 0;
-        this.minMbrZ = 0;
-        this.maxMbrZ = 0;
-        this.creator = null;
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
         this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
         this.maxMbrX = maxMbrX;
@@ -300,21 +295,19 @@ public class Region implements Serializable{
     /**
      * Represents the region created by player.
 	 * @param name Region name.
-	 * @param owners Owners names.
+	 * @param owners Owners names/uuids.
+	 * @param members Members names/uuids.
+	 * @param creator Creator name/uuid.
 	 * @param x Locations of x coords.
 	 * @param z Locations of z coords.
 	 * @param prior Location of x coords.
      * @param worldName Name of world region.
      * @param date Date of latest visit of an owner or member.
-     * @param welcome 
+     * @param welcome Set a welcome message.
+     * @param value A value in server economy.
      */
     public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int prior, String worldName, String date, Map<String, Object> flags, String welcome, Double value) {
     	super();
-        this.minMbrX = 0;
-        this.maxMbrX = 0;
-        this.minMbrZ = 0;
-        this.maxMbrZ = 0;
-        this.creator = null;
         this.prior = prior;
         this.world = worldName;
         this.date = date;
@@ -545,19 +538,7 @@ public class Region implements Serializable{
         }
         return flaginfo;
     }
-    
-    public void setName(String name) {
-    	Map<String,Object> rflags = this.flags;
-    	for (String flag:this.flags.keySet()){
-    		RedProtect.rm.removeLiveFlags(this, flag);
-    	}    	
-    	RedProtect.rm.updateLiveRegion(this, "name", name);
-        this.name = name;   
-        for (String flag:rflags.keySet()){
-        	RedProtect.rm.updateLiveFlags(this, flag, rflags.get(flag).toString());
-    	}
-    }
-    
+        
     public boolean isOnTop(){
     	Region newr = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(this.getWorld()), this.getCenterX(), this.getCenterZ());
 		return newr == null || newr.equals(this);    	

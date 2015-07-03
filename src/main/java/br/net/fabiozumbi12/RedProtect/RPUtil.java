@@ -173,7 +173,7 @@ class RPUtil {
             		players.add(RPUtil.PlayerToUUID(play));
     			}           	
             	
-            	if (days > RPConfig.getInt("sell.sell-oldest") && !players.contains(r.getCreator())){        
+            	if (days > RPConfig.getInt("sell.sell-oldest") && !players.contains(UUIDtoPlayer(r.getCreator()))){        
                 	RedProtect.logger.warning("Selling " + r.getName() + " - Days: " + days);
             		RPEconomy.putToSell(r, "server", RPEconomy.getRegionValue(r));
             		sell++;
@@ -235,7 +235,7 @@ class RPUtil {
         	//CHeck new flags if exists
         	if (r.flags == null){ 
         		backup();        		
-        		HashMap<String, Object> rflags = new HashMap<String, Object>();
+        		HashMap<String, Object> rflags = RPConfig.getDefFlagsValues();
         		rflags.put("pvp", r.f[0]);
                 rflags.put("chest", r.f[1]);
                 rflags.put("lever", r.f[2]);
@@ -365,13 +365,12 @@ class RPUtil {
 		return PlayerName;    	
     }
     
-    @SuppressWarnings("unused")
 	private static boolean isUUID(String uuid){
     	if (uuid == null){
     		return false;
     	}
     	try{
-    		UUID puuid = UUID.fromString(uuid);
+    		UUID.fromString(uuid);
     		return true;
     	} catch (IllegalArgumentException e){
     	}
@@ -452,6 +451,7 @@ class RPUtil {
 				fileDB.set(rname+".priority",r.getPrior());
 				fileDB.set(rname+".welcome",r.getWelcome());
 				fileDB.set(rname+".world",r.getWorld());
+				fileDB.set(rname+".value",r.getValue());
 				fileDB.set(rname+".maxX",r.getMaxMbrX());
 				fileDB.set(rname+".maxZ",r.getMaxMbrZ());
 				fileDB.set(rname+".minX",r.getMinMbrX());
@@ -506,7 +506,7 @@ class RPUtil {
 		                }          
 		                st = dbcon.createStatement();
 		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Creator:" + r.getCreator() + "(Size: "+r.getCreator().length()+")");
-		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,world) VALUES "
+		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,value,world) VALUES "
 		                		+ "('" +r.getName() + "', '" + 
 		                		r.getCreator().toString() + "', '" + 
 		                		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
@@ -520,6 +520,7 @@ class RPUtil {
 		                		r.getDate().toString() + "', '" +
 		                		r.getWelcome().toString() + "', '" + 
 		                		r.getPrior() + "', '" + 
+		                		r.getValue() + "', '" + 
 		                		r.getWorld().toString()+"')");                    
 		                st.close();
 		                RedProtect.logger.sucess("["+counter+"]Converted region to Mysql: " + r.getName());
@@ -567,7 +568,7 @@ class RPUtil {
 	                st = null;
 	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16))");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16), value double not null default '0.0')");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
@@ -648,4 +649,5 @@ class RPUtil {
 			}
 			}, RPConfig.getInt("flags-configuration.change-flag-delay.seconds")*20);
 	}
+	
 }

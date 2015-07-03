@@ -360,11 +360,15 @@ class RPCommands implements CommandExecutor, TabCompleter{
             			r.setFlag("for-sale", false);        			
             			r.setWelcome("");
             			if (r.getCreator() == null){
-            				r.setName(RPUtil.nameGen(player.getName(),r.getWorld()));
+            				if (RPConfig.getEcoBool("rename-region")){
+            					RedProtect.rm.renameRegion(RPUtil.nameGen(player.getName(),r.getWorld()), r);
+            				}
             				r.setCreator(RPUtil.PlayerToUUID(player.getName()));        		
             				r.addOwner(r.getCreator());
             			} else {
-            				r.setName(RPUtil.nameGen(RPUtil.UUIDtoPlayer(r.getCreator()),r.getWorld()));
+            				if (RPConfig.getEcoBool("rename-region")){
+            					RedProtect.rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(r.getCreator()),r.getWorld()),r);
+            				}
             				r.addOwner(r.getCreator());
             			}        			
             			RPLang.sendMessage(player,RPLang.get("economy.region.cancelbuy"));
@@ -1372,8 +1376,8 @@ class RPCommands implements CommandExecutor, TabCompleter{
             if (newName.contains(" ")) {
                 RPLang.sendMessage(p,RPLang.get("cmdmanager.region.rename.spaces"));
                 return;
-            }
-            r.setName(newName);
+            }            
+            RedProtect.rm.renameRegion(newName, r);
             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.rename.newname") + " " + newName);
         }
         else {
