@@ -40,6 +40,7 @@ class RPBlockListener implements Listener{
         this.plugin = plugin;
     }
     
+    @EventHandler
     public void onSignChange(SignChangeEvent e) {   
     	if (e.isCancelled()){
     		return;
