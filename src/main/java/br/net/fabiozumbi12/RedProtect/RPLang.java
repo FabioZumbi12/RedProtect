@@ -131,7 +131,6 @@ public class RPLang {
 	    }
 	  }
 	
-
 	public static String get(String key){		
 		String FMsg = "";
 
