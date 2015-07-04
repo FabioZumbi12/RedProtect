@@ -144,7 +144,7 @@ class RPPlayerListener implements Listener{
                     p.sendMessage(r.info());
                     p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
                 } else {
-                	p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{owners}", r.getCreator()));
+                	p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{owners}", RPUtil.UUIDtoPlayer(r.getCreator())));
                 }
                 event.setCancelled(true);
                 return;

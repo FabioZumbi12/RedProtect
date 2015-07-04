@@ -1,85 +1,77 @@
+gui-strings:
+  'false': '&cfalse'
+  'true': '&atrue'
+  value: '&bValue: '
 gui-flags:
   door:
     material: WOOD_DOOR
     name: '&e=> Allow Door Open'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to open'
     description1: '&aand close doors in this region.'
     description2: ''
   chest:
     material: CHEST
     name: '&e=> Allow Chest Access'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to access'
     description1: '&athis chest for take and put itens.'
     description2: ''
   allow-home:
     material: BED
     name: '&e=> Allow Set Home'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to use the'
     description1: '&acommand /sethome or /home to set or come to'
     description2: '&athis region.'
   pvp:
     material: DIAMOND_SWORD
     name: '&e=> Allow PvP'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow PvP for all players'
     description1: '&ain this region, including members and'
     description2: '&ano members.'
   lever:
     material: LEVER
     name: '&e=> Use Lever'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to use'
     description1: '&alevers in this region.'
     description2: ''
   spawn-animals:
     material: EGG
     name: '&e=> Spawn Animals'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow natural spawn of'
     description1: '&apassives mobs in this region.'
     description2: ''
   passives:
     material: SADDLE
     name: '&e=> Hurt Passives'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to hurt,'
     description1: '&akill or interact with passives mobs in'
     description2: '&athis region.'
   button:
     material: WOOD_BUTTON
     name: '&e=> Use Buttons'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to use'
     description1: '&abuttons in this region.'
     description2: ''
   minecart:
     material: MINECART
     name: '&e=> Allow Place Minecarts'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow no members to place,'
     description1: '&aenter and break Minecarts in this region.'
     description2: ''
   spawn-monsters:
     material: MONSTER_EGG
     name: '&e=> Spawn Monsters'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow natural spawn of'
     description1: '&amonsters in this region.'
     description2: ''
   fire:
     material: BLAZE_POWDER
     name: '&e=> Fire Spread and Damage Blocks'
-    value-string: '&bValue: &7'
     description: '&6Description: &aAllow damage blocks by fire'
     description1: '&aand explosion, and fire spread.'
     description2: ''
   flow:
     material: WATER_BUCKET
     name: '&e=> Water and Lava Flow'
-    value-string: '&bValue: &7'
     description: '&6Description: &aEnable water and lava flow'
     description1: '&ain this region.'
     description2: ''

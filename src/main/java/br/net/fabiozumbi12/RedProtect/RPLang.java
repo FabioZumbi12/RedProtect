@@ -149,4 +149,12 @@ public class RPLang {
 	static void sendMessage(Player p, String message){
 		p.sendMessage(get("_redprotect.prefix")+ " " + message);
 	}
+	
+	static String translBool(String bool){		
+		return get("region."+bool);
+	}
+	
+	static String translBool(Boolean bool){		
+		return get("region."+bool.toString());
+	}
 }

@@ -62,11 +62,11 @@ public class RPGui implements Listener{
 		int i = 0;
 		Set<String> RegionsSorted = new TreeSet<String>(region.flags.keySet());
 		for (String flag:RegionsSorted){
-			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiString(flag,"material")) != null){
+			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null){
 				this.guiItens[i] = RPConfig.getGuiItemStack(flag);
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
-				guiMeta.setDisplayName(RPConfig.getGuiString(flag,"name"));
-				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString(flag,"value-string")+region.flags.get(flag).toString(),"§0"+flag,RPConfig.getGuiString(flag,"description"),RPConfig.getGuiString(flag,"description1"),RPConfig.getGuiString(flag,"description2")));
+				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
+				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 				if (allowEnchant){
 					if (this.region.getFlagBool(flag)){
 						guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -76,7 +76,7 @@ public class RPGui implements Listener{
 					guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);	
 				}
 							
-				this.guiItens[i].setType(Material.getMaterial(RPConfig.getGuiString(flag,"material")));
+				this.guiItens[i].setType(Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")));
 				this.guiItens[i].setItemMeta(guiMeta);
 				i++;
 			}
@@ -158,7 +158,7 @@ public class RPGui implements Listener{
 			}
 			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}								
-		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString(flag,"value-string")+region.flags.get(flag).toString(),"§0"+flag,RPConfig.getGuiString(flag,"description"),RPConfig.getGuiString(flag,"description1"),RPConfig.getGuiString(flag,"description2")));
+		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 		event.getCurrentItem().setItemMeta(itemMeta);
 	}
 	

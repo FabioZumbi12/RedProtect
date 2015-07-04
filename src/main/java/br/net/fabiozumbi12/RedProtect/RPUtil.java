@@ -54,7 +54,6 @@ class RPUtil {
         return rname;
     }
     
-    
     static boolean isFileEmpty(String s) {
         File f = new File(s);
         if (!f.isFile()) {

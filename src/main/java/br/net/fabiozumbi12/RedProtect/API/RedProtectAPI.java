@@ -184,4 +184,14 @@ public class RedProtectAPI {
 	public static void addPlayerFlag(String flag, Object defValue){
 		RedProtect.plugin.getConfig().set(flag, defValue);
 	}
+	
+	/**
+	 * Rename a region;
+	 * <p>
+	 * @param region Region to rename.
+	 * @param newName New name of region;
+	 */
+	public static void renameRegion(Region region, String newName){
+		RedProtect.rm.renameRegion(newName, region);
+	}
 }

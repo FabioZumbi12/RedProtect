@@ -164,7 +164,7 @@ public class Region implements Serializable{
         String ownerstring = "";
         String memberstring = "";
         String wMsgTemp = "";
-        String IsTops = "";
+        String IsTops = RPLang.translBool(isOnTop());
         String today = this.date;
         String wName = this.world; 
         
@@ -199,11 +199,7 @@ public class Region implements Serializable{
         } else {
         	wMsgTemp = wMessage;
         }
-        if (isOnTop()){
-        	IsTops = RPLang.get("region.yes");
-        } else {
-        	IsTops = RPLang.get("region.no");
-        }  
+         
         if (this.date.equals(RPUtil.DateNow())){        	
         	today = RPLang.get("region.today");
         } else {
@@ -528,7 +524,7 @@ public class Region implements Serializable{
     public String getFlagInfo() {
     	String flaginfo = "";
     	for (String flag:this.flags.keySet()){
-    		flaginfo = flaginfo + ", "+ ChatColor.AQUA + flag + ":" + ChatColor.GRAY +String.valueOf(this.flags.get(flag));
+    		flaginfo = flaginfo + ", "+ ChatColor.AQUA + flag + ":" + ChatColor.GRAY +RPLang.translBool(this.flags.get(flag).toString());
     	}    	
     	if (this.flags.keySet().size() > 0) {
     		flaginfo = flaginfo.substring(2);

@@ -1394,7 +1394,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     	if (r == null) {
             sendNotInRegionMessage(p);
             return;
-        }
+        } 
     	
     	Object objflag = RPUtil.parseObject(value);
     	
@@ -1406,7 +1406,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     p.sendMessage(r.getFlagInfo());
                     p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                     return;
-                }
+                }  
             	
             	if (value.equalsIgnoreCase("remove")){
             		if (RPConfig.AdminFlags.contains(flag) && r.flags.containsKey(flag)){
@@ -1417,6 +1417,11 @@ class RPCommands implements CommandExecutor, TabCompleter{
                         RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.notset").replace("{flag}", flag)); 
                         return;
             		}
+            	}
+            	
+            	if (r.flagExists("for-sale") && flag.equalsIgnoreCase("for-sale")){
+            		RPLang.sendMessage(p, RPLang.get("cmdmanager.eco.changeflag"));
+            		return;
             	}
             	
             	if (!value.equals("")){

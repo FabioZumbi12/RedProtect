@@ -169,10 +169,13 @@ public class RPConfig{
 						e.printStackTrace();
 					}
                     
+                    GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));   
+                    GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue")); 
+                    GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse")); 
+                    
                     for (String key:getDefFlagsValues().keySet()){
                     	GuiItems.set("gui-flags."+key+".material", GuiItems.get("gui-flags."+key+".material", "GOLDEN_APPLE"));
-                    	GuiItems.set("gui-flags."+key+".name", GuiItems.get("gui-flags."+key+".name", "&e"+key));
-                    	GuiItems.set("gui-flags."+key+".value-string", GuiItems.get("gui-flags."+key+".value-string", "&bValue: &7"));
+                    	GuiItems.set("gui-flags."+key+".name", GuiItems.get("gui-flags."+key+".name", "&e"+key));                    	
                     	GuiItems.set("gui-flags."+key+".description", GuiItems.get("gui-flags."+key+".description", "&bDescription: &2Add a flag description here."));
                     	GuiItems.set("gui-flags."+key+".description1", GuiItems.get("gui-flags."+key+".description1", ""));
                     	GuiItems.set("gui-flags."+key+".description2", GuiItems.get("gui-flags."+key+".description2", ""));
@@ -227,12 +230,16 @@ public class RPConfig{
     	return new ItemStack(Material.getMaterial(GuiItems.getString("gui-flags."+key+".material")));
     }
     
-    public static String getGuiString(String flag, String option){
+    public static String getGuiFlagString(String flag, String option){
     	if (GuiItems.getString("gui-flags."+flag+"."+option) == null){
     		return "";
     	}
     	return GuiItems.getString("gui-flags."+flag+"."+option).replaceAll("(?i)&([a-f0-9k-or])", "§$1");
     }
+    
+    public static String getGuiString(String string) {
+		return GuiItems.getString("gui-strings."+string).replaceAll("(?i)&([a-f0-9k-or])", "§$1");
+	}
     
     public static Boolean getBool(String key){		
 		return RedProtect.plugin.getConfig().getBoolean(key, false);
@@ -325,6 +332,5 @@ public class RPConfig{
 	public static boolean getEcoBool(String key) {
 		return EconomyConfig.getBoolean(key);
 	}
-    
 }
    
