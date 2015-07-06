@@ -23,7 +23,6 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -695,7 +694,7 @@ class RPPlayerListener implements Listener{
     	//deny potion
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
         if(Pots.size() > 0){
-        	ThrownPotion pot = e.getPotion();
+        	Potion pot = Potion.fromItemStack(e.getPotion().getItem());       	
         	for (String potion:Pots){
         		try{
         			if (pot != null && pot.getType().equals(PotionType.valueOf(potion))){

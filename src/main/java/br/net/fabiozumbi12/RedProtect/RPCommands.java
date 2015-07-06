@@ -725,7 +725,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     		} 
         	
         	if (args.length == 1){
-        		sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), RPEconomy.getRegionValue(r));
+        		sellHandler(r, player, r.getCreator(), RPEconomy.getRegionValue(r));
         		return true;
         	}        	
         	
@@ -734,7 +734,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		try {
     				Double value = Double.parseDouble(args[1]);
     				if (player.hasPermission("redprotect.eco.setvalue")){
-    					sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), value);
+    					sellHandler(r, player, RPUtil.PlayerToUUID(r.getCreator()), value);
     					return true;
     				}    				
     			} catch (NumberFormatException e){
