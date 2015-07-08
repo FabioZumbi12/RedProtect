@@ -10,7 +10,15 @@
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
           <version>1.8.6-R0.1-SNAPSHOT</version>
-        </dependency>	
+        </dependency>
+        <!-- bukkit
+        <dependency>
+			<groupId>Bukkit</groupId>
+			<artifactId>Bukkit</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/cb1.7.9.jar</systemPath>
+		</dependency> -->
 		<dependency>
 			<groupId>BossbarAPI</groupId>
 			<artifactId>BossbarAPI</artifactId>

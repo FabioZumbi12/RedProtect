@@ -296,11 +296,13 @@ class RPPlayerListener implements Listener{
     		return;
     	}
 
-    	if (RedProtect.tpWait.contains(e.getEntity().getName())){
-    		RedProtect.tpWait.remove(e.getEntity().getName());
+    	Player play = (Player) e.getEntity();
+    	
+		if (RedProtect.tpWait.contains(play.getName())){
+    		RedProtect.tpWait.remove(play.getName());
     		RPLang.sendMessage((Player) e.getEntity(), RPLang.get("cmdmanager.region.tpcancelled"));
     	}
-    	
+		
         //deny damagecauses
         List<String> Causes = RPConfig.getStringList("server-protection.deny-playerdeath-by");
         if(Causes.size() > 0){
