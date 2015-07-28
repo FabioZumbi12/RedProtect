@@ -3,12 +3,14 @@ package br.net.fabiozumbi12.RedProtect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Golem;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Monster;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -46,26 +48,34 @@ class RPEntityListener implements Listener{
         if (e == null) {
             return;
         }
-                
-        if (e instanceof Monster) {
+           
+        RedProtect.logger.debug("Spawn monster " + event.getEntityType().name());
+        
+        if (!(e instanceof Creature)){
+        	return;
+        }
+        
+        if (e instanceof Monster || e instanceof Skeleton) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnMonsters() && 
             (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
             		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
             		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS)
             		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
             	RedProtect.logger.debug("Cancelled spawn of monster " + event.getEntityType().name());
                 event.setCancelled(true);
             }
         }
-        if (e instanceof Animals) {
+        if (e instanceof Animals || e instanceof Golem) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives() && 
             		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
             	RedProtect.logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
@@ -89,7 +99,7 @@ class RPEntityListener implements Listener{
         	}        	
         }
         
-        if (ent instanceof Animals || ent instanceof Villager) {
+        if (ent instanceof Animals || ent instanceof Villager || ent instanceof Golem) {
         	if (r != null && r.flagExists("invincible")){
         		if (r.getFlagBool("invincible")){
         			if (ent instanceof Animals){
@@ -122,7 +132,7 @@ class RPEntityListener implements Listener{
             Region r1 = RedProtect.rm.getTopRegion(e1.getLocation());
             Region r2 = RedProtect.rm.getTopRegion(e2.getLocation());
             
-            if (de.getCause().equals(DamageCause.LIGHTNING) || de.getCause().equals(DamageCause.BLOCK_EXPLOSION) || de.getCause().equals(DamageCause.FIRE) || de.getCause().equals(DamageCause.WITHER) || de.getCause().equals(DamageCause.CUSTOM)){           	
+            if (de.getCause().equals(DamageCause.LIGHTNING) || de.getCause().equals(DamageCause.BLOCK_EXPLOSION) || de.getCause().equals(DamageCause.FIRE) || de.getCause().equals(DamageCause.WITHER) || de.getCause().equals(DamageCause.CUSTOM) || de.getCause().equals(DamageCause.ENTITY_EXPLOSION)){           	
             	if (r1 != null && !r1.canFire() && !(e2 instanceof Player)){
             		e.setCancelled(true);
             		return;
@@ -135,35 +145,35 @@ class RPEntityListener implements Listener{
                     if (r1 != null) {
                     	if (p2.getItemInHand().getType().equals(Material.EGG) && !r1.canBuild(p2)){
                     		e.setCancelled(true);
-                            p2.sendMessage(RPLang.get("playerlistener.region.cantuse"));
+                    		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                             return;
                     	}
                         if (r2 != null) {
                         	if (p2.getItemInHand().getType().equals(Material.EGG) && !r2.canBuild(p2)){
                         		e.setCancelled(true);
-                                p2.sendMessage(RPLang.get("playerlistener.region.cantuse"));
+                        		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                                 return;
                         	}
                             if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
                                 e.setCancelled(true);
-                                p2.sendMessage(RPLang.get("entitylistener.region.cantpvp"));
+                                RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                                 return;
                             }
                         }
                         else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
                             e.setCancelled(true);
-                            p2.sendMessage(RPLang.get("entitylistener.region.cantpvp"));
+                            RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                             return;
                         }
                     }
                     else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
                         e.setCancelled(true);
-                        p2.sendMessage(RPLang.get("entitylistener.region.cantpvp"));
+                        RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                         return;
                     }
                 }                
             }
-            else if (e1 instanceof Animals || e1 instanceof Villager) {
+            else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
                 Region r3 = RedProtect.rm.getTopRegion(e1.getLocation());
                 if (r3 != null) {
                 	
@@ -171,22 +181,22 @@ class RPEntityListener implements Listener{
                         Player p2 = (Player)e2;
                         if (!r3.canHurtPassives(p2)) {
                             e.setCancelled(true);
-                            p2.sendMessage(RPLang.get("entitylistener.region.cantpassive"));
+                            RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
                             return;
                         }
                     }
                 } 
             } 
-            else if ((e1 instanceof ItemFrame || e1 instanceof Painting) && e2 instanceof Player){
+            else if ((e1 instanceof Hanging) && e2 instanceof Player){
             	Player p2 = (Player)e2;
             	if (r1 != null && !r1.canBuild(p2)){
             		e.setCancelled(true);
-                    p2.sendMessage(RPLang.get("playerlistener.region.cantuse"));
+            		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                     return;
             	}                
                 if (r2 != null && !r2.canBuild(p2)){
                 	e.setCancelled(true);
-                    p2.sendMessage(RPLang.get("playerlistener.region.cantuse"));
+                	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                     return;
                 }                
             }
@@ -206,7 +216,7 @@ class RPEntityListener implements Listener{
         if (ent instanceof Player) {
             Player player = (Player)ent; 
             if (r != null && !r.canBuild(player)) {
-                player.sendMessage(RPLang.get("blocklistener.region.cantbuild"));
+            	RPLang.sendMessage(player, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             }
         }
@@ -266,7 +276,7 @@ class RPEntityListener implements Listener{
 				}
 			}
 		    e.setCancelled(true);
-			p.sendMessage(RPLang.get("entitylistener.region.cantinteract"));
+			RPLang.sendMessage(p, "entitylistener.region.cantinteract");
 		}
 	}
        

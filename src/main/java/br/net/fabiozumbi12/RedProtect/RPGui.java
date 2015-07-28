@@ -62,7 +62,10 @@ public class RPGui implements Listener{
 		int i = 0;
 		Set<String> RegionsSorted = new TreeSet<String>(region.flags.keySet());
 		for (String flag:RegionsSorted){
-			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null){
+			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null && RPConfig.isFlagEnabled(flag)){
+				if (flag.equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
+    				continue;
+    			}
 				this.guiItens[i] = RPConfig.getGuiItemStack(flag);
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
@@ -87,7 +90,7 @@ public class RPGui implements Listener{
 	
 	@EventHandler
 	void onInventoryClose(InventoryCloseEvent event){
-		if (event.getInventory().getTitle().equals(this.name)) {
+		if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)) {
 			close();
 		}
 	}
@@ -120,7 +123,7 @@ public class RPGui implements Listener{
 			event.setCancelled(true);	
 			ItemStack item = event.getCurrentItem();
 			if (item == null){
-				return;
+				close();
 			}
 			if (!item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
 				ItemMeta itemMeta = item.getItemMeta();

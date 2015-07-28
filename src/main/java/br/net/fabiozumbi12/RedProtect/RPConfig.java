@@ -32,7 +32,7 @@ public class RPConfig{
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("allow-mod", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back", "for-sale");	
 			
 	static void init(RedProtect plugin) {
 
@@ -100,20 +100,30 @@ public class RPConfig{
     	            }
     	            
     	            configs = inputLoader(plugin.getResource("config.yml"));  
-                    for (String key:configs.getKeys(true)){
+                    for (String key:configs.getKeys(true)){                        	
     	            	configs.set(key, RedProtect.plugin.getConfig().get(key));    	            	   	            	
     	            }                        
-                    for (String key:configs.getKeys(false)){
+                    for (String key:configs.getKeys(false)){    
                     	RedProtect.plugin.getConfig().set(key, configs.get(key));
                     	RedProtect.logger.debug("Set key: "+key);
                     }  
                     
+                  //add op to ignore list fro purge
                     if (RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0){
                     	List<String> ops = RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players");
                         for (OfflinePlayer play:RedProtect.serv.getOperators()){
                         	ops.add(play.getName());
                         }                                                     
                         RedProtect.plugin.getConfig().set("purge.ignore-regions-from-players", ops);
+                    }
+                    
+                    //add op to ignore list fro sell
+                    if (RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players").size() <= 0){
+                    	List<String> ops = RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players");
+                        for (OfflinePlayer play:RedProtect.serv.getOperators()){
+                        	ops.add(play.getName());
+                        }                                                     
+                        RedProtect.plugin.getConfig().set("sell.ignore-regions-from-players", ops);
                     }
                     
     	            if (RedProtect.plugin.getConfig().getString("region-settings.drop-type") != null) {
@@ -147,7 +157,10 @@ public class RPConfig{
                     
                     for (World w:RedProtect.serv.getWorlds()){
                     	gflags.set(w.getName()+".build", gflags.getBoolean(w.getName()+".build", true));
+                    	gflags.set(w.getName()+".if-build-false.break-blocks", gflags.getStringList(w.getName()+".if-build-false.break-blocks"));
+                    	gflags.set(w.getName()+".if-build-false.place-blocks", gflags.getStringList(w.getName()+".if-build-false.place-blocks"));
                     	gflags.set(w.getName()+".pvp", gflags.getBoolean(w.getName()+".pvp", true));
+                    	gflags.set(w.getName()+".interact", gflags.getBoolean(w.getName()+".interact", true));
                     	gflags.set(w.getName()+".use-minecart", gflags.getBoolean(w.getName()+".use-minecart", true));
                     	gflags.set(w.getName()+".entity-block-damage", gflags.getBoolean(w.getName()+".entity-block-damage", false));
                     	gflags.set(w.getName()+".explosion-entity-damage", gflags.getBoolean(w.getName()+".explosion-entity-damage", true));
@@ -224,6 +237,10 @@ public class RPConfig{
 		return gflags.getBoolean(key);
 	}
     
+    public static List<String> getGlobalFlagList(String key){		
+		return gflags.getStringList(key);
+	}
+    
     public static ItemStack getGuiItemStack(String key){
     	RedProtect.logger.debug("Gui Material to get: " + key);
     	RedProtect.logger.debug("Result: " + GuiItems.getString("gui-flags."+key+".material"));
@@ -248,12 +265,27 @@ public class RPConfig{
     public static HashMap<String, Object> getDefFlagsValues(){
     	HashMap<String,Object> flags = new HashMap<String,Object>();
     	for (String flag:RedProtect.plugin.getConfig().getValues(true).keySet()){
-    		if (flag.contains("flags.")){
-    			flags.put(flag.replace("flags", "").replace(".", ""), RedProtect.plugin.getConfig().get(flag));
+    		if (flag.contains("flags.") && isFlagEnabled(flag.replace("flags.", ""))){
+    			if (flag.replace("flags.", "").equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
+    				continue;
+    			}
+    			
+    			flags.put(flag.replace("flags.", ""), RedProtect.plugin.getConfig().get(flag));
+    			
+    			/*
+    			if (RedProtect.plugin.getConfig().get(flag) == null){
+    				flags.put(flag.replace("flags.", ""), " ");
+    			} else {
+    				flags.put(flag.replace("flags.", ""), RedProtect.plugin.getConfig().get(flag));
+    			}*/		
     		}
     	}    	
 		return flags;
 	}
+    
+    public static boolean isFlagEnabled(String flag){    	
+    	return RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains(flag) || AdminFlags.contains(flag);
+    }
     
     public static SortedSet<String> getDefFlags(){
     	SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());

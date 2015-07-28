@@ -7,7 +7,7 @@
 # <       configuration file in this link: http://goo.gl/EAepC7        > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 5.0
+config-version: 5.5
 debug-messages: false
 file-type: yml
 flat-file:
@@ -29,6 +29,9 @@ region-settings:
   max-scan: 600
   date-format: dd/MM/yyyy
   record-player-visit-method: ON-LOGIN
+  allow-sign-interact-tags:
+  - Admin Shop
+  - '{membername}'
 allowed-claim-worlds:
 - example_world
 wands:
@@ -37,6 +40,7 @@ wands:
 private:
   use: true
   allow-outside: false
+  allowed-blocks-use-ids: false
   allowed-blocks:
   - DISPENSER
   - NOTE_BLOCK
@@ -67,6 +71,9 @@ server-protection:
   - INVISIBILITY
   deny-playerdeath-by:
   - SUFFOCATION
+  deny-commands-on-worlds:
+    world:
+    - command
 flags:
   pvp: false
   chest: false
@@ -82,6 +89,20 @@ flags:
   allow-home: false
   allow-magiccarpet: true
 flags-configuration:
+  enabled-flags:
+  - pvp
+  - chest
+  - lever
+  - button
+  - door
+  - spawn-monsters
+  - spawn-animals
+  - passives
+  - flow
+  - fire
+  - minecart
+  - allow-home
+  - allow-magiccarpet
   pvparena-nopvp-kick-cmd: spawn {player}
   change-flag-delay:
     enable: true

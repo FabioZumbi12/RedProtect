@@ -22,7 +22,7 @@ gui-flags:
     description1: '&acommand /sethome or /home to set or come to'
     description2: '&athis region.'
   pvp:
-    material: DIAMOND_SWORD
+    material: STONE_SWORD
     name: '&e=> Allow PvP'
     description: '&6Description: &aAllow PvP for all players'
     description1: '&ain this region, including members and'
@@ -58,7 +58,7 @@ gui-flags:
     description1: '&aenter and break Minecarts in this region.'
     description2: ''
   spawn-monsters:
-    material: MONSTER_EGG
+    material: SKULL_ITEM
     name: '&e=> Spawn Monsters'
     description: '&6Description: &aAllow natural spawn of'
     description1: '&amonsters in this region.'
@@ -74,4 +74,10 @@ gui-flags:
     name: '&e=> Water and Lava Flow'
     description: '&6Description: &aEnable water and lava flow'
     description1: '&ain this region.'
+    description2: ''
+  allow-magiccarpet:
+    material: GLASS
+    name: "&e=> Allow Magic Carpet"
+    description: "&6Description: &aAllow players walk with"
+    description1: "&aMagic Carpet in your region"
     description2: ''

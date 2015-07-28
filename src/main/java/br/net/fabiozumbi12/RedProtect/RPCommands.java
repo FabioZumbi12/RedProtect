@@ -32,11 +32,11 @@ import org.bukkit.potion.PotionEffectType;
 class RPCommands implements CommandExecutor, TabCompleter{
     
     private static void sendNotInRegionMessage(Player p) {
-        RPLang.sendMessage(p,RPLang.get("cmdmanager.region.todo.that"));
+        RPLang.sendMessage(p, "cmdmanager.region.todo.that");
     }
     
     private static void sendNoPermissionMessage(Player p) {
-        RPLang.sendMessage(p,RPLang.get("no.permission"));
+        RPLang.sendMessage(p, "no.permission");
     }
     
     @Override
@@ -351,7 +351,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		}
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r == null){
-        			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+        			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return true;
         		}
         		
@@ -371,14 +371,14 @@ class RPCommands implements CommandExecutor, TabCompleter{
             				}
             				r.addOwner(r.getCreator());
             			}        			
-            			RPLang.sendMessage(player,RPLang.get("economy.region.cancelbuy"));
+            			RPLang.sendMessage(player, "economy.region.cancelbuy");
         				return true;
             		} else {
-            			RPLang.sendMessage(player,RPLang.get("economy.region.buy.notforsale"));
+            			RPLang.sendMessage(player, "economy.region.buy.notforsale");
             			return true;
             		}
         		} else {
-        			RPLang.sendMessage(player, RPLang.get("economy.region.sell.own"));
+        			RPLang.sendMessage(player, "economy.region.sell.own");
         			return true;
         		}
         	}
@@ -394,7 +394,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         				return true;
         			}
         		} else {
-    				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+    				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return true;
     			} 
         	}
@@ -409,7 +409,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 			return true;
         				} 
         			} else {
-        				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+        				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
         				return true;
         			}    
         		}    			            		       		
@@ -427,7 +427,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         			try {
     					RedProtect.rm.loadAll();
     				} catch (Exception e) {
-    					RPLang.sendMessage(player,"Error on load all regions from database files:");
+    					RPLang.sendMessage(player, "Error on load all regions from database files:");
     					e.printStackTrace();
     				}
         			RPLang.sendMessage(player,ChatColor.GREEN + "" + RedProtect.rm.getAllRegions().size() + " regions has been loaded from database files!");  
@@ -436,7 +436,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	}
         	if (args[0].equalsIgnoreCase("define")){
         		if (!player.hasPermission("redprotect.admin.define")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
                 String name = RPUtil.nameGen(player.getName(), player.getWorld().getName());
@@ -466,7 +466,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	if (args[0].equalsIgnoreCase("reload") && player.hasPermission("redprotect.admin.reload")) {
         		RedProtect.plugin.getServer().getPluginManager().disablePlugin((Plugin)RedProtect.plugin);
     			RedProtect.plugin.getServer().getPluginManager().enablePlugin((Plugin)RedProtect.plugin);
-        		RPLang.sendMessage(player,RPLang.get("cmdmanager.reloaded"));
+        		RPLang.sendMessage(player, "cmdmanager.reloaded");
         		return true;
         	}
         	if (args[0].equalsIgnoreCase("wand") && player.hasPermission("redprotect.magicwand")) {
@@ -486,19 +486,19 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 return true;
             }          
             if (args[0].equalsIgnoreCase("tutorial") || args[0].equalsIgnoreCase("tut")) {
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.tutorial"));
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.tutorial1"));
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.tutorial2"));
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.tutorial3"));
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.tutorial4"));
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.tutorial5"));
+                RPLang.sendMessage(player,"cmdmanager.tutorial");
+                RPLang.sendMessage(player,"cmdmanager.tutorial1");
+                RPLang.sendMessage(player,"cmdmanager.tutorial2");
+                RPLang.sendMessage(player,"cmdmanager.tutorial3");
+                RPLang.sendMessage(player,"cmdmanager.tutorial4");
+                RPLang.sendMessage(player,"cmdmanager.tutorial5");
                 return true;
             }
             if (args[0].equalsIgnoreCase("near") || args[0].equalsIgnoreCase("nr")) {
                 if (RedProtect.ph.hasPerm(player, "redprotect.near")) {
                     Set<Region> regions = RedProtect.rm.getRegionsNear(player, 60, player.getWorld());
                     if (regions.size() == 0) {
-                        RPLang.sendMessage(player,RPLang.get("cmdmanager.noregions.nearby"));
+                        RPLang.sendMessage(player, "cmdmanager.noregions.nearby");
                     }
                     else {
                         Iterator<Region> i = regions.iterator();
@@ -514,7 +514,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     }
                 }
                 else {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                 }
                 return true;
             }
@@ -531,7 +531,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         					return true;
         				}
         			} else {
-        				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+        				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
         				return true;
         			}    
         		} 
@@ -551,7 +551,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	
         	if (args[0].equalsIgnoreCase("define")){
         		if (!player.hasPermission("redprotect.admin.define")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
                 String name = args[1];
@@ -570,13 +570,13 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	
             if (args[0].equalsIgnoreCase("redefine")) {
                 if (!player.hasPermission("redprotect.admin.redefine")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
                 String name = args[1];
                 Region oldRect = RedProtect.rm.getRegion(name, player.getWorld());
                 if (oldRect == null) {
-                    RPLang.sendMessage(player,RPLang.get("cmdmanager.region.doesntexist"));
+                    RPLang.sendMessage(player, "cmdmanager.region.doesntexist");
                     return true;
                 }
                 RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player));
@@ -591,7 +591,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                         
             if  (args[0].equalsIgnoreCase("setconfig") && args[1].equalsIgnoreCase("list")){
         		if (!player.hasPermission("redprotect.admin.setconfig")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
         		
@@ -619,7 +619,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         if (args.length == 3) {        	
         	if (args[0].equalsIgnoreCase("define")){
         		if (!player.hasPermission("redprotect.admin.define")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
                 String name = args[1];
@@ -641,7 +641,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	// - /rp copyflag from to
     		if  (args[0].equalsIgnoreCase("copyflag")){
     			if (!player.hasPermission("redprotect.admin.copyflag")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
     			World w = player.getWorld();
@@ -664,7 +664,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     		
         	if  (args[0].equalsIgnoreCase("setconfig")){
         		if (!player.hasPermission("redprotect.admin.setconfig")) {
-                    RPLang.sendMessage(player,RPLang.get("no.permission"));
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
         		if (RedProtect.plugin.getConfig().contains(args[1])){
@@ -696,11 +696,11 @@ class RPCommands implements CommandExecutor, TabCompleter{
     		}    		
     		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         	if (r == null){
-    			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+    			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     			return true;
     		}        	
         	if (!r.isForSale()){
-    			RPLang.sendMessage(player,RPLang.get("economy.region.buy.notforsale"));
+    			RPLang.sendMessage(player, "economy.region.buy.notforsale");
     			return true;
     		} 
         	
@@ -716,11 +716,11 @@ class RPCommands implements CommandExecutor, TabCompleter{
     		}        	
         	Region r = RedProtect.rm.getTopRegion(player.getLocation());
         	if (r == null){
-    			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.todo.that"));
+    			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     			return true;
     		}        	
         	if (r.isForSale()){
-    			RPLang.sendMessage(player,RPLang.get("economy.region.sell.already"));
+    			RPLang.sendMessage(player, "economy.region.sell.already");
     			return true;
     		} 
         	
@@ -754,7 +754,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     					return true;
     				}    				
     			} catch (NumberFormatException e){    
-    				RPLang.sendMessage(player, RPLang.get("cmdmanager.eco.notdouble"));
+    				RPLang.sendMessage(player, "cmdmanager.eco.notdouble");
             		return true;
     			}
         	}
@@ -762,7 +762,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args[0].equalsIgnoreCase("tp")) {
         	if (args.length == 1) {
-        		RPLang.sendMessage(player, RPLang.get("cmdmanager.help.tp"));
+        		RPLang.sendMessage(player, "cmdmanager.help.tp");
         		return true;
         	}
         	
@@ -784,7 +784,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             		return true;
             	} else {
             		RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
-            		RPLang.sendMessage(player, RPLang.get("cmdmanager.help.tp"));
+            		RPLang.sendMessage(player, "cmdmanager.help.tp");
             		return true;
             	}
             }
@@ -792,14 +792,14 @@ class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args[0].equalsIgnoreCase("limit") || args[0].equalsIgnoreCase("limitremaining") || args[0].equalsIgnoreCase("remaining") || args[0].equalsIgnoreCase("l")) {
             if (!RedProtect.ph.hasPerm(player, "redprotect.own.limit")) {
-                RPLang.sendMessage(player,RPLang.get("no.permission"));
+                RPLang.sendMessage(player, "no.permission");
                 return true;
             }
             
             if (args.length == 1) {
             	int limit = RedProtect.ph.getPlayerLimit(player);
                 if (limit < 0 || RedProtect.ph.hasPerm(player, "redprotect.limit.blocks.unlimited")) {
-                    RPLang.sendMessage(player,RPLang.get("cmdmanager.nolimit"));
+                    RPLang.sendMessage(player,"cmdmanager.nolimit");
                     return true;
                 }
                 String uuid = player.getUniqueId().toString();
@@ -812,7 +812,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             }            
 
             if (!RedProtect.ph.hasPerm(player, "redprotect.other.limit")) {
-                RPLang.sendMessage(player,RPLang.get("no.permission"));
+                RPLang.sendMessage(player, "no.permission");
                 return true;
             }
             
@@ -824,7 +824,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             	}
             	int limit = RedProtect.ph.getPlayerLimit(offp);
                 if (limit < 0 || RedProtect.ph.hasPerm(offp, "redprotect.limit.blocks.unlimited")) {
-                    RPLang.sendMessage(player,RPLang.get("cmdmanager.nolimit"));
+                    RPLang.sendMessage(player, "cmdmanager.nolimit");
                     return true;
                 }
                 
@@ -838,14 +838,14 @@ class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args[0].equalsIgnoreCase("claimlimit") || args[0].equalsIgnoreCase("climit")  || args[0].equalsIgnoreCase("cl")) {
             if (!RedProtect.ph.hasPerm(player, "redprotect.own.claimlimit")) {
-                RPLang.sendMessage(player,RPLang.get("no.permission"));
+                RPLang.sendMessage(player, "no.permission");
                 return true;
             }
             
             if (args.length == 1) {
             	int limit = RedProtect.ph.getPlayerClaimLimit(player);
                 if (limit < 0 || RedProtect.ph.hasPerm(player, "redprotect.claimunlimited")) {
-                    RPLang.sendMessage(player,RPLang.get("cmdmanager.nolimit"));
+                    RPLang.sendMessage(player,"cmdmanager.nolimit");
                     return true;
                 }
 
@@ -855,7 +855,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             }            
 
             if (!RedProtect.ph.hasPerm(player, "redprotect.other.claimlimit")) {
-                RPLang.sendMessage(player,RPLang.get("no.permission"));
+                RPLang.sendMessage(player, "no.permission");
                 return true;
             }
             
@@ -867,7 +867,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             	}
             	int limit = RedProtect.ph.getPlayerClaimLimit(offp);
                 if (limit < 0 || RedProtect.ph.hasPerm(offp, "redprotect.limit.claim.unlimited")) {
-                    RPLang.sendMessage(player,RPLang.get("cmdmanager.nolimit"));
+                    RPLang.sendMessage(player, "cmdmanager.nolimit");
                     return true;
                 }
                 
@@ -903,7 +903,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		try {
         			prior = Integer.parseInt(args[1]);
             	} catch (NumberFormatException e){ 
-        			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.notnumber"));
+        			RPLang.sendMessage(player, "cmdmanager.region.notnumber");
         			return true; 
         		} 
         		handlePriority(player, prior);
@@ -914,7 +914,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             	try {
         			prior = Integer.parseInt(args[2]);
             	} catch (NumberFormatException e){ 
-        			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.notnumber"));
+        			RPLang.sendMessage(player, "cmdmanager.region.notnumber");
         			return true; 
         		} 
         		handlePrioritySingle(player, prior, args[1]);
@@ -1063,7 +1063,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     	handleList(player, RPUtil.PlayerToUUID(args[1]), Page);
                     	return true;
                 	} catch(NumberFormatException  e){
-                        RPLang.sendMessage(player,RPLang.get("cmdmanager.region.listpage.error"));   
+                        RPLang.sendMessage(player, "cmdmanager.region.listpage.error");   
                         return true;
                 }                 
             }
@@ -1076,7 +1076,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 	private void buyHandler(Player player, Double value, Region r) {		
 		       		
 		if (RPUtil.PlayerToUUID(player.getName()).equalsIgnoreCase(r.getCreator())){
-			RPLang.sendMessage(player, RPLang.get("economy.region.buy.own"));
+			RPLang.sendMessage(player, "economy.region.buy.own");
 			return;
 		}
 		
@@ -1096,11 +1096,11 @@ class RPCommands implements CommandExecutor, TabCompleter{
 				RPLang.sendMessage(player, RPLang.get("economy.region.buy.success").replace("{region}", r.getName()).replace("{value}", value.toString()).replace("{ecosymbol}", RPConfig.getEcoString("economy-name")));
 				return;
 			} else {
-				RPLang.sendMessage(player, RPLang.get("economy.region.error"));
+				RPLang.sendMessage(player, "economy.region.error");
 				return;
 			}
 		} else {
-			RPLang.sendMessage(player, RPLang.get("economy.region.buy.nomoney"));
+			RPLang.sendMessage(player, "economy.region.buy.nomoney");
 			return;
 		} 		
 	}
@@ -1109,12 +1109,12 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		
 		if (r.isOwner(player) || player.hasPermission("redprotect.eco.admin")){
 			if (RPEconomy.putToSell(r, creator, value)){
-				RPLang.sendMessage(player, RPLang.get("economy.region.sell.success"));
+				RPLang.sendMessage(player, "economy.region.sell.success");
 			} else {
-				RPLang.sendMessage(player, RPLang.get("economy.region.error"));
+				RPLang.sendMessage(player, "economy.region.error");
 			}
 		} else {
-			RPLang.sendMessage(player, RPLang.get("economy.region.sell.own"));
+			RPLang.sendMessage(player, "economy.region.sell.own");
 		}		
 	}
 
@@ -1125,7 +1125,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     			r.setPrior(prior);
     			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.priority.set").replace("{region}", r.getName()) + " " + prior);
     		} else {
-    			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.todo.that"));
+    			RPLang.sendMessage(p, "cmdmanager.region.todo.that");
         		return;
     		}
     	}
@@ -1138,7 +1138,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     			r.setPrior(prior);
     			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.priority.set").replace("{region}", r.getName()) + " " + prior);
     		} else {
-    			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.todo.that"));
+    			RPLang.sendMessage(p, "cmdmanager.region.todo.that");
         		return;
     		}
     	}		
@@ -1164,7 +1164,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		Region r = RedProtect.rm.getRegion(rname, p.getWorld());
         if (RedProtect.ph.hasRegionPerm(p, "delete", r)) {
             if (r == null) {
-            	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.doesntexist"));
+            	RPLang.sendMessage(p, "cmdmanager.region.doesntexist");
                 return;
             }
             RedProtect.rm.remove(r);
@@ -1366,22 +1366,22 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 return;
             }
             if (RedProtect.rm.getRegion(newName, p.getWorld()) != null) {
-                RPLang.sendMessage(p,RPLang.get("cmdmanager.region.rename.already"));
+                RPLang.sendMessage(p, "cmdmanager.region.rename.already");
                 return;
             }
             if (newName.length() < 2 || newName.length() > 16) {
-                RPLang.sendMessage(p,RPLang.get("cmdmanager.region.rename.invalid"));
+                RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
                 return;
             }
             if (newName.contains(" ")) {
-                RPLang.sendMessage(p,RPLang.get("cmdmanager.region.rename.spaces"));
+                RPLang.sendMessage(p, "cmdmanager.region.rename.spaces");
                 return;
             }            
             RedProtect.rm.renameRegion(newName, r);
             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.rename.newname") + " " + newName);
         }
         else {
-            RPLang.sendMessage(p,RPLang.get("no.permission"));
+            RPLang.sendMessage(p, "no.permission");
         }
     }
     
@@ -1420,7 +1420,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             	}
             	
             	if (r.flagExists("for-sale") && flag.equalsIgnoreCase("for-sale")){
-            		RPLang.sendMessage(p, RPLang.get("cmdmanager.eco.changeflag"));
+            		RPLang.sendMessage(p, "cmdmanager.eco.changeflag");
             		return;
             	}
             	
@@ -1487,10 +1487,10 @@ class RPCommands implements CommandExecutor, TabCompleter{
             	}
             	
             } else {
-                RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.nopermregion"));
+                RPLang.sendMessage(p,"cmdmanager.region.flag.nopermregion");
             }
         } else {
-        	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.noperm"));
+        	RPLang.sendMessage(p, "cmdmanager.region.flag.noperm");
         }                      
     }
     
@@ -1546,7 +1546,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	getRegionforList(p, uuid, Page);
         	return;
         }
-        RPLang.sendMessage(p,RPLang.get("no.permission"));
+        RPLang.sendMessage(p, "no.permission");
     }
     
 	private static void getRegionforList(Player p, String uuid, int Page){
@@ -1554,7 +1554,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     	String pname = RPUtil.UUIDtoPlayer(uuid);
         int length = regions.size();
         if (pname == null || length == 0) {
-            RPLang.sendMessage(p,RPLang.get("cmdmanager.player.noregions"));
+            RPLang.sendMessage(p, "cmdmanager.player.noregions");
             return;
         }
         else {
@@ -1592,11 +1592,11 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	if (r != null){
         		if (wMessage.equals("")){
         			r.setWelcome("");
-        			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.welcomeoff"));
+        			RPLang.sendMessage(p, "cmdmanager.region.welcomeoff");
         			return;
         		} else if (wMessage.equals("hide ")){
         			r.setWelcome(wMessage);
-        			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.welcomehide"));
+        			RPLang.sendMessage(p, "cmdmanager.region.welcomehide");
         			return;
         		} else {
         			r.setWelcome(wMessage);
@@ -1604,33 +1604,33 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 	return;        		
         		}
         	} else {
-        		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.todo.that"));
+        		RPLang.sendMessage(p, "cmdmanager.region.todo.that");
         		return;
         	}
         } 
-        RPLang.sendMessage(p,RPLang.get("no.permission"));
+        RPLang.sendMessage(p, "no.permission");
     }
 	
 	private static void handletp(Player p, String rname, String wname, Player play){
 		World w = RedProtect.serv.getWorld(wname);
 		if (w == null) {
-            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.invalidworld"));
+            RPLang.sendMessage(p, "cmdmanager.region.invalidworld");
             return;
         }
     	Region region = RedProtect.rm.getRegion(rname, w);
     	if (region == null) {
-    		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.doesntexist"));
+    		RPLang.sendMessage(p, "cmdmanager.region.doesntexist");
             return;
         }          
     	
     	if (play == null) {
     		if (!RedProtect.ph.hasRegionPerm(p, "tp", region)){
-    			RPLang.sendMessage(p,RPLang.get("no.permission"));
+    			RPLang.sendMessage(p, "no.permission");
                 return;
     		}
     	} else {
     		if (!RedProtect.ph.hasPerm(p, "redprotect.tp.other")) {
-        		RPLang.sendMessage(p,RPLang.get("no.permission"));
+        		RPLang.sendMessage(p, "no.permission");
                 return;
             }    		
         }      
@@ -1651,8 +1651,8 @@ class RPCommands implements CommandExecutor, TabCompleter{
     	}
     	if (loc != null){
     		if (play != null){
-    			p.teleport(loc);
-        		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.tp") + " " + rname);   			
+    			play.teleport(loc);
+    			RPLang.sendMessage(play, RPLang.get("cmdmanager.region.tp") + " " + rname);   			
     			RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpother") + " " + rname);
     		} else {
     			tpWait(p, loc, rname);
@@ -1669,7 +1669,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		}
 		if (!RedProtect.tpWait.contains(p.getName())){
     		RedProtect.tpWait.add(p.getName());
-    		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.tpdontmove"));
+    		RPLang.sendMessage(p, "cmdmanager.region.tpdontmove");
     		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable(){
     			@Override
     			public void run() {
@@ -1681,7 +1681,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     			}    		
         	}, 60L);
     	} else {
-    		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.tpneedwait"));
+    		RPLang.sendMessage(p, "cmdmanager.region.tpneedwait");
     	}
 	}
 	

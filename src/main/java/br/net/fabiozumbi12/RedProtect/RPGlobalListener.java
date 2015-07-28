@@ -49,9 +49,12 @@ public class RPGlobalListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e) {
+		RedProtect.logger.debug("RPGlobalListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
 		if (e.isCancelled()) {
             return;
         }
+
+		Block b = e.getBlock();
 		Player p = e.getPlayer();
 		Material item = e.getItemInHand().getType();
 		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
@@ -66,6 +69,9 @@ public class RPGlobalListener implements Listener{
 	        }
 		} else {
 			if (!RPConfig.getGlobalFlag(p.getWorld().getName()+".build") && !p.hasPermission("redprotect.bypass")){
+				if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
+					return;
+				}
 				e.setCancelled(true);
 				return;
 			}
@@ -74,14 +80,20 @@ public class RPGlobalListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockBreak(BlockBreakEvent e) {
+		RedProtect.logger.debug("RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 		if (e.isCancelled()) {
             return;
         }
+
+		Block b = e.getBlock();
 		Player p = e.getPlayer();
 		World w = p.getWorld();
 		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
 		
 		if (r == null && !RPConfig.getGlobalFlag(w.getName()+".build") && !p.hasPermission("redprotect.bypass")){
+			if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
+				return;
+			}
 			e.setCancelled(true);
 			return;
 		}
@@ -89,6 +101,7 @@ public class RPGlobalListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e){
+		RedProtect.logger.debug("RPGlobalListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
             return;
         }
@@ -106,7 +119,7 @@ public class RPGlobalListener implements Listener{
     			return;		
         	}
         } else {
-        	if (!RPConfig.getGlobalFlag(b.getWorld().getName()+".build") && !p.hasPermission("redprotect.bypass")){
+        	if (!RPConfig.getGlobalFlag(b.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass")){
         		e.setUseItemInHand(Event.Result.DENY);
     			e.setCancelled(true);
     			return;
@@ -119,6 +132,7 @@ public class RPGlobalListener implements Listener{
     	if (e.isCancelled()) {
             return;
         }
+
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
@@ -132,11 +146,11 @@ public class RPGlobalListener implements Listener{
                 return;
             }
         } else {
-        	if (!RPConfig.getGlobalFlag(l.getWorld().getName()+".build") && !e.getPlayer().hasPermission("redprotect.bypass")) {
+        	if (!RPConfig.getGlobalFlag(l.getWorld().getName()+".interact") && !e.getPlayer().hasPermission("redprotect.bypass") && (!(ent instanceof Player))) {
                 e.setCancelled(true);
                 return;
             }
-        }        
+        }      
 	}
 	
 	@EventHandler

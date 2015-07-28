@@ -29,20 +29,20 @@ class DefineRegionBuilder extends RegionBuilder{
                 ++i;
             }
             if (regionName.length() > 16) {
-                p.sendMessage(RPLang.get("regionbuilder.autoname.error"));
+            	RPLang.sendMessage(p, "regionbuilder.autoname.error");
                 return;
             }
         }
         if (loc1 == null || loc2 == null) {
-            p.sendMessage(RPLang.get("regionbuilder.selection.notset"));
+        	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
         }
         if (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
-            p.sendMessage(RPLang.get("regionbuilder.regionname.existis"));
+        	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
         }
         if (regionName.length() < 2 || regionName.length() > 16) {
-            p.sendMessage(RPLang.get("regionbuilder.regionname.invalid"));
+        	RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
             return;
         }
 

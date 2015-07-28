@@ -9,7 +9,7 @@
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.8.6-R0.1-SNAPSHOT</version>
+          <version>1.8.7-R0.1-SNAPSHOT</version>
         </dependency>
         <!-- bukkit
         <dependency>
@@ -101,5 +101,5 @@
       </plugin>
     </plugins>
   </build>
-  <version>5.4</version>
+  <version>5.5</version>
 </project>

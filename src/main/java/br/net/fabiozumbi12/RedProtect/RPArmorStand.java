@@ -16,6 +16,7 @@ import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -61,7 +62,7 @@ class RPArmorStand implements Listener{
         if (ent.getType().equals(EntityType.ARMOR_STAND)) {
             if (r != null && !r.canBuild(p)) {
                 if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
-                    p.sendMessage(RPLang.get("playerlistener.region.cantedit"));
+                	RPLang.sendMessage(p, "playerlistener.region.cantedit");
                     e.setCancelled(true);
                     return;
                 }                
@@ -150,7 +151,7 @@ class RPArmorStand implements Listener{
 		if (e1 instanceof ArmorStand){
         	if (r1 != null && !r1.canBuild(p)){
             	e.setCancelled(true);
-            	p.sendMessage(RPLang.get("blocklistener.region.cantbreak"));
+            	RPLang.sendMessage(p, "blocklistener.region.cantbreak");
             	return;
             }                                  
         }
@@ -161,7 +162,7 @@ class RPArmorStand implements Listener{
                 Player p2 = mp2.getOwner().getPlayer();
                 if (!r1.canBuild(p2) || !r1.canHurtPassives(p2)) {
                     e.setCancelled(true);
-                    p2.sendMessage(RPLang.get("mplistener.cantdo"));
+                    RPLang.sendMessage(p2, "mplistener.cantdo");
                     mp2.getMyPet().setStatus(PetState.Despawned);
                     return;
                 }                
@@ -185,10 +186,21 @@ class RPArmorStand implements Listener{
     	if (p.getItemInHand().getType().equals(Material.ARMOR_STAND)){
         	if (r != null && !r.canBuild(p)){
         		e.setCancelled(true);
-            	p.sendMessage(RPLang.get("blocklistener.region.cantbuild"));
+        		RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             	return;
         	}    	
     	}
     }
+    
+	@EventHandler
+	public void onBlockExplode(BlockExplodeEvent e){
+		RedProtect.logger.debug("Is BlockExplodeEvent event");		
+		Location l = e.getBlock().getLocation();
+		Region r = RedProtect.rm.getTopRegion(l);
+		if (r != null && !r.canFire()){
+			e.setCancelled(true);
+			return;
+		}
+	}
         
 }

@@ -231,7 +231,7 @@ class RPUtil {
                 i++;
         	}
         	
-        	//CHeck new flags if exists
+        	//Check new flags if exists
         	if (r.flags == null){ 
         		backup();        		
         		HashMap<String, Object> rflags = RPConfig.getDefFlagsValues();

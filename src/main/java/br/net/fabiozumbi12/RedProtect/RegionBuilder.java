@@ -25,6 +25,7 @@ abstract class RegionBuilder{
     }
     
     void setError(Player p, String error) {
-        p.sendMessage(RPLang.get("regionbuilder.error") + " (" + error + ")");
+    	RPLang.sendMessage(p, RPLang.get("regionbuilder.error") + "(" + error + ")");
+
     }
 }

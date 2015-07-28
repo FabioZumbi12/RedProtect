@@ -460,7 +460,7 @@ public class Region implements Serializable{
     }
     
     public boolean getFlagBool(String key) {
-    	if (!flagExists(key)){
+    	if (!flagExists(key) || !RPConfig.isFlagEnabled(key)){
     		return (boolean) RPConfig.getDefFlagsValues().get(key);
     	}
         return this.flags.get(key) instanceof Boolean && (boolean)this.flags.get(key);
@@ -474,48 +474,85 @@ public class Region implements Serializable{
     }
     
     public boolean canBuild(Player p) {
-        return p.getLocation().getY() < RPConfig.getInt("region-settings.height-start") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return p.getLocation().getY() < RPConfig.getInt("region-settings.height-start") || checkAllowedPlayer(p);
     }
     
     public boolean canPVP(Player p) {
+    	if (!RPConfig.isFlagEnabled("pvp")){
+    		return RPConfig.getBool("flags.pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	}
         return getFlagBool("pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canChest(Player p) {
-        return getFlagBool("chest") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	if (!RPConfig.isFlagEnabled("chest")){
+    		return RPConfig.getBool("flags.chest") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("chest") || checkAllowedPlayer(p);
     }
     
     public boolean canLever(Player p) {
-        return getFlagBool("lever") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	if (!RPConfig.isFlagEnabled("lever")){
+    		return RPConfig.getBool("flags.lever") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("lever") || checkAllowedPlayer(p);
     }
     
     public boolean canButton(Player p) {
-        return getFlagBool("button") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	if (!RPConfig.isFlagEnabled("button")){
+    		return RPConfig.getBool("flags.button") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("button") || checkAllowedPlayer(p);
     }
     
     public boolean canDoor(Player p) {
-        return getFlagBool("door") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	if (!RPConfig.isFlagEnabled("door")){
+    		return RPConfig.getBool("flags.door") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("door") || checkAllowedPlayer(p);
     }
     
     public boolean canSpawnMonsters() {
+    	if (!RPConfig.isFlagEnabled("spawn-monsters")){
+    		return RPConfig.getBool("flags.spawn-monsters");
+    	}
         return getFlagBool("spawn-monsters");
     }
     
     public boolean canHurtPassives(Player p) {
-        return getFlagBool("passives") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	if (!RPConfig.isFlagEnabled("passives")){
+    		return RPConfig.getBool("flags.passives") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("passives") || checkAllowedPlayer(p);
     }
     
     public boolean canFlow() {
+    	if (!RPConfig.isFlagEnabled("flow")){
+    		return RPConfig.getBool("flags.flow");
+    	}
         return getFlagBool("flow");
     }
     
     public boolean canFire() {
+    	if (!RPConfig.isFlagEnabled("fire")){
+    		return RPConfig.getBool("flags.fire");
+    	}
         return getFlagBool("fire");
     }
     
     public boolean canSpawnPassives() {
+    	if (!RPConfig.isFlagEnabled("spawn-animals")){
+    		return RPConfig.getBool("flags.spawn-animals");
+    	}
         return getFlagBool("spawn-animals");
     }
+    
+	public boolean AllowHome(Player p) {
+		if (!RPConfig.isFlagEnabled("allow-home")){
+    		return RPConfig.getBool("flags.allow-home") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	}
+		return getFlagBool("allow-home") || checkAllowedPlayer(p);
+	}
     
     public int ownersSize() {
         return this.owners.size();
@@ -524,7 +561,23 @@ public class Region implements Serializable{
     public String getFlagInfo() {
     	String flaginfo = "";
     	for (String flag:this.flags.keySet()){
-    		flaginfo = flaginfo + ", "+ ChatColor.AQUA + flag + ":" + ChatColor.GRAY +RPLang.translBool(this.flags.get(flag).toString());
+    		if (RPConfig.getDefFlags().contains(flag)){   
+    			String flagValue = this.flags.get(flag).toString();
+    			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
+    				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": " + RPLang.translBool(flagValue);
+    			} else {
+    				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": "  + ChatColor.GRAY + flagValue;
+    			}    			
+    		} 
+    		
+    		if (RPConfig.AdminFlags.contains(flag)){    			
+    			String flagValue = this.flags.get(flag).toString();
+    			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
+    				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": " + RPLang.translBool(flagValue);
+    			} else {
+    				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": " + ChatColor.GRAY + flagValue;
+    			} 
+    		} 
     	}    	
     	if (this.flags.keySet().size() > 0) {
     		flaginfo = flaginfo.substring(2);
@@ -546,27 +599,30 @@ public class Region implements Serializable{
 
 	public boolean canSign(Player p) {
 		if (!flags.containsKey("sign")){
-    		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    		return checkAllowedPlayer(p);
     	}		
-        return getFlagBool("sign") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("sign") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canMinecart(Player p) {
-        return getFlagBool("minecart") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+		if (!flags.containsKey("minecart")){
+    		return checkAllowedPlayer(p);
+    	}
+        return getFlagBool("minecart") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnter(Player p) {
 		if (!flags.containsKey("enter")){
     		return true;
     	}
-        return getFlagBool("enter") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnderPearl(Player p) {
 		if (!flags.containsKey("enderpearl")){
     		return true;
     	}
-        return getFlagBool("enderpearl") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("enderpearl") || checkAllowedPlayer(p);
 	}
 	
     
@@ -597,18 +653,14 @@ public class Region implements Serializable{
 		if (!flags.containsKey("up-skills")){
     		return true;
     	}
-        return getFlagBool("up-skills") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("up-skills") || checkAllowedPlayer(p);
 	}
 
 	public boolean canDeathBack(Player p) {
 		if (!flags.containsKey("death-back")){
     		return true;
     	}
-        return getFlagBool("death-back") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
-	}
-
-	public boolean AllowHome(Player p) {
-		return getFlagBool("allow-home") || this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("death-back") || checkAllowedPlayer(p);
 	}
 	
 	public boolean isForSale() {
@@ -624,6 +676,13 @@ public class Region implements Serializable{
 		}
 		return getFlagBool("pvparena");
 	}
+	
+	public boolean allowMod() {
+		if (!flagExists("allow-mod")){
+			return false;
+		}
+		return getFlagBool("allow-mod");
+	}
 
 	public Double getValue() {	
 		return this.value;
@@ -634,4 +693,7 @@ public class Region implements Serializable{
 		this.value = value;
 	}
 	    
+	private boolean checkAllowedPlayer(Player p){
+		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+	}
 }

@@ -67,7 +67,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.getCreator().equals(uuid)){
+			if (r.getCreator() != null && r.getCreator().equals(uuid)){
 				regionsp.add(r);
 			}
 		}

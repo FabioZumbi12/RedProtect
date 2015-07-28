@@ -133,7 +133,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                                 
                             } else if (pName.equals(owner1)) {
                             	e.setLine(2, "--");
-                            	p.sendMessage(RPLang.get("regionbuilder.sign.dontneed.name"));
+                            	RPLang.sendMessage(p, "regionbuilder.sign.dontneed.name");
                             	
                             } else {
                                 owners.add(owner1);
@@ -144,7 +144,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                             	e.setLine(3, "--");
                             } else if (pName.equals(owner2)) {
                             	e.setLine(3, "--");
-                            	p.sendMessage(RPLang.get("regionbuilder.sign.dontneed.name"));
+                            	RPLang.sendMessage(p, "regionbuilder.sign.dontneed.name");
                                 
                             } else {
                             	owners.add(owner2);                                

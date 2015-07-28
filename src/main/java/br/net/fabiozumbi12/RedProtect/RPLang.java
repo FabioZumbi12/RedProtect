@@ -145,8 +145,14 @@ public class RPLang {
 		return FMsg;
 	}
 	
-	static void sendMessage(Player p, String message){
-		p.sendMessage(get("_redprotect.prefix")+ " " + message);
+	static void sendMessage(Player p, String key){
+		if (Lang.get(key) == null){
+			p.sendMessage(get("_redprotect.prefix")+ " " + key.replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
+		} else if (get(key).equalsIgnoreCase("")){
+			return;
+		} else {
+			p.sendMessage(get("_redprotect.prefix")+ " " + get(key));
+		}		
 	}
 	
 	static String translBool(String bool){		

@@ -214,7 +214,7 @@ public class RedProtect extends JavaPlugin {
 			
 			taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() { 
 				public void run() {
-					RedProtect.logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
+					RedProtect.logger.debug("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
 					rm.saveAll();					
 					} 
 				},RPConfig.getInt("flat-file.auto-save-interval-seconds")*20, RPConfig.getInt("flat-file.auto-save-interval-seconds")*20);	

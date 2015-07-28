@@ -9,14 +9,21 @@ import org.bukkit.entity.Player;
 
 class RPContainer {
 
+	@SuppressWarnings("deprecation")
 	public boolean canOpen(Block b, Player p) {
     	if (!RPConfig.getBool("private.use")){
     		return true;
     	}
     	
         Boolean Final = true;
+        String blocktype;
+        if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+        	blocktype = Integer.toString(b.getTypeId());
+        } else {
+        	blocktype = b.getType().name();
+        }  
     	
-        if (RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){
+        if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype)){
         	int x = b.getX();
             int y = b.getY();
             int z = b.getZ();
@@ -42,7 +49,14 @@ class RPContainer {
             		}
             	}
             	            	
-            	if (RPConfig.getStringList("private.allowed-blocks").contains(signb.getType().name())){
+            	String signbtype;
+                if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+                	signbtype = Integer.toString(signb.getTypeId());
+                } else {
+                	signbtype = signb.getType().name();
+                } 
+                
+            	if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
             		x = signb.getX();
                     y = signb.getY();
                     z = signb.getZ();                
@@ -71,6 +85,7 @@ class RPContainer {
 		return Final;        
     }
 
+	@SuppressWarnings("deprecation")
 	public boolean canBreak(Player p, Block b){
     	if (!RPConfig.getBool("private.use")){
     		return true;
@@ -100,7 +115,14 @@ class RPContainer {
     		}
     	}   		
            		
-        if (RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){
+        String signbtype;
+        if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+        	signbtype = Integer.toString(b.getTypeId());
+        } else {
+        	signbtype = b.getType().name();
+        } 
+        
+        if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
             for (Block signb:blocks){ 
             	if (signb.getType().equals(Material.WALL_SIGN)){
             		Sign s = (Sign) signb.getState();
@@ -131,7 +153,14 @@ class RPContainer {
 	    	container = b.getRelative(BlockFace.WEST);
 	    }    	    
 	    
-	    if (RPConfig.getStringList("private.allowed-blocks").contains(container.getType().name())){
+	    String signbtype;
+        if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+        	signbtype = Integer.toString(container.getTypeId());
+        } else {
+        	signbtype = container.getType().name();
+        } 
+        
+	    if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
 	    	return true;
 	    }
 	    return false;
