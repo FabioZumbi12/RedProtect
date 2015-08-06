@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class Region implements Serializable{
 	
@@ -560,8 +562,8 @@ public class Region implements Serializable{
     
     public String getFlagInfo() {
     	String flaginfo = "";
-    	for (String flag:this.flags.keySet()){
-    		if (RPConfig.getDefFlags().contains(flag)){   
+    	for (String flag:this.flags.keySet()){    		
+    		if (RPConfig.getDefFlags().contains(flag)){
     			String flagValue = this.flags.get(flag).toString();
     			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
     				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": " + RPLang.translBool(flagValue);
@@ -569,6 +571,10 @@ public class Region implements Serializable{
     				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": "  + ChatColor.GRAY + flagValue;
     			}    			
     		} 
+    		
+    		if (flaginfo.contains(flag)){
+				continue;
+			}
     		
     		if (RPConfig.AdminFlags.contains(flag)){    			
     			String flagValue = this.flags.get(flag).toString();
@@ -613,14 +619,75 @@ public class Region implements Serializable{
 	
 	public boolean canEnter(Player p) {
 		if (!flags.containsKey("enter")){
-    		return true;
+    		return checkAllowedPlayer(p);
     	}
         return getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || checkAllowedPlayer(p);
 	}
 	
+	public boolean canEnterWithItens(Player p) {
+		if (!flags.containsKey("allow-enter-items")){
+    		return true;
+    	}		
+		
+		if (checkAllowedPlayer(p)){
+			return true;
+		}
+		
+		String[] items = flags.get("allow-enter-items").toString().replace(" ", "").split(",");
+		List<String> inv = new ArrayList<String>();
+		List<String> mats = new ArrayList<String>();
+		for (ItemStack slot:p.getInventory()){
+			if (slot == null || slot.getType().equals(Material.AIR)){
+				continue;
+			}
+			if (!inv.contains(slot.getType().name())){
+				inv.add(slot.getType().name());
+			}
+			
+		}		
+		for (String item:items){
+			if (!mats.contains(item)){
+				mats.add(item.toUpperCase());
+			}
+			
+		}				
+		if (!(mats.containsAll(inv) && inv.containsAll(mats))){
+			return false;
+		}
+        return true;
+	}
+	
+	public boolean denyEnterWithItens(Player p) {
+		if (!flags.containsKey("deny-enter-items")){
+    		return true;
+    	}		
+		if (checkAllowedPlayer(p)){
+			return true;
+		}
+				
+		for (ItemStack slot:p.getInventory().getContents()){
+			if (slot == null){
+				continue;
+			}
+					
+			String SlotType = slot.getType().name();
+			if (SlotType.equalsIgnoreCase("AIR")){
+				continue;
+			}
+			
+			String[] items = flags.get("deny-enter-items").toString().replace(" ", "").split(",");
+			for (String comp:items){
+				if (SlotType.equalsIgnoreCase(comp)){
+					return false;
+				}
+			}
+		}
+        return true;
+	}
+	
 	public boolean canEnderPearl(Player p) {
 		if (!flags.containsKey("enderpearl")){
-    		return true;
+    		return checkAllowedPlayer(p);
     	}
         return getFlagBool("enderpearl") || checkAllowedPlayer(p);
 	}

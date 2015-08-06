@@ -1385,6 +1385,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
     }
     
+    // TODO Flag Handler
 	private static void handleFlag(Player p, String flag, String value, Region r) {  	
     	if (flag.equalsIgnoreCase("?")){
     		sendFlagHelp(p); 
@@ -1438,11 +1439,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 	
                 	if (RPConfig.AdminFlags.contains(flag)) {
                 		if (!validate(flag, objflag)){
-                			if (flag.equalsIgnoreCase("effects")){                				
-                				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
-                			} else {
-                				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usagetruefalse").replace("{flag}", flag));
-                			}                			
+                			SendFlagUsageMessage(p, flag);               			
                 			return;
                 		}
                 		r.setFlag(flag, objflag);
@@ -1456,11 +1453,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 
                 	
                 	if (RPConfig.AdminFlags.contains(flag)){
-                		if (flag.equalsIgnoreCase("effects")){                				
-            				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
-            			} else {
-            				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usagetruefalse").replace("{flag}", flag));
-            			} 
+                		SendFlagUsageMessage(p, flag); 
             		} else {
                     	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
             		}
@@ -1474,11 +1467,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                         return;
             		} else {
             			if (RPConfig.AdminFlags.contains(flag)){
-            				if (flag.equalsIgnoreCase("effects")){                				
-                				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
-                			} else {
-                				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usagetruefalse").replace("{flag}", flag));
-                			}  
+            				SendFlagUsageMessage(p, flag);  
                 		} else {
                         	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
                 		}
@@ -1494,6 +1483,18 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }                      
     }
     
+	private static void SendFlagUsageMessage(Player p, String flag) {
+		if (flag.equalsIgnoreCase("effects")){                				
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
+		} else if (flag.equalsIgnoreCase("allow-enter-items")){                				
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));    
+		} else if (flag.equalsIgnoreCase("deny-enter-items")){                				
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
+		} else {
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usagetruefalse").replace("{flag}", flag));
+		} 		
+	}
+
 	private static void sendFlagHelp(Player p) {
 		p.sendMessage(RPLang.get("general.color") + "-------------[RedProtect Flags]------------");
     	p.sendMessage(RPLang.get("cmdmanager.region.flag.list") + " " + RPConfig.getDefFlags());
@@ -1514,6 +1515,22 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		}
 		if (flag.equalsIgnoreCase("minefarm") && !(value instanceof Boolean)){
 			return false;
+		}
+		if (flag.equalsIgnoreCase("allow-enter-items")){
+			String[] valida = ((String)value).replace(" ", "").split(",");
+			for (String item:valida){
+				if (Material.getMaterial(item.toUpperCase()) == null){
+					return false;
+				}
+			}
+		}
+		if (flag.equalsIgnoreCase("deny-enter-items")){
+			String[] valida = ((String)value).replace(" ", "").split(",");
+			for (String item:valida){
+				if (Material.getMaterial(item.toUpperCase()) == null){
+					return false;
+				}
+			}
 		}
 		if (flag.equalsIgnoreCase("effects")){
 			if (!(value instanceof String)){

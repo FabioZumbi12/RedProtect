@@ -154,7 +154,7 @@ class RPPlayerListener implements Listener{
         if (b.getType().name().contains("CHEST") || 
         		b.getType().name().contains("ANVIL") ||
         		b.getType().name().contains("ENCHANTMENT_TABLE") ||
-        		b.getType().name().contains("BED") ||
+        		b.getType().name().equalsIgnoreCase("BED") ||
         		b.getType().name().contains("NOTE_BLOCK") ||
         		b.getType().name().contains("JUKEBOX") ||
         		b.getType().name().contains("WORKBENCH") ||
@@ -167,7 +167,7 @@ class RPPlayerListener implements Listener{
         		b.getType().name().contains("HOPPER") ||
         		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){   
         	
-            Boolean out = RPConfig.getBool("allow-private-outside");
+            Boolean out = RPConfig.getBool("private.allow-outside");
         	if (r != null && (!r.canChest(p) || (r.canChest(p) && !cont.canOpen(b, p)))) {
                     if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
@@ -607,41 +607,22 @@ class RPPlayerListener implements Listener{
         
         World w = lfrom.getWorld();
         
-      //Enter flag
+        //Enter flag
         if (r != null && !r.canEnter(p)){
-    		for (int i = 0; i < 100; i++){
-        		Region r1 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX()+i, lfrom.getBlockZ());
-        		Region r2 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX()-i, lfrom.getBlockZ());
-        		Region r3 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX(), lfrom.getBlockZ()+i);
-        		Region r4 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX(), lfrom.getBlockZ()-i);
-        		Region r5 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX()+i, lfrom.getBlockZ()+i);
-        		Region r6 = RedProtect.rm.getTopRegion(w, lfrom.getBlockX()-i, lfrom.getBlockZ()-i);
-        		if (r1 != r){
-        			e.setTo(lfrom.add(+i, 0, 0));
-        			break;
-        		} 
-        		if (r2 != r){
-        			e.setTo(lfrom.add(-i, 0, 0));
-        			break;
-        		} 
-        		if (r3 != r){
-        			e.setTo(lfrom.add(0, 0, +i));
-        			break;
-        		} 
-        		if (r4 != r){
-        			e.setTo(lfrom.add(0, 0, -i));
-        			break;
-        		} 
-        		if (r5 != r){
-        			e.setTo(lfrom.add(+i, 0, +i));
-        			break;
-        		} 
-        		if (r6 != r){
-        			e.setTo(lfrom.add(-i, 0, -i));
-        			break;
-        		} 
-    		}
+    		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
     		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
+    	}
+        
+        //Allow enter with items
+        if (r != null && !r.canEnterWithItens(p)){
+    		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
+    		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
+    	}
+        
+      //Deny enter with item
+        if (r != null && !r.denyEnterWithItens(p)){
+    		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
+    		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
     	}
         
         //update region owner or member visit
@@ -692,7 +673,44 @@ class RPPlayerListener implements Listener{
     	}   	
     }
     
-    @EventHandler
+    private Location DenyEnterPlayer(World wFrom, Location from, Location to, Player p, Region r) {
+    	Location setTo = to;
+    	for (int i = 0; i < 100; i++){
+    		Region r1 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockZ());
+    		Region r2 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockZ());
+    		Region r3 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockZ()+i);
+    		Region r4 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockZ()-i);
+    		Region r5 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockZ()+i);
+    		Region r6 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockZ()-i);
+    		if (r1 != r){
+    			setTo = from.add(+i, 0, 0);
+    			break;
+    		} 
+    		if (r2 != r){
+    			setTo = from.add(-i, 0, 0);
+    			break;
+    		} 
+    		if (r3 != r){
+    			setTo = from.add(0, 0, +i);
+    			break;
+    		} 
+    		if (r4 != r){
+    			setTo = from.add(0, 0, -i);
+    			break;
+    		} 
+    		if (r5 != r){
+    			setTo = from.add(+i, 0, +i);
+    			break;
+    		} 
+    		if (r6 != r){
+    			setTo = from.add(-i, 0, -i);
+    			break;
+    		} 
+		}
+    	return setTo;
+	}
+
+	@EventHandler
     public void onPlayerLogout(PlayerQuitEvent e){
     	stopTaskPlayer(e.getPlayer());
     	if (RedProtect.tpWait.contains(e.getPlayer().getName())){
