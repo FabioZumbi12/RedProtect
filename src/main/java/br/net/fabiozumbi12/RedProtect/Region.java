@@ -687,7 +687,7 @@ public class Region implements Serializable{
 	
 	public boolean canEnderPearl(Player p) {
 		if (!flags.containsKey("enderpearl")){
-    		return true;
+    		return checkAllowedPlayer(p);
     	}
         return getFlagBool("enderpearl") || checkAllowedPlayer(p);
 	}
