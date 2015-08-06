@@ -379,10 +379,10 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             } else {
                 if (RPConfig.getBool("flat-file.backup") && this.backupExists() && !path.equalsIgnoreCase(datbackf)) {
                     this.load(datbackf);
-                    RedProtect.logger.info("Data file is blank, Reading from " + datbackf);
+                    RedProtect.logger.debug("Data file is blank, Reading from " + datbackf);
                     return;
                 }
-                RedProtect.logger.info("Creating a new data file" + datbackf);
+                RedProtect.logger.debug("Creating a new data file" + datbackf);
             }
             
         }

@@ -619,7 +619,7 @@ public class Region implements Serializable{
 	
 	public boolean canEnter(Player p) {
 		if (!flags.containsKey("enter")){
-    		return checkAllowedPlayer(p);
+    		return true;
     	}
         return getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || checkAllowedPlayer(p);
 	}
@@ -687,7 +687,7 @@ public class Region implements Serializable{
 	
 	public boolean canEnderPearl(Player p) {
 		if (!flags.containsKey("enderpearl")){
-    		return checkAllowedPlayer(p);
+    		return true;
     	}
         return getFlagBool("enderpearl") || checkAllowedPlayer(p);
 	}

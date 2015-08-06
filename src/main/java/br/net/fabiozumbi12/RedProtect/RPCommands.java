@@ -130,6 +130,16 @@ class RPCommands implements CommandExecutor, TabCompleter{
             		}
         		}        		
         		
+        		if (args[0].equalsIgnoreCase("list-all")) {
+        			int total = 0;
+        			for (Region r:RedProtect.rm.getAllRegions()){
+        				RedProtect.logger.info(ChatColor.GREEN + "[" + total + "]" + "Region: " + r.getName() + ChatColor.RESET + " | " + ChatColor.AQUA + "World: " + r.getWorld() + ChatColor.RESET);
+        				total ++;
+        			}
+        			RedProtect.logger.sucess(total + " regions for " + Bukkit.getWorlds().size() + " worlds.");
+        			return true;
+        		}
+        		
         		if (args[0].equalsIgnoreCase("mychunkconvert")) {
             		if (handleMyChunk()){
             			RedProtect.logger.sucess("...converting MyChunk database");
@@ -1782,6 +1792,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 			sender.sendMessage(ChatColor.GOLD + "/rp tp <playerName> <regionName> <World>");			
 			sender.sendMessage(ChatColor.GOLD + "/rp limit <playerName>");
 			sender.sendMessage(ChatColor.GOLD + "/rp claimlimit <playerName> [world]");
+			sender.sendMessage(ChatColor.GOLD + "/rp list-all");
 			sender.sendMessage(ChatColor.GOLD + "/rp ymlTomysql");
 			sender.sendMessage(ChatColor.GOLD + "/rp save-all");
 			sender.sendMessage(ChatColor.GOLD + "/rp load-all");

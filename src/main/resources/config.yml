@@ -29,6 +29,7 @@ region-settings:
   max-scan: 600
   date-format: dd/MM/yyyy
   record-player-visit-method: ON-LOGIN
+  nether-portal-across-regions: true
   allow-sign-interact-tags:
   - Admin Shop
   - '{membername}'
@@ -114,7 +115,7 @@ purge:
   remove-oldest: 90
   ignore-regions-from-players:
 sell:
-  enabled: true
+  enabled: false
   sell-oldest: 60
   ignore-regions-from-players:
 update-check:

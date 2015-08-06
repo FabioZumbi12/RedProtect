@@ -32,6 +32,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -709,7 +710,26 @@ class RPPlayerListener implements Listener{
 		}
     	return setTo;
 	}
-
+    
+    @EventHandler
+    public void onPlayerEnterPortal(EntityPortalEvent e){
+    	if (!(e.getEntity() instanceof Player)){
+    		return;
+    	}
+    	
+    	if (RPConfig.getBool("region-settings.nether-portal-across-regions")){
+    		return;
+    	}
+    	
+    	Player p = (Player) e.getEntity();
+    	Region rto = RedProtect.rm.getTopRegion(e.getTo());
+    	
+    	if (rto != null && !rto.canBuild(p)){
+    		RPLang.sendMessage(p, "playerlistener.region.cantteleport");
+    		e.setCancelled(true);
+    	}    	
+    }
+    
 	@EventHandler
     public void onPlayerLogout(PlayerQuitEvent e){
     	stopTaskPlayer(e.getPlayer());
