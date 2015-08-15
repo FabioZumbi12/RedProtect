@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -393,12 +394,21 @@ class RPBlockListener implements Listener{
 			return;
 		}
 		Block piston = e.getBlock();
-		List<Block> blocks = e.getBlocks();
-		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
-		for (Block b:blocks){
-			Region br = RedProtect.rm.getTopRegion(b.getLocation());
+		if (Bukkit.getVersion().contains("1.7")){
+			Block block = e.getBlock();
+			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
+			Region br = RedProtect.rm.getTopRegion(block.getLocation());
 			if (pr == null && br != null || (pr != null && br != null && pr != br)){
 				e.setCancelled(true);				
+			}
+		} else {
+			List<Block> blocks = e.getBlocks();
+			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
+			for (Block b:blocks){
+				Region br = RedProtect.rm.getTopRegion(b.getLocation());
+				if (pr == null && br != null || (pr != null && br != null && pr != br)){
+					e.setCancelled(true);				
+				}
 			}
 		}
 	}

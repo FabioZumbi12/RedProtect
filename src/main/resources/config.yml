@@ -29,7 +29,6 @@ region-settings:
   max-scan: 600
   date-format: dd/MM/yyyy
   record-player-visit-method: ON-LOGIN
-  nether-portal-across-regions: true
   allow-sign-interact-tags:
   - Admin Shop
   - '{membername}'

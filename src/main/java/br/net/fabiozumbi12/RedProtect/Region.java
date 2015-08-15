@@ -604,28 +604,28 @@ public class Region implements Serializable{
     }
 
 	public boolean canSign(Player p) {
-		if (!flags.containsKey("sign")){
+		if (!flagExists("sign")){
     		return checkAllowedPlayer(p);
     	}		
         return getFlagBool("sign") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canMinecart(Player p) {
-		if (!flags.containsKey("minecart")){
+		if (!flagExists("minecart")){
     		return checkAllowedPlayer(p);
     	}
         return getFlagBool("minecart") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnter(Player p) {
-		if (!flags.containsKey("enter")){
+		if (!flagExists("enter")){
     		return true;
     	}
         return getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnterWithItens(Player p) {
-		if (!flags.containsKey("allow-enter-items")){
+		if (!flagExists("allow-enter-items")){
     		return true;
     	}		
 		
@@ -658,7 +658,7 @@ public class Region implements Serializable{
 	}
 	
 	public boolean denyEnterWithItens(Player p) {
-		if (!flags.containsKey("deny-enter-items")){
+		if (!flagExists("deny-enter-items")){
     		return true;
     	}		
 		if (checkAllowedPlayer(p)){
@@ -686,7 +686,7 @@ public class Region implements Serializable{
 	}
 	
 	public boolean canEnderPearl(Player p) {
-		if (!flags.containsKey("enderpearl")){
+		if (!flagExists("enderpearl")){
     		return checkAllowedPlayer(p);
     	}
         return getFlagBool("enderpearl") || checkAllowedPlayer(p);
@@ -694,7 +694,7 @@ public class Region implements Serializable{
 	
     
 	public boolean canMining(Block b) {
-    	if (!flags.containsKey("minefarm")){
+    	if (!flagExists("minefarm")){
     		return false;
     	}
 		if (b.getType().toString().contains("_ORE") ||
@@ -707,7 +707,7 @@ public class Region implements Serializable{
 	}
 
 	public boolean canTree(Block b) {
-		if (!flags.containsKey("treefarm")){
+		if (!flagExists("treefarm")){
     		return false;
     	}
 		if (b.getType().toString().contains("LOG") || b.getType().toString().contains("LEAVES")){
@@ -717,14 +717,14 @@ public class Region implements Serializable{
 	}
 	
 	public boolean canSkill(Player p) {
-		if (!flags.containsKey("up-skills")){
+		if (!flagExists("up-skills")){
     		return true;
     	}
         return getFlagBool("up-skills") || checkAllowedPlayer(p);
 	}
 
 	public boolean canDeathBack(Player p) {
-		if (!flags.containsKey("death-back")){
+		if (!flagExists("death-back")){
     		return true;
     	}
         return getFlagBool("death-back") || checkAllowedPlayer(p);
@@ -750,17 +750,38 @@ public class Region implements Serializable{
 		}
 		return getFlagBool("allow-mod");
 	}
+	
+	public boolean canEnterPortal(Player p) {
+		if (!flagExists("portal-enter")){
+			return true;
+		}
+		return getFlagBool("portal-enter") || checkAllowedPlayer(p);
+	}
+	
+	public boolean canExitPortal(Player p) {
+		if (!flagExists("portal-exit")){
+			return true;
+		}
+		return getFlagBool("portal-exit") || checkAllowedPlayer(p);
+	}
 
 	public Double getValue() {	
 		return this.value;
 	}
 	
 	public void setValue(Double value) {	
-		RedProtect.rm.updateLiveRegion(this, "value", value.toString());
+		RedProtect.rm.updateLiveRegion(this, "value", String.valueOf(value));
 		this.value = value;
 	}
 	    
 	private boolean checkAllowedPlayer(Player p){
 		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+	}
+
+	public boolean canCreatePortal() {
+		if (!flagExists("allow-create-portal")){
+			return true;
+		}
+		return getFlagBool("allow-create-portal");
 	}
 }

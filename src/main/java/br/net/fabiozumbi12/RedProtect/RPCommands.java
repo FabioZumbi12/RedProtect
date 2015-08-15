@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
@@ -41,47 +43,51 @@ class RPCommands implements CommandExecutor, TabCompleter{
     
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args){
-    	List<String> tab = new ArrayList<String>();    
+    	List<String> SotTab = new ArrayList<String>();    
+    	SortedSet<String> tab = new TreeSet<String>();  
     	if (sender instanceof Player){
     		List<String> cmds = Arrays.asList("value", "buy", "sell", "cancelbuy", "tutorial", "limit", "claimlimit", "list", "delete", "info", "flag", "addmember", "addowner", "removemember", "removeowner", "rename", "welcome", "priority", "near", "panel");
     		List<String> admcmds = Arrays.asList("wand", "tp", "define", "redefine", "setconfig", "reload", "copyflag", "setcreator", "save-all", "reload-all");
     		
     		if (args.length == 1){
     			for (String command:cmds){
-    				if (sender.hasPermission("redprotect.user") && command.startsWith(args[0])){
+    				if (sender.hasPermission("redprotect.user") && command.startsWith(args[0]) && !tab.contains(command)){
     					tab.add(command);
     				}
     			}
     			for (String command:admcmds){
-    				if (sender.hasPermission("redprotect.admin") && command.startsWith(args[0])){
+    				if (sender.hasPermission("redprotect.admin") && command.startsWith(args[0]) && !tab.contains(command)){
     					tab.add(command);
     				}
     			}
-    			return tab;
+    			SotTab.addAll(tab);
+    			return SotTab;
     		}
     		if (args.length == 2){
         		if (args[0].equalsIgnoreCase("flag")){
         			for (String flag:RPConfig.getDefFlags()){
-        				if (flag.startsWith(args[1]) && sender.hasPermission("redprotect.flag."+ flag)){
+        				if (flag.startsWith(args[1]) && sender.hasPermission("redprotect.flag."+ flag) && !tab.contains(flag)){
         					tab.add(flag);
         				}
         			} 
         			for (String flag:RPConfig.AdminFlags){
-        				if (flag.startsWith(args[1]) && sender.hasPermission("redprotect.admin.flag."+ flag)){
+        				if (flag.startsWith(args[1]) && sender.hasPermission("redprotect.admin.flag."+ flag) && !tab.contains(flag)){
         					tab.add(flag);
         				}
         			}
-        			return tab;
+        			SotTab.addAll(tab);
+        			return SotTab;
         		}
         	}
     	} else {
-    		List<String> consolecmds = Arrays.asList("setconfig", "flag", "tp", "ymlTomysql", "setconfig", "reload", "save-all", "reload-all", "limit", "claimlimit");
+    		List<String> consolecmds = Arrays.asList("setconfig", "flag", "tp", "ymlTomysql", "setconfig", "reload", "save-all", "reload-all", "limit", "claimlimit", "list-all");
     		for (String command:consolecmds){
 				if (command.startsWith(args[0])){
 					tab.add(command);
 				}
 			}
-    		return tab;
+    		SotTab.addAll(tab);
+			return SotTab;
     	}
 		return null;    	
     }
@@ -742,7 +748,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	if (args.length == 2){         
         		// rp sell <value/player>
         		try {
-    				Double value = Double.parseDouble(args[1]);
+        			Double value = Double.valueOf(args[1]);
     				if (player.hasPermission("redprotect.eco.setvalue")){
     					sellHandler(r, player, RPUtil.PlayerToUUID(r.getCreator()), value);
     					return true;
@@ -758,7 +764,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	if (args.length == 3){   
         		// rp sell player value
         		try {
-    				Double value = Double.parseDouble(args[2]);
+        			Double value = Double.valueOf(args[2]);
     				if (player.hasPermission("redprotect.eco.setvalue")){
     					sellHandler(r, player, RPUtil.PlayerToUUID(args[1]), value);
     					return true;
@@ -1103,7 +1109,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 						RPLang.sendMessage((Player) offp, RPLang.get("economy.region.buy.bought").replace("{player}", player.getName()).replace("{region}", rname).replace("{world}", r.getWorld()));
 					}
 				}
-				RPLang.sendMessage(player, RPLang.get("economy.region.buy.success").replace("{region}", r.getName()).replace("{value}", value.toString()).replace("{ecosymbol}", RPConfig.getEcoString("economy-name")));
+				RPLang.sendMessage(player, RPLang.get("economy.region.buy.success").replace("{region}", r.getName()).replace("{value}", String.valueOf(value)).replace("{ecosymbol}", RPConfig.getEcoString("economy-name")));
 				return;
 			} else {
 				RPLang.sendMessage(player, "economy.region.error");

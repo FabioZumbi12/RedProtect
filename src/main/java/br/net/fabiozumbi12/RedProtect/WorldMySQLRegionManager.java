@@ -59,7 +59,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = null;
                 con = DriverManager.getConnection(String.valueOf(this.url) + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16), value double not null default '0.0')");
+                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Double not null default '0.0')");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region'!");    
@@ -120,7 +120,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 			ResultSet rs = meta.getColumns(null, null, "region", "value");
 	    	if (!rs.next()){
 	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD value double not null default '0.0'");
+			    st.executeUpdate("ALTER TABLE region ADD value Double not null default '0.0'");
 			    st.close();
 			    RedProtect.logger.info("Created column 'value'!");
 	    	}
@@ -290,7 +290,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     String world = rs.getString("world");
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
-                    double value = rs.getDouble("value");
+                    Double value = rs.getDouble("value");
                     
                     for (String member:rs.getString("members").split(", ")){
                     	if (member.length() > 0){
@@ -375,7 +375,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 		r.getWelcome() + "', '" + 
                 		r.getPrior() + "', '" + 
                 		r.getWorld() + "', '" + 
-                		r.getValue().toString()+"')");                    
+                		r.getValue()+"')");                    
                 st.close();
             }
             catch (SQLException e) {

@@ -32,7 +32,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -42,8 +41,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -539,6 +540,15 @@ class RPPlayerListener implements Listener{
     		return;
     	}    	
     	
+    	//Pvp check
+        if (msg.startsWith("/pvp") && RedProtect.PvPm){
+    		if (r != null && r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
+    			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
+    			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
+    			return;
+        	}
+    	}
+        
     	if (RedProtect.Mc && r != null && !r.getFlagBool("allow-magiccarpet") && !r.isOwner(p)){
     		if (msg.startsWith("/magiccarpet")){
     			e.setCancelled(true);
@@ -712,21 +722,30 @@ class RPPlayerListener implements Listener{
 	}
     
     @EventHandler
-    public void onPlayerEnterPortal(EntityPortalEvent e){
-    	if (!(e.getEntity() instanceof Player)){
-    		return;
-    	}
-    	
-    	if (RPConfig.getBool("region-settings.nether-portal-across-regions")){
-    		return;
-    	}
-    	
-    	Player p = (Player) e.getEntity();
+    public void onPlayerEnterPortal(PlayerPortalEvent e){
+    	Player p = e.getPlayer();
     	Region rto = RedProtect.rm.getTopRegion(e.getTo());
+    	Region from = RedProtect.rm.getTopRegion(e.getFrom());
     	
-    	if (rto != null && !rto.canBuild(p)){
+    	if (rto != null && !rto.canExitPortal(p)){
     		RPLang.sendMessage(p, "playerlistener.region.cantteleport");
     		e.setCancelled(true);
+    	}    
+    	
+    	if (from != null && !from.canEnterPortal(p)){
+    		RPLang.sendMessage(p, "playerlistener.region.cantenterteleport");
+    		e.setCancelled(true);
+    	}
+    }
+    
+    @EventHandler
+    public void onPortalCreate(PortalCreateEvent e){    
+    	List<Block> blocks = e.getBlocks();
+    	for (Block b:blocks){
+    		Region r = RedProtect.rm.getTopRegion(b.getLocation());
+    		if (r != null && !r.canCreatePortal()){
+    			e.setCancelled(true);
+    		}
     	}    	
     }
     

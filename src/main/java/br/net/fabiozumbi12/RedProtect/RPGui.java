@@ -66,7 +66,7 @@ public class RPGui implements Listener{
 				if (flag.equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
     				continue;
     			}
-				this.guiItens[i] = RPConfig.getGuiItemStack(flag);
+				this.guiItens[i] = removeAttribute(RPConfig.getGuiItemStack(flag));
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
 				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
@@ -77,8 +77,7 @@ public class RPGui implements Listener{
 						guiMeta.removeEnchant(Enchantment.DURABILITY);
 					}
 					guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);	
-				}
-							
+				}				
 				this.guiItens[i].setType(Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")));
 				this.guiItens[i].setItemMeta(guiMeta);
 				i++;
@@ -122,7 +121,7 @@ public class RPGui implements Listener{
 		if (event.getInventory().getTitle().equals(this.name)){
 			event.setCancelled(true);	
 			ItemStack item = event.getCurrentItem();
-			if (item == null){
+			if (item.getType() == null){
 				close();
 			}
 			if (!item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
@@ -148,6 +147,14 @@ public class RPGui implements Listener{
 				}
 			}			
 	    }
+	}
+	
+	private ItemStack removeAttribute(ItemStack stack) {
+	    // May need to clone this ItemStack as a CraftItemStack
+	    ItemStack craftStack = NbtFactory.getCraftItemStack(stack);
+	 
+	    NbtFactory.fromItemTag(craftStack).put("AttributeModifiers", NbtFactory.createList());
+	    return craftStack;
 	}
 	
 	private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event){

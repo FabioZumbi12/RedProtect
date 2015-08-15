@@ -32,7 +32,7 @@ public class RPConfig{
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "death-back", "for-sale");	
 			
 	static void init(RedProtect plugin) {
 
@@ -345,12 +345,12 @@ public class RPConfig{
 		return values;
 	}
 
-	public static double getBlockCost(String itemName) {
-		return EconomyConfig.getDouble("items.values."+itemName);
+	public static int getBlockCost(String itemName) {
+		return EconomyConfig.getInt("items.values."+itemName);
 	}
 	
-	public static double getEnchantCost(String enchantment) {
-		return EconomyConfig.getDouble("enchantments.values."+enchantment);
+	public static int getEnchantCost(String enchantment) {
+		return EconomyConfig.getInt("enchantments.values."+enchantment);
 	}
 	
 	public static String getEcoString(String key){

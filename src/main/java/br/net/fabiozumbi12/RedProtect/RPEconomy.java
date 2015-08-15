@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class RPEconomy {
 
-	public static double getRegionValue(Region r){
-		double regionCost = 0.0;
+	public static Double getRegionValue(Region r){
+		Double regionCost = 0.0;
 		World w = RedProtect.serv.getWorld(r.getWorld());
 		int maxX = r.getMaxMbrX();
 		int minX = r.getMinMbrX();
