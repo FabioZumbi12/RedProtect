@@ -28,13 +28,13 @@ import de.Keyle.MyPet.skill.skills.implementation.Poison;
 import de.Keyle.MyPet.skill.skills.implementation.Ranged;
 
 @SuppressWarnings("deprecation")
-class RPArmorStand implements Listener{
+class RPMine18 implements Listener{
 	
 	static RPContainer cont = new RPContainer();
 	static HashMap<Player, String> Ownerslist = new HashMap<Player, String>();
     RedProtect plugin;
     
-    public RPArmorStand(RedProtect plugin) {
+    public RPMine18(RedProtect plugin) {
         this.plugin = plugin;
     }
     

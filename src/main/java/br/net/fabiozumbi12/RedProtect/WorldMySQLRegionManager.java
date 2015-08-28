@@ -47,7 +47,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             RedProtect.plugin.disable();
             return;
         }
-        this.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
+        this.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName().toLowerCase();
         Statement st = null;
         try {
             if (!this.checkDBExists()) {
@@ -57,7 +57,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 RedProtect.logger.info("Created database '" + this.dbname + "'!");
                 st.close();
                 st = null;
-                con = DriverManager.getConnection(String.valueOf(this.url) + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+                con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
                 st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Double not null default '0.0')");
                 st.close();
@@ -94,7 +94,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         if (this.dbexists) {            
             return true;
         }     
-        try {        	
+        try {   
+        	RedProtect.logger.debug("Checking if database exists... " + this.url + this.dbname);
         	Connection con = DriverManager.getConnection(this.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
             DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getCatalogs();

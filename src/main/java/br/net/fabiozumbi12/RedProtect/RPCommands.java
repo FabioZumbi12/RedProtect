@@ -420,8 +420,13 @@ class RPCommands implements CommandExecutor, TabCompleter{
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
         				if (r.isOwner(player) || player.hasPermission("redprotect.admin.panel")){
-        					RPGui gui = new RPGui(ChatColor.AQUA + r.getName() + " flags", player, r, RedProtect.plugin);
-            				gui.open();
+        					if (r.getName().length() > 16){
+        						RPGui gui = new RPGui(ChatColor.DARK_GREEN + r.getName().substring(0, 16) + " Flags!", player, r, RedProtect.plugin);
+        						gui.open();
+        					} else {
+        						RPGui gui = new RPGui(ChatColor.DARK_GREEN + r.getName() + " Flags!", player, r, RedProtect.plugin);
+        						gui.open();
+        					}
                 			return true;
         				} 
         			} else {
@@ -539,8 +544,13 @@ class RPCommands implements CommandExecutor, TabCompleter{
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
         				if (r.isOwner(player) || player.hasPermission("redprotect.admin.flag")){
-        					RPGui gui = new RPGui(ChatColor.AQUA + r.getName() + " flags", player, r, RedProtect.plugin);
-            				gui.open();
+        					if (r.getName().length() > 16){
+        						RPGui gui = new RPGui(ChatColor.DARK_GREEN + r.getName().substring(0, 16) + " Flags!", player, r, RedProtect.plugin);
+        						gui.open();
+        					} else {
+        						RPGui gui = new RPGui(ChatColor.DARK_GREEN + r.getName() + " Flags!", player, r, RedProtect.plugin);
+        						gui.open();
+        					}
                 			return true;
         				} else {
         					sendNoPermissionMessage(player);
@@ -1427,7 +1437,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
             	
             	if (value.equalsIgnoreCase("remove")){
             		if (RPConfig.AdminFlags.contains(flag) && r.flags.containsKey(flag)){
-            			r.flags.remove(flag);
+            			r.removeFlag(flag);
                         RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", r.getName())); 
             			return;
             		} else {

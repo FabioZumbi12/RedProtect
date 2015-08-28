@@ -62,15 +62,22 @@ public class RPGui implements Listener{
 		int i = 0;
 		Set<String> RegionsSorted = new TreeSet<String>(region.flags.keySet());
 		for (String flag:RegionsSorted){
+			if (!(region.flags.get(flag) instanceof Boolean)){
+				continue;
+			}
 			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null && RPConfig.isFlagEnabled(flag)){
 				if (flag.equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
     				continue;
-    			}
-				this.guiItens[i] = removeAttribute(RPConfig.getGuiItemStack(flag));
+    			}	
+				if (allowEnchant){
+					this.guiItens[i] = removeAttribute(RPConfig.getGuiItemStack(flag));
+				} else {
+					this.guiItens[i] = RPConfig.getGuiItemStack(flag);					
+				}				
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
 				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
-				if (allowEnchant){
+				if (allowEnchant){					
 					if (this.region.getFlagBool(flag)){
 						guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
 					} else {
@@ -118,13 +125,10 @@ public class RPGui implements Listener{
 	
 	@EventHandler
 	void onInventoryClick(InventoryClickEvent event){	
-		if (event.getInventory().getTitle().equals(this.name)){
+		if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)){
 			event.setCancelled(true);	
 			ItemStack item = event.getCurrentItem();
-			if (item.getType() == null){
-				close();
-			}
-			if (!item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
+			if (item != null && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
 				ItemMeta itemMeta = item.getItemMeta();
 				String flag = itemMeta.getLore().get(1).replace("§0", "");
 				if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){

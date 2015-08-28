@@ -111,13 +111,19 @@ class RPEntityListener implements Listener{
         }
 
         if (e instanceof EntityDamageByEntityEvent) {        	
-        	RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event.");        	
+        	RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event.");   
+        	
             EntityDamageByEntityEvent de = (EntityDamageByEntityEvent)e;
+            //check player listener
+            de.setCancelled(RPPlayerListener.CheckPlayerEvent(de));
+            
             Entity e1 = de.getEntity();
             Entity e2 = de.getDamager();
+            
             if (e2 == null) {
                 return;
             }
+            
             if (e2 instanceof Projectile) {
             	Projectile a = (Projectile)e2;                
                 if (a.getShooter() instanceof Entity){
@@ -131,7 +137,7 @@ class RPEntityListener implements Listener{
             
             Region r1 = RedProtect.rm.getTopRegion(e1.getLocation());
             Region r2 = RedProtect.rm.getTopRegion(e2.getLocation());
-            
+                        
             if (de.getCause().equals(DamageCause.LIGHTNING) || de.getCause().equals(DamageCause.BLOCK_EXPLOSION) || de.getCause().equals(DamageCause.FIRE) || de.getCause().equals(DamageCause.WITHER) || de.getCause().equals(DamageCause.CUSTOM) || de.getCause().equals(DamageCause.ENTITY_EXPLOSION)){           	
             	if (r1 != null && !r1.canFire() && !(e2 instanceof Player)){
             		e.setCancelled(true);
@@ -174,18 +180,14 @@ class RPEntityListener implements Listener{
                 }                
             }
             else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                Region r3 = RedProtect.rm.getTopRegion(e1.getLocation());
-                if (r3 != null) {
-                	
-                    if (e2 instanceof Player) {
-                        Player p2 = (Player)e2;
-                        if (!r3.canHurtPassives(p2)) {
-                            e.setCancelled(true);
-                            RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
-                            return;
-                        }
+            	if (r1 != null && e2 instanceof Player) {
+                    Player p2 = (Player)e2;
+                    if (!r1.canHurtPassives(p2)) {
+                        e.setCancelled(true);
+                        RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
+                        return;
                     }
-                } 
+                }                
             } 
             else if ((e1 instanceof Hanging) && e2 instanceof Player){
             	Player p2 = (Player)e2;

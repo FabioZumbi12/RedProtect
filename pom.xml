@@ -4,6 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
+  <version>5.5</version>
   <dependencies>
 		<!--Spigot-API-->
         <dependency>
@@ -101,5 +102,4 @@
       </plugin>
     </plugins>
   </build>
-  <version>5.5</version>
 </project>

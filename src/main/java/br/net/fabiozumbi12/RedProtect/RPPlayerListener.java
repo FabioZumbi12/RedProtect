@@ -20,8 +20,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Fish;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.Event;
@@ -359,7 +361,12 @@ class RPPlayerListener implements Listener{
     
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {                
-        Player p = null;        
+        e.setCancelled(CheckPlayerEvent(e));        
+    }
+    
+    public static Boolean CheckPlayerEvent(EntityDamageByEntityEvent e) {
+    	Player p = null;        
+        
         if (e.getDamager() instanceof Player){
         	p = (Player)e.getDamager();
         } else if (e.getDamager() instanceof Arrow){
@@ -369,6 +376,11 @@ class RPPlayerListener implements Listener{
         	}        	
         } else if (e.getDamager() instanceof Fish){
         	Fish fish = (Fish)e.getDamager();
+        	if (fish.getShooter() instanceof Player){
+        		p = (Player) fish.getShooter();
+        	} 
+        } else if (e.getDamager() instanceof FishHook){
+        	FishHook fish = (FishHook)e.getDamager();
         	if (fish.getShooter() instanceof Player){
         		p = (Player) fish.getShooter();
         	} 
@@ -387,22 +399,32 @@ class RPPlayerListener implements Listener{
         	if (Fireball.getShooter() instanceof Player){
         		p = (Player) Fireball.getShooter();
         	} 
+        } else if (e.getDamager() instanceof Projectile){
+        	Projectile Projectile = (Projectile)e.getDamager();
+        	if (Projectile.getShooter() instanceof Player){
+        		p = (Player) Projectile.getShooter();
+        	} 
         } else if (e.getDamager() instanceof SmallFireball){
         	SmallFireball SmallFireball = (SmallFireball)e.getDamager();
         	if (SmallFireball.getShooter() instanceof Player){
         		p = (Player) SmallFireball.getShooter();
-        	} 
+        	}
         } else {
-        	e.isCancelled();
-        	return;
+            return e.isCancelled();
         }
-
-        RedProtect.logger.debug("Is EntityDamageByEntityEvent event.");
+        
+        if (p != null){
+        	RedProtect.logger.debug("Player: " + p.getName()); 
+        } else {
+        	RedProtect.logger.debug("Player: is null"); 
+        }
+        
+        RedProtect.logger.debug("Damager: " + e.getDamager().getType().name()); 
         
         Location l = e.getEntity().getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
         if (r == null || p == null){
-        	return;
+        	return false;
         }
         
         if (RedProtect.tpWait.contains(p.getName())){
@@ -412,25 +434,22 @@ class RPPlayerListener implements Listener{
         
         if (e.getEntityType().equals(EntityType.PLAYER) && r.flagExists("pvp") && !r.canPVP(p)){
         	RPLang.sendMessage(p, "entitylistener.region.cantpvp");
-            e.setCancelled(true);
-            return;
+            return true;
         }
         
         if (e.getEntityType().equals(EntityType.ITEM_FRAME) && !r.canBuild(p)){
         	RPLang.sendMessage(p, "playerlistener.region.cantremove");
-            e.setCancelled(true);
-            return;
+            return true;
         }   
 
         if (e.getEntityType().name().contains("MINECART") && !r.canMinecart(p)){
         	RPLang.sendMessage(p, "blocklistener.region.cantbreak");
-            e.setCancelled(true);
-        	return;
+        	return true;
         }
-        
-    }
-    
-    @EventHandler
+		return false;		
+	}
+
+	@EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e){
     	if (e.isCancelled()) {
             return;

@@ -283,14 +283,26 @@ class RPBlockListener implements Listener{
     	
     	Block b = e.getBlock();
     	Block bignit = e.getIgnitingBlock(); 
-    	if ( b == null || bignit == null){
+    	if (b == null){
     		return;
     	}
-    	RedProtect.logger.debug("Is BlockIgniteEvent event");
+    	
+    	RedProtect.logger.debug("Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
+    	
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
-		if ((bignit.getType().equals(Material.FIRE) || bignit.getType().name().contains("LAVA") || e.getIgnitingEntity() != null || e.getCause().equals(IgniteCause.LIGHTNING) || e.getCause().equals(IgniteCause.EXPLOSION)) && r != null && !r.canFire()){
-			e.setCancelled(true);
-    		return;
+		if (r != null && !r.canFire()){
+			if (bignit != null && (bignit.getType().equals(Material.FIRE) || bignit.getType().name().contains("LAVA"))){
+				e.setCancelled(true);
+	    		return;
+			} 
+			if (e.getCause().equals(IgniteCause.LIGHTNING) || e.getCause().equals(IgniteCause.EXPLOSION) || e.getCause().equals(IgniteCause.FIREBALL)){
+				e.setCancelled(true);
+	    		return;
+			}
+			if (e.getIgnitingEntity() != null){
+				e.setCancelled(true);
+	    		return;
+			}
 		}
     	return;
     }

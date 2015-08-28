@@ -33,7 +33,7 @@ public class RedProtect extends JavaPlugin {
     private RPPlayerListener pListener;
     private RPEntityListener eListener;
     private RPWorldListener wListener;
-    private RPArmorStand aListener;
+    private RPMine18 aListener;
     private MPListener mpListener;
     private McMMoListener mcmmoListener;
     private SkillAPIListener skilstener;
@@ -239,7 +239,7 @@ public class RedProtect extends JavaPlugin {
         this.wListener = new RPWorldListener(this);        
         String v = RedProtect.serv.getBukkitVersion();
         if (v.contains("1.8")){
-        	this.aListener = new RPArmorStand(this);
+        	this.aListener = new RPMine18(this);
         }
         if (MyPet){
         	this.mpListener = new MPListener(this);
