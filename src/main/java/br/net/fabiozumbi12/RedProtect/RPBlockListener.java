@@ -81,7 +81,7 @@ class RPBlockListener implements Listener{
         		if (cont.isContainer(b)){
             		int length = p.getName().length();
                     if (length > 15) {
-                      length = 15;
+                      length = 16;
                     }
                 	e.setLine(1, p.getName().substring(0, length));
                 	RPLang.sendMessage(p, "blocklistener.container.protected");
