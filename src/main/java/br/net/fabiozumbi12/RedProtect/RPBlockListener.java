@@ -80,7 +80,7 @@ class RPBlockListener implements Listener{
         	if (out || r != null){
         		if (cont.isContainer(b)){
             		int length = p.getName().length();
-                    if (length > 15) {
+                    if (length > 16) {
                       length = 16;
                     }
                 	e.setLine(1, p.getName().substring(0, length));
