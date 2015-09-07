@@ -784,4 +784,36 @@ public class Region implements Serializable{
 		}
 		return getFlagBool("allow-create-portal");
 	}
+	
+	public boolean AllowCommands(Player p, String Command) {
+		if (!flagExists("allow-cmds")){
+			return true;
+		}
+		
+		Command = Command.replace("/", "");
+		//As Whitelist
+		String[] cmds = flags.get("allow-cmds").toString().replace(" ", "").split(",");
+		for (String cmd:cmds){
+			if (cmd.equalsIgnoreCase(Command)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean DenyCommands(Player p, String Command) {
+		if (!flagExists("deny-cmds")){
+			return true;
+		}
+		
+		Command = Command.replace("/", "");
+		//As BlackList
+		String[] cmds = flags.get("deny-cmds").toString().replace(" ", "").split(",");
+		for (String cmd:cmds){
+			if (cmd.equalsIgnoreCase(Command)){
+				return false;
+			}
+		}		
+		return true;
+	}
 }

@@ -1516,6 +1516,8 @@ class RPCommands implements CommandExecutor, TabCompleter{
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));    
 		} else if (flag.equalsIgnoreCase("deny-enter-items")){                				
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
+		} else if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds")){                				
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
 		} else {
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usagetruefalse").replace("{flag}", flag));
 		} 		
@@ -1557,6 +1559,17 @@ class RPCommands implements CommandExecutor, TabCompleter{
 					return false;
 				}
 			}
+		}
+		if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			try{
+				String[] cmds = ((String)value).replace(" ", "").split(",");
+				return cmds.length > 0;
+			} catch (Exception e){
+				return false;
+			}		
 		}
 		if (flag.equalsIgnoreCase("effects")){
 			if (!(value instanceof String)){

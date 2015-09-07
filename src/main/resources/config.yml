@@ -74,6 +74,8 @@ server-protection:
   deny-commands-on-worlds:
     world:
     - command
+  nickname-cap-filter:
+    enabled: false
 flags:
   pvp: false
   chest: false

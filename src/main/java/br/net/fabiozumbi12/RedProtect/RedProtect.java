@@ -66,6 +66,7 @@ public class RedProtect extends JavaPlugin {
 	static boolean SkillAPI;
 	static boolean Vault;
 	static boolean PvPm;
+	static boolean Ess;
 	public static PlayerHandler PvPmanager;
 	public static Economy econ;
     
@@ -94,6 +95,7 @@ public class RedProtect extends JavaPlugin {
             Vault = checkVault();
             SkillAPI = checkSkillAPI();
             PvPm = checkPvPm();
+            Ess = checkEss();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
@@ -130,7 +132,9 @@ public class RedProtect extends JavaPlugin {
                 	RedProtect.logger.info("PvPManager found. Hooked.");  
                 } 
             }
-            
+            if (Ess){
+            	RedProtect.logger.info("Essentials found. Hooked.");
+            }
             if (BossBar){
             	RedProtect.logger.info("BossbarAPI found. Hooked.");
             }
@@ -193,7 +197,7 @@ public class RedProtect extends JavaPlugin {
         	}
         }
     }
-
+    
 	private boolean CheckUpdate() {
 		Updater updater = null;
 		if (RPConfig.getBool("update-check.auto-update")){
@@ -327,4 +331,11 @@ public class RedProtect extends JavaPlugin {
     	return false;
     }
             
+	private boolean checkEss() {
+		Plugin pEss = Bukkit.getPluginManager().getPlugin("Essentials");
+    	if (pEss != null && pEss.isEnabled()){
+    		return true;
+    	}
+    	return false;
+	}
 }

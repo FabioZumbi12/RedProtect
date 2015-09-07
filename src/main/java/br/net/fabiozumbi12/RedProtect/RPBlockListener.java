@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -104,8 +105,7 @@ class RPBlockListener implements Listener{
                 Region r = rb.build();
                 e.setLine(0, RPLang.get("blocklistener.region.signcreated"));
                 e.setLine(1, r.getName());
-                RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));
-                p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+                //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
                 RedProtect.rm.add(r, RedProtect.serv.getWorld(r.getWorld()));
                 return;
             }
@@ -203,17 +203,19 @@ class RPBlockListener implements Listener{
                 
     }
     
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e){
 		RedProtect.logger.debug("BlockListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
             return;
         }
+    	
 		Player p = e.getPlayer();
 		Block b = p.getLocation().getBlock();
 		Location l = e.getClickedBlock().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);
-		if ((b.getType().equals(Material.CROPS) 
+		if ((b.getType().equals(Material.CROPS)
 				|| b.getType().equals(Material.CARROT)
 				|| b.getType().equals(Material.POTATO)
 				|| b.getType().equals(Material.CARROT)
@@ -223,6 +225,17 @@ class RPBlockListener implements Listener{
 			e.setCancelled(true);
 			return;
 		}		
+		
+		for (Block block:p.getLineOfSight((HashSet<Byte>)null, 8)){
+			if (block == null){
+				continue;
+			}
+			if (r != null && block.getType().equals(Material.FIRE) && !r.canBuild(p)){
+				RPLang.sendMessage(p, "blocklistener.region.cantbreak");
+				e.setCancelled(true);
+				return;
+			}
+		}
 	}
     
     @EventHandler(priority = EventPriority.LOWEST)
@@ -291,6 +304,20 @@ class RPBlockListener implements Listener{
     	
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
 		if (r != null && !r.canFire()){
+			if (e.getIgnitingEntity() != null){
+				if (e.getIgnitingEntity() instanceof Player){
+					Player p = (Player) e.getIgnitingEntity();
+					if (!r.canBuild(p)){
+						RPLang.sendMessage(p, "blocklistener.region.cantplace");
+						e.setCancelled(true);
+						return;
+					}
+				} else {
+					e.setCancelled(true);
+		    		return;
+				}
+			}
+			
 			if (bignit != null && (bignit.getType().equals(Material.FIRE) || bignit.getType().name().contains("LAVA"))){
 				e.setCancelled(true);
 	    		return;
@@ -298,11 +325,7 @@ class RPBlockListener implements Listener{
 			if (e.getCause().equals(IgniteCause.LIGHTNING) || e.getCause().equals(IgniteCause.EXPLOSION) || e.getCause().equals(IgniteCause.FIREBALL)){
 				e.setCancelled(true);
 	    		return;
-			}
-			if (e.getIgnitingEntity() != null){
-				e.setCancelled(true);
-	    		return;
-			}
+			}			
 		}
     	return;
     }

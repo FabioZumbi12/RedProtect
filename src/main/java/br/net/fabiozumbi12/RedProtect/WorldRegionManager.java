@@ -17,7 +17,7 @@ public interface WorldRegionManager {
     
     int getTotalRegionSize(String p0);
     
-    Set<Region> getRegions(String uuid);
+    Set<Region> getRegions(String pname);
     
     Set<Region> getRegionsNear(Player p0, int p1);
     
@@ -51,7 +51,7 @@ public interface WorldRegionManager {
     
     void clearRegions();
 
-	Set<Region> getMemberRegions(String uuid);
+	Set<Region> getMemberRegions(String pname);
 
 	void updateLiveRegion(String rname, String columm, String value);
 

@@ -36,6 +36,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -51,6 +53,9 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 
 import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
 
@@ -553,11 +558,29 @@ class RPPlayerListener implements Listener{
     	
        	Region r = RedProtect.rm.getTopRegion(p.getLocation());
        	
+       	if (r != null && !r.AllowCommands(p, msg.split(" ")[0])){
+       		if (msg.startsWith("/rp") || msg.startsWith("/redprotect")){
+       			return;
+       		}
+       		RPLang.sendMessage(p, "playerlistener.region.cantcommand");
+    		e.setCancelled(true);
+    		return;
+       	}
+       	
+    	if (r != null && !r.DenyCommands(p, msg.split(" ")[0])){
+       		if (msg.startsWith("/rp") || msg.startsWith("/redprotect")){
+       			return;
+       		}
+       		RPLang.sendMessage(p, "playerlistener.region.cantcommand");
+    		e.setCancelled(true);
+    		return;
+       	}
+       	
     	if (msg.startsWith("/sethome") && r != null && !r.AllowHome(p)){
     		RPLang.sendMessage(p, "playerlistener.region.canthome");
     		e.setCancelled(true);
     		return;
-    	}    	
+    	} 
     	
     	//Pvp check
         if (msg.startsWith("/pvp") && RedProtect.PvPm){
@@ -705,7 +728,7 @@ class RPPlayerListener implements Listener{
     
     private Location DenyEnterPlayer(World wFrom, Location from, Location to, Player p, Region r) {
     	Location setTo = to;
-    	for (int i = 0; i < 100; i++){
+    	for (int i = 0; i < r.getArea()+10; i++){
     		Region r1 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockZ());
     		Region r2 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockZ());
     		Region r3 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockZ()+i);
@@ -743,8 +766,16 @@ class RPPlayerListener implements Listener{
     @EventHandler
     public void onPlayerEnterPortal(PlayerPortalEvent e){
     	Player p = e.getPlayer();
-    	Region rto = RedProtect.rm.getTopRegion(e.getTo());
-    	Region from = RedProtect.rm.getTopRegion(e.getFrom());
+    	
+    	Region rto = null;
+    	Region from = null;
+    	if (e.getTo() != null){
+    		rto = RedProtect.rm.getTopRegion(e.getTo());
+    	}
+    	if (e.getFrom() != null){
+    		from = RedProtect.rm.getTopRegion(e.getFrom());
+    	}
+    	
     	
     	if (rto != null && !rto.canExitPortal(p)){
     		RPLang.sendMessage(p, "playerlistener.region.cantteleport");
@@ -929,7 +960,7 @@ class RPPlayerListener implements Listener{
 					if (PlayertaskID.containsValue(p.getName())){						
 						String eff = effect.split(" ")[0];
 						String amplifier = effect.split(" ")[1];
-						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 60, Integer.parseInt(amplifier));
+						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 90, Integer.parseInt(amplifier));
 						p.removePotionEffect(fulleffect.getType());	
 						List<String> removeTasks = new ArrayList<String>();
 						for (String taskId:PlayertaskID.keySet()){
@@ -981,7 +1012,7 @@ class RPPlayerListener implements Listener{
   			for (String effect:effects){
   				String eff = effect.split(" ")[0];
   				String amplifier = effect.split(" ")[1];
-  				final PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 60, Integer.parseInt(amplifier));
+  				final PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 90, Integer.parseInt(amplifier));
   				TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() { 
   					public void run() {
   						p.addPotionEffect(fulleffect, true); 
@@ -1034,7 +1065,7 @@ class RPPlayerListener implements Listener{
 					if (PlayertaskID.containsValue(p.getName())){						
 						String eff = effect.split(" ")[0];
 						String amplifier = effect.split(" ")[1];
-						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 60, Integer.parseInt(amplifier));
+						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 90, Integer.parseInt(amplifier));
 						p.removePotionEffect(fulleffect.getType());
 						List<String> removeTasks = new ArrayList<String>();
 						for (String taskId:PlayertaskID.keySet()){
@@ -1078,5 +1109,22 @@ class RPPlayerListener implements Listener{
             	}                	
             }
 		}
+    }
+    
+    @EventHandler
+    public void PlayerLogin(AsyncPlayerPreLoginEvent e){ 
+    	if (!RPConfig.getBool("server-protection.nickname-cap-filter.enabled")){
+    		return;
+    	}
+    	
+    	if (RedProtect.Ess){
+    		Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
+    		User essp = ess.getOfflineUser(e.getName());
+        	
+        	if (essp != null && !essp.getConfigUUID().equals(e.getUniqueId())){
+            	e.setKickMessage(RPLang.get("playerlistener.capfilter.kickmessage").replace("{nick}", essp.getName()));
+            	e.setLoginResult(Result.KICK_OTHER);
+        	}
+    	}
     }
 }

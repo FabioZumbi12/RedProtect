@@ -75,6 +75,13 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/PvPManager.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>Essentials-2.x-SNAPSHOT</groupId>
+			<artifactId>Essentials-2.x-SNAPSHOT</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/Essentials-2.x-SNAPSHOT.jar</systemPath>
+		</dependency>
     
   </dependencies>
   <repositories>

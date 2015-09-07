@@ -90,11 +90,11 @@ public class RegionManager{
         return this.regionManagers.get(w).getRegions(player);
     }
     
-    public Set<Region> getRegions(String uuid) {
+    public Set<Region> getRegions(String pname) {
         Set<Region> ret = new HashSet<Region>();
         Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
         while (rms.hasNext()) {
-            ret.addAll(rms.next().getRegions(uuid));
+            ret.addAll(rms.next().getRegions(pname));
         }
         return ret;
     }

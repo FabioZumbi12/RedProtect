@@ -64,10 +64,10 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	}
     
     @Override
-    public Set<Region> getRegions(String uuid) {
+    public Set<Region> getRegions(String pname) {
     	Set<Region> regionsp = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.getCreator() != null && r.getCreator().equals(uuid)){
+			if (r.getCreator() != null && r.getCreator().equals(pname)){
 				regionsp.add(r);
 			}
 		}

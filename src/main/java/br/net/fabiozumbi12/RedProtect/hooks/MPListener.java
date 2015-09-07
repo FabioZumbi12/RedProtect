@@ -84,7 +84,7 @@ public class MPListener implements Listener{
                         for (PotionEffect ef:p2.getActivePotionEffects()){
                         	p2.removePotionEffect(ef.getType());
                         }
-                        p2.sendMessage(RPLang.get("mplistener.cantattack.player"));
+                        p2.sendMessage(RPLang.get("mplistener.cantattack.players"));
                         return;
                     }                
             	}

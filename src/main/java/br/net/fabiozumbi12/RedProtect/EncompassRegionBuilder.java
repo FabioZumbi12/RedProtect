@@ -241,6 +241,12 @@ class EncompassRegionBuilder extends RegionBuilder{
                                 rb.setType(Material.AIR);
                             }
                         }
+                        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+                        
+                        if (RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
+                        	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
+                        	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+                        }                        
                         super.r = region;
                         return;
                     }
