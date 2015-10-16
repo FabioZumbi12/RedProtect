@@ -110,12 +110,8 @@ class RPEntityListener implements Listener{
         	}
         }
 
-        if (e instanceof EntityDamageByEntityEvent) {        	
-        	RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event.");   
-        	
+        if (e instanceof EntityDamageByEntityEvent) {          	
             EntityDamageByEntityEvent de = (EntityDamageByEntityEvent)e;
-            //check player listener
-            de.setCancelled(RPPlayerListener.CheckPlayerEvent(de));
             
             Entity e1 = de.getEntity();
             Entity e2 = de.getDamager();
@@ -123,6 +119,8 @@ class RPEntityListener implements Listener{
             if (e2 == null) {
                 return;
             }
+            
+            RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event."); 
             
             if (e2 instanceof Projectile) {
             	Projectile a = (Projectile)e2;                
@@ -201,6 +199,13 @@ class RPEntityListener implements Listener{
                 	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                     return;
                 }                
+            } 
+            else if ((e1 instanceof Hanging) && e2 instanceof Monster){
+            	if (r1 != null || r2 != null){
+            		RedProtect.logger.debug("Cancelled ItemFrame drop Item");
+            		e.setCancelled(true);
+                    return;
+            	}
             }
         }
     }

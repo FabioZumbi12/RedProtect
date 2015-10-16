@@ -227,7 +227,7 @@ public class RedProtect extends JavaPlugin {
         	RedProtect.logger.info("Auto-save Scheduler: Disabled");
         }
 	}
-
+	
 	public void disable() {
         super.setEnabled(false);
     }

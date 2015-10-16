@@ -59,6 +59,7 @@ class RPBlockListener implements Listener{
         }
         
         Region signr = RedProtect.rm.getTopRegion(b.getLocation());
+                
         if (signr != null && !signr.canSign(p)){
         	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         	e.setCancelled(true);
@@ -67,14 +68,35 @@ class RPBlockListener implements Listener{
         
         String[] lines = e.getLines();
         String line1 = lines[0];
+        
         if (lines.length != 4) {
             this.setErrorSign(e, p, RPLang.get("blocklistener.sign.wronglines"));
             return;
         }
+        
         if (!RedProtect.ph.hasPerm(p, "redprotect.create")) {
             this.setErrorSign(e, p, RPLang.get("blocklistener.region.nopem"));
             return;
         }
+        
+
+        if (RPConfig.getBool("server-protection.sign-spy.enabled") && ((!lines[0].startsWith("[")) || (!lines[0].endsWith("]")))){
+        	Bukkit.getConsoleSender().sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
+        	Bukkit.getConsoleSender().sendMessage("§bPlayer: §e" + e.getPlayer().getName());
+        	Bukkit.getConsoleSender().sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());
+        	Bukkit.getConsoleSender().sendMessage("§bLines - §e3: §r" + lines[2].toString() + " - §e4: §r" + lines[3].toString());
+        	if (!RPConfig.getBool("server-protection.sign-spy.only-console")){
+        		for (Player play:Bukkit.getOnlinePlayers()){
+        			if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/){
+        				play.sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
+        	        	play.sendMessage("§bPlayer: §e" + e.getPlayer().getName());
+        	        	play.sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());
+        	        	play.sendMessage("§bLines - §e3: §r" + lines[2].toString() + " - §e4: §r" + lines[3].toString());
+        			}
+        		}
+        	}
+        }
+        
         if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN)) && (line1.equalsIgnoreCase("private") || line1.equalsIgnoreCase("[private]") || line1.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
         	Region r = RedProtect.rm.getTopRegion(b.getLocation());        
         	Boolean out = RPConfig.getBool("private.allow-outside");

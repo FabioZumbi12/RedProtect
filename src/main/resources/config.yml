@@ -7,7 +7,7 @@
 # <       configuration file in this link: http://goo.gl/EAepC7        > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 5.5
+config-version: 5.7
 debug-messages: false
 file-type: yml
 flat-file:
@@ -76,6 +76,9 @@ server-protection:
     - command
   nickname-cap-filter:
     enabled: false
+  sign-spy:
+    enabled: false
+    only-console: true
 flags:
   pvp: false
   chest: false

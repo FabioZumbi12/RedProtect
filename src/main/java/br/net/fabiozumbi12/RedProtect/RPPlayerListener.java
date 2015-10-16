@@ -54,17 +54,19 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
+
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
-import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
+import de.Keyle.MyPet.entity.types.MyPet.PetState;
+import de.Keyle.MyPet.util.player.MyPetPlayer;
 
 @SuppressWarnings("deprecation")
 class RPPlayerListener implements Listener{
 	
 	static RPContainer cont = new RPContainer();
 	private HashMap<Player,String> Ownerslist = new HashMap<Player,String>();
-	static HashMap<Player,Region> LastDeath = new HashMap<Player,Region>();
 	private HashMap<Player, String> PlayerCmd = new HashMap<Player, String>();
 	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
     RedProtect plugin;
@@ -365,13 +367,11 @@ class RPPlayerListener implements Listener{
     }
     
     @EventHandler
-    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {                
-        e.setCancelled(CheckPlayerEvent(e));        
-    }
-    
-    public static Boolean CheckPlayerEvent(EntityDamageByEntityEvent e) {
+    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
     	Player p = null;        
         
+    	RedProtect.logger.debug("RPLayerListener: Is EntityDamageByEntityEvent event"); 
+    	
         if (e.getDamager() instanceof Player){
         	p = (Player)e.getDamager();
         } else if (e.getDamager() instanceof Arrow){
@@ -415,7 +415,7 @@ class RPPlayerListener implements Listener{
         		p = (Player) SmallFireball.getShooter();
         	}
         } else {
-            return e.isCancelled();
+            e.isCancelled();
         }
         
         if (p != null){
@@ -429,7 +429,7 @@ class RPPlayerListener implements Listener{
         Location l = e.getEntity().getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
         if (r == null || p == null){
-        	return false;
+        	return;
         }
         
         if (RedProtect.tpWait.contains(p.getName())){
@@ -439,19 +439,18 @@ class RPPlayerListener implements Listener{
         
         if (e.getEntityType().equals(EntityType.PLAYER) && r.flagExists("pvp") && !r.canPVP(p)){
         	RPLang.sendMessage(p, "entitylistener.region.cantpvp");
-            return true;
+            e.setCancelled(true);
         }
         
         if (e.getEntityType().equals(EntityType.ITEM_FRAME) && !r.canBuild(p)){
         	RPLang.sendMessage(p, "playerlistener.region.cantremove");
-            return true;
+        	e.setCancelled(true);
         }   
 
         if (e.getEntityType().name().contains("MINECART") && !r.canMinecart(p)){
         	RPLang.sendMessage(p, "blocklistener.region.cantbreak");
-        	return true;
-        }
-		return false;		
+        	e.setCancelled(true);
+        }	
 	}
 
 	@EventHandler
@@ -504,9 +503,8 @@ class RPPlayerListener implements Listener{
     	}
     	
     	if (PlayerCmd.containsKey(p)){
-    		if (rto != null && !rto.canDeathBack(p) && PlayerCmd.get(p).startsWith("/back") && LastDeath.get(p) != null && LastDeath.get(p).equals(rto)){
+    		if (rto != null && !rto.canBack(p) && PlayerCmd.get(p).startsWith("/back")){
         		RPLang.sendMessage(p, "playerlistener.region.cantback");
-        		LastDeath.remove(p);
         		e.setCancelled(true);
         	}
     		if (rto != null && !rto.AllowHome(p) && PlayerCmd.get(p).startsWith("/home")){
@@ -551,13 +549,20 @@ class RPPlayerListener implements Listener{
     		e.setCancelled(true);
     		return;
     	}
-    	
+    	    	
     	if (msg.startsWith("/back") || msg.startsWith("/home")){
     		PlayerCmd.put(p, msg);
     	}
     	
        	Region r = RedProtect.rm.getTopRegion(p.getLocation());
        	
+
+    	if (r != null && ((msg.startsWith("/petc")) || (msg.startsWith("/petcall"))) && RedProtect.MyPet && !r.canPet(p)){
+    		RPLang.sendMessage(p, "playerlistener.region.cantpet");
+    		e.setCancelled(true);
+    		return;
+    	}
+    	
        	if (r != null && !r.AllowCommands(p, msg.split(" ")[0])){
        		if (msg.startsWith("/rp") || msg.startsWith("/redprotect")){
        			return;
@@ -614,11 +619,6 @@ class RPPlayerListener implements Listener{
     		RedProtect.tpWait.remove(p.getName());
     		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
     	}
-    	
-    	Region r = RedProtect.rm.getTopRegion(p.getLocation());    	
-    	if (r != null){
-    		LastDeath.put(p, r);
-    	}
     }
     
     @EventHandler
@@ -659,6 +659,16 @@ class RPPlayerListener implements Listener{
     	} 
         
         World w = lfrom.getWorld();
+        
+        //Mypet Flag
+        if (RedProtect.MyPet && r != null && !r.canPet(p)){
+        	MyPetPlayer mp = MyPetPlayer.getMyPetPlayer(p.getName());
+        	//MyPetEntity mp = ((MyPetEntity)e.getPlayer());
+        	if (mp.getMyPet().getStatus().equals(PetState.Here)){
+        		mp.getMyPet().setStatus(PetState.Despawned);
+        		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
+        	}        			
+    	}
         
         //Enter flag
         if (r != null && !r.canEnter(p)){

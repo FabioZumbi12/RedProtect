@@ -723,11 +723,11 @@ public class Region implements Serializable{
         return getFlagBool("up-skills") || checkAllowedPlayer(p);
 	}
 
-	public boolean canDeathBack(Player p) {
-		if (!flagExists("death-back")){
+	public boolean canBack(Player p) {
+		if (!flagExists("can-back")){
     		return true;
     	}
-        return getFlagBool("death-back") || checkAllowedPlayer(p);
+        return getFlagBool("can-back") || checkAllowedPlayer(p);
 	}
 	
 	public boolean isForSale() {
@@ -763,6 +763,13 @@ public class Region implements Serializable{
 			return true;
 		}
 		return getFlagBool("portal-exit") || checkAllowedPlayer(p);
+	}
+	
+	public boolean canPet(Player p) {
+		if (!flagExists("can-pet")){
+			return true;
+		}
+		return getFlagBool("can-pet") || checkAllowedPlayer(p);
 	}
 
 	public Double getValue() {	
