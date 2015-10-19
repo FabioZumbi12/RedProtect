@@ -654,7 +654,6 @@ class RPPlayerListener implements Listener{
     		if (r != null && r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
     			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
     			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
-    			return;
         	}
     	} 
         
@@ -662,12 +661,13 @@ class RPPlayerListener implements Listener{
         
         //Mypet Flag
         if (RedProtect.MyPet && r != null && !r.canPet(p)){
-        	MyPetPlayer mp = MyPetPlayer.getMyPetPlayer(p.getName());
-        	//MyPetEntity mp = ((MyPetEntity)e.getPlayer());
-        	if (mp.getMyPet().getStatus().equals(PetState.Here)){
-        		mp.getMyPet().setStatus(PetState.Despawned);
-        		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
-        	}        			
+        	MyPetPlayer mpp = MyPetPlayer.getMyPetPlayer(p.getName());
+        	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
+            	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
+            		mpp.getMyPet().setStatus(PetState.Despawned);
+            		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
+            	}  
+        	}        	      			
     	}
         
         //Enter flag
