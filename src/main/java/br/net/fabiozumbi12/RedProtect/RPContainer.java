@@ -32,7 +32,7 @@ class RPContainer {
             blocks[0] = w.getBlockAt(x-1, y, z);
             blocks[1] = w.getBlockAt(x+1, y, z);
             blocks[2] = w.getBlockAt(x, y, z-1);
-            blocks[3] = w.getBlockAt(x, y, z+1);     	        
+            blocks[3] = w.getBlockAt(x, y, z+1);    
 
         	for (Block signb:blocks){
             	if (signb.getType().equals(Material.WALL_SIGN)){
@@ -56,7 +56,7 @@ class RPContainer {
                 	signbtype = signb.getType().name();
                 } 
                 
-            	if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
+            	if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype) && blocktype.equals(signbtype)){
             		x = signb.getX();
                     y = signb.getY();
                     z = signb.getZ();                

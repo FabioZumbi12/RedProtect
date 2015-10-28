@@ -494,6 +494,15 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		int max = 0;
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
+				if (regionlist.containsKey(r.getPrior())){
+					Region reg1 = regionlist.get(r.getPrior());
+					int Prior = r.getPrior();
+					if (reg1.getArea() >= r.getArea()){
+						r.setPrior(Prior+1);
+					} else {
+						reg1.setPrior(Prior+1);
+					}					
+				}
 				regionlist.put(r.getPrior(), r);
 			}
 		}
@@ -509,6 +518,15 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		int min = 0;
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
+				if (regionlist.containsKey(r.getPrior())){
+					Region reg1 = regionlist.get(r.getPrior());
+					int Prior = r.getPrior();
+					if (reg1.getArea() >= r.getArea()){
+						r.setPrior(Prior+1);
+					} else {
+						reg1.setPrior(Prior+1);
+					}					
+				}
 				regionlist.put(r.getPrior(), r);
 			}
 		}
@@ -518,10 +536,20 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		return regionlist.get(min);
 	}
 	
+	@Override
 	public Map<Integer,Region> getGroupRegion(int x, int z) {
 		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
+				if (regionlist.containsKey(r.getPrior())){
+					Region reg1 = regionlist.get(r.getPrior());
+					int Prior = r.getPrior();
+					if (reg1.getArea() >= r.getArea()){
+						r.setPrior(Prior+1);
+					} else {
+						reg1.setPrior(Prior+1);
+					}					
+				}
 				regionlist.put(r.getPrior(), r);
 			}
 		}

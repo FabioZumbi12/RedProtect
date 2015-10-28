@@ -59,6 +59,7 @@ import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
+import de.Keyle.MyPet.api.entity.MyPetEntity;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
 import de.Keyle.MyPet.util.player.MyPetPlayer;
 
@@ -329,6 +330,12 @@ class RPPlayerListener implements Listener{
             event.setCancelled(true);
             return;
         } 
+        
+        else if (RedProtect.MyPet && e instanceof MyPetEntity){
+        	if (((MyPetEntity)e).getOwner().getPlayer().equals(p)){
+        		return;
+        	}
+        }
         
         else  if (!r.canBuild(p) && !r.canMinecart(p) && !r.allowMod() && (!(event.getRightClicked() instanceof Player))){
         	RPLang.sendMessage(p, "playerlistener.region.cantinteract");

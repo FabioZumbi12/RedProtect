@@ -50,7 +50,7 @@ public class RPGlobalListener implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onBlockPlace(BlockPlaceEvent e) {
 		RedProtect.logger.debug("RPGlobalListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
-		if (e.isCancelled()) {
+		if (e.isCancelled() || e.getItemInHand() == null) {
             return;
         }
 

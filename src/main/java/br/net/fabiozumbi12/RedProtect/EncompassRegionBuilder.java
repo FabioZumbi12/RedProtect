@@ -224,7 +224,6 @@ class EncompassRegionBuilder extends RegionBuilder{
                         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         	p.sendMessage(RPLang.get("regionbuilder.overlapping"));
                         	p.sendMessage(RPLang.get("region.regions") + " " + othersName);
-                        	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         }
                         
                         if (RPConfig.getDropType("region-settings.drop-type").equals(RedProtect.DROP_TYPE.drop)) {
@@ -238,13 +237,16 @@ class EncompassRegionBuilder extends RegionBuilder{
                             for (Block rb : blocks) {
                                 rb.setType(Material.AIR);
                             }
-                        }
-                        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+                        }                        
                         
                         if (RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
-                        	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
                         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-                        }                        
+                        	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
+                        	
+                        }
+                        
+                        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+                        
                         super.r = region;
                         return;
                     }
