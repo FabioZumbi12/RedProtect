@@ -227,16 +227,18 @@ class RPPlayerListener implements Listener{
                 }
             }
         }
-        else if (b.getType().name().contains("_DOOR") || b.getType().name().contains("_GATE")) {
+        else if (RPDoor.isOpenable(b)) {
             if (r != null && (!r.canDoor(p) || (r.canDoor(p) && !cont.canOpen(b, p)))) {
                 if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantdoor");
+                    RPLang.sendMessage(p, "playerlistener.region.cantdoor");                    
                     event.setCancelled(true);
-                }
-                else {
+                } else {
                     RPLang.sendMessage(p, "playerlistener.region.opendoor");
+                    RPDoor.ChangeDoor(b, r);
                 }
-            }            
+            } else {
+            	RPDoor.ChangeDoor(b, r);
+            }
         } 
         else if (b.getType().name().contains("RAIL")){
             if (r != null && !r.canMinecart(p)){
@@ -294,6 +296,7 @@ class RPPlayerListener implements Listener{
             event.setCancelled(true);
             return;
         }
+                
         else if (r != null && !r.canBuild(p) && !r.canSign(p) && !r.canLever(p) && !r.canDoor(p) && !r.canButton(p) && !r.canChest(p) && !r.allowMod()){
         	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         	event.setCancelled(true);
@@ -644,6 +647,7 @@ class RPPlayerListener implements Listener{
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
     	
+    	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
     	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass")){
@@ -656,6 +660,14 @@ class RPPlayerListener implements Listener{
     	
         Region r = RedProtect.rm.getTopRegion(lto);
         
+        //deny enter if no perm doors
+    	String door = p.getWorld().getBlockAt(lto).getType().name();
+    	if (r != null && (door.contains("DOOR") || door.contains("_GATE")) && !r.canDoor(p)){
+    		if (RPDoor.isDoorClosed(p.getWorld().getBlockAt(lto))){
+    			e.setCancelled(true);
+    		}
+    	}
+    	
         //Pvp check to enter on region
         if (RedProtect.PvPm){
     		if (r != null && r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){

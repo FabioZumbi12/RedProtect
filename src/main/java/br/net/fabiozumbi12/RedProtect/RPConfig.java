@@ -150,8 +150,25 @@ public class RPConfig{
     	            		RedProtect.logger.warning("Added world " + w.getName());
     	            	}
     	            	RedProtect.plugin.getConfig().set("allowed-claim-worlds", worlds);
-    	            }
+    	            }    	            
     	            
+                    /*------------- ---- Add default config for not updateable configs ------------------*/
+                    
+                    //update new player flags according version
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.0){
+        				RedProtect.plugin.getConfig().set("config-version", 6.0D);
+        				
+        				//add flag "smart-door"
+        				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+        				if (!flags.contains("smart-door")){
+        					flags.add("smart-door");
+            				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);
+        				}
+        				
+        			}
+        			
+        			/*------------------------------------------------------------------------------------*/
+        			
     	            //load and write globalflags to global file
                     gflags = RPYaml.loadConfiguration(globalflags);
                     
@@ -173,25 +190,28 @@ public class RPConfig{
                     	gflags.set(w.getName()+".remove-entities-not-allowed-to-spawn", gflags.getBoolean(w.getName()+".remove-entities-not-allowed-to-spawn", false));
                     	w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
                     	RedProtect.logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
-                    }      
+                    }
                     
-                  //load and write GuiItems to guiconfig file
+                    //load and write GuiItems to guiconfig file
                     try {
 						GuiItems.load(gui);
 					} catch (IOException | InvalidConfigurationException e) {
 						e.printStackTrace();
 					}
                     
+                    RPYaml GuiBase = inputLoader(plugin.getResource("guiconfig.yml")); 
+                    
                     GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));   
                     GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue")); 
                     GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse")); 
                     
                     for (String key:getDefFlagsValues().keySet()){
-                    	GuiItems.set("gui-flags."+key+".material", GuiItems.get("gui-flags."+key+".material", "GOLDEN_APPLE"));
-                    	GuiItems.set("gui-flags."+key+".name", GuiItems.get("gui-flags."+key+".name", "&e"+key));                    	
-                    	GuiItems.set("gui-flags."+key+".description", GuiItems.get("gui-flags."+key+".description", "&bDescription: &2Add a flag description here."));
-                    	GuiItems.set("gui-flags."+key+".description1", GuiItems.get("gui-flags."+key+".description1", ""));
-                    	GuiItems.set("gui-flags."+key+".description2", GuiItems.get("gui-flags."+key+".description2", ""));
+                    	GuiItems.set("gui-flags."+key+".slot", GuiItems.get("gui-flags."+key+".slot", GuiBase.get("gui-flags."+key+".slot", getDefFlagsValues().size())));
+                    	GuiItems.set("gui-flags."+key+".material", GuiItems.get("gui-flags."+key+".material", GuiBase.get("gui-flags."+key+".material", "GOLDEN_APPLE")));
+                    	GuiItems.set("gui-flags."+key+".name", GuiItems.get("gui-flags."+key+".name", GuiBase.get("gui-flags."+key+".name", "&e"+key)));                    	
+                    	GuiItems.set("gui-flags."+key+".description", GuiItems.get("gui-flags."+key+".description", GuiBase.get("gui-flags."+key+".description", "&bDescription: &2Add a flag description here.")));
+                    	GuiItems.set("gui-flags."+key+".description1", GuiItems.get("gui-flags."+key+".description1", GuiBase.get("gui-flags."+key+".description1", "")));
+                    	GuiItems.set("gui-flags."+key+".description2", GuiItems.get("gui-flags."+key+".description2", GuiBase.get("gui-flags."+key+".description2", "")));
                     }
                     
                     
@@ -228,7 +248,7 @@ public class RPConfig{
         				RedProtect.plugin.getConfig().set("notify.region-enter-mode", "CHAT");
 	                    RedProtect.logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");
         			}
-
+        			    			
         			save();        			
     	            RedProtect.logger.info("All configurations loaded!");
 	}
@@ -256,6 +276,10 @@ public class RPConfig{
     
     public static String getGuiString(String string) {
 		return GuiItems.getString("gui-strings."+string).replaceAll("(?i)&([a-f0-9k-or])", "§$1");
+	}
+    
+    public static int getGuiSlot(String slot) {
+		return GuiItems.getInt("gui-flags."+slot+".slot");
 	}
     
     public static Boolean getBool(String key){		

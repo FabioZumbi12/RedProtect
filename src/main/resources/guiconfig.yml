@@ -4,80 +4,100 @@ gui-strings:
   value: '&bValue: '
 gui-flags:
   door:
+    slot: 0
     material: WOOD_DOOR
     name: '&e=> Allow Door Open'
     description: '&6Description: &aAllow no members to open'
     description1: '&aand close doors in this region.'
     description2: ''
-  chest:
-    material: CHEST
-    name: '&e=> Allow Chest Access'
-    description: '&6Description: &aAllow no members to access'
-    description1: '&athis chest for take and put itens.'
-    description2: ''
-  allow-home:
-    material: BED
-    name: '&e=> Allow Set Home'
-    description: '&6Description: &aAllow no members to use the'
-    description1: '&acommand /sethome or /home to set or come to'
-    description2: '&athis region.'
+  smart-door:
+    slot: 1
+    material: IRON_DOOR
+    name: '&e=> Open Double and Iron Doors'
+    description: '&6Description: &aAllow members to open'
+    description1: '&asingle and double normal and iron doors'
+    description2: '&aand iron trap doors.'
   pvp:
+    slot: 2
     material: STONE_SWORD
     name: '&e=> Allow PvP'
     description: '&6Description: &aAllow PvP for all players'
     description1: '&ain this region, including members and'
     description2: '&ano members.'
+  allow-home:
+    slot: 3
+    material: BED
+    name: '&e=> Allow Set Home'
+    description: '&6Description: &aAllow no members to use the'
+    description1: '&acommand /sethome or /home to set or come to'
+    description2: '&athis region.'
+  chest:
+    slot: 4
+    material: CHEST
+    name: '&e=> Allow Chest Access'
+    description: '&6Description: &aAllow no members to access'
+    description1: '&athis chest for take and put itens.'
+    description2: ''
   lever:
+    slot: 5
     material: LEVER
     name: '&e=> Use Lever'
     description: '&6Description: &aAllow no members to use'
     description1: '&alevers in this region.'
     description2: ''
-  spawn-animals:
-    material: EGG
-    name: '&e=> Spawn Animals'
-    description: '&6Description: &aAllow natural spawn of'
-    description1: '&apassives mobs in this region.'
-    description2: ''
-  passives:
-    material: SADDLE
-    name: '&e=> Hurt Passives'
-    description: '&6Description: &aAllow no members to hurt,'
-    description1: '&akill or interact with passives mobs in'
-    description2: '&athis region.'
   button:
+    slot: 6
     material: WOOD_BUTTON
     name: '&e=> Use Buttons'
     description: '&6Description: &aAllow no members to use'
     description1: '&abuttons in this region.'
     description2: ''
+  passives:
+    slot: 7
+    material: SADDLE
+    name: '&e=> Hurt Passives'
+    description: '&6Description: &aAllow no members to hurt,'
+    description1: '&akill or interact with passives mobs in'
+    description2: '&athis region.'
+  allow-magiccarpet:
+    slot: 8
+    material: GLASS
+    name: "&e=> Allow Magic Carpet"
+    description: "&6Description: &aAllow players walk with"
+    description1: "&aMagic Carpet in your region"
+    description2: ''
   minecart:
+    slot: 9
     material: MINECART
     name: '&e=> Allow Place Minecarts'
     description: '&6Description: &aAllow no members to place,'
     description1: '&aenter and break Minecarts in this region.'
     description2: ''
-  spawn-monsters:
-    material: SKULL_ITEM
-    name: '&e=> Spawn Monsters'
-    description: '&6Description: &aAllow natural spawn of'
-    description1: '&amonsters in this region.'
-    description2: ''
   fire:
+    slot: 10
     material: BLAZE_POWDER
     name: '&e=> Fire Spread and Damage Blocks'
     description: '&6Description: &aAllow damage blocks by fire'
     description1: '&aand explosion, and fire spread.'
     description2: ''
   flow:
+    slot: 11
     material: WATER_BUCKET
     name: '&e=> Water and Lava Flow'
     description: '&6Description: &aEnable water and lava flow'
     description1: '&ain this region.'
     description2: ''
-  allow-magiccarpet:
-    material: GLASS
-    name: "&e=> Allow Magic Carpet"
-    description: "&6Description: &aAllow players walk with"
-    description1: "&aMagic Carpet in your region"
+  spawn-animals:
+    slot: 12
+    material: EGG
+    name: '&e=> Spawn Animals'
+    description: '&6Description: &aAllow natural spawn of'
+    description1: '&apassives mobs in this region.'
+    description2: ''
+  spawn-monsters:
+    slot: 13
+    material: SKULL_ITEM
+    name: '&e=> Spawn Monsters'
+    description: '&6Description: &aAllow natural spawn of'
+    description1: '&amonsters in this region.'
     description2: ''

@@ -1,9 +1,6 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -59,9 +56,7 @@ public class RPGui implements Listener{
 			}			
 		}	
 		
-		int i = 0;
-		Set<String> RegionsSorted = new TreeSet<String>(region.flags.keySet());
-		for (String flag:RegionsSorted){
+		for (String flag:region.flags.keySet()){
 			if (!(region.flags.get(flag) instanceof Boolean)){
 				continue;
 			}
@@ -69,6 +64,9 @@ public class RPGui implements Listener{
 				if (flag.equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
     				continue;
     			}	
+				
+				int i = RPConfig.getGuiSlot(flag);
+				
 				if (allowEnchant){
 					this.guiItens[i] = removeAttribute(RPConfig.getGuiItemStack(flag));
 				} else {

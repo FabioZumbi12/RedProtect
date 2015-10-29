@@ -1,7 +1,7 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 5.9.0
-author: ikillforeyou, FabioZumbi12
+version: 6.0.0
+author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager]
 url: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/
@@ -55,6 +55,7 @@ permissions:
       redprotect.flag.minecart: true
       redprotect.flag.allow-home: true
       redprotect.flag.allow-magiccarpet: true
+      redprotect.flag.smart-door: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false

@@ -7,7 +7,7 @@
 # <       configuration file in this link: http://goo.gl/EAepC7        > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 5.7
+config-version: 6.0
 debug-messages: false
 file-type: yml
 flat-file:
@@ -85,6 +85,7 @@ flags:
   lever: false
   button: false
   door: false
+  smart-door: true
   spawn-monsters: true
   spawn-animals: true
   passives: false
@@ -100,6 +101,7 @@ flags-configuration:
   - lever
   - button
   - door
+  - smart-door
   - spawn-monsters
   - spawn-animals
   - passives

@@ -97,7 +97,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		
 		if (args.length == 0) {
             sender.sendMessage(RPLang.get("general.color") + "---------------- " + RedProtect.pdf.getFullName() + " ----------------");
-            sender.sendMessage(RPLang.get("general.color") + "Developed by " + ChatColor.GOLD + "ikillforeyou [aka. OverCaste & FabioZumbi12]" + RPLang.get("general.color") + ".");
+            sender.sendMessage(RPLang.get("general.color") + "Developed by " + ChatColor.GOLD + RedProtect.pdf.getAuthors() + RPLang.get("general.color") + ".");
             sender.sendMessage(RPLang.get("general.color") + "For more information about the commands, type [" + ChatColor.GOLD + "/rp ?" + RPLang.get("general.color") + "].");
             sender.sendMessage(RPLang.get("general.color") + "For a tutorial, type [" + ChatColor.GOLD + "/rp tutorial" + RPLang.get("general.color") + "].");
             sender.sendMessage(RPLang.get("general.color") + "---------------------------------------------------");
@@ -1795,7 +1795,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 	private static void HandleHelPage(CommandSender sender, int page){
 		sender.sendMessage(RPLang.get("_redprotect.prefix") + " " + RPLang.get("cmdmanager.available.cmds"));
 		sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
-		sender.sendMessage(RPLang.get("general.color") + "/rp <command>|<alias> | <> = Required | [] = Optional");
+		sender.sendMessage(ChatColor.DARK_GRAY + "/rp <command>|<alias> | <> = Required | [] = Optional");
         
 		if (sender instanceof Player){
 			Player player = (Player)sender;		
