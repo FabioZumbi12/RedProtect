@@ -104,7 +104,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 if (listOfDatabases.equalsIgnoreCase(this.dbname)) {
                 	con.close();
                 	rs.close();
-                    return this.dbexists = true;
+                    return true;
                 }
             }
             con.close();

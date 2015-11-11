@@ -32,7 +32,7 @@ public class RPDoor {
 		block[3] = b.getWorld().getBlockAt(b.getX(), b.getY(), b.getZ()-1);		
 		
 		for (Block b2:block){
-			if (isOpenable(b) && b.getType().equals(b2.getType())){
+			if (b.getType().equals(b2.getType()) && (isIronDoor(b) || isDoor(b))){
 				b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
 				if (isDoorClosed(b)){
 					closeIronDoor(b2);	
@@ -143,6 +143,6 @@ public class RPDoor {
 	}
 	
 	public static boolean isOpenable(Block b){
-		return isDoor(b) || isIronDoor(b) || isTrapDoor(b)|| isIronTrapDoor(b);		
+		return isDoor(b) || isIronDoor(b) || isTrapDoor(b) || isIronTrapDoor(b) || b.getType().name().contains("GATE");		
 	}
 }

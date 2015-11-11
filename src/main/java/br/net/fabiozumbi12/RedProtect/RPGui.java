@@ -47,7 +47,7 @@ public class RPGui implements Listener{
 				
 		allowEnchant = false;
 		String bukkitv = Bukkit.getVersion();
-		for (int i = 3; i < 8; i++){
+		for (int i = 3; i <= 8; i++){
 			RedProtect.logger.debug("Finding bukkit version 1.8."+i);
 			if (bukkitv.contains("1.8."+i)){
 				allowEnchant = true;

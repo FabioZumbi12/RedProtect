@@ -23,6 +23,9 @@ public class RPLang {
 	
 	static HashMap<String, String> BaseLang = new HashMap<String, String>();
 	static HashMap<String, String> Lang = new HashMap<String, String>();
+    static String pathLang; 
+    static String resLang; 
+    static RedProtect plugin;
 	
 	static SortedSet<String> helpStrings(){
 		SortedSet<String> values = new TreeSet<String>();
@@ -35,24 +38,34 @@ public class RPLang {
 	}
 	
 	static void init(RedProtect plugin) {
-		File lang = new File(RedProtect.pathLang);
+		RPLang.plugin = plugin;
+		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang" + RPConfig.getString("language") + ".ini";
+		resLang = "lang" + RPConfig.getString("language") + ".ini";
+		
+		File lang = new File(pathLang);			
 		if (!lang.exists()) {
-			plugin.saveResource("lang.ini", false);//create lang file
-            RedProtect.logger.info("Created config file: " + RedProtect.pathLang);
-        }		
+			if (plugin.getResource(resLang) == null){		
+				RPConfig.setConfig("language", "EN-US");
+				RPConfig.save();
+				resLang = "langEN-US.ini";	
+				pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "langEN-US.ini";
+			}
+			plugin.saveResource(resLang, false);//create lang file
+            RedProtect.logger.info("Created config file: " + pathLang);
+        }
+		
 		loadLang();
 		loadBaseLang();
-		RedProtect.logger.info("Language file loaded - Using: "+ Lang.get("_lang.code"));	
+		RedProtect.logger.info("Language file loaded - Using: "+ RPConfig.getString("language"));	
 	}
 	
 	static void loadBaseLang(){
 	    BaseLang.clear();
 	    Properties properties = new Properties();
-	    try
-	    {
-	      InputStream fileInput = RedProtect.class.getClassLoader().getResourceAsStream("lang.ini");
-	      Reader reader = new InputStreamReader(fileInput, "UTF-8");
-	      properties.load(reader);
+	    try {
+	    	InputStream fileInput = RedProtect.class.getClassLoader().getResourceAsStream("langEN-US.ini");	      
+	        Reader reader = new InputStreamReader(fileInput, "UTF-8");
+	        properties.load(reader);
 	    }
 	    catch (Exception e)
 	    {
@@ -70,7 +83,7 @@ public class RPLang {
 		Lang.clear();
 		Properties properties = new Properties();
 		try {
-			FileInputStream fileInput = new FileInputStream(RedProtect.pathLang);
+			FileInputStream fileInput = new FileInputStream(pathLang);
 			Reader reader = new InputStreamReader(fileInput, "UTF-8");
 			properties.load(reader);
 		} catch (Exception e) {
@@ -112,7 +125,7 @@ public class RPLang {
 	          return Collections.enumeration(new TreeSet<Object>(super.keySet()));
 	        }
 	      };
-	      FileReader reader = new FileReader(RedProtect.pathLang);
+	      FileReader reader = new FileReader(pathLang);
 	      BufferedReader bufferedReader = new BufferedReader(reader);
 	      properties.load(bufferedReader);
 	      bufferedReader.close();
@@ -123,7 +136,7 @@ public class RPLang {
 	          properties.put(key, Lang.get(key));
 	        }
 	      }
-	      properties.store(new OutputStreamWriter(new FileOutputStream(RedProtect.pathLang), "UTF-8"), null);
+	      properties.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
 	    }
 	    catch (Exception e)
 	    {

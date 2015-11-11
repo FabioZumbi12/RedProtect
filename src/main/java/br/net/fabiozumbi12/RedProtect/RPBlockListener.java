@@ -166,7 +166,7 @@ class RPBlockListener implements Listener{
     	
         try {
 
-            if (r != null && !r.canBuild(p)) {
+            if (r != null && !r.canBuild(p) && !r.canPlace(b)) {
             	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             } else {
@@ -217,7 +217,7 @@ class RPBlockListener implements Listener{
     		}
         }
              
-        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b)){
+        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canBreak(b)){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         	return;
@@ -248,16 +248,20 @@ class RPBlockListener implements Listener{
 			return;
 		}		
 		
-		for (Block block:p.getLineOfSight((HashSet<Byte>)null, 8)){
-			if (block == null){
-				continue;
+		try {
+			for (Block block:p.getLineOfSight((HashSet<Byte>)null, 8)){
+				if (block == null){
+					continue;
+				}
+				if (r != null && block.getType().equals(Material.FIRE) && !r.canBuild(p)){
+					RPLang.sendMessage(p, "blocklistener.region.cantbreak");
+					e.setCancelled(true);
+					return;
+				}
 			}
-			if (r != null && block.getType().equals(Material.FIRE) && !r.canBuild(p)){
-				RPLang.sendMessage(p, "blocklistener.region.cantbreak");
-				e.setCancelled(true);
-				return;
-			}
+		} catch (Exception ex){			
 		}
+		
 	}
     
     @EventHandler(priority = EventPriority.LOWEST)

@@ -708,6 +708,32 @@ public class Region implements Serializable{
 		}
 		return false;
 	}
+	
+	public boolean canPlace(Block b) {
+    	if (!flagExists("allow-place")){
+    		return false;
+    	}
+    	String[] blocks = getFlagString("allow-place").replace(" ", "").split(",");
+		for (String block:blocks){
+			if (block.toUpperCase().equals(b.getType().name())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean canBreak(Block b) {
+    	if (!flagExists("allow-break")){
+    		return false;
+    	}
+    	String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
+		for (String block:blocks){
+			if (block.toUpperCase().equals(b.getType().name())){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public boolean canTree(Block b) {
 		if (!flagExists("treefarm")){
@@ -747,11 +773,11 @@ public class Region implements Serializable{
 		return getFlagBool("pvparena");
 	}
 	
-	public boolean allowMod() {
+	public boolean allowMod(Player p) {
 		if (!flagExists("allow-mod")){
 			return false;
 		}
-		return getFlagBool("allow-mod");
+		return getFlagBool("allow-mod") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnterPortal(Player p) {

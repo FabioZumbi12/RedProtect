@@ -9,6 +9,7 @@
 
 config-version: 6.0
 debug-messages: false
+language: EN-US
 file-type: yml
 flat-file:
   auto-save-interval-seconds: 1200

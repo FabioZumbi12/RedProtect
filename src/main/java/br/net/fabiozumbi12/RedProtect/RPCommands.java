@@ -275,11 +275,28 @@ class RPCommands implements CommandExecutor, TabCompleter{
             			return true;
             		}
         		}
+        		
+        		//rp info <region> <world>
+        		if (args[0].equalsIgnoreCase("info")) {
+        			if (Bukkit.getWorld(args[2]) != null){
+        				Region r = RedProtect.rm.getRegion(args[1], Bukkit.getWorld(args[2]));
+        				if (r != null){
+        					sender.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
+        					sender.sendMessage(r.info());
+        					sender.sendMessage(RPLang.get("general.color") + "----------------------------------");
+        				} else {
+        					sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
+        				}
+        			} else {
+        				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid World: " + args[2]);
+        			}
+                    return true;
+                }
         	}
         	        	
         	if (args.length == 4) {
         		if (args[0].equalsIgnoreCase("tp")){
-        			// /rp tp <player> <region> <world>
+        			//rp tp <player> <region> <world>
                 	Player play = RedProtect.serv.getPlayer(args[1]);
                 	if (play != null){                		
                 		World w = RedProtect.serv.getWorld(args[3]);                		
@@ -316,30 +333,46 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 		HandleHelPage(sender, 1);
                 		return true;
                 	}
-        		}            	
+        		}          
+        		
+        		//rp flag info <region> <world>
+        		if (args[0].equalsIgnoreCase("flag") && args[1].equalsIgnoreCase("info") ) {
+        			if (Bukkit.getWorld(args[3]) != null){
+        				Region r = RedProtect.rm.getRegion(args[2], Bukkit.getWorld(args[3]));
+        				if (r != null){
+        					sender.sendMessage(RPLang.get("general.color") + "------------[" + RPLang.get("cmdmanager.region.flag.values") + "]------------");
+        					sender.sendMessage(r.getFlagInfo());
+                            sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
+        				} else {
+        					sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[2]);
+        				}
+        			} else {
+        				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid World: " + args[3]);
+        			}
+                    return true;
+                }
             }
         	
     		if (args.length == 5){
-    			/*/rp flag <regionName> <world> <flag> <value>*/
+    			/*/rp flag <regionName> <flag> <value> <world>*/
     			if  (args[0].equalsIgnoreCase("flag")){
-    				World w = RedProtect.serv.getWorld(args[2]);
+    				World w = RedProtect.serv.getWorld(args[4]);
         			if (w == null){
-        				sender.sendMessage(RPLang.get("correct.usage") + ChatColor.YELLOW + " /rp flag <regionName> <world> <flag> <value>");
+        				sender.sendMessage(RPLang.get("correct.usage") + ChatColor.YELLOW + " rp flag <regionName> <flag> <value> <world>");
         				return true;
         			}
         			Region r = RedProtect.rm.getRegion(args[1], w);
-        			if (r != null && (RPConfig.getDefFlags().contains(args[3]) || RPConfig.AdminFlags.contains(args[3]))){
-        				Object objflag = RPUtil.parseObject(args[4]);
-        				r.setFlag(args[3], objflag);
+        			if (r != null && (RPConfig.getDefFlags().contains(args[2]) || RPConfig.AdminFlags.contains(args[2]))){
+        				Object objflag = RPUtil.parseObject(args[3]);
+        				r.setFlag(args[2], objflag);
         				if (objflag instanceof Boolean){
-                			sender.sendMessage(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[3]+"'") + " " + r.getFlagBool(args[3]));
+                			sender.sendMessage(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[2]+"'") + " " + r.getFlagBool(args[2]));
                 		} else {
-                			sender.sendMessage(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[3]+"'") + " " + r.getFlagString(args[3]));
+                			sender.sendMessage(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[2]+"'") + " " + r.getFlagString(args[2]));
                 		}
         				return true;
         			}
-    			}
-    			
+    			}    			
     		}    		
         	HandleHelPage(sender, 1);
             return true;            
@@ -1516,7 +1549,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));    
 		} else if (flag.equalsIgnoreCase("deny-enter-items")){                				
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
-		} else if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds")){                				
+		} else if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds") || flag.equalsIgnoreCase("allow-break") || flag.equalsIgnoreCase("allow-place")){                				
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
 		} else {
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usagetruefalse").replace("{flag}", flag));
@@ -1535,24 +1568,10 @@ class RPCommands implements CommandExecutor, TabCompleter{
 	}
 
 	private static boolean validate(String flag, Object value) {
-		if (flag.equalsIgnoreCase("invincible") && !(value instanceof Boolean)){
+		if ((flag.equalsIgnoreCase("treefarm") || flag.equalsIgnoreCase("invincible") || flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
-		if (flag.equalsIgnoreCase("treefarm") && !(value instanceof Boolean)){
-			return false;
-		}
-		if (flag.equalsIgnoreCase("minefarm") && !(value instanceof Boolean)){
-			return false;
-		}
-		if (flag.equalsIgnoreCase("allow-enter-items")){
-			String[] valida = ((String)value).replace(" ", "").split(",");
-			for (String item:valida){
-				if (Material.getMaterial(item.toUpperCase()) == null){
-					return false;
-				}
-			}
-		}
-		if (flag.equalsIgnoreCase("deny-enter-items")){
+		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items") || flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
 			String[] valida = ((String)value).replace(" ", "").split(",");
 			for (String item:valida){
 				if (Material.getMaterial(item.toUpperCase()) == null){
@@ -1815,17 +1834,20 @@ class RPCommands implements CommandExecutor, TabCompleter{
 				}
 			}
 		} else {
-			sender.sendMessage(ChatColor.GOLD + "/rp setconfig list");
-			sender.sendMessage(ChatColor.GOLD + "/rp setconfig <Config-Section> <Value>");
-			sender.sendMessage(ChatColor.GOLD + "/rp flag <regionName> <World> <Flag> <Value>");
-			sender.sendMessage(ChatColor.GOLD + "/rp tp <playerName> <regionName> <World>");			
-			sender.sendMessage(ChatColor.GOLD + "/rp limit <playerName>");
-			sender.sendMessage(ChatColor.GOLD + "/rp claimlimit <playerName> [world]");
-			sender.sendMessage(ChatColor.GOLD + "/rp list-all");
-			sender.sendMessage(ChatColor.GOLD + "/rp ymlTomysql");
-			sender.sendMessage(ChatColor.GOLD + "/rp save-all");
-			sender.sendMessage(ChatColor.GOLD + "/rp load-all");
-			sender.sendMessage(ChatColor.GOLD + "/rp reload");
+			sender.sendMessage(ChatColor.GOLD + "rp setconfig list");
+			sender.sendMessage(ChatColor.GOLD + "rp setconfig <Config-Section> <Value>");
+			sender.sendMessage(ChatColor.GOLD + "rp info <region> <world>");
+			sender.sendMessage(ChatColor.GOLD + "rp flag <regionName> <Flag> <Value> <World>");
+			sender.sendMessage(ChatColor.GOLD + "rp flag info <region> <world>");
+			sender.sendMessage(ChatColor.GOLD + "rp tp <playerName> <regionName> <World>");			
+			sender.sendMessage(ChatColor.GOLD + "rp limit <playerName>");
+			sender.sendMessage(ChatColor.GOLD + "rp claimlimit <playerName> [world]");
+			sender.sendMessage(ChatColor.GOLD + "rp list-all");
+			sender.sendMessage(ChatColor.GOLD + "rp ymlTomysql");
+			sender.sendMessage(ChatColor.GOLD + "rp save-all");
+			sender.sendMessage(ChatColor.GOLD + "rp load-all");
+			sender.sendMessage(ChatColor.GOLD + "rp reload");
+			
 		}
 		sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
 	}

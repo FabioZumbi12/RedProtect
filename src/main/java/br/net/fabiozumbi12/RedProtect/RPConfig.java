@@ -32,7 +32,7 @@ public class RPConfig{
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
 	static void init(RedProtect plugin) {
 
@@ -285,6 +285,10 @@ public class RPConfig{
     public static Boolean getBool(String key){		
 		return RedProtect.plugin.getConfig().getBoolean(key, false);
 	}
+    
+    public static void setConfig(String key, Object value){
+    	RedProtect.plugin.getConfig().set(key, value);
+    }
     
     public static HashMap<String, Object> getDefFlagsValues(){
     	HashMap<String,Object> flags = new HashMap<String,Object>();

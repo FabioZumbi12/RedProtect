@@ -228,17 +228,20 @@ class RPPlayerListener implements Listener{
             }
         }
         else if (RPDoor.isOpenable(b)) {
-            if (r != null && (!r.canDoor(p) || (r.canDoor(p) && !cont.canOpen(b, p)))) {
-                if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantdoor");                    
-                    event.setCancelled(true);
+        	if (r != null){
+        		if ((!r.canDoor(p) || (r.canDoor(p) && !cont.canOpen(b, p)))) {
+                    if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantdoor");                    
+                        event.setCancelled(true);
+                    } else {
+                        RPLang.sendMessage(p, "playerlistener.region.opendoor");
+                        RPDoor.ChangeDoor(b, r);
+                    }
                 } else {
-                    RPLang.sendMessage(p, "playerlistener.region.opendoor");
-                    RPDoor.ChangeDoor(b, r);
+                	RPDoor.ChangeDoor(b, r);
                 }
-            } else {
-            	RPDoor.ChangeDoor(b, r);
-            }
+        	}
+            
         } 
         else if (b.getType().name().contains("RAIL")){
             if (r != null && !r.canMinecart(p)){
@@ -297,11 +300,18 @@ class RPPlayerListener implements Listener{
             return;
         }
                 
-        else if (r != null && !r.canBuild(p) && !r.canSign(p) && !r.canLever(p) && !r.canDoor(p) && !r.canButton(p) && !r.canChest(p) && !r.allowMod()){
-        	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-        	event.setCancelled(true);
-            return;
+        else if (r != null && !r.allowMod(p)){
+        	//check if is bukkit 1.8.8 blocks
+        	try{
+        		RPBukkitBlocks.valueOf(b.getType().name());        		 
+        	} catch (Exception e){
+        		RedProtect.logger.debug("Block is " + b.getType().name());
+            	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+            	event.setCancelled(true);
+                return;
+        	}
         }
+        
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
@@ -340,11 +350,17 @@ class RPPlayerListener implements Listener{
         	}
         }
         
-        else  if (!r.canBuild(p) && !r.canMinecart(p) && !r.allowMod() && (!(event.getRightClicked() instanceof Player))){
-        	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-        	event.setCancelled(true);
-            return;
-        }
+        else if (!r.allowMod(p) && (!(event.getRightClicked() instanceof Player))){
+        	//check if is bukkit 1.8.8 blocks
+        	try{
+        		RPBukkitEntities.valueOf(event.getRightClicked().getType().name());
+        	} catch (Exception ex){
+        		RedProtect.logger.debug("PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
+            	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+            	event.setCancelled(true);
+                return;
+        	}       
+        }        
     }
     
     @EventHandler

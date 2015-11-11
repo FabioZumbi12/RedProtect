@@ -53,7 +53,6 @@ public class RedProtect extends JavaPlugin {
     static String pathMain = "plugins" + File.separator + "RedProtect" + File.separator;
     static String pathData = String.valueOf(RedProtect.pathMain) + File.separator + "data" + File.separator;
     static String pathConfig = String.valueOf(RedProtect.pathMain) + File.separator + "config.yml";
-    static String pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang.ini"; 
     static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
     static String pathGui = String.valueOf(RedProtect.pathMain) + File.separator + "guiconfig.yml"; 
     static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";;
