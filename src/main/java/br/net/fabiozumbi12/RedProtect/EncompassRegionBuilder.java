@@ -165,39 +165,29 @@ class EncompassRegionBuilder extends RegionBuilder{
                         }
                         
                         
-                        Region region = new Region(regionName, owners, new ArrayList<String>(), owners.get(0), rx, rz, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0.0);
+                        Region region = new Region(regionName, owners, new ArrayList<String>(), owners.get(0), rx, rz, 0, w.getMaxHeight(), 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0.0);
                         
                         List<String> othersName = new ArrayList<String>();
                         Region otherrg = null;
                         
                         for (int locx = region.getMinMbrX();  locx < region.getMaxMbrX(); locx++){
                         	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
-                        		otherrg = RedProtect.rm.getTopRegion(new Location(w, locx, p.getLocation().getY(), locz));
-                        		if (otherrg != null){
-                                	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
-                                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
-                                        return;
-                                	}
-                                	if (!othersName.contains(otherrg.getName())){
-                                		othersName.add(otherrg.getName());
-                                	}
-                                }  
+                        		for (int locy = region.getMinY();  locy < region.getMaxY(); locy++){
+                        			otherrg = RedProtect.rm.getTopRegion(new Location(w, locx, p.getLocation().getY(), locz));
+                            		if (otherrg != null){
+                                    	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
+                                    		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
+                                            return;
+                                    	}
+                                    	if (!othersName.contains(otherrg.getName())){
+                                    		othersName.add(otherrg.getName());
+                                    	}
+                                    } 
+                        		}                        		 
                         	}
                         }                                
                         
-                        int regionarea = region.getArea();                        
-                        Region topRegion = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterZ());
-                        Region lowRegion = RedProtect.rm.getLowRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterZ());
-                        
-                        if (lowRegion != null){
-                        	if (regionarea > lowRegion.getArea()){
-                        		region.setPrior(lowRegion.getPrior() - 1);
-                        	} else if (regionarea < lowRegion.getArea() && regionarea < topRegion.getArea() ){
-                        		region.setPrior(topRegion.getPrior() + 1);
-                        	} else if (regionarea < topRegion.getArea()){
-                        		region.setPrior(topRegion.getPrior() + 1);
-                        	} 
-                        }
+                        region.setPrior(RPUtil.getUpdatedPrior(region));
                         
                         int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
                         int claimused = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()),w).size();
@@ -210,14 +200,14 @@ class EncompassRegionBuilder extends RegionBuilder{
                         int pLimit = RedProtect.ph.getPlayerLimit(p);
                         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
                         int totalArea = RedProtect.rm.getTotalRegionSize(pName);
-                        if (pLimit >= 0 && totalArea + regionarea > pLimit && !areaUnlimited) {
+                        if (pLimit >= 0 && totalArea + region.getArea() > pLimit && !areaUnlimited) {
                             this.setErrorSign(e, RPLang.get("regionbuilder.reach.limit"));
                             return;
                         }
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         p.sendMessage(RPLang.get("regionbuilder.claim.left") + claimused + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
-                        p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (totalArea + regionarea) + "\n" + 
-                        RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + regionarea))));
+                        p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (totalArea + region.getArea()) + "\n" + 
+                        RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea()))));
                         p.sendMessage(RPLang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior());
                         
                         if (othersName.size() > 0){

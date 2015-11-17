@@ -25,6 +25,8 @@ public class Region implements Serializable{
     private int maxMbrX;
     private int minMbrZ;
     private int maxMbrZ;
+    private int minY;
+    private int maxY;
     private int prior;
     private String name;
     private List<String> owners;
@@ -56,6 +58,24 @@ public class Region implements Serializable{
     
     public String getDate() {
         return this.date;
+    }
+    
+    public int getMaxY() {
+        return this.maxY;
+    }
+    
+    public void setMaxY(int y) {
+        this.maxY = y;
+        RedProtect.rm.updateLiveRegion(this, "maxy", String.valueOf(y));
+    }
+    
+    public int getMinY() {
+        return this.minY;
+    }
+    
+    public void setMinY(int y) {
+        this.minY = y;
+        RedProtect.rm.updateLiveRegion(this, "miny", String.valueOf(y));
     }
     
     public void setWorld(String w) {
@@ -146,6 +166,10 @@ public class Region implements Serializable{
         return (this.minMbrZ + this.maxMbrZ) / 2;
     }
     
+    public int getCenterY() {
+        return (this.minY + this.maxY) / 2;
+    }
+    
     public int getMaxMbrX() {
         return this.maxMbrX;
     }
@@ -230,7 +254,8 @@ public class Region implements Serializable{
         
         return RPLang.get("region.name") + " " + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.creator") + " " + RPUtil.UUIDtoPlayer(this.creator) + "\n" +      
         RPLang.get("region.priority") + " " + this.prior + RPLang.get("general.color") + " | " + RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPConfig.getEcoString("economy-symbol") + this.value + "\n" +
-        RPLang.get("region.world") + " " + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + RPLang.get("general.color") +  " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
+        RPLang.get("region.world") + " " + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
+        RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | "+ RPLang.get("region.area") + " " + this.getArea() + "\n" +
         RPLang.get("region.owners") + " " + ownerstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
         RPLang.get("region.date") + " " + today + "\n" +
         RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ")? RPLang.get("region.hiding") : wMsgTemp.replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
@@ -256,7 +281,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an owner or member.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, Double value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, Double value) {
     	super();
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
         this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
@@ -264,6 +289,8 @@ public class Region implements Serializable{
         this.minMbrX = minMbrX;
         this.maxMbrZ = maxMbrZ;
         this.minMbrZ = minMbrZ;
+        this.maxY = maxY;
+        this.minY = minY;
         this.name = name;
         this.owners = owners;
         this.members = members;
@@ -298,13 +325,15 @@ public class Region implements Serializable{
 	 * @param creator Creator name/uuid.
 	 * @param x Locations of x coords.
 	 * @param z Locations of z coords.
+	 * @param miny Min coord y of this region.
+	 * @param maxy Max coord y of this region.
 	 * @param prior Location of x coords.
      * @param worldName Name of world region.
      * @param date Date of latest visit of an owner or member.
      * @param welcome Set a welcome message.
      * @param value A value in server economy.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int prior, String worldName, String date, Map<String, Object> flags, String welcome, Double value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, Double value) {
     	super();
         this.prior = prior;
         this.world = worldName;
@@ -334,6 +363,8 @@ public class Region implements Serializable{
         this.minMbrX = x[0];
         this.maxMbrZ = z[0];
         this.minMbrZ = z[0];
+        this.maxY = maxy;
+        this.minY = miny;
         for (int i = 0; i < x.length; ++i) {
             if (x[i] > this.maxMbrX) {
                 this.maxMbrX = x[i];
@@ -479,7 +510,10 @@ public class Region implements Serializable{
     }
     
     public boolean canBuild(Player p) {
-        return p.getLocation().getY() < RPConfig.getInt("region-settings.height-start") || checkAllowedPlayer(p);
+    	if (p.getLocation().getBlockY() <= this.minY || p.getLocation().getBlockY() >= this.maxY){
+    		return true;
+    	}    	
+        return checkAllowedPlayer(p);
     }
     
     public boolean canPVP(Player p) {
@@ -598,7 +632,7 @@ public class Region implements Serializable{
     }
         
     public boolean isOnTop(){
-    	Region newr = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(this.getWorld()), this.getCenterX(), this.getCenterZ());
+    	Region newr = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(this.getWorld()), this.getCenterX(), this.getCenterY(), this.getCenterZ());
 		return newr == null || newr.equals(this);    	
     }
     
@@ -799,6 +833,13 @@ public class Region implements Serializable{
 			return true;
 		}
 		return getFlagBool("can-pet") || checkAllowedPlayer(p);
+	}
+	
+	public boolean canProtectiles(Player p) {
+		if (!flagExists("can-projectiles")){
+			return checkAllowedPlayer(p);
+		}
+		return getFlagBool("can-projectiles") || checkAllowedPlayer(p);
 	}
 
 	public Double getValue() {	

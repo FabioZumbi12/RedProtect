@@ -26,6 +26,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -474,4 +475,11 @@ class RPBlockListener implements Listener{
 		}
 	}
 	
+	@EventHandler
+	public void onLeafDecay(LeavesDecayEvent e){
+		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());		
+		if (r != null && !r.canFlow()){
+         	 e.setCancelled(true);           	  
+		}		
+	}	
 }

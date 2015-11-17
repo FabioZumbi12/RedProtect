@@ -50,28 +50,44 @@ class DefineRegionBuilder extends RegionBuilder{
         if (!pName.equals(creator)) {
             owners.add(pName);
         }
-        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0.0);
         
-        int regionarea = region.getArea();                        
-        Region topRegion = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterZ());
-        Region lowRegion = RedProtect.rm.getLowRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterZ());
-        
-        if (lowRegion != null){
-        	if (regionarea > lowRegion.getArea()){
-        		region.setPrior(lowRegion.getPrior() - 1);
-        	} else if (regionarea < lowRegion.getArea() && regionarea < topRegion.getArea() ){
-        		region.setPrior(topRegion.getPrior() + 1);
-        	} else if (regionarea < topRegion.getArea()){
-        		region.setPrior(topRegion.getPrior() + 1);
-        	} 
-        }              
-            	
-        for (Region reg:RedProtect.rm.getPossibleIntersectingRegions(region, RedProtect.serv.getWorld(region.getWorld()))){        	
-        	if (!reg.isOwner(p) || !p.hasPermission("redprotect.admin")){
-        		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(reg.getCreator())));
-                return;
-        	}
+        int miny = loc1.getBlockY();
+        int maxy = loc2.getBlockY();
+        if (RPConfig.getBool("region-settings.autoexpandvert-ondefine")){
+        	miny = 0;
+        	maxy = p.getWorld().getMaxHeight();
         }
+        
+        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0.0);
+        
+        region.setPrior(RPUtil.getUpdatedPrior(region));            
+            	
+        List<String> othersName = new ArrayList<String>();
+        Region otherrg = null;
+        
+        for (int locx = region.getMinMbrX();  locx < region.getMaxMbrX(); locx++){
+        	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
+        		for (int locy = region.getMinY();  locy < region.getMaxY(); locy++){
+        			otherrg = RedProtect.rm.getTopRegion(new Location(p.getWorld(), locx, p.getLocation().getY(), locz));
+            		if (otherrg != null){
+                    	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
+                    		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
+                            return;
+                    	}
+                    	if (!othersName.contains(otherrg.getName())){
+                    		othersName.add(otherrg.getName());
+                    	}
+                    } 
+        		}        		 
+        	}
+        } 
+        
+        if (othersName.size() > 0){
+        	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+        	p.sendMessage(RPLang.get("regionbuilder.overlapping"));
+        	p.sendMessage(RPLang.get("region.regions") + " " + othersName);
+        }
+        
         super.r = region;
         return;
     }

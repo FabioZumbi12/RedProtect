@@ -113,25 +113,26 @@ class RPPlayerListener implements Listener{
     	
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
+        Location l = null;
         
-        if (b == null) {
-            return;
+        if (b != null){
+        	l = b.getLocation();
+        	RedProtect.logger.debug("RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
+        } else {
+        	l = p.getLocation();
         }
         
-        RedProtect.logger.debug("RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
-        
-        Location l = b.getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
-        Material itemInHand = p.getItemInHand().getType(); 
+        Material itemInHand = p.getItemInHand().getType();
         
-        if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
-            if (event.getAction().equals((Object)Action.RIGHT_CLICK_BLOCK)) {
+        if (b != null && p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
+            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             	RedProtect.secondLocationSelections.put(p, b.getLocation());
                 p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + b.getLocation().getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockZ() + RPLang.get("general.color") + ").");
                 event.setCancelled(true);
                 return;                
             }
-            else if (event.getAction().equals((Object)Action.LEFT_CLICK_BLOCK)) {
+            else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                 RedProtect.firstLocationSelections.put(p, b.getLocation());
                 p.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + b.getLocation().getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockZ() + RPLang.get("general.color") + ").");
                 event.setCancelled(true);
@@ -139,11 +140,11 @@ class RPPlayerListener implements Listener{
             }
         }
         if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.infoWandID")) {
-            if (event.getAction().equals((Object)Action.RIGHT_CLICK_AIR)) {
+            if (b == null) {
             	Location lp = p.getLocation();
                 r = RedProtect.rm.getTopRegion(lp);
             }
-            else if (event.getAction().equals((Object)Action.RIGHT_CLICK_BLOCK)) {
+            else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             	Location lb = b.getLocation();
                 r = RedProtect.rm.getTopRegion(lb);
             }
@@ -163,7 +164,7 @@ class RPPlayerListener implements Listener{
             }
         } 
         
-        if (b.getType().name().contains("CHEST") || 
+        if (b != null && (b.getType().name().contains("CHEST") || 
         		b.getType().name().contains("ANVIL") ||
         		b.getType().name().contains("ENCHANTMENT_TABLE") ||
         		b.getType().name().equalsIgnoreCase("BED") ||
@@ -177,7 +178,7 @@ class RPPlayerListener implements Listener{
         		b.getType().name().contains("DISPENSER") || 
         		b.getType().name().contains("FURNACE") ||
         		b.getType().name().contains("HOPPER") ||
-        		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){   
+        		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){   
         	
             Boolean out = RPConfig.getBool("private.allow-outside");
         	if (r != null && (!r.canChest(p) || (r.canChest(p) && !cont.canOpen(b, p)))) {
@@ -205,7 +206,7 @@ class RPPlayerListener implements Listener{
         	}
         }               
         
-        else if (b.getType().name().contains("LEVER")) {
+        else if (b != null && b.getType().name().contains("LEVER")) {
             if (r != null && !r.canLever(p)) {
                 if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                     RPLang.sendMessage(p, "playerlistener.region.cantlever");
@@ -216,7 +217,7 @@ class RPPlayerListener implements Listener{
                 }
             }
         }
-        else if (b.getType().name().contains("BUTTON")) {
+        else if (b != null && b.getType().name().contains("BUTTON")) {
             if (r != null && !r.canButton(p)) {
                 if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                     RPLang.sendMessage(p, "playerlistener.region.cantbutton");
@@ -227,7 +228,7 @@ class RPPlayerListener implements Listener{
                 }
             }
         }
-        else if (RPDoor.isOpenable(b)) {
+        else if (b != null && RPDoor.isOpenable(b)) {
         	if (r != null){
         		if ((!r.canDoor(p) || (r.canDoor(p) && !cont.canOpen(b, p)))) {
                     if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
@@ -243,7 +244,7 @@ class RPPlayerListener implements Listener{
         	}
             
         } 
-        else if (b.getType().name().contains("RAIL")){
+        else if (b != null && b.getType().name().contains("RAIL")){
             if (r != null && !r.canMinecart(p)){
         		RPLang.sendMessage(p, "blocklistener.region.cantplace");
         		event.setUseItemInHand(Event.Result.DENY);
@@ -251,7 +252,7 @@ class RPPlayerListener implements Listener{
     			return;		
         	}
         } 
-        else if ((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) && 
+        else if (b != null && ((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) && 
         	      b.getType().name().contains("SIGN") && (r != null && !r.canSign(p))){
         	      Sign sign = (Sign) b.getState();
         	      for (String tag:RPConfig.getStringList("region-settings.allow-sign-interact-tags")){
@@ -299,19 +300,28 @@ class RPPlayerListener implements Listener{
             event.setCancelled(true);
             return;
         }
+        
+        else if (r != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){        	
+        	if (p.getItemInHand().getType().equals(Material.ENDER_PEARL) && r.canEnderPearl(p)){
+    			//allow if is ender pearl allowed on region
+    			return;
+    		} else if ((p.getItemInHand().getType().equals(Material.BOW) || p.getItemInHand().getType().equals(Material.SNOW_BALL) || p.getItemInHand().getType().equals(Material.EGG)) && !r.canProtectiles(p)){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                event.setCancelled(true); 
+                return;
+    		}
+        }
                 
-        else if (r != null && !r.allowMod(p)){
+        else if (b != null && r != null && !r.allowMod(p)){
         	//check if is bukkit 1.8.8 blocks
         	try{
         		RPBukkitBlocks.valueOf(b.getType().name());        		 
         	} catch (Exception e){
-        		RedProtect.logger.debug("Block is " + b.getType().name());
             	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
             	event.setCancelled(true);
                 return;
         	}
-        }
-        
+        }        
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
@@ -774,12 +784,12 @@ class RPPlayerListener implements Listener{
     private Location DenyEnterPlayer(World wFrom, Location from, Location to, Player p, Region r) {
     	Location setTo = to;
     	for (int i = 0; i < r.getArea()+10; i++){
-    		Region r1 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockZ());
-    		Region r2 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockZ());
-    		Region r3 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockZ()+i);
-    		Region r4 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockZ()-i);
-    		Region r5 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockZ()+i);
-    		Region r6 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockZ()-i);
+    		Region r1 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ());
+    		Region r2 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockY(), from.getBlockZ());
+    		Region r3 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ()+i);
+    		Region r4 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ()-i);
+    		Region r5 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ()+i);
+    		Region r6 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockY(), from.getBlockZ()-i);
     		if (r1 != r){
     			setTo = from.add(+i, 0, 0);
     			break;

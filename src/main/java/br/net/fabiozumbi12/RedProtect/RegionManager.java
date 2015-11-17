@@ -9,7 +9,6 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class RegionManager{
@@ -131,10 +130,13 @@ public class RegionManager{
         }
     }
     
+    /*
     public Region isSurroundingRegion(Region r, World w) {
         return this.regionManagers.get(w).isSurroundingRegion(r);
     }
+    */
     
+    /*
     public boolean regionExists(Block block, World w) {
         return this.regionManagers.get(w).regionExists(block);
     }
@@ -142,13 +144,16 @@ public class RegionManager{
     public boolean regionExists(int x, int z, World w) {
         return this.regionManagers.get(w).regionExists(x, z);
     }
+    */
     
+    /*
     public Set<Region> getPossibleIntersectingRegions(Region r, World w) {
         return this.regionManagers.get(w).getPossibleIntersectingRegions(r);
     }
+    */
       
-    public Set<Region> getRegions(Player p, int x, int z){
-    	return this.regionManagers.get(p.getWorld()).getRegions(x, z);    	
+    public Set<Region> getRegions(Player p, int x, int y, int z){
+    	return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);    	
     }
 
     public Region getTopRegion(Location loc){
@@ -156,23 +161,23 @@ public class RegionManager{
     		return null;
     	}
     	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());    	
-		return rm.getTopRegion(loc.getBlockX(), loc.getBlockZ());
+		return rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
     
-    public Region getTopRegion(World w, int x, int z){
+    public Region getTopRegion(World w, int x, int y, int z){
     	if (!this.regionManagers.containsKey(w)){
     		return null;
     	}
     	WorldRegionManager rm = this.regionManagers.get(w);    	
-		return rm.getTopRegion(x, z);
+		return rm.getTopRegion(x, y, z);
     }
     
-    public Region getLowRegion(World w, int x, int z){
+    public Region getLowRegion(World w, int x, int y, int z){
     	if (!this.regionManagers.containsKey(w)){
     		return null;
     	}
     	WorldRegionManager rm = this.regionManagers.get(w);    	
-		return rm.getLowRegion(x, z);
+		return rm.getLowRegion(x, y, z);
     }
     
     public Region getLowRegion(Location loc){
@@ -180,15 +185,15 @@ public class RegionManager{
     		return null;
     	}
     	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());    	
-		return rm.getLowRegion(loc.getBlockX(), loc.getBlockZ());
+		return rm.getLowRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
     
-    public Map<Integer,Region> getGroupRegion(World w, int x, int z){
+    public Map<Integer,Region> getGroupRegion(World w, int x, int y, int z){
     	if (!this.regionManagers.containsKey(w)){
     		return null;
     	}
     	WorldRegionManager rm = this.regionManagers.get(w);    	
-		return rm.getGroupRegion(x, z);
+		return rm.getGroupRegion(x, y, z);
     }
     
     public Map<Integer,Region> getGroupRegion(Location loc){
@@ -196,7 +201,7 @@ public class RegionManager{
     		return null;
     	}
     	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());    	
-		return rm.getGroupRegion(loc.getBlockX(), loc.getBlockZ());
+		return rm.getGroupRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
         
     public Set<Region> getAllRegions(){
@@ -249,7 +254,7 @@ public class RegionManager{
 	
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getOwners(), old.getMembers(), old.getCreator(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
-				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue());
+				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue());
 		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));
 		this.remove(old);		
 	}

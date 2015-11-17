@@ -147,13 +147,13 @@ class RPEntityListener implements Listener{
                 if (e2 instanceof Player) {                	
                     Player p2 = (Player)e2; 
                     if (r1 != null) {
-                    	if (p2.getItemInHand().getType().equals(Material.EGG) && !r1.canBuild(p2)){
+                    	if (p2.getItemInHand().getType().equals(Material.EGG) && !r1.canProtectiles(p2)){
                     		e.setCancelled(true);
                     		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                             return;
                     	}
                         if (r2 != null) {
-                        	if (p2.getItemInHand().getType().equals(Material.EGG) && !r2.canBuild(p2)){
+                        	if (p2.getItemInHand().getType().equals(Material.EGG) && !r2.canProtectiles(p2)){
                         		e.setCancelled(true);
                         		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                                 return;

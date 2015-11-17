@@ -31,7 +31,7 @@ public class RedProtectAPI {
 	 * @return {@code Region} of player location or {@code null} if no regions on player location.
 	 */
 	public static Region getRegion(Location location){				
-		return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockZ());
+		return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 	}
 	
 	/**
@@ -62,11 +62,12 @@ public class RedProtectAPI {
 	 * <p>
 	 * @param player Owner of regions.
 	 * @param x Coord x of a location.
+	 * @param y Coord y of a location.
 	 * @param z Coord z of a location.
 	 * @return {@code set<Region>} with all regions created by given player.
 	 */
-	public static Set<Region> getPlayerRegions(Player player, int x, int z){
-		return RedProtect.rm.getRegions(player, x, z);
+	public static Set<Region> getPlayerRegions(Player player, int x, int y, int z){
+		return RedProtect.rm.getRegions(player, x, y, z);
 	}
 	
 	/**
@@ -74,11 +75,12 @@ public class RedProtectAPI {
 	 * <p>
 	 * @param world World to search for regions.
 	 * @param x Coord x of a location.
+	 * @param y Coord y of a location.
 	 * @param z Coord z of a location.
 	 * @return The high priority {@code Region} in a group of regions.
 	 */
-	public static Region getHighPriorityRegion(World world, int x, int z){
-		return RedProtect.rm.getTopRegion(world, x, z);
+	public static Region getHighPriorityRegion(World world, int x, int y, int z){
+		return RedProtect.rm.getTopRegion(world, x, y, z);
 	}
 	
 	/**
@@ -86,11 +88,12 @@ public class RedProtectAPI {
 	 * <p>
 	 * @param world World to search for regions.
 	 * @param x Coord x of a location.
+	 * @param y Coord y of a location.
 	 * @param z Coord z of a location.
 	 * @return The lower priority {@code Region} in a group of regions.
 	 */
-	public static Region getLowPriorytyRegion(World world, int x, int z){
-		return RedProtect.rm.getLowRegion(world, x, z);
+	public static Region getLowPriorytyRegion(World world, int x, int y, int z){
+		return RedProtect.rm.getLowRegion(world, x, y, z);
 	}
 	
 	/**
@@ -98,11 +101,12 @@ public class RedProtectAPI {
 	 * <p>
 	 * @param world World to search for regions.
 	 * @param x Coord x of a location.
+	 * @param y Coord y of a location.
 	 * @param z Coord z of a location.
 	 * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
 	 */
-	public static Map<Integer, Region> getGroupRegions(World world, int x, int z){
-		return RedProtect.rm.getGroupRegion(world, x, z);
+	public static Map<Integer, Region> getGroupRegions(World world, int x, int y, int z){
+		return RedProtect.rm.getGroupRegion(world, x, y, z);
 	}
 	
 	/**

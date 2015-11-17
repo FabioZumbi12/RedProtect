@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandException;
@@ -647,6 +648,46 @@ class RPUtil {
 				} 
 			}
 			}, RPConfig.getInt("flags-configuration.change-flag-delay.seconds")*20);
+	}
+
+	public static List<String> CheckIntersectRegion(Region region, Player p) {
+		Region otherrg = null;
+		List<String> othersName = new ArrayList<String>();
+		for (int locx = region.getMinMbrX();  locx < region.getMaxMbrX(); locx++){
+        	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
+        		for (int locy = region.getMinY();  locy < region.getMaxY(); locy++){
+        			otherrg = RedProtect.rm.getTopRegion(new Location(p.getWorld(), locx, p.getLocation().getY(), locz));
+            		if (otherrg != null){
+                    	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){                		
+                            return null;
+                    	}
+                    	if (!othersName.contains(otherrg.getName())){
+                    		othersName.add(otherrg.getName());
+                    	}
+                    } 
+        		}
+        		 
+        	}
+        }
+		return othersName;
+	}
+
+	public static int getUpdatedPrior(Region region) {
+		int regionarea = region.getArea();  
+		int prior = region.getPrior();
+        Region topRegion = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region lowRegion = RedProtect.rm.getLowRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        
+        if (lowRegion != null){
+        	if (regionarea > lowRegion.getArea()){
+        		prior = lowRegion.getPrior() - 1;
+        	} else if (regionarea < lowRegion.getArea() && regionarea < topRegion.getArea() ){
+        		prior = topRegion.getPrior() + 1;
+        	} else if (regionarea < topRegion.getArea()){
+        		prior = topRegion.getPrior() + 1;
+        	} 
+        }
+		return prior;
 	}
 	
 }
