@@ -184,8 +184,7 @@ class RPBlockListener implements Listener{
             		} 
             	}
             }
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
         }
     }    	
@@ -271,7 +270,7 @@ class RPBlockListener implements Listener{
         for (int i = 0; i < e.blockList().size(); i++) {
         	Location l = e.blockList().get(i).getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
-        	if (r != null && !r.canFire()){
+        	if (r != null && !r.canMobLoot()){
         		e.setCancelled(true);
         		return;
         	}

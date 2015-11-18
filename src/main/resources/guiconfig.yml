@@ -101,3 +101,10 @@ gui-flags:
     description: '&6Description: &aAllow natural spawn of'
     description1: '&amonsters in this region.'
     description2: ''
+  allow-potions:
+    slot: 14
+    material: POTION
+    name: '&e=> Allow Potions'
+    description: '&6Description: &aAllow use or throw'
+    description1: '&aany type of potions for no members'
+    description2: '&aof region.'

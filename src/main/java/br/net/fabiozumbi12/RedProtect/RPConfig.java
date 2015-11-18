@@ -32,7 +32,7 @@ public class RPConfig{
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("mob-loot", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
 	static void init(RedProtect plugin) {
 
@@ -155,16 +155,17 @@ public class RPConfig{
                     /*------------- ---- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.0){
-        				RedProtect.plugin.getConfig().set("config-version", 6.0D);
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.2D){
+        				RedProtect.plugin.getConfig().set("config-version", 6.2D);        				
         				
-        				//add flag "smart-door"
         				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
         				if (!flags.contains("smart-door")){
         					flags.add("smart-door");
-            				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);
         				}
-        				
+        				if (!flags.contains("allow-potions")){
+        					flags.add("allow-potions");            				
+        				}
+        				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);        				
         			}
         			
         			/*------------------------------------------------------------------------------------*/

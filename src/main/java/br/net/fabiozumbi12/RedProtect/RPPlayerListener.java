@@ -22,6 +22,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
@@ -36,8 +37,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -292,9 +296,7 @@ class RPPlayerListener implements Listener{
         		itemInHand.equals(Material.BUCKET) || 
         		itemInHand.equals(Material.LAVA_BUCKET) || 
         		itemInHand.equals(Material.ITEM_FRAME) || 
-        		itemInHand.equals(Material.PAINTING) ||
-        		itemInHand.name().contains("POTION") ||
-        		itemInHand.name().contains("EGG")) && r != null && !r.canBuild(p)) {
+        		itemInHand.equals(Material.PAINTING)) && r != null && !r.canBuild(p)) {
             RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantuse"));
             event.setUseItemInHand(Event.Result.DENY);
             event.setCancelled(true);
@@ -308,6 +310,12 @@ class RPPlayerListener implements Listener{
     		} else if ((p.getItemInHand().getType().equals(Material.BOW) || p.getItemInHand().getType().equals(Material.SNOW_BALL) || p.getItemInHand().getType().equals(Material.EGG)) && !r.canProtectiles(p)){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true); 
+                event.setUseItemInHand(Event.Result.DENY);
+                return;
+    		} else if (p.getItemInHand().getType().equals(Material.POTION) && !r.allowPotions(p)){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                event.setCancelled(true); 
+                event.setUseItemInHand(Event.Result.DENY);
                 return;
     		}
         }
@@ -897,7 +905,23 @@ class RPPlayerListener implements Listener{
     }
     
     @EventHandler
-    public void PlayerTrownPotion(PotionSplashEvent e){    	
+    public void PlayerTrownPotion(PotionSplashEvent e){ 
+    	if (!(e.getPotion().getShooter() instanceof Player)){
+    		return;
+    	}
+    	
+    	Player p = (Player)e.getPotion().getShooter();
+    	Entity ent = e.getEntity();
+    	
+    	RedProtect.logger.debug("Is PotionSplashEvent event.");
+        
+    	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
+    	if (r != null && !r.allowPotions(p)){
+    		RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    		e.setCancelled(true);
+    		return;
+    	}    
+    	
     	//deny potion
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
         if(Pots.size() > 0){
@@ -915,22 +939,6 @@ class RPPlayerListener implements Listener{
         		}
         	}                    
         }
-        
-    	if (!(e.getPotion().getShooter() instanceof Player)){
-    		return;
-    	}
-    	
-    	Player p = (Player)e.getPotion().getShooter();
-    	Entity ent = e.getEntity();
-    	
-    	RedProtect.logger.debug("Is PotionSplashEvent event.");
-        
-    	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
-    	if (r != null && !r.canBuild(p)){
-    		RPLang.sendMessage(p, "playerlistener.region.cantuse");
-    		e.setCancelled(true);
-    		return;
-    	}    	
     }
             
     public void SendNotifyMsg(Player p, String notify){
@@ -1181,5 +1189,58 @@ class RPPlayerListener implements Listener{
             	e.setLoginResult(Result.KICK_OTHER);
         	}
     	}
+    }
+    
+
+    @EventHandler
+    public void onHangingDamaged(HangingBreakByEntityEvent e) {
+    	if (e.isCancelled()) {
+            return;
+        }
+    	RedProtect.logger.debug("Is Entity Listener - HangingBreakByEntityEvent event");
+        Entity ent = e.getRemover();
+        Location loc = e.getEntity().getLocation();
+        Region r = RedProtect.rm.getTopRegion(loc);
+        
+        if (ent instanceof Player) {
+            Player player = (Player)ent; 
+            if (r != null && !r.canBuild(player)) {
+            	RPLang.sendMessage(player, "blocklistener.region.cantbuild");
+                e.setCancelled(true);
+            }
+        } 
+        if (ent instanceof Monster){
+        	if (r != null && !r.canMobLoot()) {
+                e.setCancelled(true);
+            }
+        }
+    }
+    
+    @EventHandler
+	public void onBucketUse(PlayerBucketEmptyEvent e){
+    	if (e.isCancelled()) {
+            return;
+        }
+    	Player p = e.getPlayer();
+    	Location l = e.getBlockClicked().getLocation();
+		Region r = RedProtect.rm.getTopRegion(l);	
+    	if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
+    		e.setCancelled(true);
+			return;
+		}
+    }
+    
+    @EventHandler
+	public void onBucketFill(PlayerBucketFillEvent e){
+    	if (e.isCancelled()) {
+            return;
+        }
+    	Player p = e.getPlayer();
+    	Location l = e.getBlockClicked().getLocation();
+		Region r = RedProtect.rm.getTopRegion(l);	
+    	if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
+    		e.setCancelled(true);
+			return;
+		}
     }
 }

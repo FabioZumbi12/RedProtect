@@ -169,11 +169,12 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
     
     /*
-    public Set<Region> getRegionsIntersecting(int bx, int bz) {
+    @Override
+    public Set<Region> getRegionsForY(int x, int z, int maxy, int miny) {
 		Set<Region> ret = new HashSet<Region>();
 		try {
             Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE " + bx + "<=maxMbrX AND " + bx + ">=minMbrX AND " + bz + "<=maxMbrZ AND " + bz + ">=minMbrZ");
+            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE " + x + ">=maxMbrX AND " + x + "<=minMbrX AND " + z + ">=maxMbrZ AND " + z + "<=minMbrZ AND " + maxy + ">=maxY AND " + miny + "<=minY");
             while (rs.next()) {
             	ret.add(this.getRegion(rs.getString("name")));
             }
@@ -183,12 +184,13 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		catch (SQLException e) {
             e.printStackTrace();
         }
-		RedProtect.logger.debug("Rects intersecting " + bx + ", " + bz + ": ");
+		
         for (Region r : ret) {
             RedProtect.logger.debug(String.valueOf(r.getName()) + r.info());
         }
         return ret;
-	}*/
+	}
+	*/
     
     @Override
     public Set<Region> getRegions(String uuid) {
@@ -807,5 +809,5 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         }
 		return total;
 	}
-	
+		
 }

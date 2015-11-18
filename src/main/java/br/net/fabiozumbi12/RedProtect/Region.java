@@ -510,88 +510,8 @@ public class Region implements Serializable{
     }
     
     public boolean canBuild(Player p) {
-    	if (p.getLocation().getBlockY() <= this.minY || p.getLocation().getBlockY() >= this.maxY){
-    		return true;
-    	}    	
         return checkAllowedPlayer(p);
     }
-    
-    public boolean canPVP(Player p) {
-    	if (!RPConfig.isFlagEnabled("pvp")){
-    		return RPConfig.getBool("flags.pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
-    	}
-        return getFlagBool("pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
-    }
-    
-    public boolean canChest(Player p) {
-    	if (!RPConfig.isFlagEnabled("chest")){
-    		return RPConfig.getBool("flags.chest") || checkAllowedPlayer(p);
-    	}
-        return getFlagBool("chest") || checkAllowedPlayer(p);
-    }
-    
-    public boolean canLever(Player p) {
-    	if (!RPConfig.isFlagEnabled("lever")){
-    		return RPConfig.getBool("flags.lever") || checkAllowedPlayer(p);
-    	}
-        return getFlagBool("lever") || checkAllowedPlayer(p);
-    }
-    
-    public boolean canButton(Player p) {
-    	if (!RPConfig.isFlagEnabled("button")){
-    		return RPConfig.getBool("flags.button") || checkAllowedPlayer(p);
-    	}
-        return getFlagBool("button") || checkAllowedPlayer(p);
-    }
-    
-    public boolean canDoor(Player p) {
-    	if (!RPConfig.isFlagEnabled("door")){
-    		return RPConfig.getBool("flags.door") || checkAllowedPlayer(p);
-    	}
-        return getFlagBool("door") || checkAllowedPlayer(p);
-    }
-    
-    public boolean canSpawnMonsters() {
-    	if (!RPConfig.isFlagEnabled("spawn-monsters")){
-    		return RPConfig.getBool("flags.spawn-monsters");
-    	}
-        return getFlagBool("spawn-monsters");
-    }
-    
-    public boolean canHurtPassives(Player p) {
-    	if (!RPConfig.isFlagEnabled("passives")){
-    		return RPConfig.getBool("flags.passives") || checkAllowedPlayer(p);
-    	}
-        return getFlagBool("passives") || checkAllowedPlayer(p);
-    }
-    
-    public boolean canFlow() {
-    	if (!RPConfig.isFlagEnabled("flow")){
-    		return RPConfig.getBool("flags.flow");
-    	}
-        return getFlagBool("flow");
-    }
-    
-    public boolean canFire() {
-    	if (!RPConfig.isFlagEnabled("fire")){
-    		return RPConfig.getBool("flags.fire");
-    	}
-        return getFlagBool("fire");
-    }
-    
-    public boolean canSpawnPassives() {
-    	if (!RPConfig.isFlagEnabled("spawn-animals")){
-    		return RPConfig.getBool("flags.spawn-animals");
-    	}
-        return getFlagBool("spawn-animals");
-    }
-    
-	public boolean AllowHome(Player p) {
-		if (!RPConfig.isFlagEnabled("allow-home")){
-    		return RPConfig.getBool("flags.allow-home") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
-    	}
-		return getFlagBool("allow-home") || checkAllowedPlayer(p);
-	}
     
     public int ownersSize() {
         return this.owners.size();
@@ -639,21 +559,23 @@ public class Region implements Serializable{
     public boolean flagExists(String key){
     	return flags.containsKey(key);
     }
-
-	public boolean canSign(Player p) {
+	
+	
+	//---------------------- Admin Flags --------------------------//
+    public boolean canMobLoot() {
+    	if (!flagExists("mob-loot")){
+    		return RPConfig.getGlobalFlag(this.world + ".entity-block-damage");
+    	}
+        return getFlagBool("mob-loot");
+    }
+    
+    public boolean canSign(Player p) {
 		if (!flagExists("sign")){
     		return checkAllowedPlayer(p);
     	}		
         return getFlagBool("sign") || checkAllowedPlayer(p);
 	}
-	
-	public boolean canMinecart(Player p) {
-		if (!flagExists("minecart")){
-    		return checkAllowedPlayer(p);
-    	}
-        return getFlagBool("minecart") || checkAllowedPlayer(p);
-	}
-	
+    
 	public boolean canEnter(Player p) {
 		if (!flagExists("enter")){
     		return true;
@@ -837,24 +759,11 @@ public class Region implements Serializable{
 	
 	public boolean canProtectiles(Player p) {
 		if (!flagExists("can-projectiles")){
-			return checkAllowedPlayer(p);
+			return true;
 		}
 		return getFlagBool("can-projectiles") || checkAllowedPlayer(p);
 	}
-
-	public Double getValue() {	
-		return this.value;
-	}
 	
-	public void setValue(Double value) {	
-		RedProtect.rm.updateLiveRegion(this, "value", String.valueOf(value));
-		this.value = value;
-	}
-	    
-	private boolean checkAllowedPlayer(Player p){
-		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
-	}
-
 	public boolean canCreatePortal() {
 		if (!flagExists("allow-create-portal")){
 			return true;
@@ -893,4 +802,112 @@ public class Region implements Serializable{
 		}		
 		return true;
 	}
+	
+	
+	//---------------------- Player Flags --------------------------//
+	public boolean allowPotions(Player p) {
+    	if (!flagExists("allow-potions")){
+    		return RPConfig.getBool("flags.allow-potions");
+    	}    	
+        return getFlagBool("allow-potions");
+    }
+    
+    public boolean canPVP(Player p) {
+    	if (!RPConfig.isFlagEnabled("pvp")){
+    		return RPConfig.getBool("flags.pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	}
+        return getFlagBool("pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    }
+    
+    public boolean canChest(Player p) {
+    	if (!RPConfig.isFlagEnabled("chest")){
+    		return RPConfig.getBool("flags.chest") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("chest") || checkAllowedPlayer(p);
+    }
+    
+    public boolean canLever(Player p) {
+    	if (!RPConfig.isFlagEnabled("lever")){
+    		return RPConfig.getBool("flags.lever") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("lever") || checkAllowedPlayer(p);
+    }
+    
+    public boolean canButton(Player p) {
+    	if (!RPConfig.isFlagEnabled("button")){
+    		return RPConfig.getBool("flags.button") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("button") || checkAllowedPlayer(p);
+    }
+    
+    public boolean canDoor(Player p) {
+    	if (!RPConfig.isFlagEnabled("door")){
+    		return RPConfig.getBool("flags.door") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("door") || checkAllowedPlayer(p);
+    }
+    
+    public boolean canSpawnMonsters() {
+    	if (!RPConfig.isFlagEnabled("spawn-monsters")){
+    		return RPConfig.getBool("flags.spawn-monsters");
+    	}
+        return getFlagBool("spawn-monsters");
+    }
+        
+    public boolean canSpawnPassives() {
+    	if (!RPConfig.isFlagEnabled("spawn-animals")){
+    		return RPConfig.getBool("flags.spawn-animals");
+    	}
+        return getFlagBool("spawn-animals");
+    }
+    
+	public boolean canMinecart(Player p) {
+		if (!RPConfig.isFlagEnabled("minecart")){
+    		return RPConfig.getBool("flags.minecart") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("minecart") || checkAllowedPlayer(p);
+	}
+	
+	public boolean canHurtPassives(Player p) {
+    	if (!RPConfig.isFlagEnabled("passives")){
+    		return RPConfig.getBool("flags.passives") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("passives") || checkAllowedPlayer(p);
+    }
+    
+    public boolean canFlow() {
+    	if (!RPConfig.isFlagEnabled("flow")){
+    		return RPConfig.getBool("flags.flow");
+    	}
+        return getFlagBool("flow");
+    }
+    
+    public boolean canFire() {
+    	if (!RPConfig.isFlagEnabled("fire")){
+    		return RPConfig.getBool("flags.fire");
+    	}
+        return getFlagBool("fire");
+    }
+    
+    public boolean AllowHome(Player p) {
+		if (!RPConfig.isFlagEnabled("allow-home")){
+    		return RPConfig.getBool("flags.allow-home") || checkAllowedPlayer(p);
+    	}
+		return getFlagBool("allow-home") || checkAllowedPlayer(p);
+	}
+	//--------------------------------------------------------------//
+	
+	public Double getValue() {	
+		return this.value;
+	}
+	
+	public void setValue(Double value) {	
+		RedProtect.rm.updateLiveRegion(this, "value", String.valueOf(value));
+		this.value = value;
+	}
+	    
+	private boolean checkAllowedPlayer(Player p){
+		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+	}
+	
 }

@@ -147,8 +147,8 @@ public class RegionManager{
     */
     
     /*
-    public Set<Region> getPossibleIntersectingRegions(Region r, World w) {
-        return this.regionManagers.get(w).getPossibleIntersectingRegions(r);
+    public Set<Region> getRegionsForY(int x, int z, int miny, int maxy, World w) {
+        return this.regionManagers.get(w).getRegionsForY(x, z, maxy, miny);
     }
     */
       

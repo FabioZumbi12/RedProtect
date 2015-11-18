@@ -172,18 +172,21 @@ class EncompassRegionBuilder extends RegionBuilder{
                         
                         for (int locx = region.getMinMbrX();  locx < region.getMaxMbrX(); locx++){
                         	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
+                        		otherrg = RedProtect.rm.getTopRegion(new Location(w, locx, locz, locz));
+                        		if (otherrg != null){
+                                	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
+                                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
+                                        return;
+                                	}
+                                	if (!othersName.contains(otherrg.getName())){
+                                		othersName.add(otherrg.getName());
+                                	}
+                                }
+                        		/*
                         		for (int locy = region.getMinY();  locy < region.getMaxY(); locy++){
-                        			otherrg = RedProtect.rm.getTopRegion(new Location(w, locx, p.getLocation().getY(), locz));
-                            		if (otherrg != null){
-                                    	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
-                                    		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
-                                            return;
-                                    	}
-                                    	if (!othersName.contains(otherrg.getName())){
-                                    		othersName.add(otherrg.getName());
-                                    	}
-                                    } 
-                        		}                        		 
+                        			 
+                        		} 
+                        		*/                       		 
                         	}
                         }                                
                         

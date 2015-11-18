@@ -9,8 +9,8 @@ import org.bukkit.material.TrapDoor;
 @SuppressWarnings("deprecation")
 public class RPDoor {
 	
-	public static void ChangeDoor(Block b, Region r){
-		if (!r.getFlagBool("smart-door")){
+	public static void ChangeDoor(Block b, Region r){		
+		if ((!RPConfig.isFlagEnabled("smart-door") && !RPConfig.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")){
 			return;
 		}
 		

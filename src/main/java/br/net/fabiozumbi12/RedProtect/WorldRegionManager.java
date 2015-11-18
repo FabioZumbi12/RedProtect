@@ -35,7 +35,7 @@ public interface WorldRegionManager {
         
     //boolean regionExists(int p0, int p1);
     
-    //Set<Region> getPossibleIntersectingRegions(Region p0);
+    //Set<Region> getRegionsForY(int x, int z, int maxy, int miny);
     
     Set<Region> getRegions(int x, int y, int z); 
     

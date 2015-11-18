@@ -1,17 +1,14 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
 import org.bukkit.World;
@@ -22,11 +19,9 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
     HashMap<String, Region> regions;
     World world;
-    HashMap<Long, LargeChunkObject> regionslco;
     
     public WorldFlatFileRegionManager(World world) {
         super();
-        this.regionslco = new HashMap<Long, LargeChunkObject>(100);
         this.regions = new HashMap<String, Region>();
         this.world = world;
     }
@@ -44,19 +39,17 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     }
     
     /*
-    public Set<Region> getRegionsIntersecting(int bx, int bz) {
+    @Override
+    public Set<Region> getRegionsForY(int x, int z, int maxy, int miny) {
 		Set<Region> ret = new HashSet<Region>();
-		for (Region r:regions.values()){
-			if (bx <= r.getMaxMbrX() && bx >= r.getMinMbrX() && bz <= r.getMaxMbrZ() && bz >= r.getMinMbrZ()){
-				ret.add(r);
+		for (Region dbr:this.regions.values()){
+			if (dbr.getMaxMbrX() <= x && dbr.getMinMbrX() >= x && dbr.getMaxY() <= maxy && dbr.getMinY() >= miny && dbr.getMaxMbrZ() <= z && dbr.getMinMbrZ() >= z){
+				ret.add(dbr);
 			}
 		}
-		RedProtect.logger.debug("Rects intersecting " + bx + ", " + bz + ": ");
-        for (Region r : ret) {
-            RedProtect.logger.debug(String.valueOf(r.getName()) + r.info());
-        }
         return ret;
-	}*/
+	}
+    */
     
     @Override
     public Set<Region> getRegions(String pname) {
@@ -229,22 +222,26 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     */
     
     @Override
-    public void load() {
-        String world = this.getWorld().getName();
-        if (RPConfig.getString("file-type").equals("oosgz")) {
-            this.load(String.valueOf(RedProtect.pathData) + "data_" + world + ".regions");        	
-        } else if (RPConfig.getString("file-type").equals("yml")) {        	
-        	File oldf = new File(String.valueOf(RedProtect.pathData) + world + ".yml");
-        	File newf = new File(String.valueOf(RedProtect.pathData) + "data_" + world + ".yml");
-            if (oldf.exists()){
-            	oldf.renameTo(newf);
-            }            
-            this.load(String.valueOf(RedProtect.pathData) + "data_" + world + ".yml");        	
-        }
+    public void load() {   
+    	try {
+            String world = this.getWorld().getName();
+            if (RPConfig.getString("file-type").equals("oosgz")) {
+				this.load(String.valueOf(RedProtect.pathData) + "data_" + world + ".regions");
+            } else if (RPConfig.getString("file-type").equals("yml")) {        	
+            	File oldf = new File(String.valueOf(RedProtect.pathData) + world + ".yml");
+            	File newf = new File(String.valueOf(RedProtect.pathData) + "data_" + world + ".yml");
+                if (oldf.exists()){
+                	oldf.renameTo(newf);
+                }            
+                this.load(String.valueOf(RedProtect.pathData) + "data_" + world + ".yml");        	
+            }
+			} catch (FileNotFoundException | ZipException
+					| ClassNotFoundException e) {
+				e.printStackTrace();
+			} 
     }
     
-    @SuppressWarnings("unchecked")
-	private void load(String path) {
+	private void load(String path) throws FileNotFoundException, ZipException, ClassNotFoundException {
         String world = this.getWorld().getName();
         String datbackf = String.valueOf(RedProtect.pathData) + "data_" + world + ".backup";
         File f = new File(path);
@@ -257,8 +254,10 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         }
         try {
             if (!RPUtil.isFileEmpty(path)) {
+            	/*
                 ObjectInputStream ois = null;       
                 
+               
                 //oosgz type file
                 if (RPConfig.getString("file-type").equals("oosgz")) {
                     RedProtect.logger.debug("Load world " + this.world.getName() + ". File type: oosgz");
@@ -291,6 +290,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                         }
                     }
                 }
+                */
                 
                 //yml type file
                 if (RPConfig.getString("file-type").equals("yml")) {
@@ -358,20 +358,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             }
             
         }
-        catch (FileNotFoundException e2) {
-            e2.printStackTrace();
-        }
-        catch (ZipException e5) {
-            if (RPConfig.getBool("flat-file.backup") && this.backupExists() && !path.equalsIgnoreCase(datbackf)) {
-                this.load(datbackf);
-                RedProtect.logger.info("The data file is corrupt. Loading from " + datbackf);
-            }
-        }
         catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (ClassNotFoundException e3) {
-            e3.printStackTrace();
         }
         catch (Exception e4) {
             e4.printStackTrace();

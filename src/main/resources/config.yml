@@ -7,7 +7,7 @@
 # <       configuration file in this link: https://goo.gl/SEbYBZ       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 6.0
+config-version: 6.2
 debug-messages: false
 language: EN-US
 file-type: yml
@@ -86,6 +86,7 @@ flags:
   lever: false
   button: false
   door: false
+  allow-potions: true
   smart-door: true
   spawn-monsters: true
   spawn-animals: true
@@ -109,6 +110,7 @@ flags-configuration:
   - flow
   - fire
   - minecart
+  - allow-potions
   - allow-home
   - allow-magiccarpet
   pvparena-nopvp-kick-cmd: spawn {player}

@@ -544,14 +544,15 @@ public class RPGlobalListener implements Listener{
     }
     
     @EventHandler
-    public void WitherBlockBreak(EntityChangeBlockEvent event) {
+    public void MonsterBlockBreak(EntityChangeBlockEvent event) {
     	if (event.isCancelled()) {
             return;
         }
+    	
     	RedProtect.logger.debug("Is EntityChangeBlockEvent event");
     	Entity e = event.getEntity();    	
     	if (e instanceof Monster) {
-            Region r = RedProtect.rm.getTopRegion(event.getEntity().getLocation());
+            Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
             if (r != null){
          	   return;
             }

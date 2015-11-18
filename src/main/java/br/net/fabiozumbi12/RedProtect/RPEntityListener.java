@@ -22,9 +22,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -209,26 +206,7 @@ class RPEntityListener implements Listener{
             }
         }
     }
-    
-    @EventHandler
-    public void onHangingDamaged(HangingBreakByEntityEvent e) {
-    	if (e.isCancelled()) {
-            return;
-        }
-    	RedProtect.logger.debug("Is Entity Listener - HangingBreakByEntityEvent event");
-        Entity ent = e.getRemover();
-        Location loc = e.getEntity().getLocation();
-        Region r = RedProtect.rm.getTopRegion(loc);
         
-        if (ent instanceof Player) {
-            Player player = (Player)ent; 
-            if (r != null && !r.canBuild(player)) {
-            	RPLang.sendMessage(player, "blocklistener.region.cantbuild");
-                e.setCancelled(true);
-            }
-        }
-    }
-    
     @EventHandler
     public void onPotionSplash(PotionSplashEvent event) {
     	if (event.isCancelled()) {
@@ -286,36 +264,6 @@ class RPEntityListener implements Listener{
 			RPLang.sendMessage(p, "entitylistener.region.cantinteract");
 		}
 	}
-       
-    @EventHandler
-	public void onBucketUse(PlayerBucketEmptyEvent e){
-    	if (e.isCancelled()) {
-            return;
-        }
-    	Player p = e.getPlayer();
-    	Location l = e.getBlockClicked().getLocation();
-		Region r = RedProtect.rm.getTopRegion(l);	
-    	if (r != null && !r.canBuild(p) && 
-    			(p.getItemInHand().getType().name().contains("BUCKET"))) {
-    			e.setCancelled(true);
-    			return;
-    		}
-    }
-    
-    @EventHandler
-	public void onBucketFill(PlayerBucketFillEvent e){
-    	if (e.isCancelled()) {
-            return;
-        }
-    	Player p = e.getPlayer();
-    	Location l = e.getBlockClicked().getLocation();
-		Region r = RedProtect.rm.getTopRegion(l);	
-    	if (r != null && !r.canBuild(p) && 
-    			(p.getItemInHand().getType().name().contains("BUCKET"))) {
-    			e.setCancelled(true);
-    			return;
-    		}
-    }
       
     @EventHandler
     public void WitherBlockBreak(EntityChangeBlockEvent event) {
@@ -325,8 +273,8 @@ class RPEntityListener implements Listener{
     	RedProtect.logger.debug("Is EntityChangeBlockEvent event");
     	Entity e = event.getEntity();    	
     	if (e instanceof Monster) {
-            Region r = RedProtect.rm.getTopRegion(event.getEntity().getLocation());
-            if (r != null && !r.canFire()){
+            Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
+            if (r != null && !r.canMobLoot()){
          	   event.setCancelled(true);
             }
     	}
