@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +40,7 @@ public class Region implements Serializable{
     private String date;
     protected Map<String, Object> flags = new HashMap<String,Object>();
     protected boolean[] f = new boolean[10];
-	private Double value;
+	private long value;
         
     public void setFlag(String Name, Object value) {
     	this.flags.put(Name, value);
@@ -81,7 +84,15 @@ public class Region implements Serializable{
     public void setWorld(String w) {
         this.world = w;
         RedProtect.rm.updateLiveRegion(this, "world", w);
-    }    
+    }   
+    
+    public Location getMaxLocation(){
+    	return new Location(Bukkit.getWorld(this.world), this.maxMbrX, this.maxY, this.maxMbrZ);
+    }
+    
+    public Location getMinLocation(){
+    	return new Location(Bukkit.getWorld(this.world), this.minMbrX, this.minY, this.minMbrZ);
+    }
     
     public String getWorld() {
         return this.world;
@@ -150,10 +161,24 @@ public class Region implements Serializable{
         return this.name;
     }
     
+    /**
+	 * Use this method to get raw owners. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
+	 * 
+	 * To check if a player can build on this region use {@code canBuild(p)} instead this method.
+	 * @return {@code List<String>}
+	 */  
+    @Deprecated()
     public List<String> getOwners() {
         return this.owners;
     }
     
+    /**
+	 * Use this method to get raw members. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
+	 * 
+	 * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
+	 * @return {@code List<String>}
+	 */  
+    @Deprecated
     public List<String> getMembers() {
         return this.members;
     }
@@ -192,7 +217,13 @@ public class Region implements Serializable{
         String wMsgTemp = "";
         String IsTops = RPLang.translBool(isOnTop());
         String today = this.date;
-        String wName = this.world; 
+        String wName = this.world;
+        String colorChar = "";
+        
+        if (RPConfig.getString("region-settings.world-colors." + this.world) != null){
+        	char c = '&';
+        	colorChar = ChatColor.translateAlternateColorCodes(c, RPConfig.getString("region-settings.world-colors." + this.world));
+        }
         
         for (int i = 0; i < this.owners.size(); ++i) {
         	if (this.owners.get(i) == null){
@@ -252,9 +283,9 @@ public class Region implements Serializable{
         	}
         } 
         
-        return RPLang.get("region.name") + " " + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.creator") + " " + RPUtil.UUIDtoPlayer(this.creator) + "\n" +      
-        RPLang.get("region.priority") + " " + this.prior + RPLang.get("general.color") + " | " + RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPConfig.getEcoString("economy-symbol") + this.value + "\n" +
-        RPLang.get("region.world") + " " + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
+        return RPLang.get("region.name") + " " + colorChar+this.name + RPLang.get("general.color") + " | " + RPLang.get("region.creator") + " " + RPUtil.UUIDtoPlayer(this.creator) + "\n" +      
+        RPLang.get("region.priority") + " " + this.prior + RPLang.get("general.color") + " | " + RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPEconomy.getFormatted(this.value) + "\n" +
+        RPLang.get("region.world") + " " + colorChar+wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
         RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | "+ RPLang.get("region.area") + " " + this.getArea() + "\n" +
         RPLang.get("region.owners") + " " + ownerstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
         RPLang.get("region.date") + " " + today + "\n" +
@@ -262,10 +293,59 @@ public class Region implements Serializable{
         
     }
     
+	/**
+	 * Represents the region created by player.
+     * @param name Name of region.
+     * @param owners List of owners.
+     * @param members List of owners.
+     * @param creator Name of creator.
+     * @param minLoc Min coord.
+     * @param maxLoc Max coord.
+     * @param flags Flag names and values.
+     * @param wMessage Welcome message.
+     * @param prior Priority of region.
+     * @param worldName Name of world for this region.
+     * @param date Date of latest visit of an owner or member.
+     * @param value Last value of this region.
+     */
+    public Region(String name, List<String> owners, List<String> members, String creator, Location minLoc, Location maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value) {
+    	super();        
+        this.maxMbrX = maxLoc.getBlockX();
+        this.minMbrX = minLoc.getBlockX();
+        this.maxMbrZ = maxLoc.getBlockZ();
+        this.minMbrZ = minLoc.getBlockZ();
+        this.maxY = maxLoc.getBlockY();
+        this.minY = minLoc.getBlockY();
+        this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
+        this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
+        this.name = name;
+        this.owners = owners;
+        this.members = members;
+        this.creator = creator;    
+        this.flags = flags;
+        this.value = value;
+        
+        if (worldName != null){
+            this.world = worldName;
+        } else {
+        	this.world = "";
+        }
+        
+        if (wMessage != null){
+            this.wMessage = wMessage;
+        } else {
+        	this.wMessage = "";
+        }
+        
+        if (date != null){
+            this.date = date;
+        } else {
+        	this.date = RPUtil.DateNow();
+        }
+    }
+    
     /**
 	 * Represents the region created by player.
-	 * @param x Locations of x coords.
-	 * @param z Locations of z coords.
      * @param name Name of region.
      * @param owners List of owners.
      * @param members List of owners.
@@ -281,7 +361,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an owner or member.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, Double value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value) {
     	super();
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
         this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
@@ -333,7 +413,7 @@ public class Region implements Serializable{
      * @param welcome Set a welcome message.
      * @param value A value in server economy.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, Double value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value) {
     	super();
         this.prior = prior;
         this.world = worldName;
@@ -411,30 +491,16 @@ public class Region implements Serializable{
         */
     }
     
+    /*
     public boolean inBoundingRect(int bx, int bz) {
         return bx <= this.maxMbrX && bx >= this.minMbrX && bz <= this.maxMbrZ && bz >= this.minMbrZ;
     }
+    */
     
     public boolean inBoundingRect(Region other) {
-        return other.maxMbrX >= this.minMbrX && other.maxMbrZ >= this.minMbrZ && other.minMbrX <= this.maxMbrX && other.minMbrZ <= this.maxMbrZ;
+        return other.maxMbrX >= this.minMbrX && other.minMbrZ >= this.minMbrZ && other.minMbrX <= this.maxMbrX && other.minMbrZ <= this.maxMbrZ;
     }
-    
-    public boolean intersects(int bx, int bz) {
-        if (this.x == null) {
-            return true;
-        }
-        boolean ret = false;
-        int i = 0;
-        int j = this.x.length - 1;
-        while (i < this.x.length) {
-            if (((this.z[i] <= bz && bz < this.z[j]) || (this.z[j] <= bz && bz < this.z[i])) && bx < (this.x[j] - this.x[i]) * (bz - this.z[i]) / (this.z[j] - this.z[i]) + this.x[i]) {
-                ret = !ret;
-            }
-            j = i++;
-        }
-        return ret;
-    }
-    
+        
 	public boolean isOwner(Player player) {
         return this.owners.contains(RPUtil.PlayerToUUID(player.getName()));
     }
@@ -443,6 +509,9 @@ public class Region implements Serializable{
         return this.members.contains(RPUtil.PlayerToUUID(player.getName()));
     }
     
+	/** Add a member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * @param uuid - UUID or Player Name.
+     */
     public void addMember(String uuid) {
     	String pinfo = uuid;
     	if (!RedProtect.OnlineMode){
@@ -454,6 +523,9 @@ public class Region implements Serializable{
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
+    /** Add an owner to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * @param uuid - UUID or Player Name.
+     */
     public void addOwner(String uuid) {
     	String pinfo = uuid;
     	if (!RedProtect.OnlineMode){
@@ -469,6 +541,9 @@ public class Region implements Serializable{
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
+    /** Remove an member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * @param uuid - UUID or Player Name.
+     */
     public void removeMember(String uuid) {
     	String pinfo = uuid;
     	if (!RedProtect.OnlineMode){
@@ -484,6 +559,9 @@ public class Region implements Serializable{
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
+    /** Remove an owner to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * @param uuid - UUID or Player Name.
+     */
     public void removeOwner(String uuid) {
     	String pinfo = uuid;
     	if (!RedProtect.OnlineMode){
@@ -558,17 +636,9 @@ public class Region implements Serializable{
     
     public boolean flagExists(String key){
     	return flags.containsKey(key);
-    }
+    }	
 	
-	
-	//---------------------- Admin Flags --------------------------//
-    public boolean canMobLoot() {
-    	if (!flagExists("mob-loot")){
-    		return RPConfig.getGlobalFlag(this.world + ".entity-block-damage");
-    	}
-        return getFlagBool("mob-loot");
-    }
-    
+	//---------------------- Admin Flags --------------------------//        
     public boolean canSign(Player p) {
 		if (!flagExists("sign")){
     		return checkAllowedPlayer(p);
@@ -805,8 +875,15 @@ public class Region implements Serializable{
 	
 	
 	//---------------------- Player Flags --------------------------//
+	public boolean canMobLoot() {
+    	if (!RPConfig.isFlagEnabled("mob-loot")){
+    		return RPConfig.getBool("flags.mob-loot");
+    	}
+        return getFlagBool("mob-loot");
+    }
+	
 	public boolean allowPotions(Player p) {
-    	if (!flagExists("allow-potions")){
+    	if (!RPConfig.isFlagEnabled("allow-potions")){
     		return RPConfig.getBool("flags.allow-potions");
     	}    	
         return getFlagBool("allow-potions");
@@ -897,17 +974,45 @@ public class Region implements Serializable{
 	}
 	//--------------------------------------------------------------//
 	
-	public Double getValue() {	
+	public long getValue() {	
 		return this.value;
 	}
 	
-	public void setValue(Double value) {	
+	public void setValue(long value) {	
 		RedProtect.rm.updateLiveRegion(this, "value", String.valueOf(value));
 		this.value = value;
 	}
 	    
 	private boolean checkAllowedPlayer(Player p){
 		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+	}
+	
+	public List<Location> getLimitLocs(){
+		final List<Location> locBlocks = new ArrayList<Location>();
+		Location loc1 = this.getMinLocation();
+		Location loc2 = this.getMaxLocation();
+		World w = Bukkit.getWorld(this.getWorld());
+		
+		for (int x = (int) loc1.getX(); x <= (int) loc2.getX(); ++x) {
+            for (int z = (int) loc1.getZ(); z <= (int) loc2.getZ(); ++z) {
+                for (int y = (int) loc1.getY(); y <= (int) loc2.getY(); ++y) {
+                    if (z == loc1.getZ() || z == loc2.getZ() ||
+                        x == loc1.getX() || x == loc2.getX() ) {
+                    	locBlocks.add(new Location(w,x,y,z));                    	                   	
+                    }
+                }
+            }
+        } 
+		return locBlocks;
+	}
+	
+	public List<Location> get4Points(int y){
+		List <Location> locs = new ArrayList<Location>();
+		locs.add(this.getMinLocation());
+		locs.add(this.getMaxLocation());
+		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX,y,this.minMbrZ+(this.maxMbrZ-this.minMbrZ)));
+		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX+(this.maxMbrX-this.minMbrX),y,this.minMbrZ));
+		return locs;		
 	}
 	
 }

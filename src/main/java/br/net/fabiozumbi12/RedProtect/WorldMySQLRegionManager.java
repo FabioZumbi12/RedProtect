@@ -20,6 +20,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandException;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("deprecation")
 class WorldMySQLRegionManager implements WorldRegionManager{
 
 	private String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
@@ -57,7 +58,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = null;
                 con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Double not null default '0.0')");
+                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null default '0')");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region'!");    
@@ -119,7 +120,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 			ResultSet rs = meta.getColumns(null, null, "region", "value");
 	    	if (!rs.next()){
 	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD value Double not null default '0.0'");
+			    st.executeUpdate("ALTER TABLE region ADD value Long not null default '0'");
 			    st.close();
 			    RedProtect.logger.info("Created column 'value'!");
 	    	}
@@ -168,30 +169,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         }
     }
     
-    /*
-    @Override
-    public Set<Region> getRegionsForY(int x, int z, int maxy, int miny) {
-		Set<Region> ret = new HashSet<Region>();
-		try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE " + x + ">=maxMbrX AND " + x + "<=minMbrX AND " + z + ">=maxMbrZ AND " + z + "<=minMbrZ AND " + maxy + ">=maxY AND " + miny + "<=minY");
-            while (rs.next()) {
-            	ret.add(this.getRegion(rs.getString("name")));
-            }
-            st.close();
-            rs.close();
-        }
-		catch (SQLException e) {
-            e.printStackTrace();
-        }
-		
-        for (Region r : ret) {
-            RedProtect.logger.debug(String.valueOf(r.getName()) + r.info());
-        }
-        return ret;
-	}
-	*/
-    
     @Override
     public Set<Region> getRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
@@ -206,13 +183,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         }
 		catch (SQLException e) {
             e.printStackTrace();
-        }
-    	/*
-		for (Region r:regions.values()){
-			if (r.getCreator().equals(uuid)){
-				regionsp.add(r);
-			}
-		}*/
+        }    	
 		return regionsp;
     }
     
@@ -231,61 +202,9 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		catch (SQLException e) {
             e.printStackTrace();
         }
-    	/*
-		for (Region r:regions.values()){
-			if (r.isMember(uuid) || r.isOwner(uuid)){
-				regionsp.add(r);
-			}
-		}*/
 		return regionsp;
     }
-    
-    /*
-    @Override
-    public boolean regionExists(Block b) {
-        return this.regionExists(b.getX(), b.getZ());
-    }
-    */
-    
-    /*
-    @Override
-    public boolean regionExists(int x, int z) {
-    	for (Region poly : this.getRegionsIntersecting(x, z)) {
-            if (poly.intersects(x, z)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    */
-    
-    /*
-    @Override
-    public Region getRegion(Location l) {
-        int x = l.getBlockX();
-        int z = l.getBlockZ();
-        return this.getRegion(x, z);
-    }
-    */
-    
-    /*
-    private Region getRegion(int x, int z) {
-    	for (Region poly : this.getRegionsIntersecting(x, z)) {
-            if (poly.intersects(x, z)) {
-                return poly;
-            }
-        }
-        return null;
-    }
-    */
-    
-    /*
-    @Override
-    public Region getRegion(Player p) {
-        return this.getRegion(p.getLocation());
-    }
-    */
-    
+        
     @Override
     public Region getRegion(final String rname){
     	if (this.dbcon == null){
@@ -314,7 +233,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     String world = rs.getString("world");
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
-                    Double value = rs.getDouble("value");
+                    long value = rs.getLong("value");
                     
                     for (String member:rs.getString("members").split(", ")){
                     	if (member.length() > 0){
@@ -359,17 +278,11 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
     
     @Override
-    public void save() {
-    	/*
-    	for (Region r:this.regions.values()){   
-    		addLiveRegion(r);
-    	}*/
-    }    
+    public void save() {}    
 
 	@Override
     public void add(Region r) {
-		addLiveRegion(r);
-        //this.regions.put(r.getName(), r);        
+		addLiveRegion(r);       
     }
 	
     private void addLiveRegion(Region r){
@@ -457,13 +370,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
         
     @Override
-    public int getTotalRegionSize(String uuid) {		
-		/*
-		for (Region r:regions.values()){
-			if (r.getCreator().equalsIgnoreCase(uuid)){
-				regionslist.add(r);
-			}
-		}*/
+    public int getTotalRegionSize(String uuid) {
 		int total = 0;
 		for (Region r2 : this.getRegions(uuid)) {
         	total += r2.getArea();
@@ -471,71 +378,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		return total;
     }
     
-    /*
     @Override
-    public Region isSurroundingRegion(Region r) {
-    	for (Region other : this.getRegionLcos(r)) {  
-			if (other != null){
-            	if (other != null && r.inBoundingRect(other.getCenterX(), other.getCenterZ()) && r.intersects(other.getCenterX(), other.getCenterZ())) {
-                    return other;
-            	}
-            }
-		}
-        return null;
-    }
-    */
-    
-    @Override
-    public void load() {  
-    	/*
-        try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM region");            
-            while (rs.next()){ 
-            	LinkedList<String> owners = new LinkedList<String>();
-                List<String> members = new ArrayList<String>();
-                HashMap<String, Object> flags = new HashMap<String, Object>();  
-                
-                String rname = rs.getString("name");
-                String creator = rs.getString("creator");
-                int maxMbrX = rs.getInt("maxMbrX");
-                int minMbrX = rs.getInt("minMbrX");
-                int maxMbrZ = rs.getInt("maxMbrZ");
-                int minMbrZ = rs.getInt("minMbrZ");
-                int prior = rs.getInt("prior");
-                String world = rs.getString("world");
-                String date = rs.getString("date");
-                String wel = rs.getString("wel");
-                
-                for (String member:rs.getString("members").split(", ")){
-                	if (member.length() > 0){
-                		members.add(member);
-                	}                	
-                }
-                for (String owner:rs.getString("owners").split(", ")){
-                	if (owner.length() > 0){
-                		owners.add(owner);
-                	}                	
-                }
-                
-                Statement fst = this.dbcon.createStatement();
-                ResultSet frs = fst.executeQuery("SELECT value,flag FROM region_flags WHERE region = '" + rname + "'");
-                while (frs.next()){
-                	flags.put(frs.getString("flag"), RPUtil.parseObject(frs.getString("value")));
-                }   
-                fst.close();
-                frs.close();
-                
-                this.regions.put(rname, new Region(rname, owners, members, creator, maxMbrX, minMbrX, maxMbrZ, minMbrZ, flags, wel, prior, world, date));
-            }    
-            st.close(); 
-            rs.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        } 
-        */
-    }
+    public void load() {}
     
     @Override
     public Set<Region> getRegionsNear(Player player, int radius) {
@@ -555,14 +399,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         catch (SQLException e) {
             e.printStackTrace();
         }
-        /*
-		for (Region r:regions.values()){
-			RedProtect.logger.debug("Radius: " + radius);
-			RedProtect.logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
-			if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius){
-				ret.add(r);
-			}
-		}*/
         return ret;
     }
     
@@ -603,48 +439,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     public World getWorld() {
         return this.world;
     }    
-    
-    /*
-    @Override
-    public Set<Region> getPossibleIntersectingRegions(Region r) {
-    	Set<Region> ret = new HashSet<Region>();
-		int cmaxX = LargeChunkObject.convertBlockToLCO(r.getMaxMbrX());
-        int cmaxZ = LargeChunkObject.convertBlockToLCO(r.getMaxMbrZ());
-        int cminX = LargeChunkObject.convertBlockToLCO(r.getMinMbrX());
-        int cminZ = LargeChunkObject.convertBlockToLCO(r.getMinMbrZ());
-        for (int xl = cminX; xl <= cmaxX; ++xl) {
-            for (int zl = cminZ; zl <= cmaxZ; ++zl) {
-            	Region regs = this.getRegion(xl, zl);
-                if (regs != null) {
-                	if (r.inBoundingRect(regs)) {
-                        ret.add(regs);
-                    }
-                }
-            }            
-        }
-        return ret;
-    }
-    */
-    
-    /*
-    public List<Region> getRegionLcos(Region r) {
-    	List<Region> ret = new LinkedList<Region>();
-        int cmaxX = LargeChunkObject.convertBlockToLCO(r.getMaxMbrX());
-        int cmaxZ = LargeChunkObject.convertBlockToLCO(r.getMaxMbrZ());
-        int cminX = LargeChunkObject.convertBlockToLCO(r.getMinMbrX());
-        int cminZ = LargeChunkObject.convertBlockToLCO(r.getMinMbrZ());
-        for (int xl = cminX; xl <= cmaxX; ++xl) {
-            for (int zl = cminZ; zl <= cmaxZ; ++zl) {
-            	Region regs = this.getRegion(xl, zl);
-                if (regs != null) {
-                      ret.add(regs);
-                    }
-                }
-            }
-        return ret;
-    }
-    */
-    
+        
 	@Override
 	public Set<Region> getRegions(int x, int y, int z) {
 		Set<Region> regionl = new HashSet<Region>();		
@@ -660,12 +455,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		catch (SQLException e) {
             e.printStackTrace();
         }
-		/*
-		for (Region r:regions.values()){
-			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
-				regionl.add(r);
-			}
-		}*/
 		return regionl;
 	}
 
@@ -760,8 +549,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         }
         catch (SQLException e) {
             e.printStackTrace();
-        }
-		//regions.clear();		
+        }		
 	}
 
 	@Override

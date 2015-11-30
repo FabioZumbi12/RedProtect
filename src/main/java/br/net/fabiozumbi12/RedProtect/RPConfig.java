@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,7 +33,7 @@ public class RPConfig{
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("mob-loot", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
 	static void init(RedProtect plugin) {
 
@@ -150,13 +151,29 @@ public class RPConfig{
     	            		RedProtect.logger.warning("Added world " + w.getName());
     	            	}
     	            	RedProtect.plugin.getConfig().set("allowed-claim-worlds", worlds);
-    	            }    	            
+    	            }    
+    	            
+    	            //add worlds to color list
+    	            for (World w:RedProtect.serv.getWorlds()){
+	            		if (RedProtect.plugin.getConfig().getString("region-settings.world-colors."+w.getName()) == null) {
+	            			if (w.getEnvironment().equals(Environment.NORMAL)){
+	            				RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&a&l");			            		
+	            			} else
+	            			if (w.getEnvironment().equals(Environment.NETHER)){
+	            				RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&c&l");			            		
+	            			} else
+	            			if (w.getEnvironment().equals(Environment.THE_END)){
+	            				RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&5&l");			            		
+	            			}
+	            			RedProtect.logger.warning("Added world " + w.getName());
+	            		}
+	            	}
     	            
                     /*------------- ---- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.2D){
-        				RedProtect.plugin.getConfig().set("config-version", 6.2D);        				
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.3D){
+        				RedProtect.plugin.getConfig().set("config-version", 6.3D);        				
         				
         				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
         				if (!flags.contains("smart-door")){
@@ -164,6 +181,9 @@ public class RPConfig{
         				}
         				if (!flags.contains("allow-potions")){
         					flags.add("allow-potions");            				
+        				}
+        				if (!flags.contains("mob-loot")){
+        					flags.add("mob-loot");            				
         				}
         				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);        				
         			}
@@ -336,6 +356,10 @@ public class RPConfig{
     public static DROP_TYPE getDropType(String key){		
 		return DropType.get(key);
 	}
+    
+    public static Material getMaterial(String key){
+    	return Material.getMaterial(RedProtect.plugin.getConfig().getString(key));
+    }
     
     public static void save(){
     	File globalflags = new File(RedProtect.pathglobalFlags);  

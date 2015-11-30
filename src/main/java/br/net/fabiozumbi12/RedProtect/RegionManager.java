@@ -89,15 +89,27 @@ public class RegionManager{
         return this.regionManagers.get(w).getRegions(player);
     }
     
-    public Set<Region> getRegions(String pname) {
+    /**Return a {@code set<region>} of regions by player UUID or Name;
+     * 
+     * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
+     * @param uuid
+     * @return set<region>
+     */
+    public Set<Region> getRegions(String uuid) {
         Set<Region> ret = new HashSet<Region>();
         Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
         while (rms.hasNext()) {
-            ret.addAll(rms.next().getRegions(pname));
+            ret.addAll(rms.next().getRegions(uuid));
         }
         return ret;
     }
     
+    /**Return a {@code set<region>} of regions by player UUID or Name;
+     * 
+     * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
+     * @param uuid
+     * @return set<region>
+     */
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> ret = new HashSet<Region>();
         Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
@@ -156,6 +168,10 @@ public class RegionManager{
     	return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);    	
     }
 
+    /**
+     * Get the hight priority region in a group region. If no other regions, return the unique region on location.
+     * @return {@code Region} - Or null if no regions on this location.
+     */
     public Region getTopRegion(Location loc){
     	if (!this.regionManagers.containsKey(loc.getWorld())){
     		return null;
@@ -164,6 +180,10 @@ public class RegionManager{
 		return rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
     
+    /**
+     * Get the hight priority region in a group region. If no other regions, return the unique region on location.
+     * @return {@code Region} - Or null if no regions on this location.
+     */
     public Region getTopRegion(World w, int x, int y, int z){
     	if (!this.regionManagers.containsKey(w)){
     		return null;
@@ -172,6 +192,10 @@ public class RegionManager{
 		return rm.getTopRegion(x, y, z);
     }
     
+    /**
+     * Get the low priority region in a group region. If no other regions, return the unique region on location.
+     * @return {@code Region} - Or null if no regions on this location.
+     */
     public Region getLowRegion(World w, int x, int y, int z){
     	if (!this.regionManagers.containsKey(w)){
     		return null;
@@ -180,6 +204,10 @@ public class RegionManager{
 		return rm.getLowRegion(x, y, z);
     }
     
+    /**
+     * Get the low priority region in a group region. If no other regions, return the unique region on location.
+     * @return {@code Region} - Or null if no regions on this location.
+     */
     public Region getLowRegion(Location loc){
     	if (!this.regionManagers.containsKey(loc.getWorld())){
     		return null;
@@ -188,6 +216,9 @@ public class RegionManager{
 		return rm.getLowRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
     
+    /** Get regions in a group region. If no other regions, return the unique region on location.
+     * @return {@code Map<Integer,Region>} - Indexed by priority
+     */
     public Map<Integer,Region> getGroupRegion(World w, int x, int y, int z){
     	if (!this.regionManagers.containsKey(w)){
     		return null;
@@ -196,6 +227,9 @@ public class RegionManager{
 		return rm.getGroupRegion(x, y, z);
     }
     
+    /** Get regions in a group region. If no other regions, return the unique region on location.
+     * @return {@code Map<Integer,Region>} - Indexed by priority
+     */
     public Map<Integer,Region> getGroupRegion(Location loc){
     	if (!this.regionManagers.containsKey(loc.getWorld())){
     		return null;
@@ -252,6 +286,7 @@ public class RegionManager{
 		return total;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getOwners(), old.getMembers(), old.getCreator(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
 				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue());

@@ -9,7 +9,8 @@ import org.bukkit.entity.Player;
 
 class RedefineRegionBuilder extends RegionBuilder{
 		
-    public RedefineRegionBuilder(Player p, Region old, Location l1, Location l2) {
+    @SuppressWarnings("deprecation")
+	public RedefineRegionBuilder(Player p, Region old, Location l1, Location l2) {
     	super();
         if (l1 == null || l2 == null) {
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));

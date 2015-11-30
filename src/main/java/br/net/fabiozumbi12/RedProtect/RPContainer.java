@@ -15,7 +15,6 @@ class RPContainer {
     		return true;
     	}
     	
-        Boolean Final = true;
         String blocktype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")){
         	blocktype = Integer.toString(b.getTypeId());
@@ -28,63 +27,40 @@ class RPContainer {
             int y = b.getY();
             int z = b.getZ();
             World w = p.getWorld();        
-            Block[] blocks = new Block[4];        
-            blocks[0] = w.getBlockAt(x-1, y, z);
-            blocks[1] = w.getBlockAt(x+1, y, z);
-            blocks[2] = w.getBlockAt(x, y, z-1);
-            blocks[3] = w.getBlockAt(x, y, z+1);    
-
-        	for (Block signb:blocks){
-            	if (signb.getType().equals(Material.WALL_SIGN)){
-            		Sign s = (Sign) signb.getState();
-            		if (s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")){
-            			for (String line:s.getLines()){
-            				if (line.equals(p.getName())){
-                				Final = true;
-                				break;
-                			} else {
-                				Final = false;
-                			}        				
-            			}
-            		}
-            	}
-            	            	
-            	String signbtype;
-                if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-                	signbtype = Integer.toString(signb.getTypeId());
-                } else {
-                	signbtype = signb.getType().name();
-                } 
-                
-            	if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype) && blocktype.equals(signbtype)){
-            		x = signb.getX();
-                    y = signb.getY();
-                    z = signb.getZ();                
-                    blocks[0] = w.getBlockAt(x-1, y, z);
-                    blocks[1] = w.getBlockAt(x+1, y, z);
-                    blocks[2] = w.getBlockAt(x, y, z-1);
-                    blocks[3] = w.getBlockAt(x, y, z+1);  
-            		for (Block signc:blocks){
-                    	if (signc.getType().equals(Material.WALL_SIGN)){
-                    		Sign s = (Sign) signc.getState();
-                    		if (s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")){ 
-                    			for (String line:s.getLines()){
-                					if (line.equals(p.getName())){
-                        				Final = true;
-                        				break;
-                    				} else {
-                        				Final = false;
-                    				}
-                				}
-                    		}
-                    	}               		
-            		}
-            	}        	
-            }
+            
+            for (int sx = -1; sx <= 1; sx++){
+            	for (int sz = -1; sz <= 1; sz++){
+    				Block bs = w.getBlockAt(x+sx, y, z+sz);
+    				if (bs.getType().equals(Material.WALL_SIGN) && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
+    					return false;
+                	}
+    		        
+    		        int x2 = bs.getX();
+    	            int y2 = bs.getY();
+    	            int z2 = bs.getZ();
+    	            
+    	            String blocktype2;
+    	            if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+    	            	blocktype2 = Integer.toString(b.getTypeId());
+    	            } else {
+    	            	blocktype2 = b.getType().name();
+    	            }
+    				if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype2)){    					
+    					for (int ux = -1; ux <= 1; ux++){
+    						for (int uz = -1; uz <= 1; uz++){
+    	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);    	        				
+    	        				if (bu.getType().equals(Material.WALL_SIGN) && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
+    	        					return false;
+    	                    	}
+    	        			}        	        		
+        	        	}
+    				}
+    			}        		
+        	}
         }
-		return Final;        
+		return true;        
     }
-
+	
 	@SuppressWarnings("deprecation")
 	public boolean canBreak(Player p, Block b){
     	if (!RPConfig.getBool("private.use")){
@@ -98,21 +74,9 @@ class RPContainer {
         int y = b.getY();
         int z = b.getZ();
         World w = p.getWorld();
-        
-        Block[] blocks = new Block[6];        
-        blocks[0] = w.getBlockAt(x-1, y, z);
-        blocks[1] = w.getBlockAt(x+1, y, z);
-        blocks[2] = w.getBlockAt(x, y, z-1);
-        blocks[3] = w.getBlockAt(x, y, z+1); 
-        blocks[4] = w.getBlockAt(x, y-1, z);
-        blocks[5] = w.getBlockAt(x, y+1, z); 
 
-        if (b.getType().equals(Material.WALL_SIGN)){
-    		Sign s = (Sign) b.getState();
-    		if ((s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
-    			!s.getLine(1).equals(p.getName())){
-    		    return false;
-    		}
+        if (b.getType().equals(Material.WALL_SIGN) && !validateSign(b, p)){
+			return false;
     	}   		
            		
         String signbtype;
@@ -123,19 +87,131 @@ class RPContainer {
         } 
         
         if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
-            for (Block signb:blocks){ 
-            	if (signb.getType().equals(Material.WALL_SIGN)){
-            		Sign s = (Sign) signb.getState();
-            		if ((s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
-            			!s.getLine(1).equals(p.getName())){
-            		    return false;
-            		} 
-            	}            	
-            }        
+        	for (int sx = -1; sx <= 1; sx++){
+        		for (int sy = -1; sy <= 1; sy++){
+        			for (int sz = -1; sz <= 1; sz++){
+        				Block bs = w.getBlockAt(x+sx, y+sy, z+sz);
+        				if (bs.getType().equals(Material.WALL_SIGN) && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
+        					return false;
+                    	}
+        				
+        				String blocktype2;
+        	            if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+        	            	blocktype2 = Integer.toString(b.getTypeId());
+        	            } else {
+        	            	blocktype2 = b.getType().name();
+        	            }
+        				
+        				int x2 = bs.getX();
+        	            int y2 = bs.getY();
+        	            int z2 = bs.getZ();
+        	            
+        				if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype2)){
+        					for (int ux = -1; ux <= 1; ux++){
+            	        		for (int uy = -1; uy <= 1; uy++){
+            	        			for (int uz = -1; uz <= 1; uz++){
+            	        				Block bu = w.getBlockAt(x2+ux, y2+uy, z2+uz);
+            	        				if (bu.getType().equals(Material.WALL_SIGN) && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
+            	        					return false;
+            	                    	}
+            	        			}
+            	        		}
+            	        	}
+        				}        				 
+        			}
+        		}
+        	}                   
         } 
         return true;
     }
     
+	@SuppressWarnings("deprecation")
+	public boolean canWorldBreak(Block b){
+    	if (!RPConfig.getBool("private.use")){
+    		return true;
+    	}
+    	Region reg = RedProtect.rm.getTopRegion(b.getLocation());
+    	if (reg == null && !RPConfig.getBool("private.allow-outside")){
+    		return true;
+    	}
+    	int x = b.getX();
+        int y = b.getY();
+        int z = b.getZ();
+        World w = b.getWorld();
+
+        if (b.getType().equals(Material.WALL_SIGN) && validatePrivateSign(b)){
+			return false;
+    	}   		
+           		
+        String signbtype;
+        if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+        	signbtype = Integer.toString(b.getTypeId());
+        } else {
+        	signbtype = b.getType().name();
+        } 
+        
+        if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){        	
+        	for (int sx = -1; sx <= 1; sx++){
+        		for (int sz = -1; sz <= 1; sz++){
+    				Block bs = w.getBlockAt(x+sx, y, z+sz);
+    				if (bs.getType().equals(Material.WALL_SIGN) && validatePrivateSign(bs)){
+    					return false;
+                	}
+    				
+    				String blocktype2;
+    	            if (RPConfig.getBool("private.allowed-blocks-use-ids")){
+    	            	blocktype2 = Integer.toString(b.getTypeId());
+    	            } else {
+    	            	blocktype2 = b.getType().name();
+    	            }
+    				
+    				int x2 = bs.getX();
+    	            int y2 = bs.getY();
+    	            int z2 = bs.getZ();
+    	            
+    				if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype2)){
+    					for (int ux = -1; ux <= 1; ux++){
+    						for (int uz = -1; uz <= 1; uz++){
+    	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);
+    	        				if (bu.getType().equals(Material.WALL_SIGN) && validatePrivateSign(bu)){
+    	        					return false;
+    	                    	}
+    	        			}
+        	        		
+        	        	}
+    				}        				 
+    			}	        		
+        	}                   
+        } 
+        return true;
+    }
+	
+	public static Block getBlockRelative(Block block) {
+        if (block.getType().equals(Material.WALL_SIGN)){
+        	Sign s = (Sign) block.getState();
+        	org.bukkit.material.Sign data = (org.bukkit.material.Sign) s.getData();
+        	return block.getRelative(data.getAttachedFace());
+        }            
+        return null;
+    }
+	
+	private boolean validatePrivateSign(Block b){
+		Sign s = (Sign) b.getState();
+		if (s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")){
+		    return true;
+		}
+		return false;
+	}
+	
+	private boolean validateSign(Block b, Player p){
+		Sign s = (Sign) b.getState();
+		if ((s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
+			!s.getLine(1).equals(p.getName())){
+		    return false;
+		}
+		return true;
+	}
+	
     @SuppressWarnings("deprecation")
 	public boolean isContainer(Block b){
     	Block container = null;

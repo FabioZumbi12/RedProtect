@@ -67,7 +67,7 @@ gui-flags:
     description2: "&anesta regi\xe3o."
     slot: 9
   spawn-monsters:
-    material: SKULL_ITEM
+    material: PUMPKIN
     name: '&e=> Spawnar Monstros'
     description: "&6Descri\xe7\xe3o: &aHabilitar nascer monstros"
     description1: "&anaturalmente ou de spawners nesta regi\xe3o."
@@ -103,7 +103,7 @@ gui-flags:
     description2: ''
   allow-potions:
     slot: 14
-    material: POTION
+    material: GLASS_BOTTLE
     name: '&e=> Permitir Poções'
     description: '&6Descri\xe7\xe3o: &aPermite usar ou jogar'
     description1: '&aqualquer tipo de poção para não membros'

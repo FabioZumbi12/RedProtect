@@ -1,9 +1,9 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.2.0
+version: 6.3.2
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
-softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager]
+softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials]
 url: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/
 commands:
   RedProtect:
@@ -23,6 +23,7 @@ permissions:
     children:
       redprotect.create: true
       redprotect.near: true
+      redprotect.own.border: true
       redprotect.own.addmember: true
       redprotect.own.delete: true
       redprotect.own.info: true
@@ -37,6 +38,7 @@ permissions:
       redprotect.own.priority: true
       redprotect.own.panel: true
       redprotect.own.flag: true
+      redprotect.own.near: true
       redprotect.infowand: true
   redprotect.flag.all:
     description: "Access to edit all flags."
@@ -57,6 +59,7 @@ permissions:
       redprotect.flag.allow-magiccarpet: true
       redprotect.flag.smart-door: true
       redprotect.flag.allow-potions: true
+      redprotect.flag.mob-loot: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false
@@ -99,7 +102,6 @@ permissions:
       redprotect.admin.flag.deny-cmds: true
       redprotect.admin.flag.can-pet: true
       redprotect.admin.flag.can-projectiles: true
-      redprotect.admin.flag.mob-loot: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op
@@ -127,6 +129,7 @@ permissions:
       redprotect.admin.expandvert: true
       redprotect.admin.setmaxy: true
       redprotect.admin.setminy: true
+      redprotect.admin.border: true
       redprotect.tp.other: true
       redprotect.flag.special: true
       redprotect.other.limit: true

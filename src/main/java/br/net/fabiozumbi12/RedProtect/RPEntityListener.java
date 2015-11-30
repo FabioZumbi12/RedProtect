@@ -30,6 +30,7 @@ import org.bukkit.projectiles.ProjectileSource;
 class RPEntityListener implements Listener{
 	
     RedProtect plugin;
+    static RPContainer cont = new RPContainer();
         
     public RPEntityListener(RedProtect plugin) {
         this.plugin = plugin;
@@ -274,6 +275,10 @@ class RPEntityListener implements Listener{
     	Entity e = event.getEntity();    	
     	if (e instanceof Monster) {
             Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
+            if (!cont.canWorldBreak(event.getBlock())){        		        		
+        		event.setCancelled(true);
+        		return;
+        	} 
             if (r != null && !r.canMobLoot()){
          	   event.setCancelled(true);
             }

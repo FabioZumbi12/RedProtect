@@ -29,7 +29,6 @@ public class SkillAPIListener implements Listener{
 		
 		Player p = e.getPlayerData().getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
-		
 		if (r != null && !r.canSkill(p)){
 			e.setCancelled(true);
 		}

@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class RPEconomy {
 
-	public static Double getRegionValue(Region r){
-		Double regionCost = 0.0;
+	public static long getRegionValue(Region r){
+		long regionCost = 0;
 		World w = RedProtect.serv.getWorld(r.getWorld());
 		int maxX = r.getMaxMbrX();
 		int minX = r.getMinMbrX();
@@ -57,10 +57,35 @@ public class RPEconomy {
 	}
 
 	public static String getCostMessage(Region r){
-		return RPLang.get("economy.forsale") + " &6" + RPConfig.getEcoString("economy-symbol") + r.getValue() +" &2"+ RPConfig.getEcoString("economy-name");
+		return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) +" &2"+ RPConfig.getEcoString("economy-name");
 	}
 	
-	public static boolean putToSell(Region r, String uuid, Double value) {
+	public static String getFormatted(long value){
+		/*
+		String[] locale = RPConfig.getEcoString("economy-locale").split("-");
+		NumberFormat curr = NumberFormat.getCurrencyInstance(new Locale(locale[0], locale[1]));
+		String format = "";
+		for (int i = 0; i < 3; i++){
+			if (isNumber(curr.format(value).substring(i, i+2))){
+				format = RPConfig.getEcoString("economy-symbol") + " " + curr.format(value).substring(i);
+				break;
+			}
+		}	*/
+		return RPConfig.getEcoString("economy-symbol") + value;
+	}
+	
+	/*
+	private static boolean isNumber(String num){
+		try{
+			Integer.parseInt(num);
+			return true;
+		} catch (NumberFormatException e){			
+		}
+		return false;
+	}
+	*/
+	
+	public static boolean putToSell(Region r, String uuid, long value) {
 		try {			
 			r.setCreator(uuid);
 			r.clearMembers();

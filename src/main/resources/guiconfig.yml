@@ -62,9 +62,9 @@ gui-flags:
   allow-magiccarpet:
     slot: 8
     material: GLASS
-    name: "&e=> Allow Magic Carpet"
-    description: "&6Description: &aAllow players walk with"
-    description1: "&aMagic Carpet in your region"
+    name: '&e=> Allow Magic Carpet'
+    description: '&6Description: &aAllow players walk with'
+    description1: '&aMagic Carpet in your region'
     description2: ''
   minecart:
     slot: 9
@@ -96,15 +96,22 @@ gui-flags:
     description2: ''
   spawn-monsters:
     slot: 13
-    material: SKULL_ITEM
+    material: PUMPKIN
     name: '&e=> Spawn Monsters'
     description: '&6Description: &aAllow natural spawn of'
     description1: '&amonsters in this region.'
     description2: ''
   allow-potions:
     slot: 14
-    material: POTION
+    material: GLASS_BOTTLE
     name: '&e=> Allow Potions'
     description: '&6Description: &aAllow use or throw'
     description1: '&aany type of potions for no members'
     description2: '&aof region.'
+  mob-loot:
+    slot: 15
+    material: GRASS
+    name: '&e=> Allow Mob Grief'
+    description: '&6Description: &aAllow mobs to damage,'
+    description1: '&aexplode or grief blocks on this'
+    description2: '&aregion.'

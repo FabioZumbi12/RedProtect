@@ -9,6 +9,7 @@ import br.net.fabiozumbi12.RedProtect.RPLang;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerExperienceEvent;
 import com.gmail.nossr50.events.fake.FakeEntityDamageByEntityEvent;
 import com.gmail.nossr50.events.fake.FakeEntityDamageEvent;
@@ -30,15 +31,23 @@ public class McMMoListener implements Listener{
 		if (e.isCancelled()){
 			return;
 		}
-		
+	
 		RedProtect.logger.debug("Mcmmo McMMOPlayerExperienceEvent event.");
 		
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+		if (r == null){
+			return;
+		}
 		
-		if (r != null && !r.canSkill(p)){
+		if (!r.canSkill(p)){
 			e.setCancelled(true);
 		}
+		/*
+		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED))){
+			e.setCancelled(true);
+		}
+		*/
 	}
 	
 	@EventHandler
@@ -51,9 +60,15 @@ public class McMMoListener implements Listener{
 		
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+		if (r == null){
+			return;
+		}
 		
-		if (r != null && !r.canSkill(p)){
+		if (!r.canSkill(p)){
 			p.sendMessage(RPLang.get("mcmmolistener.notallowed"));
+			e.setCancelled(true);
+		}
+		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED))){
 			e.setCancelled(true);
 		}
 	}
@@ -64,8 +79,14 @@ public class McMMoListener implements Listener{
 		
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+		if (r == null){
+			return;
+		}
 		
-		if (r != null && !r.canSkill(p)){
+		if (!r.canSkill(p)){
+			e.setCancelled(true);
+		}
+		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
 			e.setCancelled(true);
 		}
 	}
@@ -76,8 +97,14 @@ public class McMMoListener implements Listener{
 		
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(e.getDefender().getLocation());
+		if (r == null){
+			return;
+		}
 		
-		if (r != null && !r.canSkill(p)){
+		if (!r.canSkill(p)){
+			e.setCancelled(true);
+		}
+		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
 			e.setCancelled(true);
 		}
 	}
@@ -88,8 +115,13 @@ public class McMMoListener implements Listener{
 		
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(e.getPlayer().getLocation());
-		
-		if (r != null && !r.canSkill(p)){
+		if (r == null){
+			return;
+		}
+		if (!r.canSkill(p)){
+			e.setCancelled(true);
+		}
+		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
 			e.setCancelled(true);
 		}
 	}

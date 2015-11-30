@@ -19,6 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
@@ -195,8 +196,13 @@ class RPBlockListener implements Listener{
     	if (e.isCancelled()) {
             return;
         }
-        Player p = e.getPlayer();
-        Block b = e.getBlock();
+    	Player p = e.getPlayer();
+    	Block b = e.getBlock();
+    	if (RPUtil.pBorders.containsKey(p) && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))){
+    		RPLang.sendMessage(p, "blocklistener.cantbreak.borderblock");
+    		e.setCancelled(true);
+    		return;
+    	}                
         World w = p.getWorld();
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
@@ -270,6 +276,10 @@ class RPBlockListener implements Listener{
         for (int i = 0; i < e.blockList().size(); i++) {
         	Location l = e.blockList().get(i).getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
+        	if (!cont.canWorldBreak(e.blockList().get(i))){        		        		
+        		e.setCancelled(true);
+        		return;
+        	}        	
         	if (r != null && !r.canMobLoot()){
         		e.setCancelled(true);
         		return;
@@ -365,6 +375,10 @@ class RPBlockListener implements Listener{
     	Block b = e.getBlock();
 
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
+    	if (!cont.canWorldBreak(b)){
+    		e.setCancelled(true);
+    		return;
+    	}    	
 		if (r != null && !r.canFire()){
 			e.setCancelled(true);
     		return;
@@ -450,6 +464,20 @@ class RPBlockListener implements Listener{
 	}
 	
 	@EventHandler
+	public void onBlockExplode(BlockExplodeEvent e){
+		List<Block> blocks = e.blockList();
+		for (Block b:blocks){
+			Region r = RedProtect.rm.getTopRegion(b.getLocation());
+			if (!cont.canWorldBreak(b)){
+				e.blockList().remove(b);
+	    	}
+			if (r != null && !r.canFire()){
+				e.blockList().remove(b);				
+			}
+		}		
+	}
+	
+	@EventHandler
 	public void onPistonRetract(BlockPistonRetractEvent e){
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
 			return;
@@ -481,4 +509,29 @@ class RPBlockListener implements Listener{
          	 e.setCancelled(true);           	  
 		}		
 	}	
+	/*
+	@EventHandler
+	public void onHopperPickup(InventoryMoveItemEvent e) {
+		InventoryHolder frominv = e.getSource().getHolder();
+		InventoryHolder toinv = e.getDestination().getHolder();
+		
+		if (toinv instanceof Hopper){
+			Location loc = null;
+			
+			if (frominv instanceof BlockState) {
+	            BlockState blockState = (BlockState) frominv;	 
+	            loc = blockState.getLocation();
+	        } else if (frominv instanceof DoubleChest) {
+	            DoubleChest chest = (DoubleChest) frominv;
+	            loc = chest.getLocation();
+	        }
+	 
+	        if (loc != null) {	        	
+	            if (!cont.canWorldBreak(loc.getBlock())){
+					RedProtect.logger.debug("Cancelled transfer itens by Hopper");
+					e.setCancelled(true);
+				}
+	        }
+		}
+	}*/
 }

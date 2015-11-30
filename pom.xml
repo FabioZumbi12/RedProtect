@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>6.2</version>
+  <version>6.3</version>
   <dependencies>
 		<!--Spigot-API-->
         <dependency>
@@ -82,7 +82,14 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/Essentials-2.x-SNAPSHOT.jar</systemPath>
 		</dependency>
-    
+        <dependency>
+			<groupId>GriefPrevention</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/GriefPrevention.jar</systemPath>
+		</dependency>
+		
   </dependencies>
   <repositories>
      <repository>

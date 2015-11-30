@@ -58,7 +58,7 @@ class DefineRegionBuilder extends RegionBuilder{
         	maxy = p.getWorld().getMaxHeight();
         }
         
-        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0.0);
+        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0);
         
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	

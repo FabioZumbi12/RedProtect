@@ -7,7 +7,7 @@
 # <       configuration file in this link: https://goo.gl/SEbYBZ       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 6.2
+config-version: 6.3
 debug-messages: false
 language: EN-US
 file-type: yml
@@ -21,11 +21,17 @@ mysql:
   host: localhost
   region-cache-minutes: 2
 region-settings:
+  world-colors:
+    example-world: '&a'
+  border:
+    material: GLOWSTONE
+    time-showing: 5
+  simple-list: true
   autoexpandvert-ondefine: true
   anti-hopper: true
   drop-type: keep
   limit-amount: 8000
-  claim-amount-per-world: -1
+  claim-amount-per-world: 20
   block-id: FENCE
   max-scan: 600
   date-format: dd/MM/yyyy
@@ -96,6 +102,7 @@ flags:
   minecart: false
   allow-home: false
   allow-magiccarpet: true
+  mob-loot: false
 flags-configuration:
   enabled-flags:
   - pvp
@@ -113,6 +120,7 @@ flags-configuration:
   - allow-potions
   - allow-home
   - allow-magiccarpet
+  - mob-loot
   pvparena-nopvp-kick-cmd: spawn {player}
   change-flag-delay:
     enable: true
@@ -133,3 +141,6 @@ update-check:
 performance:
   disable-onPlayerMoveEvent-handler: false
   disable-PistonEvent-handler: false
+hooks:
+  essentials:
+     import-lastvisits: false

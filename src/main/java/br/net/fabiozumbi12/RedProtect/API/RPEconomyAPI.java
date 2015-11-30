@@ -13,7 +13,7 @@ public class RPEconomyAPI {
 	 * @param value - Value to sell this region;
 	 * @return {@code true} if successfull sell flag. {@code false} if theres an error on sell the region and the money will return to player.
 	 */
-	public static boolean SellRegion(Region region, String owner, Double value){
+	public static boolean SellRegion(Region region, String owner, long value){
 		return RPEconomy.putToSell(region, owner, value);
 	}
 	
@@ -32,9 +32,9 @@ public class RPEconomyAPI {
 	 * Get the region value based on blocks, chests, itens inside chests and item enchantements inside chests too.
 	 * <p>
 	 * @param region - Region to get value.
-	 * @return {@code Double} value of the region.
+	 * @return {@code Long} value of the region.
 	 */
-	public static Double getRegionValue(Region region){
+	public static long getRegionValue(Region region){
 		return RPEconomy.getRegionValue(region);
 	}
 }

@@ -33,7 +33,7 @@ public class RPDoor {
 		
 		for (Block b2:block){
 			if (b.getType().equals(b2.getType()) && (isIronDoor(b) || isDoor(b))){
-				b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
+				//b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
 				if (isDoorClosed(b)){
 					closeIronDoor(b2);	
 					openDoor(b2);
@@ -101,11 +101,11 @@ public class RPDoor {
 	static void openDoor(Block block) {		
         if (isDoor(block)){
             byte data = block.getData();
-            if ((data & 0x8) == 0x8) {
+            if ((data & 0x8) == 0x8 && !isTrapDoor(block)) {
                 block = block.getRelative(BlockFace.DOWN);
                 data = block.getData();
             }
-            if (isDoorClosed(block)) {
+            if (isDoorClosed(block) && !isTrapDoor(block)) {
                 data = (byte) (data | 0x4);
                 block.setData(data, true);                
             }            
@@ -115,11 +115,11 @@ public class RPDoor {
 	static void closeDoor(Block block) {
         if (isDoor(block)){
             byte data = block.getData();
-            if ((data & 0x8) == 0x8) {
+            if ((data & 0x8) == 0x8 && !isTrapDoor(block)) {
                 block = block.getRelative(BlockFace.DOWN);
                 data = block.getData();
             }
-            if (!isDoorClosed(block)) {
+            if (!isDoorClosed(block) && !isTrapDoor(block)) {
                 data = (byte) (data & 0xb);
                 block.setData(data, true);                
             }

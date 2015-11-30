@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("deprecation")
 class WorldFlatFileRegionManager implements WorldRegionManager{
 
     HashMap<String, Region> regions;
@@ -37,20 +38,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         	this.regions.remove(r.getName());
         }
     }
-    
-    /*
-    @Override
-    public Set<Region> getRegionsForY(int x, int z, int maxy, int miny) {
-		Set<Region> ret = new HashSet<Region>();
-		for (Region dbr:this.regions.values()){
-			if (dbr.getMaxMbrX() <= x && dbr.getMinMbrX() >= x && dbr.getMaxY() <= maxy && dbr.getMinY() >= miny && dbr.getMaxMbrZ() <= z && dbr.getMinMbrZ() >= z){
-				ret.add(dbr);
-			}
-		}
-        return ret;
-	}
-    */
-    
+        
     @Override
     public Set<Region> getRegions(String pname) {
     	Set<Region> regionsp = new HashSet<Region>();
@@ -72,51 +60,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		}
 		return regionsp;
     }
-    
-    /*
-    @Override
-    public boolean regionExists(Block b) {
-        return this.regionExists(b.getX(), b.getZ());
-    }
-    */
-    
-    /*
-    @Override
-    public boolean regionExists(int x, int z) {
-    	for (Region poly : this.getRegionsIntersecting(x, z)) {
-            if (poly.intersects(x, z)) {
-                return true;
-            }
-        }
-        return false;
-    }*/
-    
-    /*
-    @Override
-    public Region getRegion(Location l) {
-        int x = l.getBlockX();
-        int z = l.getBlockZ();
-        return this.getRegion(x, z);
-    }
-    */
-    
-    /*
-    private Region getRegion(int x, int z) {
-    	for (Region poly : this.getRegionsIntersecting(x, z)) {
-            if (poly.intersects(x, z)) {
-                return poly;
-            }
-        }
-        return null;
-    }*/
-    
-    /*
-    @Override
-    public Region getRegion(Player p) {
-        return this.getRegion(p.getLocation());
-    }
-    */
-    
+        
     @Override
     public Region getRegion(String rname) {
     	return regions.get(rname);
@@ -207,20 +151,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		return total;
     }
     
-    /*
-    @Override
-    public Region isSurroundingRegion(Region r) {
-    	for (Region other : this.getRegionLcos(r)) {  
-			if (other != null){
-            	if (other != null && r.inBoundingRect(other.getCenterX(), other.getCenterZ()) && r.intersects(other.getCenterX(), other.getCenterZ())) {
-                    return other;
-            	}
-            }
-		}
-        return null;
-    }
-    */
-    
     @Override
     public void load() {   
     	try {
@@ -254,44 +184,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         }
         try {
             if (!RPUtil.isFileEmpty(path)) {
-            	/*
-                ObjectInputStream ois = null;       
-                
-               
-                //oosgz type file
-                if (RPConfig.getString("file-type").equals("oosgz")) {
-                    RedProtect.logger.debug("Load world " + this.world.getName() + ". File type: oosgz");
-                    if (ois == null) {
-                      ois = new ObjectInputStream(new GZIPInputStream(new FileInputStream(path)));
-                    }
-                    Object oois = ois.readObject();
-                    HashMap<Long, Set<String>> lcos;
-                    if ((oois instanceof HashMap)) {
-                      lcos = (HashMap<Long, Set<String>>)oois;
-                    } else {
-                      lcos = null;
-                    }
-                    oois = ois.readObject();
-                    HashMap<String, Region> newRegions;
-                    if ((oois instanceof HashMap)) {
-                      newRegions = (HashMap<String, Region>)oois;
-                    } else {
-                      newRegions = null;
-                    }
-                    ois.close();
-                    this.regionslco = new HashMap<>(lcos.size());
-                    for (Map.Entry<Long, Set<String>> ss : lcos.entrySet()) {
-                      this.regionslco.put(ss.getKey(), new LargeChunkObject(newRegions, (Set<String>)ss.getValue()));
-                    }
-                    
-                    for (LargeChunkObject lco : this.regionslco.values()) {
-                        for (Region r : lco.regions) {
-                          regions.put(r.getName(), r);
-                        }
-                    }
-                }
-                */
-                
                 //yml type file
                 if (RPConfig.getString("file-type").equals("yml")) {
                 	RPYaml fileDB = new RPYaml();
@@ -325,7 +217,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             	    	  String welcome = fileDB.getString(rname+".welcome");
             	    	  int prior = fileDB.getInt(rname+".priority");
             	    	  String date = fileDB.getString(rname+".lastvisit");
-            	    	  Double value = fileDB.getDouble(rname+".value");
+            	    	  long value = fileDB.getLong(rname+".value");
             	    	  if (owners.size() == 0){
             	    		  owners.add(creator);
             	    	  }			    	
@@ -400,48 +292,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
     public World getWorld() {
         return this.world;
-    }
-    
-    /*
-    @Override
-    public Set<Region> getPossibleIntersectingRegions(Region r) {
-    	Set<Region> ret = new HashSet<Region>();
-		int cmaxX = LargeChunkObject.convertBlockToLCO(r.getMaxMbrX());
-        int cmaxZ = LargeChunkObject.convertBlockToLCO(r.getMaxMbrZ());
-        int cminX = LargeChunkObject.convertBlockToLCO(r.getMinMbrX());
-        int cminZ = LargeChunkObject.convertBlockToLCO(r.getMinMbrZ());
-        for (int xl = cminX; xl <= cmaxX; ++xl) {
-            for (int zl = cminZ; zl <= cmaxZ; ++zl) {
-            	Region regs = this.getRegion(xl, zl);
-                if (regs != null) {
-                	if (r.inBoundingRect(regs)) {
-                        ret.add(regs);
-                    }
-                }
-            }            
-        }
-        return ret;
-    }
-    */
-    
-    /*
-    public List<Region> getRegionLcos(Region r) {
-    	List<Region> ret = new LinkedList<Region>();
-        int cmaxX = LargeChunkObject.convertBlockToLCO(r.getMaxMbrX());
-        int cmaxZ = LargeChunkObject.convertBlockToLCO(r.getMaxMbrZ());
-        int cminX = LargeChunkObject.convertBlockToLCO(r.getMinMbrX());
-        int cminZ = LargeChunkObject.convertBlockToLCO(r.getMinMbrZ());
-        for (int xl = cminX; xl <= cmaxX; ++xl) {
-            for (int zl = cminZ; zl <= cmaxZ; ++zl) {
-            	Region regs = this.getRegion(xl, zl);
-                if (regs != null) {
-                      ret.add(regs);
-                    }
-                }
-            }
-        return ret;
-    }
-    */
+    }       
     
 	@Override
 	public Set<Region> getRegions(int x, int y, int z) {

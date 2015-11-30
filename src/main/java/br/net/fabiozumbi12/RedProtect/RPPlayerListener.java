@@ -232,9 +232,9 @@ class RPPlayerListener implements Listener{
                 }
             }
         }
-        else if (b != null && RPDoor.isOpenable(b)) {
+        else if (b != null && RPDoor.isOpenable(b) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
         	if (r != null){
-        		if ((!r.canDoor(p) || (r.canDoor(p) && !cont.canOpen(b, p)))) {
+        		if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
                     if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                         RPLang.sendMessage(p, "playerlistener.region.cantdoor");                    
                         event.setCancelled(true);
@@ -331,7 +331,7 @@ class RPPlayerListener implements Listener{
         	}
         }        
     }
-    
+    	
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         Entity e = event.getRightClicked();
@@ -694,13 +694,14 @@ class RPPlayerListener implements Listener{
     	
         Region r = RedProtect.rm.getTopRegion(lto);
         
+        /*
         //deny enter if no perm doors
-    	String door = p.getWorld().getBlockAt(lto).getType().name();
+    	String door = lto.getBlock().getType().name();
     	if (r != null && (door.contains("DOOR") || door.contains("_GATE")) && !r.canDoor(p)){
     		if (RPDoor.isDoorClosed(p.getWorld().getBlockAt(lto))){
     			e.setCancelled(true);
     		}
-    	}
+    	}*/
     	
         //Pvp check to enter on region
         if (RedProtect.PvPm){

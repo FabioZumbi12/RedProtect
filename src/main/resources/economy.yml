@@ -1,5 +1,6 @@
 economy-symbol: $
 economy-name: Coins
+economy-locale: en-US
 max-area-toget-value: 100000
 rename-region: false
 items:

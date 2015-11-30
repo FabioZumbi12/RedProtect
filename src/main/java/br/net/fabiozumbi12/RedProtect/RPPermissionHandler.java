@@ -1,5 +1,8 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
@@ -28,28 +31,44 @@ public class RPPermissionHandler{
     }
     
     private int LimitHandler(Player p){
-    	int limit = RPConfig.getInt("region-settings.limit-amount");   	
+    	int limit = RPConfig.getInt("region-settings.limit-amount");
+    	List<Integer> limits = new ArrayList<Integer>();
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
-    	if (limit > 0 && !p.hasPermission("redprotect.limit.blocks.unlimited")){
-    		for (PermissionAttachmentInfo perm:perms){
-    			if (perm.getPermission().startsWith("redprotect.limit.blocks.")){
-        			limit = Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", ""));    				
-    			}  
+    	if (limit > 0){
+    		if (!p.hasPermission("redprotect.limit.blocks.unlimited")){
+    			for (PermissionAttachmentInfo perm:perms){    			
+        			if (perm.getPermission().startsWith("redprotect.limit.blocks.")){
+        				limits.add(Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", "")));    				
+        			}  
+        		}
+    		} else {
+    			return -1;
     		}
     	}
+    	if (limits.size() > 1){
+    		limit = Collections.max(limits);
+    	} 
 		return limit;
     }
     
     private int ClaimLimitHandler(Player p){
-    	int limit = RPConfig.getInt("region-settings.claim-amount-per-world");   	
+    	int limit = RPConfig.getInt("region-settings.claim-amount-per-world");  
+    	List<Integer> limits = new ArrayList<Integer>();
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
-    	if (limit > 0 && !p.hasPermission("redprotect.limit.claim.unlimited")){
-    		for (PermissionAttachmentInfo perm:perms){
-    			if (perm.getPermission().startsWith("redprotect.limit.claim.")){
-        			limit = Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", ""));    				
-    			}  
-    		}
+    	if (limit > 0){
+    		if (!p.hasPermission("redprotect.limit.claim.unlimited")){
+    			for (PermissionAttachmentInfo perm:perms){
+        			if (perm.getPermission().startsWith("redprotect.limit.claim.")){
+        				limits.add(Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", "")));    				
+        			}  
+        		}
+    		} else {
+    			return -1;
+    		}  		
     	}
+    	if (limits.size() > 1){
+    		limit = Collections.max(limits);
+    	}     	
 		return limit;
     }
     

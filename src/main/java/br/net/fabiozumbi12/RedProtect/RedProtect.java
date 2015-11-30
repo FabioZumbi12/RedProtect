@@ -42,6 +42,9 @@ public class RedProtect extends JavaPlugin {
 	public static boolean Update;
 	public static String UptVersion;
 	public static String UptLink;
+    /**
+     * Get the region database from here. All functions for manage regions can be found in this variable. 
+     */
     public static RegionManager rm;
     public static List<String> changeWait = new ArrayList<String>();
     public static List<String> tpWait = new ArrayList<String>();
@@ -66,6 +69,7 @@ public class RedProtect extends JavaPlugin {
 	static boolean Vault;
 	static boolean PvPm;
 	static boolean Ess;
+	static boolean GP;
 	public static PlayerHandler PvPmanager;
 	public static Economy econ;
     
@@ -95,6 +99,7 @@ public class RedProtect extends JavaPlugin {
             SkillAPI = checkSkillAPI();
             PvPm = checkPvPm();
             Ess = checkEss();
+            GP = checkGP();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
@@ -161,17 +166,7 @@ public class RedProtect extends JavaPlugin {
             	RPUtil.ReadAllDB(RedProtect.rm.getAllRegions());
         	} else {
         		RedProtect.logger.info("Theres " + RedProtect.rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");        		
-        	}
-            
-            
-            if (RPConfig.getString("file-type").equals("oosgz")){
-            	RPUtil.backup = 0;
-            	RPUtil.backup();
-                RPUtil.oosTOyml();
-                RedProtect.plugin.getConfig().set("file-type","yml");
-                RPConfig.save();
-                RedProtect.logger.warning("The database type 'oosgz' is deprecated. Now use only yml ow Mysql!");
-            }
+        	}            
             
             RedProtect.logger.sucess(RedProtect.pdf.getFullName() + " enabled.");  
             
@@ -257,6 +252,15 @@ public class RedProtect extends JavaPlugin {
         ph = new RPPermissionHandler();
         rm = new RegionManager();
     }
+    
+  //check if plugin GriefPrevention is installed
+    private boolean checkGP() {
+    	Plugin pGP = Bukkit.getPluginManager().getPlugin("GriefPrevention");
+    	if (pGP != null && pGP.isEnabled()){
+    		return true;
+    	}
+		return false;
+	}
     
     //check if plugin BossbarAPI is installed
     private boolean checkBM(){
