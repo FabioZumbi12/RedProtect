@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.3.2
+version: 6.3.3
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials]
@@ -102,6 +102,8 @@ permissions:
       redprotect.admin.flag.deny-cmds: true
       redprotect.admin.flag.can-pet: true
       redprotect.admin.flag.can-projectiles: true
+      redprotect.admin.flag.can-hunger: true
+      redprotect.admin.flag.player-damage: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op

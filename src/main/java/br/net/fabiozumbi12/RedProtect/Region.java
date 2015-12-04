@@ -638,7 +638,21 @@ public class Region implements Serializable{
     	return flags.containsKey(key);
     }	
 	
-	//---------------------- Admin Flags --------------------------//        
+	//---------------------- Admin Flags --------------------------// 
+    public boolean canPlayerDamage() {
+    	if (!flagExists("player-damage")){
+    		return true;
+    	}
+		return getFlagBool("player-damage");
+	}
+    
+    public boolean canHunger() {
+    	if (!flagExists("can-hunger")){
+    		return true;
+    	}
+		return getFlagBool("can-hunger");
+	}
+    
     public boolean canSign(Player p) {
 		if (!flagExists("sign")){
     		return checkAllowedPlayer(p);
@@ -987,7 +1001,7 @@ public class Region implements Serializable{
 		return this.isOwner(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
 	}
 	
-	public List<Location> getLimitLocs(){
+	public List<Location> getLimitLocs(int locy){
 		final List<Location> locBlocks = new ArrayList<Location>();
 		Location loc1 = this.getMinLocation();
 		Location loc2 = this.getMaxLocation();
@@ -995,12 +1009,12 @@ public class Region implements Serializable{
 		
 		for (int x = (int) loc1.getX(); x <= (int) loc2.getX(); ++x) {
             for (int z = (int) loc1.getZ(); z <= (int) loc2.getZ(); ++z) {
-                for (int y = (int) loc1.getY(); y <= (int) loc2.getY(); ++y) {
+                //for (int y = (int) loc1.getY(); y <= (int) loc2.getY(); ++y) {
                     if (z == loc1.getZ() || z == loc2.getZ() ||
                         x == loc1.getX() || x == loc2.getX() ) {
-                    	locBlocks.add(new Location(w,x,y,z));                    	                   	
+                    	locBlocks.add(new Location(w,x,locy,z));                    	                   	
                     }
-                }
+                //}
             }
         } 
 		return locBlocks;
@@ -1014,5 +1028,5 @@ public class Region implements Serializable{
 		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX+(this.maxMbrX-this.minMbrX),y,this.minMbrZ));
 		return locs;		
 	}
-	
+
 }

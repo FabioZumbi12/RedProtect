@@ -45,7 +45,7 @@ public class RPPermissionHandler{
     			return -1;
     		}
     	}
-    	if (limits.size() > 1){
+    	if (limits.size() > 0){
     		limit = Collections.max(limits);
     	} 
 		return limit;
@@ -66,7 +66,7 @@ public class RPPermissionHandler{
     			return -1;
     		}  		
     	}
-    	if (limits.size() > 1){
+    	if (limits.size() > 0){
     		limit = Collections.max(limits);
     	}     	
 		return limit;

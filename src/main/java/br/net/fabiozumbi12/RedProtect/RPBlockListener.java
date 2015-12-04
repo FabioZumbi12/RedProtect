@@ -82,7 +82,7 @@ class RPBlockListener implements Listener{
         }
         
 
-        if (RPConfig.getBool("server-protection.sign-spy.enabled") && ((!lines[0].startsWith("[")) || (!lines[0].endsWith("]")))){
+        if (RPConfig.getBool("server-protection.sign-spy.enabled")){
         	Bukkit.getConsoleSender().sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
         	Bukkit.getConsoleSender().sendMessage("§bPlayer: §e" + e.getPlayer().getName());
         	Bukkit.getConsoleSender().sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());

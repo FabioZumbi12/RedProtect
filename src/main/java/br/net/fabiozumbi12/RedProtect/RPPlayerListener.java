@@ -35,6 +35,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -394,6 +395,11 @@ class RPPlayerListener implements Listener{
     		RPLang.sendMessage((Player) e.getEntity(), RPLang.get("cmdmanager.region.tpcancelled"));
     	}
 		
+    	Region r = RedProtect.rm.getTopRegion(play.getLocation());
+    	if (r != null && !r.canPlayerDamage()){
+    		e.setCancelled(true);
+    	}
+    	
         //deny damagecauses
         List<String> Causes = RPConfig.getStringList("server-protection.deny-playerdeath-by");
         if(Causes.size() > 0){
@@ -404,7 +410,7 @@ class RPPlayerListener implements Listener{
             			e.setCancelled(true);
             		}
         		} catch(IllegalArgumentException ex){
-        			RedProtect.logger.severe("The config 'deny-playerdeath-by' have a unknow damage cause type. Change to a valid damage cause type.");
+        			RedProtect.logger.severe("The config 'deny-playerdeath-by' have an unknow damage cause type. Change to a valid damage cause type.");
         		}        		
         	}                    
         }        
@@ -1243,5 +1249,18 @@ class RPPlayerListener implements Listener{
     		e.setCancelled(true);
 			return;
 		}
+    }
+    
+    @EventHandler
+	public void onHunger(FoodLevelChangeEvent e){
+    	if (!(e.getEntity() instanceof Player)){
+    		return;
+    	}
+    	
+    	Player p = (Player) e.getEntity();
+    	Region r = RedProtect.rm.getTopRegion(p.getLocation());
+    	if (r != null && !r.canHunger()){
+    		e.setCancelled(true);
+    	}
     }
 }

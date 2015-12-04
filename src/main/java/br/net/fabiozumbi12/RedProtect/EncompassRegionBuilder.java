@@ -66,51 +66,21 @@ class EncompassRegionBuilder extends RegionBuilder{
             int y = current.getY();
             int z = current.getZ();
             int blockSize = 6;
-            Block[] block;
-            if (RPConfig.getString("region-settings.block-id").equalsIgnoreCase("REDSTONE") ) {
-                block = new Block[12];
-                blockSize = 12;
-                block[0] = w.getBlockAt(x + 1, y, z);
-                block[1] = w.getBlockAt(x - 1, y, z);
-                block[2] = w.getBlockAt(x, y, z + 1);
-                block[3] = w.getBlockAt(x, y, z - 1);
-                block[4] = w.getBlockAt(x + 1, y + 1, z);
-                block[5] = w.getBlockAt(x - 1, y + 1, z);
-                block[6] = w.getBlockAt(x, y + 1, z + 1);
-                block[7] = w.getBlockAt(x, y + 1, z - 1);
-                block[8] = w.getBlockAt(x + 1, y - 1, z);
-                block[9] = w.getBlockAt(x - 1, y - 1, z);
-                block[10] = w.getBlockAt(x, y - 1, z + 1);
-                block[11] = w.getBlockAt(x, y - 1, z - 1);
-            }
-            else if (RPConfig.getString("region-settings.block-id").equalsIgnoreCase("FENCE")) {
-                block = new Block[6];
-                blockSize = 6;
-                block[0] = w.getBlockAt(x + 1, y, z);
-                block[1] = w.getBlockAt(x - 1, y, z);
-                block[2] = w.getBlockAt(x, y, z + 1);
-                block[3] = w.getBlockAt(x, y, z - 1);
-                block[4] = w.getBlockAt(x, y - 1, z);
-                block[5] = w.getBlockAt(x, y + 1, z);
-            }
-            else {
-                block = new Block[6];
-                blockSize = 6;
-                block[0] = w.getBlockAt(x + 1, y, z);
-                block[1] = w.getBlockAt(x - 1, y, z);
-                block[2] = w.getBlockAt(x, y, z + 1);
-                block[3] = w.getBlockAt(x, y, z - 1);
-                block[4] = w.getBlockAt(x, y - 1, z);
-                block[5] = w.getBlockAt(x, y + 1, z);
-            }
+            Block[] block = new Block[6];
+            blockSize = 6;
+            block[0] = w.getBlockAt(x + 1, y, z);
+            block[1] = w.getBlockAt(x - 1, y, z);
+            block[2] = w.getBlockAt(x, y, z + 1);
+            block[3] = w.getBlockAt(x, y, z - 1);
+            block[4] = w.getBlockAt(x, y - 1, z);
+            block[5] = w.getBlockAt(x, y + 1, z);
             for (int bi = 0; bi < blockSize; ++bi) {
-            	RedProtect.logger.debug("protection Block is: " + block[bi].getType().name());
             	
-                boolean validBlock = false;            	
+            	boolean validBlock = false;            	
                 
                 validBlock = (block[bi].getType().name().contains(RPConfig.getString("region-settings.block-id"))); 
-                if (validBlock && !block[bi].getLocation().equals((Object)last.getLocation())) {
-                    ++nearbyCount;
+                if (validBlock && !block[bi].getLocation().equals((Object)last.getLocation())) {                
+                	++nearbyCount;
                     next = block[bi];
                     curFacing = bi % 4;
                     if (i == 1) {
@@ -120,7 +90,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                         if (nearbyCount == 2) {
                             bFirst2 = block[bi];
                         }
-                    }
+                    } 
                 }
             }
             if (nearbyCount == 1) {
@@ -182,8 +152,17 @@ class EncompassRegionBuilder extends RegionBuilder{
                             	}
                         	}
                         }
-                        for (Location loc:region.getLimitLocs()){
+                        
+                        for (Location loc:region.getLimitLocs(b.getY())){
                         	otherrg = RedProtect.rm.getTopRegion(loc);
+                        	
+                        	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
+                        	
+                        	if (!loc.getBlock().getType().name().contains(RPConfig.getString("region-settings.block-id"))){
+                        		this.setErrorSign(e, RPLang.get("regionbuilder.neeberetangle"));
+                        		return;
+                        	}
+                        	
                     		if (otherrg != null){                    			
                             	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
                             		this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getCreator())));
@@ -213,7 +192,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                             return;
                         }
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-                        p.sendMessage(RPLang.get("regionbuilder.claim.left") + claimused + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
+                        p.sendMessage(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
                         p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (totalArea + region.getArea()) + "\n" + 
                         RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea()))));
                         p.sendMessage(RPLang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior());
@@ -239,10 +218,8 @@ class EncompassRegionBuilder extends RegionBuilder{
                         
                         if (RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
                         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-                        	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
-                        	
-                        }
-                        
+                        	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));                        	
+                        }                        
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         
                         super.r = region;
