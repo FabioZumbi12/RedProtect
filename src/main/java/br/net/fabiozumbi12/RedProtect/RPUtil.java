@@ -462,7 +462,7 @@ class RPUtil {
 			Connection dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 			
 			for (Region r:RedProtect.rm.getRegionsByWorld(world)){
-				if (!regionExists(r.getName(),dbname)) {
+				if (!regionExists(r.getName(),dbname, world.getName())) {
 		            try {                
 		                Statement st = null;
 		                for (String flag:r.flags.keySet()){
@@ -471,8 +471,8 @@ class RPUtil {
 		                	st.close();
 		                }          
 		                st = dbcon.createStatement();
-		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Creator:" + r.getCreator() + "(Size: "+r.getCreator().length()+")");
-		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,centerX,centerZ,date,wel,prior,value,world) VALUES "
+		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Creator:" + r.getCreator() + "(Size: "+r.getArea()+")");
+		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,maxy,miny,centerX,centerZ,date,wel,prior,value,world) VALUES "
 		                		+ "('" +r.getName() + "', '" + 
 		                		r.getCreator().toString() + "', '" + 
 		                		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
@@ -481,13 +481,15 @@ class RPUtil {
 		                		r.getMinMbrX() + "', '" + 
 		                		r.getMaxMbrZ() + "', '" + 
 		                		r.getMinMbrZ() + "', '" + 
+		                		r.getMaxY() + "', '" + 
+		                		r.getMinY() + "', '" + 
 		                		r.getCenterX() + "', '" + 
 		                		r.getCenterZ() + "', '" + 
 		                		r.getDate().toString() + "', '" +
 		                		r.getWelcome().toString() + "', '" + 
 		                		r.getPrior() + "', '" + 
 		                		r.getValue() + "', '" + 
-		                		r.getWorld().toString()+"')");                    
+		                		r.getWorld()+"')");                    
 		                st.close();
 		                RedProtect.logger.sucess("["+counter+"]Converted region to Mysql: " + r.getName());
 		                counter++;
@@ -511,7 +513,7 @@ class RPUtil {
 	private static void initMysql() throws Exception{
 		for (World world:Bukkit.getWorlds()){
 			
-		    String dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName().toLowerCase();
+		    String dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
 		    String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
 		    String reconnect = "?autoReconnect=true";
 		    
@@ -534,7 +536,7 @@ class RPUtil {
 	                st = null;
 	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null default '0.0')");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, miny int, maxy int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null)");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
@@ -562,14 +564,14 @@ class RPUtil {
 		}
 	    
 	}
-	
-	private static boolean regionExists(String name, String dbname) {
+		
+	private static boolean regionExists(String name, String dbname, String world) {
         int total = 0;
         String reconnect = "?autoReconnect=true";
         try {
         	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+dbname+reconnect,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
             Statement st = dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name = '" + name + "'");
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name='"+name+"' AND world='"+world+"'");
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
             }

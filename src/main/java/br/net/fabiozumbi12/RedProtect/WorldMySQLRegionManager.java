@@ -46,7 +46,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             RedProtect.plugin.disable();
             return;
         }
-        this.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName().toLowerCase();
+        this.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
         Statement st = null;
         try {
             if (!this.checkDBExists()) {
@@ -58,7 +58,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = null;
                 con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null default '0')");
+                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null)");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region'!");    
@@ -120,7 +120,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 			ResultSet rs = meta.getColumns(null, null, "region", "value");
 	    	if (!rs.next()){
 	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD value Long not null default '0'");
+			    st.executeUpdate("ALTER TABLE region ADD value Long not null");
 			    st.close();
 			    RedProtect.logger.info("Created column 'value'!");
 	    	}
@@ -216,7 +216,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     		}
     		try {
                 Statement st = this.dbcon.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM region WHERE name='"+rname+"'");            
+                ResultSet rs = st.executeQuery("SELECT * FROM region WHERE name='"+rname+"' AND world='"+this.world.getName()+"'");            
                 if (rs.next()){ 
                 	LinkedList<String> owners = new LinkedList<String>();
                     List<String> members = new ArrayList<String>();
@@ -255,7 +255,9 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     frs.close();
                     
                     regions.put(rname, new Region(rname, owners, members, creator, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value));
-                }    
+                } else {
+                	return null;
+                }
                 st.close(); 
                 rs.close();
                 RedProtect.logger.debug("Adding region to cache: "+rname);
@@ -267,8 +269,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 			RedProtect.logger.debug("Removed cached region: "+rname);
                 		}
                 		}                	
-                }, (20*60)*RPConfig.getInt("mysql.region-cache-minutes"));
-                
+                }, (20*60)*RPConfig.getInt("mysql.region-cache-minutes"));                
             }
             catch (SQLException e) {
                 e.printStackTrace();
