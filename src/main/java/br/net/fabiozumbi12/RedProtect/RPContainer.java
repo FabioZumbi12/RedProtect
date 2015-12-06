@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.RedProtect;
 
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -31,7 +30,7 @@ class RPContainer {
             for (int sx = -1; sx <= 1; sx++){
             	for (int sz = -1; sz <= 1; sz++){
     				Block bs = w.getBlockAt(x+sx, y, z+sz);
-    				if (bs.getType().equals(Material.WALL_SIGN) && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
+    				if (bs.getState() instanceof Sign && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
     					return false;
                 	}
     		        
@@ -49,7 +48,7 @@ class RPContainer {
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);    	        				
-    	        				if (bu.getType().equals(Material.WALL_SIGN) && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
+    	        				if (bu.getState() instanceof Sign && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
     	        					return false;
     	                    	}
     	        			}        	        		
@@ -75,7 +74,7 @@ class RPContainer {
         int z = b.getZ();
         World w = p.getWorld();
 
-        if (b.getType().equals(Material.WALL_SIGN) && !validateSign(b, p)){
+        if (b.getState() instanceof Sign && !validateSign(b, p)){
 			return false;
     	}   		
            		
@@ -91,7 +90,7 @@ class RPContainer {
         		for (int sy = -1; sy <= 1; sy++){
         			for (int sz = -1; sz <= 1; sz++){
         				Block bs = w.getBlockAt(x+sx, y+sy, z+sz);
-        				if (bs.getType().equals(Material.WALL_SIGN) && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
+        				if (bs.getState() instanceof Sign && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
         					return false;
                     	}
         				
@@ -111,7 +110,7 @@ class RPContainer {
             	        		for (int uy = -1; uy <= 1; uy++){
             	        			for (int uz = -1; uz <= 1; uz++){
             	        				Block bu = w.getBlockAt(x2+ux, y2+uy, z2+uz);
-            	        				if (bu.getType().equals(Material.WALL_SIGN) && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
+            	        				if (bu.getState() instanceof Sign && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
             	        					return false;
             	                    	}
             	        			}
@@ -126,7 +125,7 @@ class RPContainer {
     }
     
 	@SuppressWarnings("deprecation")
-	public boolean canWorldBreak(Block b){
+	public boolean canWorldBreak(Block b){		
     	if (!RPConfig.getBool("private.use")){
     		return true;
     	}
@@ -139,7 +138,8 @@ class RPContainer {
         int z = b.getZ();
         World w = b.getWorld();
 
-        if (b.getType().equals(Material.WALL_SIGN) && validatePrivateSign(b)){
+        if (b.getState() instanceof Sign && validatePrivateSign(b)){
+        	RedProtect.logger.debug("Valid Sign on canWorldBreak!");
 			return false;
     	}   		
            		
@@ -154,7 +154,7 @@ class RPContainer {
         	for (int sx = -1; sx <= 1; sx++){
         		for (int sz = -1; sz <= 1; sz++){
     				Block bs = w.getBlockAt(x+sx, y, z+sz);
-    				if (bs.getType().equals(Material.WALL_SIGN) && validatePrivateSign(bs)){
+    				if (bs.getState() instanceof Sign && validatePrivateSign(bs)){
     					return false;
                 	}
     				
@@ -173,11 +173,10 @@ class RPContainer {
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);
-    	        				if (bu.getType().equals(Material.WALL_SIGN) && validatePrivateSign(bu)){
+    	        				if (bu.getState() instanceof Sign && validatePrivateSign(bu)){
     	        					return false;
     	                    	}
-    	        			}
-        	        		
+    	        			}        	        		
         	        	}
     				}        				 
     			}	        		
@@ -187,7 +186,7 @@ class RPContainer {
     }
 	
 	public static Block getBlockRelative(Block block) {
-        if (block.getType().equals(Material.WALL_SIGN)){
+        if (block.getState() instanceof Sign){
         	Sign s = (Sign) block.getState();
         	org.bukkit.material.Sign data = (org.bukkit.material.Sign) s.getData();
         	return block.getRelative(data.getAttachedFace());

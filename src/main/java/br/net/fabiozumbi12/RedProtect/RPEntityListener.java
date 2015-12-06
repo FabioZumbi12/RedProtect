@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Monster;
@@ -201,6 +202,12 @@ class RPEntityListener implements Listener{
             else if ((e1 instanceof Hanging) && e2 instanceof Monster){
             	if (r1 != null || r2 != null){
             		RedProtect.logger.debug("Cancelled ItemFrame drop Item");
+            		e.setCancelled(true);
+                    return;
+            	}
+            }
+            else if ((e1 instanceof Explosive)){
+            	if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())){
             		e.setCancelled(true);
                     return;
             	}

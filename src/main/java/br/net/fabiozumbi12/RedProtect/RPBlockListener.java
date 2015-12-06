@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
@@ -273,18 +275,35 @@ class RPBlockListener implements Listener{
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityExplode(EntityExplodeEvent e) {
     	RedProtect.logger.debug("Is BlockListener - EntityExplodeEvent event");
-        for (int i = 0; i < e.blockList().size(); i++) {
-        	Location l = e.blockList().get(i).getLocation();
+    	List<Block> toRemove = new ArrayList<Block>();
+        for (Block b:e.blockList()) {
+        	RedProtect.logger.debug("Blocks: "+b.getType().name());
+        	Location l = b.getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
-        	if (!cont.canWorldBreak(e.blockList().get(i))){        		        		
-        		e.setCancelled(true);
-        		return;
+        	if (!cont.canWorldBreak(b)){
+        		RedProtect.logger.debug("canWorldBreak Called!");
+        		//e.setCancelled(true);
+        		toRemove.add(b);
+        		continue;
         	}        	
-        	if (r != null && !r.canMobLoot()){
-        		e.setCancelled(true);
-        		return;
+        	if (r == null){
+        		continue;
+        	}
+        	
+        	if (e.getEntityType().name().contains("TNT") && !r.canFire()){
+        		toRemove.add(b);
+    			continue;
+        	}  
+        	
+        	if (e.getEntity() instanceof LivingEntity && !r.canMobLoot()){
+        		toRemove.add(b);
+        		continue;
         	}
         }
+        if (!toRemove.isEmpty()){
+        	e.blockList().removeAll(toRemove);
+        }
+        
     }
     
     @EventHandler
@@ -465,16 +484,22 @@ class RPBlockListener implements Listener{
 	
 	@EventHandler
 	public void onBlockExplode(BlockExplodeEvent e){
-		List<Block> blocks = e.blockList();
-		for (Block b:blocks){
+		RedProtect.logger.debug("Is BlockListener - BlockExplodeEvent event");
+		List<Block> toRemove = new ArrayList<Block>();
+		for (Block b:e.blockList()){
 			Region r = RedProtect.rm.getTopRegion(b.getLocation());
 			if (!cont.canWorldBreak(b)){
-				e.blockList().remove(b);
+				toRemove.add(b);
+				continue;
 	    	}
 			if (r != null && !r.canFire()){
-				e.blockList().remove(b);				
+				toRemove.add(b);	
+				continue;
 			}
 		}		
+		if (!toRemove.isEmpty()){
+			e.blockList().removeAll(toRemove);
+		}
 	}
 	
 	@EventHandler

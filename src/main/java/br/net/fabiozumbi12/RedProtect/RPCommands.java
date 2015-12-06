@@ -16,6 +16,7 @@ import me.ellbristow.mychunk.MyChunkChunk;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -584,11 +585,11 @@ class RPCommands implements CommandExecutor, TabCompleter{
                 return true;
             }
             
-            if (args[0].equalsIgnoreCase("flag")) {
-            	if (player.hasPermission("redprotect.own.flag")) {
+            if (args[0].equalsIgnoreCase("flag") || args[0].equalsIgnoreCase("fl")) {
+            	if (player.hasPermission("redprotect.own.flaggui")) {
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				if (r.isOwner(player) || player.hasPermission("redprotect.admin.flag")){
+        				if (r.isOwner(player) || player.hasPermission("redprotect.admin.flaggui")){
         					if (r.getName().length() > 16){
         						RPGui gui = new RPGui(ChatColor.DARK_GREEN + r.getName().substring(0, 16) + " Flags!", player, r, RedProtect.plugin);
         						gui.open();
@@ -1752,7 +1753,9 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		if (flag.equalsIgnoreCase("effects")){                				
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
 		} else if (flag.equalsIgnoreCase("allow-enter-items")){                				
-			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));    
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));   
+		} else if (flag.equalsIgnoreCase("gamemode")){                				
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag)); 
 		} else if (flag.equalsIgnoreCase("deny-enter-items")){                				
 			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage"+flag));
 		} else if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds") || flag.equalsIgnoreCase("allow-break") || flag.equalsIgnoreCase("allow-place")){                				
@@ -1774,7 +1777,34 @@ class RPCommands implements CommandExecutor, TabCompleter{
 	}
 
 	private static boolean validate(String flag, Object value) {
-		if ((flag.equalsIgnoreCase("treefarm") || flag.equalsIgnoreCase("invincible") || flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
+		if (flag.equalsIgnoreCase("gamemode")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			try {
+				GameMode.valueOf(value.toString().toUpperCase());
+			} catch (IllegalArgumentException e){
+				return false;
+			}			
+		}
+		
+		if ((flag.equalsIgnoreCase("can-fly") || 
+				flag.equalsIgnoreCase("player-damage") || 
+				flag.equalsIgnoreCase("can-hunger") || 
+				flag.equalsIgnoreCase("can-projectiles") || 
+				flag.equalsIgnoreCase("can-pet") || 
+				flag.equalsIgnoreCase("portal-enter") || 
+				flag.equalsIgnoreCase("allow-create-portal") || 
+				flag.equalsIgnoreCase("allow-mod") || 
+				flag.equalsIgnoreCase("portal-exit") || 
+				flag.equalsIgnoreCase("enderpearl") || 
+				flag.equalsIgnoreCase("can-back") || 
+				flag.equalsIgnoreCase("up-skills") || 
+				flag.equalsIgnoreCase("enter") || 
+				flag.equalsIgnoreCase("treefarm") || 
+				flag.equalsIgnoreCase("sign") || 
+				flag.equalsIgnoreCase("invincible") || 
+				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
 		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items") || flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){

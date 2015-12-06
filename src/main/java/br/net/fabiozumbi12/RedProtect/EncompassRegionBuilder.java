@@ -65,16 +65,14 @@ class EncompassRegionBuilder extends RegionBuilder{
             int x = current.getX();
             int y = current.getY();
             int z = current.getZ();
-            int blockSize = 6;
-            Block[] block = new Block[6];
-            blockSize = 6;
+            
+            Block[] block = new Block[4];            
             block[0] = w.getBlockAt(x + 1, y, z);
             block[1] = w.getBlockAt(x - 1, y, z);
             block[2] = w.getBlockAt(x, y, z + 1);
-            block[3] = w.getBlockAt(x, y, z - 1);
-            block[4] = w.getBlockAt(x, y - 1, z);
-            block[5] = w.getBlockAt(x, y + 1, z);
-            for (int bi = 0; bi < blockSize; ++bi) {
+            block[3] = w.getBlockAt(x, y, z - 1);           
+            
+            for (int bi = 0; bi < block.length; ++bi) {
             	
             	boolean validBlock = false;            	
                 

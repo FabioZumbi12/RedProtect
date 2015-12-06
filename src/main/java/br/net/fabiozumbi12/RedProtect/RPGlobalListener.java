@@ -1,5 +1,8 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -417,17 +420,22 @@ public class RPGlobalListener implements Listener{
     	if (e.isCancelled()){
     		return;
     	}
-        for (Block block : e.blockList()) {
-        	Location l = block.getLocation();
+    	List<Block> toRemove = new ArrayList<Block>();
+        for (Block b:e.blockList()) {
+        	Location l = b.getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
-        	if (r != null){
-        		return;
+        	if (r != null && !r.canFire()){
+        		toRemove.add(b);
+        		continue;
         	}
         	
         	if (!RPConfig.getGlobalFlag(l.getWorld().getName()+".entity-block-damage")){
-        		e.setCancelled(true);
-        		return;
+        		toRemove.add(b);
+        		continue;
         	}
+        }
+        if (!toRemove.isEmpty()){
+        	e.blockList().removeAll(toRemove);
         }
     }
 	

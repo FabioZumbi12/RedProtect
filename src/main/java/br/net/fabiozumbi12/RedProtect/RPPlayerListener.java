@@ -9,6 +9,7 @@ import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -169,7 +170,14 @@ class RPPlayerListener implements Listener{
             }
         } 
         
-        if (b != null && (b.getType().name().contains("CHEST") || 
+        if (b != null && (b.getType().equals(Material.DRAGON_EGG))){
+        	if (r != null && !r.canBuild(p)){
+        		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+        		event.setCancelled(true);
+                return;
+        	}
+        } 
+        else if (b != null && (b.getType().name().contains("CHEST") || 
         		b.getType().name().contains("ANVIL") ||
         		b.getType().name().contains("ENCHANTMENT_TABLE") ||
         		b.getType().name().equalsIgnoreCase("BED") ||
@@ -880,9 +888,11 @@ class RPPlayerListener implements Listener{
     @EventHandler
     public void PlayerLogin(PlayerJoinEvent e){
     	Player p = e.getPlayer();
+    	//Adjust inside region
+    	p.teleport(new Location(p.getWorld(), p.getLocation().getBlockX(), p.getLocation().getBlockY()+0.1, p.getLocation().getBlockZ()));
     	
     	if (p.hasPermission("redprotect.update") && RedProtect.Update && !RPConfig.getBool("update-check.auto-update")){
-    		RPLang.sendMessage(p, ChatColor.AQUA + "An update is available for RedProtect: " + RedProtect.UptVersion + " - on " + RedProtect.UptLink);
+    		RPLang.sendMessage(p, ChatColor.AQUA + "An update is available for RedProtect: " + RedProtect.UptVersion);
     		RPLang.sendMessage(p, ChatColor.AQUA + "Use /rp update to download and automatically install this update.");
     	}
     	
@@ -991,7 +1001,59 @@ class RPPlayerListener implements Listener{
     	toremove.clear();
     }
     
+    private void EnterExitNotify(Region r, Player p){
+    	if (!RPConfig.getBool("notify.region-enter")){
+    		return;
+    	}
+    	
+    	String ownerstring = "";
+    	String m = "";
+    	//Enter-Exit notifications    
+        if (r.getWelcome().equals("")){
+			if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")
+	    			|| RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
+				for (int i = 0; i < r.getOwners().size(); ++i) {
+    				ownerstring = ownerstring + ", " + RPUtil.UUIDtoPlayer(r.getOwners().get(i)); 
+    	        }
+				
+				if (r.getOwners().size() > 0) {
+		            ownerstring = ownerstring.substring(2);
+		        }
+		        else {
+		            ownerstring = "None";
+		        }
+    			m = RPLang.get("playerlistener.region.entered"); 
+        		m = m.replace("{owners}", ownerstring);
+        		m = m.replace("{region}", r.getName());
+			} 
+			SendNotifyMsg(p, m);
+		} else {
+			SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": "+ ChatColor.RESET + r.getWelcome().replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
+    		return;        			
+		}
+    }
+    
     private void RegionFlags(Region r, Region er, final Player p){  
+    	//enter fly flag
+    	if (r.flagExists("can-fly")){
+    		p.setAllowFlight(r.getFlagBool("can-fly"));
+    	}
+    	
+    	//exit fly flag
+    	if (er != null && er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly")){
+    		p.setAllowFlight(false);
+    	}
+    	
+    	//enter Gamemode flag
+    	if (r.flagExists("gamemode")){
+    		p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
+    	}
+    	
+    	//Exit gamemode
+		if (er != null && er.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
+			p.setGameMode(Bukkit.getServer().getDefaultGameMode());
+		}
+		
 		//Enter command as player
         if (r.flagExists("player-enter-command")){
         	String[] cmds = r.getFlagString("player-enter-command").split(",");
@@ -1093,41 +1155,19 @@ class RPPlayerListener implements Listener{
   			}
   		}
     }
-    
-    private void EnterExitNotify(Region r, Player p){
-    	if (!RPConfig.getBool("notify.region-enter")){
-    		return;
-    	}
-    	
-    	String ownerstring = "";
-    	String m = "";
-    	//Enter-Exit notifications    
-        if (r.getWelcome().equals("")){
-			if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")
-	    			|| RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
-				for (int i = 0; i < r.getOwners().size(); ++i) {
-    				ownerstring = ownerstring + ", " + RPUtil.UUIDtoPlayer(r.getOwners().get(i)); 
-    	        }
-				
-				if (r.getOwners().size() > 0) {
-		            ownerstring = ownerstring.substring(2);
-		        }
-		        else {
-		            ownerstring = "None";
-		        }
-    			m = RPLang.get("playerlistener.region.entered"); 
-        		m = m.replace("{owners}", ownerstring);
-        		m = m.replace("{region}", r.getName());
-			} 
-			SendNotifyMsg(p, m);
-		} else {
-			SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": "+ ChatColor.RESET + r.getWelcome().replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
-    		return;        			
-		}
-    }
-    
+        
     private void noRegionFlags(Region er, Player p){
-    	if (er != null){			
+    	if (er != null){	
+    		//exit fly flag
+        	if (er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly")){
+        		p.setAllowFlight(false);
+        	}
+        	
+    		//Exit gamemode
+    		if (er.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
+    			p.setGameMode(Bukkit.getServer().getDefaultGameMode());
+    		}
+    		
 			//Exit effect
 			if (er.flagExists("effects")){
 				String[] effects = er.getFlagString("effects").split(",");
