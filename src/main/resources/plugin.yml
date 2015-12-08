@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.3.4
+version: 6.3.5
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials]
