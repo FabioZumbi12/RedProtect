@@ -1028,21 +1028,12 @@ class RPPlayerListener implements Listener{
 			} 
 			SendNotifyMsg(p, m);
 		} else {
-			SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": "+ ChatColor.RESET + r.getWelcome().replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
+			SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": "+ ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', r.getWelcome()));
     		return;        			
 		}
     }
     
-    private void RegionFlags(Region r, Region er, final Player p){  
-    	//enter fly flag
-    	if (r.flagExists("can-fly")){
-    		p.setAllowFlight(r.getFlagBool("can-fly"));
-    	}
-    	
-    	//exit fly flag
-    	if (er != null && er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly")){
-    		p.setAllowFlight(false);
-    	}
+    private void RegionFlags(final Region r, Region er, final Player p){  
     	
     	//enter Gamemode flag
     	if (r.flagExists("gamemode")){
@@ -1101,7 +1092,7 @@ class RPPlayerListener implements Listener{
 							if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
 								Bukkit.getScheduler().cancelTask(id);
 								removeTasks.add(taskId);
-								RedProtect.logger.debug("Removed task ID: " + taskId + " for player " + p.getName());
+								RedProtect.logger.debug("(RegionFlags-eff)Removed task ID: " + taskId + " for player " + p.getName());
 							}
 						}
 						for (String key:removeTasks){
@@ -1110,7 +1101,31 @@ class RPPlayerListener implements Listener{
 						removeTasks.clear();
 					}					
 				}
-			} else {
+			} else
+			//exit fly flag
+	    	if (er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+	    		if (PlayertaskID.containsValue(p.getName())){
+	    			if (r.flagExists("can-fly")){
+	    				p.setAllowFlight(r.getFlagBool("can-fly"));
+	    			} else {
+	    				p.setAllowFlight(false);	
+	    			}	    			
+					List<String> removeTasks = new ArrayList<String>();
+					for (String taskId:PlayertaskID.keySet()){
+						int id = Integer.parseInt(taskId.split("_")[0]);
+						String ideff = id+"_"+"can-fly"+er.getName();
+						if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
+							Bukkit.getScheduler().cancelTask(id);
+							removeTasks.add(taskId);
+							RedProtect.logger.debug("(RegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
+						}
+					}
+					for (String key:removeTasks){
+						PlayertaskID.remove(key);
+					}
+					removeTasks.clear();
+				}    		
+	    	} else {
 				stopTaskPlayer(p);
 			}
 			
@@ -1139,13 +1154,12 @@ class RPPlayerListener implements Listener{
         
         //Enter effect
         if (r.flagExists("effects")){
-  			int TaskId = 0;
   			String[] effects = r.getFlagString("effects").split(",");
   			for (String effect:effects){
   				String eff = effect.split(" ")[0];
   				String amplifier = effect.split(" ")[1];
   				final PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), 90, Integer.parseInt(amplifier));
-  				TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() { 
+  				int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() { 
   					public void run() {
   						p.addPotionEffect(fulleffect, true); 
   						} 
@@ -1154,15 +1168,23 @@ class RPPlayerListener implements Listener{
   				RedProtect.logger.debug("Added task ID: " + TaskId+"_"+eff + " for player " + p.getName());
   			}
   		}
+        
+      //enter fly flag
+    	if (r.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+    		p.setAllowFlight(r.getFlagBool("can-fly"));
+    		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() { 
+					public void run() {
+						p.setAllowFlight(r.getFlagBool("can-fly")); 
+						} 
+					},0, 80);	
+				PlayertaskID.put(TaskId+"_"+"can-fly"+r.getName(), p.getName());
+				RedProtect.logger.debug("(RegionFlags fly)Added task ID: " + TaskId+"_"+"can-fly"+ " for player " + p.getName());
+    	}
     }
         
     private void noRegionFlags(Region er, Player p){
-    	if (er != null){	
-    		//exit fly flag
-        	if (er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly")){
-        		p.setAllowFlight(false);
-        	}
-        	
+    	if (er != null){
+    		        	
     		//Exit gamemode
     		if (er.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
     			p.setGameMode(Bukkit.getServer().getDefaultGameMode());
@@ -1184,7 +1206,7 @@ class RPPlayerListener implements Listener{
 							if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
 								Bukkit.getScheduler().cancelTask(id);
 								removeTasks.add(taskId);
-								RedProtect.logger.debug("Removed task ID: " + taskId + " for effect " + effect);
+								RedProtect.logger.debug("(noRegionFlags eff)Removed task ID: " + taskId + " for effect " + effect);
 							}
 						}
 						for (String key:removeTasks){
@@ -1193,7 +1215,28 @@ class RPPlayerListener implements Listener{
 						removeTasks.clear();
 					}
 				}
-			} else {
+			} else
+			
+			//exit fly flag
+        	if (er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+        		if (PlayertaskID.containsValue(p.getName())){
+        			p.setAllowFlight(false);	
+    				List<String> removeTasks = new ArrayList<String>();
+    				for (String taskId:PlayertaskID.keySet()){
+    					int id = Integer.parseInt(taskId.split("_")[0]);
+    					String ideff = id+"_"+"can-fly"+er.getName();
+    					if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
+    						Bukkit.getScheduler().cancelTask(id);
+    						removeTasks.add(taskId);
+    						RedProtect.logger.debug("(noRegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
+    					}
+    				}
+    				for (String key:removeTasks){
+    					PlayertaskID.remove(key);
+    				}
+    				removeTasks.clear();
+    			}    		
+        	} else {
 				stopTaskPlayer(p);
 			}
 			

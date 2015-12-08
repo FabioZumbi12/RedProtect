@@ -148,19 +148,19 @@ public class RPLang {
 		String FMsg = "";
 
 		if (Lang.get(key) == null){
-			FMsg = "§c§oMissing language string for "+ ChatColor.GOLD + key;
+			FMsg = "&c&oMissing language string for "+ ChatColor.GOLD + key;
 		} else {
 			FMsg = Lang.get(key);
 		}
-
-		FMsg = FMsg.replaceAll("(?i)&([a-f0-9k-or])", "§$1");
+				
+		FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
 		
 		return FMsg;
 	}
 	
 	public static void sendMessage(Player p, String key){
 		if (Lang.get(key) == null){
-			p.sendMessage(get("_redprotect.prefix")+ " " + key.replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
+			p.sendMessage(get("_redprotect.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
 		} else if (get(key).equalsIgnoreCase("")){
 			return;
 		} else {

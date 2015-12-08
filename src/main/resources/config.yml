@@ -26,7 +26,9 @@ region-settings:
   border:
     material: GLOWSTONE
     time-showing: 5
-  simple-list: true
+  region-list:
+    simple-listing: true
+    hover-and-click-teleport: true
   autoexpandvert-ondefine: true
   anti-hopper: true
   drop-type: keep

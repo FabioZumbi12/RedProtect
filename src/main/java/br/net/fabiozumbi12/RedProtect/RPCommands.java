@@ -32,6 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
+import br.net.fabiozumbi12.RedProtect.Fanciful.FancyMessage;
+
 @SuppressWarnings("deprecation")
 class RPCommands implements CommandExecutor, TabCompleter{
     
@@ -573,7 +575,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                         RPLang.sendMessage(player,RPLang.get("general.color") + "------------------------------------");
                         while (i.hasNext()) {
                             Region r = i.next();
-                            RPLang.sendMessage(player,RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + " | Center (§6X,Z"+RPLang.get("general.color")+"): §6" +  r.getCenterX() + ", "  + r.getCenterZ());
+                            RPLang.sendMessage(player,RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + ChatColor.translateAlternateColorCodes('&', " | Center (&6X,Z"+RPLang.get("general.color")+"): &6") +  r.getCenterX() + ", "  + r.getCenterZ());
                             RPLang.sendMessage(player,RPLang.get("region.regions") + " " + regions.size());
                         }
                         RPLang.sendMessage(player,RPLang.get("general.color") + "------------------------------------");
@@ -1871,20 +1873,43 @@ class RPCommands implements CommandExecutor, TabCompleter{
         else {
         	p.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
         	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.created.list") + " " +pname);
-        	p.sendMessage("-----");
-        	char c = '&';        	
-        	if (RPConfig.getBool("region-settings.simple-list")){
+        	p.sendMessage("-----");        	
+        	if (RPConfig.getBool("region-settings.region-list.simple-listing")){
         		for (World w:Bukkit.getWorlds()){
-        			String colorChar = ChatColor.translateAlternateColorCodes(c, RPConfig.getString("region-settings.world-colors." + w.getName()));
+        			String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName()));
         			Set<Region> wregions = RedProtect.rm.getRegions(uuid, w);
         			if (wregions.size() > 0){
-        				String worldregions = "";
-            			Iterator<Region> it = wregions.iterator();
-            			while (it.hasNext()){
-            				worldregions = worldregions+RPLang.get("general.color")+", "+ChatColor.GRAY+it.next().getName();
-            			}
-            			p.sendMessage(RPLang.get("general.color")+RPLang.get("region.world").replace(":", "")+" "+colorChar+w.getName()+"["+wregions.size()+"]"+ChatColor.RESET+": "+worldregions.substring(3)+RPLang.get("general.color")+".");
-            			p.sendMessage("-----");
+        				Iterator<Region> it = wregions.iterator();
+        				if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.ph.hasRegionPerm(p, "tp", null)){
+        					FancyMessage fancy = new FancyMessage();
+                			boolean first = true;
+                			while (it.hasNext()){
+                				Region r = it.next();
+                				String rname = RPLang.get("general.color")+", "+ChatColor.GRAY+r.getName();
+                				if (first){
+                					rname = rname.substring(3);
+                					first = false;
+                				}
+                				if (!it.hasNext()){
+                					rname = rname+RPLang.get("general.color")+".";
+                				}
+                				fancy.text(rname).color(ChatColor.DARK_GRAY)
+                        				.tooltip(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
+                        				.command("/rp tp "+r.getName()+" "+r.getWorld())
+                        				.then(" ");
+                			} 
+                			p.sendMessage(RPLang.get("general.color")+RPLang.get("region.world").replace(":", "")+" "+colorChar+w.getName()+"["+wregions.size()+"]"+ChatColor.RESET+": ");
+                			fancy.send(p);
+                			p.sendMessage("-----");
+        				} else {
+        					String worldregions = "";
+                			while (it.hasNext()){
+                				worldregions = worldregions+RPLang.get("general.color")+", "+ChatColor.GRAY+it.next().getName();
+                			}
+                			p.sendMessage(RPLang.get("general.color")+RPLang.get("region.world").replace(":", "")+" "+colorChar+w.getName()+"["+wregions.size()+"]"+ChatColor.RESET+": "); 
+                			p.sendMessage(worldregions.substring(3)+RPLang.get("general.color")+".");
+                			p.sendMessage("-----");                			
+        				}        				           			
         			}
         		}
         	} else {        		
@@ -1930,7 +1955,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         			return;
         		} else {
         			r.setWelcome(wMessage);
-                	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.welcomeset") + " "+ wMessage.replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
+                	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.welcomeset") + " "+ ChatColor.translateAlternateColorCodes('&', wMessage));
                 	return;        		
         		}
         	} else {
@@ -1975,7 +2000,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     		Material mat1 = w.getBlockAt(region.getCenterX(), i+1, region.getCenterZ()).getType();
     		Material mat2 = w.getBlockAt(region.getCenterX(), i+2, region.getCenterZ()).getType();
     		if ((!mat.equals(Material.LAVA) || !mat.equals(Material.STATIONARY_LAVA)) && !mat.equals(Material.AIR) && mat1.equals(Material.AIR) && mat2.equals(Material.AIR)){
-    			loc = new Location(w, region.getCenterX(), i+1, region.getCenterZ());            			
+    			loc = new Location(w, region.getCenterX()+0.500, i+1, region.getCenterZ()+0.500);            			
     			break;
     		}
     	}
