@@ -85,17 +85,17 @@ class RPBlockListener implements Listener{
         
 
         if (RPConfig.getBool("server-protection.sign-spy.enabled")){
-        	Bukkit.getConsoleSender().sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
-        	Bukkit.getConsoleSender().sendMessage("§bPlayer: §e" + e.getPlayer().getName());
-        	Bukkit.getConsoleSender().sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());
-        	Bukkit.getConsoleSender().sendMessage("§bLines - §e3: §r" + lines[2].toString() + " - §e4: §r" + lines[3].toString());
+        	Bukkit.getConsoleSender().sendMessage("Â§cSign Spy Â§b- Location: Â§rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
+        	Bukkit.getConsoleSender().sendMessage("Â§bPlayer: Â§e" + e.getPlayer().getName());
+        	Bukkit.getConsoleSender().sendMessage("Â§bLines - Â§e1: Â§r" + lines[0].toString() + " - Â§e2: Â§r" + lines[1].toString());
+        	Bukkit.getConsoleSender().sendMessage("Â§bLines - Â§e3: Â§r" + lines[2].toString() + " - Â§e4: Â§r" + lines[3].toString());
         	if (!RPConfig.getBool("server-protection.sign-spy.only-console")){
         		for (Player play:Bukkit.getOnlinePlayers()){
         			if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/){
-        				play.sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
-        	        	play.sendMessage("§bPlayer: §e" + e.getPlayer().getName());
-        	        	play.sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());
-        	        	play.sendMessage("§bLines - §e3: §r" + lines[2].toString() + " - §e4: §r" + lines[3].toString());
+        				play.sendMessage("Â§cSign Spy Â§b- Location: Â§rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
+        	        	play.sendMessage("Â§bPlayer: Â§e" + e.getPlayer().getName());
+        	        	play.sendMessage("Â§bLines - Â§e1: Â§r" + lines[0].toString() + " - Â§e2: Â§r" + lines[1].toString());
+        	        	play.sendMessage("Â§bLines - Â§e3: Â§r" + lines[2].toString() + " - Â§e4: Â§r" + lines[3].toString());
         			}
         		}
         	}

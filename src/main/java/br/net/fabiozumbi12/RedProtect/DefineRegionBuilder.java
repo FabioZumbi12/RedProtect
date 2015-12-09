@@ -92,6 +92,7 @@ class DefineRegionBuilder extends RegionBuilder{
         }
         
         super.r = region;
+        RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" DEFINED region "+region.getName());
         return;
     }
 }

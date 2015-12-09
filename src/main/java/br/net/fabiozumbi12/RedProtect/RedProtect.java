@@ -54,6 +54,7 @@ public class RedProtect extends JavaPlugin {
     static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
     static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
     static String pathMain = "plugins" + File.separator + "RedProtect" + File.separator;
+    static String pathLogs = "plugins" + File.separator + "RedProtect" + File.separator + "logs" + File.separator;
     static String pathData = String.valueOf(RedProtect.pathMain) + File.separator + "data" + File.separator;
     static String pathConfig = String.valueOf(RedProtect.pathMain) + File.separator + "config.yml";
     static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
@@ -83,6 +84,7 @@ public class RedProtect extends JavaPlugin {
     public void onDisable() {
         RedProtect.rm.saveAll();
         RedProtect.rm.unloadAll();
+        logger.SaveLogs();
         Bukkit.getScheduler().cancelTasks(this);
         RedProtect.logger.severe(RedProtect.pdf.getFullName() + " disabled.");
     }
@@ -213,7 +215,7 @@ public class RedProtect extends JavaPlugin {
 			taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() { 
 				public void run() {
 					RedProtect.logger.debug("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
-					rm.saveAll();					
+					rm.saveAll();
 					} 
 				},RPConfig.getInt("flat-file.auto-save-interval-seconds")*20, RPConfig.getInt("flat-file.auto-save-interval-seconds")*20);	
 			

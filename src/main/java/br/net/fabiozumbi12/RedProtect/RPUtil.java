@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -45,6 +48,22 @@ class RPUtil {
     static int backup = 0; 
     static HashMap<Player, HashMap<Location, Material>> pBorders = new HashMap<Player, HashMap<Location, Material>>();
         
+    
+    static void SaveToZip(File file, String ZippedFile, StringBuilder sb){
+    	try{
+    		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
+            ZipEntry e = new ZipEntry(ZippedFile);
+            out.putNextEntry(e);
+
+            byte[] data = sb.toString().getBytes();
+            out.write(data, 0, data.length);
+            out.closeEntry();
+            out.close();
+    	} catch (Exception e){
+    		e.printStackTrace();
+    	}    	
+    }
+    
     /**Generate a friendly and unique name for a region based on player name.
      * 
      * @param p Player
@@ -116,6 +135,13 @@ class RPUtil {
         Date today = Calendar.getInstance().getTime(); 
         String now = df.format(today);
 		return now;    	
+    }
+    
+    static String HourNow(){
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int min = Calendar.getInstance().get(Calendar.MINUTE);
+        int sec = Calendar.getInstance().get(Calendar.SECOND);        
+		return "["+hour+":"+min+":"+sec+"]";    	
     }
     
     static void fixWorld(String regionname){
@@ -289,7 +315,7 @@ class RPUtil {
         	}
         	
         	if (pls > 0){
-        		RedProtect.logger.sucess("["+pls+"]Region updated §6§l" + r.getName() + "§a§l. Owner §6§l" + r.getCreator());
+        		RedProtect.logger.sucess("["+pls+"]Region updated ï¿½6ï¿½l" + r.getName() + "ï¿½aï¿½l. Owner ï¿½6ï¿½l" + r.getCreator());
             }        	
         }     
         
@@ -300,9 +326,9 @@ class RPUtil {
                    	        
         if (i > 0 || pls > 0){
         	if (i > pls){
-            	RedProtect.logger.sucess("Updated a total of §6§l" + (i-pls) + "§a§l regions!");
+            	RedProtect.logger.sucess("Updated a total of ï¿½6ï¿½l" + (i-pls) + "ï¿½aï¿½l regions!");
         	} else {
-            	RedProtect.logger.sucess("Updated a total of §6§l" + (pls-i) + "§a§l regions!");
+            	RedProtect.logger.sucess("Updated a total of ï¿½6ï¿½l" + (pls-i) + "ï¿½aï¿½l regions!");
         	}
         	RedProtect.rm.saveAll();        	
         	RedProtect.logger.sucess("Regions saved!");  
@@ -311,12 +337,12 @@ class RPUtil {
         }
         
         if (purged > 0){
-        	RedProtect.logger.warning("Purged a total of §6§l" + purged + "§a§l regions!");
+        	RedProtect.logger.warning("Purged a total of ï¿½6ï¿½l" + purged + "ï¿½aï¿½l regions!");
         	purged = 0;
         }
         
         if (sell > 0){
-        	RedProtect.logger.warning("Put to sell a total of §6§l" + sell + "§a§l regions!");
+        	RedProtect.logger.warning("Put to sell a total of ï¿½6ï¿½l" + sell + "ï¿½aï¿½l regions!");
         	sell = 0;
         }
         regions.clear();   
@@ -462,7 +488,7 @@ class RPUtil {
 			Connection dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 			
 			for (Region r:RedProtect.rm.getRegionsByWorld(world)){
-				if (!regionExists(r.getName(),dbname, world.getName())) {
+				if (!regionExists(r.getName(),dbname)) {
 		            try {                
 		                Statement st = null;
 		                for (String flag:r.flags.keySet()){
@@ -485,8 +511,8 @@ class RPUtil {
 		                		r.getMinY() + "', '" + 
 		                		r.getCenterX() + "', '" + 
 		                		r.getCenterZ() + "', '" + 
-		                		r.getDate().toString() + "', '" +
-		                		r.getWelcome().toString() + "', '" + 
+		                		r.getDate() + "', '" +
+		                		r.getWelcome() + "', '" + 
 		                		r.getPrior() + "', '" + 
 		                		r.getValue() + "', '" + 
 		                		r.getWorld()+"')");                    
@@ -527,7 +553,7 @@ class RPUtil {
 	        Statement st = null;
 	        
 	        try {
-	            if (!checkDBExists(dbname)) {
+	        	if (!checkDBExists(dbname)) {
 	                Connection con = DriverManager.getConnection(url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
 	                st.executeUpdate("CREATE DATABASE " + dbname);
@@ -536,7 +562,7 @@ class RPUtil {
 	                st = null;
 	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, miny int, maxy int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null)");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null)");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
@@ -547,6 +573,7 @@ class RPUtil {
 	                RedProtect.logger.info("Created table: 'Region Flags'!"); 
 	                con.close();
 	            }
+	        	ConnectDB(url,dbname,reconnect);
 	        }
 	        catch (CommandException e3) {
 	            RedProtect.logger.severe("Couldn't connect to mysql! Make sure you have mysql turned on and installed properly, and the service is started.");
@@ -565,13 +592,26 @@ class RPUtil {
 	    
 	}
 		
-	private static boolean regionExists(String name, String dbname, String world) {
+	private static boolean ConnectDB(final String url,final String dbname,final String reconnect) {
+    	try {
+    		@SuppressWarnings("unused")
+			Connection dbcon = DriverManager.getConnection(url + dbname+ reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+			RedProtect.logger.info("Conected to "+dbname+" via Mysql!");
+			return true;
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			RedProtect.logger.severe("["+dbname+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
+			return false;
+		}		
+	}
+	
+	private static boolean regionExists(String name, String dbname) {
         int total = 0;
         String reconnect = "?autoReconnect=true";
         try {
         	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+dbname+reconnect,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
             Statement st = dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name='"+name+"' AND world='"+world+"'");
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name='"+name+"'");
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
             }
@@ -587,12 +627,15 @@ class RPUtil {
 	
 	private static boolean checkDBExists(String dbname) throws SQLException {
         try {
+        	RedProtect.logger.debug("Checking if database exists... " + dbname);
         	Connection con = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/",RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
             DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getCatalogs();
             while (rs.next()) {
                 String listOfDatabases = rs.getString("TABLE_CAT");
                 if (listOfDatabases.equalsIgnoreCase(dbname)) {
+                	con.close();
+                	rs.close();
                     return true;
                 }
             }

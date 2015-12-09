@@ -289,7 +289,7 @@ public class Region implements Serializable{
         RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | "+ RPLang.get("region.area") + " " + this.getArea() + "\n" +
         RPLang.get("region.owners") + " " + ownerstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
         RPLang.get("region.date") + " " + today + "\n" +
-        RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ")? RPLang.get("region.hiding") : wMsgTemp.replaceAll("(?i)&([a-f0-9k-or])", "§$1"));
+        RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ")? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
         
     }
     

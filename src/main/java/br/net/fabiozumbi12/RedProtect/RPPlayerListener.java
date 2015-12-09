@@ -310,8 +310,7 @@ class RPPlayerListener implements Listener{
             event.setUseItemInHand(Event.Result.DENY);
             event.setCancelled(true);
             return;
-        }
-        
+        }        
         else if (r != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){        	
         	if (p.getItemInHand().getType().equals(Material.ENDER_PEARL) && r.canEnderPearl(p)){
     			//allow if is ender pearl allowed on region

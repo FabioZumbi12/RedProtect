@@ -9,6 +9,7 @@
 
 config-version: 6.3
 debug-messages: false
+log-actions: true
 language: EN-US
 file-type: yml
 flat-file:

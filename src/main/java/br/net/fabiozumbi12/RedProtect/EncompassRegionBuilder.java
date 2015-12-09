@@ -220,7 +220,9 @@ class EncompassRegionBuilder extends RegionBuilder{
                         }                        
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         
+                        
                         super.r = region;
+                        RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED region "+region.getName());
                         return;
                     }
                 }

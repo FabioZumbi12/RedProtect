@@ -572,11 +572,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			RedProtect.logger.severe("["+dbname+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
-			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-					public void run() {
-						ConnectDB(); 
-						} 
-					}, 300);
 			return false;
 		}		
 	}

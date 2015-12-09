@@ -55,7 +55,9 @@ class RedefineRegionBuilder extends RegionBuilder{
         	p.sendMessage(RPLang.get("region.regions") + " " + othersName);
         }
         
+        
         super.r = region;
+        RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" REDEFINED region "+region.getName());
         return;
     }
 }

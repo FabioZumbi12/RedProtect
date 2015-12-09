@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -43,6 +44,7 @@ public class RPConfig{
     	            File config = new File(RedProtect.pathConfig);
     	            File bvalues = new File(RedProtect.pathBlockValues);
     	            File globalflags = new File(RedProtect.pathglobalFlags);
+    	            File logs = new File(RedProtect.pathLogs);
 
     	            
     	            if (!main.exists()) {
@@ -54,7 +56,7 @@ public class RPConfig{
     	                data.mkdir();
     	                RedProtect.logger.info("Created folder: " + RedProtect.pathData);
     	            }    	            
-    	            
+    	                	            
     	            if (!config.exists()) {
     	            	plugin.saveResource("config.yml", false);//create config file    	            	
     	                RedProtect.logger.info("Created config file: " + RedProtect.pathConfig);
@@ -269,7 +271,12 @@ public class RPConfig{
         				RedProtect.plugin.getConfig().set("notify.region-enter-mode", "CHAT");
 	                    RedProtect.logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");
         			}
-        			    			
+        			    	
+        			if(getBool("log-actions") && !logs.exists()){
+        				logs.mkdir();
+    	                RedProtect.logger.info("Created folder: " + RedProtect.pathLogs);        	    		
+        	    	}
+        			
         			save();        			
     	            RedProtect.logger.info("All configurations loaded!");
 	}
@@ -292,11 +299,11 @@ public class RPConfig{
     	if (GuiItems.getString("gui-flags."+flag+"."+option) == null){
     		return "";
     	}
-    	return GuiItems.getString("gui-flags."+flag+"."+option).replaceAll("(?i)&([a-f0-9k-or])", "§$1");
+    	return ChatColor.translateAlternateColorCodes('&', GuiItems.getString("gui-flags."+flag+"."+option));
     }
     
     public static String getGuiString(String string) {
-		return GuiItems.getString("gui-strings."+string).replaceAll("(?i)&([a-f0-9k-or])", "§$1");
+		return ChatColor.translateAlternateColorCodes('&', GuiItems.getString("gui-strings."+string));
 	}
     
     public static int getGuiSlot(String slot) {

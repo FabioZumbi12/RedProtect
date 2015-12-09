@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.util.Arrays;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -74,7 +75,7 @@ public class RPGui implements Listener{
 				}				
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
-				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"ง0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
+				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"ยง0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 				if (allowEnchant){					
 					if (this.region.getFlagBool(flag)){
 						guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -128,7 +129,7 @@ public class RPGui implements Listener{
 			ItemStack item = event.getCurrentItem();
 			if (item != null && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
 				ItemMeta itemMeta = item.getItemMeta();
-				String flag = itemMeta.getLore().get(1).replace("ง0", "");
+				String flag = itemMeta.getLore().get(1).replace("ยง0", "");
 				if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
 					if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)){
 							if (!RedProtect.changeWait.contains(this.region.getName()+flag)){								
@@ -170,8 +171,9 @@ public class RPGui implements Listener{
 			}
 			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}								
-		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"ง0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
+		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(this.region.flags.get(flag).toString()),"ยง0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 		event.getCurrentItem().setItemMeta(itemMeta);
+		RedProtect.logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+this.region.flags.get(flag).toString());
 	}
 	
 	public void close(){
