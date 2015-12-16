@@ -183,7 +183,6 @@ public class RedProtect extends JavaPlugin {
             if (RPConfig.getString("file-type").equals("yml")){
             	AutoSaveHandler(); 
             }
-             
         }
         catch (Exception e) {
     		e.printStackTrace();
@@ -343,5 +342,4 @@ public class RedProtect extends JavaPlugin {
     	}
     	return false;
 	}
-	
 }

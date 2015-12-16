@@ -111,24 +111,45 @@ public class RPConfig{
                     	RedProtect.logger.debug("Set key: "+key);
                     }  
                     
-                  //add op to ignore list fro purge
-                    if (RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0){
+                    // check if can enable json support
+                    if (getBool("region-settings.region-list.hover-and-click-teleport")){
+                    	try {
+                       	 Class.forName("com.google.gson.JsonParser");
+                       	} catch( ClassNotFoundException e ) {
+                       		RedProtect.plugin.getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
+                       		RedProtect.logger.warning("Your server version do not support JSON events, disabling Hover and Clicking region features.");
+                       	}
+                    }                    
+                    
+                    //add op to ignore list fro purge
+                    if (RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0){     
                     	List<String> ops = RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players");
                         for (OfflinePlayer play:RedProtect.serv.getOperators()){
                         	ops.add(play.getName());
-                        }                                                     
+                        }
                         RedProtect.plugin.getConfig().set("purge.ignore-regions-from-players", ops);
                     }
                     
                     //add op to ignore list fro sell
-                    if (RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players").size() <= 0){
+                    if (RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players").size() <= 0){      
                     	List<String> ops = RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players");
                         for (OfflinePlayer play:RedProtect.serv.getOperators()){
                         	ops.add(play.getName());
-                        }                                                     
+                        }
                         RedProtect.plugin.getConfig().set("sell.ignore-regions-from-players", ops);
                     }
                     
+                    //add op to ignore list fro furniture purge
+                    if (RedProtect.plugin.getConfig().getStringList("hooks.furniturelib.purge.ignore-regions-from-players").size() <= 0){ 
+                    	List<String> ops = RedProtect.plugin.getConfig().getStringList("hooks.furniturelib.purge.ignore-regions-from-players");
+                        for (OfflinePlayer play:RedProtect.serv.getOperators()){
+                        	ops.add(play.getName());
+                        }
+                        RedProtect.plugin.getConfig().set("hooks.furniturelib.purge.ignore-regions-from-players", ops);
+                    }
+                    
+                    
+                    //drop type
     	            if (RedProtect.plugin.getConfig().getString("region-settings.drop-type") != null) {
     	                if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("keep")) {
     	                    DropType.put("region-settings.drop-type", DROP_TYPE.keep);
@@ -150,8 +171,9 @@ public class RPConfig{
     	            	List<String> worlds = new ArrayList<String>();
     	            	for (World w:RedProtect.serv.getWorlds()){
     	            		worlds.add(w.getName());
-    	            		RedProtect.logger.warning("Added world " + w.getName());
+    	            		RedProtect.logger.warning("Added world to claim list " + w.getName());
     	            	}
+    	            	worlds.remove("example_world");
     	            	RedProtect.plugin.getConfig().set("allowed-claim-worlds", worlds);
     	            }    
     	            
@@ -167,8 +189,8 @@ public class RPConfig{
 	            			if (w.getEnvironment().equals(Environment.THE_END)){
 	            				RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&5&l");			            		
 	            			}
-	            			RedProtect.logger.warning("Added world " + w.getName());
-	            		}
+	            			RedProtect.logger.warning("Added world to color list " + w.getName());
+	            		}	            		
 	            	}
     	            
                     /*------------- ---- Add default config for not updateable configs ------------------*/
@@ -271,7 +293,8 @@ public class RPConfig{
         				RedProtect.plugin.getConfig().set("notify.region-enter-mode", "CHAT");
 	                    RedProtect.logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");
         			}
-        			    	
+        			
+        			//create logs folder
         			if(getBool("log-actions") && !logs.exists()){
         				logs.mkdir();
     	                RedProtect.logger.info("Created folder: " + RedProtect.pathLogs);        	    		

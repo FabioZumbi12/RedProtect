@@ -18,7 +18,7 @@
 			<artifactId>Bukkit</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/cb1.7.9.jar</systemPath>
+			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
 		</dependency> -->
 		<dependency>
 			<groupId>BossbarAPI</groupId>
@@ -88,6 +88,13 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/GriefPrevention.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>FurnitureLib</groupId>
+			<artifactId>FurnitureLib</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/FurnitureLib.jar</systemPath>
 		</dependency>
   </dependencies>
   

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandException;
 import org.bukkit.entity.Player;
@@ -58,7 +59,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st = null;
                 con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null)");
+                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null, tppoint varchar(16))");
                 st.close();
                 st = null;
                 RedProtect.logger.info("Created table: 'Region'!");    
@@ -141,6 +142,14 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 			    RedProtect.logger.info("Created column 'minY'!");
 	    	}
 	    	rs.close();
+	    	rs = meta.getColumns(null, null, "region", "tppoint");
+	    	if (!rs.next()){
+	    		Statement st = this.dbcon.createStatement();        			
+			    st.executeUpdate("ALTER TABLE region ADD tppoint varchar(20)");
+			    st.close();
+			    RedProtect.logger.info("Created column 'tppoint'!");
+	    	}
+	    	rs.close();	
 		} catch(Exception ex){
 			RedProtect.logger.severe("Cold not add the colluns to table region.");        		        
 		}    		 
@@ -235,6 +244,13 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     String wel = rs.getString("wel");
                     long value = rs.getLong("value");
                     
+                    Location tppoint = null;
+                    if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")){
+                    	String tpstring[] = rs.getString("tppoint").split(",");
+                        tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]), 
+                        		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
+                    }                    
+                    
                     for (String member:rs.getString("members").split(", ")){
                     	if (member.length() > 0){
                     		members.add(member);
@@ -254,7 +270,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     fst.close();
                     frs.close();
                     
-                    regions.put(rname, new Region(rname, owners, members, creator, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value));
+                    regions.put(rname, new Region(rname, owners, members, creator, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint));
                 } else {
                 	return null;
                 }

@@ -68,6 +68,7 @@ public class RPGlobalListener implements Listener{
 		if (item.name().contains("MINECART") || item.name().contains("BOAT")){
 			if (!RPConfig.getGlobalFlag(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
 	            e.setCancelled(true);
+	            RedProtect.logger.debug("RPGlobalListener - Can't place minecart/boat!");
 	            return;
 	        }
 		} else {
@@ -76,6 +77,7 @@ public class RPGlobalListener implements Listener{
 					return;
 				}
 				e.setCancelled(true);
+				RedProtect.logger.debug("RPGlobalListener - Can't Build!");
 				return;
 			}
 		}		
@@ -424,15 +426,10 @@ public class RPGlobalListener implements Listener{
         for (Block b:e.blockList()) {
         	Location l = b.getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
-        	if (r != null && !r.canFire()){
+        	if (r == null && !RPConfig.getGlobalFlag(l.getWorld().getName()+".entity-block-damage")){
         		toRemove.add(b);
         		continue;
-        	}
-        	
-        	if (!RPConfig.getGlobalFlag(l.getWorld().getName()+".entity-block-damage")){
-        		toRemove.add(b);
-        		continue;
-        	}
+        	} 
         }
         if (!toRemove.isEmpty()){
         	e.blockList().removeAll(toRemove);

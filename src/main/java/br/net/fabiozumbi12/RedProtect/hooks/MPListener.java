@@ -62,7 +62,7 @@ public class MPListener implements Listener{
             		MyPetEntity mp2 = (MyPetEntity)e2;
                     Player p2 = mp2.getOwner().getPlayer();
                     LivingEntity liv = (LivingEntity) e1;                    
-                    if (!r1.canBuild(p2) || !r1.canHurtPassives(p2)) {
+                    if (!r1.canBuild(p2) || !r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         mp2.getMyPet().setStatus(PetState.Despawned);
                         for (PotionEffect ef:liv.getActivePotionEffects()){

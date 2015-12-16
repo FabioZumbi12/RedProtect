@@ -160,7 +160,7 @@ class RPMine18 implements Listener{
         	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetEntity) {
         		MyPetEntity mp2 = (MyPetEntity)e2;
                 Player p2 = mp2.getOwner().getPlayer();
-                if (!r1.canBuild(p2) || !r1.canHurtPassives(p2)) {
+                if (!r1.canBuild(p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "mplistener.cantdo");
                     mp2.getMyPet().setStatus(PetState.Despawned);

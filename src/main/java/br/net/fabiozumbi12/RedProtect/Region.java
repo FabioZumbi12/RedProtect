@@ -41,6 +41,7 @@ public class Region implements Serializable{
     protected Map<String, Object> flags = new HashMap<String,Object>();
     protected boolean[] f = new boolean[10];
 	private long value;
+	private Location tppoint;
         
     public void setFlag(String Name, Object value) {
     	this.flags.put(Name, value);
@@ -58,6 +59,25 @@ public class Region implements Serializable{
         this.date = value;
         RedProtect.rm.updateLiveRegion(this, "date", value);
     }    
+    
+    public void setTPPoint(Location loc){    	
+    	this.tppoint = loc;
+    	if (loc != null){
+    		double x = loc.getX();
+        	double y = loc.getY();
+        	double z = loc.getZ();
+        	float yaw = loc.getYaw();
+        	float pitch = loc.getPitch();
+        	RedProtect.rm.updateLiveRegion(this, "tppoint", x+","+y+","+z+","+yaw+","+pitch);
+    	} else {
+    		RedProtect.rm.updateLiveRegion(this, "tppoint", "");
+    	}
+    	
+    }
+    
+    public Location getTPPoint(){
+    	return this.tppoint;
+    }
     
     public String getDate() {
         return this.date;
@@ -308,7 +328,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an owner or member.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, Location minLoc, Location maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, Location minLoc, Location maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint) {
     	super();        
         this.maxMbrX = maxLoc.getBlockX();
         this.minMbrX = minLoc.getBlockX();
@@ -324,6 +344,7 @@ public class Region implements Serializable{
         this.creator = creator;    
         this.flags = flags;
         this.value = value;
+        this.tppoint = tppoint;
         
         if (worldName != null){
             this.world = worldName;
@@ -361,7 +382,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an owner or member.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint) {
     	super();
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
         this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
@@ -377,6 +398,7 @@ public class Region implements Serializable{
         this.creator = creator;    
         this.flags = flags;
         this.value = value;
+        this.tppoint = tppoint;
         
         if (worldName != null){
             this.world = worldName;
@@ -413,7 +435,7 @@ public class Region implements Serializable{
      * @param welcome Set a welcome message.
      * @param value A value in server economy.
      */
-    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value) {
+    public Region(String name, List<String> owners, List<String> members, String creator, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location tppoint) {
     	super();
         this.prior = prior;
         this.world = worldName;
@@ -422,6 +444,7 @@ public class Region implements Serializable{
         this.wMessage = welcome;
         int size = x.length;
         this.value = value;
+        this.tppoint = tppoint;
           	    
         if (size != z.length) {
             throw new Error(RPLang.get("region.xy"));
@@ -959,7 +982,7 @@ public class Region implements Serializable{
         return getFlagBool("minecart") || checkAllowedPlayer(p);
 	}
 	
-	public boolean canHurtPassives(Player p) {
+	public boolean canInteractPassives(Player p) {
     	if (!RPConfig.isFlagEnabled("passives")){
     		return RPConfig.getBool("flags.passives") || checkAllowedPlayer(p);
     	}

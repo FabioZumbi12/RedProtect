@@ -1,7 +1,11 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -21,6 +25,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -179,7 +184,7 @@ class RPEntityListener implements Listener{
             else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
             	if (r1 != null && e2 instanceof Player) {
                     Player p2 = (Player)e2;
-                    if (!r1.canHurtPassives(p2)) {
+                    if (!r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
                         return;
@@ -241,7 +246,7 @@ class RPEntityListener implements Listener{
                     return;
                 }
             } else {
-            	if (r != null && !r.canHurtPassives(shooter)) {
+            	if (r != null && !r.canInteractPassives(shooter)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -261,7 +266,7 @@ class RPEntityListener implements Listener{
 		Location l = e.getRightClicked().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
 		Entity et = e.getRightClicked();
-		if (r != null && !r.canHurtPassives(p) && (et instanceof Animals || et instanceof Villager)) {
+		if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager)) {
 			if (et instanceof Tameable){
 				Tameable tam = (Tameable) et;
 				if (tam.isTamed() && tam.getOwner() != null && tam.getOwner().getName().equals(p.getName())){
@@ -290,6 +295,25 @@ class RPEntityListener implements Listener{
          	   event.setCancelled(true);
             }
     	}
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityExplode(EntityExplodeEvent e) {
+    	if (e.isCancelled()){
+    		return;
+    	}
+    	List<Block> toRemove = new ArrayList<Block>();
+        for (Block b:e.blockList()) {
+        	Location l = b.getLocation();
+        	Region r = RedProtect.rm.getTopRegion(l);
+        	if (r != null && !r.canFire()){
+        		toRemove.add(b);
+        		continue;
+        	}        	
+        }
+        if (!toRemove.isEmpty()){
+        	e.blockList().removeAll(toRemove);
+        }
     }
 
 }

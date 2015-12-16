@@ -45,6 +45,18 @@ public class RPGui implements Listener{
 			this.size = 27;
 			this.guiItens = new ItemStack[this.size];
 		}
+		if (region.flags.size() >= 28 && region.flags.size() <= 36){
+			this.size = 36;
+			this.guiItens = new ItemStack[this.size];
+		}
+		if (region.flags.size() >= 37 && region.flags.size() <= 45){
+			this.size = 45;
+			this.guiItens = new ItemStack[this.size];
+		}
+		if (region.flags.size() >= 46 && region.flags.size() <= 54){
+			this.size = 54;
+			this.guiItens = new ItemStack[this.size];
+		}
 				
 		allowEnchant = false;
 		String bukkitv = Bukkit.getVersion();

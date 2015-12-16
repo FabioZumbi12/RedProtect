@@ -1,8 +1,8 @@
 package br.net.fabiozumbi12.RedProtect;
 
-import java.io.File;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -51,19 +51,14 @@ public class RPLogger{
     	if(!RPConfig.getBool("log-actions")){
     		return;
     	}
-    	int count = 0;
-    	String date = RPUtil.DateNow().replace("/", "-");
-    	File logfile = new File(RedProtect.pathLogs+date+"-"+count+".zip");
-    	while(logfile.exists()){    		
-    		count++;
-    		logfile = new File(RedProtect.pathLogs+date+"-"+count+".zip");
-    	}  
-    	
+    	    	
     	final StringBuilder sb = new StringBuilder();
     	for (int key:MainLog.keySet()){
 			  sb.append(MainLog.get(key));
 			  sb.append('\n');    			  
     	}
-    	RPUtil.SaveToZip(logfile, "RedProtectLogs.txt", sb);
+    	if (RPUtil.genFileName(RedProtect.pathLogs) != null){
+    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.pathLogs), "RedProtectLogs.txt", sb);
+    	}    	
     }
 }

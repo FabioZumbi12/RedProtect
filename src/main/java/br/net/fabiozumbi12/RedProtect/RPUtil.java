@@ -1,10 +1,7 @@
 package br.net.fabiozumbi12.RedProtect;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -41,7 +38,8 @@ import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
-import com.google.common.io.Files;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 @SuppressWarnings("deprecation")
 class RPUtil {
@@ -49,7 +47,22 @@ class RPUtil {
     static HashMap<Player, HashMap<Location, Material>> pBorders = new HashMap<Player, HashMap<Location, Material>>();
         
     
-    static void SaveToZip(File file, String ZippedFile, StringBuilder sb){
+    static void SaveToZipYML(File file, String ZippedFile, RPYaml yml){
+    	try{
+    		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
+            ZipEntry e = new ZipEntry(ZippedFile);
+            out.putNextEntry(e);
+
+            byte[] data = yml.saveToString().getBytes();
+            out.write(data, 0, data.length);
+            out.closeEntry();
+            out.close();
+    	} catch (Exception e){
+    		e.printStackTrace();
+    	}    	
+    }
+    
+    static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry(ZippedFile);
@@ -62,6 +75,27 @@ class RPUtil {
     	} catch (Exception e){
     		e.printStackTrace();
     	}    	
+    }
+    
+    static File genFileName(String Path){
+    	int count = 1;
+		String date = DateNow().replace("/", "-");
+    	File logfile = new File(Path+date+"-"+count+".zip");
+    	File files[] = new File(Path).listFiles();
+		HashMap<Long, File> keyFiles = new HashMap<Long, File>();
+    	if (files.length >= RPConfig.getInt("flat-file.max-backups") && Path.contains("backups")){
+    		for (File key:files){
+    			keyFiles.put(key.lastModified(), key);
+    		}
+    		keyFiles.get(Collections.min(keyFiles.keySet())).delete();    		 
+    	}
+    	
+    	while(logfile.exists()){     		
+    		count++;
+    		logfile = new File(Path+date+"-"+count+".zip");
+    	}
+    	
+    	return logfile;
     }
     
     /**Generate a friendly and unique name for a region based on player name.
@@ -88,29 +122,6 @@ class RPUtil {
                 ++i;
             }           
         return rname;
-    }
-    
-    static boolean isFileEmpty(String s) {
-        File f = new File(s);
-        if (!f.isFile()) {
-            return true;
-        }
-        try {
-            FileInputStream fis = new FileInputStream(s);
-            int b = fis.read();
-            if (b != -1) {
-                fis.close();
-                return false;
-            }
-            fis.close();
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e2) {
-            e2.printStackTrace();
-        }
-        return true;
     }
     
     static String formatName(String name) {
@@ -152,6 +163,47 @@ class RPUtil {
     		}
     	}
     }
+    
+    static void PurgeFurnis(int oldest){
+    	int count = 0;
+    	Date now = null;    
+    	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
+    	try {
+			now = dateformat.parse(DateNow());
+		} catch (ParseException e1) {
+			RedProtect.logger.severe("The 'date-format' don't match with date 'now'!!");
+		}
+    	Date regiondate = null;    	
+    	
+    	for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+    		Region r = RedProtect.rm.getTopRegion(id.getStartLocation());
+    		if (r != null){
+    			try {
+    				regiondate = dateformat.parse(r.getDate());
+    			} catch (ParseException e) {
+    				RedProtect.logger.severe("The 'date-format' don't match with region date!!");
+    				e.printStackTrace();
+    				return;
+    			}
+    			Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+    			List<String> players = new ArrayList<String>();
+            	for (String play:RPConfig.getStringList("hooks.furniturelib.purge.ignore-regions-from-players")){
+            		players.add(RPUtil.PlayerToUUID(play));
+    			}
+            	
+    			if (days > oldest && !players.contains(UUIDtoPlayer(r.getCreator()))){
+    				FurnitureLib.getInstance().getFurnitureManager().remove(id);
+    				RedProtect.logger.warning("Removing furniture on region " + r.getName() + " - Days: " + days);
+    				count++;
+            	}
+    		}
+        }
+    	if (count > 0){
+        	RedProtect.logger.warning("Removed a total of &6&l" + count + "&a&l furnitures!");
+        } else {
+        	RedProtect.logger.warning("No furnitures to remove!");
+        }
+    }
         
     static void ReadAllDB(Set<Region> regions){     	
     	RedProtect.logger.info("Loaded " + regions.size() + " regions (" + RPConfig.getString("file-type") + ")");
@@ -188,7 +240,7 @@ class RPUtil {
             		players.add(RPUtil.PlayerToUUID(play));
     			}           	
             	
-            	if (days > RPConfig.getInt("purge.remove-oldest") && !players.contains(r.getCreator())){        
+            	if (days > RPConfig.getInt("purge.remove-oldest") && !players.contains(UUIDtoPlayer(r.getCreator()))){        
                 	RedProtect.logger.warning("Purging" + r.getName() + " - Days: " + days);
             		r.delete();
             		purged++;
@@ -220,9 +272,8 @@ class RPUtil {
         	}
         	
         	//Update player names
-        	if (RedProtect.OnlineMode && !r.isForSale()){
+        	if (RedProtect.OnlineMode && !r.isForSale() && r.getCreator().equalsIgnoreCase(RPConfig.getString(""))){
         		if (!isUUID(r.getCreator()) && r.getCreator() != null){
-        			backup(); 
             		RedProtect.logger.warning("Creator from: " + r.getCreator());
             		RedProtect.logger.warning("To UUID: " + PlayerToUUID(r.getCreator()));
             		r.setCreator(PlayerToUUID(r.getCreator()));      
@@ -234,7 +285,6 @@ class RPUtil {
             	for (int o = 0; o < ownersl.size(); o++){
             		String pname = ownersl.get(o);
             		if (!isUUID(pname) && pname != null){
-            			backup(); 
                 		RedProtect.logger.warning("Owner from: " + pname);
             			ownersl.remove(o);
                 		ownersl.add(o, PlayerToUUID(pname));
@@ -245,7 +295,6 @@ class RPUtil {
             	for (int m = 0; m < membersl.size(); m++){
             		String pname = membersl.get(m);     		
             		if (!isUUID(pname) && pname != null){
-            			backup(); 
                 		RedProtect.logger.warning("Member from: " + pname);   
             			membersl.remove(m);
                 		membersl.add(m, PlayerToUUID(pname));
@@ -302,20 +351,9 @@ class RPUtil {
         			dates.clear();
             	}
         	}
-        	
-        	//Update OLD Databases!
-        	if (fixFlags(r)) {
-        		if (r.getDate() == null) {
-                    r.setDate(DateNow());                    
-            	}
-        		if (r.getWorld() == null) {
-                    fixWorld(r.getName());
-                }   
-                i++;
-        	}
-        	
+        	        	
         	if (pls > 0){
-        		RedProtect.logger.sucess("["+pls+"]Region updated �6�l" + r.getName() + "�a�l. Owner �6�l" + r.getCreator());
+        		RedProtect.logger.sucess("["+pls+"]Region updated &6&l" + r.getName() + "&a&l. Owner &6&l" + r.getCreator());
             }        	
         }     
         
@@ -326,9 +364,9 @@ class RPUtil {
                    	        
         if (i > 0 || pls > 0){
         	if (i > pls){
-            	RedProtect.logger.sucess("Updated a total of �6�l" + (i-pls) + "�a�l regions!");
+            	RedProtect.logger.sucess("Updated a total of &6&l" + (i-pls) + "&a&l regions!");
         	} else {
-            	RedProtect.logger.sucess("Updated a total of �6�l" + (pls-i) + "�a�l regions!");
+            	RedProtect.logger.sucess("Updated a total of &6&l" + (pls-i) + "&a&l regions!");
         	}
         	RedProtect.rm.saveAll();        	
         	RedProtect.logger.sucess("Regions saved!");  
@@ -337,50 +375,28 @@ class RPUtil {
         }
         
         if (purged > 0){
-        	RedProtect.logger.warning("Purged a total of �6�l" + purged + "�a�l regions!");
+        	RedProtect.logger.warning("Purged a total of &6&l" + purged + "&a&l regions!");
         	purged = 0;
         }
         
         if (sell > 0){
-        	RedProtect.logger.warning("Put to sell a total of �6�l" + sell + "�a�l regions!");
+        	RedProtect.logger.warning("Put to sell a total of &6&l" + sell + "&a&l regions!");
         	sell = 0;
         }
         regions.clear();   
 	}
-    
-    static boolean fixFlags(Region r){
-      if (r.f != null && r.f.length < 10){
-        backup();
-        boolean[] flags = { r.f[0], r.f[1], r.f[2], r.f[3], r.f[4], r.f[5], r.f[6], RPConfig.getBool("flags.flow").booleanValue(), RPConfig.getBool("flags.fire").booleanValue(), RPConfig.getBool("flags.spawnpassives").booleanValue() };
-        r.f = flags;
-        return true;
-      }
-      return false;
-    }
-    
-    static void backup(){
-    	if (backup == 0){
-    		RedProtect.logger.warning("Making backup of your database before update the database...");
-    		File source = new File(RedProtect.pathData);
-    		File dest = new File(RedProtect.pathMain + "backupUpdate" + RedProtect.pdf.getVersion());
-    		if (source.exists()){
-    			try {
-       		        Files.copy(source, dest);
-        		} catch (IOException e) {
-        			RedProtect.logger.severe("Error on create a backup of your database: ");
-        		    e.printStackTrace();
-        		    RedProtect.logger.severe("Operation canceled!");
-        		}
-        		RedProtect.logger.sucess("Backup created!");
-    			backup++;
-    		}    		
-		}
-    }
+      
     
 	static String PlayerToUUID(String PlayerName){
     	if (PlayerName == null || PlayerName.equals("")){
     		return null;
     	}
+    	
+    	//check if is already UUID
+    	if (isUUID(PlayerName)){
+    		return PlayerName;
+    	}
+    	
     	String uuid = PlayerName;
 
     	if (!RedProtect.OnlineMode){
@@ -389,7 +405,7 @@ class RPUtil {
     	}
     	
     	try{
-    		OfflinePlayer offp = RedProtect.serv.getOfflinePlayer(PlayerName);
+    		OfflinePlayer offp = RedProtect.serv.getOfflinePlayer(PlayerName);    		
     		uuid = offp.getUniqueId().toString();
 		} catch (IllegalArgumentException e){	
 	    	Player onp = RedProtect.serv.getPlayer(PlayerName);
@@ -397,7 +413,6 @@ class RPUtil {
 	    		uuid = onp.getUniqueId().toString();
 	    	}
 		}
-    	
 		return uuid;    	
     }
     
@@ -405,6 +420,12 @@ class RPUtil {
     	if (uuid == null){
     		return null;
     	}
+    	
+    	//check if is UUID
+    	if (!isUUID(uuid)){
+    		return uuid;
+    	}
+    	
     	String PlayerName = null;
     	UUID uuids = null;
     	
@@ -412,6 +433,7 @@ class RPUtil {
 	    	PlayerName = uuid.toLowerCase();	    	
     		return PlayerName;
     	}
+    	
     	try{
     		uuids = UUID.fromString(uuid);
     		OfflinePlayer offp = RedProtect.serv.getOfflinePlayer(uuids);
@@ -562,7 +584,7 @@ class RPUtil {
 	                st = null;
 	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null)");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null, tppoint varchar(16))");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
@@ -740,7 +762,7 @@ class RPUtil {
 				newmax.setY(w.getMaxHeight());
 				
 				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), owners, new ArrayList<String>(), pname, 
-						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0);				
+						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null);				
 				
 				Region other = RedProtect.rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
 				if (other != null && r.getWelcome().equals(other.getWelcome())){
@@ -753,5 +775,15 @@ class RPUtil {
 			}
 		}		
 		return claimed;		
+	}
+
+	public static String StripName(String pRName) {
+        String regionName;
+		if (pRName.length() > 13) {
+            regionName = pRName.substring(0, 13);
+        } else {
+        	regionName = pRName;
+        } 
+		return regionName;
 	}
 }

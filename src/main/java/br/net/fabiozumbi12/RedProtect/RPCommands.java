@@ -51,7 +51,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
     	SortedSet<String> tab = new TreeSet<String>();  
     	if (sender instanceof Player){
     		List<String> cmds = Arrays.asList("border", "expand-vert", "setminy", "setmaxy", "value", "buy", "sell", "cancelbuy", "tutorial", "limit", "claimlimit", "list", "delete", "info", "flag", "addmember", "addowner", "removemember", "removeowner", "rename", "welcome", "priority", "near", "panel");
-    		List<String> admcmds = Arrays.asList("wand", "tp", "define", "redefine", "setconfig", "reload", "copyflag", "setcreator", "save-all", "reload-all");
+    		List<String> admcmds = Arrays.asList("wand", "tp", "claim", "define", "redefine", "setconfig", "reload", "copyflag", "setcreator", "save-all", "reload-all");
     		
     		if (args.length == 1){
     			for (String command:cmds){
@@ -108,7 +108,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
 		
         if (!(sender instanceof Player)) {        	
-        	if (args.length == 1) {
+        	if (args.length == 1) {        		
         		if (args[0].equalsIgnoreCase("ymlToMysql")) {
         			try {
 						if (!RPUtil.ymlToMysql()){
@@ -204,6 +204,22 @@ class RPCommands implements CommandExecutor, TabCompleter{
         	} 
         	
         	if(args.length == 2){
+        		
+        		if (args[0].equalsIgnoreCase("purgefurni")) {
+        			try{
+        				Integer.parseInt(args[1]);
+        			} catch (Exception e){
+        				RedProtect.logger.severe("The argumment need to be a number.");
+        			}
+        			Plugin pFl = Bukkit.getPluginManager().getPlugin("FurnitureLib");
+        	    	if (pFl != null && pFl.isEnabled()){
+        	    		RPUtil.PurgeFurnis(Integer.parseInt(args[1]));
+        	    	} else {
+        	    		RedProtect.logger.severe("FurnitureLib not installed or not enabled.");
+        	    	}      
+        	    	return true;
+        		}
+        		
         		if  (args[0].equalsIgnoreCase("setconfig") && args[1].equalsIgnoreCase("list")){           		
         			sender.sendMessage(ChatColor.AQUA + "=========== Config Sections: ===========");
             		for (String section:RedProtect.plugin.getConfig().getValues(false).keySet()){
@@ -333,20 +349,27 @@ class RPCommands implements CommandExecutor, TabCompleter{
                             return true;
                         } 
                     	
-                		Location loc = null;
-                    	int limit = w.getMaxHeight();
-                    	if (w.getEnvironment().equals(Environment.NETHER)){
-                    		limit = 124;
-                    	}
-                    	for (int i = limit; i > 0; i--){
-                    		Material mat = w.getBlockAt(region.getCenterX(), i, region.getCenterZ()).getType();
-                    		Material mat1 = w.getBlockAt(region.getCenterX(), i+1, region.getCenterZ()).getType();
-                    		Material mat2 = w.getBlockAt(region.getCenterX(), i+2, region.getCenterZ()).getType();
-                    		if ((!mat.equals(Material.LAVA) || !mat.equals(Material.STATIONARY_LAVA)) && !mat.equals(Material.AIR) && mat1.equals(Material.AIR) && mat2.equals(Material.AIR)){
-                    			loc = new Location(w, region.getCenterX(), i+1, region.getCenterZ());            			
-                    			break;
-                    		}
-                    	}                    	
+                    	Location loc = null;
+                    	if (region.getTPPoint() != null){
+                    		loc = region.getTPPoint();
+                    		loc.setX(loc.getBlockX()+0.500);
+                			loc.setZ(loc.getBlockZ()+0.500);
+                    	} else {
+                    		int limit = w.getMaxHeight();
+                        	if (w.getEnvironment().equals(Environment.NETHER)){
+                        		limit = 124;
+                        	}
+                        	for (int i = limit; i > 0; i--){
+                        		Material mat = w.getBlockAt(region.getCenterX(), i, region.getCenterZ()).getType();
+                        		Material mat1 = w.getBlockAt(region.getCenterX(), i+1, region.getCenterZ()).getType();
+                        		Material mat2 = w.getBlockAt(region.getCenterX(), i+2, region.getCenterZ()).getType();
+                        		if ((!mat.equals(Material.LAVA) || !mat.equals(Material.STATIONARY_LAVA)) && !mat.equals(Material.AIR) && mat1.equals(Material.AIR) && mat2.equals(Material.AIR)){
+                        			loc = new Location(w, region.getCenterX()+0.500, i+1, region.getCenterZ()+0.500);            			
+                        			break;
+                        		}
+                        	}
+                    	}               		
+                    	                    	
                     	play.teleport(loc);
             			RPLang.sendMessage(play,RPLang.get("cmdmanager.region.tp") + " " + args[2]);     
             			sender.sendMessage(ChatColor.AQUA + "Player teleported to " + args[2]);
@@ -411,6 +434,30 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		} else {
         			RPLang.sendMessage(player, ChatColor.AQUA + "No updates to download!");
         			return true;
+        		}
+        	}
+        	
+        	if (args[0].equalsIgnoreCase("settp") && RedProtect.ph.hasHelpPerm(player, "settp")){
+        		Region r = RedProtect.rm.getTopRegion(player.getLocation());
+        		if (r != null){
+        			r.setTPPoint(player.getLocation());
+        			RPLang.sendMessage(player, "cmdmanager.region.settp.ok");
+        			return true;
+        		} else {
+    				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+    				return true;    
+        		}
+        	}
+        	
+        	if (args[0].equalsIgnoreCase("deltp") && RedProtect.ph.hasHelpPerm(player, "settp")){
+        		Region r = RedProtect.rm.getTopRegion(player.getLocation());
+        		if (r != null){
+        			r.setTPPoint(null);
+        			RPLang.sendMessage(player, "cmdmanager.region.settp.removed");
+        			return true;
+        		} else {
+    				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+    				return true;    
         		}
         	}
         	
@@ -507,6 +554,25 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
+        		String serverName = RPConfig.getString("region-settings.default-owner");
+                String name = RPUtil.nameGen(serverName, player.getWorld().getName());
+                
+                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player), name, serverName, new ArrayList<String>());
+                if (rb2.ready()) {
+                    Region r2 = rb2.build();
+                    RPLang.sendMessage(player,RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.rm.add(r2, player.getWorld());
+                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" DEFINED region "+r2.getName());
+                }
+                return true;
+        	}
+        	
+        	//rp claim
+        	if (args[0].equalsIgnoreCase("claim")){
+        		if (!player.hasPermission("redprotect.admin.claim")) {
+                    RPLang.sendMessage(player, "no.permission");
+                    return true;
+                }
                 String name = RPUtil.nameGen(player.getName(), player.getWorld().getName());
                 String creator = player.getUniqueId().toString();
                 if (!RedProtect.OnlineMode){
@@ -517,7 +583,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                     RedProtect.rm.add(r2, player.getWorld());
-                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" DEFINED region "+r2.getName());
+                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CLAIMED region "+r2.getName());
                 }
                 return true;
         	}
@@ -629,6 +695,25 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
+        		String serverName = RPConfig.getString("region-settings.default-owner");
+                String name = args[1];
+                
+                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player), name, serverName, new ArrayList<String>());
+                if (rb2.ready()) {
+                    Region r2 = rb2.build();
+                    RPLang.sendMessage(player,RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.rm.add(r2, player.getWorld());
+                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" DEFINED region "+r2.getName());
+                }
+                return true;
+        	}
+        	
+        	//rp claim [nameOfRegion]
+        	if (args[0].equalsIgnoreCase("claim")){
+        		if (!player.hasPermission("redprotect.admin.claim")) {
+                    RPLang.sendMessage(player, "no.permission");
+                    return true;
+                }
                 String name = args[1];
                 String creator = player.getUniqueId().toString();
                 if (!RedProtect.OnlineMode){
@@ -639,7 +724,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                     RedProtect.rm.add(r2, player.getWorld());
-                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" DEFINED region "+r2.getName());
+                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CLAIMED region "+r2.getName());
                 }
                 return true;
         	}
@@ -695,8 +780,9 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }
         
         if (args.length == 3) { 
-        	if (args[0].equalsIgnoreCase("define")){
-        		if (!player.hasPermission("redprotect.admin.define")) {
+        	//rp claim [regionName] [owner]
+        	if (args[0].equalsIgnoreCase("claim")){
+        		if (!player.hasPermission("redprotect.admin.claim")) {
                     RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
@@ -712,7 +798,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                     RedProtect.rm.add(r2, player.getWorld());
-                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" DEFINED region "+r2.getName());
+                    RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CLAIMED region "+r2.getName());
                 }
                 return true;
         	}
@@ -2018,19 +2104,26 @@ class RPCommands implements CommandExecutor, TabCompleter{
         }      
 
     	Location loc = null;
-    	int limit = w.getMaxHeight();
-    	if (w.getEnvironment().equals(Environment.NETHER)){
-    		limit = 124;
+    	if (region.getTPPoint() != null){
+    		loc = region.getTPPoint();
+    		loc.setX(loc.getBlockX()+0.500);
+			loc.setZ(loc.getBlockZ()+0.500);
+    	} else {
+    		int limit = w.getMaxHeight();
+        	if (w.getEnvironment().equals(Environment.NETHER)){
+        		limit = 124;
+        	}
+        	for (int i = limit; i > 0; i--){
+        		Material mat = w.getBlockAt(region.getCenterX(), i, region.getCenterZ()).getType();
+        		Material mat1 = w.getBlockAt(region.getCenterX(), i+1, region.getCenterZ()).getType();
+        		Material mat2 = w.getBlockAt(region.getCenterX(), i+2, region.getCenterZ()).getType();
+        		if ((!mat.equals(Material.LAVA) || !mat.equals(Material.STATIONARY_LAVA)) && !mat.equals(Material.AIR) && mat1.equals(Material.AIR) && mat2.equals(Material.AIR)){
+        			loc = new Location(w, region.getCenterX()+0.500, i+1, region.getCenterZ()+0.500);            			
+        			break;
+        		}
+        	}
     	}
-    	for (int i = limit; i > 0; i--){
-    		Material mat = w.getBlockAt(region.getCenterX(), i, region.getCenterZ()).getType();
-    		Material mat1 = w.getBlockAt(region.getCenterX(), i+1, region.getCenterZ()).getType();
-    		Material mat2 = w.getBlockAt(region.getCenterX(), i+2, region.getCenterZ()).getType();
-    		if ((!mat.equals(Material.LAVA) || !mat.equals(Material.STATIONARY_LAVA)) && !mat.equals(Material.AIR) && mat1.equals(Material.AIR) && mat2.equals(Material.AIR)){
-    			loc = new Location(w, region.getCenterX()+0.500, i+1, region.getCenterZ()+0.500);            			
-    			break;
-    		}
-    	}
+    	
     	if (loc != null){
     		if (play != null){
     			play.teleport(loc);
@@ -2105,7 +2198,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 	                ++in;
 	            }
 	            
-				Region r = new Region(regionName, owners, new ArrayList<String>(), owners.get(0), new int[] {x + 8, x + 8, x - 7, x - 7}, new int[] {z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0);
+				Region r = new Region(regionName, owners, new ArrayList<String>(), owners.get(0), new int[] {x + 8, x + 8, x - 7, x - 7}, new int[] {z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null);
 				MyChunkChunk.unclaim(chunk);
 				RedProtect.rm.add(r, w);
 				RedProtect.logger.warning("Region converted and named to "+ r.getName());

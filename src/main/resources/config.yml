@@ -13,8 +13,9 @@ log-actions: true
 language: EN-US
 file-type: yml
 flat-file:
-  auto-save-interval-seconds: 1200
+  auto-save-interval-seconds: 3600
   backup: true
+  max-backups: 10
 mysql:
   db-name: redprotect
   user-name: root
@@ -22,8 +23,8 @@ mysql:
   host: localhost
   region-cache-minutes: 2
 region-settings:
+  default-owner: '#server#'
   world-colors:
-    example-world: '&a'
   border:
     material: GLOWSTONE
     time-showing: 5
@@ -107,6 +108,7 @@ flags:
   allow-magiccarpet: true
   mob-loot: false
 flags-configuration:
+  effects-duration: 5
   enabled-flags:
   - pvp
   - chest
@@ -146,4 +148,8 @@ performance:
   disable-PistonEvent-handler: false
 hooks:
   essentials:
-     import-lastvisits: false
+    import-lastvisits: false
+  furniturelib:
+    purge:
+       ignore-regions-from-players:
+       

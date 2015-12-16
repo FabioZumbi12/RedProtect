@@ -30,7 +30,7 @@ class RPContainer {
             for (int sx = -1; sx <= 1; sx++){
             	for (int sz = -1; sz <= 1; sz++){
     				Block bs = w.getBlockAt(x+sx, y, z+sz);
-    				if (bs.getState() instanceof Sign && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
+    				if (bs.getState() instanceof Sign && !validateOpenBlock(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
     					return false;
                 	}
     		        
@@ -48,7 +48,7 @@ class RPContainer {
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);    	        				
-    	        				if (bu.getState() instanceof Sign && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
+    	        				if (bu.getState() instanceof Sign && !validateOpenBlock(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
     	        					return false;
     	                    	}
     	        			}        	        		
@@ -74,7 +74,7 @@ class RPContainer {
         int z = b.getZ();
         World w = p.getWorld();
 
-        if (b.getState() instanceof Sign && !validateSign(b, p)){
+        if (b.getState() instanceof Sign && !validateBreakSign(b, p)){
 			return false;
     	}   		
            		
@@ -90,7 +90,7 @@ class RPContainer {
         		for (int sy = -1; sy <= 1; sy++){
         			for (int sz = -1; sz <= 1; sz++){
         				Block bs = w.getBlockAt(x+sx, y+sy, z+sz);
-        				if (bs.getState() instanceof Sign && !validateSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
+        				if (bs.getState() instanceof Sign && !validateBreakSign(bs, p) && getBlockRelative(bs).getType().equals(b.getType())){
         					return false;
                     	}
         				
@@ -110,7 +110,7 @@ class RPContainer {
             	        		for (int uy = -1; uy <= 1; uy++){
             	        			for (int uz = -1; uz <= 1; uz++){
             	        				Block bu = w.getBlockAt(x2+ux, y2+uy, z2+uz);
-            	        				if (bu.getState() instanceof Sign && !validateSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
+            	        				if (bu.getState() instanceof Sign && !validateBreakSign(bu, p) && getBlockRelative(bu).getType().equals(b.getType())){
             	        					return false;
             	                    	}
             	        			}
@@ -202,10 +202,21 @@ class RPContainer {
 		return false;
 	}
 	
-	private boolean validateSign(Block b, Player p){
+	private boolean validateBreakSign(Block b, Player p){
 		Sign s = (Sign) b.getState();
 		if ((s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
 			!s.getLine(1).equals(p.getName())){
+		    return false;
+		}
+		return true;
+	}
+	
+	private boolean validateOpenBlock(Block b, Player p){
+		Sign s = (Sign) b.getState();
+		if ((s.getLine(0).equalsIgnoreCase("[private]") || s.getLine(0).equalsIgnoreCase("private") || s.getLine(0).equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || s.getLine(0).equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
+			(!s.getLine(1).equals(p.getName()) &&
+			!s.getLine(2).equals(p.getName()) &&
+			!s.getLine(3).equals(p.getName()))){
 		    return false;
 		}
 		return true;

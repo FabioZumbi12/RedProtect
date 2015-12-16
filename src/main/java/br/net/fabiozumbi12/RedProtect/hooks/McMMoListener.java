@@ -135,7 +135,7 @@ public class McMMoListener implements Listener{
 			Region r = RedProtect.rm.getTopRegion(e.getEntity().getLocation());
 			
 			if (e.getEntity() instanceof Animals){
-				if (r != null && !r.canHurtPassives(p)){
+				if (r != null && !r.canInteractPassives(p)){
 					RPLang.sendMessage(p, "entitylistener.region.cantpassive");
 					e.setCancelled(true);
 				}

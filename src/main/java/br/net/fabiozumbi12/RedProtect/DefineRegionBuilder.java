@@ -14,20 +14,22 @@ class DefineRegionBuilder extends RegionBuilder{
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
     	}
+        
+        String pRName = RPUtil.UUIDtoPlayer(p.getName());
+        String wmsg = "";
+        if (creator.equals(RPConfig.getString("region-settings.default-owner"))){
+        	pName = creator;
+        	pRName = creator;
+        	wmsg = "hide ";
+        }
+        
         if (regionName.equals("")) {
-            int i = 0;
-            while (true) {
-                if (p.getName().length() > 13) {
-                    regionName = String.valueOf(p.getName().substring(0, 13)) + "_" + i;
-                }
-                else {
-                    regionName = String.valueOf(p.getName()) + "_" + i;
-                }
-                if (RedProtect.rm.getRegion(regionName, p.getWorld()) == null) {
-                    break;
-                }
-                ++i;
-            }
+            int i = 0;            
+            regionName = RPUtil.StripName(pRName)+"_"+0;            
+            while (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
+            	++i;
+            	regionName = RPUtil.StripName(pRName)+"_"+i;   
+            }            
             if (regionName.length() > 16) {
             	RPLang.sendMessage(p, "regionbuilder.autoname.error");
                 return;
@@ -41,7 +43,7 @@ class DefineRegionBuilder extends RegionBuilder{
         	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
         }
-        if (regionName.length() < 2 || regionName.length() > 16) {
+        if (regionName.length() < 3 || regionName.length() > 16) {
         	RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
             return;
         }
@@ -58,7 +60,7 @@ class DefineRegionBuilder extends RegionBuilder{
         	maxy = p.getWorld().getMaxHeight();
         }
         
-        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0);
+        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null);
         
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	
