@@ -598,14 +598,22 @@ public class Region implements Serializable{
     
     public boolean getFlagBool(String key) {
     	if (!flagExists(key) || !RPConfig.isFlagEnabled(key)){
-    		return (boolean) RPConfig.getDefFlagsValues().get(key);
+    		if (RPConfig.getDefFlagsValues().get(key) != null){
+    			return (Boolean) RPConfig.getDefFlagsValues().get(key);
+    		} else {
+    			return RPConfig.getBool("flags."+key);
+    		}  		
     	}
         return this.flags.get(key) instanceof Boolean && (boolean)this.flags.get(key);
     }
     
     public String getFlagString(String key) {
-    	if (!flagExists(key)){
-    		return (String) RPConfig.getDefFlagsValues().get(key);
+    	if (!flagExists(key) || !RPConfig.isFlagEnabled(key)){
+    		if (RPConfig.getDefFlagsValues().get(key) != null){
+    			return (String) RPConfig.getDefFlagsValues().get(key);
+    		} else {
+    			return RPConfig.getString("flags."+key);
+    		}
     	}
         return this.flags.get(key).toString();
     }
