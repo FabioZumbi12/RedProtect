@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +41,18 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 
+import br.net.fabiozumbi12.RedProtect.RPConfig;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+
 @SuppressWarnings("deprecation")
 public class RPGlobalListener implements Listener{
 	
-	RedProtect plugin;
-
-	public RPGlobalListener(RedProtect plugin) {
-        this.plugin = plugin;
-    }
+	public RPGlobalListener(){
+		RedProtect.logger.debug("Loaded RPGlobalListener...");
+	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onBlockPlace(BlockPlaceEvent e) {
 		RedProtect.logger.debug("RPGlobalListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
 		if (e.isCancelled() || e.getItemInHand() == null) {
@@ -83,7 +85,7 @@ public class RPGlobalListener implements Listener{
 		}		
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
 		RedProtect.logger.debug("RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 		if (e.isCancelled()) {
@@ -104,7 +106,7 @@ public class RPGlobalListener implements Listener{
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e){
 		RedProtect.logger.debug("RPGlobalListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {

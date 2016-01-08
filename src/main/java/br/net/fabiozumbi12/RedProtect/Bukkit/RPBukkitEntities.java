@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 public enum RPBukkitEntities {
 	ARMOR_STAND,

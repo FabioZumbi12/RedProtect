@@ -15,44 +15,35 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
 import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
 import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPBlockListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPEntityListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPGlobalListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPMine18;
+import br.net.fabiozumbi12.RedProtect.listeners.RPPlayerListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPWorldListener;
 
 public class RedProtect extends JavaPlugin {
 	static File JarFile = null;
 	public static PluginDescriptionFile pdf;
-    private PluginManager pm;
     public static RedProtect plugin;
-    private RPGlobalListener gListener;
-    private RPBlockListener bListener;
-    private RPPlayerListener pListener;
-    private RPEntityListener eListener;
-    private RPWorldListener wListener;
-    private RPMine18 aListener;
-    private MPListener mpListener;
-    private McMMoListener mcmmoListener;
-    private SkillAPIListener skilstener;
-    private RPCommands cManager;
 	private int taskid;
 	public static boolean Update;
 	public static String UptVersion;
-	public static String UptLink;
-    /**
-     * Get the region database from here. All functions for manage regions can be found in this variable. 
-     */
+	public static String UptLink;    
     public static RegionManager rm;
     public static List<String> changeWait = new ArrayList<String>();
     public static List<String> tpWait = new ArrayList<String>();
-    static RPPermissionHandler ph;
+    public static RPPermissionHandler ph;
     public static RPLogger logger = new RPLogger();
-    static Server serv;    
-    static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
-    static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
+    public static Server serv;    
+    public static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
+    public static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
     static String pathMain = "plugins" + File.separator + "RedProtect" + File.separator;
     static String pathLogs = "plugins" + File.separator + "RedProtect" + File.separator + "logs" + File.separator;
     static String pathData = String.valueOf(RedProtect.pathMain) + File.separator + "data" + File.separator;
@@ -60,22 +51,21 @@ public class RedProtect extends JavaPlugin {
     static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
     static String pathGui = String.valueOf(RedProtect.pathMain) + File.separator + "guiconfig.yml"; 
     static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";;
-    static boolean BossBar;
+    public static boolean BossBar;
     static boolean MyChunk;
-    static boolean MyPet;
+    public static boolean MyPet;
     static boolean McMMo;
-    static boolean OnlineMode;
-	static boolean Mc;
+    public static boolean OnlineMode;
+	public static boolean Mc;
 	static boolean SkillAPI;
 	static boolean Vault;
-	static boolean PvPm;
-	static boolean Ess;
+	public static boolean PvPm;
+	public static boolean Ess;
 	static boolean GP;
 	public static PlayerHandler PvPmanager;
 	public static Economy econ;
     
-    static enum DROP_TYPE
-    {
+    static enum DROP_TYPE {
         drop, 
         remove, 
         keep;
@@ -108,17 +98,17 @@ public class RedProtect extends JavaPlugin {
             RPLang.init(this);
             rm.loadAll();
             OnlineMode = serv.getOnlineMode();
-            this.pm.registerEvents(this.gListener, this);
-            this.pm.registerEvents(this.bListener, this);
-            this.pm.registerEvents(this.pListener, this);
-            this.pm.registerEvents(this.eListener, this);
-            this.pm.registerEvents(this.wListener, this);            
+            serv.getPluginManager().registerEvents(new RPGlobalListener(), this);
+            serv.getPluginManager().registerEvents(new RPBlockListener(), this);
+            serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
+            serv.getPluginManager().registerEvents(new RPEntityListener(), this);
+            serv.getPluginManager().registerEvents(new RPWorldListener(), this);            
             
             String v = RedProtect.serv.getBukkitVersion();
             if (v.contains("1.8")){
-            	this.pm.registerEvents(this.aListener, this);
+            	serv.getPluginManager().registerEvents(new RPMine18(), this);
             }  
-            getCommand("RedProtect").setExecutor(this.cManager);
+            getCommand("RedProtect").setExecutor(new RPCommands());
             
             if (Vault){
             	RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
@@ -145,15 +135,15 @@ public class RedProtect extends JavaPlugin {
             	RedProtect.logger.info("BossbarAPI found. Hooked.");
             }
             if (MyPet){
-            	this.pm.registerEvents(this.mpListener, this);
+            	serv.getPluginManager().registerEvents(new MPListener(), this);
             	RedProtect.logger.info("MyPet found. Hooked.");
             }
             if (McMMo){
-            	this.pm.registerEvents(this.mcmmoListener, this);
+            	serv.getPluginManager().registerEvents(new McMMoListener(), this);
             	RedProtect.logger.info("McMMo found. Hooked.");
             }
             if (SkillAPI){
-            	this.pm.registerEvents(this.skilstener, this);
+            	serv.getPluginManager().registerEvents(new SkillAPIListener(), this);
             	RedProtect.logger.info("SkillAPI found. Hooked.");
             }
             if (MyChunk){
@@ -165,9 +155,9 @@ public class RedProtect extends JavaPlugin {
             }
             
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
-            	RPUtil.ReadAllDB(RedProtect.rm.getAllRegions());
+            	RPUtil.ReadAllDB(rm.getAllRegions());
         	} else {
-        		RedProtect.logger.info("Theres " + RedProtect.rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");        		
+        		RedProtect.logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");        		
         	}            
             
             RedProtect.logger.sucess(RedProtect.pdf.getFullName() + " enabled.");  
@@ -227,29 +217,10 @@ public class RedProtect extends JavaPlugin {
         super.setEnabled(false);
     }
     
-    void initVars() throws Exception {
+    private void initVars() throws Exception {
         serv = getServer();
         pdf = getDescription();
-        this.pm = serv.getPluginManager();
-        this.gListener = new RPGlobalListener(this);
-        this.bListener = new RPBlockListener(this);
-        this.pListener = new RPPlayerListener(this);
-        this.eListener = new RPEntityListener(this);
-        this.wListener = new RPWorldListener(this);        
-        String v = RedProtect.serv.getBukkitVersion();
-        if (v.contains("1.8")){
-        	this.aListener = new RPMine18(this);
-        }
-        if (MyPet){
-        	this.mpListener = new MPListener(this);
-        }
-        if (McMMo){
-        	this.mcmmoListener = new McMMoListener(this);
-        }
-        if (SkillAPI){
-        	this.skilstener = new SkillAPIListener(this);
-        }
-        this.cManager = new RPCommands();
+        
         ph = new RPPermissionHandler();
         rm = new RegionManager();
     }

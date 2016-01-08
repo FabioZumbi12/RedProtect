@@ -19,12 +19,7 @@ import com.gmail.nossr50.events.skills.secondaryabilities.SecondaryAbilityWeight
 import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 
 public class McMMoListener implements Listener{
-
-	RedProtect plugin;
 	
-	public McMMoListener(RedProtect redProtect) {
-		plugin = redProtect;
-	}
 
 	@EventHandler
 	public void onPlayerExperience(McMMOPlayerExperienceEvent e){

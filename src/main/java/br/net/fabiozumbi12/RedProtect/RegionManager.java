@@ -11,6 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+/**
+ * Get the region database from here. All functions for manage regions can be found in this variable. 
+ */
 public class RegionManager{
 	
 	HashMap<World, WorldRegionManager> regionManagers;

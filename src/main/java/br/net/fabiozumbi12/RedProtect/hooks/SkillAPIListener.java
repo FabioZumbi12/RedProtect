@@ -12,12 +12,7 @@ import com.sucy.skill.api.event.PlayerGainSkillPointsEvent;
 import com.sucy.skill.api.event.PlayerManaGainEvent;
 
 public class SkillAPIListener implements Listener{
-
-	RedProtect plugin;
 	
-	public SkillAPIListener(RedProtect redProtect) {
-		plugin = redProtect;
-	}
 
 	@EventHandler
 	public void onPlayerExperience(PlayerExperienceGainEvent e){

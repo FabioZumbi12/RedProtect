@@ -6,7 +6,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-class RPContainer {
+public class RPContainer {
 
 	@SuppressWarnings("deprecation")
 	public boolean canOpen(Block b, Player p) {

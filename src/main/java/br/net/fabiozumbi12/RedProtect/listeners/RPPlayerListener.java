@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +40,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -56,11 +57,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import br.net.fabiozumbi12.RedProtect.RPConfig;
+import br.net.fabiozumbi12.RedProtect.RPContainer;
+import br.net.fabiozumbi12.RedProtect.RPDoor;
+import br.net.fabiozumbi12.RedProtect.RPLang;
+import br.net.fabiozumbi12.RedProtect.RPUtil;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
 
 import com.earth2me.essentials.Essentials;
@@ -71,16 +80,15 @@ import de.Keyle.MyPet.entity.types.MyPet.PetState;
 import de.Keyle.MyPet.util.player.MyPetPlayer;
 
 @SuppressWarnings("deprecation")
-class RPPlayerListener implements Listener{
+public class RPPlayerListener implements Listener{
 	
 	static RPContainer cont = new RPContainer();
 	private HashMap<Player,String> Ownerslist = new HashMap<Player,String>();
 	private HashMap<Player, String> PlayerCmd = new HashMap<Player, String>();
 	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
-    RedProtect plugin;
     
-    public RPPlayerListener(RedProtect plugin) {
-        this.plugin = plugin;
+    public RPPlayerListener() {
+    	RedProtect.logger.debug("Loaded RPPlayerListener...");
     }
     
     @EventHandler
@@ -132,29 +140,28 @@ class RPPlayerListener implements Listener{
         Region r = RedProtect.rm.getTopRegion(l);
         Material itemInHand = p.getItemInHand().getType();
         
-        if (b != null && p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
-            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            	RedProtect.secondLocationSelections.put(p, b.getLocation());
-                p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + b.getLocation().getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockZ() + RPLang.get("general.color") + ").");
+        //check if is a gui item
+        if (RPUtil.RemoveGuiItem(p.getItemInHand())){
+        	p.setItemInHand(new ItemStack(Material.AIR));
+        	event.setCancelled(true);
+        }
+        
+        if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
+            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+            	RedProtect.secondLocationSelections.put(p, l);
+                p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
                 event.setCancelled(true);
                 return;                
             }
-            else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                RedProtect.firstLocationSelections.put(p, b.getLocation());
-                p.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + b.getLocation().getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + b.getLocation().getBlockZ() + RPLang.get("general.color") + ").");
+            else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
+                RedProtect.firstLocationSelections.put(p, l);
+                p.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
                 event.setCancelled(true);
                 return;
             }
         }
         if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.infoWandID")) {
-            if (b == null) {
-            	Location lp = p.getLocation();
-                r = RedProtect.rm.getTopRegion(lp);
-            }
-            else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            	Location lb = b.getLocation();
-                r = RedProtect.rm.getTopRegion(lb);
-            }
+        	r = RedProtect.rm.getTopRegion(l);
             if (p.hasPermission("redprotect.infowand")) {
                 if (r == null) {
                     RPLang.sendMessage(p, "playerlistener.noregion.atblock");
@@ -314,7 +321,7 @@ class RPPlayerListener implements Listener{
                 	    		  }
                 	    	  }
                 	      }        	              	      
-                	      RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                	      RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
                 	      event.setUseItemInHand(Event.Result.DENY);
                 	      event.setCancelled(true);
                 	      return;
@@ -330,18 +337,37 @@ class RPPlayerListener implements Listener{
                     event.setCancelled(true);
                     return;
                 }                    
-                else if (b != null && !r.allowMod(p)){
-                	//check if is bukkit 1.8.8 blocks
-                	try{
-                		RPBukkitBlocks.valueOf(b.getType().name());        		 
-                	} catch (Exception e){
-                    	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-                    	event.setCancelled(true);
-                        return;
-                	}
+                else if (b != null && !r.allowMod(p) && !RPUtil.isBukkitBlock(b)){
+                	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                	event.setCancelled(true);    
+                	return;
                 }
         	}             
         }               
+    }
+    
+    @EventHandler
+    public void MoveItem(InventoryClickEvent e){
+    	if (e.isCancelled()){
+    		return;
+    	}
+    	
+    	Region r = RedProtect.rm.getTopRegion(e.getWhoClicked().getLocation());
+    	if (r != null && e.getInventory().getTitle() != null){
+    		if (r.getName().length() > 16){
+        		if (e.getInventory().getTitle().equals(RPLang.get("gui.invflag").replace("{region}", r.getName().substring(0, 16)))){
+            		return;
+            	}
+        	} else {
+        		if (e.getInventory().getTitle().equals(RPLang.get("gui.invflag").replace("{region}", r.getName())) || e.getInventory().getTitle().equals(RPLang.get("gui.editflag"))){
+            		return;
+            	}
+        	}
+    	}    	
+    	
+    	if (RPUtil.RemoveGuiItem(e.getCurrentItem())){
+    		e.setCurrentItem(new ItemStack(Material.AIR));
+    	}
     }
     	
     @EventHandler(priority = EventPriority.LOWEST)
@@ -380,16 +406,10 @@ class RPPlayerListener implements Listener{
         	}
         }
         
-        else if (!r.allowMod(p) && (!(event.getRightClicked() instanceof Player))){
-        	//check if is bukkit 1.8.8 blocks
-        	try{
-        		RPBukkitEntities.valueOf(event.getRightClicked().getType().name());
-        	} catch (Exception ex){
-        		RedProtect.logger.debug("PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
-            	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-            	event.setCancelled(true);
-                return;
-        	}       
+        else if (!r.allowMod(p) && !RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))){
+        	RedProtect.logger.debug("PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
+        	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+        	event.setCancelled(true);        	       
         }        
     }
     
@@ -532,7 +552,7 @@ class RPPlayerListener implements Listener{
     	final Region rfrom = RedProtect.rm.getTopRegion(lfrom);
     	final Region rto = RedProtect.rm.getTopRegion(lto);
     	   	
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable(){
 			@Override
 			public void run() {
 				if (rto != null && rfrom != null){
@@ -580,7 +600,7 @@ class RPPlayerListener implements Listener{
     	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
-    	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass")){
+    	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")){
     		RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     		e.setCancelled(true); 
     	}
@@ -705,7 +725,7 @@ class RPPlayerListener implements Listener{
     	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
-    	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass")){
+    	if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")){
     		for (String cmd:RPConfig.getStringList("netherProtection.execute-cmd")){
         		RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), cmd.replace("{player}", p.getName()));
     		}
@@ -1166,7 +1186,7 @@ class RPPlayerListener implements Listener{
   				String eff = effect.split(" ")[0];
   				String amplifier = effect.split(" ")[1];
   				final PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RPConfig.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
-  				int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() { 
+  				int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() { 
   					public void run() {
   						if (p.isOnline() && r.flagExists("effects")){
   							p.addPotionEffect(fulleffect, true); 
@@ -1188,7 +1208,7 @@ class RPPlayerListener implements Listener{
       //enter fly flag
     	if (r.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
     		p.setAllowFlight(r.getFlagBool("can-fly"));
-    		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() { 
+    		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() { 
 					public void run() {
 						if (p.isOnline() && r.flagExists("can-fly")){
 							p.setAllowFlight(r.getFlagBool("can-fly")); 

@@ -11,10 +11,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
-class EncompassRegionBuilder extends RegionBuilder{
+public class EncompassRegionBuilder extends RegionBuilder{
 
-    public EncompassRegionBuilder(SignChangeEvent e) {
-        super();    	
+    public EncompassRegionBuilder(SignChangeEvent e) { 	
         String owner1 = RPUtil.PlayerToUUID(e.getLine(2));
         String owner2 = RPUtil.PlayerToUUID(e.getLine(3));
         Block b = e.getBlock();
@@ -163,7 +162,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                         	
                     		if (otherrg != null){                    			
                             	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
-                            		this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getCreator())));
+                            		this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + region.getCenterX() + ", z: " + region.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(region.getCreator())));
                                     return;
                             	}
                             	if (!othersName.contains(otherrg.getName())){
@@ -221,7 +220,7 @@ class EncompassRegionBuilder extends RegionBuilder{
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         
                         
-                        super.r = region;
+                        this.r = region;
                         RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED region "+region.getName());
                         return;
                     }

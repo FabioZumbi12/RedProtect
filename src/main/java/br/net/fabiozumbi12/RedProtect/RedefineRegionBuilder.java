@@ -11,7 +11,6 @@ class RedefineRegionBuilder extends RegionBuilder{
 		
     @SuppressWarnings("deprecation")
 	public RedefineRegionBuilder(Player p, Region old, Location l1, Location l2) {
-    	super();
         if (l1 == null || l2 == null) {
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
@@ -56,7 +55,7 @@ class RedefineRegionBuilder extends RegionBuilder{
         }
         
         
-        super.r = region;
+        this.r = region;
         RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" REDEFINED region "+region.getName());
         return;
     }

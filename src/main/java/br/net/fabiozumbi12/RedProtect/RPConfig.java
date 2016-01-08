@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
@@ -23,6 +24,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.FileUtil;
 
 import br.net.fabiozumbi12.RedProtect.RedProtect.DROP_TYPE;
@@ -36,7 +38,7 @@ public class RPConfig{
 	static RPYaml EconomyConfig = new RPYaml();
 	public static List<String> AdminFlags = Arrays.asList("can-fly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
-	static void init(RedProtect plugin) {
+	public static void init(RedProtect plugin) {
 
     	            File main = new File(RedProtect.pathMain);
     	            File data = new File(RedProtect.pathData);
@@ -81,6 +83,7 @@ public class RPConfig{
     	                RedProtect.logger.info("Created economy file: " + RedProtect.pathBlockValues);
     	            }
     	            
+    	            //------------------------------ Add default Values ----------------------------//
     	            FileConfiguration temp = new RPYaml();
     	            try {
     	            	temp.load(config);
@@ -110,12 +113,19 @@ public class RPConfig{
                     	RedProtect.plugin.getConfig().set(key, configs.get(key));
                     	RedProtect.logger.debug("Set key: "+key);
                     }  
+                    //--------------------------------------------------------------------------//
+                    
+                    RedProtect.logger.info("Server version: " + RedProtect.serv.getBukkitVersion());
                     
                     // check if can enable json support
-                    if (getBool("region-settings.region-list.hover-and-click-teleport")){
+                    if (getBool("region-settings.region-list.hover-and-click-teleport")){                    	
                     	try {
-                       	 Class.forName("com.google.gson.JsonParser");
-                       	} catch( ClassNotFoundException e ) {
+                    		Class.forName("com.google.gson.JsonParser");
+                          	if (RedProtect.serv.getBukkitVersion().contains("1.7")){
+                          		RedProtect.plugin.getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
+                          		RedProtect.logger.warning("Your server version do not support Hover and Clicking region features, only 1.8.+");
+                          	}                           	
+                       	} catch(ClassNotFoundException e ) {
                        		RedProtect.plugin.getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
                        		RedProtect.logger.warning("Your server version do not support JSON events, disabling Hover and Clicking region features.");
                        	}
@@ -196,8 +206,8 @@ public class RPConfig{
                     /*------------- ---- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.3D){
-        				RedProtect.plugin.getConfig().set("config-version", 6.3D);        				
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.8D){
+        				RedProtect.plugin.getConfig().set("config-version", 6.8D);        				
         				
         				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
         				if (!flags.contains("smart-door")){
@@ -209,7 +219,11 @@ public class RPConfig{
         				if (!flags.contains("mob-loot")){
         					flags.add("mob-loot");            				
         				}
-        				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);        				
+        				if (!flags.contains("flow-damage")){
+        					flags.add("flow-damage");            				
+        				}
+        				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
+        				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
         			}
         			
         			/*------------------------------------------------------------------------------------*/
@@ -249,6 +263,10 @@ public class RPConfig{
                     GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));   
                     GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue")); 
                     GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse")); 
+                    GuiItems.set("gui-strings.separator", GuiItems.getString("gui-strings.separator", "&7|")); 
+                    
+                    GuiItems.set("gui-separator.material", GuiItems.getString("gui-separator.material", "THIN_GLASS")); 
+                    GuiItems.set("gui-separator.data", GuiItems.getInt("gui-separator.data", 0)); 
                     
                     for (String key:getDefFlagsValues().keySet()){
                     	GuiItems.set("gui-flags."+key+".slot", GuiItems.get("gui-flags."+key+".slot", GuiBase.get("gui-flags."+key+".slot", getDefFlagsValues().size())));
@@ -329,8 +347,33 @@ public class RPConfig{
 		return ChatColor.translateAlternateColorCodes('&', GuiItems.getString("gui-strings."+string));
 	}
     
-    public static int getGuiSlot(String slot) {
-		return GuiItems.getInt("gui-flags."+slot+".slot");
+    public static int getGuiSlot(String flag) {
+		return GuiItems.getInt("gui-flags."+flag+".slot");
+	}
+    
+    public static void setGuiSlot(/*String mat, */String flag, int slot) {
+		GuiItems.set("gui-flags."+flag+".slot", slot);
+		//GuiItems.set("gui-flags."+flag+".material", mat);
+		
+	}
+    
+    public static ItemStack getGuiSeparator() {
+    	ItemStack separator = new ItemStack(Material.getMaterial(GuiItems.getString("gui-separator.material")), 1, (short)GuiItems.getInt("gui-separator.data"));
+    	ItemMeta meta = separator.getItemMeta();
+    	meta.setDisplayName(getGuiString("separator"));
+    	meta.setLore(Arrays.asList("", getGuiString("separator")));
+    	separator.setItemMeta(meta);
+		return separator;
+	}
+    
+    public static int getGuiMaxSlot() {
+    	SortedSet<Integer> slots = new TreeSet<Integer>(new ArrayList<Integer>());
+    	for (String key:GuiItems.getKeys(true)){
+    		if (key.contains(".slot")){
+    			slots.add(GuiItems.getInt(key));
+    		}    		
+    	}
+		return Collections.max(slots);
 	}
     
     public static Boolean getBool(String key){		
@@ -406,6 +449,15 @@ public class RPConfig{
 		}
     }
     
+    public static void saveGui(){ 
+    	File guiconfig = new File(RedProtect.pathGui);
+    	try {
+			GuiItems.save(guiconfig);
+		} catch (IOException e) {
+			RedProtect.logger.severe("Problems during save gui file:");
+			e.printStackTrace();
+		}
+    }    
     
     private static RPYaml inputLoader(InputStream inp) {
 		RPYaml file = new RPYaml();
@@ -447,5 +499,6 @@ public class RPConfig{
 	public static boolean getEcoBool(String key) {
 		return EconomyConfig.getBoolean(key);
 	}
+	
 }
    

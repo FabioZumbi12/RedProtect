@@ -23,11 +23,6 @@ import de.Keyle.MyPet.skill.skills.implementation.Ranged;
 
 public class MPListener implements Listener{
 	
-    RedProtect plugin;
-        
-    public MPListener( RedProtect plugin) {
-        this.plugin = plugin;
-    }
     
     @EventHandler
     public void onEntityDamageByPet( EntityDamageEvent e) {

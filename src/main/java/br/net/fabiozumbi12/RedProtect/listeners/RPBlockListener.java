@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.listeners;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +21,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
@@ -38,17 +37,25 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 
-class RPBlockListener implements Listener{
+import br.net.fabiozumbi12.RedProtect.EncompassRegionBuilder;
+import br.net.fabiozumbi12.RedProtect.RPConfig;
+import br.net.fabiozumbi12.RedProtect.RPContainer;
+import br.net.fabiozumbi12.RedProtect.RPLang;
+import br.net.fabiozumbi12.RedProtect.RPUtil;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.RegionBuilder;
+
+public class RPBlockListener implements Listener{
 	
-	static RPContainer cont = new RPContainer();
-    RedProtect plugin;
+	private static RPContainer cont = new RPContainer();
+	
+	public RPBlockListener(){
+		RedProtect.logger.debug("Loaded RPBlockListener...");
+	}    
     
-    public RPBlockListener(RedProtect plugin) {
-        this.plugin = plugin;
-    }
-    
-    @EventHandler
-    public void onSignChange(SignChangeEvent e) {   
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onSignPlace(SignChangeEvent e) {   
     	RedProtect.logger.debug("BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()){
     		return;
@@ -85,17 +92,17 @@ class RPBlockListener implements Listener{
         
 
         if (RPConfig.getBool("server-protection.sign-spy.enabled")){
-        	Bukkit.getConsoleSender().sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
-        	Bukkit.getConsoleSender().sendMessage("§bPlayer: §e" + e.getPlayer().getName());
-        	Bukkit.getConsoleSender().sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());
-        	Bukkit.getConsoleSender().sendMessage("§bLines - §e3: §r" + lines[2].toString() + " - §e4: §r" + lines[3].toString());
+        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+b.getX()).replace("{y}", ""+b.getY()).replace("{z}", ""+b.getZ()).replace("{world}", b.getWorld().getName()));
+        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
+        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0].toString()).replace("{line2}", lines[1].toString()));
+        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2].toString()).replace("{line4}", lines[3].toString()));
         	if (!RPConfig.getBool("server-protection.sign-spy.only-console")){
         		for (Player play:Bukkit.getOnlinePlayers()){
         			if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/){
-        				play.sendMessage("§cSign Spy §b- Location: §rx: " + b.getX() + ", y: " + b.getY() + ", z: " + b.getZ() + ", world: " + b.getWorld().getName());
-        	        	play.sendMessage("§bPlayer: §e" + e.getPlayer().getName());
-        	        	play.sendMessage("§bLines - §e1: §r" + lines[0].toString() + " - §e2: §r" + lines[1].toString());
-        	        	play.sendMessage("§bLines - §e3: §r" + lines[2].toString() + " - §e4: §r" + lines[3].toString());
+        				play.sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+b.getX()).replace("{y}", ""+b.getY()).replace("{z}", ""+b.getZ()).replace("{world}", b.getWorld().getName()));
+        	        	play.sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
+        	        	play.sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0].toString()).replace("{line2}", lines[1].toString()));
+        	        	play.sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2].toString()).replace("{line4}", lines[3].toString()));
         			}
         		}
         	}
@@ -144,7 +151,7 @@ class RPBlockListener implements Listener{
         RPLang.sendMessage(p, RPLang.get("regionbuilder.signerror") + ": " + error);
     }
     
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent e) {
     	RedProtect.logger.debug("BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
@@ -234,7 +241,7 @@ class RPBlockListener implements Listener{
     }
     
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e){
 		RedProtect.logger.debug("BlockListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
@@ -415,8 +422,14 @@ class RPBlockListener implements Listener{
 		RedProtect.logger.debug("Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
     	if (r != null && bfrom.isLiquid() && !r.canFlow()){
-          	 e.setCancelled(true);           	  
+          	 e.setCancelled(true);   
+          	 return;
     	}
+    	
+    	if (r != null && !b.isEmpty() && !r.FlowDamage()){
+         	 e.setCancelled(true);      
+         	return;
+   	    }
     }
 	    
 	@EventHandler
@@ -481,27 +494,7 @@ class RPBlockListener implements Listener{
 			}
 		}	
 	}
-	
-	@EventHandler
-	public void onBlockExplode(BlockExplodeEvent e){
-		RedProtect.logger.debug("Is BlockListener - BlockExplodeEvent event");
-		List<Block> toRemove = new ArrayList<Block>();
-		for (Block b:e.blockList()){
-			Region r = RedProtect.rm.getTopRegion(b.getLocation());
-			if (!cont.canWorldBreak(b)){
-				toRemove.add(b);
-				continue;
-	    	}
-			if (r != null && !r.canFire()){
-				toRemove.add(b);	
-				continue;
-			}
-		}		
-		if (!toRemove.isEmpty()){
-			e.blockList().removeAll(toRemove);
-		}
-	}
-	
+		
 	@EventHandler
 	public void onPistonRetract(BlockPistonRetractEvent e){
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){

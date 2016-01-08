@@ -52,7 +52,7 @@ public class RPPermissionHandler{
     }
     
     private int ClaimLimitHandler(Player p){
-    	int limit = RPConfig.getInt("region-settings.claim-amount-per-world");  
+    	int limit = RPConfig.getInt("region-settings.claim-amount");  
     	List<Integer> limits = new ArrayList<Integer>();
     	Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
     	if (limit > 0){

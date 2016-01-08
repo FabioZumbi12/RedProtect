@@ -3,7 +3,7 @@ package br.net.fabiozumbi12.RedProtect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
-abstract class RegionBuilder{
+public abstract class RegionBuilder{
 	
     Region r;
     

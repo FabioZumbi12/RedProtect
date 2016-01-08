@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.3.7
+version: 6.4.0
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [FurnitureLib, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials]
@@ -60,6 +60,7 @@ permissions:
       redprotect.flag.smart-door: true
       redprotect.flag.allow-potions: true
       redprotect.flag.mob-loot: true
+      redprotect.flag.flow-damage: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false
@@ -143,6 +144,7 @@ permissions:
       redprotect.limit.claim.unlimited: true
       redprotect.limit.blocks.unlimited: true
       redprotect.bypass: true
+      redprotect.bypass.nether-roof: true
       redprotect.magicwand: true
       redprotect.update: true
       redprotect.signspy: true
@@ -150,6 +152,7 @@ permissions:
       redprotect.eco.admin: true
       redprotect.eco.setvalue: true
       redprotect.eco.others: true
+      redprotect.gui.edit: true
   redprotect.eco.use:
     description: "Economy permissions."
     default: false

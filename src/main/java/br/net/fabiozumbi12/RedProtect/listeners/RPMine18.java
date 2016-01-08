@@ -1,9 +1,12 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.listeners;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -21,6 +24,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import br.net.fabiozumbi12.RedProtect.RPConfig;
+import br.net.fabiozumbi12.RedProtect.RPContainer;
+import br.net.fabiozumbi12.RedProtect.RPLang;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
 import de.Keyle.MyPet.api.entity.MyPetEntity;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
 import de.Keyle.MyPet.skill.skills.implementation.Fire;
@@ -28,15 +36,15 @@ import de.Keyle.MyPet.skill.skills.implementation.Poison;
 import de.Keyle.MyPet.skill.skills.implementation.Ranged;
 
 @SuppressWarnings("deprecation")
-class RPMine18 implements Listener{
+public class RPMine18 implements Listener{
+	
+	public RPMine18(){
+		RedProtect.logger.debug("Loaded RPMine18...");
+	}
 	
 	static RPContainer cont = new RPContainer();
 	static HashMap<Player, String> Ownerslist = new HashMap<Player, String>();
-    RedProtect plugin;
     
-    public RPMine18(RedProtect plugin) {
-        this.plugin = plugin;
-    }
     
     @EventHandler
     public void onAttemptInteractAS(PlayerInteractAtEntityEvent e) {
@@ -194,12 +202,21 @@ class RPMine18 implements Listener{
     
 	@EventHandler
 	public void onBlockExplode(BlockExplodeEvent e){
-		RedProtect.logger.debug("Is BlockExplodeEvent event");		
-		Location l = e.getBlock().getLocation();
-		Region r = RedProtect.rm.getTopRegion(l);
-		if (r != null && !r.canFire()){
-			e.setCancelled(true);
-			return;
+		RedProtect.logger.debug("Is BlockListener - BlockExplodeEvent event");
+		List<Block> toRemove = new ArrayList<Block>();
+		for (Block b:e.blockList()){
+			Region r = RedProtect.rm.getTopRegion(b.getLocation());
+			if (!cont.canWorldBreak(b)){
+				toRemove.add(b);
+				continue;
+	    	}
+			if (r != null && !r.canFire()){
+				toRemove.add(b);	
+				continue;
+			}
+		}		
+		if (!toRemove.isEmpty()){
+			e.blockList().removeAll(toRemove);
 		}
 	}
         

@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +33,18 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
-class RPEntityListener implements Listener{
+import br.net.fabiozumbi12.RedProtect.RPContainer;
+import br.net.fabiozumbi12.RedProtect.RPLang;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+
+public class RPEntityListener implements Listener{
 	
-    RedProtect plugin;
-    static RPContainer cont = new RPContainer();
-        
-    public RPEntityListener(RedProtect plugin) {
-        this.plugin = plugin;
-    }
+	public RPEntityListener(){
+		RedProtect.logger.debug("Loaded RPEntityListener...");
+	}
+	
+    static RPContainer cont = new RPContainer();     
         
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {

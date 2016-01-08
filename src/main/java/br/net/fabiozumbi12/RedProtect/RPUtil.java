@@ -34,18 +34,45 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandException;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
+
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 @SuppressWarnings("deprecation")
-class RPUtil {
+public class RPUtil {
     static int backup = 0; 
-    static HashMap<Player, HashMap<Location, Material>> pBorders = new HashMap<Player, HashMap<Location, Material>>();
+    public static HashMap<Player, HashMap<Location, Material>> pBorders = new HashMap<Player, HashMap<Location, Material>>();
         
+    
+
+    public static boolean isBukkitBlock(Block b){
+    	//check if is bukkit 1.8.8 blocks
+    	try{
+    		RPBukkitBlocks.valueOf(b.getType().name());     
+    		return true;
+    	} catch (Exception e){
+    		return false;
+    	}
+    }
+    
+    public static boolean isBukkitEntity(Entity e){
+    	//check if is bukkit 1.8.8 Entity
+    	try{
+    		RPBukkitEntities.valueOf(e.getType().name());
+    		return true;
+    	} catch (Exception ex){ 
+    		return false;
+    	}
+    }
     
     static void SaveToZipYML(File file, String ZippedFile, RPYaml yml){
     	try{
@@ -77,13 +104,14 @@ class RPUtil {
     	}    	
     }
     
-    static File genFileName(String Path){
+    
+    static File genFileName(String Path, Boolean isBackup){
     	int count = 1;
 		String date = DateNow().replace("/", "-");
     	File logfile = new File(Path+date+"-"+count+".zip");
     	File files[] = new File(Path).listFiles();
 		HashMap<Long, File> keyFiles = new HashMap<Long, File>();
-    	if (files.length >= RPConfig.getInt("flat-file.max-backups") && Path.contains("backups")){
+    	if (files.length >= RPConfig.getInt("flat-file.max-backups") && isBackup){
     		for (File key:files){
     			keyFiles.put(key.lastModified(), key);
     		}
@@ -141,7 +169,7 @@ class RPUtil {
         return ret;
     }
     
-    static String DateNow(){
+    public static String DateNow(){
     	DateFormat df = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
         Date today = Calendar.getInstance().getTime(); 
         String now = df.format(today);
@@ -387,13 +415,13 @@ class RPUtil {
 	}
       
     
-	static String PlayerToUUID(String PlayerName){
+    public static String PlayerToUUID(String PlayerName){
     	if (PlayerName == null || PlayerName.equals("")){
     		return null;
     	}
     	
     	//check if is already UUID
-    	if (isUUID(PlayerName)){
+    	if (isUUID(PlayerName) || RPConfig.getString("region-settings.default-owner").equalsIgnoreCase(PlayerName)){
     		return PlayerName;
     	}
     	
@@ -416,7 +444,7 @@ class RPUtil {
 		return uuid;    	
     }
     
-	static String UUIDtoPlayer(String uuid){
+	public static String UUIDtoPlayer(String uuid){
     	if (uuid == null){
     		return null;
     	}
@@ -456,8 +484,8 @@ class RPUtil {
     		UUID.fromString(uuid);
     		return true;
     	} catch (IllegalArgumentException e){
-    	}
-		return false;
+    		return false;
+    	}		
     }
     
     static void addRegion(List<Region> regions, World w){    	
@@ -785,5 +813,18 @@ class RPUtil {
         	regionName = pRName;
         } 
 		return regionName;
+	}
+
+	public static boolean RemoveGuiItem(ItemStack item) {    	
+    	if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()){
+    		try{
+    			String lore = item.getItemMeta().getLore().get(1);
+    			if (RPConfig.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RPConfig.getGuiString("separator"))){
+    				return true;
+    			}
+    		} catch (IndexOutOfBoundsException ex){    			
+    		}    		
+    	}
+    	return false;
 	}
 }

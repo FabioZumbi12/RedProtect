@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 class DefineRegionBuilder extends RegionBuilder{
 	
     public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String creator, List<String> owners) {  	
-    	super();
         String pName = p.getUniqueId().toString();
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
@@ -93,7 +92,7 @@ class DefineRegionBuilder extends RegionBuilder{
         	p.sendMessage(RPLang.get("region.regions") + " " + othersName);
         }
         
-        super.r = region;
+        this.r = region;
         RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" DEFINED region "+region.getName());
         return;
     }

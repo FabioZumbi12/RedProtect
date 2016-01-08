@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.listeners;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
@@ -11,11 +11,14 @@ import org.bukkit.World;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.Listener;
 
-class RPWorldListener implements Listener {
-    RedProtect plugin;
+import br.net.fabiozumbi12.RedProtect.RPConfig;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+
+public class RPWorldListener implements Listener {
     
-    public RPWorldListener(RedProtect plugin) {
-        this.plugin = plugin;
+    public RPWorldListener() {
+        RedProtect.logger.debug("Loaded RPEntityListener...");
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
@@ -23,7 +26,7 @@ class RPWorldListener implements Listener {
         World w = e.getWorld();
         try {
             RedProtect.rm.load(w);
-            RPConfig.init(plugin);    
+            RPConfig.init(RedProtect.plugin);    
             RedProtect.logger.warning("World loaded: " + w.getName());
             
         }

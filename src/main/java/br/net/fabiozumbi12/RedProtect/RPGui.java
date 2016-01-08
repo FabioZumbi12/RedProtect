@@ -27,33 +27,36 @@ public class RPGui implements Listener{
 	private Player player;
 	private Region region;
 	private boolean allowEnchant;
+	private boolean edit;
+	private Inventory inv;
 
-	public RPGui(String name, Player player, Region region,Plugin plugin){
+	public RPGui(String name, Player player, Region region,Plugin plugin, boolean edit, int MaxSlot){
+		this.edit = edit;
 		this.name = name;
 		this.player = player;
 		this.region = region;
 		
-		if (region.flags.size() <= 9){
+		if (MaxSlot <= 9){
 			this.size = 9;
 			this.guiItens = new ItemStack[this.size];
 		} else
-		if (region.flags.size() >= 10 && region.flags.size() <= 18){
+		if (MaxSlot >= 10 && MaxSlot <= 18){
 			this.size = 18;
 			this.guiItens = new ItemStack[this.size];
 		} else
-		if (region.flags.size() >= 19 && region.flags.size() <= 27){
+		if (MaxSlot >= 19 && MaxSlot <= 27){
 			this.size = 27;
 			this.guiItens = new ItemStack[this.size];
 		}
-		if (region.flags.size() >= 28 && region.flags.size() <= 36){
+		if (MaxSlot >= 28 && MaxSlot <= 36){
 			this.size = 36;
 			this.guiItens = new ItemStack[this.size];
 		}
-		if (region.flags.size() >= 37 && region.flags.size() <= 45){
+		if (MaxSlot >= 37 && MaxSlot <= 45){
 			this.size = 45;
 			this.guiItens = new ItemStack[this.size];
 		}
-		if (region.flags.size() >= 46 && region.flags.size() <= 54){
+		if (MaxSlot >= 46 && MaxSlot <= 54){
 			this.size = 54;
 			this.guiItens = new ItemStack[this.size];
 		}
@@ -102,12 +105,34 @@ public class RPGui implements Listener{
 			}
 		}
 		
+		for (int slotc=0; slotc < this.size; slotc++){			
+			if (this.guiItens[slotc] == null){
+				this.guiItens[slotc] = RPConfig.getGuiSeparator();
+			}
+		}	
+		
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
 	@EventHandler
 	void onInventoryClose(InventoryCloseEvent event){
 		if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)) {
+			if (this.edit){
+				for (int i = 0; i < this.size; i++){
+					try{
+						String flag = this.inv.getItem(i).getItemMeta().getLore().get(1).replace("§0", "");
+						if (RPConfig.getDefFlags().contains(flag)){
+							RPConfig.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
+						}
+					} catch (Exception e){
+						RPLang.sendMessage(this.player, "gui.edit.error");
+						close();
+						return;
+					}					
+				}
+				RPConfig.saveGui();
+				RPLang.sendMessage(this.player, "gui.edit.ok");
+			}
 			close();
 		}
 	}
@@ -133,32 +158,36 @@ public class RPGui implements Listener{
 			play.closeInventory();
 		}
 	}
-	
+		
 	@EventHandler
 	void onInventoryClick(InventoryClickEvent event){	
+		if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getInventory().getTitle().equals(this.name)){
+    		return;
+    	}
+		
+		if (this.edit){			
+			return;
+		}
+				
 		if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)){
 			event.setCancelled(true);	
 			ItemStack item = event.getCurrentItem();
-			if (item != null && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
+			if (item != null && !item.equals(RPConfig.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size-1){
 				ItemMeta itemMeta = item.getItemMeta();
 				String flag = itemMeta.getLore().get(1).replace("§0", "");
 				if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
 					if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)){
 							if (!RedProtect.changeWait.contains(this.region.getName()+flag)){								
 								applyFlag(flag, itemMeta, event);	
-								RPUtil.startFlagChanger(this.region.getName(), flag, player);
-								return;
+								RPUtil.startFlagChanger(this.region.getName(), flag, player);								
 							} else {
 								RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RPConfig.getString("flags-configuration.change-flag-delay.seconds")));	
-								return;
 							}
 						} else {
 							applyFlag(flag, itemMeta, event);
-							return;
 						}					
 				} else {
 					applyFlag(flag, itemMeta, event);
-					return;
 				}
 			}			
 	    }
@@ -203,6 +232,7 @@ public class RPGui implements Listener{
 	public void open(){	
 		Inventory inv = Bukkit.createInventory(player, this.size, this.name);
 	    inv.setContents(this.guiItens);
-	    player.openInventory(inv);	     
-	}	
+	    player.openInventory(inv);
+	    this.inv = inv;
+	}
 }

@@ -57,8 +57,8 @@ public class RPLogger{
 			  sb.append(MainLog.get(key));
 			  sb.append('\n');    			  
     	}
-    	if (RPUtil.genFileName(RedProtect.pathLogs) != null){
-    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.pathLogs), "RedProtectLogs.txt", sb);
+    	if (RPUtil.genFileName(RedProtect.pathLogs, false) != null){
+    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.pathLogs, false), "RedProtectLogs.txt", sb);
     	}    	
     }
 }

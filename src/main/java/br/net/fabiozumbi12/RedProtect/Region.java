@@ -38,7 +38,7 @@ public class Region implements Serializable{
     private String creator;
     private String world;
     private String date;
-    protected Map<String, Object> flags = new HashMap<String,Object>();
+    public Map<String, Object> flags = new HashMap<String,Object>();
     protected boolean[] f = new boolean[10];
 	private long value;
 	private Location tppoint;
@@ -604,7 +604,7 @@ public class Region implements Serializable{
     			return RPConfig.getBool("flags."+key);
     		}  		
     	}
-        return this.flags.get(key) instanceof Boolean && (boolean)this.flags.get(key);
+        return this.flags.get(key) instanceof Boolean && (Boolean)this.flags.get(key);
     }
     
     public String getFlagString(String key) {
@@ -846,11 +846,11 @@ public class Region implements Serializable{
 	
 	public boolean allowMod(Player p) {
 		if (!flagExists("allow-mod")){
-			return false;
-		}
+			return checkAllowedPlayer(p);
+		}		
 		return getFlagBool("allow-mod") || checkAllowedPlayer(p);
 	}
-	
+		
 	public boolean canEnterPortal(Player p) {
 		if (!flagExists("portal-enter")){
 			return true;
@@ -920,6 +920,13 @@ public class Region implements Serializable{
 	
 	
 	//---------------------- Player Flags --------------------------//
+	public boolean FlowDamage() {
+		if (!RPConfig.isFlagEnabled("flow-damage")){
+    		return RPConfig.getBool("flags.flow-damage");
+    	}
+		return getFlagBool("flow-damage");
+	}
+	
 	public boolean canMobLoot() {
     	if (!RPConfig.isFlagEnabled("mob-loot")){
     		return RPConfig.getBool("flags.mob-loot");
@@ -1059,5 +1066,5 @@ public class Region implements Serializable{
 		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX+(this.maxMbrX-this.minMbrX),y,this.minMbrZ));
 		return locs;		
 	}
-
+	
 }

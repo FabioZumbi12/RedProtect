@@ -150,8 +150,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         }
         
         //Save backup
-        if (RPUtil.genFileName(folder.getPath()+File.separator) != null){
-        	RPUtil.SaveToZipYML(RPUtil.genFileName(folder.getPath()+File.separator), "data_" + this.world.getName() + ".yml", fileDB); 
+        if (RPUtil.genFileName(folder.getPath()+File.separator, true) != null){
+        	RPUtil.SaveToZipYML(RPUtil.genFileName(folder.getPath()+File.separator, true), "data_" + this.world.getName() + ".yml", fileDB); 
         }
 		       
     }

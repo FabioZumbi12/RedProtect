@@ -7,7 +7,7 @@
 # <       configuration file in this link: https://goo.gl/SEbYBZ       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 6.3
+config-version: 6.4
 debug-messages: false
 log-actions: true
 language: EN-US
@@ -35,7 +35,7 @@ region-settings:
   anti-hopper: true
   drop-type: keep
   limit-amount: 8000
-  claim-amount-per-world: 20
+  claim-amount: 20
   block-id: FENCE
   max-scan: 600
   date-format: dd/MM/yyyy
@@ -107,6 +107,7 @@ flags:
   allow-home: false
   allow-magiccarpet: true
   mob-loot: false
+  flow-damage: false
 flags-configuration:
   effects-duration: 5
   enabled-flags:
@@ -126,6 +127,7 @@ flags-configuration:
   - allow-home
   - allow-magiccarpet
   - mob-loot
+  - flow-damage
   pvparena-nopvp-kick-cmd: spawn {player}
   change-flag-delay:
     enable: true
