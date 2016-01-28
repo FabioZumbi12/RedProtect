@@ -89,9 +89,8 @@ public class RPBlockListener implements Listener{
             this.setErrorSign(e, p, RPLang.get("blocklistener.region.nopem"));
             return;
         }
-        
-
-        if (RPConfig.getBool("server-protection.sign-spy.enabled")){
+                
+        if (RPConfig.getBool("server-protection.sign-spy.enabled") && !(lines[0].isEmpty() && lines[1].isEmpty() && lines[2].isEmpty() && lines[3].isEmpty())){
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+b.getX()).replace("{y}", ""+b.getY()).replace("{z}", ""+b.getZ()).replace("{world}", b.getWorld().getName()));
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0].toString()).replace("{line2}", lines[1].toString()));
@@ -501,7 +500,7 @@ public class RPBlockListener implements Listener{
 			return;
 		}
 		Block piston = e.getBlock();
-		if (Bukkit.getVersion().contains("1.7")){
+		if (!Bukkit.getVersion().startsWith("1.8.")){
 			Block block = e.getBlock();
 			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
 			Region br = RedProtect.rm.getTopRegion(block.getLocation());

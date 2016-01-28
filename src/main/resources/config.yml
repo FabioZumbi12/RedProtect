@@ -7,51 +7,89 @@
 # <       configuration file in this link: https://goo.gl/SEbYBZ       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 6.4
+config-version: 6.8
+# Enable debug messages
 debug-messages: false
+
+# Log all commands used by players
 log-actions: true
+
+# Available: EN-US, PT-BR, ZH-CN
 language: EN-US
+
+# Available: yml and mysql
 file-type: yml
+
+# If file-type: yml, configuration:
 flat-file:
   auto-save-interval-seconds: 3600
   backup: true
   max-backups: 10
+
+# If file-type: mysql, configuration:
 mysql:
   db-name: redprotect
   user-name: root
   user-pass: redprotect
   host: localhost
+  # Regions stay loaded on memory for:
   region-cache-minutes: 2
+
 region-settings:
+  # The name of owner for regions created with /rp define. 
   default-owner: '#server#'
+  # Colors of world to show on /rp info and /rp list.
   world-colors:
+  # Border block type when use /rp border.
   border:
     material: GLOWSTONE
     time-showing: 5
   region-list:
+    # Show simple list with only name of region or all region info.
     simple-listing: true
+    # If running server 1.8+ enable hover and teleport click on simple list.
     hover-and-click-teleport: true
+  # Automatically set max y to 256 and min y to 0 (sky to bedrock).
   autoexpandvert-ondefine: true
+  # Deny break/place blocks under chests.
   anti-hopper: true
+  # Available: keep, drop, remove.
   drop-type: keep
+  # Limit of blocks/region.
   limit-amount: 8000
+  # Limit of claims a player can have.
   claim-amount: 20
+  # Block used to protect regions.
   block-id: FENCE
+  # Ammount of blocks to scan on place sign to claim a region. Consider this the max area.
   max-scan: 600
+  # Time format to use with data and time infos.
   date-format: dd/MM/yyyy
+  # Register player visits on... Available: ON-LOGIN, ON-REGION-ENTER.
   record-player-visit-method: ON-LOGIN
+  # Allow players without permissions to interact with signs starting with this tags.
   allow-sign-interact-tags:
   - Admin Shop
   - '{membername}'
+
+# World that player can claim regions.
 allowed-claim-worlds:
 - example_world
+
 wands:
+  # Item used to define and redefine regions.
   adminWandID: 374
+  # Item used to check regions.
   infoWandID: 339
+
 private:
+  # Enable private signs?
   use: true
+  # Allow private signs outside regions
   allow-outside: false
+  # Use number IDs instead item names?
   allowed-blocks-use-ids: false
+  # Block allowed to lock with private signs.
   allowed-blocks:
   - DISPENSER
   - NOTE_BLOCK
@@ -68,28 +106,58 @@ private:
   - TRAPPED_CHEST
   - HOPPER
   - DROPPER
+
 notify:
+  # Show region info when enter a region.
   region-enter: true
+  # Show region info(or wilderness message) when exit a region.
   region-exit: true
+  # How to show the messages? Available: BOSSBAR, CHAT. If plugin BoobarApi not installed, will show on chat.
   region-enter-mode: BOSSBAR
+  # Where to show the welcome message (/rp wel <message>)? Available: BOSSBAR, CHAT.
   welcome-mode: BOSSBAR
+
 netherProtection:
+  # Max size of your world nether.
   maxYsize: 128
+  # Execute this if player go up to maxYsize of nether.
   execute-cmd: 
   - spawn {player}
+
 server-protection:
+  # List of potions the player cant use on server. Here the PotioTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
   deny-potions:
   - INVISIBILITY
+  # List of causes the player cant die/take damage for. here the list of DamageCauses: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
   deny-playerdeath-by:
   - SUFFOCATION
+  # Deny certain commands on specific worlds.
   deny-commands-on-worlds:
     world:
     - command
+  # Deny players with same nick but cap diferences to join on server (most used on offline severs).
   nickname-cap-filter:
     enabled: false
+  # Show all lines of a sign when player place signs in any world.
   sign-spy:
     enabled: false
+    # Show only on console or in-game too?
     only-console: true
+  teleport-player:
+    # Teleport player on join the server.
+    on-join:
+       enable: false
+       # The player need to be in this world to be teleported? Use 'none' for all worlds.
+       need-world-to-teleport: none
+       # The location, using as world, x, y, z.
+       location: world, 0, 90, 0
+    # Teleport player on logout the server.
+    on-leave:    
+       enable: false
+       need-world-to-teleport: none
+       location: world, 0, 90, 0
+
+# Default values for new regions.
 flags:
   pvp: false
   chest: false
@@ -108,8 +176,11 @@ flags:
   allow-magiccarpet: true
   mob-loot: false
   flow-damage: false
+
 flags-configuration:
+  # Duration for timed flags like potions effects, jump, etc.
   effects-duration: 5
+  # Flags enabled to players use with commands and flag Gui.
   enabled-flags:
   - pvp
   - chest
@@ -128,30 +199,61 @@ flags-configuration:
   - allow-magiccarpet
   - mob-loot
   - flow-damage
+  # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}
+  # Delay the player can change a flag after last change.
   change-flag-delay:
     enable: true
     seconds: 10
+    # List of flags the player will need to wait to change.
     flags:
     - pvp
+
+# Remove regions after x time the player dont came online.
 purge:
   enabled: false
   remove-oldest: 90
   ignore-regions-from-players:
+  
+# Put regions to sell after x time the player dont came online.
 sell:
   enabled: false
   sell-oldest: 60
   ignore-regions-from-players:
+  
+# Check for updates?
 update-check:
   enable: true
   auto-update: false
+
 performance:
+  # DIsable player move event to improve performance? Note: Disabling this will make some flags do not work, like deny enter, execute commands and effects.
   disable-onPlayerMoveEvent-handler: false
+  # Disable piston track? Disabling this will allow players to get blocks from protected regions to unprotected.
   disable-PistonEvent-handler: false
+
 hooks:
   essentials:
+    # Import last visits from Essentials to RedProtect Regions.
     import-lastvisits: false
   furniturelib:
+    # Remove oldest furnitureLibs.
     purge:
        ignore-regions-from-players:
+  dynmap:
+    # Enable hook to show all regions on dynmap plugin?
+    enable: true
+    # Group to show on hide/show tab map.
+    marks-groupname: RedProtect
+    # If you use another region mark plugin.
+    layer-priority: 10
+    # Show names under regions.
+    show-label: true
+    # Show icons under regions.
+    show-icon: true
+    # Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png
+    marker-icon: shield
+    min-zoom: 0
+    # Default disabled. Set time to check for deleted regions to remove markers in seconds. You dont need to enable this, but dynmap dont have a code to get marker by world, then some icons can persist for deleted regions.
+    check-invalid-marks: -1
        

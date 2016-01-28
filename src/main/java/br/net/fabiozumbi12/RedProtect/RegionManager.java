@@ -79,6 +79,10 @@ public class RegionManager{
         return this.regionManagers.get(w).getRegion(rname);
     }
     
+    public Region getRegion(String rname, String w) {
+        return this.regionManagers.get(Bukkit.getWorld(w)).getRegion(rname);
+    }
+    
     public int getTotalRegionSize(String uuid) {
         int ret = 0;
         Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
@@ -132,6 +136,9 @@ public class RegionManager{
     
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
+        if (RedProtect.Dyn){
+        	RedProtect.dynmap.addMark(r);
+        }
     }
     
     public void save(World w){
@@ -139,10 +146,14 @@ public class RegionManager{
     }
     
     public void remove(Region r) {
+    	if (RedProtect.Dyn){
+    		RedProtect.dynmap.removeMark(r);
+    	}    	
         Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
         while (rms.hasNext()) {
             rms.next().remove(r);
         }
+        
     }
     
     /*
@@ -293,7 +304,7 @@ public class RegionManager{
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getOwners(), old.getMembers(), old.getCreator(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
 				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint());
-		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));
+		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));		
 		this.remove(old);		
 	}
     

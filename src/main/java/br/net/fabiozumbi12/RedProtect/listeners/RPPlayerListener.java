@@ -906,9 +906,16 @@ public class RPPlayerListener implements Listener{
     
 	@EventHandler
     public void onPlayerLogout(PlayerQuitEvent e){
-    	stopTaskPlayer(e.getPlayer());
-    	if (RedProtect.tpWait.contains(e.getPlayer().getName())){
-    		RedProtect.tpWait.remove(e.getPlayer().getName());
+		Player p = e.getPlayer();
+    	stopTaskPlayer(p);
+    	if (RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    	}
+    	String worldneeded = RPConfig.getString("server-protection.teleport-player.on-leave.need-world-to-teleport");
+    	if (RPConfig.getBool("server-protection.teleport-player.on-leave.enable") && 
+    			(worldneeded.equals("none") || worldneeded.equals(p.getWorld().getName()))){
+    		String[] loc = RPConfig.getString("server-protection.teleport-player.on-leave.location").split(",");
+    		p.teleport(new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1])+0.500, Double.parseDouble(loc[2]), Double.parseDouble(loc[3])+0.500));
     	}
     }
     
@@ -933,7 +940,13 @@ public class RPPlayerListener implements Listener{
         			r.setDate(RPUtil.DateNow());
         		}
         	}
-    	}    	
+    	}    
+    	String worldneeded = RPConfig.getString("server-protection.teleport-player.on-join.need-world-to-teleport");
+    	if (RPConfig.getBool("server-protection.teleport-player.on-join.enable") && 
+    			(worldneeded.equals("none") || worldneeded.equals(p.getWorld().getName()))){
+    		String[] loc = RPConfig.getString("server-protection.teleport-player.on-join.location").split(",");
+    		e.getPlayer().teleport(new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1])+0.500, Double.parseDouble(loc[2]), Double.parseDouble(loc[3])+0.500));
+    	}
     }
     
     @EventHandler

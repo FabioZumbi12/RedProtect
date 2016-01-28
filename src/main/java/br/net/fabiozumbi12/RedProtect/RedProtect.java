@@ -17,7 +17,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.dynmap.DynmapAPI;
 
+import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
 import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
 import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
@@ -62,6 +64,8 @@ public class RedProtect extends JavaPlugin {
 	public static boolean PvPm;
 	public static boolean Ess;
 	static boolean GP;
+	static boolean Dyn;
+	public static Dynmap dynmap;
 	public static PlayerHandler PvPmanager;
 	public static Economy econ;
     
@@ -92,12 +96,14 @@ public class RedProtect extends JavaPlugin {
             PvPm = checkPvPm();
             Ess = checkEss();
             GP = checkGP();
+            Dyn = checkDyn();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
             RPLang.init(this);
             rm.loadAll();
             OnlineMode = serv.getOnlineMode();
+            
             serv.getPluginManager().registerEvents(new RPGlobalListener(), this);
             serv.getPluginManager().registerEvents(new RPBlockListener(), this);
             serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
@@ -152,6 +158,12 @@ public class RedProtect extends JavaPlugin {
             } 
             if (Mc){
             	RedProtect.logger.info("MagicCarpet found. Hooked.");
+            }
+            if (Dyn && RPConfig.getBool("hooks.dynmap.enable")){
+            	RedProtect.logger.info("Dynmap found. Hooked.");
+            	RedProtect.logger.info("Loading dynmap markers...");
+            	dynmap = new Dynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+            	RedProtect.logger.info("Dynmap markers loaded!");
             }
             
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
@@ -309,6 +321,14 @@ public class RedProtect extends JavaPlugin {
 	private boolean checkEss() {
 		Plugin pEss = Bukkit.getPluginManager().getPlugin("Essentials");
     	if (pEss != null && pEss.isEnabled()){
+    		return true;
+    	}
+    	return false;
+	}
+	
+	private boolean checkDyn() {
+		Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
+    	if (pDyn != null && pDyn.isEnabled()){
     		return true;
     	}
     	return false;

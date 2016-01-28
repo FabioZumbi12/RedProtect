@@ -65,11 +65,13 @@ public class EncompassRegionBuilder extends RegionBuilder{
             int y = current.getY();
             int z = current.getZ();
             
-            Block[] block = new Block[4];            
+            Block[] block = new Block[6];            
             block[0] = w.getBlockAt(x + 1, y, z);
             block[1] = w.getBlockAt(x - 1, y, z);
             block[2] = w.getBlockAt(x, y, z + 1);
-            block[3] = w.getBlockAt(x, y, z - 1);           
+            block[3] = w.getBlockAt(x, y, z - 1);      
+            block[4] = w.getBlockAt(x, y + 1, z);
+            block[5] = w.getBlockAt(x, y - 1, z);  
             
             for (int bi = 0; bi < block.length; ++bi) {
             	

@@ -42,7 +42,15 @@ public class Region implements Serializable{
     protected boolean[] f = new boolean[10];
 	private long value;
 	private Location tppoint;
-        
+	
+	
+	/**Get unique ID of region based on name of region + world.
+	 * @return {@code id string}
+	 */
+	public String getID(){
+		return this.name+this.world;
+	}
+	
     public void setFlag(String Name, Object value) {
     	this.flags.put(Name, value);
     	RedProtect.rm.updateLiveFlags(this, Name, value.toString());
@@ -284,7 +292,7 @@ public class Region implements Serializable{
         }
         for (String pname:this.owners){
         	Player play = RedProtect.serv.getPlayer(pname);
-            if (RedProtect.OnlineMode && pname != null){
+            if (RedProtect.OnlineMode && pname != null && !pname.equalsIgnoreCase(RPConfig.getString("region-settings.default-owner"))){
             	play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
         	}            
         	if (pname != null && play != null && play.isOnline()){
@@ -294,7 +302,7 @@ public class Region implements Serializable{
         } 
         for (String pname:this.members){        	
         	Player play = RedProtect.serv.getPlayer(pname);
-            if (RedProtect.OnlineMode && pname != null){
+            if (RedProtect.OnlineMode && pname != null && !pname.equalsIgnoreCase(RPConfig.getString("region-settings.default-owner"))){
             	play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
         	}             
         	if (pname != null && play != null && play.isOnline()){
@@ -1060,9 +1068,9 @@ public class Region implements Serializable{
 	
 	public List<Location> get4Points(int y){
 		List <Location> locs = new ArrayList<Location>();
-		locs.add(this.getMinLocation());
-		locs.add(this.getMaxLocation());
+		locs.add(this.getMinLocation());		
 		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX,y,this.minMbrZ+(this.maxMbrZ-this.minMbrZ)));
+		locs.add(this.getMaxLocation());
 		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX+(this.maxMbrX-this.minMbrX),y,this.minMbrZ));
 		return locs;		
 	}

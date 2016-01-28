@@ -96,6 +96,13 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/FurnitureLib.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>dynmap</groupId>
+			<artifactId>dynmap</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/dynmap-api-2.3-SNAPSHOT.jar</systemPath>
+		</dependency>
   </dependencies>
   
   <repositories>

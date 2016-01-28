@@ -1947,6 +1947,10 @@ class RPCommands implements CommandExecutor, TabCompleter{
 		}
 		
 		if ((flag.equalsIgnoreCase("can-fly") || 
+				flag.equalsIgnoreCase("door") ||
+				flag.equalsIgnoreCase("button") ||
+				flag.equalsIgnoreCase("lever") ||
+				flag.equalsIgnoreCase("pvp") ||
 				flag.equalsIgnoreCase("player-damage") || 
 				flag.equalsIgnoreCase("can-hunger") || 
 				flag.equalsIgnoreCase("can-projectiles") || 
@@ -1962,6 +1966,15 @@ class RPCommands implements CommandExecutor, TabCompleter{
 				flag.equalsIgnoreCase("treefarm") || 
 				flag.equalsIgnoreCase("sign") || 
 				flag.equalsIgnoreCase("invincible") || 
+				flag.equalsIgnoreCase("flow-damage") ||
+				flag.equalsIgnoreCase("mob-loot") ||
+				flag.equalsIgnoreCase("allow-potions") ||
+				flag.equalsIgnoreCase("smart-door") ||
+				flag.equalsIgnoreCase("allow-magiccarpet") ||
+				flag.equalsIgnoreCase("allow-home") ||
+				flag.equalsIgnoreCase("spawn-monsters") ||
+				flag.equalsIgnoreCase("spawn-animals") ||
+				flag.equalsIgnoreCase("minecart") ||
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
