@@ -22,11 +22,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.potion.PotionEffect;
@@ -226,6 +228,7 @@ public class RPEntityListener implements Listener{
         
     @EventHandler
     public void onPotionSplash(PotionSplashEvent event) {
+    	RedProtect.logger.debug("RPEntityListener - Is PotionSplashEvent");
     	if (event.isCancelled()) {
             return;
         }
@@ -260,6 +263,7 @@ public class RPEntityListener implements Listener{
     
     @EventHandler
 	public void onInteractEvent(PlayerInteractEntityEvent e){
+    	RedProtect.logger.debug("RPEntityListener - Is PlayerInteractEntityEvent");
     	if (e.isCancelled()) {
             return;
         }
@@ -284,10 +288,10 @@ public class RPEntityListener implements Listener{
       
     @EventHandler
     public void WitherBlockBreak(EntityChangeBlockEvent event) {
+    	RedProtect.logger.debug("RPEntityListener - Is EntityChangeBlockEvent");
     	if (event.isCancelled()) {
             return;
         }
-    	RedProtect.logger.debug("Is EntityChangeBlockEvent event");
     	Entity e = event.getEntity();    	
     	if (e instanceof Monster) {
             Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
@@ -303,6 +307,7 @@ public class RPEntityListener implements Listener{
     
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent e) {
+    	RedProtect.logger.debug("RPEntityListener - Is EntityExplodeEvent");
     	if (e.isCancelled()){
     		return;
     	}
@@ -319,5 +324,14 @@ public class RPEntityListener implements Listener{
         	e.blockList().removeAll(toRemove);
         }
     }
-
+    
+    @EventHandler
+    public void onEntityEvent(EntityInteractEvent e) {
+    	RedProtect.logger.debug("RPEntityListener - Is EntityInteractEvent");
+    }
+    
+    @EventHandler
+    public void onBreakDoor(EntityBreakDoorEvent e) {
+    	RedProtect.logger.debug("RPEntityListener - Is EntityBreakDoorEvent");
+    }
 }

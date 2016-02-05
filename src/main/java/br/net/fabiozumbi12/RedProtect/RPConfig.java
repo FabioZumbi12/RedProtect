@@ -27,16 +27,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.FileUtil;
 
-import br.net.fabiozumbi12.RedProtect.RedProtect.DROP_TYPE;
-
 public class RPConfig{
 	
-	static HashMap<String, DROP_TYPE> DropType = new HashMap<String, DROP_TYPE>();
 	static FileConfiguration configs = new RPYaml();
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("can-fly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("forcepvp","can-fly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
 	public static void init(RedProtect plugin) {
 
@@ -157,25 +154,7 @@ public class RPConfig{
                         }
                         RedProtect.plugin.getConfig().set("hooks.furniturelib.purge.ignore-regions-from-players", ops);
                     }
-                    
-                    
-                    //drop type
-    	            if (RedProtect.plugin.getConfig().getString("region-settings.drop-type") != null) {
-    	                if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("keep")) {
-    	                    DropType.put("region-settings.drop-type", DROP_TYPE.keep);
-    	                }
-    	                else if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("remove")) {
-    	                	DropType.put("region-settings.drop-type", DROP_TYPE.remove);
-    	                }
-    	                else if (RedProtect.plugin.getConfig().getString("region-settings.drop-type").equalsIgnoreCase("drop")) {
-    	                	DropType.put("region-settings.drop-type", DROP_TYPE.drop);
-    	                }
-    	                else {
-    	                	DropType.put("region-settings.drop-type", DROP_TYPE.keep);
-    	                    RedProtect.logger.warning("There is an error in your configuration: drop-type! Defaulting to 'Keep'.");
-    	                }
-    	            } 
-    	                	            
+                        	                	            
     	            //add allowed claim worlds to config
     	            if (RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").get(0).equals("example_world")) {
     	            	List<String> worlds = new ArrayList<String>();
@@ -424,10 +403,6 @@ public class RPConfig{
     
     public static List<String> getStringList(String key){		
 		return RedProtect.plugin.getConfig().getStringList(key);
-	}
-    
-    public static DROP_TYPE getDropType(String key){		
-		return DropType.get(key);
 	}
     
     public static Material getMaterial(String key){

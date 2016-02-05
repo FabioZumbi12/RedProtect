@@ -785,7 +785,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
         		return true;
             }
             
-            if (args[0].equalsIgnoreCase("setcreator")) {
+            if (args[0].equalsIgnoreCase("setcreator") || args[0].equalsIgnoreCase("sc")) {
             	Region r = RedProtect.rm.getTopRegion(player.getLocation());
             	if (r != null && player.hasPermission("redprotect.admin.setcreator")){
             		String old = RPUtil.UUIDtoPlayer(r.getCreator());
@@ -1975,6 +1975,7 @@ class RPCommands implements CommandExecutor, TabCompleter{
 				flag.equalsIgnoreCase("spawn-monsters") ||
 				flag.equalsIgnoreCase("spawn-animals") ||
 				flag.equalsIgnoreCase("minecart") ||
+				flag.equalsIgnoreCase("forcepvp") ||
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}

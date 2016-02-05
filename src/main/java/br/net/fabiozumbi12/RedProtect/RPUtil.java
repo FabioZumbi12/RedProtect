@@ -421,7 +421,7 @@ public class RPUtil {
     	}
     	
     	//check if is already UUID
-    	if (isUUID(PlayerName) || RPConfig.getString("region-settings.default-owner").equalsIgnoreCase(PlayerName)){
+    	if (isUUID(PlayerName) || RPConfig.getString("region-settings.default-owner").equalsIgnoreCase(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))){
     		return PlayerName;
     	}
     	

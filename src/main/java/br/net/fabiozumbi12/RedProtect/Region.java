@@ -685,6 +685,13 @@ public class Region implements Serializable{
 		return getFlagBool("player-damage");
 	}
     
+    public boolean forcePVP() {
+    	if (!flagExists("forcepvp")){
+    		return false;
+    	}
+		return getFlagBool("forcepvp");
+	}
+    
     public boolean canHunger() {
     	if (!flagExists("can-hunger")){
     		return true;
@@ -1066,6 +1073,26 @@ public class Region implements Serializable{
 		return locBlocks;
 	}
 	
+	public List<Location> getLimitLocs(int miny, int maxy){
+		final List<Location> locBlocks = new ArrayList<Location>();
+		Location loc1 = this.getMinLocation();
+		Location loc2 = this.getMaxLocation();
+		World w = Bukkit.getWorld(this.getWorld());
+		
+		for (int x = (int) loc1.getX(); x <= (int) loc2.getX(); ++x) {
+            for (int z = (int) loc1.getZ(); z <= (int) loc2.getZ(); ++z) {
+                for (int y = (int) miny; y <= (int) maxy; ++y) {
+                    if ((z == loc1.getZ() || z == loc2.getZ() ||
+                        x == loc1.getX() || x == loc2.getX())
+                        && new Location(w,x,y,z).getBlock().getType().name().contains(RPConfig.getString("region-settings.block-id"))) {
+                    	locBlocks.add(new Location(w,x,y,z));                    	                   	
+                    }
+                }
+            }
+        } 
+		return locBlocks;
+	}
+	
 	public List<Location> get4Points(int y){
 		List <Location> locs = new ArrayList<Location>();
 		locs.add(this.getMinLocation());		
@@ -1073,6 +1100,10 @@ public class Region implements Serializable{
 		locs.add(this.getMaxLocation());
 		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX+(this.maxMbrX-this.minMbrX),y,this.minMbrZ));
 		return locs;		
+	}
+
+	public Location getCenterLoc() {		
+		return new Location(Bukkit.getWorld(this.world), this.getCenterX(), this.getCenterY(), this.getCenterZ());
 	}
 	
 }

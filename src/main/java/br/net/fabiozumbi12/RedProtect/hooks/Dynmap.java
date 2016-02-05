@@ -106,9 +106,4 @@ public class Dynmap {
 			}
 		}
 	}
-	/*
-	public void reMark(Region old, Region newr){
-		removeMark(old);
-		addMark(newr);	
-	}*/
 }

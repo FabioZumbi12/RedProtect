@@ -175,4 +175,8 @@ public class RPLang {
 	static String translBool(Boolean bool){		
 		return get("region."+bool.toString());
 	}
+	
+	static boolean containsValue(String value){
+		return Lang.containsValue(value);
+	}
 }

@@ -52,7 +52,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         try {
             if (!this.checkDBExists()) {
                 Connection con = DriverManager.getConnection(this.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-                st = con.createStatement();
+                st = con.createStatement();                
                 st.executeUpdate("CREATE DATABASE " + this.dbname);
                 RedProtect.logger.info("Created database '" + this.dbname + "'!");
                 st.close();
@@ -106,9 +106,9 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 	rs.close();
                     return true;
                 }
-            }
-            con.close();
-        	rs.close();
+                con.close();
+            	rs.close();
+            }            
         } catch (SQLException e){
         	e.printStackTrace();
         }        
@@ -605,6 +605,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             rs.close();
         }
         catch (SQLException e) {
+        	RedProtect.logger.severe("Error on get total of regions for "+dbname+"!");
             e.printStackTrace();
         }
 		return total;

@@ -204,6 +204,8 @@ public class RPBlockListener implements Listener{
     	if (e.isCancelled()) {
             return;
         }
+    	
+    	
     	Player p = e.getPlayer();
     	Block b = e.getBlock();
     	if (RPUtil.pBorders.containsKey(p) && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))){
@@ -296,7 +298,7 @@ public class RPBlockListener implements Listener{
         		continue;
         	}
         	
-        	if (e.getEntityType().name().contains("TNT") && !r.canFire()){
+        	if ((e.getEntity() == null || e.getEntityType().name().contains("TNT"))  && !r.canFire()){
         		toRemove.add(b);
     			continue;
         	}  
@@ -314,10 +316,11 @@ public class RPBlockListener implements Listener{
     
     @EventHandler
     public void onFrameBrake(HangingBreakByEntityEvent e) {
+    	RedProtect.logger.debug("Is BlockListener - HangingBreakByEntityEvent event");
     	if (e.isCancelled()){
     		return;
     	}
-    	RedProtect.logger.debug("Is BlockListener - HangingBreakByEntityEvent event");
+    	
     	Entity remover = e.getRemover();
     	Entity ent = e.getEntity();
     	Location l = e.getEntity().getLocation();
@@ -333,10 +336,11 @@ public class RPBlockListener implements Listener{
     
     @EventHandler
     public void onFrameBrake(HangingBreakEvent e) {
+    	RedProtect.logger.debug("Is BlockListener - HangingBreakEvent event");
     	if (e.isCancelled()){
     		return;
     	}
-    	RedProtect.logger.debug("Is BlockListener - HangingBreakEvent event");
+    	
     	Entity ent = e.getEntity();
     	Location l = e.getEntity().getLocation();		
     	
@@ -351,6 +355,7 @@ public class RPBlockListener implements Listener{
         
     @EventHandler
     public void onBlockStartBurn(BlockIgniteEvent e){
+    	RedProtect.logger.debug("RPBlockListener - Is BlockIgniteEvent event");
     	if (e.isCancelled()){
     		return;
     	}
@@ -393,10 +398,11 @@ public class RPBlockListener implements Listener{
     
     @EventHandler
     public void onBlockBurn(BlockBurnEvent e){
+    	RedProtect.logger.debug("RPBlockListener - Is BlockBurnEvent event");
     	if (e.isCancelled()){
     		return;
     	}
-    	RedProtect.logger.debug("Is BlockBurnEvent event");
+    	
     	Block b = e.getBlock();
 
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
@@ -413,6 +419,7 @@ public class RPBlockListener implements Listener{
     
 	@EventHandler
     public void onFlow(BlockFromToEvent e){
+		RedProtect.logger.debug("RPBlockListener - Is BlockFromToEvent event");
 		if (e.isCancelled()){
     		return;
     	}		
@@ -433,7 +440,7 @@ public class RPBlockListener implements Listener{
 	    
 	@EventHandler
 	public void onLightning(LightningStrikeEvent e){
-		RedProtect.logger.debug("Is LightningStrikeEvent event");
+		RedProtect.logger.debug("RPBlockListener - Is LightningStrikeEvent event");
 		Location l = e.getLightning().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);
 		if (r != null && !r.canFire()){
@@ -444,6 +451,7 @@ public class RPBlockListener implements Listener{
 	
 	@EventHandler
     public void onFireSpread(BlockSpreadEvent  e){
+		RedProtect.logger.debug("RPBlockListener - Is BlockSpreadEvent event");
 		if (e.isCancelled()){
     		return;
     	}
@@ -458,6 +466,7 @@ public class RPBlockListener implements Listener{
 	
 	@EventHandler
 	public void onVehicleBreak(VehicleDestroyEvent e){
+		RedProtect.logger.debug("RPBlockListener - Is VehicleDestroyEvent event");
 		if (e.isCancelled()){
     		return;
     	}
@@ -480,6 +489,7 @@ public class RPBlockListener implements Listener{
 	
 	@EventHandler
 	public void onPistonExtend(BlockPistonExtendEvent e){
+		RedProtect.logger.debug("RPBlockListener - Is BlockPistonExtendEvent event");
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
 			return;
 		}
@@ -496,6 +506,7 @@ public class RPBlockListener implements Listener{
 		
 	@EventHandler
 	public void onPistonRetract(BlockPistonRetractEvent e){
+		RedProtect.logger.debug("RPBlockListener - Is BlockPistonRetractEvent event");
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
 			return;
 		}
@@ -521,34 +532,11 @@ public class RPBlockListener implements Listener{
 	
 	@EventHandler
 	public void onLeafDecay(LeavesDecayEvent e){
+		RedProtect.logger.debug("RPBlockListener - Is LeavesDecayEvent event");
 		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());		
 		if (r != null && !r.canFlow()){
          	 e.setCancelled(true);           	  
 		}		
 	}	
-	/*
-	@EventHandler
-	public void onHopperPickup(InventoryMoveItemEvent e) {
-		InventoryHolder frominv = e.getSource().getHolder();
-		InventoryHolder toinv = e.getDestination().getHolder();
-		
-		if (toinv instanceof Hopper){
-			Location loc = null;
-			
-			if (frominv instanceof BlockState) {
-	            BlockState blockState = (BlockState) frominv;	 
-	            loc = blockState.getLocation();
-	        } else if (frominv instanceof DoubleChest) {
-	            DoubleChest chest = (DoubleChest) frominv;
-	            loc = chest.getLocation();
-	        }
-	 
-	        if (loc != null) {	        	
-	            if (!cont.canWorldBreak(loc.getBlock())){
-					RedProtect.logger.debug("Cancelled transfer itens by Hopper");
-					e.setCancelled(true);
-				}
-	        }
-		}
-	}*/
+	
 }

@@ -108,6 +108,7 @@ permissions:
       redprotect.admin.flag.can-fly: true
       redprotect.admin.flag.gamemode: true
       redprotect.admin.flag.pvparena: true
+      redprotect.admin.flag.forcepvp: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op
@@ -154,6 +155,7 @@ permissions:
       redprotect.eco.setvalue: true
       redprotect.eco.others: true
       redprotect.gui.edit: true
+      redprotect.use-claim-modes: true
   redprotect.eco.use:
     description: "Economy permissions."
     default: false

@@ -53,8 +53,18 @@ region-settings:
   autoexpandvert-ondefine: true
   # Deny break/place blocks under chests.
   anti-hopper: true
-  # Available: keep, drop, remove.
-  drop-type: keep
+  # Modes of protection regions
+  claim-modes:
+    # Default modes for claim regions. Modes available: keep, drop, remove or give. 
+    # keep: Nothing happens
+    # drop: Will drop all protection blocks
+    # remove: Will remove all protection blocks
+    # give: Give back the protection blocks to player, and drop(on player location) if players's inventory is full
+    mode: keep
+    # Allow players to decide what mode to use? If true, the player need to set the line 4 of the sign with [keep], [drop], [remove], [give] or a translation you is using on 'lang.ini'.
+    allow-player-decide: false
+    # If 'allow-player-decide' is true, player need to have the permission 'redprotect.use-claim-modes' to use modes on signs?
+    use-perm: false
   # Limit of blocks/region.
   limit-amount: 8000
   # Limit of claims a player can have.
@@ -156,6 +166,15 @@ server-protection:
        enable: false
        need-world-to-teleport: none
        location: world, 0, 90, 0
+  # Deny player to use the item in hand on server.
+  deny-item-usage:
+    # Allow usage on claimed rps?
+    allow-on-claimed-rps: true
+    # Allow where no rps?
+    allow-on-wilderness: true
+    # List of items names.
+    items:
+    - NONE
 
 # Default values for new regions.
 flags:

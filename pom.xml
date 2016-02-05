@@ -25,7 +25,7 @@
 			<artifactId>BossbarAPI</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/BossbarAPI.jar</systemPath>
+			<systemPath>D:/ProjetosBukkit/APIs/BossBarAPI_v1.0.7.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>MyChunk</groupId>
@@ -35,8 +35,15 @@
 			<systemPath>D:/ProjetosBukkit/APIs/MyChunk.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>MyPet</groupId>
-			<artifactId>MyPet</artifactId>
+			<groupId>MyPet1</groupId>
+			<artifactId>MyPet1</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/MyPet-1.2.6.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>MyPet2</groupId>
+			<artifactId>MyPet2</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/MyPet-1.8-1.2.1-SNAPSHOT.jar</systemPath>

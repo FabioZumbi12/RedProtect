@@ -67,13 +67,7 @@ public class RedProtect extends JavaPlugin {
 	static boolean Dyn;
 	public static Dynmap dynmap;
 	public static PlayerHandler PvPmanager;
-	public static Economy econ;
-    
-    static enum DROP_TYPE {
-        drop, 
-        remove, 
-        keep;
-    }
+	public static Economy econ;    
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -248,7 +242,7 @@ public class RedProtect extends JavaPlugin {
     
     //check if plugin BossbarAPI is installed
     private boolean checkBM(){
-    	Plugin pBM = Bukkit.getPluginManager().getPlugin("BossbarAPI");
+    	Plugin pBM = Bukkit.getPluginManager().getPlugin("BossBarAPI");
     	if (pBM != null && pBM.isEnabled()){
     		return true;
     	}

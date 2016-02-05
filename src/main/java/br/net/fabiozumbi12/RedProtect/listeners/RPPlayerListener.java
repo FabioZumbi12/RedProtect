@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import me.mgone.bossbarapi.BossbarAPI;
+import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
 
 import org.bukkit.Bukkit;
@@ -62,6 +62,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.inventivetalent.bossbar.BossBarAPI;
 
 import br.net.fabiozumbi12.RedProtect.RPConfig;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
@@ -76,15 +77,17 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
 import de.Keyle.MyPet.api.entity.MyPetEntity;
+import de.Keyle.MyPet.api.player.MyPetPlayer;
 import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.util.player.MyPetPlayer;
+import de.Keyle.MyPet.repository.PlayerList;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener{
 	
 	static RPContainer cont = new RPContainer();
-	private HashMap<Player,String> Ownerslist = new HashMap<Player,String>();
+	private HashMap<Player, String> Ownerslist = new HashMap<Player,String>();
 	private HashMap<Player, String> PlayerCmd = new HashMap<Player, String>();
+	private HashMap<Player, Boolean> PvPState = new HashMap<Player, Boolean>();
 	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
     
     public RPPlayerListener() {
@@ -102,7 +105,7 @@ public class RPPlayerListener implements Listener{
     	if (p == null){
     		return;
     	}
-    	
+    	    	
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
         if(e.getItem().getType().equals(Material.POTION) && Pots.size() > 0){
         	Potion pot = Potion.fromItemStack(e.getItem());        	
@@ -144,6 +147,26 @@ public class RPPlayerListener implements Listener{
         if (RPUtil.RemoveGuiItem(p.getItemInHand())){
         	p.setItemInHand(new ItemStack(Material.AIR));
         	event.setCancelled(true);
+        	return;
+        }
+        
+        //deny item usage
+        if (RPConfig.getStringList("server-protection.deny-item-usage.items").contains(itemInHand.name())){
+    		if (r != null && ((!RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
+    				(RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    			event.setUseInteractedBlock(Event.Result.DENY);
+    			event.setUseItemInHand(Event.Result.DENY);
+    			event.setCancelled(true);  
+    			return;
+    		}
+    		if (r == null && !RPConfig.getBool("server-protection.deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    			event.setUseInteractedBlock(Event.Result.DENY);
+    			event.setUseItemInHand(Event.Result.DENY);
+    			event.setCancelled(true);
+    			return;
+    		}
         }
         
         if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
@@ -378,7 +401,7 @@ public class RPPlayerListener implements Listener{
         	return;
         }
         
-        RedProtect.logger.debug("Is PlayerInteractEntityEvent event: " + e.getType().name());
+        RedProtect.logger.debug("RPPlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
         
         Location l = e.getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
@@ -745,27 +768,9 @@ public class RPPlayerListener implements Listener{
     	}*/
     	World w = lfrom.getWorld();
     	
-    	if (r != null){    		
-    		//Pvp check to enter on region
-            if (RedProtect.PvPm){
-        		if (r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
-        			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
-        			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
-            	}
-        	} 
+    	if (r != null){
             
-            //Mypet Flag
-            if (RedProtect.MyPet && !r.canPet(p)){
-            	MyPetPlayer mpp = MyPetPlayer.getMyPetPlayer(p.getName());
-            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
-                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
-                		mpp.getMyPet().setStatus(PetState.Despawned);
-                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
-                	}  
-            	}        	      			
-        	}
-            
-            //Enter flag
+    		//Enter flag
             if (!r.canEnter(p)){
         		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
@@ -1002,7 +1007,7 @@ public class RPPlayerListener implements Listener{
     	if (!notify.equals("")){
     		if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
     			if (RedProtect.BossBar){
-    				BossbarAPI.setMessage(p,notify);
+    				BossBarAPI.setMessage(p,notify);
     			} else {
     				p.sendMessage(notify);
     			}
@@ -1016,7 +1021,7 @@ public class RPPlayerListener implements Listener{
     public void SendWelcomeMsg(Player p, String wel){
 		if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("BOSSBAR")){
 			if (RedProtect.BossBar){
-				BossbarAPI.setMessage(p,wel);
+				BossBarAPI.setMessage(p,wel);
 			} else {
 				p.sendMessage(wel);
 			}
@@ -1075,6 +1080,35 @@ public class RPPlayerListener implements Listener{
     
     private void RegionFlags(final Region r, Region er, final Player p){  
     	
+    	//Pvp check to enter on region
+        if (RedProtect.PvPm){
+    		if (r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
+    			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
+    			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
+        	}
+    	} 
+        
+        //Mypet Flag
+        if (RedProtect.MyPet && !r.canPet(p)){
+            if (Integer.parseInt(Bukkit.getPluginManager().getPlugin("MyPet").getDescription().getVersion().replace(".", "")) <= 124){
+            	de.Keyle.MyPet.util.player.MyPetPlayer mpp = de.Keyle.MyPet.util.player.MyPetPlayer.getMyPetPlayer(p.getName()); 
+            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
+                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
+                		mpp.getMyPet().removePet(false);
+                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
+                	}  
+            	}                	
+            } else {
+            	MyPetPlayer mpp = PlayerList.getMyPetPlayer(p);  
+            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
+                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
+                		mpp.getMyPet().removePet(false);
+                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
+                	}  
+            	}
+            }            	        	      			
+    	}        
+        
     	//enter Gamemode flag
     	if (r.flagExists("gamemode")){
     		p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
@@ -1180,6 +1214,16 @@ public class RPPlayerListener implements Listener{
             	}                	
             }
             
+            //Pvp check to exit region
+            if (er.flagExists("forcepvp") && RedProtect.PvPm){
+        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.bypass")){
+        			if (PvPState.get(p).booleanValue() != RedProtect.PvPmanager.get(p).hasPvPEnabled()){
+        				RedProtect.PvPmanager.get(p).setPvP(PvPState.get(p).booleanValue());        			  
+        			}
+        			PvPState.remove(p);  			
+        		}
+        	}
+            
             //Exit command as console
             if (er.flagExists("server-exit-command")){
             	String[] cmds = er.getFlagString("server-exit-command").split(",");
@@ -1191,6 +1235,17 @@ public class RPPlayerListener implements Listener{
             	}                	
             }
         }
+        
+        //Enter check forcepvp flag
+        if (RedProtect.PvPm){
+        	if (r.flagExists("forcepvp") && !p.hasPermission("redprotect.bypass")){
+    			PvPlayer pvpp = RedProtect.PvPmanager.get(p);
+    			if (r.forcePVP() != pvpp.hasPvPEnabled()){
+					PvPState.put(p, pvpp.hasPvPEnabled());
+					pvpp.setPvP(r.forcePVP());
+				}
+    		}
+        }        
         
         //Enter effect
         if (r.flagExists("effects")){
@@ -1241,8 +1296,19 @@ public class RPPlayerListener implements Listener{
     }
         
     private void noRegionFlags(Region er, Player p){
+    	
     	if (er != null){
-    		        	
+    		
+    		//Pvp check to exit region
+            if (er.flagExists("forcepvp") && RedProtect.PvPm){
+        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.bypass")){
+        			if (PvPState.get(p).booleanValue() != RedProtect.PvPmanager.get(p).hasPvPEnabled()){
+        				RedProtect.PvPmanager.get(p).setPvP(PvPState.get(p).booleanValue());        			  
+        			}
+        			PvPState.remove(p);  			
+        		}
+        	}
+            
     		//Exit gamemode
     		if (er.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
     			p.setGameMode(Bukkit.getServer().getDefaultGameMode());
