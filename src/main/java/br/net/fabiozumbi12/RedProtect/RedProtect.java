@@ -23,6 +23,7 @@ import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
 import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
 import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPAddProtection;
 import br.net.fabiozumbi12.RedProtect.listeners.RPBlockListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPEntityListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPGlobalListener;
@@ -52,6 +53,7 @@ public class RedProtect extends JavaPlugin {
     static String pathConfig = String.valueOf(RedProtect.pathMain) + File.separator + "config.yml";
     static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
     static String pathGui = String.valueOf(RedProtect.pathMain) + File.separator + "guiconfig.yml"; 
+    static String protections = String.valueOf(RedProtect.pathMain) + File.separator + "protections.yml"; 
     static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";;
     public static boolean BossBar;
     static boolean MyChunk;
@@ -102,7 +104,8 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPBlockListener(), this);
             serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
             serv.getPluginManager().registerEvents(new RPEntityListener(), this);
-            serv.getPluginManager().registerEvents(new RPWorldListener(), this);            
+            serv.getPluginManager().registerEvents(new RPWorldListener(), this);  
+            serv.getPluginManager().registerEvents(new RPAddProtection(), this);   
             
             String v = RedProtect.serv.getBukkitVersion();
             if (v.contains("1.8")){

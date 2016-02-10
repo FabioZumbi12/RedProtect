@@ -105,10 +105,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 	con.close();
                 	rs.close();
                     return true;
-                }
-                con.close();
-            	rs.close();
-            }            
+                }                
+            }    
+            con.close();
+        	rs.close();
         } catch (SQLException e){
         	e.printStackTrace();
         }        

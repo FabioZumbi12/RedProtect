@@ -1,0 +1,88 @@
+# Chat protection.
+chat-protection:
+  # Chat enhancement.
+  chat-enhancement:
+    # All to lower-case and first word to uppercase.
+    enabled: false
+    # Always end with dots.
+    end-with-dot: true
+    # Colorize player names on player chat.
+    colorize-playernames: true
+    colorize-prefix-color: '&e'
+    # Anti-Flood
+    anti-flood:
+      enable: true
+      whitelist-flood-characs:
+      - k
+
+  # Anti-Spam system.
+  antispam:
+    enabled: false
+    # Time in seconds the player can send new messages.
+    time-beteween-messages: 1
+    # The count of player can send the same message before run the cmd-action.
+    count-of-same-message: 5
+    # Time in secounds to check if the player will repeat the same message.
+    time-beteween-same-messages: 10
+    colldown-msg: '&6Slow down your messages!'
+    wait-message: '&cWait to send the same message again!'
+    # Command to run. You can use {player} for get player name.
+    cmd-action: kick {player} Relax, slow down your messages frequency ;)
+
+  # Word Censor
+  censor:
+    enabled: false
+    # Use symbol instead a word.
+    replace-by-symbol: true
+    # Replace whole word by this symbal base on length of word.
+    by-symbol: '*'
+
+    # Replace the word by this unique string.
+    by-word: censored
+    # Replace only whole word or partial string inside words.
+    # If true, consider censor word 'ass', this will replace 'kickass' by 'kick***'.
+    # If false, consider censor word 'ass', will replace only 'ass' by '***' and not 'kick***'.
+    replace-partial-word: false
+    # List of words (case insensitive).
+    replace-words:
+    - word1
+
+  # Anti-IP and websites
+  anti-ip:
+    enabled: false
+    # This regex for detect IP is already working, but if you find one more efficient you can change.
+    custom-ip-regex: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+    # This regex for detect URLs is already working, but if you find one more efficient you can change.
+    custom-url-regex: ((http:\/\/|https:\/\/)?(www.)?(([a-zA-Z0-9-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z-_\/\.0-9#:?=&;,]*)?)?)
+    # Check for additional words or entire websites/ips on player message. If unique word add a dot stating the word. This will check for '.net', '. net' or '.     net' using 'net' as exmaple.
+    check-for-words:
+    - www.google.com
+    # Whitelist words to ignore. Partial or complete URLs/IPs.
+    whitelist-words:
+    - www.myserver.com
+    - prntscr.com
+    - gyazo.com
+
+    # Cancel the chat message and show an alert or only replace the link by a word. Use 'replace' or 'cancel'.
+    cancel-or-replace: cancel
+    # If using 'cancel', the warning to show.
+    cancel-msg: '&cYou cant send websites or ips on chat'
+    # If using 'replace' the IP/URL will be replace by this word.
+    replace-by-word: '-removed-'
+
+    # Enable punishiments.
+    punish: 
+      enable: false
+      # Max attempts the player can send url/ip before punished.
+      max-attempts: 3
+      # Mute or execute command.
+
+      mute-or-cmd: mute
+      # Mute for x minutes.
+      mute-duration: 1
+      # Mute and unmute msgs to send.
+      mute-msg: '&cYou have been muted for send IPs or URLs on chat!'
+      unmute-msg: '&aYou can chat again!'
+
+      # Command to execute if choose 'cmd'.
+      cmd-punish: tempban {player} 10m &cYou have been warned about send links or IPs on chat!

@@ -275,4 +275,7 @@ hooks:
     min-zoom: 0
     # Default disabled. Set time to check for deleted regions to remove markers in seconds. You dont need to enable this, but dynmap dont have a code to get marker by world, then some icons can persist for deleted regions.
     check-invalid-marks: -1
+  magiccarpet:
+    # Fix pistons allow get mc blocks.
+    fix-piston-getblocks: true
        

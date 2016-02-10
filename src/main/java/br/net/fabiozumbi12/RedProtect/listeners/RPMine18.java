@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.digiex.magiccarpet.Carpet;
+import net.digiex.magiccarpet.MagicCarpet;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,6 +23,7 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -220,4 +224,20 @@ public class RPMine18 implements Listener{
 		}
 	}
         
+
+    @EventHandler
+	public void onPistonRetract(BlockPistonRetractEvent e){
+    	if (RedProtect.Mc && RPConfig.getBool("hooks.magiccarpet.fix-piston-getblocks")){	
+    		List<Block> blocks = e.getBlocks();
+    		for (Block block:blocks){
+    			for (Carpet carpet:MagicCarpet.getCarpets().all()){
+    				if (carpet != null && carpet.isVisible() && carpet.touches(e.getBlock())){
+    					block.setType(Material.AIR);
+    					RedProtect.logger.debug("Carpet touch block "+block.getType().name());
+    					e.setCancelled(true);
+    				}
+    			}
+    		}
+		}
+	}
 }

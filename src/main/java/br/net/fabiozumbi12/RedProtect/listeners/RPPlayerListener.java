@@ -952,6 +952,18 @@ public class RPPlayerListener implements Listener{
     		String[] loc = RPConfig.getString("server-protection.teleport-player.on-join.location").split(",");
     		e.getPlayer().teleport(new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1])+0.500, Double.parseDouble(loc[2]), Double.parseDouble(loc[3])+0.500));
     	}
+    	
+    	//Pvp check on join
+    	if (RedProtect.PvPm){
+    		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+        	if (r != null && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
+        		PvPlayer pvpp = RedProtect.PvPmanager.get(p);
+    			if (r.forcePVP() != pvpp.hasPvPEnabled()){
+					PvPState.put(p, pvpp.hasPvPEnabled());
+					pvpp.setPvP(r.forcePVP());
+				}
+        	}
+    	}        
     }
     
     @EventHandler
@@ -1216,7 +1228,7 @@ public class RPPlayerListener implements Listener{
             
             //Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
-        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.bypass")){
+        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.forcepvp.bypass")){
         			if (PvPState.get(p).booleanValue() != RedProtect.PvPmanager.get(p).hasPvPEnabled()){
         				RedProtect.PvPmanager.get(p).setPvP(PvPState.get(p).booleanValue());        			  
         			}
@@ -1238,7 +1250,7 @@ public class RPPlayerListener implements Listener{
         
         //Enter check forcepvp flag
         if (RedProtect.PvPm){
-        	if (r.flagExists("forcepvp") && !p.hasPermission("redprotect.bypass")){
+        	if (r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
     			PvPlayer pvpp = RedProtect.PvPmanager.get(p);
     			if (r.forcePVP() != pvpp.hasPvPEnabled()){
 					PvPState.put(p, pvpp.hasPvPEnabled());
@@ -1301,7 +1313,7 @@ public class RPPlayerListener implements Listener{
     		
     		//Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
-        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.bypass")){
+        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.forcepvp.bypass")){
         			if (PvPState.get(p).booleanValue() != RedProtect.PvPmanager.get(p).hasPvPEnabled()){
         				RedProtect.PvPmanager.get(p).setPvP(PvPState.get(p).booleanValue());        			  
         			}
@@ -1470,4 +1482,5 @@ public class RPPlayerListener implements Listener{
     		e.setCancelled(true);
     	}
     }
+    
 }

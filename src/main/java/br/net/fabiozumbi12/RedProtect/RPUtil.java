@@ -34,12 +34,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandException;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
+import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
@@ -54,6 +56,14 @@ public class RPUtil {
         
     
 
+	public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
+	    TaskChain.newChain().add(new TaskChain.GenericTask() {
+	        public void run() {
+	        	RedProtect.serv.dispatchCommand(consoleCommandSender,command);
+	        }
+	    }).execute();
+	}
+	
     public static boolean isBukkitBlock(Block b){
     	//check if is bukkit 1.8.8 blocks
     	try{

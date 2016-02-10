@@ -32,6 +32,7 @@ public class RPConfig{
 	static FileConfiguration configs = new RPYaml();
 	static YamlConfiguration gflags = new RPYaml();
 	static RPYaml GuiItems = new RPYaml();
+	static YamlConfiguration Prots = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
 	public static List<String> AdminFlags = Arrays.asList("forcepvp","can-fly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
@@ -43,6 +44,7 @@ public class RPConfig{
     	            File config = new File(RedProtect.pathConfig);
     	            File bvalues = new File(RedProtect.pathBlockValues);
     	            File globalflags = new File(RedProtect.pathglobalFlags);
+    	            File protections = new File(RedProtect.protections);
     	            File logs = new File(RedProtect.pathLogs);
 
     	            
@@ -80,6 +82,11 @@ public class RPConfig{
     	                RedProtect.logger.info("Created economy file: " + RedProtect.pathBlockValues);
     	            }
     	            
+    	            if (!protections.exists()) {
+    	            	plugin.saveResource("protections.yml", false);//create protections file    	            	
+    	                RedProtect.logger.info("Created protections file: " + RedProtect.protections);
+    	            }
+    	            
     	            //------------------------------ Add default Values ----------------------------//
     	            FileConfiguration temp = new RPYaml();
     	            try {
@@ -110,6 +117,7 @@ public class RPConfig{
                     	RedProtect.plugin.getConfig().set(key, configs.get(key));
                     	RedProtect.logger.debug("Set key: "+key);
                     }  
+                    
                     //--------------------------------------------------------------------------//
                     
                     RedProtect.logger.info("Server version: " + RedProtect.serv.getBukkitVersion());
@@ -182,7 +190,7 @@ public class RPConfig{
 	            		}	            		
 	            	}
     	            
-                    /*------------- ---- Add default config for not updateable configs ------------------*/
+                    /*----------------- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
         			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.8D){
@@ -207,6 +215,11 @@ public class RPConfig{
         			
         			/*------------------------------------------------------------------------------------*/
         			
+        			//load protections file
+        			Prots = updateFile(protections, "protections.yml");    	                
+                    
+        			/*------------------------------------------------------------------------------------*/
+        			
     	            //load and write globalflags to global file
                     gflags = RPYaml.loadConfiguration(globalflags);
                     
@@ -229,6 +242,9 @@ public class RPConfig{
                     	w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
                     	RedProtect.logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
                     }
+                    
+                    
+                    /*------------------------------------------------------------------------------------*/
                     
                     //load and write GuiItems to guiconfig file
                     try {
@@ -256,6 +272,7 @@ public class RPConfig{
                     	GuiItems.set("gui-flags."+key+".description2", GuiItems.get("gui-flags."+key+".description2", GuiBase.get("gui-flags."+key+".description2", "")));
                     }
                     
+                    /*------------------------------------------------------------------------------------*/
                     
                     //load blockvalues file
                     try {
@@ -284,6 +301,7 @@ public class RPConfig{
                     
                     
                     //////////////////////
+                    /*------------------------------------------------------------------------------------*/
                     
         			String v = RedProtect.serv.getBukkitVersion();
         			if (RedProtect.plugin.getConfig().getString("notify.region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
@@ -413,11 +431,13 @@ public class RPConfig{
     	File globalflags = new File(RedProtect.pathglobalFlags);  
     	File guiconfig = new File(RedProtect.pathGui);
     	File blockvalues = new File(RedProtect.pathBlockValues);
+    	File protections = new File(RedProtect.protections);
     	try {
 			RedProtect.plugin.saveConfig();
 			gflags.save(globalflags);
 			GuiItems.save(guiconfig);
 			EconomyConfig.save(blockvalues);
+			Prots.save(protections);
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
 			e.printStackTrace();
@@ -455,6 +475,30 @@ public class RPConfig{
 		return values;
 	}
 
+	public static int getProtInt(String key){
+		return Prots.getInt(key);
+	}
+	
+	public static boolean getProtBool(String key){
+		return Prots.getBoolean(key);
+	}
+	
+	public static List<String> getProtStringList(String key){
+		return Prots.getStringList(key);
+	}
+	
+    public static boolean containsProtKey(String key){		
+		return Prots.contains(key);
+	}
+    
+	public static String getProtString(String key){
+		return Prots.getString(key);
+	}
+	
+	public static String getProtMsg(String key){
+		return ChatColor.translateAlternateColorCodes('&',Prots.getString(key));
+	}
+		
 	public static int getBlockCost(String itemName) {
 		return EconomyConfig.getInt("items.values."+itemName);
 	}
@@ -475,5 +519,23 @@ public class RPConfig{
 		return EconomyConfig.getBoolean(key);
 	}
 	
+	private static RPYaml updateFile(File saved, String filename){
+		RPYaml finalyml = new RPYaml();    			
+        try {
+        	finalyml.load(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+                			
+		RPYaml tempProts = inputLoader(RedProtect.plugin.getResource(filename));  
+        for (String key:tempProts.getKeys(true)){    
+        	Object obj = tempProts.get(key);
+        	if (finalyml.get(key) != null){
+        		obj = finalyml.get(key);
+        	}
+        	finalyml.set(key, obj);    	            	   	            	
+        }  
+        return finalyml;
+	}
 }
    
