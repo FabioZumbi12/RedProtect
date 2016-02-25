@@ -19,89 +19,19 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
-		</dependency> -->
-		<dependency>
-			<groupId>BossbarAPI</groupId>
-			<artifactId>BossbarAPI</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/BossBarAPI_v1.0.7.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>MyChunk</groupId>
-			<artifactId>MyChunk</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/MyChunk.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>MyPet1</groupId>
-			<artifactId>MyPet1</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/MyPet-1.3.1.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>MyPet2</groupId>
-			<artifactId>MyPet2</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/MyPet-1.8-1.2.1-SNAPSHOT.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>McMMo</groupId>
-			<artifactId>McMMo</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/McMMo.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>SkillApi</groupId>
-			<artifactId>SkillApi</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/SkillApi.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>MagicCarpet</groupId>
-			<artifactId>MagicCarpet</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/MagicCarpet.jar</systemPath>
-		</dependency>		
+		</dependency> -->	
 		<dependency>
            <groupId>net.milkbowl.vault</groupId>
            <artifactId>VaultAPI</artifactId>            
            <version>LATEST</version>
            <scope>provided</scope>
         </dependency>    
-        <dependency>
-			<groupId>PvPManager</groupId>
-			<artifactId>PvPManager</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/PvPManager.jar</systemPath>
-		</dependency>
 		<dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-			<groupId>GriefPrevention</groupId>
-			<artifactId>GriefPrevention</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/GriefPrevention.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>dynmap</groupId>
-			<artifactId>dynmap</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dynmap-api-2.3-SNAPSHOT.jar</systemPath>
-		</dependency>
   </dependencies>
   
   <repositories>
