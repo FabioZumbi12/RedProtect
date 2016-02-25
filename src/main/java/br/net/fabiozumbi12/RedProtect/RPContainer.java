@@ -6,6 +6,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+
 public class RPContainer {
 
 	@SuppressWarnings("deprecation")

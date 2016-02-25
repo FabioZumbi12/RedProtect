@@ -33,10 +33,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
 import br.net.fabiozumbi12.RedProtect.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.RPConfig;
 import br.net.fabiozumbi12.RedProtect.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.RPGui;
-import br.net.fabiozumbi12.RedProtect.RPLang;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.RedefineRegionBuilder;
@@ -44,6 +42,8 @@ import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Updater;
 import br.net.fabiozumbi12.RedProtect.Fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 @SuppressWarnings("deprecation")
 public class RPCommands implements CommandExecutor, TabCompleter{
@@ -78,7 +78,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     	SortedSet<String> tab = new TreeSet<String>();  
     	if (sender instanceof Player){
     		List<String> cmds = new ArrayList<String>();
-    		for (String key:RPLang.Lang.keySet()){
+    		for (String key:RPLang.Lang.keySet()){    			
     			if (key.startsWith("cmdmanager.translation.") && !key.endsWith(".alias")){
     				cmds.add(key.replace("cmdmanager.translation.", ""));
     			}
@@ -110,7 +110,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		}
         	}
     	} else {
-    		List<String> consolecmds = Arrays.asList("setconfig", "flag", "teleport", "ymlTomysql", "setconfig", "reload", "save-all", "reload-all", "limit", "claimlimit", "list-all");
+    		List<String> consolecmds = Arrays.asList("files-to-single", "single-to-files", "setconfig", "flag", "teleport", "ymlTomysql", "setconfig", "reload", "save-all", "reload-all", "limit", "claimlimit", "list-all");
     		for (String command:consolecmds){
 				if (command.startsWith(args[0])){
 					tab.add(command);
@@ -136,15 +136,13 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         if (!(sender instanceof Player)) {        	
         	if (args.length == 1) {    
         		if (args[0].equalsIgnoreCase("single-to-files")) {
-        			if (RPUtil.SingleToFiles()){
-        				
-        			}
+        			RedProtect.logger.sucess("["+RPUtil.SingleToFiles()+"]"+" regions converted to your own files with success");
+        			return true;
         		}
         		
         		if (args[0].equalsIgnoreCase("files-to-single")) {
-        			if (RPUtil.FilesToSingle()){
-        				
-        			}
+        			RedProtect.logger.sucess("["+RPUtil.FilesToSingle()+"]"+" regions converted to unified world file with success");
+        			return true;
         		}
         		
         		if (args[0].equalsIgnoreCase("ymlToMysql")) {
@@ -2501,6 +2499,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			sender.sendMessage(ChatColor.GOLD + "rp list <player> [page] " + ChatColor.DARK_AQUA + "- List All regions from player");		
 			sender.sendMessage(ChatColor.GOLD + "rp ymlTomysql " + ChatColor.DARK_AQUA + "- Convert from Yml to Mysql");
 			sender.sendMessage(ChatColor.GOLD + "rp mychunktorp " + ChatColor.DARK_AQUA + "- Convert from MyChunk to RedProtect");
+			sender.sendMessage(ChatColor.GOLD + "rp single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
+			sender.sendMessage(ChatColor.GOLD + "rp files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single world files");
 			sender.sendMessage(ChatColor.GOLD + "rp gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
 			sender.sendMessage(ChatColor.GOLD + "rp save-all " + ChatColor.DARK_AQUA + "- Save all regions to database");
 			sender.sendMessage(ChatColor.GOLD + "rp load-all " + ChatColor.DARK_AQUA + "- Load all regions from database");

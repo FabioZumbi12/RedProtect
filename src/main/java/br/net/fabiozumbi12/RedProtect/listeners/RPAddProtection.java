@@ -14,9 +14,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import br.net.fabiozumbi12.RedProtect.RPConfig;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 
 public class RPAddProtection implements Listener{
 	

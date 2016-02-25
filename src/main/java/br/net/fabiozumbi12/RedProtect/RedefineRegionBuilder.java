@@ -7,6 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+
 public class RedefineRegionBuilder extends RegionBuilder{
 		
     @SuppressWarnings("deprecation")

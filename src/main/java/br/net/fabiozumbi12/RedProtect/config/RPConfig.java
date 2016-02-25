@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.FileUtil;
+
+import br.net.fabiozumbi12.RedProtect.config.RPYaml;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
 
 public class RPConfig{
 	
@@ -153,16 +156,7 @@ public class RPConfig{
                         }
                         RedProtect.plugin.getConfig().set("sell.ignore-regions-from-players", ops);
                     }
-                    
-                    //add op to ignore list fro furniture purge
-                    if (RedProtect.plugin.getConfig().getStringList("hooks.furniturelib.purge.ignore-regions-from-players").size() <= 0){ 
-                    	List<String> ops = RedProtect.plugin.getConfig().getStringList("hooks.furniturelib.purge.ignore-regions-from-players");
-                        for (OfflinePlayer play:RedProtect.serv.getOperators()){
-                        	ops.add(play.getName());
-                        }
-                        RedProtect.plugin.getConfig().set("hooks.furniturelib.purge.ignore-regions-from-players", ops);
-                    }
-                        	                	            
+                                          	                	            
     	            //add allowed claim worlds to config
     	            if (RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").get(0).equals("example_world")) {
     	            	List<String> worlds = new ArrayList<String>();

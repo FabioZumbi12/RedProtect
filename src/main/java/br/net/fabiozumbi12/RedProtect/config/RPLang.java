@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.config;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +20,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+
 public class RPLang {
 	
 	static HashMap<String, String> BaseLang = new HashMap<String, String>();
@@ -39,7 +41,7 @@ public class RPLang {
 		return values;
 	}
 	
-	static void init(RedProtect plugin) {
+	public static void init(RedProtect plugin) {
 		
 		RPLang.plugin = plugin;
 		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang" + RPConfig.getString("language") + ".ini";
@@ -182,15 +184,15 @@ public class RPLang {
 		}		
 	}
 	
-	static String translBool(String bool){		
+	public static String translBool(String bool){		
 		return get("region."+bool);
 	}
 	
-	static String translBool(Boolean bool){		
+	public static String translBool(Boolean bool){		
 		return get("region."+bool.toString());
 	}
 	
-	static boolean containsValue(String value){
+	public static boolean containsValue(String value){
 		return Lang.containsValue(value);
 	}
 }

@@ -41,9 +41,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 
-import br.net.fabiozumbi12.RedProtect.RPConfig;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 
 @SuppressWarnings("deprecation")
 public class RPGlobalListener implements Listener{

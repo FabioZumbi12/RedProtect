@@ -7,6 +7,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+
 public class RPEconomy {
 
 	public static long getRegionValue(Region r){

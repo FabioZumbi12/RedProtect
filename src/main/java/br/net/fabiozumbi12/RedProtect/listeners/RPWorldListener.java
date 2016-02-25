@@ -11,9 +11,9 @@ import org.bukkit.World;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.Listener;
 
-import br.net.fabiozumbi12.RedProtect.RPConfig;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 
 public class RPWorldListener implements Listener {
     

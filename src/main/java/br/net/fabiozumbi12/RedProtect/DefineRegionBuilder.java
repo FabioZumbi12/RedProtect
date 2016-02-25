@@ -6,6 +6,9 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+
 public class DefineRegionBuilder extends RegionBuilder{
 	
     public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String creator, List<String> leaders) {  	

@@ -6,16 +6,15 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("deprecation")
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPYaml;
+
 class WorldFlatFileRegionManager implements WorldRegionManager{
 
     HashMap<String, Region> regions;
@@ -71,16 +70,11 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     	int saved = 0;
         try {
             RedProtect.logger.debug("RegionManager.Save(): File type is " + RPConfig.getString("file-type"));
-            String world = this.getWorld().getName();
-            
-            File datf = null;
-            
-                                   
+            String world = this.getWorld().getName();            
+            File datf = null;  
                         
-            if (RPConfig.getString("file-type").equals("yml"))  {   
-            	
-            	datf = new File(RedProtect.pathData, "data_" + world + ".yml"); 
-                
+            if (RPConfig.getString("file-type").equals("yml"))  {               	
+            	datf = new File(RedProtect.pathData, "data_" + world + ".yml");
             	RPYaml fileDB = new RPYaml();
         		
         		for (Region r:regions.values()){
@@ -96,36 +90,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                     	datf = new File(RedProtect.pathData, world+File.separator+r.getName()+".yml");        	
                     }
         			
-        			String rname = r.getName().replace(".", "-");					
-        			fileDB.createSection(rname);
-        			fileDB.set(rname+".name",r.getName());
-        			fileDB.set(rname+".lastvisit",r.getDate());
-        			fileDB.set(rname+".admins",r.getAdmins());
-        			fileDB.set(rname+".members",r.getMembers());
-        			fileDB.set(rname+".leaders",r.getLeaders());
-        			fileDB.set(rname+".priority",r.getPrior());
-        			fileDB.set(rname+".welcome",r.getWelcome());
-        			fileDB.set(rname+".world",r.getWorld());
-        			fileDB.set(rname+".maxX",r.getMaxMbrX());
-        			fileDB.set(rname+".maxZ",r.getMaxMbrZ());
-        			fileDB.set(rname+".minX",r.getMinMbrX());
-        			fileDB.set(rname+".minZ",r.getMinMbrZ());	
-        			fileDB.set(rname+".maxY",r.getMaxY());
-        			fileDB.set(rname+".minY",r.getMinY());
-        			fileDB.set(rname+".flags",r.flags);	
-        			fileDB.set(rname+".value",r.getValue());
-        			
-        			Location loc = r.getTPPoint();
-        			if (loc != null){
-        				int x = loc.getBlockX();
-            	    	int y = loc.getBlockY();
-            	    	int z = loc.getBlockZ();
-            	    	float yaw = loc.getYaw();
-            	    	float pitch = loc.getPitch();
-            			fileDB.set(rname+".tppoint",x+","+y+","+z+","+yaw+","+pitch);
-        			} else {
-        				fileDB.set(rname+".tppoint","");
-        			}    
+        			fileDB = RPUtil.addProps(fileDB, r);   
         			saved++;
         			
         			if (RPConfig.getBool("flat-file.region-per-file")) {
@@ -137,7 +102,19 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         		if (!RPConfig.getBool("flat-file.region-per-file")) {
         			this.backupRegions(fileDB);
         			saveYaml(fileDB, datf);
-    			}        		       
+    			} else {
+    				//remove deleted regions
+    				File wfolder = new File(RedProtect.pathData + world);
+    				if (wfolder.exists()){
+    					File[] listOfFiles = new File(RedProtect.pathData + world).listFiles();    				
+                		for (File region:listOfFiles){
+                			if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))){
+                				region.delete();
+                			}
+                		}
+    				}
+    				
+    			}
             }
         }
         catch (Exception e4) {
@@ -226,7 +203,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     }
     
 	private void load(String path) throws FileNotFoundException, ClassNotFoundException {
-        String world = this.getWorld().getName();
         File f = new File(path);
         if (!f.exists()) {
             try {
@@ -250,61 +226,9 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     		}
         	
         	for (String rname:fileDB.getKeys(false)){
-        		if (fileDB.getString(rname+".name") == null){
-        			continue;
-        		}
-        		int maxX = fileDB.getInt(rname+".maxX");
-        		int maxZ = fileDB.getInt(rname+".maxZ");
-        		int minX = fileDB.getInt(rname+".minX");
-        		int minZ = fileDB.getInt(rname+".minZ");
-    	    	int maxY = fileDB.getInt(rname+".maxY", this.world.getMaxHeight());
-    	    	int minY = fileDB.getInt(rname+".minY", 0);
-    	    	String name = fileDB.getString(rname+".name");
-    	    	List<String> leaders = fileDB.getStringList(rname+".leaders");
-    	    	List<String> admins = fileDB.getStringList(rname+".admins");
-    	    	List<String> members = fileDB.getStringList(rname+".members");
-    	    	//String creator = fileDB.getString(rname+".creator");	    	  
-    	    	String welcome = fileDB.getString(rname+".welcome");
-    	    	int prior = fileDB.getInt(rname+".priority");
-    	    	String date = fileDB.getString(rname+".lastvisit");
-    	    	long value = fileDB.getLong(rname+".value");
-    	    	
-    	    	Location tppoint = null;
-                if (!fileDB.getString(rname+".tppoint", "").equalsIgnoreCase("")){
-                	String tpstring[] = fileDB.getString(rname+".tppoint").split(",");
-                    tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]), 
-                    		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
-                }
-                //compatibility ------>                
-                if (fileDB.contains(rname+".creator")){
-                	String creator = fileDB.getString(rname+".creator");
-                	if (!leaders.contains(creator)){
-                		leaders.add(creator);
-                	}                	
-                }                
-                if (fileDB.contains(rname+".owners")){
-                	admins.addAll(fileDB.getStringList(rname+".owners"));
-                	if (admins.contains(fileDB.getString(rname+".creator"))){
-                		admins.remove(fileDB.getString(rname+".creator"));
-                	}                	
-                }
-              //compatibility <------
-    	    	fileDB = RPUtil.fixdbFlags(fileDB, rname);
-  	    	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world, date, RPConfig.getDefFlagsValues(), welcome, value, tppoint);
-    	    	for (String flag:RPConfig.getDefFlags()){
-    	    		if (fileDB.get(rname+".flags."+flag) != null){
-  	    			    newr.flags.put(flag,fileDB.get(rname+".flags."+flag)); 
-  	    		    } else {
-  	    			    newr.flags.put(flag,RPConfig.getDefFlagsValues().get(flag)); 
-  	    		    }    	    		
-  	    	    } 
-    	    	for (String flag:RPConfig.AdminFlags){
-    	    		if (fileDB.get(rname+".flags."+flag) != null){
-    	    			newr.flags.put(flag,fileDB.get(rname+".flags."+flag));
-    	    		}
-    	    	}
+        		Region newr = RPUtil.loadProps(fileDB, rname, this.world);
     	    	newr.setToSave(false);
-        	    regions.put(name,newr);
+        	    regions.put(rname,newr);
         	}
         }
     }

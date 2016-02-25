@@ -13,6 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+
 public class EncompassRegionBuilder extends RegionBuilder{
 
     public EncompassRegionBuilder(SignChangeEvent e) { 	

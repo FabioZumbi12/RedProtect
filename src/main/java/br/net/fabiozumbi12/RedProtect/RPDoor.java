@@ -6,6 +6,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.TrapDoor;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+
 @SuppressWarnings("deprecation")
 public class RPDoor {
 	

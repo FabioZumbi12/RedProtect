@@ -20,6 +20,8 @@ import org.bukkit.World;
 import org.bukkit.command.CommandException;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+
 @SuppressWarnings("deprecation")
 class WorldMySQLRegionManager implements WorldRegionManager{
 

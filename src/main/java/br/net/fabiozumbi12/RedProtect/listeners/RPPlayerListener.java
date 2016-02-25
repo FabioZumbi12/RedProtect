@@ -64,13 +64,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.inventivetalent.bossbar.BossBarAPI;
 
-import br.net.fabiozumbi12.RedProtect.RPConfig;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
 import br.net.fabiozumbi12.RedProtect.RPDoor;
-import br.net.fabiozumbi12.RedProtect.RPLang;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
 
 import com.earth2me.essentials.Essentials;

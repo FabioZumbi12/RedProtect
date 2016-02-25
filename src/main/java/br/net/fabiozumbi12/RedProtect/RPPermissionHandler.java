@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+
 public class RPPermissionHandler{
       
     public boolean hasPerm(Player p, String perm) {

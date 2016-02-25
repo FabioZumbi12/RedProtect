@@ -11,6 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+
 /**
  * Get the region database from here. All functions for manage regions can be found in this variable. 
  */

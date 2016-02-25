@@ -6,6 +6,8 @@ import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+
 public class RPLogger{
 	private SortedMap<Integer,String> MainLog = new TreeMap<Integer,String>();
 	   

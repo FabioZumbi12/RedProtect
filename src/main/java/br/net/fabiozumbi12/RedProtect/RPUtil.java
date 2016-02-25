@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -42,6 +43,9 @@ import org.bukkit.inventory.ItemStack;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.config.RPYaml;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
@@ -809,13 +813,161 @@ public class RPUtil {
     	return false;
 	}
 
-	public static boolean SingleToFiles() {
-		// TODO Auto-generated method stub
-		return false;
+	private static void saveYaml(RPYaml fileDB, File file){
+    	try {         			   
+    		fileDB.save(file);         			
+		} catch (IOException e) {
+			RedProtect.logger.severe("Error during save database file");
+			e.printStackTrace();
+		}
+    }
+	
+	public static Region loadProps(RPYaml fileDB, String rname, World world){
+		if (fileDB.getString(rname+".name") == null){
+			return null;
+		}
+		int maxX = fileDB.getInt(rname+".maxX");
+		int maxZ = fileDB.getInt(rname+".maxZ");
+		int minX = fileDB.getInt(rname+".minX");
+		int minZ = fileDB.getInt(rname+".minZ");
+    	int maxY = fileDB.getInt(rname+".maxY", world.getMaxHeight());
+    	int minY = fileDB.getInt(rname+".minY", 0);
+    	String name = fileDB.getString(rname+".name");
+    	List<String> leaders = fileDB.getStringList(rname+".leaders");
+    	List<String> admins = fileDB.getStringList(rname+".admins");
+    	List<String> members = fileDB.getStringList(rname+".members");
+    	//String creator = fileDB.getString(rname+".creator");	    	  
+    	String welcome = fileDB.getString(rname+".welcome");
+    	int prior = fileDB.getInt(rname+".priority");
+    	String date = fileDB.getString(rname+".lastvisit");
+    	long value = fileDB.getLong(rname+".value");
+    	
+    	Location tppoint = null;
+        if (!fileDB.getString(rname+".tppoint", "").equalsIgnoreCase("")){
+        	String tpstring[] = fileDB.getString(rname+".tppoint").split(",");
+            tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]), 
+            		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
+        }
+        //compatibility ------>                
+        if (fileDB.contains(rname+".creator")){
+        	String creator = fileDB.getString(rname+".creator");
+        	if (!leaders.contains(creator)){
+        		leaders.add(creator);
+        	}                	
+        }                
+        if (fileDB.contains(rname+".owners")){
+        	admins.addAll(fileDB.getStringList(rname+".owners"));
+        	if (admins.contains(fileDB.getString(rname+".creator"))){
+        		admins.remove(fileDB.getString(rname+".creator"));
+        	}                	
+        }
+        //compatibility <------
+    	fileDB = RPUtil.fixdbFlags(fileDB, rname);
+  	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint);
+    	for (String flag:RPConfig.getDefFlags()){
+    		if (fileDB.get(rname+".flags."+flag) != null){
+  			    newr.flags.put(flag,fileDB.get(rname+".flags."+flag)); 
+  		    } else {
+  			    newr.flags.put(flag,RPConfig.getDefFlagsValues().get(flag)); 
+  		    }    	    		
+  	    } 
+    	for (String flag:RPConfig.AdminFlags){
+    		if (fileDB.get(rname+".flags."+flag) != null){
+    			newr.flags.put(flag,fileDB.get(rname+".flags."+flag));
+    		}
+    	}
+    	
+    	return newr;
+	}
+	
+	public static RPYaml addProps(RPYaml fileDB, Region r){
+		String rname = r.getName().replace(".", "-");					
+		fileDB.createSection(rname);
+		fileDB.set(rname+".name",r.getName());
+		fileDB.set(rname+".lastvisit",r.getDate());
+		fileDB.set(rname+".admins",r.getAdmins());
+		fileDB.set(rname+".members",r.getMembers());
+		fileDB.set(rname+".leaders",r.getLeaders());
+		fileDB.set(rname+".priority",r.getPrior());
+		fileDB.set(rname+".welcome",r.getWelcome());
+		fileDB.set(rname+".world",r.getWorld());
+		fileDB.set(rname+".maxX",r.getMaxMbrX());
+		fileDB.set(rname+".maxZ",r.getMaxMbrZ());
+		fileDB.set(rname+".minX",r.getMinMbrX());
+		fileDB.set(rname+".minZ",r.getMinMbrZ());	
+		fileDB.set(rname+".maxY",r.getMaxY());
+		fileDB.set(rname+".minY",r.getMinY());
+		fileDB.set(rname+".flags",r.flags);	
+		fileDB.set(rname+".value",r.getValue());
+		
+		Location loc = r.getTPPoint();
+		if (loc != null){
+			int x = loc.getBlockX();
+	    	int y = loc.getBlockY();
+	    	int z = loc.getBlockZ();
+	    	float yaw = loc.getYaw();
+	    	float pitch = loc.getPitch();
+			fileDB.set(rname+".tppoint",x+","+y+","+z+","+yaw+","+pitch);
+		} else {
+			fileDB.set(rname+".tppoint","");
+		}  
+		return fileDB;
+	}
+	
+	public static int SingleToFiles() {
+		int saved = 0;
+		for (World w:Bukkit.getWorlds()){
+			Set<Region> regions = RedProtect.rm.getRegionsByWorld(w);			
+			for (Region r:regions){
+				RPYaml fileDB = new RPYaml();
+				
+				File f = new File(RedProtect.pathData + w.getName());
+        		if (!f.exists()){
+        			f.mkdir();
+        		}
+				File wf = new File(RedProtect.pathData, w.getName()+File.separator+r.getName()+".yml");  
+												
+    			saved++;
+    			saveYaml(addProps(fileDB, r), wf);    			
+			} 
+			
+			File oldf = new File(RedProtect.pathData + "data_" + w.getName() + ".yml");
+			if (oldf.exists()){
+				oldf.delete();
+			}
+		}		
+		
+		if (!RPConfig.getBool("flat-file.region-per-file")){
+			RPConfig.setConfig("flat-file.region-per-file", true);
+		}
+		RPConfig.save();
+		return saved;
 	}
 
-	public static boolean FilesToSingle() {
-		// TODO Auto-generated method stub
-		return false;
+	public static int FilesToSingle() {
+		int saved = 0;		
+		for (World w:Bukkit.getWorlds()){
+			File f = new File(RedProtect.pathData, "data_" + w.getName() + ".yml");	
+			Set<Region> regions = RedProtect.rm.getRegionsByWorld(w);	
+			RPYaml fileDB = new RPYaml();
+			for (Region r:regions){
+				addProps(fileDB, r);
+				saved++;
+				File oldf = new File(RedProtect.pathData, w.getName()+File.separator+r.getName()+".yml");
+				if (oldf.exists()){
+					oldf.delete();
+				}
+			}
+			File oldf = new File(RedProtect.pathData, w.getName());
+			if (oldf.exists()){
+				oldf.delete();
+			}
+			saveYaml(fileDB, f);			
+		}
+		if (RPConfig.getBool("flat-file.region-per-file")){
+			RPConfig.setConfig("flat-file.region-per-file", false);
+		}
+		RPConfig.save();
+		return saved;
 	}
 }
