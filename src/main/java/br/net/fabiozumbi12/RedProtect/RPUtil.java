@@ -46,9 +46,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-
 @SuppressWarnings("deprecation")
 public class RPUtil {
     static int backup = 0; 
@@ -142,7 +139,7 @@ public class RPUtil {
      * @param World World
      * @return Name of region
      */
-    static String nameGen(String p, String World){
+    public static String nameGen(String p, String World){
     	String rname = "";
     	World w = RedProtect.serv.getWorld(World);    	
             int i = 0;
@@ -201,48 +198,7 @@ public class RPUtil {
     		}
     	}
     }
-    
-    static void PurgeFurnis(int oldest){
-    	int count = 0;
-    	Date now = null;    
-    	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
-    	try {
-			now = dateformat.parse(DateNow());
-		} catch (ParseException e1) {
-			RedProtect.logger.severe("The 'date-format' don't match with date 'now'!!");
-		}
-    	Date regiondate = null;    	
-    	
-    	for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-    		Region r = RedProtect.rm.getTopRegion(id.getStartLocation());
-    		if (r != null){
-    			try {
-    				regiondate = dateformat.parse(r.getDate());
-    			} catch (ParseException e) {
-    				RedProtect.logger.severe("The 'date-format' don't match with region date!!");
-    				e.printStackTrace();
-    				return;
-    			}
-    			Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-    			List<String> players = new ArrayList<String>();
-            	for (String play:RPConfig.getStringList("hooks.furniturelib.purge.ignore-regions-from-players")){
-            		players.add(RPUtil.PlayerToUUID(play));
-    			}
-            	
-    			if (days > oldest && !players.contains(UUIDtoPlayer(r.getCreator()))){
-    				FurnitureLib.getInstance().getFurnitureManager().remove(id);
-    				RedProtect.logger.warning("Removing furniture on region " + r.getName() + " - Days: " + days);
-    				count++;
-            	}
-    		}
-        }
-    	if (count > 0){
-        	RedProtect.logger.warning("Removed a total of &6&l" + count + "&a&l furnitures!");
-        } else {
-        	RedProtect.logger.warning("No furnitures to remove!");
-        }
-    }
-        
+            
     static void ReadAllDB(Set<Region> regions){     	
     	RedProtect.logger.info("Loaded " + regions.size() + " regions (" + RPConfig.getString("file-type") + ")");
     	int i = 0;
@@ -271,14 +227,15 @@ public class RPUtil {
     				RedProtect.logger.severe("The 'date-format' don't match with region date!!");
     				e.printStackTrace();
     			}
-            	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+            	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);            	
             	
-            	List<String> players = new ArrayList<String>();
             	for (String play:RPConfig.getStringList("purge.ignore-regions-from-players")){
-            		players.add(RPUtil.PlayerToUUID(play));
+            		if (r.isLeader(RPUtil.PlayerToUUID(play))){
+            			continue;
+            		}
     			}           	
             	
-            	if (days > RPConfig.getInt("purge.remove-oldest") && !players.contains(UUIDtoPlayer(r.getCreator()))){        
+            	if (days > RPConfig.getInt("purge.remove-oldest")){        
                 	RedProtect.logger.warning("Purging" + r.getName() + " - Days: " + days);
             		r.delete();
             		purged++;
@@ -297,35 +254,49 @@ public class RPUtil {
     			}
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
             	
-            	List<String> players = new ArrayList<String>();
             	for (String play:RPConfig.getStringList("sell.ignore-regions-from-players")){
-            		players.add(RPUtil.PlayerToUUID(play));
+            		if (r.isLeader(RPUtil.PlayerToUUID(play))){
+            			continue;
+            		}
     			}           	
             	
-            	if (days > RPConfig.getInt("sell.sell-oldest") && !players.contains(UUIDtoPlayer(r.getCreator()))){        
+            	if (days > RPConfig.getInt("sell.sell-oldest")){        
                 	RedProtect.logger.warning("Selling " + r.getName() + " - Days: " + days);
-            		RPEconomy.putToSell(r, "server", RPEconomy.getRegionValue(r));
+            		RPEconomy.putToSell(r, RPConfig.getString("region-settings.default-leader"), RPEconomy.getRegionValue(r));
             		sell++;
+            		RedProtect.rm.saveAll();
+            		continue;
             	}
         	}
         	
         	//Update player names
-        	if (RedProtect.OnlineMode && !r.isForSale() && r.getCreator().equalsIgnoreCase(RPConfig.getString(""))){
-        		if (!isUUID(r.getCreator()) && r.getCreator() != null){
+        	if (RedProtect.OnlineMode){
+        		/*if (!isUUID(r.getCreator()) && r.getCreator() != null){
             		RedProtect.logger.warning("Creator from: " + r.getCreator());
             		RedProtect.logger.warning("To UUID: " + PlayerToUUID(r.getCreator()));
             		r.setCreator(PlayerToUUID(r.getCreator()));      
             		origupdt++;
-            	}
+            	}*/
             	
-            	List<String> ownersl = r.getOwners();
-            	List<String> membersl = r.getMembers();        	
-            	for (int o = 0; o < ownersl.size(); o++){
-            		String pname = ownersl.get(o);
+        		List<String> leadersl = r.getAdmins();
+            	List<String> adminsl = r.getAdmins();
+            	List<String> membersl = r.getMembers(); 
+            	for (int l = 0; l < leadersl.size(); l++){
+            		String pname = leadersl.get(l);
             		if (!isUUID(pname) && pname != null){
-                		RedProtect.logger.warning("Owner from: " + pname);
-            			ownersl.remove(o);
-                		ownersl.add(o, PlayerToUUID(pname));
+                		RedProtect.logger.warning("Leader from: " + pname);
+                		leadersl.remove(l);
+                		leadersl.add(l, PlayerToUUID(pname));
+                		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));
+                		origupdt++;
+            		}             		
+            	} 
+            	for (int o = 0; o < adminsl.size(); o++){
+            		String pname = adminsl.get(o);
+            		if (!isUUID(pname) && pname != null){
+                		RedProtect.logger.warning("Admin from: " + pname);
+                		adminsl.remove(o);
+                		adminsl.add(o, PlayerToUUID(pname));
                 		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));
                 		origupdt++;
             		}             		
@@ -340,7 +311,8 @@ public class RPUtil {
                 		origupdt++;
             		}              		
             	}
-            	r.setOwners(ownersl);
+            	r.setLeaders(leadersl);
+            	r.setAdmins(adminsl);
             	r.setMembers(membersl);
             	if (origupdt > 0){
             		pls++;
@@ -349,13 +321,13 @@ public class RPUtil {
         	
         	//import essentials last visit for player dates
         	if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.Ess){
-        		List<String> ownersl = r.getOwners();
-            	List<String> membersl = r.getMembers();    
+        		List<String> adminsl = r.getAdmins();
+            	List<String> leadersl = r.getLeaders();    
             	Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
             	List<Long> dates = new ArrayList<Long>(); 
             	
-            	for (int o = 0; o < ownersl.size(); o++){
-            		String pname = ownersl.get(o);  
+            	for (int o = 0; o < adminsl.size(); o++){
+            		String pname = adminsl.get(o);  
             		User essp = null;
             		if (RedProtect.OnlineMode){
             			essp = ess.getUser(UUID.fromString(pname));
@@ -365,11 +337,10 @@ public class RPUtil {
             		if (essp != null){
             			dates.add(essp.getLastLogout());
             			RedProtect.logger.info("Updated user date: "+pname+" - "+dateformat.format(essp.getLastLogout()));
-            		}
-            		
+            		}            		
             	}        	
-            	for (int m = 0; m < membersl.size(); m++){
-            		String pname = membersl.get(m); 
+            	for (int m = 0; m < leadersl.size(); m++){
+            		String pname = leadersl.get(m); 
             		User essp = null;
             		if (RedProtect.OnlineMode){
             			essp = ess.getUser(UUID.fromString(pname));
@@ -391,7 +362,7 @@ public class RPUtil {
         	}
         	        	
         	if (pls > 0){
-        		RedProtect.logger.sucess("["+pls+"]Region updated &6&l" + r.getName() + "&a&l. Owner &6&l" + r.getCreator());
+        		RedProtect.logger.sucess("["+pls+"]Region updated &6&l" + r.getName() + "&a&l. Leaders &6&l" + r.getLeadersDesc());
             }        	
         }     
         
@@ -431,7 +402,7 @@ public class RPUtil {
     	}
     	
     	//check if is already UUID
-    	if (isUUID(PlayerName) || RPConfig.getString("region-settings.default-owner").equalsIgnoreCase(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))){
+    	if (isUUID(PlayerName) || RPConfig.getString("region-settings.default-leader").equalsIgnoreCase(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))){
     		return PlayerName;
     	}
     	
@@ -508,7 +479,7 @@ public class RPUtil {
     	regions.clear();
     }
     
-    static Object parseObject(String value){
+    public static Object parseObject(String value){
     	Object obj = value;
     	try {
     		obj = Integer.parseInt(value);
@@ -532,7 +503,7 @@ public class RPUtil {
 		return db;
 	}
     
-	static boolean ymlToMysql() throws Exception{
+	public static boolean ymlToMysql() throws Exception{
 		if (!RPConfig.getString("file-type").equalsIgnoreCase("yml")){
 			return false;
 		}
@@ -557,11 +528,11 @@ public class RPUtil {
 		                	st.close();
 		                }          
 		                st = dbcon.createStatement();
-		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Creator:" + r.getCreator() + "(Size: "+r.getArea()+")");
-		                st.executeUpdate("INSERT INTO region (name,creator,owners,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,maxy,miny,centerX,centerZ,date,wel,prior,value,world) VALUES "
+		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Leaders:" + r.getLeadersDesc() + "(Size: "+r.getArea()+")");
+		                st.executeUpdate("INSERT INTO region (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,maxy,miny,centerX,centerZ,date,wel,prior,value,world) VALUES "
 		                		+ "('" +r.getName() + "', '" + 
-		                		r.getCreator().toString() + "', '" + 
-		                		r.getOwners().toString().replace("[", "").replace("]", "")  + "', '" + 
+		                		r.getLeaders().toString().replace("[", "").replace("]", "")  + "', '" + 
+		                		r.getAdmins().toString().replace("[", "").replace("]", "")  + "', '" + 
 		                		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
 		                		r.getMaxMbrX() + "', '" + 
 		                		r.getMinMbrX() + "', '" + 
@@ -622,7 +593,7 @@ public class RPUtil {
 	                st = null;
 	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, creator varchar(36), owners varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null, tppoint varchar(16))");
+	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null, tppoint varchar(16))");
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: 'Region'!");    
@@ -792,14 +763,14 @@ public class RPUtil {
 				if (RedProtect.OnlineMode){
 					pname = claim.ownerID.toString();
 				}
-				List<String> owners = new ArrayList<String>();
-				owners.add(pname);
+				List<String> leaders = new ArrayList<String>();
+				leaders.add(pname);
 				Location newmin = claim.getGreaterBoundaryCorner();
 				Location newmax = claim.getLesserBoundaryCorner();
 				newmin.setY(0);
 				newmax.setY(w.getMaxHeight());
 				
-				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), owners, new ArrayList<String>(), pname, 
+				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), new ArrayList<String>(), new ArrayList<String>(), leaders, 
 						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null);				
 				
 				Region other = RedProtect.rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
@@ -836,5 +807,15 @@ public class RPUtil {
     		}    		
     	}
     	return false;
+	}
+
+	public static boolean SingleToFiles() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean FilesToSingle() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

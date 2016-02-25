@@ -9,7 +9,7 @@ public interface WorldRegionManager {
 	
     void load();
     
-    void save();
+    int save();
     
     Region getRegion(String rname);
     
@@ -18,24 +18,10 @@ public interface WorldRegionManager {
     Set<Region> getRegions(String pname);
     
     Set<Region> getRegionsNear(Player p0, int p1);
-    
-    //Region getRegion(Player p0);
-    
+
     void add(Region p0);
     
     void remove(Region p0);
-        
-    //Region isSurroundingRegion(Region p1);
-    
-    //boolean regionExists(Block p0);
-    
-    //Region getRegion(Location p0);
-    
-    //boolean regionExists(Region p0);
-        
-    //boolean regionExists(int p0, int p1);
-    
-    //Set<Region> getRegionsForY(int x, int z, int maxy, int miny);
     
     Set<Region> getRegions(int x, int y, int z); 
     

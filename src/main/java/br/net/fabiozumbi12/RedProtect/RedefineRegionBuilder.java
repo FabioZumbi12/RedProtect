@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-class RedefineRegionBuilder extends RegionBuilder{
+public class RedefineRegionBuilder extends RegionBuilder{
 		
     @SuppressWarnings("deprecation")
 	public RedefineRegionBuilder(Player p, Region old, Location l1, Location l2) {
@@ -24,7 +24,7 @@ class RedefineRegionBuilder extends RegionBuilder{
         	maxy = w.getMaxHeight();
         }
         
-        Region region = new Region(old.getName(), old.getOwners(), old.getMembers(), old.getCreator(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint());
+        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint());
         List<String> othersName = new ArrayList<String>();
         Region otherrg = null;
         
@@ -32,8 +32,8 @@ class RedefineRegionBuilder extends RegionBuilder{
         	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
         		otherrg = RedProtect.rm.getTopRegion(new Location(p.getWorld(), locx, p.getLocation().getBlockY(), locz));
         		if (otherrg != null){
-                	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
-                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
+                	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.admin")){
+                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                         return;
                 	}
                 	if (!othersName.contains(otherrg.getName())){

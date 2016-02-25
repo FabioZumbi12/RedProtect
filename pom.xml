@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>6.4</version>
+  <version>6.5</version>
   <dependencies>
 		<!--Spigot-API-->
         <dependency>
@@ -95,13 +95,6 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/GriefPrevention.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>FurnitureLib</groupId>
-			<artifactId>FurnitureLib</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/FurnitureLib.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>dynmap</groupId>

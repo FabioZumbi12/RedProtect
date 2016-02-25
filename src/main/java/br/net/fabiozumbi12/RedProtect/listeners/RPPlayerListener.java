@@ -133,6 +133,11 @@ public class RPPlayerListener implements Listener{
         Block b = event.getClickedBlock();
         Location l = null;
         
+        if (RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+    	}
+        
         if (b != null){
         	l = b.getLocation();
         	RedProtect.logger.debug("RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
@@ -194,7 +199,7 @@ public class RPPlayerListener implements Listener{
                     p.sendMessage(r.info());
                     p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
                 } else {
-                	p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{owners}", RPUtil.UUIDtoPlayer(r.getCreator())));
+                	p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{owners}", r.getLeadersDesc()));
                 }
                 event.setCancelled(true);
                 return;
@@ -266,7 +271,7 @@ public class RPPlayerListener implements Listener{
                                 return;
                             }
                             else {
-                                RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", RPUtil.UUIDtoPlayer(r.getCreator())));
+                                RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", r.getLeadersDesc()));
                             }
                 	} 
                 }               
@@ -278,7 +283,7 @@ public class RPPlayerListener implements Listener{
                             event.setCancelled(true);
                         }
                         else {
-                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.levertoggled").replace("{region}", RPUtil.UUIDtoPlayer(r.getCreator())));
+                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.levertoggled").replace("{region}", r.getLeadersDesc()));
                         }
                     }
                 }
@@ -289,7 +294,7 @@ public class RPPlayerListener implements Listener{
                             event.setCancelled(true);
                         }
                         else {
-                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.buttonactivated").replace("{region}", RPUtil.UUIDtoPlayer(r.getCreator())));
+                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.buttonactivated").replace("{region}", r.getLeadersDesc()));
                         }
                     }
                 }
@@ -325,8 +330,13 @@ public class RPPlayerListener implements Listener{
                 	    	  
                 	    	  //check if tag is owners or members names
                 	    	  if (tag.equalsIgnoreCase("{membername}")){
-                	    		  for (String owner:r.getOwners()){
-                    	    		  if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(owner))){
+                	    		  for (String leader:r.getLeaders()){
+                    	    		  if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))){
+                    	    			  return;
+                    	    		  }
+                    	    	  }
+                	    		  for (String admin:r.getAdmins()){
+                    	    		  if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))){
                     	    			  return;
                     	    		  }
                     	    	  }
@@ -703,7 +713,7 @@ public class RPPlayerListener implements Listener{
             	}
         	}
             
-        	if (RedProtect.Mc && !r.getFlagBool("allow-magiccarpet") && !r.isOwner(p)){
+        	if (RedProtect.Mc && !r.getFlagBool("allow-magiccarpet") && (!r.isAdmin(p) && !r.isLeader(p))){
         		if (msg.startsWith("/magiccarpet")){
         			e.setCancelled(true);
         			RPLang.sendMessage(p, "playerlistener.region.cantmc");
@@ -736,15 +746,14 @@ public class RPPlayerListener implements Listener{
         }
     	
     	Player p = e.getPlayer();
-    	
-    	if (e.getFrom() != e.getTo() && RedProtect.tpWait.contains(p.getName())){
-    		RedProtect.tpWait.remove(p.getName());
-    		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
-    	}
-    	
+    	    	
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
     	
+    	if (lto.getWorld().equals(lfrom.getWorld()) && lto.distance(lfrom) > 0.1 && RedProtect.tpWait.contains(p.getName())){
+    		RedProtect.tpWait.remove(p.getName());
+    		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+    	}
     	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RPConfig.getInt("netherProtection.maxYsize");
@@ -788,9 +797,9 @@ public class RPPlayerListener implements Listener{
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
         	}
             
-            //update region owner or member visit
+            //update region admin or leander visit
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")){
-        		if (r.isMember(p) || r.isOwner(p)){
+        		if (r.isLeader(p) || r.isMember(p)){
                 	if (r.getDate() == null || (r.getDate() != RPUtil.DateNow())){
                 		r.setDate(RPUtil.DateNow());
                 	}        	
@@ -1063,24 +1072,24 @@ public class RPPlayerListener implements Listener{
     		return;
     	}
     	
-    	String ownerstring = "";
+    	String leaderstring = "";
     	String m = "";
     	//Enter-Exit notifications    
         if (r.getWelcome().equals("")){
 			if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")
 	    			|| RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
-				for (int i = 0; i < r.getOwners().size(); ++i) {
-    				ownerstring = ownerstring + ", " + RPUtil.UUIDtoPlayer(r.getOwners().get(i)); 
+				for (int i = 0; i < r.getLeaders().size(); ++i) {
+					leaderstring = leaderstring + ", " + RPUtil.UUIDtoPlayer(r.getLeaders().get(i)); 
     	        }
 				
-				if (r.getOwners().size() > 0) {
-		            ownerstring = ownerstring.substring(2);
+				if (r.getLeaders().size() > 0) {
+					leaderstring = leaderstring.substring(2);
 		        }
 		        else {
-		            ownerstring = "None";
+		        	leaderstring = "None";
 		        }
     			m = RPLang.get("playerlistener.region.entered"); 
-        		m = m.replace("{owners}", ownerstring);
+        		m = m.replace("{leaders}", leaderstring);
         		m = m.replace("{region}", r.getName());
 			} 
 			SendNotifyMsg(p, m);
@@ -1482,5 +1491,5 @@ public class RPPlayerListener implements Listener{
     		e.setCancelled(true);
     	}
     }
-    
+        
 }

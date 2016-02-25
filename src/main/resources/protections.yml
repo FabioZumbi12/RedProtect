@@ -8,7 +8,7 @@ chat-protection:
     end-with-dot: true
     # Colorize player names on player chat.
     colorize-playernames: true
-    colorize-prefix-color: '&e'
+    colorize-prefix-color: '&e@'
     # Anti-Flood
     anti-flood:
       enable: true
@@ -75,8 +75,8 @@ chat-protection:
       enable: false
       # Max attempts the player can send url/ip before punished.
       max-attempts: 3
-      # Mute or execute command.
 
+      # Mute or execute command.
       mute-or-cmd: mute
       # Mute for x minutes.
       mute-duration: 1

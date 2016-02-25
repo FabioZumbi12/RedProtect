@@ -17,17 +17,19 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RPLang {
 	
 	static HashMap<String, String> BaseLang = new HashMap<String, String>();
-	static HashMap<String, String> Lang = new HashMap<String, String>();
+	public static HashMap<String, String> Lang = new HashMap<String, String>();
+	//static List<String> langString = new ArrayList<String>();
     static String pathLang; 
     static String resLang; 
     static RedProtect plugin;
 	
-	static SortedSet<String> helpStrings(){
+	public static SortedSet<String> helpStrings(){
 		SortedSet<String> values = new TreeSet<String>();
 		for (String help:Lang.keySet()){
 			if (help.startsWith("cmdmanager.help.")){
@@ -38,6 +40,7 @@ public class RPLang {
 	}
 	
 	static void init(RedProtect plugin) {
+		
 		RPLang.plugin = plugin;
 		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang" + RPConfig.getString("language") + ".ini";
 		resLang = "lang" + RPConfig.getString("language") + ".ini";
@@ -94,7 +97,8 @@ public class RPLang {
 			if (!(key instanceof String)) {
 				continue;
 			}			
-			Lang.put((String) key, properties.getProperty((String) key));
+			String keylang = properties.getProperty((String) key);
+			Lang.put((String) key, keylang.replace("owner", "leader"));
 		}		
 		
 		if (Lang.get("_lang.version") != null){
@@ -159,6 +163,16 @@ public class RPLang {
 	}
 	
 	public static void sendMessage(Player p, String key){
+		if (Lang.get(key) == null){
+			p.sendMessage(get("_redprotect.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
+		} else if (get(key).equalsIgnoreCase("")){
+			return;
+		} else {
+			p.sendMessage(get("_redprotect.prefix")+ " " + get(key));
+		}		
+	}
+	
+	public static void sendMessage(CommandSender p, String key){
 		if (Lang.get(key) == null){
 			p.sendMessage(get("_redprotect.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
 		} else if (get(key).equalsIgnoreCase("")){

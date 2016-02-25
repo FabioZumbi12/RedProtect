@@ -86,10 +86,9 @@ public class RPEconomy {
 	*/
 	
 	public static boolean putToSell(Region r, String uuid, long value) {
-		try {			
-			r.setCreator(uuid);
+		try {
 			r.clearMembers();
-			r.clearOwners();
+			r.clearAdmins();
 			r.setValue(value);
 			r.setWelcome(getCostMessage(r));			
 			r.setFlag("for-sale", true);
@@ -105,16 +104,15 @@ public class RPEconomy {
 	public static boolean BuyRegion(Region r, String uuid) {
 		try {			
 			r.clearMembers();
-			r.clearOwners();
-			r.setCreator(uuid);
-			r.addOwner(uuid);
+			r.clearAdmins();
+			r.addLeader(uuid);
 			r.setDate(RPUtil.DateNow());
 			r.setWelcome("");
 			r.flags = RPConfig.getDefFlagsValues();
 			if (RPConfig.getEcoBool("rename-region")){
 				RedProtect.rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}	
-			r.setFlag("for-sale", false);
+			r.removeFlag("for-sale");
 			return true;
 		} catch (Exception e){
 			return false;

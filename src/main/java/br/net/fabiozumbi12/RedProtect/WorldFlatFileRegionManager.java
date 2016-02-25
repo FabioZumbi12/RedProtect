@@ -43,7 +43,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getRegions(String pname) {
     	Set<Region> regionsp = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.getCreator() != null && r.getCreator().equals(pname)){
+			if (r.isLeader(pname)){
 				regionsp.add(r);
 			}
 		}
@@ -54,44 +54,55 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getMemberRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.getMembers().contains(uuid) || r.getOwners().contains(uuid)){
+			if (r.isLeader(uuid)){
 				regionsp.add(r);
 			}
 		}
 		return regionsp;
     }
-        
+    
     @Override
     public Region getRegion(String rname) {
     	return regions.get(rname);
     }
     
     @Override
-    public void save() {
+    public int save() {
+    	int saved = 0;
         try {
             RedProtect.logger.debug("RegionManager.Save(): File type is " + RPConfig.getString("file-type"));
             String world = this.getWorld().getName();
             
             File datf = null;
             
-            if (RPConfig.getString("file-type").equals("yml")) {
-            	datf = new File(RedProtect.pathData, "data_" + world + ".yml");        	
-            }                        
+                                   
                         
-            if (RPConfig.getString("file-type").equals("yml"))  {            	
+            if (RPConfig.getString("file-type").equals("yml"))  {   
+            	
+            	datf = new File(RedProtect.pathData, "data_" + world + ".yml"); 
+                
             	RPYaml fileDB = new RPYaml();
         		
         		for (Region r:regions.values()){
         			if (r.getName() == null){
         				continue;
         			}
+        			
+        			if (RPConfig.getBool("flat-file.region-per-file")) {
+        				if (!r.toSave()){
+            				continue;
+            			}
+        				fileDB = new RPYaml();
+                    	datf = new File(RedProtect.pathData, world+File.separator+r.getName()+".yml");        	
+                    }
+        			
         			String rname = r.getName().replace(".", "-");					
         			fileDB.createSection(rname);
         			fileDB.set(rname+".name",r.getName());
         			fileDB.set(rname+".lastvisit",r.getDate());
-        			fileDB.set(rname+".owners",r.getOwners());
+        			fileDB.set(rname+".admins",r.getAdmins());
         			fileDB.set(rname+".members",r.getMembers());
-        			fileDB.set(rname+".creator",r.getCreator());
+        			fileDB.set(rname+".leaders",r.getLeaders());
         			fileDB.set(rname+".priority",r.getPrior());
         			fileDB.set(rname+".welcome",r.getWelcome());
         			fileDB.set(rname+".world",r.getWorld());
@@ -114,23 +125,34 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             			fileDB.set(rname+".tppoint",x+","+y+","+z+","+yaw+","+pitch);
         			} else {
         				fileDB.set(rname+".tppoint","");
-        			}        			
+        			}    
+        			saved++;
+        			
+        			if (RPConfig.getBool("flat-file.region-per-file")) {
+        				saveYaml(fileDB, datf);
+        				r.setToSave(false);
+        			}
         		}	 
-
-        		try {
-        			this.backupRegions(fileDB);
-        			fileDB.save(datf); 
-        		} catch (IOException e) {
-        			RedProtect.logger.severe("Error during save database file for world " + world + ": ");
-        			e.printStackTrace();
-        		}        		
         		
+        		if (!RPConfig.getBool("flat-file.region-per-file")) {
+        			this.backupRegions(fileDB);
+        			saveYaml(fileDB, datf);
+    			}        		       
             }
-            
         }
         catch (Exception e4) {
             e4.printStackTrace();
         }
+        return saved;
+    }
+    
+    private void saveYaml(RPYaml fileDB, File file){
+    	try {         			   
+    		fileDB.save(file);         			
+		} catch (IOException e) {
+			RedProtect.logger.severe("Error during save database file for world " + world + ": ");
+			e.printStackTrace();
+		}
     }
     
     private void backupRegions(RPYaml fileDB) {
@@ -160,7 +182,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public int getTotalRegionSize(String uuid) {
 		Set<Region> regionslist = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.getCreator().equalsIgnoreCase(uuid)){
+			if (r.isLeader(uuid)){
 				regionslist.add(r);
 			}
 		}
@@ -175,17 +197,32 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public void load() {   
     	try {
             String world = this.getWorld().getName();
-            if (RPConfig.getString("file-type").equals("yml")) {        	
-            	File oldf = new File(String.valueOf(RedProtect.pathData) + world + ".yml");
-            	File newf = new File(String.valueOf(RedProtect.pathData) + "data_" + world + ".yml");
-                if (oldf.exists()){
-                	oldf.renameTo(newf);
-                }            
-                this.load(String.valueOf(RedProtect.pathData) + "data_" + world + ".yml");        	
+            
+            if (RPConfig.getString("file-type").equals("yml")) {    
+            	if (RPConfig.getBool("flat-file.region-per-file")) {
+            		File f = new File(RedProtect.pathData + world);
+            		if (!f.exists()){
+            			f.mkdir();
+            		}
+            		File[] listOfFiles = f.listFiles();
+            		for (File region:listOfFiles){
+            			if (region.getName().endsWith(".yml")){
+            				this.load(region.getPath()); 
+            			}
+            		}
+    			} else {
+    				File oldf = new File(RedProtect.pathData + world + ".yml");
+                	File newf = new File(RedProtect.pathData + "data_" + world + ".yml");
+                    if (oldf.exists()){
+                    	oldf.renameTo(newf);
+                    }            
+                    this.load(RedProtect.pathData + "data_" + world + ".yml"); 
+    			}
+            	       	
             }
-			} catch (FileNotFoundException | ClassNotFoundException e) {
+		} catch (FileNotFoundException | ClassNotFoundException e) {
 				e.printStackTrace();
-			} 
+		} 
     }
     
 	private void load(String path) throws FileNotFoundException, ClassNotFoundException {
@@ -223,16 +260,14 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     	    	int maxY = fileDB.getInt(rname+".maxY", this.world.getMaxHeight());
     	    	int minY = fileDB.getInt(rname+".minY", 0);
     	    	String name = fileDB.getString(rname+".name");
-    	    	List<String> owners = fileDB.getStringList(rname+".owners");
+    	    	List<String> leaders = fileDB.getStringList(rname+".leaders");
+    	    	List<String> admins = fileDB.getStringList(rname+".admins");
     	    	List<String> members = fileDB.getStringList(rname+".members");
-    	    	String creator = fileDB.getString(rname+".creator");	    	  
+    	    	//String creator = fileDB.getString(rname+".creator");	    	  
     	    	String welcome = fileDB.getString(rname+".welcome");
     	    	int prior = fileDB.getInt(rname+".priority");
     	    	String date = fileDB.getString(rname+".lastvisit");
     	    	long value = fileDB.getLong(rname+".value");
-    	    	if (owners.size() == 0){
-    	    		owners.add(creator);
-    	    	}			    	
     	    	
     	    	Location tppoint = null;
                 if (!fileDB.getString(rname+".tppoint", "").equalsIgnoreCase("")){
@@ -240,9 +275,22 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                     tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]), 
                     		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                 }
-                
+                //compatibility ------>                
+                if (fileDB.contains(rname+".creator")){
+                	String creator = fileDB.getString(rname+".creator");
+                	if (!leaders.contains(creator)){
+                		leaders.add(creator);
+                	}                	
+                }                
+                if (fileDB.contains(rname+".owners")){
+                	admins.addAll(fileDB.getStringList(rname+".owners"));
+                	if (admins.contains(fileDB.getString(rname+".creator"))){
+                		admins.remove(fileDB.getString(rname+".creator"));
+                	}                	
+                }
+              //compatibility <------
     	    	fileDB = RPUtil.fixdbFlags(fileDB, rname);
-  	    	    Region newr = new Region(name, owners, members, creator, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world, date, RPConfig.getDefFlagsValues(), welcome, value, tppoint);
+  	    	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world, date, RPConfig.getDefFlagsValues(), welcome, value, tppoint);
     	    	for (String flag:RPConfig.getDefFlags()){
     	    		if (fileDB.get(rname+".flags."+flag) != null){
   	    			    newr.flags.put(flag,fileDB.get(rname+".flags."+flag)); 
@@ -255,6 +303,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     	    			newr.flags.put(flag,fileDB.get(rname+".flags."+flag));
     	    		}
     	    	}
+    	    	newr.setToSave(false);
         	    regions.put(name,newr);
         	}
         }
@@ -380,7 +429,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	public void clearRegions() {
 		regions.clear();		
 	}
-
+	
 	@Override
 	public void updateLiveRegion(String rname, String columm, String value) {}
 
@@ -398,5 +447,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
 	@Override
 	public void removeLiveFlags(String rname, String flag) {}
+	
 	
 }

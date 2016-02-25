@@ -25,6 +25,7 @@ import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
 import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPAddProtection;
 import br.net.fabiozumbi12.RedProtect.listeners.RPBlockListener;
+import br.net.fabiozumbi12.RedProtect.listeners.RPCommands;
 import br.net.fabiozumbi12.RedProtect.listeners.RPEntityListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPGlobalListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPMine18;
@@ -32,7 +33,7 @@ import br.net.fabiozumbi12.RedProtect.listeners.RPPlayerListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPWorldListener;
 
 public class RedProtect extends JavaPlugin {
-	static File JarFile = null;
+	public static File JarFile = null;
 	public static PluginDescriptionFile pdf;
     public static RedProtect plugin;
 	private int taskid;
@@ -42,6 +43,7 @@ public class RedProtect extends JavaPlugin {
     public static RegionManager rm;
     public static List<String> changeWait = new ArrayList<String>();
     public static List<String> tpWait = new ArrayList<String>();
+    public static HashMap<Player,String> alWait = new HashMap<Player,String>();
     public static RPPermissionHandler ph;
     public static RPLogger logger = new RPLogger();
     public static Server serv;    
@@ -56,16 +58,16 @@ public class RedProtect extends JavaPlugin {
     static String protections = String.valueOf(RedProtect.pathMain) + File.separator + "protections.yml"; 
     static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";;
     public static boolean BossBar;
-    static boolean MyChunk;
+    public static boolean MyChunk;
     public static boolean MyPet;
     static boolean McMMo;
     public static boolean OnlineMode;
 	public static boolean Mc;
 	static boolean SkillAPI;
-	static boolean Vault;
+	public static boolean Vault;
 	public static boolean PvPm;
 	public static boolean Ess;
-	static boolean GP;
+	public static boolean GP;
 	static boolean Dyn;
 	public static Dynmap dynmap;
 	public static PlayerHandler PvPmanager;

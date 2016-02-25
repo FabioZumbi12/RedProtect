@@ -497,6 +497,8 @@ public class RPBlockListener implements Listener{
 		List<Block> blocks = e.getBlocks();
 		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
 		for (Block b:blocks){
+			RedProtect.logger.debug("BlockPistonExtendEvent event - Block: "+b.getType().name());
+			RedProtect.logger.debug("BlockPistonExtendEvent event - Relative: "+b.getRelative(e.getDirection()).getType().name());
 			Region br = RedProtect.rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
 			if (pr == null && br != null || (pr != null && br != null && pr != br)){
 				e.setCancelled(true);
@@ -504,6 +506,7 @@ public class RPBlockListener implements Listener{
 		}	
 	}
 		
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPistonRetract(BlockPistonRetractEvent e){
 		RedProtect.logger.debug("RPBlockListener - Is BlockPistonRetractEvent event");
@@ -511,10 +514,11 @@ public class RPBlockListener implements Listener{
 			return;
 		}
 		Block piston = e.getBlock();
-		if (!Bukkit.getVersion().startsWith("1.8.")){
-			Block block = e.getBlock();
+		if (!Bukkit.getBukkitVersion().startsWith("1.8.")){
+			Block b = e.getRetractLocation().getBlock();
+			RedProtect.logger.debug("BlockPistonRetractEvent not 1.8 event - Block: "+b.getType().name());
 			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
-			Region br = RedProtect.rm.getTopRegion(block.getLocation());
+			Region br = RedProtect.rm.getTopRegion(b.getLocation());
 			if (pr == null && br != null || (pr != null && br != null && pr != br)){
 				e.setCancelled(true);				
 			}
@@ -522,6 +526,7 @@ public class RPBlockListener implements Listener{
 			List<Block> blocks = e.getBlocks();
 			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
 			for (Block b:blocks){
+				RedProtect.logger.debug("BlockPistonRetractEvent 1.8 event - Block: "+b.getType().name());
 				Region br = RedProtect.rm.getTopRegion(b.getLocation());
 				if (pr == null && br != null || (pr != null && br != null && pr != br)){
 					e.setCancelled(true);				

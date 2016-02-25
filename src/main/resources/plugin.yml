@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.4.4
+version: 6.5.0
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [FurnitureLib, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap]
@@ -27,16 +27,17 @@ permissions:
       redprotect.own.addmember: true
       redprotect.own.delete: true
       redprotect.own.info: true
-      redprotect.own.addowner: true
+      redprotect.own.addleader: true
+      redprotect.own.addadmin: true
       redprotect.own.removemember: true
-      redprotect.own.removeowner: true
+      redprotect.own.removeadmin: true
+      redprotect.own.removeleader: true
       redprotect.own.rename: true
       redprotect.own.welcome: true
       redprotect.own.limit: true
       redprotect.own.claimlimit: true
       redprotect.own.list: true
       redprotect.own.priority: true
-      redprotect.own.gui: true
       redprotect.own.flaggui: true
       redprotect.own.near: true
       redprotect.infowand: true
@@ -65,7 +66,7 @@ permissions:
     description: "Recommended Vip permissions."
     default: false
     children:
-      redprotect.own.tp: true
+      redprotect.own.teleport: true
       redprotect.limit.claim.unlimited: true
       redprotect.limit.blocks.unlimited: true
   redprotect.ranked:
@@ -114,8 +115,10 @@ permissions:
     default: op
     children:
       redprotect.admin.delete: true
-      redprotect.admin.removeowner: true
-      redprotect.admin.addowner: true
+      redprotect.admin.removeadmin: true
+      redprotect.admin.addadmin: true
+      redprotect.admin.removeleader: true
+      redprotect.admin.addleader: true
       redprotect.admin.addmember: true
       redprotect.admin.removemember: true
       redprotect.admin.info: true
@@ -127,11 +130,11 @@ permissions:
       redprotect.admin.reload: true
       redprotect.admin.save-all: true
       redprotect.admin.load-all: true
-      redprotect.admin.tp: true
+      redprotect.admin.teleport: true
       redprotect.admin.copyflag: true
       redprotect.admin.setconfig: true
-      redprotect.admin.setcreator: true
       redprotect.admin.settp: true
+      redprotect.admin.deltp: true
       redprotect.admin.flaggui: true
       redprotect.admin.flag: true
       redprotect.admin.value: true
@@ -139,7 +142,7 @@ permissions:
       redprotect.admin.setmaxy: true
       redprotect.admin.setminy: true
       redprotect.admin.border: true
-      redprotect.tp.other: true
+      redprotect.teleport.other: true
       redprotect.flag.special: true
       redprotect.other.limit: true
       redprotect.other.claimlimit: true
@@ -147,6 +150,7 @@ permissions:
       redprotect.limit.blocks.unlimited: true
       redprotect.bypass: true
       redprotect.bypass.nether-roof: true
+      redprotect.bypass.addleader: true
       redprotect.magicwand: true
       redprotect.update: true
       redprotect.signspy: true

@@ -6,9 +6,9 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-class DefineRegionBuilder extends RegionBuilder{
+public class DefineRegionBuilder extends RegionBuilder{
 	
-    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String creator, List<String> owners) {  	
+    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String creator, List<String> leaders) {  	
         String pName = p.getUniqueId().toString();
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
@@ -34,6 +34,10 @@ class DefineRegionBuilder extends RegionBuilder{
                 return;
             }
         }
+        if (regionName.contains("@")) {
+            p.sendMessage(RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
+            return;
+        }
         if (loc1 == null || loc2 == null) {
         	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
@@ -47,9 +51,9 @@ class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
-        owners.add(creator);
+        leaders.add(creator);
         if (!pName.equals(creator)) {
-            owners.add(pName);
+        	leaders.add(pName);
         }
         
         int miny = loc1.getBlockY();
@@ -59,10 +63,24 @@ class DefineRegionBuilder extends RegionBuilder{
         	maxy = p.getWorld().getMaxHeight();
         }
         
-        Region region = new Region(regionName, owners, new ArrayList<String>(), creator, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null);
+        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null);
         
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	
+        int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
+        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),region.getWorld());               
+        if (claimused >= claimLimit && claimLimit >= 0) {
+        	this.setError(p, RPLang.get("regionbuilder.claim.limit"));
+            return;
+        }
+        
+        int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
+        int totalArea = RedProtect.rm.getTotalRegionSize(pName);
+        if (pLimit >= 0 && totalArea + region.getArea() > pLimit) {
+        	this.setError(p, RPLang.get("regionbuilder.reach.limit"));
+            return;
+        }
+        
         List<String> othersName = new ArrayList<String>();
         Region otherrg = null;
         
@@ -70,8 +88,8 @@ class DefineRegionBuilder extends RegionBuilder{
         	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
         		otherrg = RedProtect.rm.getTopRegion(new Location(p.getWorld(), locx, p.getLocation().getBlockY(), locz));
         		if (otherrg != null){
-                	if (!otherrg.isOwner(p) && !p.hasPermission("redprotect.admin")){
-                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getCreator())));
+                	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.admin")){                		
+                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                         return;
                 	}
                 	if (!othersName.contains(otherrg.getName())){

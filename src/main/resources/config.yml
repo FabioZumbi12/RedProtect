@@ -22,6 +22,8 @@ file-type: yml
 
 # If file-type: yml, configuration:
 flat-file:
+  # Want to save the regions in your ow files? This can improve performance because theres a new system where the autosave will save only modified regions and not all on auto-save.
+  region-per-file: false
   auto-save-interval-seconds: 3600
   backup: true
   max-backups: 10
@@ -36,8 +38,8 @@ mysql:
   region-cache-minutes: 2
 
 region-settings:
-  # The name of owner for regions created with /rp define. 
-  default-owner: '#server#'
+  # The name of leader for regions created with /rp define. 
+  default-leader: '#server#'
   # Colors of world to show on /rp info and /rp list.
   world-colors:
   # Border block type when use /rp border.
@@ -81,6 +83,8 @@ region-settings:
   allow-sign-interact-tags:
   - Admin Shop
   - '{membername}'
+  # Time in seconds to wait player accept leadership request
+  leadership-request-time: 20
 
 # World that player can claim regions.
 allowed-claim-worlds:
@@ -255,10 +259,6 @@ hooks:
   essentials:
     # Import last visits from Essentials to RedProtect Regions.
     import-lastvisits: false
-  furniturelib:
-    # Remove oldest furnitureLibs.
-    purge:
-       ignore-regions-from-players:
   dynmap:
     # Enable hook to show all regions on dynmap plugin?
     enable: true
