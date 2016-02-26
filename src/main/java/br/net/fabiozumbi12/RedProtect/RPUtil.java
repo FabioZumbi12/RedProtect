@@ -897,7 +897,7 @@ public class RPUtil {
 	public static RPYaml addProps(RPYaml fileDB, Region r){
 		String rname = r.getName().replace(".", "-");					
 		fileDB.createSection(rname);
-		fileDB.set(rname+".name",r.getName());
+		fileDB.set(rname+".name",rname);
 		fileDB.set(rname+".lastvisit",r.getDate());
 		fileDB.set(rname+".admins",r.getAdmins());
 		fileDB.set(rname+".members",r.getMembers());
