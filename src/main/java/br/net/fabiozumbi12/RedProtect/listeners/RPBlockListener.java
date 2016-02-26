@@ -496,6 +496,8 @@ public class RPBlockListener implements Listener{
 		Block piston = e.getBlock();
 		List<Block> blocks = e.getBlocks();
 		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
+		Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
+		World w = e.getBlock().getWorld();
 		for (Block b:blocks){
 			RedProtect.logger.debug("BlockPistonExtendEvent event - Block: "+b.getType().name());
 			RedProtect.logger.debug("BlockPistonExtendEvent event - Relative: "+b.getRelative(e.getDirection()).getType().name());
@@ -503,6 +505,16 @@ public class RPBlockListener implements Listener{
 			if (pr == null && br != null || (pr != null && br != null && pr != br)){
 				e.setCancelled(true);
 			}
+			if (antih){
+        		int x = b.getX();
+        		int y = b.getY();
+        		int z = b.getZ();
+        		Block ib = w.getBlockAt(x, y+1, z);
+        		if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)){
+        			e.setCancelled(true);
+        			return;
+        		} 
+        	}
 		}	
 	}
 		
@@ -513,6 +525,8 @@ public class RPBlockListener implements Listener{
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
 			return;
 		}
+		World w = e.getBlock().getWorld();
+		Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
 		Block piston = e.getBlock();
 		if (!Bukkit.getBukkitVersion().startsWith("1.8.")){
 			Block b = e.getRetractLocation().getBlock();
@@ -522,6 +536,16 @@ public class RPBlockListener implements Listener{
 			if (pr == null && br != null || (pr != null && br != null && pr != br)){
 				e.setCancelled(true);				
 			}
+			if (antih){
+        		int x = b.getX();
+        		int y = b.getY();
+        		int z = b.getZ();
+        		Block ib = w.getBlockAt(x, y+1, z);
+        		if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)){
+        			e.setCancelled(true);
+        			return;
+        		} 
+        	}
 		} else {
 			List<Block> blocks = e.getBlocks();
 			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
@@ -531,6 +555,16 @@ public class RPBlockListener implements Listener{
 				if (pr == null && br != null || (pr != null && br != null && pr != br)){
 					e.setCancelled(true);				
 				}
+				if (antih){
+	        		int x = b.getX();
+	        		int y = b.getY();
+	        		int z = b.getZ();
+	        		Block ib = w.getBlockAt(x, y+1, z);
+	        		if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)){
+	        			e.setCancelled(true);
+	        			return;
+	        		} 
+	        	}
 			}
 		}
 	}

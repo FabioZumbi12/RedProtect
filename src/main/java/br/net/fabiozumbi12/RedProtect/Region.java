@@ -1251,6 +1251,9 @@ public class Region implements Serializable{
 	}
 
 	public String getAdminDesc() {
+		if (this.admins.size() == 0){
+			return "[none]";
+		}
 		StringBuilder adminsList = new StringBuilder();
 		for (String admin:this.admins){
 			adminsList.append(", "+admin);
@@ -1259,6 +1262,9 @@ public class Region implements Serializable{
 	}
 	
 	public String getLeadersDesc() {
+		if (this.leaders.size() == 0){
+			return "[none]";
+		}
 		StringBuilder leaderList = new StringBuilder();
 		for (String leader:this.leaders){
 			leaderList.append(", "+leader);

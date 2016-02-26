@@ -211,6 +211,7 @@ public class RPUtil {
     	int purged = 0;
     	int sell = 0;
     	int dateint = 0;
+    	int cfm = 0;
     	Date now = null;    	   	
     	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
 
@@ -220,8 +221,7 @@ public class RPUtil {
 			RedProtect.logger.severe("The 'date-format' don't match with date 'now'!!");
 		}
 		
-        for (Region r:regions){
-        	
+        for (Region r:regions){        	
         	//purge regions
         	if (RPConfig.getBool("purge.enabled")){
         		Date regiondate = null;
@@ -282,7 +282,7 @@ public class RPUtil {
             		origupdt++;
             	}*/
             	
-        		List<String> leadersl = r.getAdmins();
+        		List<String> leadersl = r.getLeaders();
             	List<String> adminsl = r.getAdmins();
             	List<String> membersl = r.getMembers(); 
             	for (int l = 0; l < leadersl.size(); l++){
@@ -366,9 +366,20 @@ public class RPUtil {
         	}
         	        	
         	if (pls > 0){
-        		RedProtect.logger.sucess("["+pls+"]Region updated &6&l" + r.getName() + "&a&l. Leaders &6&l" + r.getLeadersDesc());
-            }        	
+        		RedProtect.logger.sucess("["+pls+"] Region updated &6&l" + r.getName() + "&a&l. Leaders &6&l" + r.getLeadersDesc());
+            }      
+        	
+        	//conform region names        	
+        	if (r.getName().contains("/")){
+    			String rname = r.getName().replace("/", "|");
+    			RedProtect.rm.renameRegion(rname, r);
+    			cfm++;
+    		}        	
         }     
+        
+        if (cfm > 0){
+    		RedProtect.logger.sucess("["+cfm+"] Region names conformed!");
+        }
         
         if (dateint > 0){
 			RedProtect.logger.info("Updated "+ dateint +" last visit users!");
@@ -435,7 +446,7 @@ public class RPUtil {
     	}
     	
     	//check if is UUID
-    	if (!isUUID(uuid)){
+    	if (uuid.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader")) || !isUUID(uuid)){
     		return uuid;
     	}
     	
@@ -464,6 +475,9 @@ public class RPUtil {
 	private static boolean isUUID(String uuid){
     	if (uuid == null){
     		return false;
+    	}
+    	if (uuid.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))){
+    		return true;
     	}
     	try{
     		UUID.fromString(uuid);
@@ -862,7 +876,7 @@ public class RPUtil {
         	}                	
         }
         //compatibility <------
-    	fileDB = RPUtil.fixdbFlags(fileDB, rname);
+    	fileDB = RPUtil.fixdbFlags(fileDB, rname);    	
   	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint);
     	for (String flag:RPConfig.getDefFlags()){
     		if (fileDB.get(rname+".flags."+flag) != null){

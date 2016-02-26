@@ -827,7 +827,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
-                String name = args[1];
+                String name = args[1].replace("/", "|");
                 String leader = player.getUniqueId().toString();
                 if (!RedProtect.OnlineMode){
                 	leader = player.getName().toLowerCase();
@@ -1977,6 +1977,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 sendNotInRegionMessage(p);
                 return;
             }
+            
+            //region name conform
+            newName = newName.replace("/", "|");
             if (RedProtect.rm.getRegion(newName, p.getWorld()) != null) {
                 RPLang.sendMessage(p, "cmdmanager.region.rename.already");
                 return;

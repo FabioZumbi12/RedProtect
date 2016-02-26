@@ -51,6 +51,8 @@ public class EncompassRegionBuilder extends RegionBuilder{
             }
         }
         
+        //region name conform
+        regionName = regionName.replace("/", "|");  
         if (RedProtect.rm.getRegion(regionName, w) != null) {
             this.setErrorSign(e, RPLang.get("regionbuilder.regionname.existis"));
             return;

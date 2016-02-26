@@ -45,6 +45,9 @@ public class DefineRegionBuilder extends RegionBuilder{
         	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
         }
+        
+        //region name conform
+        regionName = regionName.replace("/", "|");        
         if (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
         	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
@@ -53,7 +56,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         	RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
             return;
         }
-
+        
         leaders.add(creator);
         if (!pName.equals(creator)) {
         	leaders.add(pName);

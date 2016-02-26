@@ -76,11 +76,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             if (RPConfig.getString("file-type").equals("yml"))  {               	
             	datf = new File(RedProtect.pathData, "data_" + world + ".yml");
             	RPYaml fileDB = new RPYaml();
-        		
+        		            	            	
         		for (Region r:regions.values()){
         			if (r.getName() == null){
         				continue;
         			}
+        			
         			
         			if (RPConfig.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
@@ -229,7 +230,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         		Region newr = RPUtil.loadProps(fileDB, rname, this.world);
     	    	newr.setToSave(false);
         	    regions.put(rname,newr);
-        	}
+        	}        	
         }
     }
         
