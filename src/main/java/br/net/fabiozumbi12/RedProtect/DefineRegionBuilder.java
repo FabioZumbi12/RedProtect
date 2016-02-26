@@ -11,7 +11,7 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class DefineRegionBuilder extends RegionBuilder{
 	
-    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String creator, List<String> leaders) {  	
+    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String leader, List<String> leaders) {  	
         String pName = p.getUniqueId().toString();
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
@@ -19,9 +19,9 @@ public class DefineRegionBuilder extends RegionBuilder{
         
         String pRName = RPUtil.UUIDtoPlayer(p.getName());
         String wmsg = "";
-        if (creator.equals(RPConfig.getString("region-settings.default-owner"))){
-        	pName = creator;
-        	pRName = creator;
+        if (leader.equals(RPConfig.getString("region-settings.default-leader"))){
+        	pName = leader;
+        	pRName = leader;
         	wmsg = "hide ";
         }
         
@@ -57,8 +57,8 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
         
-        leaders.add(creator);
-        if (!pName.equals(creator)) {
+        leaders.add(leader);
+        if (!pName.equals(leader)) {
         	leaders.add(pName);
         }
         
