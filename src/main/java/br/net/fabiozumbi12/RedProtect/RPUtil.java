@@ -46,6 +46,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.config.RPYaml;
+import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
@@ -203,7 +204,7 @@ public class RPUtil {
     	}
     }
             
-    static void ReadAllDB(Set<Region> regions){     	
+    static void ReadAllDB(Set<Region> regions) {     	
     	RedProtect.logger.info("Loaded " + regions.size() + " regions (" + RPConfig.getString("file-type") + ")");
     	int i = 0;
     	int pls = 0;
@@ -212,6 +213,7 @@ public class RPUtil {
     	int sell = 0;
     	int dateint = 0;
     	int cfm = 0;
+    	int delay = 0;
     	Date now = null;    	   	
     	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
 
@@ -234,13 +236,17 @@ public class RPUtil {
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);            	
             	
             	for (String play:RPConfig.getStringList("purge.ignore-regions-from-players")){
-            		if (r.isLeader(RPUtil.PlayerToUUID(play))){
+            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isLeader(RPConfig.getString("region-settings.default-leader"))){
             			continue;
             		}
     			}           	
             	
             	if (days > RPConfig.getInt("purge.remove-oldest")){        
                 	RedProtect.logger.warning("Purging" + r.getName() + " - Days: " + days);
+                	if (RedProtect.WE && RPConfig.getBool("purge.regen.enable") && r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
+                		WEListener.regenRegion(r, delay, null);
+                		delay=delay+40;
+                	}
             		r.delete();
             		purged++;
             		continue;
@@ -259,7 +265,7 @@ public class RPUtil {
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
             	
             	for (String play:RPConfig.getStringList("sell.ignore-regions-from-players")){
-            		if (r.isLeader(RPUtil.PlayerToUUID(play))){
+            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isLeader(RPConfig.getString("region-settings.default-leader"))){
             			continue;
             		}
     			}           	
@@ -377,6 +383,10 @@ public class RPUtil {
     		}        	
         }     
         
+        if (delay > 0){
+    		RedProtect.logger.warning("Theres "+delay/40+" regions to be regenerated...");
+        }
+        
         if (cfm > 0){
     		RedProtect.logger.sucess("["+cfm+"] Region names conformed!");
         }
@@ -409,9 +419,8 @@ public class RPUtil {
         }
         regions.clear();   
 	}
-      
-    
-    public static String PlayerToUUID(String PlayerName){
+        
+	public static String PlayerToUUID(String PlayerName){
     	if (PlayerName == null || PlayerName.equals("")){
     		return null;
     	}

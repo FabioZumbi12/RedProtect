@@ -236,6 +236,11 @@ flags-configuration:
 purge:
   enabled: false
   remove-oldest: 90
+  # Hook with WorldEdit, will regen only the region areas to bedrock to sky. Theres no undo for this action!
+  regen:
+    enable: false
+    # Max area size to automatic regen the region.
+    max-area-regen: 500
   ignore-regions-from-players:
   
 # Put regions to sell after x time the player dont came online.

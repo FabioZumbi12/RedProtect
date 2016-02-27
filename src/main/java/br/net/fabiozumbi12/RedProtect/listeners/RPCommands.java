@@ -44,6 +44,7 @@ import br.net.fabiozumbi12.RedProtect.Updater;
 import br.net.fabiozumbi12.RedProtect.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 @SuppressWarnings("deprecation")
 public class RPCommands implements CommandExecutor, TabCompleter{
@@ -144,7 +145,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			RedProtect.logger.sucess("["+RPUtil.FilesToSingle()+"]"+" regions converted to unified world file with success");
         			return true;
         		}
-        		
+        		        		
         		if (args[0].equalsIgnoreCase("ymlToMysql")) {
         			try {
 						if (!RPUtil.ymlToMysql()){
@@ -295,6 +296,26 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	}
                
         	if (args.length == 3){
+        		
+        		//rp regen <region> <world>
+        		if (args[0].equalsIgnoreCase("regen")) {
+        			if (!RedProtect.WE){
+        				return true;
+        			}
+        			World w = RedProtect.serv.getWorld(args[2]);
+        			if (w == null){
+                    	sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+                    	return true;
+                    }
+        			Region r = RedProtect.rm.getRegion(args[1], w);
+        			if (r == null){
+        				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
+        				return true;
+        			}
+        			WEListener.regenRegion(r, 20, sender);
+        			return true;
+        		}
+        		
         		//rp list <player> [page]
         		if (checkCmd(args[0], "list")){        			
         			try{
@@ -463,6 +484,22 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         final Player player = (Player)sender;
         
         if (args.length == 1) {
+        	
+        	//rp regen
+    		if (args[0].equalsIgnoreCase("regen")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			Region r = RedProtect.rm.getTopRegion(player.getLocation());
+    			if (r == null){
+    				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+    				return true;
+    			}
+    			
+    			WEListener.regenRegion(r, 20, sender);
+    			return true;
+    		}
+    		
         	if (checkCmd(args[0], "update") && player.hasPermission("redprotect.update")){
         		if (RedProtect.Update){
             		RPLang.sendMessage(player, ChatColor.AQUA + "Starting download update...");
@@ -884,6 +921,26 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args.length == 3) { 
         	
+        	//rp regen <region> <world>
+    		if (args[0].equalsIgnoreCase("regen")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			World w = RedProtect.serv.getWorld(args[2]);
+    			if (w == null){
+                	sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+                	return true;
+                }
+    			Region r = RedProtect.rm.getRegion(args[1], w);
+    			if (r == null){
+    				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
+    				return true;
+    			}
+    			
+    			WEListener.regenRegion(r, 20, sender);    			
+    			return true;
+    		}
+    		
         	if (checkCmd(args[0], "flag") && args[1].equalsIgnoreCase("gui-edit")) {
         		if (player.hasPermission("redprotect.gui.edit")){
         			int MaxSlot = 0;

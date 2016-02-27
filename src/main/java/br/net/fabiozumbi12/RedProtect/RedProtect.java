@@ -70,6 +70,8 @@ public class RedProtect extends JavaPlugin {
 	public static boolean PvPm;
 	public static boolean Ess;
 	public static boolean GP;
+	public static boolean WE;
+	public static boolean AWE;
 	static boolean Dyn;
 	public static Dynmap dynmap;
 	public static PlayerHandler PvPmanager;
@@ -97,6 +99,8 @@ public class RedProtect extends JavaPlugin {
             Ess = checkEss();
             GP = checkGP();
             Dyn = checkDyn();
+            WE = checkWe();
+            AWE = checkAWe();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
@@ -137,6 +141,12 @@ public class RedProtect extends JavaPlugin {
             }
             if (Ess){
             	RedProtect.logger.info("Essentials found. Hooked.");
+            }
+            if (WE){
+            	RedProtect.logger.info("WorldEdit found. Hooked.");
+            }
+            if (AWE){
+            	RedProtect.logger.info("AsyncWorldEdit found. Hooked.");
             }
             if (BossBar){
             	RedProtect.logger.info("BossbarAPI found. Hooked.");
@@ -330,6 +340,22 @@ public class RedProtect extends JavaPlugin {
 	private boolean checkDyn() {
 		Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
     	if (pDyn != null && pDyn.isEnabled()){
+    		return true;
+    	}
+    	return false;
+	}
+	
+	private boolean checkWe() {
+		Plugin pWe = Bukkit.getPluginManager().getPlugin("WorldEdit");
+    	if (pWe != null && pWe.isEnabled()){
+    		return true;
+    	}
+    	return false;
+	}
+	
+	private boolean checkAWe() {
+		Plugin pAWe = Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");
+    	if (pAWe != null && pAWe.isEnabled()){
     		return true;
     	}
     	return false;

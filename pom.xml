@@ -21,6 +21,20 @@
 			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
 		</dependency> -->
 		<dependency>
+			<groupId>AsyncWorldEdit</groupId>
+			<artifactId>AsyncWorldEdit</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/lib/AsyncWorldEdit.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>WorldEdit</groupId>
+			<artifactId>WorldEdit</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/lib/worldedit-bukkit-6.1.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>BossbarAPI</groupId>
 			<artifactId>BossbarAPI</artifactId>
 			<version>v1</version>

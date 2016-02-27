@@ -53,7 +53,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getMemberRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
 		for (Region r:regions.values()){
-			if (r.isLeader(uuid)){
+			if (r.isLeader(uuid) || r.isAdmin(uuid)){
 				regionsp.add(r);
 			}
 		}
