@@ -89,9 +89,11 @@ public class RPPlayerListener implements Listener{
 	private HashMap<Player, String> PlayerCmd = new HashMap<Player, String>();
 	private HashMap<Player, Boolean> PvPState = new HashMap<Player, Boolean>();
 	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
+	private boolean is19;
     
     public RPPlayerListener() {
     	RedProtect.logger.debug("Loaded RPPlayerListener...");
+    	is19 = Bukkit.getBukkitVersion().startsWith("1.9");
     }
     
     @EventHandler
@@ -129,8 +131,16 @@ public class RPPlayerListener implements Listener{
     public void onPlayerInteract(PlayerInteractEvent event) {
     	RedProtect.logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
     	
+    	//event.setCancelled(true);
+    	
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
+        ItemStack itemInHand = event.getItem();
+        
+        if (itemInHand != null){
+        	RedProtect.logger.severe("Item in Hand: "+itemInHand.getType().name());
+        }        
+        
         Location l = null;
         
         if (RedProtect.tpWait.contains(p.getName())){
@@ -146,65 +156,78 @@ public class RPPlayerListener implements Listener{
         }
         
         Region r = RedProtect.rm.getTopRegion(l);
-        Material itemInHand = p.getItemInHand().getType();
+        /*ItemStack itemInHand = p.getItemInHand().clone();
+        if (is19){
+        	itemInHand = p.getInventory().getItemInMainHand().clone();
+        }*/
         
         //check if is a gui item
-        if (RPUtil.RemoveGuiItem(p.getItemInHand())){
-        	p.setItemInHand(new ItemStack(Material.AIR));
+        if (RPUtil.RemoveGuiItem(itemInHand)){
+        	if (!is19){
+        		p.setItemInHand(new ItemStack(Material.AIR));
+        	} else {
+        		if (itemInHand.equals(p.getInventory().getItemInMainHand())){
+        			p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        		} else if (itemInHand.equals(p.getInventory().getItemInOffHand())){
+        			p.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+        		}        		
+        	}        	
         	event.setCancelled(true);
         	return;
         }
         
-        //deny item usage
-        if (RPConfig.getStringList("server-protection.deny-item-usage.items").contains(itemInHand.name())){
-    		if (r != null && ((!RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
-    				(RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
-    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
-    			event.setUseInteractedBlock(Event.Result.DENY);
-    			event.setUseItemInHand(Event.Result.DENY);
-    			event.setCancelled(true);  
-    			return;
-    		}
-    		if (r == null && !RPConfig.getBool("server-protection.deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
-    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
-    			event.setUseInteractedBlock(Event.Result.DENY);
-    			event.setUseItemInHand(Event.Result.DENY);
-    			event.setCancelled(true);
-    			return;
-    		}
-        }
-        
-        if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
-            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-            	RedProtect.secondLocationSelections.put(p, l);
-                p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
-                event.setCancelled(true);
-                return;                
+        if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){
+        	//deny item usage
+        	if (RPConfig.getStringList("server-protection.deny-item-usage.items").contains(itemInHand.getType().name())){
+        		if (r != null && ((!RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
+        				(RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
+        			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+        			event.setUseInteractedBlock(Event.Result.DENY);
+        			event.setUseItemInHand(Event.Result.DENY);
+        			event.setCancelled(true);  
+        			return;
+        		}
+        		if (r == null && !RPConfig.getBool("server-protection.deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+        			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+        			event.setUseInteractedBlock(Event.Result.DENY);
+        			event.setUseItemInHand(Event.Result.DENY);
+        			event.setCancelled(true);
+        			return;
+        		}
             }
-            else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
-                RedProtect.firstLocationSelections.put(p, l);
-                p.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
-                event.setCancelled(true);
-                return;
-            }
-        }
-        if (p.getItemInHand().getTypeId() == RPConfig.getInt("wands.infoWandID")) {
-        	r = RedProtect.rm.getTopRegion(l);
-            if (p.hasPermission("redprotect.infowand")) {
-                if (r == null) {
-                    RPLang.sendMessage(p, "playerlistener.noregion.atblock");
+            
+            if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
+                if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                	RedProtect.secondLocationSelections.put(p, l);
+                    p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
+                    event.setCancelled(true);
+                    return;                
                 }
-                else if (r.canBuild(p)) {
-                    p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
-                    p.sendMessage(r.info());
-                    p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
-                } else {
-                	p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{owners}", r.getLeadersDesc()));
+                else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
+                    RedProtect.firstLocationSelections.put(p, l);
+                    p.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
+                    event.setCancelled(true);
+                    return;
                 }
-                event.setCancelled(true);
-                return;
             }
-        } 
+            if (itemInHand.getTypeId() == RPConfig.getInt("wands.infoWandID")) {
+            	r = RedProtect.rm.getTopRegion(l);
+                if (p.hasPermission("redprotect.infowand")) {
+                    if (r == null) {
+                        RPLang.sendMessage(p, "playerlistener.noregion.atblock");
+                    }
+                    else if (r.canBuild(p)) {
+                        p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
+                        p.sendMessage(r.info());
+                        p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
+                    } else {
+                    	p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{owners}", r.getLeadersDesc()));
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            } 
+        }        
         
         //start player checks
         if (r == null){
@@ -227,8 +250,8 @@ public class RPPlayerListener implements Listener{
                     	
         } else { //if r != null >>
         	//other blocks and interactions       	
-        	if (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null){ 
-        		Material hand = p.getItemInHand().getType()
+        	if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){ 
+        		Material hand = itemInHand.getType()
 ;            	if (hand.equals(Material.ENDER_PEARL) && r.canEnderPearl(p)){
         			//allow if is ender pearl allowed on region
         			return;
@@ -359,25 +382,27 @@ public class RPPlayerListener implements Listener{
                 	      event.setCancelled(true);
                 	      return;
                 } 
-                else if ((itemInHand.equals(Material.FLINT_AND_STEEL) || 
+                else if ((itemInHand != null && !itemInHand.equals(Material.AIR)) && !r.canBuild(p) && (itemInHand.equals(Material.FLINT_AND_STEEL) || 
                 		itemInHand.equals(Material.WATER_BUCKET) || 
                 		itemInHand.equals(Material.BUCKET) || 
                 		itemInHand.equals(Material.LAVA_BUCKET) || 
                 		itemInHand.equals(Material.ITEM_FRAME) || 
-                		itemInHand.equals(Material.PAINTING)) && !r.canBuild(p)) {
-                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantuse"));
+                		itemInHand.equals(Material.PAINTING))) {
+                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setCancelled(true);
                     return;
                 }                    
                 else if (b != null && !r.allowMod(p) && !RPUtil.isBukkitBlock(b)){
                 	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-                	event.setCancelled(true);    
+                	event.setCancelled(true);  
+                	event.setUseInteractedBlock(Event.Result.DENY);
                 	return;
                 }
         	}             
-        }               
+        }
     }
+    
     
     @EventHandler
     public void MoveItem(InventoryClickEvent e){

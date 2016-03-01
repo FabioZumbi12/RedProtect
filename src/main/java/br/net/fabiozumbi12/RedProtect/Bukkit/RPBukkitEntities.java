@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 public enum RPBukkitEntities {
+	AREA_EFFECT_CLOUD,
 	ARMOR_STAND,
 	ARROW,
 	BAT,
@@ -49,12 +50,15 @@ public enum RPBukkitEntities {
 	PRIMED_TNT,
 	RABBIT, 
 	SHEEP,
+	SHULKER,
+	SHULKER_BULLET,
 	SILVERFISH, 
 	SKELETON,
 	SLIME,
 	SMALL_FIREBALL,
 	SNOWBALL,
 	SNOWMAN,
+	SPECTRAL_ARROW,
 	SPIDER,
 	SPLASH_POTION,
 	SQUID,

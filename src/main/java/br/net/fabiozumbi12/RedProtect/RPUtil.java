@@ -244,7 +244,7 @@ public class RPUtil {
             	if (days > RPConfig.getInt("purge.remove-oldest")){        
                 	RedProtect.logger.warning("Purging" + r.getName() + " - Days: " + days);
                 	if (RedProtect.WE && RPConfig.getBool("purge.regen.enable") && r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
-                		WEListener.regenRegion(r, delay, null);
+                		WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
                 		delay=delay+40;
                 	}
             		r.delete();

@@ -312,7 +312,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
         				return true;
         			}
-        			WEListener.regenRegion(r, 20, sender);
+        			WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
         			return true;
         		}
         		
@@ -486,7 +486,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         if (args.length == 1) {
         	
         	//rp regen
-    		if (args[0].equalsIgnoreCase("regen")) {
+    		if (args[0].equalsIgnoreCase("regen") && player.hasPermission("redprotect.regen")) {
     			if (!RedProtect.WE){
     				return true;
     			}
@@ -496,7 +496,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			WEListener.regenRegion(r, 20, sender);
+    			WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
     			return true;
     		}
     		
@@ -922,7 +922,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         if (args.length == 3) { 
         	
         	//rp regen <region> <world>
-    		if (args[0].equalsIgnoreCase("regen")) {
+    		if (args[0].equalsIgnoreCase("regen") && player.hasPermission("redprotect.regen")) {
     			if (!RedProtect.WE){
     				return true;
     			}
@@ -937,7 +937,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			WEListener.regenRegion(r, 20, sender);    			
+    			WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);    			
     			return true;
     		}
     		

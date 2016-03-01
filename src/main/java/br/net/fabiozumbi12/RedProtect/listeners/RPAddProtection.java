@@ -156,6 +156,9 @@ public class RPAddProtection implements Listener{
 					StringBuilder finalmsg = new StringBuilder(); 
 					boolean first = true;
 					for (String msgw:messages){
+						if (msgw.length() <= 0){
+							continue;
+						}
 						if (first){
 							finalmsg.append(msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
 							first = false;
@@ -173,7 +176,7 @@ public class RPAddProtection implements Listener{
 					if (RPConfig.getProtBool("chat-protection.chat-enhancement.colorize-playernames")){
 						for (Player play:Bukkit.getOnlinePlayers()){
 							if (StringUtils.containsIgnoreCase(nmsg, play.getName()) && !play.equals(p)){
-								nmsg = nmsg.replaceAll("(?i)"+play.getName(),
+								nmsg = nmsg.replaceAll("(?i)\\b"+play.getName()+"\\b",
 										RPConfig.getProtMsg("chat-protection.chat-enhancement.colorize-prefix-color")+play.getName()+ChatColor.RESET);
 								break;
 							}

@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
+
 public enum RPBukkitBlocks {
 	ACACIA_DOOR,
 	ACACIA_DOOR_ITEM,
@@ -55,6 +56,10 @@ public enum RPBukkitBlocks {
 	CHAINMAIL_HELMET,
 	CHAINMAIL_LEGGINGS,
 	CHEST,
+	CHORUS_FLOWER,
+	CHORUS_FRUIT,
+	CHORUS_FRUIT_POPPED,
+	CHORUS_PLANT,
 	CLAY,
 	CLAY_BALL,
 	CLAY_BRICK,
@@ -114,11 +119,15 @@ public enum RPBukkitBlocks {
 	EMPTY_MAP,
 	ENCHANTED_BOOK,
 	ENCHANTMENT_TABLE,
+	END_BRICKS,	
+	END_ROD,
 	ENDER_CHEST,
 	ENDER_PEARL,
 	ENDER_PORTAL,
 	ENDER_PORTAL_FRAME,
 	ENDER_STONE,
+	ENDER_BRICKS,
+	ENDER_GATEWAY,
 	EXP_BOTTLE,
 	EXPLOSIVE_MINECART,
 	EYE_OF_ENDER,
@@ -263,6 +272,11 @@ public enum RPBukkitBlocks {
 	PUMPKIN_PIE, 
 	PUMPKIN_SEEDS, 
 	PUMPKIN_STEM,
+	PURPUR_BLOCK,
+	PURPUR_DOUBLE_SLAB,
+	PURPUR_PILLAR,
+	PURPUR_SLAB,
+	PURPUR_STAIRS,
 	QUARTZ,
 	QUARTZ_BLOCK, 
 	QUARTZ_ORE,
@@ -389,7 +403,6 @@ public enum RPBukkitBlocks {
     ;
 	
 	public Boolean equals(String type){
-		
 		return true;
 	}
 }

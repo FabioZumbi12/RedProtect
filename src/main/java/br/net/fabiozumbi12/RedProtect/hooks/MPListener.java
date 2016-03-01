@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect.hooks;
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Golem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -52,7 +53,7 @@ public class MPListener implements Listener{
     			return;
     		}
     		
-            if (e1 instanceof Animals || e1 instanceof Villager) {   
+            if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {   
             	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetEntity) {
             		MyPetEntity mp2 = (MyPetEntity)e2;
                     Player p2 = mp2.getOwner().getPlayer();

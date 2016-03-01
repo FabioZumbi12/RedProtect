@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,8 +27,8 @@ import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -41,7 +42,7 @@ import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class RPEntityListener implements Listener{
-	
+		
 	public RPEntityListener(){
 		RedProtect.logger.debug("Loaded RPEntityListener...");
 	}
@@ -78,7 +79,7 @@ public class RPEntityListener implements Listener{
                 event.setCancelled(true);
             }
         }
-        if (e instanceof Animals || e instanceof Golem) {
+        if (e instanceof Animals || e instanceof Villager || e instanceof Golem) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives() && 
@@ -93,7 +94,8 @@ public class RPEntityListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent e) {
         if (e.isCancelled()) {
             return;
@@ -157,13 +159,17 @@ public class RPEntityListener implements Listener{
                 if (e2 instanceof Player) {                	
                     Player p2 = (Player)e2; 
                     if (r1 != null) {
-                    	if (p2.getItemInHand().getType().equals(Material.EGG) && !r1.canProtectiles(p2)){
+                    	Material mp2 = p2.getItemInHand().getType();
+                    	if (Bukkit.getVersion().startsWith("1.9")){
+                    		mp2 = p2.getItemOnCursor().getType();
+                        } 
+                    	if (mp2.equals(Material.EGG) && !r1.canProtectiles(p2)){
                     		e.setCancelled(true);
                     		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                             return;
                     	}
                         if (r2 != null) {
-                        	if (p2.getItemInHand().getType().equals(Material.EGG) && !r2.canProtectiles(p2)){
+                        	if (mp2.equals(Material.EGG) && !r2.canProtectiles(p2)){
                         		e.setCancelled(true);
                         		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                                 return;
@@ -274,7 +280,7 @@ public class RPEntityListener implements Listener{
 		Location l = e.getRightClicked().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
 		Entity et = e.getRightClicked();
-		if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager)) {
+		if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager || et instanceof Golem)) {
 			if (et instanceof Tameable){
 				Tameable tam = (Tameable) et;
 				if (tam.isTamed() && tam.getOwner() != null && tam.getOwner().getName().equals(p.getName())){

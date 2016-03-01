@@ -150,7 +150,8 @@ public class RPBlockListener implements Listener{
         RPLang.sendMessage(p, RPLang.get("regionbuilder.signerror") + ": " + error);
     }
     
-    @EventHandler(priority = EventPriority.HIGH)
+    @SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent e) {
     	RedProtect.logger.debug("BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
@@ -161,6 +162,9 @@ public class RPBlockListener implements Listener{
         Block b = e.getBlockPlaced();       
         World w = p.getWorld();
         Material m = p.getItemInHand().getType();
+        if (Bukkit.getVersion().startsWith("1.9")){
+        	m = p.getItemOnCursor().getType();
+        }       
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
         
@@ -168,7 +172,7 @@ public class RPBlockListener implements Listener{
         	return;
         }
         
-    	if (r != null && !r.canMinecart(p) && p.getItemInHand().getType().name().contains("MINECART")){
+    	if (r != null && !r.canMinecart(p) && m.name().contains("MINECART")){
     		RPLang.sendMessage(p, "blocklistener.region.cantplace");
             e.setCancelled(true);
         	return;
@@ -528,7 +532,7 @@ public class RPBlockListener implements Listener{
 		World w = e.getBlock().getWorld();
 		Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
 		Block piston = e.getBlock();
-		if (!Bukkit.getBukkitVersion().startsWith("1.8.")){
+		if (!Bukkit.getBukkitVersion().startsWith("1.8.") && !Bukkit.getBukkitVersion().startsWith("1.9.")){
 			Block b = e.getRetractLocation().getBlock();
 			RedProtect.logger.debug("BlockPistonRetractEvent not 1.8 event - Block: "+b.getType().name());
 			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());

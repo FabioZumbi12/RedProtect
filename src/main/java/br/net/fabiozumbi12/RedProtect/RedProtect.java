@@ -75,7 +75,7 @@ public class RedProtect extends JavaPlugin {
 	static boolean Dyn;
 	public static Dynmap dynmap;
 	public static PlayerHandler PvPmanager;
-	public static Economy econ;    
+	public static Economy econ;
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -116,9 +116,10 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPAddProtection(), this);   
             
             String v = RedProtect.serv.getBukkitVersion();
-            if (v.contains("1.8")){
+            if (v.contains("1.8") || v.contains("1.9")){
             	serv.getPluginManager().registerEvents(new RPMine18(), this);
-            }  
+            }
+            
             getCommand("RedProtect").setExecutor(new RPCommands());
             
             if (Vault){

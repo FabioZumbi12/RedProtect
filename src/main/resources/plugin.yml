@@ -1,9 +1,9 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.5.2
+version: 6.5.3
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
-softdepend: [WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap]
+softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap]
 url: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/
 commands:
   RedProtect:
@@ -153,6 +153,7 @@ permissions:
       redprotect.bypass.addleader: true
       redprotect.magicwand: true
       redprotect.update: true
+      redprotect.regen: true
       redprotect.signspy: true
       redprotect.eco.use: true
       redprotect.eco.admin: true

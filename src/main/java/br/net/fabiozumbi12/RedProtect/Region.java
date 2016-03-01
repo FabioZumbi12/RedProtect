@@ -1053,7 +1053,7 @@ public class Region implements Serializable{
 		//As Whitelist
 		String[] cmds = flags.get("allow-cmds").toString().replace(" ", "").split(",");
 		for (String cmd:cmds){
-			if (cmd.equalsIgnoreCase(Command)){
+			if (cmd.replace("/", "").equalsIgnoreCase(Command)){
 				return true;
 			}
 		}
@@ -1069,7 +1069,7 @@ public class Region implements Serializable{
 		//As BlackList
 		String[] cmds = flags.get("deny-cmds").toString().replace(" ", "").split(",");
 		for (String cmd:cmds){
-			if (cmd.equalsIgnoreCase(Command)){
+			if (cmd.replace("/", "").equalsIgnoreCase(Command)){
 				return false;
 			}
 		}		
