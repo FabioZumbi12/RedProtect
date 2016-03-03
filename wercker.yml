@@ -28,7 +28,8 @@ deploy:
     steps:
         - script:
             name: List Output
-            code: ls $WERCKER_OUTPUT_DIR
+            code: |
+              ls $WERCKER_OUTPUT_DIR
         - github-upload-asset:
             token: $GIT_TOKEN
             file: $WERCKER_OUTPUT_DIR/*.jar
