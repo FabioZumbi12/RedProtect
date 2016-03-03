@@ -26,8 +26,10 @@ build:
           echo "hello world!"
 # The steps that will be executed in the deploy pipeline
 deploy:
-  box: nodesource/node:trusty
   steps:
-    - script:
-        name: testing deploy
-        code: node --version
+    - install-packages:
+        packages: git ssh-client
+    - lukevivier/gh-pages@0.2.1:
+        token: $GIT_TOKEN
+        domain: fabiozumbi12.github.io/RedProtect
+        basedir: public
