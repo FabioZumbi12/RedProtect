@@ -29,7 +29,7 @@ build:
         name: Check Builds
         code: |
           ls -la $WERCKER_SOURCE_DIR
-          ls -la ../cache
+          ls -la ../cache/wercker
 deploy:
     steps:
         - github-upload-asset:
