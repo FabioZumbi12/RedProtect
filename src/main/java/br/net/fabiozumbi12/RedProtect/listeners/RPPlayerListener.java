@@ -131,15 +131,9 @@ public class RPPlayerListener implements Listener{
     public void onPlayerInteract(PlayerInteractEvent event) {
     	RedProtect.logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
     	
-    	//event.setCancelled(true);
-    	
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
         ItemStack itemInHand = event.getItem();
-        
-        if (itemInHand != null){
-        	RedProtect.logger.severe("Item in Hand: "+itemInHand.getType().name());
-        }        
         
         Location l = null;
         
@@ -156,11 +150,7 @@ public class RPPlayerListener implements Listener{
         }
         
         Region r = RedProtect.rm.getTopRegion(l);
-        /*ItemStack itemInHand = p.getItemInHand().clone();
-        if (is19){
-        	itemInHand = p.getInventory().getItemInMainHand().clone();
-        }*/
-        
+                
         //check if is a gui item
         if (RPUtil.RemoveGuiItem(itemInHand)){
         	if (!is19){
@@ -382,15 +372,17 @@ public class RPPlayerListener implements Listener{
                 	      event.setCancelled(true);
                 	      return;
                 } 
-                else if ((itemInHand != null && !itemInHand.equals(Material.AIR)) && !r.canBuild(p) && (itemInHand.equals(Material.FLINT_AND_STEEL) || 
-                		itemInHand.equals(Material.WATER_BUCKET) || 
-                		itemInHand.equals(Material.BUCKET) || 
-                		itemInHand.equals(Material.LAVA_BUCKET) || 
-                		itemInHand.equals(Material.ITEM_FRAME) || 
-                		itemInHand.equals(Material.PAINTING))) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
-                    event.setUseItemInHand(Event.Result.DENY);
+                else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && 
+                		(itemInHand.getType().equals(Material.FLINT_AND_STEEL) || 
+                		itemInHand.getType().equals(Material.WATER_BUCKET) || 
+                		itemInHand.getType().equals(Material.BUCKET) || 
+                		itemInHand.getType().equals(Material.LAVA_BUCKET) || 
+                		itemInHand.getType().equals(Material.ITEM_FRAME) || 
+                		itemInHand.getType().equals(Material.PAINTING))) {
+                    RPLang.sendMessage(p, "playerlistener.region.cantuse");                    
                     event.setCancelled(true);
+                    event.setUseItemInHand(Event.Result.DENY);
+                    event.setUseInteractedBlock(Event.Result.DENY);
                     return;
                 }                    
                 else if (b != null && !r.allowMod(p) && !RPUtil.isBukkitBlock(b)){

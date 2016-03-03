@@ -49,7 +49,6 @@ public class RPConfig{
     	            File globalflags = new File(RedProtect.pathglobalFlags);
     	            File protections = new File(RedProtect.protections);
     	            File logs = new File(RedProtect.pathLogs);
-
     	            
     	            if (!main.exists()) {
     	                main.mkdir();
