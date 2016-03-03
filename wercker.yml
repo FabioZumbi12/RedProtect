@@ -19,17 +19,9 @@ build:
     # Steps make up the actions in your pipeline
     # Read more about steps on our dev center:
     # http://devcenter.wercker.com/docs/steps/index.html
-  steps:
+  after-steps:
     - script:
-        name: echo
+        name: Download Build Result
         code: |
-          echo "hello world!"
-# The steps that will be executed in the deploy pipeline
-deploy:
-  steps:
-    - install-packages:
-        packages: git ssh-client
-    - lukevivier/gh-pages@0.2.1:
-        token: $GIT_TOKEN
-        domain: fabiozumbi12.github.io/RedProtect
-        basedir: ./public
+          ls -la ./samples/build/outputs
+          cp ./samples/build/outputs/*.jar $WERCKER_REPORT_ARTIFACTS_DIR
