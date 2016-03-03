@@ -3,7 +3,7 @@ jdk:
   - openjdk7
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
+  api_key: "45f73933830150c6d4709b52444e4b2cd1cd7303"
   file: "Redprotect-SnapShot.jar"
   skip_cleanup: true
   on:
