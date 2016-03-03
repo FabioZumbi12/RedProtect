@@ -23,8 +23,9 @@ build:
     - script:
         name: Make Output Dir
         code: |
-          go build
-          mkdir -p $WERCKER_SOURCE_DIR/target
+          wercker build
+          wercker deploy --deploy-target rolling-update
+          mkdir -p $WERCKER_SOURCE_DIR
   after-steps:
     - script:
         name: Check Builds
