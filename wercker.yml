@@ -28,7 +28,7 @@ build:
     - script:
         name: Check Builds
         code: |
-          ls -la $WERCKER_STEP_ROOT/artifacts
+          ls -la ./target
 deploy:
     steps:
         - github-upload-asset:
