@@ -28,6 +28,7 @@ build:
     - script:
         name: Check Builds
         code: |
+          ls -la $WERCKER_SOURCE_DIR
           ls -la $WERCKER_SOURCE_DIR/target
 deploy:
     steps:
