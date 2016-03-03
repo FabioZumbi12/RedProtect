@@ -19,9 +19,9 @@ build:
     # Steps make up the actions in your pipeline
     # Read more about steps on our dev center:
     # http://devcenter.wercker.com/docs/steps/index.html
-  after-steps:
-    - script:
-        name: Download Build Result
-        code: |
-          ls -la ./samples/build/outputs
-          cp ./samples/build/outputs/*.jar $WERCKER_REPORT_ARTIFACTS_DIR
+deploy:
+    steps:
+        - github-upload-asset:
+            token: $GITHUB_TOKEN
+            file: build.tgz
+            release_id: 1
