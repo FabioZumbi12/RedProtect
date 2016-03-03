@@ -28,5 +28,8 @@ deploy:
     steps:
         - github-upload-asset:
             token: $GIT_TOKEN
-            file: $WERCKER_OUTPUT_DIR/RedProtect.jar
+            file: $WERCKER_OUTPUT_DIR/*.jar
             release_id: 1
+        - script:
+            name: List Output
+            code: ls $WERCKER_OUTPUT_DIR
