@@ -2,7 +2,7 @@
 # Docker Hub https://registry.hub.docker.com/_/debian/
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: wercker
+box: debian
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
 # services:
@@ -29,7 +29,7 @@ build:
         name: Check Builds
         code: |
           ls -la $WERCKER_SOURCE_DIR
-          ls -la ../cache/wercker
+          ls -la $WERCKER_REPORT_ARTIFACTS_DIR
 deploy:
     steps:
         - github-upload-asset:
