@@ -21,14 +21,14 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: echo
+        name: Make Output Dir
         code: |
-          echo "hello world!"
+          mkdir -p $WERCKER_SOURCE_DIR/target
   after-steps:
     - script:
         name: Check Builds
         code: |
-          ls -la ./target
+          ls -la $WERCKER_SOURCE_DIR/target
 deploy:
     steps:
         - github-upload-asset:
