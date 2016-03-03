@@ -23,6 +23,7 @@ build:
     - script:
         name: Make Output Dir
         code: |
+          go build
           mkdir -p $WERCKER_SOURCE_DIR/target
   after-steps:
     - script:
