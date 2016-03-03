@@ -1,3 +1,10 @@
 language: java
 jdk:
   - openjdk7
+deploy:
+  provider: releases
+  api_key: "GITHUB OAUTH TOKEN"
+  file: "Redprotect-SnapShot.jar"
+  skip_cleanup: true
+  on:
+    tags: true
