@@ -24,12 +24,13 @@ build:
         name: echo
         code: |
           echo "hello world!"
+  after-steps:
+    - script:
+        name: Check Builds
+        code: |
+          ls -la $WERCKER_OUTPUT_DIR
 deploy:
     steps:
-        - script:
-            name: List Output
-            code: |
-              ls $WERCKER_OUTPUT_DIR
         - github-upload-asset:
             token: $GIT_TOKEN
             file: $WERCKER_OUTPUT_DIR/*.jar
