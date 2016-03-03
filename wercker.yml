@@ -27,6 +27,6 @@ build:
 deploy:
     steps:
         - github-upload-asset:
-            token: $GITHUB_TOKEN
+            token: $GIT_TOKEN
             file: build.tgz
             release_id: 1
