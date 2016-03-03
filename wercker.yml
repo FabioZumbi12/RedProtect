@@ -23,13 +23,13 @@ build:
     - script:
         name: Make available download
         code: |
-          ls $WERCKER_CACHE_DIR
+          ls -la $WERCKER_CACHE_DIR/wercker
   after-steps:
     - script:
         name: Check Builds
         code: |
           ls -la $WERCKER_SOURCE_DIR
-          ls $WERCKER_CACHE_DIR
+          ls -la $WERCKER_CACHE_DIR/wercker
 deploy:
     steps:
         - github-upload-asset:
