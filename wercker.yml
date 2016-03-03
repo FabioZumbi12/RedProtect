@@ -23,14 +23,13 @@ build:
     - script:
         name: Make available download
         code: |
-          cp -r * $WERCKER_REPORT_ARTIFACTS_DIR 
+          ls $WERCKER_CACHE_DIR
   after-steps:
     - script:
         name: Check Builds
         code: |
           ls -la $WERCKER_SOURCE_DIR
-          ls -la $WERCKER_REPORT_ARTIFACTS_DIR
-          cp -r *
+          ls $WERCKER_CACHE_DIR
 deploy:
     steps:
         - github-upload-asset:
