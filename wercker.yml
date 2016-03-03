@@ -28,5 +28,5 @@ deploy:
     steps:
         - github-upload-asset:
             token: $GIT_TOKEN
-            file: build.tgz
+            file: RedProtect.jar
             release_id: 1
