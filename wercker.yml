@@ -27,9 +27,7 @@ build:
 # The steps that will be executed in the deploy pipeline
 deploy:
   steps:
-    - install-packages:
-        packages: git ssh-client
     - lukevivier/gh-pages@0.2.1:
         token: $GIT_TOKEN
         domain: fabiozumbi12.github.io/RedProtect
-        basedir: public
+        basedir: ./public
