@@ -22,12 +22,61 @@
 			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
 		</dependency> -->
 		<dependency>
-			<groupId>AsyncWorldEdit</groupId>
+			<groupId>repo.libs</groupId>
 			<artifactId>AsyncWorldEdit</artifactId>
 			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/lib/AsyncWorldEdit.jar</systemPath>
+		</dependency>		
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>worldedit</artifactId>
+			<version>v6.1</version>
 		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>BossBarAPI</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>MyChunk</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>MyPet131</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>MyPet121</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>mcMMO</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>SkillAPI</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>MagicCarpet</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>PvPManager</artifactId>
+			<version>v1</version>
+		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<version>v1</version>
+		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>WorldEdit</groupId>
 			<artifactId>WorldEdit</artifactId>
@@ -58,7 +107,7 @@
 		</dependency>
 		<dependency>
 			<groupId>MyPet1.2</groupId>
-			<artifactId>MyPet1.2</artifactId>
+			<artifactId>MyPet1.2.1</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>${pom.basedir}/lib/MyPet-1.8-1.2.1-SNAPSHOT.jar</systemPath>
@@ -83,26 +132,15 @@
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>${pom.basedir}/lib/MagicCarpet.jar</systemPath>
-		</dependency>		
-		<dependency>
-           <groupId>net.milkbowl.vault</groupId>
-           <artifactId>VaultAPI</artifactId>            
-           <version>LATEST</version>
-           <scope>provided</scope>
-        </dependency>    
+		</dependency>	
+		    
         <dependency>
 			<groupId>PvPManager</groupId>
 			<artifactId>PvPManager</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>${pom.basedir}/lib/PvPManager.jar</systemPath>
-		</dependency>
-		<dependency>
-            <groupId>net.ess3</groupId>
-            <artifactId>EssentialsX</artifactId>
-            <version>2.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+		</dependency>		
         <dependency>
 			<groupId>GriefPrevention</groupId>
 			<artifactId>GriefPrevention</artifactId>
@@ -110,6 +148,19 @@
 			<scope>system</scope>
 			<systemPath>${pom.basedir}/lib/GriefPrevention.jar</systemPath>
 		</dependency>
+		 -->
+		<dependency>
+           <groupId>net.milkbowl.vault</groupId>
+           <artifactId>VaultAPI</artifactId>            
+           <version>LATEST</version>
+           <scope>provided</scope>
+        </dependency>
+		<dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>dynmap</groupId>
 			<artifactId>dynmap</artifactId>
@@ -120,6 +171,11 @@
   </dependencies>
   
   <repositories>
+     <repository>
+            <id>libs-repo</id>
+            <url>http://areaz12server.net.br/maven/</url>
+     </repository>
+     
      <repository>
 	        <id>maven-restlet</id>
 	        <name>Public online Restlet repository</name>
