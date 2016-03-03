@@ -21,9 +21,9 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: Make Output Dir
+        name: Make available download
         code: |
-          mkdir -p $WERCKER_SOURCE_DIR
+          cp -r * $WERCKER_REPORT_ARTIFACTS_DIR 
   after-steps:
     - script:
         name: Check Builds
