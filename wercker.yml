@@ -28,7 +28,7 @@ build:
     - script:
         name: Check Builds
         code: |
-          ls -la $WERCKER_OUTPUT_DIR
+          ls -la $WERCKER_REPORT_ARTIFACTS_DIR
 deploy:
     steps:
         - github-upload-asset:
