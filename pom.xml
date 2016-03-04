@@ -193,19 +193,49 @@
      </repository>
 
   </repositories>
+
   <build>
-    <finalName>${project.name}</finalName>
+    <finalName>${project.name}-${project.version}-SNAPSHOT</finalName>
     <defaultGoal>clean package install</defaultGoal>
     <plugins>
-        <plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
-        </configuration>
+        </configuration>        
       </plugin>
+      
+      <plugin>  
+        <groupId>org.apache.maven.plugins</groupId>  
+        <artifactId>maven-resources-plugin</artifactId>  
+        <version>2.4.3</version>  
+        <executions>  
+         <execution>
+          <id>copy-resources</id>
+          <phase>validate</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>          
+          <outputDirectory>${project.basedir}/release</outputDirectory>
+          <resources>
+            <resource>
+              <directory>target/</directory>
+              <includes>
+                <include>${build.finalName}.jar</include>
+              </includes>
+              <filtering>false</filtering>
+            </resource>
+          </resources>
+          </configuration>
+        </execution>
+      </executions>  
+     </plugin> 
+     
     </plugins>
   </build>
 </project>
