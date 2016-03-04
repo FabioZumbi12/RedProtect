@@ -76,6 +76,11 @@
 			<artifactId>GriefPrevention</artifactId>
 			<version>v1</version>
 		</dependency>
+		<dependency>
+			<groupId>repo.libs</groupId>
+			<artifactId>dynmap-api-2.3</artifactId>
+			<version>v1</version>
+		</dependency>
 		<!-- 
 		<dependency>
 			<groupId>WorldEdit</groupId>
@@ -161,13 +166,6 @@
             <version>2.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>dynmap</groupId>
-			<artifactId>dynmap</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/lib/dynmap-api-2.3-SNAPSHOT.jar</systemPath>
-		</dependency>
   </dependencies>
   
   <repositories>
