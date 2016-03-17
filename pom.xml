@@ -41,14 +41,14 @@
 			<artifactId>MyChunk</artifactId>
 			<version>v1</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>repo.libs</groupId>
 			<artifactId>MyPet131</artifactId>
 			<version>v1</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>repo.libs</groupId>
-			<artifactId>MyPet121</artifactId>
+			<artifactId>MyPet200</artifactId>
 			<version>v1</version>
 		</dependency>
 		<dependency>

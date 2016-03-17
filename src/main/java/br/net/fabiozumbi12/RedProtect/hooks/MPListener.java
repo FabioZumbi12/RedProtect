@@ -16,28 +16,28 @@ import org.bukkit.potion.PotionEffect;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
-import de.Keyle.MyPet.api.entity.MyPetEntity;
-import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.skill.skills.implementation.Fire;
-import de.Keyle.MyPet.skill.skills.implementation.Poison;
-import de.Keyle.MyPet.skill.skills.implementation.Ranged;
+import de.Keyle.MyPet.api.entity.MyPet.PetState;
+import de.Keyle.MyPet.api.entity.MyPetMinecraftEntity;
+import de.Keyle.MyPet.skill.skills.Fire;
+import de.Keyle.MyPet.skill.skills.Poison;
+import de.Keyle.MyPet.skill.skills.Ranged;
 
 public class MPListener implements Listener{
 	
     
     @EventHandler
-    public void onEntityDamageByPet( EntityDamageEvent e) {
+    public void onEntityDamageByPet(EntityDamageEvent e) {
     	if (e.isCancelled()) {
             return;
         }
     	
     	Entity ent = e.getEntity();
-        if (ent instanceof MyPetEntity){
+        if (ent instanceof MyPetMinecraftEntity){
         	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
         	if (r != null && r.flagExists("invincible")){
         		if (r.getFlagBool("invincible")){
         			e.setCancelled(true);
-        			((MyPetEntity)ent).setTarget(null);
+        			((MyPetMinecraftEntity)ent).forgetTarget();
         		}
         	}        	
         }
@@ -54,8 +54,8 @@ public class MPListener implements Listener{
     		}
     		
             if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {   
-            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetEntity) {
-            		MyPetEntity mp2 = (MyPetEntity)e2;
+            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetMinecraftEntity) {
+            		MyPetMinecraftEntity mp2 = (MyPetMinecraftEntity)e2;
                     Player p2 = mp2.getOwner().getPlayer();
                     LivingEntity liv = (LivingEntity) e1;                    
                     if (!r1.canBuild(p2) || !r1.canInteractPassives(p2)) {
@@ -70,9 +70,9 @@ public class MPListener implements Listener{
             	}
         	}
             
-            if (e1 instanceof Player) {   
-            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetEntity) {
-            		MyPetEntity mp2 = (MyPetEntity)e2;
+            if (e1 instanceof Player) {
+            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetMinecraftEntity) {
+            		MyPetMinecraftEntity mp2 = (MyPetMinecraftEntity)e2;
                     Player p2 = mp2.getOwner().getPlayer();
                     if (!r1.canPVP(p2)) {
                         e.setCancelled(true);

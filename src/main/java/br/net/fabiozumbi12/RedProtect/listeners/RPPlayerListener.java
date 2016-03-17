@@ -76,10 +76,10 @@ import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
-import de.Keyle.MyPet.api.entity.MyPetEntity;
+import de.Keyle.MyPet.MyPetApi;
+import de.Keyle.MyPet.api.entity.MyPet.PetState;
+import de.Keyle.MyPet.api.entity.MyPetMinecraftEntity;
 import de.Keyle.MyPet.api.player.MyPetPlayer;
-import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.repository.PlayerList;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener{
@@ -450,8 +450,8 @@ public class RPPlayerListener implements Listener{
             return;
         } 
         
-        else if (RedProtect.MyPet && e instanceof MyPetEntity){
-        	if (((MyPetEntity)e).getOwner().getPlayer().equals(p)){
+        else if (RedProtect.MyPet && e instanceof MyPetMinecraftEntity){
+        	if (((MyPetMinecraftEntity)e).getOwner().getPlayer().equals(p)){
         		return;
         	}
         }
@@ -802,6 +802,17 @@ public class RPPlayerListener implements Listener{
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
         	}
             
+            //Mypet Flag
+            if (RedProtect.MyPet && !r.canPet(p)){
+            	MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);  
+            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
+                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
+                		mpp.getMyPet().removePet(false);
+                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
+                	}  
+            	}          	        	      			
+        	} 
+            
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
         		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
@@ -1126,26 +1137,16 @@ public class RPPlayerListener implements Listener{
         	}
     	} 
         
-        //Mypet Flag
+        /*//Mypet Flag
         if (RedProtect.MyPet && !r.canPet(p)){
-            if (Integer.parseInt(Bukkit.getPluginManager().getPlugin("MyPet").getDescription().getVersion().replace(".", "")) <= 124){
-            	de.Keyle.MyPet.util.player.MyPetPlayer mpp = de.Keyle.MyPet.util.player.MyPetPlayer.getMyPetPlayer(p.getName()); 
-            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
-                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
-                		mpp.getMyPet().removePet(false);
-                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
-                	}  
-            	}                	
-            } else {
-            	MyPetPlayer mpp = PlayerList.getMyPetPlayer(p);  
-            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
-                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
-                		mpp.getMyPet().removePet(false);
-                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
-                	}  
-            	}
-            }            	        	      			
-    	}        
+        	MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);  
+        	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
+            	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
+            		mpp.getMyPet().removePet(false);
+            		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
+            	}  
+        	}          	        	      			
+    	}*/   
         
     	//enter Gamemode flag
     	if (r.flagExists("gamemode")){

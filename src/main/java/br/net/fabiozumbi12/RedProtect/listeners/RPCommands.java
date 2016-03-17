@@ -1551,6 +1551,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         if (checkCmd(args[0], "flag")) {
         	Region r = RedProtect.rm.getTopRegion(player.getLocation());
+        	if (r == null){
+        		RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+        		return true;
+        	}
         	
             if (args.length == 2) {            	
             	if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
@@ -1841,7 +1845,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             final Player pVictim = RedProtect.serv.getPlayer(sVictim);
             
             final String VictimUUID = RPUtil.PlayerToUUID(sVictim);
-            if (pVictim != null && !pVictim.isOnline() && !p.hasPermission("redprotect.bypass.addleader")){
+            if ((pVictim == null || pVictim != null && !pVictim.isOnline()) && !p.hasPermission("redprotect.bypass.addleader")){
         		RPLang.sendMessage(p,RPLang.get("cmdmanager.noplayer.online").replace("{player}", sVictim));
             	return;
         	}

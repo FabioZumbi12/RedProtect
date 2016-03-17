@@ -28,16 +28,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import de.Keyle.MyPet.api.entity.MyPet.PetState;
+import de.Keyle.MyPet.api.entity.MyPetMinecraftEntity;
+import de.Keyle.MyPet.skill.skills.Fire;
+import de.Keyle.MyPet.skill.skills.Poison;
+import de.Keyle.MyPet.skill.skills.Ranged;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
-import de.Keyle.MyPet.api.entity.MyPetEntity;
-import de.Keyle.MyPet.entity.types.MyPet.PetState;
-import de.Keyle.MyPet.skill.skills.implementation.Fire;
-import de.Keyle.MyPet.skill.skills.implementation.Poison;
-import de.Keyle.MyPet.skill.skills.implementation.Ranged;
 
 @SuppressWarnings("deprecation")
 public class RPMine18 implements Listener{
@@ -148,8 +148,8 @@ public class RPMine18 implements Listener{
             }
             
             if (e1 instanceof ArmorStand && RedProtect.MyPet) {   
-            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetEntity) {
-            		MyPetEntity mp2 = (MyPetEntity)e2;
+            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetMinecraftEntity) {
+            		MyPetMinecraftEntity mp2 = (MyPetMinecraftEntity)e2;
                     if (!RPConfig.getGlobalFlag(loc.getWorld().getName()+".build")) {
                         e.setCancelled(true);
                         mp2.getMyPet().setStatus(PetState.Despawned);
@@ -169,8 +169,8 @@ public class RPMine18 implements Listener{
         }
         
         if (e1 instanceof ArmorStand && RedProtect.MyPet) {   
-        	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetEntity) {
-        		MyPetEntity mp2 = (MyPetEntity)e2;
+        	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetMinecraftEntity) {
+        		MyPetMinecraftEntity mp2 = (MyPetMinecraftEntity)e2;
                 Player p2 = mp2.getOwner().getPlayer();
                 if (!r1.canBuild(p2)) {
                     e.setCancelled(true);
