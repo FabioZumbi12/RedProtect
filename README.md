@@ -6,3 +6,8 @@ Full features and description on BukkitDev: http://dev.bukkit.org/bukkit-plugins
 And now on Spigot too: https://www.spigotmc.org/resources/redprotect.15841/
 
 See the WIKI for Help with commands and permissions: https://github.com/FabioZumbi12/RedProtect/wiki
+
+#Sponge Version: 
+
+Theres a release of this same plugin as is on Bukkit, but for Sponge.
+Try it now: https://forums.spongepowered.org/t/bukkit-port-redprotect-6-4-0-alpha/11846/
