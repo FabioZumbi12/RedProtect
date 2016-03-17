@@ -21,18 +21,6 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: Make available download
+        name: Download SNAPSHOT
         code: |
-          ls -la $WERCKER_CACHE_DIR/wercker/aptupdated
-  after-steps:
-    - script:
-        name: Check Builds
-        code: |
-          ls -la $WERCKER_SOURCE_DIR
-          ls -la $WERCKER_CACHE_DIR/wercker/aptupdated
-deploy:
-    steps:
-        - github-upload-asset:
-            token: $GIT_TOKEN
-            file: $WERCKER_OUTPUT_DIR/*.jar
-            release_id: 1
+          cp -r $WERCKER_SOURCE_DIR/release/*.jar $WERCKER_REPORT_ARTIFACTS_DIR
