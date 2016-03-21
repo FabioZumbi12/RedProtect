@@ -1,60 +1,33 @@
 package br.net.fabiozumbi12.RedProtect.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import br.net.fabiozumbi12.RedProtect.*;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
+import de.Keyle.MyPet.MyPetApi;
+import de.Keyle.MyPet.api.entity.MyPet.PetState;
+import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
+import de.Keyle.MyPet.api.entity.MyPetMinecraftEntity;
+import de.Keyle.MyPet.api.player.MyPetPlayer;
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -64,22 +37,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.inventivetalent.bossbar.BossBarAPI;
 
-import br.net.fabiozumbi12.RedProtect.RPContainer;
-import br.net.fabiozumbi12.RedProtect.RPDoor;
-import br.net.fabiozumbi12.RedProtect.RPUtil;
-import br.net.fabiozumbi12.RedProtect.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Region;
-import br.net.fabiozumbi12.RedProtect.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
-
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-
-import de.Keyle.MyPet.MyPetApi;
-import de.Keyle.MyPet.api.entity.MyPet.PetState;
-import de.Keyle.MyPet.api.entity.MyPetMinecraftEntity;
-import de.Keyle.MyPet.api.player.MyPetPlayer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener{
@@ -450,8 +410,8 @@ public class RPPlayerListener implements Listener{
             return;
         } 
         
-        else if (RedProtect.MyPet && e instanceof MyPetMinecraftEntity){
-        	if (((MyPetMinecraftEntity)e).getOwner().getPlayer().equals(p)){
+        else if (RedProtect.MyPet && e instanceof MyPetBukkitEntity){
+        	if (((MyPetBukkitEntity)e).getOwner().getPlayer().equals(p)){
         		return;
         	}
         }
@@ -803,15 +763,15 @@ public class RPPlayerListener implements Listener{
         	}
             
             //Mypet Flag
-            if (RedProtect.MyPet && !r.canPet(p)){
-            	MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);  
-            	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
-                	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
-                		mpp.getMyPet().removePet(false);
-                		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
-                	}  
-            	}          	        	      			
-        	} 
+			if (RedProtect.MyPet && !r.canPet(p)) {
+				if (MyPetApi.getPlayerManager().isMyPetPlayer(p)) {
+					MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);
+					if (mpp.hasMyPet() && mpp.getMyPet().getStatus() == PetState.Here) {
+						mpp.getMyPet().removePet();
+						RPLang.sendMessage(p, "playerlistener.region.cantpet");
+					}
+				}
+			}
             
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
@@ -1135,19 +1095,21 @@ public class RPPlayerListener implements Listener{
     			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
     			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
         	}
-    	} 
-        
-        /*//Mypet Flag
-        if (RedProtect.MyPet && !r.canPet(p)){
-        	MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);  
-        	if (mpp != null && mpp.hasMyPet() && mpp.getMyPet().getStatus() != null){
-            	if (mpp.getMyPet().getStatus().equals(PetState.Here)){
-            		mpp.getMyPet().removePet(false);
-            		RPLang.sendMessage(p, "playerlistener.region.cantpet");	
-            	}  
-        	}          	        	      			
-    	}*/   
-        
+    	}
+
+		/*
+		//Mypet Flag
+        if (RedProtect.MyPet && !r.canPet(p)) {
+			if (MyPetApi.getPlayerManager().isMyPetPlayer(p)) {
+				MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);
+				if (mpp.hasMyPet() && mpp.getMyPet().getStatus() == PetState.Here) {
+					mpp.getMyPet().removePet();
+					RPLang.sendMessage(p, "playerlistener.region.cantpet");
+				}
+			}
+		}
+		*/
+
     	//enter Gamemode flag
     	if (r.flagExists("gamemode")){
     		p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));

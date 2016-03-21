@@ -1,25 +1,16 @@
 package br.net.fabiozumbi12.RedProtect.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import br.net.fabiozumbi12.RedProtect.RPContainer;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import net.digiex.magiccarpet.Carpet;
 import net.digiex.magiccarpet.MagicCarpet;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -28,16 +19,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import de.Keyle.MyPet.api.entity.MyPet.PetState;
-import de.Keyle.MyPet.api.entity.MyPetMinecraftEntity;
-import de.Keyle.MyPet.skill.skills.Fire;
-import de.Keyle.MyPet.skill.skills.Poison;
-import de.Keyle.MyPet.skill.skills.Ranged;
-import br.net.fabiozumbi12.RedProtect.RPContainer;
-import br.net.fabiozumbi12.RedProtect.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Region;
-import br.net.fabiozumbi12.RedProtect.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.config.RPLang;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class RPMine18 implements Listener{
@@ -146,17 +130,6 @@ public class RPMine18 implements Listener{
                     }
                 }                  
             }
-            
-            if (e1 instanceof ArmorStand && RedProtect.MyPet) {   
-            	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetMinecraftEntity) {
-            		MyPetMinecraftEntity mp2 = (MyPetMinecraftEntity)e2;
-                    if (!RPConfig.getGlobalFlag(loc.getWorld().getName()+".build")) {
-                        e.setCancelled(true);
-                        mp2.getMyPet().setStatus(PetState.Despawned);
-                        return;
-                    }                
-            	}
-        	}
             return;
 		} 
 		
@@ -167,20 +140,7 @@ public class RPMine18 implements Listener{
             	return;
             }                                  
         }
-        
-        if (e1 instanceof ArmorStand && RedProtect.MyPet) {   
-        	if (e2 instanceof Fire || e2 instanceof Poison || e2 instanceof Ranged || e2 instanceof MyPetMinecraftEntity) {
-        		MyPetMinecraftEntity mp2 = (MyPetMinecraftEntity)e2;
-                Player p2 = mp2.getOwner().getPlayer();
-                if (!r1.canBuild(p2)) {
-                    e.setCancelled(true);
-                    RPLang.sendMessage(p2, "mplistener.cantdo");
-                    mp2.getMyPet().setStatus(PetState.Despawned);
-                    return;
-                }                
-        	}
-    	}
-	} 
+	}
     
     @EventHandler
     public void onInteractAS(PlayerInteractEvent e){
