@@ -44,6 +44,7 @@ import br.net.fabiozumbi12.RedProtect.Updater;
 import br.net.fabiozumbi12.RedProtect.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 @SuppressWarnings("deprecation")
@@ -295,8 +296,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		
         	}
                
-        	if (args.length == 3){
-        		
+        	if (args.length == 3){        		
         		//rp regen <region> <world>
         		if (args[0].equalsIgnoreCase("regen")) {
         			if (!RedProtect.WE){
@@ -312,7 +312,44 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
         				return true;
         			}
-        			WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+        			
+        			if (RedProtect.AWE){
+        				AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+        			} else {
+        				WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+        			}        			
+        			return true;
+        		}
+        		
+        		//rp undo <region> <world>
+        		if (args[0].equalsIgnoreCase("undo")) {
+        			if (!RedProtect.WE){
+        				return true;
+        			}
+        			World w = RedProtect.serv.getWorld(args[2]);
+        			if (w == null){
+                    	sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+                    	return true;
+                    }
+        			Region r = RedProtect.rm.getRegion(args[1], w);
+        			if (r == null){
+        				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
+        				return true;
+        			}
+        			
+        			if (RedProtect.AWE){
+        				if (AWEListener.undo(r.getID())){
+        					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+        				} else {
+        					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+        				}        				      				
+        			} else {
+                        if (WEListener.undo(r.getID())){
+                        	RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+        				} else {
+        					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+        				} 
+        			}        			
         			return true;
         		}
         		
@@ -496,7 +533,38 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    			if (RedProtect.AWE){
+    				AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+    			} else {
+    				WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    			} 
+    			return true;
+    		}
+    		
+    		//rp undo
+    		if (args[0].equalsIgnoreCase("undo") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			Region r = RedProtect.rm.getTopRegion(player.getLocation());
+    			if (r == null){
+    				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+    				return true;
+    			}
+    			
+    			if (RedProtect.AWE){
+    				if (AWEListener.undo(r.getID())){
+    					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+    				} else {
+    					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+    				}        				      				
+    			} else {
+                    if (WEListener.undo(r.getID())){
+                    	RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+    				} else {
+    					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+    				} 
+    			}        			
     			return true;
     		}
     		
@@ -937,7 +1005,43 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);    			
+    			if (RedProtect.AWE){
+    				AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+    			} else {
+    				WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    			}   			
+    			return true;
+    		}
+    		
+    		//rp undo <region> <world>
+    		if (args[0].equalsIgnoreCase("undo") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			World w = RedProtect.serv.getWorld(args[2]);
+    			if (w == null){
+                	sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+                	return true;
+                }
+    			Region r = RedProtect.rm.getRegion(args[1], w);
+    			if (r == null){
+    				sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
+    				return true;
+    			}
+    			
+    			if (RedProtect.AWE){
+    				if (AWEListener.undo(r.getID())){
+    					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+    				} else {
+    					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+    				}        				      				
+    			} else {
+                    if (WEListener.undo(r.getID())){
+                    	RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+    				} else {
+    					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+    				} 
+    			}        			
     			return true;
     		}
     		

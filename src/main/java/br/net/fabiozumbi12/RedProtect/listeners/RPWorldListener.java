@@ -51,7 +51,7 @@ public class RPWorldListener implements Listener {
     
     @EventHandler(priority = EventPriority.NORMAL)
     public void onChunkUnload(ChunkLoadEvent e) {
-    	if (!RPConfig.getGlobalFlag("remove-entities-not-allowed-to-spawn")){
+    	if (!RPConfig.getGlobalFlagBool("remove-entities-not-allowed-to-spawn")){
     		return;
     	}
     	Entity[] ents = e.getChunk().getEntities();
@@ -63,11 +63,11 @@ public class RPWorldListener implements Listener {
         		}
     		} else {
     			if (ent instanceof Monster){
-    				if (!RPConfig.getGlobalFlag("spawn-monsters")){
+    				if (!RPConfig.getGlobalFlagBool("spawn-monsters")){
     					ent.remove();
     				}    			   				
     			}
-    			else if (!RPConfig.getGlobalFlag("spawn-passives")){
+    			else if (!RPConfig.getGlobalFlagBool("spawn-passives")){
     				if (ent instanceof Tameable){
     					return;
     				}

@@ -232,6 +232,8 @@ public class RPConfig{
                     	gflags.set(w.getName()+".spawn-monsters", gflags.getBoolean(w.getName()+".spawn-monsters", true));
                     	gflags.set(w.getName()+".spawn-passives", gflags.getBoolean(w.getName()+".spawn-passives", true));
                     	gflags.set(w.getName()+".remove-entities-not-allowed-to-spawn", gflags.getBoolean(w.getName()+".remove-entities-not-allowed-to-spawn", false));
+                    	gflags.set(w.getName()+".elytra.allow", gflags.getBoolean(w.getName()+".elytra.allow", true));
+                    	gflags.set(w.getName()+".elytra.boost", gflags.getDouble(w.getName()+".elytra.boost", 0.5D));
                     	w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
                     	RedProtect.logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
                     }
@@ -312,7 +314,15 @@ public class RPConfig{
     	            RedProtect.logger.info("All configurations loaded!");
 	}
     
-    public static Boolean getGlobalFlag(String key){		
+	public static double getGlobalFlagDouble(String key){		
+		return gflags.getDouble(key);
+	}
+	
+	public static int getGlobalFlagInt(String key){		
+		return gflags.getInt(key);
+	}
+	
+    public static Boolean getGlobalFlagBool(String key){		
 		return gflags.getBoolean(key);
 	}
     

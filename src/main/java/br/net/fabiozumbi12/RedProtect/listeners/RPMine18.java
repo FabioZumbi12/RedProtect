@@ -47,7 +47,7 @@ public class RPMine18 implements Listener{
         if (r == null){
         	//global flags
         	if (ent.getType().equals(EntityType.ARMOR_STAND)) {
-                if (!RPConfig.getGlobalFlag(l.getWorld().getName()+".build")) {
+                if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".build")) {
                 	e.setCancelled(true);
                     return;
                 }
@@ -124,7 +124,7 @@ public class RPMine18 implements Listener{
 			//global flags
 			if (e1 instanceof ArmorStand){
             	if (e2 instanceof Player) {
-                    if (!RPConfig.getGlobalFlag(loc.getWorld().getName()+".build")){
+                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build")){
                     	e.setCancelled(true);
                     	return;
                     }
