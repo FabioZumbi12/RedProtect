@@ -104,6 +104,13 @@
             <version>2.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>3.6.5</version>
+        </dependency>
+        
   </dependencies>
   
   <repositories>
@@ -128,8 +135,12 @@
      <repository>
             <id>ess-repo</id>
             <url>http://ci.drtshock.net/plugin/repository/everything</url>
+     </repository>     
+     <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
      </repository>
-
+     
   </repositories>
 
   <build>

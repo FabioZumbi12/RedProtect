@@ -157,7 +157,7 @@ public class RPGlobalListener implements Listener{
 		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
 		
 		if (r == null && !RPConfig.getGlobalFlagBool(w.getName()+".build") && !p.hasPermission("redprotect.bypass")){
-			if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
+			if (RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
 				return;
 			}
 			e.setCancelled(true);
@@ -165,7 +165,7 @@ public class RPGlobalListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteract(PlayerInteractEvent e){
 		RedProtect.logger.debug("RPGlobalListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
@@ -173,19 +173,49 @@ public class RPGlobalListener implements Listener{
         }
 		Player p = e.getPlayer();	
 		Block b = e.getClickedBlock();
-		Region r = RedProtect.rm.getTopRegion(b.getLocation());
+		Location l = null;
+		
+		if (b != null){
+        	l = b.getLocation();
+        	RedProtect.logger.debug("RPGlobalListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
+        } else {
+        	l = p.getLocation();
+        }
+		
+		Region r = RedProtect.rm.getTopRegion(l);
+		
+		//deny item usage
+		List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName()+".deny-item-usage.items");
+    	if (e.getItem() != null && items.contains(e.getItem().getType().name())){
+    		if (r != null && ((!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
+    				(RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    			e.setUseInteractedBlock(Event.Result.DENY);
+    			e.setUseItemInHand(Event.Result.DENY);
+    			e.setCancelled(true);  
+    			return;
+    		}
+    		if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    			e.setUseInteractedBlock(Event.Result.DENY);
+    			e.setUseItemInHand(Event.Result.DENY);
+    			e.setCancelled(true);
+    			return;
+    		}
+        }
+    	
 		if (r != null){
 			return;
 		}
 		
-		if (b.getType().name().contains("RAIL") || b.getType().name().contains("WATER")){
-            if (!RPConfig.getGlobalFlagBool(b.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
+		if (b != null && b.getType().name().contains("RAIL") || b.getType().name().contains("WATER")){
+            if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
         		e.setUseItemInHand(Event.Result.DENY);
         		e.setCancelled(true);
     			return;		
         	}
         } else {
-        	if (!RPConfig.getGlobalFlagBool(b.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass")){
+        	if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass")){
         		e.setUseItemInHand(Event.Result.DENY);
     			e.setCancelled(true);
     			return;

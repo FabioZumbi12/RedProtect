@@ -914,7 +914,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     return true;
                 }
         		String serverName = RPConfig.getString("region-settings.default-leader");
-                String name = args[1];
+                String name = args[1].replace("/", "|");
                 
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player), name, serverName, new ArrayList<String>());
                 if (rb2.ready()) {
@@ -1075,7 +1075,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
-                String name = args[1];
+                String name = args[1].replace("/", "|");
                 String leader = player.getUniqueId().toString();
                 List<String> addedAdmins = new ArrayList<String>();
                 addedAdmins.add(RPUtil.PlayerToUUID(args[2]));

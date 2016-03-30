@@ -6,6 +6,7 @@ import java.util.List;
 
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -57,7 +58,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.Potion;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -108,13 +109,12 @@ public class RPPlayerListener implements Listener{
     	}
     	    	
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
-        if(e.getItem().getType().equals(Material.POTION) && Pots.size() > 0){
-        	Potion pot = Potion.fromItemStack(e.getItem());        	
-        	for (String potion:Pots){
-        		potion = potion.toUpperCase();
-        		PotionType ptype = PotionType.valueOf(potion);
+        if(e.getItem().getType().name().contains("POTION") && Pots.size() > 0){
+        	PotionMeta pot = (PotionMeta) e.getItem().getItemMeta();
+        	for (String potion:Pots){      		
         		try{
-        			if (ptype != null && pot.getType() != null && pot.getType().equals(ptype) && !p.hasPermission("redprotect.bypass")){
+        			PotionType ptype = PotionType.valueOf(potion.toUpperCase());
+        			if (pot.getBasePotionData().getType().equals(ptype) && !p.hasPermission("redprotect.bypass")){
             			e.setCancelled(true);
             			RPLang.sendMessage(p, "playerlistener.denypotion");
             		}
@@ -126,9 +126,9 @@ public class RPPlayerListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerInteract(PlayerInteractEvent event) {
-    	RedProtect.logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerInteract(PlayerInteractEvent event) {    	
+    	RedProtect.logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());    	
     	
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
@@ -165,27 +165,12 @@ public class RPPlayerListener implements Listener{
         	return;
         }
         
-        if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){
-        	//deny item usage
-        	if (RPConfig.getStringList("server-protection.deny-item-usage.items").contains(itemInHand.getType().name())){
-        		if (r != null && ((!RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
-        				(RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
-        			RPLang.sendMessage(p, "playerlistener.region.cantuse");
-        			event.setUseInteractedBlock(Event.Result.DENY);
-        			event.setUseItemInHand(Event.Result.DENY);
-        			event.setCancelled(true);  
-        			return;
-        		}
-        		if (r == null && !RPConfig.getBool("server-protection.deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
-        			RPLang.sendMessage(p, "playerlistener.region.cantuse");
-        			event.setUseInteractedBlock(Event.Result.DENY);
-        			event.setUseItemInHand(Event.Result.DENY);
-        			event.setCancelled(true);
-        			return;
-        		}
-            }
+        if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){        	
             
-            if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && p.hasPermission("redprotect.magicwand")) {
+            if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && 
+            		(RedProtect.ph.hasGenPerm(p, "claim") ||
+            		RedProtect.ph.hasGenPerm(p, "define") ||
+            		RedProtect.ph.hasGenPerm(p, "redefine"))) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 	RedProtect.secondLocationSelections.put(p, l);
                     p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
@@ -217,6 +202,10 @@ public class RPPlayerListener implements Listener{
                 }
             } 
         }        
+        
+        if (event.isCancelled()) {
+            return;
+        }
         
         //start player checks
         if (r == null){
@@ -760,8 +749,11 @@ public class RPPlayerListener implements Listener{
     	if (e.isCancelled() || RPConfig.getBool("performance.disable-onPlayerMoveEvent-handler")) {
             return;
         }
-    	
+    	    	
     	Player p = e.getPlayer();
+    	
+    	//test antixray
+    	//RPAntiXray.sendOtherBlock(p);
     	
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
@@ -1034,11 +1026,11 @@ public class RPPlayerListener implements Listener{
     	
     	//deny potion
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
-        if(Pots.size() > 0){
-        	Potion pot = Potion.fromItemStack(e.getPotion().getItem());       	
+        if(Pots.size() > 0){        	
+        	PotionMeta pot = (PotionMeta) e.getPotion().getItem().getItemMeta();     	
         	for (String potion:Pots){
         		try{
-        			if (pot != null && pot.getType().equals(PotionType.valueOf(potion))){
+        			if (pot.getBasePotionData().getType().equals(PotionType.valueOf(potion.toUpperCase()))){
             			e.setCancelled(true);
             			if (e.getPotion().getShooter() instanceof Player){
             				RPLang.sendMessage((Player)e.getPotion().getShooter(), RPLang.get("playerlistener.denypotion"));
@@ -1150,7 +1142,7 @@ public class RPPlayerListener implements Listener{
 		*/
 
     	//enter Gamemode flag
-    	if (r.flagExists("gamemode")){
+    	if (r.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
     		p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
     	}
     	
@@ -1160,7 +1152,7 @@ public class RPPlayerListener implements Listener{
 		}
 		
 		//Enter command as player
-        if (r.flagExists("player-enter-command")){
+        if (r.flagExists("player-enter-command") && !p.hasPermission("redprotect.admin.flag.player-enter-command")){
         	String[] cmds = r.getFlagString("player-enter-command").split(",");
         	for (String cmd:cmds){
         		if (cmd.startsWith("/")){
@@ -1171,7 +1163,7 @@ public class RPPlayerListener implements Listener{
         }
         
         //Enter command as console
-        if (r.flagExists("server-enter-command")){
+        if (r.flagExists("server-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
         	String[] cmds = r.getFlagString("server-enter-command").split(",");
         	for (String cmd:cmds){
         		if (cmd.startsWith("/")){
@@ -1191,7 +1183,7 @@ public class RPPlayerListener implements Listener{
         
         if (er != null){                	
         	//Exit effect
-			if (er.flagExists("effects")){
+			if (er.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
 				String[] effects = er.getFlagString("effects").split(",");
 				for (String effect:effects){
 					if (PlayertaskID.containsValue(p.getName())){						
@@ -1244,7 +1236,7 @@ public class RPPlayerListener implements Listener{
 			}
 			
         	//Exit command as player
-            if (er.flagExists("player-exit-command")){
+            if (er.flagExists("player-exit-command") && !p.hasPermission("redprotect.admin.flag.player-exit-command")){
             	String[] cmds = er.getFlagString("player-exit-command").split(",");
             	for (String cmd:cmds){
             		if (cmd.startsWith("/")){
@@ -1265,7 +1257,7 @@ public class RPPlayerListener implements Listener{
         	}
             
             //Exit command as console
-            if (er.flagExists("server-exit-command")){
+            if (er.flagExists("server-exit-command") && !p.hasPermission("redprotect.admin.flag.server-exit-command")){
             	String[] cmds = er.getFlagString("server-exit-command").split(",");
             	for (String cmd:cmds){
             		if (cmd.startsWith("/")){
@@ -1288,7 +1280,7 @@ public class RPPlayerListener implements Listener{
         }        
         
         //Enter effect
-        if (r.flagExists("effects")){
+        if (r.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
   			String[] effects = r.getFlagString("effects").split(",");
   			for (String effect:effects){
   				String eff = effect.split(" ")[0];
@@ -1355,7 +1347,7 @@ public class RPPlayerListener implements Listener{
     		}
     		
 			//Exit effect
-			if (er.flagExists("effects")){
+			if (er.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
 				String[] effects = er.getFlagString("effects").split(",");
 				for (String effect:effects){
 					if (PlayertaskID.containsValue(p.getName())){						
@@ -1405,7 +1397,7 @@ public class RPPlayerListener implements Listener{
 			}
 			
 			//Exit command as player
-            if (er.flagExists("player-exit-command")){
+            if (er.flagExists("player-exit-command") && !p.hasPermission("redprotect.admin.flag.player-exit-command")){
             	String[] cmds = er.getFlagString("player-exit-command").split(",");
             	for (String cmd:cmds){
             		if (cmd.startsWith("/")){
@@ -1416,7 +1408,7 @@ public class RPPlayerListener implements Listener{
             }
             
             //Exit command as console
-            if (er.flagExists("server-exit-command")){
+            if (er.flagExists("server-exit-command") && !p.hasPermission("redprotect.admin.flag.server-exit-command")){
             	String[] cmds = er.getFlagString("server-exit-command").split(",");
             	for (String cmd:cmds){
             		if (cmd.startsWith("/")){

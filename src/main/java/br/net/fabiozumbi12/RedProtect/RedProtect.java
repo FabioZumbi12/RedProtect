@@ -19,6 +19,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 
+import br.net.fabiozumbi12.RedProtect.antixray.RPAntiXray;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
@@ -31,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.listeners.RPCommands;
 import br.net.fabiozumbi12.RedProtect.listeners.RPEntityListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPGlobalListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPMine18;
+import br.net.fabiozumbi12.RedProtect.listeners.RPMine19;
 import br.net.fabiozumbi12.RedProtect.listeners.RPPlayerListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPWorldListener;
 
@@ -114,10 +116,14 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPEntityListener(), this);
             serv.getPluginManager().registerEvents(new RPWorldListener(), this);  
             serv.getPluginManager().registerEvents(new RPAddProtection(), this);   
+            serv.getPluginManager().registerEvents(new RPAntiXray(), this);  
             
             String v = RedProtect.serv.getBukkitVersion();
             if (v.contains("1.8") || v.contains("1.9")){
             	serv.getPluginManager().registerEvents(new RPMine18(), this);
+            }
+            if (v.contains("1.9")){
+            	serv.getPluginManager().registerEvents(new RPMine19(), this);
             }
             
             getCommand("RedProtect").setExecutor(new RPCommands());

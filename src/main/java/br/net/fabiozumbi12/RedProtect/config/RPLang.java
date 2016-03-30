@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import br.net.fabiozumbi12.RedProtect.RedProtect;
 
 public class RPLang {
 	
+	private static final HashMap<Player, String> DelayedMessage = new HashMap<Player, String>();
 	static HashMap<String, String> BaseLang = new HashMap<String, String>();
 	public static HashMap<String, String> Lang = new HashMap<String, String>();
 	//static List<String> langString = new ArrayList<String>();
@@ -164,7 +166,11 @@ public class RPLang {
 		return FMsg;
 	}
 	
-	public static void sendMessage(Player p, String key){
+	public static void sendMessage(final Player p, String key){
+		if (DelayedMessage.containsKey(p) && DelayedMessage.get(p).equals(key)){
+			return;
+		}
+		
 		if (Lang.get(key) == null){
 			p.sendMessage(get("_redprotect.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
 		} else if (get(key).equalsIgnoreCase("")){
@@ -172,16 +178,42 @@ public class RPLang {
 		} else {
 			p.sendMessage(get("_redprotect.prefix")+ " " + get(key));
 		}		
+		
+		DelayedMessage.put(p, key);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
+			public void run() {
+				if (DelayedMessage.containsKey(p)){
+					DelayedMessage.remove(p);
+				}
+				} 
+			}, 20);		
 	}
 	
-	public static void sendMessage(CommandSender p, String key){
+	public static void sendMessage(CommandSender sender, String key){		
+		if (sender instanceof Player && DelayedMessage.containsKey((Player)sender) && DelayedMessage.get((Player)sender).equals(key)){
+			return;
+		}
+		
 		if (Lang.get(key) == null){
-			p.sendMessage(get("_redprotect.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
+			sender.sendMessage(get("_redprotect.prefix")+ " " + ChatColor.translateAlternateColorCodes('&', key));
 		} else if (get(key).equalsIgnoreCase("")){
 			return;
 		} else {
-			p.sendMessage(get("_redprotect.prefix")+ " " + get(key));
+			sender.sendMessage(get("_redprotect.prefix")+ " " + get(key));
 		}		
+		
+		if (sender instanceof Player){
+			final Player p = (Player)sender;
+			DelayedMessage.put(p, key);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
+				public void run() {
+					if (DelayedMessage.containsKey(p)){
+						DelayedMessage.remove(p);
+					}
+					} 
+				}, 20);	
+		}
+		
 	}
 	
 	public static String translBool(String bool){		

@@ -170,15 +170,6 @@ server-protection:
        enable: false
        need-world-to-teleport: none
        location: world, 0, 90, 0
-  # Deny player to use the item in hand on server.
-  deny-item-usage:
-    # Allow usage on claimed rps?
-    allow-on-claimed-rps: true
-    # Allow where no rps?
-    allow-on-wilderness: true
-    # List of items names.
-    items:
-    - NONE
 
 # Default values for new regions.
 flags:
