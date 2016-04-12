@@ -19,7 +19,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 
-import br.net.fabiozumbi12.RedProtect.antixray.RPAntiXray;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
@@ -115,8 +114,7 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
             serv.getPluginManager().registerEvents(new RPEntityListener(), this);
             serv.getPluginManager().registerEvents(new RPWorldListener(), this);  
-            serv.getPluginManager().registerEvents(new RPAddProtection(), this);   
-            serv.getPluginManager().registerEvents(new RPAntiXray(), this);  
+            serv.getPluginManager().registerEvents(new RPAddProtection(), this);
             
             String v = RedProtect.serv.getBukkitVersion();
             if (v.contains("1.8") || v.contains("1.9")){

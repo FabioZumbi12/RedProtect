@@ -46,6 +46,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.config.RPYaml;
+import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 import com.earth2me.essentials.Essentials;
@@ -216,7 +217,7 @@ public class RPUtil {
     	int delay = 0;
     	Date now = null;    	   	
     	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
-
+    	
 		try {
 			now = dateformat.parse(DateNow());
 		} catch (ParseException e1) {
@@ -236,15 +237,21 @@ public class RPUtil {
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);            	
             	
             	for (String play:RPConfig.getStringList("purge.ignore-regions-from-players")){
-            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isLeader(RPConfig.getString("region-settings.default-leader"))){
+            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || 
+            				r.isAdmin(RPUtil.PlayerToUUID(play)) ||
+            				r.isLeader(RPConfig.getString("region-settings.default-leader"))){
             			continue;
             		}
     			}           	
             	
             	if (days > RPConfig.getInt("purge.remove-oldest")){        
-                	RedProtect.logger.warning("Purging" + r.getName() + " - Days: " + days);
+                	RedProtect.logger.warning("Purging " + r.getName() + " - Days: " + days);
                 	if (RedProtect.WE && RPConfig.getBool("purge.regen.enable") && r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
-                		WEListener.regenRegion(r.getName(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                		if (RedProtect.AWE){
+                			AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                		} else {
+                			WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                		}                		
                 		delay=delay+40;
                 	}
             		r.delete();
@@ -265,7 +272,9 @@ public class RPUtil {
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
             	
             	for (String play:RPConfig.getStringList("sell.ignore-regions-from-players")){
-            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isLeader(RPConfig.getString("region-settings.default-leader"))){
+            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || 
+            				r.isAdmin(RPUtil.PlayerToUUID(play)) ||
+            				r.isLeader(RPConfig.getString("region-settings.default-leader"))){
             			continue;
             		}
     			}           	
@@ -384,7 +393,8 @@ public class RPUtil {
         }     
         
         if (delay > 0){
-    		RedProtect.logger.warning("Theres "+delay/40+" regions to be regenerated...");
+    		RedProtect.logger.warning("&c> There's "+delay/40+" regions to be regenerated...");
+    		RedProtect.logger.severe("&cRegen can take long time, but your players can join and play normally!");
         }
         
         if (cfm > 0){
@@ -409,12 +419,12 @@ public class RPUtil {
         }
         
         if (purged > 0){
-        	RedProtect.logger.warning("Purged a total of &6&l" + purged + "&a&l regions!");
+        	RedProtect.logger.sucess("Purged a total of &6" + purged + "&a regions!");
         	purged = 0;
         }
         
         if (sell > 0){
-        	RedProtect.logger.warning("Put to sell a total of &6&l" + sell + "&a&l regions!");
+        	RedProtect.logger.sucess("Put to sell a total of &6" + sell + "&a regions!");
         	sell = 0;
         }
         regions.clear();   

@@ -3,6 +3,10 @@ economy-name: Coins
 economy-locale: en-US
 max-area-toget-value: 100000
 rename-region: false
+claim-cost-per-block:
+  enable: false
+  cost-per-block: 10
+  y-is-free: true
 items:
   values:
     AIR: 0.0

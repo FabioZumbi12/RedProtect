@@ -180,7 +180,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         //check regions inside region
                         for (Region r:RedProtect.rm.getRegionsByWorld(w)){
                         	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
-                        		if (!r.isLeader(p) && !p.hasPermission("redprotect.admin")){
+                        		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
                             		this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                                     return;
                             	}
@@ -197,7 +197,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
                         	
                     		if (otherrg != null){                    			
-                            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.admin")){
+                            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
                             		this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                                     return;
                             	}
@@ -231,6 +231,24 @@ public class EncompassRegionBuilder extends RegionBuilder{
                             this.setErrorSign(e, RPLang.get("regionbuilder.reach.limit"));
                             return;
                         }
+                        
+                        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.Vault && !p.hasPermission("redprotect.eco.bypass")){
+                        	Double peco = RedProtect.econ.getBalance(p);
+                        	long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
+                        	
+                        	if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")){
+                        		reco = reco * Math.abs(region.getMaxY()-region.getMinY());
+                        	}
+                        	
+                        	if (peco >= reco){
+                        		RedProtect.econ.withdrawPlayer(p, reco);
+                        		p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco+" "+RPConfig.getEcoString("economy-name")));
+                        	} else {
+                        		this.setErrorSign(e, RPLang.get("regionbuilder.notenought.money").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco));
+                        		return;
+                        	}
+                        }
+                        
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         p.sendMessage(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
                         p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (totalArea + region.getArea()) + "\n" + 

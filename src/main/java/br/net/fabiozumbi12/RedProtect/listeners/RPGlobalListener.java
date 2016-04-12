@@ -44,6 +44,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -188,7 +189,7 @@ public class RPGlobalListener implements Listener{
 		List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName()+".deny-item-usage.items");
     	if (e.getItem() != null && items.contains(e.getItem().getType().name())){
     		if (r != null && ((!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
-    				(RPConfig.getBool("server-protection.deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
+    				(RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
     			e.setUseInteractedBlock(Event.Result.DENY);
     			e.setUseItemInHand(Event.Result.DENY);
@@ -708,5 +709,33 @@ public class RPGlobalListener implements Listener{
             	event.setCancelled(true);
             }
     	}
+    }
+    
+    @EventHandler
+    public void onConsume(PlayerItemConsumeEvent e){
+        if(e.getItem() == null){
+            return;
+        }
+        
+        Player p = e.getPlayer();
+        Location l = p.getLocation();
+        
+        Region r = RedProtect.rm.getTopRegion(l);
+		
+		//deny item usage
+		List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName()+".deny-item-usage.items");
+    	if (e.getItem() != null && items.contains(e.getItem().getType().name())){
+    		if (r != null && ((!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
+    				(RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    			e.setCancelled(true);  
+    			return;
+    		}
+    		if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+    			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+    			e.setCancelled(true);
+    			return;
+    		}
+        }
     }
 }

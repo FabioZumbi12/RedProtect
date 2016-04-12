@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Explosive;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
@@ -288,6 +289,7 @@ public class RPBlockListener implements Listener{
     public void onEntityExplode(EntityExplodeEvent e) {
     	RedProtect.logger.debug("Is BlockListener - EntityExplodeEvent event");
     	List<Block> toRemove = new ArrayList<Block>();
+    	Region or = RedProtect.rm.getTopRegion(e.getEntity().getLocation());
         for (Block b:e.blockList()) {
         	RedProtect.logger.debug("Blocks: "+b.getType().name());
         	Location l = b.getLocation();
@@ -302,7 +304,12 @@ public class RPBlockListener implements Listener{
         		continue;
         	}
         	
-        	if ((e.getEntity() == null || e.getEntityType().name().contains("TNT"))  && !r.canFire()){
+        	if (r != or){
+        		toRemove.add(b);
+    			continue;
+        	} 
+        	
+        	if (e.getEntity() instanceof Explosive && !r.canFire()){
         		toRemove.add(b);
     			continue;
         	}  

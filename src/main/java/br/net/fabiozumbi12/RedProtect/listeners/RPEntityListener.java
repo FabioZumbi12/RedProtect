@@ -1,12 +1,8 @@
 package br.net.fabiozumbi12.RedProtect.listeners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -28,7 +24,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -310,7 +305,7 @@ public class RPEntityListener implements Listener{
             }
     	}
     }
-    
+    /*
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent e) {
     	RedProtect.logger.debug("RPEntityListener - Is EntityExplodeEvent");
@@ -330,7 +325,7 @@ public class RPEntityListener implements Listener{
         	e.blockList().removeAll(toRemove);
         }
     }
-    
+    */
     @EventHandler
     public void onEntityEvent(EntityInteractEvent e) {
     	RedProtect.logger.debug("RPEntityListener - Is EntityInteractEvent");

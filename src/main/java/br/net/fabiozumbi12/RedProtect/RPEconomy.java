@@ -108,6 +108,7 @@ public class RPEconomy {
 		try {			
 			r.clearMembers();
 			r.clearAdmins();
+			r.clearLeaders();
 			r.addLeader(uuid);
 			r.setDate(RPUtil.DateNow());
 			r.setWelcome("");

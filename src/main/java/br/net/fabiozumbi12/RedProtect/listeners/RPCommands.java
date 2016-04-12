@@ -2344,7 +2344,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			return false;
 		}
 		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items") || flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
-			String[] valida = ((String)value).replace(" ", "").split(",");
+			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
 				if (Material.getMaterial(item.toUpperCase()) == null){
 					return false;
@@ -2356,7 +2356,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 			try{
-				String[] cmds = ((String)value).replace(" ", "").split(",");
+				String[] cmds = value.toString().replace(" ", "").split(",");
 				return cmds.length > 0;
 			} catch (Exception e){
 				return false;
@@ -2366,7 +2366,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] effects = ((String)value).split(",");
+			String[] effects = value.toString().split(",");
 			for (String eff:effects){
 				String[] effect = eff.split(" ");
 				if (effect.length < 2){

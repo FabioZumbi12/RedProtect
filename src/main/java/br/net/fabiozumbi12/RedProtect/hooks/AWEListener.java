@@ -37,7 +37,7 @@ public class AWEListener {
 		return false;
 	}
 	
-    public static void regenRegion(final String rid, final World w, final Location p1, final Location p2, int delay, final CommandSender sender) {
+    public static void regenRegion(final String rid, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender) {
     	    	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() {
 
@@ -80,16 +80,21 @@ public class AWEListener {
 	    		AsyncEditSessionFactory factory = (AsyncEditSessionFactory) WorldEdit.getInstance().getEditSessionFactory();
 	    		EditSession ess = factory.getEditSession(wreg.getWorld(), -1);
 	    		eSessions.put(rid,ess);
+	    		int delayCount = 1+delay/40;
 	    		
                 if (sender != null){
 		    		
 	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess)){
-	    				RPLang.sendMessage(sender,"&aRegion "+rid.split("@")[0]+" regenerated with success!");
+	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+rid.split("@")[0]+" regenerated with success!");
 	    			} else {
-	    				RPLang.sendMessage(sender,"&cTheres an error when regen the region "+rid.split("@")[0]+"!");
+	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+rid.split("@")[0]+"!");
 	    			}
 	    		} else {
-	    			AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess);
+	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess)){
+	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+rid.split("@")[0]+" regenerated with success!");
+	    			} else {
+	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+rid.split("@")[0]+"!");
+	    			}
 	    		}
 		    	
 				} 

@@ -15,13 +15,13 @@
         </dependency>
         
         <dependency>
-			<groupId>minecraft_server</groupId>
-			<artifactId>minecraft_server</artifactId>
+			<groupId>FastAsyncWorldEdit</groupId>
+			<artifactId>FastAsyncWorldEdit</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/minecraft_server.1.9.jar</systemPath>
+			<systemPath>D:/ProjetosBukkit/APIs/FastAsyncWorldEdit.jar</systemPath>
 		</dependency>
-		
+		<!--
 		<dependency>
 			<groupId>craftbukkit-1.9</groupId>
 			<artifactId>craftbukkit-1.9</artifactId>
@@ -29,7 +29,7 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/craftbukkit-1.9.jar</systemPath>
 		</dependency>
-        <!-- bukkit
+         bukkit
         <dependency>
 			<groupId>Bukkit</groupId>
 			<artifactId>Bukkit</artifactId>

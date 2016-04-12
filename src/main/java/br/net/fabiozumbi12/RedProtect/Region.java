@@ -557,26 +557,8 @@ public class Region implements Serializable{
     }
     
     public int getArea() {
-    	return Math.abs(this.maxMbrX - this.minMbrX) * Math.abs(this.maxMbrZ - this.minMbrZ);
-    	/*
-        if (this.x == null) {
-            return (this.maxMbrX - this.minMbrX) * (this.maxMbrZ - this.minMbrZ);
-        }
-        int area = 0;
-        for (int i = 0; i < this.x.length; ++i) {
-            int j = (i + 1) % this.x.length;
-            area += this.x[i] * this.z[j] - this.z[i] * this.x[j];
-        }
-        area = Math.abs(area / 2);
-        return area;
-        */
+    	return Math.abs(this.maxMbrX - this.minMbrX) * Math.abs(this.maxMbrZ - this.minMbrZ);    	
     }
-    
-    /*
-    public boolean inBoundingRect(int bx, int bz) {
-        return bx <= this.maxMbrX && bx >= this.minMbrX && bz <= this.maxMbrZ && bz >= this.minMbrZ;
-    }
-    */
     
     public boolean inBoundingRect(Region other) {
         return other.maxMbrX >= this.minMbrX && other.minMbrZ >= this.minMbrZ && other.minMbrX <= this.maxMbrX && other.minMbrZ <= this.maxMbrZ;
