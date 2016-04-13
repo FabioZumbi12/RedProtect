@@ -3,15 +3,24 @@ package br.net.fabiozumbi12.RedProtect.API;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
-import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 
 public class RedProtectAPI {
+	
+	/**
+	 * Return all regions for all loaded worlds;
+	 * <p> 
+	 * @return {@code Set<Region>} with all regions. Empty list if no regions.
+	 */
+	public static Set<Region> getAllRegions(){
+		return RedProtect.rm.getAllRegions();
+	}
 	
 	/**
 	 * Give the Region based on given name and world.
@@ -110,39 +119,23 @@ public class RedProtectAPI {
 	}
 	
 	/**
-	 * Set a flag for the given Region with flag name and value.
+	 * The group of Regions on given location x and z.
 	 * <p>
-	 * @param region Region to set the flag.
-	 * @param flag String with flag name.
-	 * @param value Object to define the flag. This Object need to be a {@code Boolean}, {@code String} or {@code Integer}.
-	 * <p>Use cast to convert the non Object to Object:
-	 * <p>{@code Object value = (String)MyValue;}
-	 * @see  #equals(Object)
+	 * @param loc {@code Location} to check the regions
+	 * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
 	 */
-	public static void setRegionFlag(Region region, String flag, Object value){
-		region.setFlag(flag, value);
+	public static Map<Integer, Region> getGroupRegions(Location loc){
+		return RedProtect.rm.getGroupRegion(loc);
 	}
 	
 	/**
-	 * Get a boolean value from given region of booleans flags.
+	 * Return all regions present on provided chunk, including low and hight priority.
 	 * <p>
-	 * @param region Region to get flags.
-	 * @param flag Flag name.
-	 * @return {@code Boolean} value of flag. Return {@code false} if flag not found.
+	 * @param chunk Chunk to get Regions.
+	 * @return {@code Set<Region>} with all regions on provided chunk.
 	 */
-	public static boolean getBoolFlag(Region region, String flag){
-		return region.getFlagBool(flag);
-	}
-	
-	/**
-	 * Get a String value from given region of strings flags.
-	 * <p>
-	 * @param region Region to get flags.
-	 * @param flag Flag name.
-	 * @return {@code String} value of flag. Return {@code null} if flag not found.
-	 */
-	public static String getStringFlag(Region region, String flag){
-		return region.getFlagString(flag);
+	public static Set<Region> getChunkRegions(Chunk chunk){
+		return RedProtect.rm.getRegionsForChunk(chunk);
 	}
 	
 	/**
@@ -162,31 +155,6 @@ public class RedProtectAPI {
 	 */
 	public static void removeRegion(Region region){
 		RedProtect.rm.remove(region);
-	}
-	
-	/**
-	 * Add Admin flags with this method.
-	 * This flag need to be added when your custom plugin load. Adding a Admin flag, you can define a permission, or leave free for all.
-	 * Adding a flag, this flag will automatically checked for RedProtect plugin.
-	 * <p>You need to use the predefined permission {@code "redprotect.flag.admin." + YourCustomFlag} to allow player to change the values of Admin flags with commands.
-	 * <p>
-	 * @param flag Admin Flag to add
-	 */
-	public static void addAdminFlag(String flag){
-		RPConfig.AdminFlags.add(flag);
-	}
-	
-	/**
-	 * Add Player flags with this method.
-	 * This flag need to be added when your custom plugin load. Adding a custom flag, you can define a permission, or leave free for all.
-	 * Adding a flag, this flag will automatically checked for RedProtect plugin.
-	 * <p>You need to use the predefined permission {@code "redprotect.flag." + YourCustomFlag} to allow player to change the values of Player flags with commands.
-	 * <p>
-	 * @param flag Player Flag to add
-	 * @param flag Player Flag to add
-	 */
-	public static void addPlayerFlag(String flag, Object defValue){
-		RedProtect.plugin.getConfig().set(flag, defValue);
 	}
 	
 	/**

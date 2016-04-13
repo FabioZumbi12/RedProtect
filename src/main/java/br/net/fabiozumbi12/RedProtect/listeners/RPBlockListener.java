@@ -151,7 +151,6 @@ public class RPBlockListener implements Listener{
         RPLang.sendMessage(p, RPLang.get("regionbuilder.signerror") + ": " + error);
     }
     
-    @SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent e) {
     	RedProtect.logger.debug("BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
@@ -162,10 +161,8 @@ public class RPBlockListener implements Listener{
     	Player p = e.getPlayer();
         Block b = e.getBlockPlaced();       
         World w = p.getWorld();
-        Material m = p.getItemInHand().getType();
-        if (Bukkit.getVersion().startsWith("1.9")){
-        	m = p.getItemOnCursor().getType();
-        }       
+        Material m = e.getItemInHand().getType();
+        
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
         
@@ -173,7 +170,7 @@ public class RPBlockListener implements Listener{
         	return;
         }
         
-    	if (r != null && !r.canMinecart(p) && m.name().contains("MINECART")){
+    	if (r != null && !r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))){
     		RPLang.sendMessage(p, "blocklistener.region.cantplace");
             e.setCancelled(true);
         	return;

@@ -11,12 +11,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.Golem;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ShulkerBullet;
@@ -34,6 +36,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -66,6 +69,24 @@ public class RPGlobalListener implements Listener{
 		RedProtect.logger.debug("Loaded RPGlobalListener...");
 		is19 = Bukkit.getBukkitVersion().startsWith("1.9");
 	}
+	
+	@EventHandler
+    public void onPlayerFrostWalk(EntityBlockFormEvent e) {
+    	Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
+    	if (r != null){
+    		return;
+    	}
+    	RedProtect.logger.debug("RPGlobalListener - EntityBlockFormEvent canceled? " + e.isCancelled()); 
+    	if (e.getEntity() instanceof Player){
+    		Player p = (Player) e.getEntity();
+    		if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".iceform-by.player") && !p.hasPermission("redprotect.bypass")){
+        		e.setCancelled(true);
+        	}
+    	} 
+    	else if (!RPConfig.getGlobalFlagBool(e.getEntity().getWorld().getName()+".iceform-by.entity")){
+    		e.setCancelled(true);
+    	}    	
+    }
 	
     @EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
@@ -237,7 +258,7 @@ public class RPGlobalListener implements Listener{
 			return;
 		}
         
-        if (ent.getType().name().contains("MINECART") || ent.getType().name().contains("BOAT")){
+        if (ent instanceof Minecart || ent instanceof Boat){
         	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".use-minecart") && !e.getPlayer().hasPermission("redprotect.bypass")) {
                 e.setCancelled(true);
                 return;
@@ -334,7 +355,7 @@ public class RPGlobalListener implements Listener{
             		return;
             	}
             }
-        	if ((e1.getType().name().contains("MINECART") || e1.getType().name().contains("BOAT")) && !RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
+        	if ((e1 instanceof Minecart || e1 instanceof Boat) && !RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass")){
                 e.setCancelled(true);
             	return;
             }

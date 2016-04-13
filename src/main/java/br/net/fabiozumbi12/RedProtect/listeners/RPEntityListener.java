@@ -18,6 +18,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -44,6 +45,18 @@ public class RPEntityListener implements Listener{
 	
     static RPContainer cont = new RPContainer();     
         
+    @EventHandler
+    public void onPlayerFrostWalk(EntityBlockFormEvent e) {  
+    	if (e.getEntity() instanceof Player){
+    		return;
+    	}
+    	RedProtect.logger.debug("RPEntityListener - EntityBlockFormEvent canceled? " + e.isCancelled());  
+    	Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
+    	if (r != null && !r.canIceForm()){
+    		e.setCancelled(true);
+    	}
+    }
+    
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
     	if (event.isCancelled()) {

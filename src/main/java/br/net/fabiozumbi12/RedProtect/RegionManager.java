@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -135,6 +136,24 @@ public class RegionManager{
         return ret;
     }
         
+    public Set<Region> getRegionsForChunk(Chunk chunk) {
+        int x;
+        int y;
+        int z;
+        Set<Region> regions = new HashSet<Region>();
+        for (y = (0); y <= chunk.getWorld().getMaxHeight(); y++) {
+            for (x = ((chunk.getX()*16)-8); x <= ((chunk.getX()*16) + 8); x++) {
+                for (z = ((chunk.getZ()*16)-8); z <= ((chunk.getZ()*16) + 8); z++) {
+                    Location location = new Location(chunk.getWorld(), x, y , z);
+                    if (getGroupRegion(location).size() > 0) {
+                        regions.addAll(getGroupRegion(location).values());
+                    }
+                }
+            }
+        }
+        return regions;        
+    }
+    
     public Set<Region> getRegionsNear(Player player, int i, World w) {
         return this.regionManagers.get(w).getRegionsNear(player, i);
     }

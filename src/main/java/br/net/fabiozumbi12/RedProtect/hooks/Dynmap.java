@@ -41,29 +41,6 @@ public class Dynmap {
 			for (Region r:RedProtect.rm.getRegionsByWorld(w)){
     			addMark(r);
     		}
-		}		
-		
-		if (RPConfig.getInt("hooks.dynmap.check-invalid-marks") != -1){
-			Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() {
-		    	public void run(){	    		
-		    		removeInvalidMarks();
-		    	}
-		    },RPConfig.getInt("hooks.dynmap.check-invalid-marks")*20,RPConfig.getInt("hooks.dynmap.check-invalid-marks")*20);
-		}
-	    
-	    
-	}
-	
-	public void removeInvalidMarks(){
-		for (AreaMarker m : MSet.getAreaMarkers()) {
-			if (RedProtect.rm.getRegion(m.getLabel(), m.getWorld()) == null){
-				m.deleteMarker();
-			}
-		}	
-		for (Marker m : MSet.getMarkers()) {
-			if (RedProtect.rm.getRegion(m.getLabel(), m.getWorld()) == null || !RPConfig.getBool("hooks.dynmap.show-icon")){
-				m.deleteMarker();
-			}
 		}
 	}
 	
@@ -94,8 +71,8 @@ public class Dynmap {
 			am = MSet.createAreaMarker(r.getID(), r.getName(), false, r.getWorld(), x, z, true);	
 		} else {
 			am.setCornerLocations(x, z);
-			am.setRangeY(r.getMinLocation().getY(), r.getMaxLocation().getY());
 		}		
+		am.setRangeY(r.getMinLocation().getY(), r.getMaxLocation().getY());
 		
 		if (RPConfig.getBool("hooks.dynmap.show-icon")){
 			Marker m = MSet.findMarker(r.getID());

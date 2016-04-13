@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.5.6
+version: 6.5.7
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap]
@@ -62,6 +62,8 @@ permissions:
       redprotect.flag.allow-potions: true
       redprotect.flag.mob-loot: true
       redprotect.flag.flow-damage: true
+      redprotect.flag.iceform-player: true
+      redprotect.flag.iceform-entity: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false

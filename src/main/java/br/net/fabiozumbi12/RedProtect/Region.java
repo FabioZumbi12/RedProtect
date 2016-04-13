@@ -1060,6 +1060,29 @@ public class Region implements Serializable{
 	
 	
 	//---------------------- Player Flags --------------------------//
+
+	/**Allow ice form by players.
+	 * 
+	 * @return boolean
+	 */
+	public boolean canIceForm(Player p) {
+		if (!RPConfig.isFlagEnabled("iceform-player")){
+    		return RPConfig.getBool("flags.iceform-player");
+    	}
+		return getFlagBool("iceform-player");
+	}
+	
+	/**Allow ice form by entity.
+	 * 
+	 * @return boolean
+	 */
+	public boolean canIceForm() {
+		if (!RPConfig.isFlagEnabled("iceform-entity")){
+    		return RPConfig.getBool("flags.iceform-entity");
+    	}
+		return getFlagBool("iceform-entity");
+	}
+	
 	public boolean FlowDamage() {
 		if (!RPConfig.isFlagEnabled("flow-damage")){
     		return RPConfig.getBool("flags.flow-damage");
@@ -1252,6 +1275,5 @@ public class Region implements Serializable{
 			leaderList.append(", "+leader);
 		}
 		return "["+leaderList.toString().substring(2)+"]";
-	}
-	
+	}	
 }

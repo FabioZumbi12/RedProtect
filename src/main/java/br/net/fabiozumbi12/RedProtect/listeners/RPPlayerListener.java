@@ -16,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -23,6 +24,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -33,6 +35,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -94,6 +97,19 @@ public class RPPlayerListener implements Listener{
     public RPPlayerListener() {
     	RedProtect.logger.debug("Loaded RPPlayerListener...");
     	is19 = Bukkit.getBukkitVersion().startsWith("1.9");
+    }
+    
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerFrostWalk(EntityBlockFormEvent e) {  
+    	if (!(e.getEntity() instanceof Player)){
+    		return;
+    	}
+    	RedProtect.logger.debug("RPPlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());  
+    	Player p = (Player) e.getEntity();
+    	Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
+    	if (r != null && !r.canIceForm(p)){
+    		e.setCancelled(true);
+    	}
     }
     
     @EventHandler
@@ -312,7 +328,7 @@ public class RPPlayerListener implements Listener{
                     	RPDoor.ChangeDoor(b, r);
                     }            	                
                 } 
-                else if (b != null && b.getType().name().contains("RAIL")){
+                else if (b != null && (b.getType().name().contains("RAIL") || b.getType().name().contains("WATER"))){
                     if (!r.canMinecart(p)){
                 		RPLang.sendMessage(p, "blocklistener.region.cantplace");
                 		event.setUseItemInHand(Event.Result.DENY);
@@ -432,7 +448,7 @@ public class RPPlayerListener implements Listener{
             }
         } 
         
-        else if ((e.getType().name().contains("MINECART") || e.getType().name().contains("BOAT")) && !r.canMinecart(p)) {
+        else if ((e instanceof Minecart || e instanceof Boat) && !r.canMinecart(p)) {
         	RPLang.sendMessage(p, "blocklistener.region.cantenter");
             event.setCancelled(true);
             return;

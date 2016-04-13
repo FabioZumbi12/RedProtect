@@ -190,6 +190,8 @@ flags:
   allow-magiccarpet: true
   mob-loot: false
   flow-damage: false
+  iceform-player: true
+  iceform-entity: true
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.
@@ -213,6 +215,8 @@ flags-configuration:
   - allow-magiccarpet
   - mob-loot
   - flow-damage
+  - iceform-player
+  - iceform-entity
   # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}
   # Delay the player can change a flag after last change.
@@ -269,8 +273,6 @@ hooks:
     # Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png
     marker-icon: shield
     min-zoom: 0
-    # Default disabled. Set time to check for deleted regions to remove markers in seconds. You dont need to enable this, but dynmap dont have a code to get marker by world, then some icons can persist for deleted regions.
-    check-invalid-marks: -1
   magiccarpet:
     # Fix pistons allow get mc blocks.
     fix-piston-getblocks: true

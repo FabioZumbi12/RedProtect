@@ -1725,7 +1725,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 }                 
             }
         }
-        RPLang.sendMessage(player,RPLang.get("correct.command") + " " + ChatColor.DARK_AQUA + "/rp "+getCmd("list"));   
+        RPLang.sendMessage(player,RPLang.get("correct.command") + " " + ChatColor.DARK_AQUA + "/rp "+getCmd("help"));   
         return true;
     }
 

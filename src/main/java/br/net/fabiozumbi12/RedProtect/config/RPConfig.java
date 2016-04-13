@@ -186,11 +186,11 @@ public class RPConfig{
                     /*----------------- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.8D){
-        				RedProtect.plugin.getConfig().set("config-version", 6.8D);        				
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.9D){
+        				RedProtect.plugin.getConfig().set("config-version", 6.9D);        				
         				
         				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
-        				if (!flags.contains("smart-door")){
+        				/*if (!flags.contains("smart-door")){
         					flags.add("smart-door");
         				}
         				if (!flags.contains("allow-potions")){
@@ -201,6 +201,12 @@ public class RPConfig{
         				}
         				if (!flags.contains("flow-damage")){
         					flags.add("flow-damage");            				
+        				}*/
+        				if (!flags.contains("iceform-player")){
+        					flags.add("iceform-player");            				
+        				}
+        				if (!flags.contains("iceform-entity")){
+        					flags.add("iceform-entity");            				
         				}
         				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
         				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
@@ -221,6 +227,8 @@ public class RPConfig{
                     	gflags.set(w.getName()+".if-build-false.break-blocks", gflags.getStringList(w.getName()+".if-build-false.break-blocks"));
                     	gflags.set(w.getName()+".if-build-false.place-blocks", gflags.getStringList(w.getName()+".if-build-false.place-blocks"));
                     	gflags.set(w.getName()+".pvp", gflags.getBoolean(w.getName()+".pvp", true));
+                    	gflags.set(w.getName()+".iceform-by.player", gflags.getBoolean(w.getName()+".iceform-by.player", false));
+                    	gflags.set(w.getName()+".iceform-by.entity", gflags.getBoolean(w.getName()+".iceform-by.entity", true));
                     	gflags.set(w.getName()+".interact", gflags.getBoolean(w.getName()+".interact", true));
                     	gflags.set(w.getName()+".use-minecart", gflags.getBoolean(w.getName()+".use-minecart", true));
                     	gflags.set(w.getName()+".entity-block-damage", gflags.getBoolean(w.getName()+".entity-block-damage", false));
