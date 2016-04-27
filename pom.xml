@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>repo.libs</groupId>
 			<artifactId>PvPManager</artifactId>
-			<version>v1</version>
+			<version>v2</version>
 		</dependency>
 		<dependency>
 			<groupId>repo.libs</groupId>

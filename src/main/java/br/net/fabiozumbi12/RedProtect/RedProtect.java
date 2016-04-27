@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import me.NoChance.PvPManager.PvPManager;
-import me.NoChance.PvPManager.Managers.PlayerHandler;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -75,7 +73,6 @@ public class RedProtect extends JavaPlugin {
 	public static boolean AWE;
 	static boolean Dyn;
 	public static Dynmap dynmap;
-	public static PlayerHandler PvPmanager;
 	public static Economy econ;
     
     public void onDisable() {
@@ -138,11 +135,7 @@ public class RedProtect extends JavaPlugin {
             }
             
             if (PvPm){
-            	PvPManager pvp = (PvPManager) Bukkit.getPluginManager().getPlugin("PvPManager");
-                if (pvp.getPlayerHandler() != null) {
-                	PvPmanager = pvp.getPlayerHandler();
-                	RedProtect.logger.info("PvPManager found. Hooked.");  
-                } 
+            	RedProtect.logger.info("PvPManager found. Hooked.");   
             }
             if (Ess){
             	RedProtect.logger.info("Essentials found. Hooked.");

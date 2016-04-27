@@ -625,7 +625,7 @@ public class RPPlayerListener implements Listener{
     	
     	if (rto != null){
     		if (RedProtect.PvPm){
-        		if (rto.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !rto.canBuild(p)){
+        		if (rto.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !rto.canBuild(p)){
         			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
             		e.setCancelled(true); 
             		return;
@@ -727,7 +727,7 @@ public class RPPlayerListener implements Listener{
         	
         	//Pvp check
             if (msg.startsWith("/pvp") && RedProtect.PvPm){
-        		if (r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
+        		if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)){
         			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
         			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
         			return;
@@ -1001,7 +1001,7 @@ public class RPPlayerListener implements Listener{
     	if (RedProtect.PvPm){
     		Region r = RedProtect.rm.getTopRegion(p.getLocation());
         	if (r != null && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
-        		PvPlayer pvpp = RedProtect.PvPmanager.get(p);
+        		PvPlayer pvpp = PvPlayer.get(p);
     			if (r.forcePVP() != pvpp.hasPvPEnabled()){
 					PvPState.put(p, pvpp.hasPvPEnabled());
 					pvpp.setPvP(r.forcePVP());
@@ -1138,7 +1138,7 @@ public class RPPlayerListener implements Listener{
     	
     	//Pvp check to enter on region
         if (RedProtect.PvPm){
-    		if (r.isPvPArena() && !RedProtect.PvPmanager.get(p).hasPvPEnabled() && !r.canBuild(p)){
+    		if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)){
     			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
     			RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
         	}
@@ -1265,8 +1265,8 @@ public class RPPlayerListener implements Listener{
             //Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
         		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.forcepvp.bypass")){
-        			if (PvPState.get(p).booleanValue() != RedProtect.PvPmanager.get(p).hasPvPEnabled()){
-        				RedProtect.PvPmanager.get(p).setPvP(PvPState.get(p).booleanValue());        			  
+        			if (PvPState.get(p).booleanValue() != PvPlayer.get(p).hasPvPEnabled()){
+        				PvPlayer.get(p).setPvP(PvPState.get(p).booleanValue());        			  
         			}
         			PvPState.remove(p);  			
         		}
@@ -1287,7 +1287,7 @@ public class RPPlayerListener implements Listener{
         //Enter check forcepvp flag
         if (RedProtect.PvPm){
         	if (r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
-    			PvPlayer pvpp = RedProtect.PvPmanager.get(p);
+    			PvPlayer pvpp = PvPlayer.get(p);
     			if (r.forcePVP() != pvpp.hasPvPEnabled()){
 					PvPState.put(p, pvpp.hasPvPEnabled());
 					pvpp.setPvP(r.forcePVP());
@@ -1350,8 +1350,8 @@ public class RPPlayerListener implements Listener{
     		//Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
         		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.forcepvp.bypass")){
-        			if (PvPState.get(p).booleanValue() != RedProtect.PvPmanager.get(p).hasPvPEnabled()){
-        				RedProtect.PvPmanager.get(p).setPvP(PvPState.get(p).booleanValue());        			  
+        			if (PvPState.get(p).booleanValue() != PvPlayer.get(p).hasPvPEnabled()){
+        				PvPlayer.get(p).setPvP(PvPState.get(p).booleanValue());        			  
         			}
         			PvPState.remove(p);  			
         		}

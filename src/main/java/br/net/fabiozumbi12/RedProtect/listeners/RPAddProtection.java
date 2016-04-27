@@ -151,8 +151,8 @@ public class RPAddProtection implements Listener{
 			//capitalization verify
 			if (RPConfig.getProtBool("chat-protection.chat-enhancement.enabled")){
 				if (!Pattern.compile(regexIP).matcher(nmsg).find() && !Pattern.compile(regexUrl).matcher(nmsg).find()){
-					nmsg = nmsg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ");
-					String[] messages = nmsg.split("(?<=[.!?])");
+					nmsg = nmsg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+nmsg.substring(1).toLowerCase();
+					/*String[] messages = nmsg.split("(?<=[.!?])");
 					StringBuilder finalmsg = new StringBuilder(); 
 					boolean first = true;
 					for (String msgw:messages){
@@ -168,7 +168,7 @@ public class RPAddProtection implements Listener{
 							finalmsg.append(" "+msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
 						}
 					}					
-					nmsg = finalmsg.toString();
+					nmsg = finalmsg.toString();*/
 					if (RPConfig.getProtBool("chat-protection.chat-enhancement.end-with-dot") && !nmsg.endsWith("?") && !nmsg.endsWith("!") && !nmsg.endsWith(".") && nmsg.split(" ").length > 2){
 						nmsg = nmsg+".";
 					}

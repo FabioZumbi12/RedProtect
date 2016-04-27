@@ -34,10 +34,14 @@ public class RedProtectAPI {
 	}
 	
 	/**
-	 * Return the Region on player location.
+	 * Return the Region on location. 
+	 * <p>
+	 * *Note: If theres more region in this same location this method will 
+	 * return only the high priority region. To get all possible region in	 
+	 * one location use {@code getGroupRegions()}
 	 * <p>
 	 * @param location Player location.
-	 * @return {@code Region} of player location or {@code null} if no regions on player location.
+	 * @return {@code Region} of location or {@code null} if no regions on player location.
 	 */
 	public static Region getRegion(Location location){				
 		return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());

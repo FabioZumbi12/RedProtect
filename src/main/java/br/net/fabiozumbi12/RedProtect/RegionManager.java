@@ -137,21 +137,20 @@ public class RegionManager{
     }
         
     public Set<Region> getRegionsForChunk(Chunk chunk) {
-        int x;
-        int y;
-        int z;
         Set<Region> regions = new HashSet<Region>();
-        for (y = (0); y <= chunk.getWorld().getMaxHeight(); y++) {
-            for (x = ((chunk.getX()*16)-8); x <= ((chunk.getX()*16) + 8); x++) {
-                for (z = ((chunk.getZ()*16)-8); z <= ((chunk.getZ()*16) + 8); z++) {
-                    Location location = new Location(chunk.getWorld(), x, y , z);
-                    if (getGroupRegion(location).size() > 0) {
-                        regions.addAll(getGroupRegion(location).values());
-                    }
-                }
+        for (Region region : RedProtect.rm.getRegionsByWorld(chunk.getWorld())) {
+            int minChunkX = (int)Math.floor(region.getMinMbrX() / 16f);
+            int maxChunkX = (int)Math.floor(region.getMaxMbrX() / 16f);
+            int minChunkZ = (int)Math.floor(region.getMinMbrZ() / 16f);
+            int maxChunkZ = (int)Math.floor(region.getMaxMbrZ() / 16f);
+
+            if (chunk.getX() >= minChunkX && chunk.getX() <= maxChunkX && chunk.getZ() >= minChunkZ && chunk.getZ() <= maxChunkZ) {
+            	if (!regions.contains(region)){
+            		regions.add(region);
+            	}               
             }
         }
-        return regions;        
+        return regions;
     }
     
     public Set<Region> getRegionsNear(Player player, int i, World w) {
