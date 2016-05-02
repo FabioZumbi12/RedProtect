@@ -7,7 +7,7 @@
 # <       configuration file in this link: https://goo.gl/SEbYBZ       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 6.8
+config-version: 7.0
 # Enable debug messages
 debug-messages: false
 
@@ -192,6 +192,7 @@ flags:
   flow-damage: false
   iceform-player: true
   iceform-entity: true
+  allow-fly: false
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.
@@ -217,6 +218,7 @@ flags-configuration:
   - flow-damage
   - iceform-player
   - iceform-entity
+  - allow-fly
   # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}
   # Delay the player can change a flag after last change.
@@ -276,4 +278,6 @@ hooks:
   magiccarpet:
     # Fix pistons allow get mc blocks.
     fix-piston-getblocks: true
+  armor-stands:
+    spawn-arms: true
        

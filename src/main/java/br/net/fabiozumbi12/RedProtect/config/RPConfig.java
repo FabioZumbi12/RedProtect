@@ -37,7 +37,7 @@ public class RPConfig{
 	static RPYaml GuiItems = new RPYaml();
 	static YamlConfiguration Prots = new RPYaml();
 	static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("forcepvp","can-fly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
 	public static void init(RedProtect plugin) {
 
@@ -186,11 +186,12 @@ public class RPConfig{
                     /*----------------- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-        			if (RedProtect.plugin.getConfig().getDouble("config-version") != 6.9D){
-        				RedProtect.plugin.getConfig().set("config-version", 6.9D);        				
-        				
-        				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
-        				/*if (!flags.contains("smart-door")){
+    	            if (RedProtect.plugin.getConfig().getDouble("config-version") < 6.8D){
+    	            	RedProtect.plugin.getConfig().set("config-version", 6.8D); 
+    	            	
+    	            	List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+    	            	
+    	            	if (!flags.contains("smart-door")){
         					flags.add("smart-door");
         				}
         				if (!flags.contains("allow-potions")){
@@ -201,12 +202,33 @@ public class RPConfig{
         				}
         				if (!flags.contains("flow-damage")){
         					flags.add("flow-damage");            				
-        				}*/
+        				}
+        				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
+        				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
+    	            }
+    	            
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 6.9D){
+        				RedProtect.plugin.getConfig().set("config-version", 6.9D);        				
+        				
+        				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+        				
         				if (!flags.contains("iceform-player")){
         					flags.add("iceform-player");            				
         				}
         				if (!flags.contains("iceform-entity")){
         					flags.add("iceform-entity");            				
+        				}
+        				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
+        				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
+        			}
+        			
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.0D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.0D);        				
+        				
+        				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+        				
+        				if (!flags.contains("allow-fly")){
+        					flags.add("allow-fly");            				
         				}
         				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
         				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
@@ -245,6 +267,8 @@ public class RPConfig{
                     	gflags.set(w.getName()+".deny-item-usage.allow-on-claimed-rps", gflags.getBoolean(w.getName()+".deny-item-usage.allow-on-claimed-rps", true));
                     	gflags.set(w.getName()+".deny-item-usage.allow-on-wilderness", gflags.getBoolean(w.getName()+".deny-item-usage.allow-on-wilderness", true));
                     	gflags.set(w.getName()+".deny-item-usage.items", gflags.getStringList(w.getName()+".deny-item-usage.items"));
+                    	gflags.set(w.getName()+".player-velocity.walk-speed", gflags.getDouble(w.getName()+".player-velocity.walk-speed", -1));
+                    	gflags.set(w.getName()+".player-velocity.fly-speed", gflags.getDouble(w.getName()+".player-velocity.fly-speed", -1));
                     	w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
                     	RedProtect.logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
                     }
@@ -327,6 +351,10 @@ public class RPConfig{
     
 	public static double getGlobalFlagDouble(String key){		
 		return gflags.getDouble(key);
+	}
+	
+	public static float getGlobalFlagFloat(String key){			
+		return Float.valueOf(gflags.getString(key));
 	}
 	
 	public static int getGlobalFlagInt(String key){		

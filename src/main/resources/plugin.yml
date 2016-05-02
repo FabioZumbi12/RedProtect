@@ -1,6 +1,6 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.RedProtect
-version: 6.5.7
+version: 6.5.8
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap]
@@ -64,6 +64,7 @@ permissions:
       redprotect.flag.flow-damage: true
       redprotect.flag.iceform-player: true
       redprotect.flag.iceform-entity: true
+      redprotect.flag.allow-fly: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false
@@ -108,7 +109,7 @@ permissions:
       redprotect.admin.flag.can-projectiles: true
       redprotect.admin.flag.can-hunger: true
       redprotect.admin.flag.player-damage: true
-      redprotect.admin.flag.can-fly: true
+      redprotect.admin.flag.forcefly: true
       redprotect.admin.flag.gamemode: true
       redprotect.admin.flag.pvparena: true
       redprotect.admin.flag.forcepvp: true
@@ -153,6 +154,7 @@ permissions:
       redprotect.bypass: true
       redprotect.bypass.nether-roof: true
       redprotect.bypass.addleader: true
+      redprotect.bypass.velocity: true
       redprotect.magicwand: true
       redprotect.update: true
       redprotect.regen: true

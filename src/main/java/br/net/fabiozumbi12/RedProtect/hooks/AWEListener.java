@@ -16,6 +16,7 @@ import org.primesoft.asyncworldedit.playerManager.PlayerEntry;
 import org.primesoft.asyncworldedit.worldedit.AsyncEditSessionFactory;
 import org.primesoft.asyncworldedit.worldedit.world.AsyncWorld;
 
+import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
@@ -37,11 +38,14 @@ public class AWEListener {
 		return false;
 	}
 	
-    public static void regenRegion(final String rid, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender) {
+    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender) {
     	    	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() {
 
 			public void run() {
+				if (RPUtil.stopRegen){
+					return;
+				}
 				CuboidSelection csel = new CuboidSelection(w , p1, p2);
 		    	Region wreg = null;
 		    	try {
@@ -56,7 +60,7 @@ public class AWEListener {
 	                @Override
 	                public void jobStateChanged(JobEntry job) {
 	                    String name = job.getName();
-	                    RedProtect.logger.info("State: " + name + " of region " + rid + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                    RedProtect.logger.info("State: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
 	                }
 	            };
 
@@ -65,37 +69,39 @@ public class AWEListener {
 	                public void jobAdded(JobEntry job) {
 	                    String name = job.getName();
 	                    job.addStateChangedListener(stateListener);
-	                    RedProtect.logger.warning("JobAdded: " + name + " of region " + rid + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                    RedProtect.logger.warning("JobAdded: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
 	                }
 
 	                @Override
 	                public void jobRemoved(JobEntry job) {
 	                    String name = job.getName();
 	                    job.addStateChangedListener(stateListener);
-	                    RedProtect.logger.sucess("JobDone: " + name + " of region " + rid + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                    RedProtect.logger.sucess("JobDone: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
 	                }
 	            };
 	            
 	            bPlacer.addListener(listener);
 	    		AsyncEditSessionFactory factory = (AsyncEditSessionFactory) WorldEdit.getInstance().getEditSessionFactory();
 	    		EditSession ess = factory.getEditSession(wreg.getWorld(), -1);
-	    		eSessions.put(rid,ess);
-	    		int delayCount = 1+delay/40;
+	    		eSessions.put(r.getID(),ess);
+	    		int delayCount = 1+delay/10;
 	    		
                 if (sender != null){
 		    		
 	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess)){
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+rid.split("@")[0]+" regenerated with success!");
+	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
 	    			} else {
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+rid.split("@")[0]+"!");
+	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
 	    			}
 	    		} else {
 	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess)){
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+rid.split("@")[0]+" regenerated with success!");
+	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
 	    			} else {
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+rid.split("@")[0]+"!");
+	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
 	    			}
 	    		}
+                
+                RedProtect.rm.remove(r);
 		    	
 				} 
 			},delay); 

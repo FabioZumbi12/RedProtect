@@ -43,7 +43,9 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -61,10 +63,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.inventivetalent.bossbar.BossBarAPI;
 
 import br.net.fabiozumbi12.RedProtect.RPContainer;
@@ -99,6 +99,29 @@ public class RPPlayerListener implements Listener{
     	is19 = Bukkit.getBukkitVersion().startsWith("1.9");
     }
     
+    @EventHandler
+    public void onBrewing(BrewEvent e){
+    	ItemStack[] cont = e.getContents().getContents();
+    	for (int i = 0; i < cont.length; i++){
+    		if (RPUtil.denyPotion(cont[i])){
+    			e.getContents().setItem(i, new ItemStack(Material.AIR));
+    		}
+    	}
+    }
+    
+    @EventHandler
+    public void onCraftItem(PrepareItemCraftEvent e){
+    	if (e.getView().getPlayer() instanceof Player){
+    		Player p = (Player) e.getView().getPlayer();
+    		
+    		ItemStack result = e.getInventory().getResult();
+        	
+        	if (RPUtil.denyPotion(result, p)){
+        		e.getInventory().setResult(new ItemStack(Material.AIR));        	    		
+        	}
+    	}    	
+    }
+        
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {  
     	if (!(e.getEntity() instanceof Player)){
@@ -123,22 +146,9 @@ public class RPPlayerListener implements Listener{
     	if (p == null){
     		return;
     	}
-    	    	
-        List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
-        if(e.getItem().getType().name().contains("POTION") && Pots.size() > 0){
-        	PotionMeta pot = (PotionMeta) e.getItem().getItemMeta();
-        	for (String potion:Pots){      		
-        		try{
-        			PotionType ptype = PotionType.valueOf(potion.toUpperCase());
-        			if (pot.getBasePotionData().getType().equals(ptype) && !p.hasPermission("redprotect.bypass")){
-            			e.setCancelled(true);
-            			RPLang.sendMessage(p, "playerlistener.denypotion");
-            		}
-        		} catch(IllegalArgumentException ex){
-        			RPLang.sendMessage(p, "The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
-        			RedProtect.logger.severe("The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
-        		}        		
-        	}                    
+    	
+        if(RPUtil.denyPotion(e.getItem(), p)){
+        	e.setCancelled(true);                    
         }
     }
     
@@ -788,7 +798,6 @@ public class RPPlayerListener implements Listener{
     		RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     	}
     	
-    	
         Region r = RedProtect.rm.getTopRegion(lto);
         
         /*
@@ -840,6 +849,13 @@ public class RPPlayerListener implements Listener{
                 	}        	
         		}
         	}
+            
+            //Deny Fly
+            if (!r.canFly(p) && p.isFlying() && !p.getGameMode().toString().equalsIgnoreCase("SPECTATOR")){
+        		p.setFlying(false);
+        		//p.setAllowFlight(false);
+        		RPLang.sendMessage(p, "playerlistener.region.cantfly");
+        	} 
             
             if (Ownerslist.get(p) != r.getName()){ 
     			Region er = RedProtect.rm.getRegion(Ownerslist.get(p), p.getWorld());			
@@ -1041,21 +1057,8 @@ public class RPPlayerListener implements Listener{
     	}    
     	
     	//deny potion
-        List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
-        if(Pots.size() > 0){        	
-        	PotionMeta pot = (PotionMeta) e.getPotion().getItem().getItemMeta();     	
-        	for (String potion:Pots){
-        		try{
-        			if (pot.getBasePotionData().getType().equals(PotionType.valueOf(potion.toUpperCase()))){
-            			e.setCancelled(true);
-            			if (e.getPotion().getShooter() instanceof Player){
-            				RPLang.sendMessage((Player)e.getPotion().getShooter(), RPLang.get("playerlistener.denypotion"));
-            			}            			
-            		}
-        		} catch(IllegalArgumentException ex){
-        			RedProtect.logger.severe("The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
-        		}
-        	}                    
+        if (RPUtil.denyPotion(e.getPotion().getItem(), p)){
+        	e.setCancelled(true);
         }
     }
             
@@ -1194,9 +1197,9 @@ public class RPPlayerListener implements Listener{
         	if (MagicCarpet.getCarpets().getCarpet(p) != null){
         		MagicCarpet.getCarpets().remove(p);
         		RPLang.sendMessage(p, "playerlistener.region.cantmc");
-        	}        	
-        }
-        
+        	}    
+        }        
+                        
         if (er != null){                	
         	//Exit effect
 			if (er.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
@@ -1225,17 +1228,17 @@ public class RPPlayerListener implements Listener{
 				}
 			} else
 			//exit fly flag
-	    	if (er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+	    	if (er.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
 	    		if (PlayertaskID.containsValue(p.getName())){
-	    			if (r.flagExists("can-fly")){
-	    				p.setAllowFlight(r.getFlagBool("can-fly"));
+	    			if (r.flagExists("forcefly")){
+	    				p.setAllowFlight(r.getFlagBool("forcefly"));
 	    			} else {
 	    				p.setAllowFlight(false);	
 	    			}	    			
 					List<String> removeTasks = new ArrayList<String>();
 					for (String taskId:PlayertaskID.keySet()){
 						int id = Integer.parseInt(taskId.split("_")[0]);
-						String ideff = id+"_"+"can-fly"+er.getName();
+						String ideff = id+"_"+"forcefly"+er.getName();
 						if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
 							Bukkit.getScheduler().cancelTask(id);
 							removeTasks.add(taskId);
@@ -1322,24 +1325,24 @@ public class RPPlayerListener implements Listener{
   		}
         
       //enter fly flag
-    	if (r.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
-    		p.setAllowFlight(r.getFlagBool("can-fly"));
+    	if (r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+    		p.setAllowFlight(r.getFlagBool("forcefly"));
     		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() { 
 					public void run() {
-						if (p.isOnline() && r.flagExists("can-fly")){
-							p.setAllowFlight(r.getFlagBool("can-fly")); 
+						if (p.isOnline() && r.flagExists("forcefly")){
+							p.setAllowFlight(r.getFlagBool("forcefly")); 
 						} else {
 							p.setAllowFlight(false); 
 							try {
 								this.finalize();
 							} catch (Throwable e) {
-								RedProtect.logger.debug("Can-fly not finalized...");
+								RedProtect.logger.debug("forcefly not finalized...");
 							}							
 						}
 						} 
 					},0, 80);	
-				PlayertaskID.put(TaskId+"_"+"can-fly"+r.getName(), p.getName());
-				RedProtect.logger.debug("(RegionFlags fly)Added task ID: " + TaskId+"_"+"can-fly"+ " for player " + p.getName());
+				PlayertaskID.put(TaskId+"_"+"forcefly"+r.getName(), p.getName());
+				RedProtect.logger.debug("(RegionFlags fly)Added task ID: " + TaskId+"_"+"forcefly"+ " for player " + p.getName());
     	}
     }
         
@@ -1390,13 +1393,13 @@ public class RPPlayerListener implements Listener{
 			} else
 			
 			//exit fly flag
-        	if (er.flagExists("can-fly") && !p.hasPermission("redprotect.admin.flag.can-fly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+        	if (er.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
         		if (PlayertaskID.containsValue(p.getName())){
         			p.setAllowFlight(false);	
     				List<String> removeTasks = new ArrayList<String>();
     				for (String taskId:PlayertaskID.keySet()){
     					int id = Integer.parseInt(taskId.split("_")[0]);
-    					String ideff = id+"_"+"can-fly"+er.getName();
+    					String ideff = id+"_"+"forcefly"+er.getName();
     					if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
     						Bukkit.getScheduler().cancelTask(id);
     						removeTasks.add(taskId);

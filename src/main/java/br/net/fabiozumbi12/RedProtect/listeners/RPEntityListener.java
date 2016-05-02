@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Creature;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Golem;
@@ -35,6 +35,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class RPEntityListener implements Listener{
@@ -70,8 +71,10 @@ public class RPEntityListener implements Listener{
            
         RedProtect.logger.debug("Spawn monster " + event.getEntityType().name());
         
-        if (!(e instanceof Creature)){
-        	return;
+        //spawn arms on armor stands
+        if ((e instanceof ArmorStand) && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
+        	ArmorStand as = (ArmorStand) e;
+        	as.setArms(true);
         }
         
         if (e instanceof Monster || e instanceof Skeleton) {

@@ -22,7 +22,7 @@ gui-flags:
     description1: '&asingle and double normal and iron doors'
     description2: '&aand iron trap doors.'
   pvp:
-    slot: 13
+    slot: 12
     material: STONE_SWORD
     name: '&e=> Allow PvP'
     description: '&6Description: &aAllow PvP for all players'
@@ -139,4 +139,11 @@ gui-flags:
     name: '&e=> Allow Ice Form by Entity'
     description: '&6Description: &aAllow ice form'
     description1: '&aby entitys like SnowMan.'
+    description2: ''
+  allow-fly:
+    slot: 14
+    material: FEATHER
+    name: '&e=> Allow Fly'
+    description: '&6Description: &aAllow players with'
+    description1: '&afly enabled to fly on this region.'
     description2: ''

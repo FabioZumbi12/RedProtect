@@ -110,7 +110,7 @@ public class RegionManager{
      * 
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      * @param uuid
-     * @return set<region>
+     * @return {@code set<region>}
      */
     public Set<Region> getRegions(String uuid) {
         Set<Region> ret = new HashSet<Region>();
@@ -121,11 +121,11 @@ public class RegionManager{
         return ret;
     }
     
-    /**Return a {@code set<region>} of regions by player UUID or Name;
+    /**Return a {@code set<region>} of regions by player UUID or Name if this player is Admin or Leader;
      * 
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      * @param uuid
-     * @return set<region>
+     * @return {@code set<region>}
      */
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> ret = new HashSet<Region>();

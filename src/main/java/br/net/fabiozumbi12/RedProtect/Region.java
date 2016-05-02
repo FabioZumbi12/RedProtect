@@ -1061,6 +1061,20 @@ public class Region implements Serializable{
 	
 	//---------------------- Player Flags --------------------------//
 
+	/**Allow players with fly enabled fly on this region.
+	 * 
+	 * @return boolean
+	 */
+	public boolean canFly(Player p) {
+		if (!RPConfig.isFlagEnabled("allow-fly")){
+    		return RPConfig.getBool("flags.allow-fly");
+    	}
+		if (checkAllowedPlayer(p)){
+			return true;
+		}
+		return getFlagBool("allow-fly");
+	}
+	
 	/**Allow ice form by players.
 	 * 
 	 * @return boolean

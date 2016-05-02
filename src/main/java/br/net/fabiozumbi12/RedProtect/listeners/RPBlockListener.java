@@ -22,6 +22,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
@@ -55,6 +56,13 @@ public class RPBlockListener implements Listener{
 		RedProtect.logger.debug("Loaded RPBlockListener...");
 	}    
     
+	@EventHandler
+	public void onDispenser(BlockDispenseEvent e){
+		if (RPUtil.denyPotion(e.getItem())){
+			e.setCancelled(true);
+		}
+	}
+	
     @EventHandler(priority = EventPriority.HIGH)
     public void onSignPlace(SignChangeEvent e) {   
     	RedProtect.logger.debug("BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
@@ -161,7 +169,10 @@ public class RPBlockListener implements Listener{
     	Player p = e.getPlayer();
         Block b = e.getBlockPlaced();       
         World w = p.getWorld();
-        Material m = e.getItemInHand().getType();
+        Material m = null;
+        if (e.getItemInHand() != null){
+        	m = e.getItemInHand().getType();
+        }
         
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
@@ -170,7 +181,7 @@ public class RPBlockListener implements Listener{
         	return;
         }
         
-    	if (r != null && !r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))){
+    	if (r != null && m != null && !r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))){
     		RPLang.sendMessage(p, "blocklistener.region.cantplace");
             e.setCancelled(true);
         	return;
@@ -182,7 +193,7 @@ public class RPBlockListener implements Listener{
             	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             } else {
-            	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && 
+            	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
             			(m.equals(Material.HOPPER) || m.name().contains("RAIL"))){
             		int x = b.getX();
             		int y = b.getY();

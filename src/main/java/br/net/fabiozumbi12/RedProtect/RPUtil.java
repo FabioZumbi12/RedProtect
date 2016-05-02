@@ -39,6 +39,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
@@ -56,9 +57,33 @@ import com.earth2me.essentials.User;
 public class RPUtil {
     static int backup = 0; 
     public static HashMap<Player, HashMap<Location, Material>> pBorders = new HashMap<Player, HashMap<Location, Material>>();
-        
+	public static boolean stopRegen = false;
     
-
+    public static boolean denyPotion(ItemStack result){
+    	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
+    	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
+    		PotionMeta pot = (PotionMeta) result.getItemMeta();
+    		
+    		if (Pots.contains(pot.getBasePotionData().getType().name())){
+    			return true;
+    		}        	    		
+    	}
+    	return false;
+    }
+    
+    public static boolean denyPotion(ItemStack result, Player p){
+    	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
+    	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
+    		PotionMeta pot = (PotionMeta) result.getItemMeta();
+    		
+    		if (Pots.contains(pot.getBasePotionData().getType().name())){    			
+    			RPLang.sendMessage(p, "playerlistener.denypotion");
+    			return true;
+    		}        	    		
+    	}
+    	return false;
+    }
+    
 	public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
 	    TaskChain.newChain().add(new TaskChain.GenericTask() {
 	        public void run() {
@@ -215,6 +240,7 @@ public class RPUtil {
     	int dateint = 0;
     	int cfm = 0;
     	int delay = 0;
+    	int skipped = 0;
     	Date now = null;    	   	
     	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
     	
@@ -244,18 +270,24 @@ public class RPUtil {
             		}
     			}           	
             	
-            	if (days > RPConfig.getInt("purge.remove-oldest")){        
-                	RedProtect.logger.warning("Purging " + r.getName() + " - Days: " + days);
-                	if (RedProtect.WE && RPConfig.getBool("purge.regen.enable") && r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
-                		if (RedProtect.AWE){
-                			AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
-                		} else {
-                			WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
-                		}                		
-                		delay=delay+40;
-                	}
-            		r.delete();
-            		purged++;
+            	if (days > RPConfig.getInt("purge.remove-oldest")){                		
+            		if (RedProtect.WE && RPConfig.getBool("purge.regen.enable")){
+            			if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
+            				if (RedProtect.AWE){
+                    			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                    		} else {
+                    			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                    		}                		
+                    		delay=delay+10;
+            			} else {
+            				skipped++;
+            				continue;
+            			}                			
+            		} else {
+            			r.delete();
+            			purged++;
+            			RedProtect.logger.warning("Purging " + r.getName() + " - Days: " + days);
+            		}
             		continue;
             	}
         	}    
@@ -393,7 +425,7 @@ public class RPUtil {
         }     
         
         if (delay > 0){
-    		RedProtect.logger.warning("&c> There's "+delay/40+" regions to be regenerated...");
+    		RedProtect.logger.warning("&c> There's "+delay/10+" regions to be regenerated at 2 regions/second.");
     		RedProtect.logger.severe("&cRegen can take long time, but your players can join and play normally!");
         }
         
@@ -416,6 +448,11 @@ public class RPUtil {
         	RedProtect.logger.sucess("Regions saved!");  
         	pls = 0;
         	i = 0;
+        }
+        
+        if (skipped > 0){
+        	RedProtect.logger.sucess(skipped + " regions skipped due to max size limit to regen!");
+        	skipped = 0;
         }
         
         if (purged > 0){

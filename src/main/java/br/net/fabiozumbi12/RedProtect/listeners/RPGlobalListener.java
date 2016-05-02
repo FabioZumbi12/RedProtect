@@ -92,6 +92,16 @@ public class RPGlobalListener implements Listener{
 	public void onPlayerMove(PlayerMoveEvent e) {
     	Player p = e.getPlayer();
     	
+    	//set velocities
+    	if (!p.hasPermission("redprotect.bypass.velocity")){
+    		if (RPConfig.getGlobalFlagFloat(p.getWorld().getName()+".player-velocity.walk-speed") >= 0){
+        		p.setWalkSpeed(RPConfig.getGlobalFlagFloat(p.getWorld().getName()+".player-velocity.walk-speed"));
+        	}
+        	if (RPConfig.getGlobalFlagFloat(p.getWorld().getName()+".player-velocity.fly-speed") >= 0){
+        		p.setFlySpeed(RPConfig.getGlobalFlagFloat(p.getWorld().getName()+".player-velocity.fly-speed"));
+        	}
+    	}
+    	
     	if (is19){    		
     		if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
     			ItemStack item = p.getInventory().getChestplate();

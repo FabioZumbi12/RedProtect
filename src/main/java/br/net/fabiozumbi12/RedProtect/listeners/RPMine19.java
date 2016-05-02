@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TippedArrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionType;
-
+import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
@@ -19,6 +19,25 @@ public class RPMine19 implements Listener{
 
 	public RPMine19(){
 		RedProtect.logger.debug("Loaded RPMine19...");
+	}
+	
+	@EventHandler
+	public void onShootBow(EntityShootBowEvent e){
+		if (e.isCancelled() || !(e.getEntity() instanceof Player)){
+			return;
+		}
+		
+		Player p = (Player) e.getEntity();		
+		Entity proj = e.getProjectile();
+		List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
+		
+		if (proj != null && (proj instanceof TippedArrow)){
+			TippedArrow arr = (TippedArrow) proj;
+			if (Pots.contains(arr.getBasePotionData().getType().name())){
+				RPLang.sendMessage(p, "playerlistener.denypotion");
+				e.setCancelled(true);
+			}
+		}
 	}
 	
 	@EventHandler
@@ -39,22 +58,11 @@ public class RPMine19 implements Listener{
     		return;
     	}    
     	
-    	//deny potion
-        List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
-        if(Pots.size() > 0){        	
-        	PotionMeta pot = (PotionMeta) e.getEntity().getItem().getItemMeta();     	
-        	for (String potion:Pots){
-        		try{
-        			if (pot.getBasePotionData().getType().equals(PotionType.valueOf(potion.toUpperCase()))){
-            			e.setCancelled(true);
-            			if (e.getEntity().getShooter() instanceof Player){
-            				RPLang.sendMessage((Player)e.getEntity().getShooter(), RPLang.get("playerlistener.denypotion"));
-            			}            			
-            		}
-        		} catch(IllegalArgumentException ex){
-        			RedProtect.logger.severe("The config 'deny-potions' have a unknow potion type. Change to a valid potion type to really deny the usage.");
-        		}
-        	}                    
-        }
+    	if (RPUtil.denyPotion(e.getEntity().getItem())){
+    		e.setCancelled(true);
+			if (e.getEntity().getShooter() instanceof Player){
+				RPLang.sendMessage((Player)e.getEntity().getShooter(), RPLang.get("playerlistener.denypotion"));
+			}
+    	}
 	}
 }

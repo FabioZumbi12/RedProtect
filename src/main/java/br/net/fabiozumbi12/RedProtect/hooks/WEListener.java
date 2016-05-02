@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
+import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
@@ -29,10 +30,13 @@ public class WEListener {
 		return false;
 	}
 	
-    public static void regenRegion(final String rid, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender) {
+    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender) {
     	    	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
 			public void run() {
+				if (RPUtil.stopRegen){
+					return;
+				}
 				CuboidSelection csel = new CuboidSelection(w , p1, p2);
 		    	Region wreg = null;
 		    	try {
@@ -42,22 +46,24 @@ public class WEListener {
 				}
 		    	
 		    	EditSession esession = new EditSession(LocalWorldAdapter.adapt(wreg.getWorld()), -1);
-		    	eSessions.put(rid, esession);
-		    	int delayCount = 1+delay/40;
+		    	eSessions.put(r.getID(), esession);
+		    	int delayCount = 1+delay/10;
 		    	
 		    	if (sender != null){
 	    			if (wreg.getWorld().regenerate(wreg, esession)){
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+rid.split("@")[0]+" regenerated with success!");
+	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
 	    			} else {
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+rid.split("@")[0]+"!");
+	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
 	    			}
 	    		} else {
 	    			if (wreg.getWorld().regenerate(wreg, esession)){
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+rid.split("@")[0]+" regenerated with success!");
+	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
 	    			} else {
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+rid.split("@")[0]+"!");
+	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
 	    			}
 	    		}
+		    	
+		    	RedProtect.rm.remove(r);
 		    	
 				} 
 			},delay); 

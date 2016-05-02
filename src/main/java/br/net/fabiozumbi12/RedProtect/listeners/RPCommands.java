@@ -242,6 +242,16 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	if(args.length == 2){
         		
+        		//rp regen stop
+        		if (args[0].equalsIgnoreCase("regen") && args[1].equalsIgnoreCase("stop")) {
+        			if (!RedProtect.WE){
+        				return true;
+        			}
+        			RPUtil.stopRegen = true;
+        			RPLang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
+        			return true;
+        		}
+        		
         		//rp list <player>
         		if (checkCmd(args[0], "list")){        			
         			getRegionforList(sender, RPUtil.PlayerToUUID(args[1]), 1);
@@ -314,9 +324,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			}
         			
         			if (RedProtect.AWE){
-        				AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+        				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
         			} else {
-        				WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+        				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
         			}        			
         			return true;
         		}
@@ -534,9 +544,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			}
     			
     			if (RedProtect.AWE){
-    				AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+    				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
     			} else {
-    				WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
     			} 
     			return true;
     		}
@@ -885,6 +895,16 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args.length == 2) {      
         	
+        	//rp regen stop
+    		if (args[0].equalsIgnoreCase("regen") && args[1].equalsIgnoreCase("stop") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			RPUtil.stopRegen = true;
+    			RPLang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
+    			return true;
+    		}
+    		
         	if (checkCmd(args[0], "flag") && args[1].equalsIgnoreCase("gui-edit")) {
         		if (player.hasPermission("redprotect.gui.edit")){
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
@@ -1006,9 +1026,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			}
     			
     			if (RedProtect.AWE){
-    				AWEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+    				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
     			} else {
-    				WEListener.regenRegion(r.getID(), Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
     			}   			
     			return true;
     		}
@@ -2310,7 +2330,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			}			
 		}
 		
-		if ((flag.equalsIgnoreCase("can-fly") || 
+		if ((flag.equalsIgnoreCase("forcefly") || 
+				flag.equalsIgnoreCase("allow-fly") ||
 				flag.equalsIgnoreCase("door") ||
 				flag.equalsIgnoreCase("button") ||
 				flag.equalsIgnoreCase("lever") ||
