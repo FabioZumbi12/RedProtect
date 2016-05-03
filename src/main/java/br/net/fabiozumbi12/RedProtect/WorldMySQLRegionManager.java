@@ -375,7 +375,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     	Set<Region> regionsp = new HashSet<Region>();
     	try {
             Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE leaders LIKE ='%"+uuid+"%'");
+            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE leaders LIKE '%"+uuid+"%'");
             while (rs.next()) {
             	regionsp.add(this.getRegion(rs.getString("name")));
             }
