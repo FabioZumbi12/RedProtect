@@ -324,9 +324,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			}
         			
         			if (RedProtect.AWE){
-        				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+        				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender, false);        				
         			} else {
-        				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+        				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
         			}        			
         			return true;
         		}
@@ -544,9 +544,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			}
     			
     			if (RedProtect.AWE){
-    				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+    				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender, false);        				
     			} else {
-    				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
     			} 
     			return true;
     		}
@@ -840,6 +840,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 RPLang.sendMessage(player,"cmdmanager.tutorial3");
                 RPLang.sendMessage(player,"cmdmanager.tutorial4");
                 RPLang.sendMessage(player,"cmdmanager.tutorial5");
+                RPLang.sendMessage(player,"cmdmanager.tutorial6");
                 return true;
             }
             
@@ -1026,9 +1027,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			}
     			
     			if (RedProtect.AWE){
-    				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender);        				
+    				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender, false);        				
     			} else {
-    				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender);
+    				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
     			}   			
     			return true;
     		}

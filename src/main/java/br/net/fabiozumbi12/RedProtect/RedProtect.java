@@ -74,6 +74,7 @@ public class RedProtect extends JavaPlugin {
 	static boolean Dyn;
 	public static Dynmap dynmap;
 	public static Economy econ;
+	public static String v;
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -113,7 +114,7 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPWorldListener(), this);  
             serv.getPluginManager().registerEvents(new RPAddProtection(), this);
             
-            String v = RedProtect.serv.getBukkitVersion();
+            v = RedProtect.serv.getBukkitVersion();
             if (v.contains("1.8") || v.contains("1.9")){
             	serv.getPluginManager().registerEvents(new RPMine18(), this);
             }

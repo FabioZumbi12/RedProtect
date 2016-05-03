@@ -38,7 +38,7 @@ public class AWEListener {
 		return false;
 	}
 	
-    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender) {
+    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
     	    	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() {
 
@@ -101,7 +101,9 @@ public class AWEListener {
 	    			}
 	    		}
                 
-                RedProtect.rm.remove(r);
+                if (remove){
+		    		RedProtect.rm.remove(r);
+		    	}
 		    	
 				} 
 			},delay); 

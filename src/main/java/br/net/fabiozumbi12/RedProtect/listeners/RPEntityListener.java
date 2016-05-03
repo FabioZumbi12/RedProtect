@@ -9,10 +9,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -77,28 +77,18 @@ public class RPEntityListener implements Listener{
         	as.setArms(true);
         }
         
-        if (e instanceof Monster || e instanceof Skeleton) {
+        if (e instanceof Monster) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
-            if (r != null && !r.canSpawnMonsters() && 
-            (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
-            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
-            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS)
-            		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
+            if (r != null && !r.canSpawnMonsters()) {
             	RedProtect.logger.debug("Cancelled spawn of monster " + event.getEntityType().name());
                 event.setCancelled(true);
             }
         }
-        if (e instanceof Animals || e instanceof Villager || e instanceof Golem) {
+        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player))) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
-            if (r != null && !r.canSpawnPassives() && 
-            		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
+            if (r != null && !r.canSpawnPassives()) {
             	RedProtect.logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
             }

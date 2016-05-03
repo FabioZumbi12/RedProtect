@@ -40,6 +40,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
@@ -62,9 +63,15 @@ public class RPUtil {
     public static boolean denyPotion(ItemStack result){
     	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
     	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
-    		PotionMeta pot = (PotionMeta) result.getItemMeta();
-    		
-    		if (Pots.contains(pot.getBasePotionData().getType().name())){
+    		String potname = "";
+    		if (RedProtect.v.startsWith("1.9")){
+    			PotionMeta pot = (PotionMeta) result.getItemMeta();
+    			potname = pot.getBasePotionData().getType().name();
+    		}
+    		if (RedProtect.v.startsWith("1.7") || RedProtect.v.startsWith("1.8")){
+    			potname = Potion.fromItemStack(result).getType().name();
+    		} 
+    		if (Pots.contains(potname)){
     			return true;
     		}        	    		
     	}
@@ -74,9 +81,15 @@ public class RPUtil {
     public static boolean denyPotion(ItemStack result, Player p){
     	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
     	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
-    		PotionMeta pot = (PotionMeta) result.getItemMeta();
-    		
-    		if (Pots.contains(pot.getBasePotionData().getType().name())){    			
+    		String potname = "";
+    		if (RedProtect.v.startsWith("1.9")){
+    			PotionMeta pot = (PotionMeta) result.getItemMeta();
+    			potname = pot.getBasePotionData().getType().name();
+    		}
+    		if (RedProtect.v.startsWith("1.7") || RedProtect.v.startsWith("1.8")){
+    			potname = Potion.fromItemStack(result).getType().name();
+    		}    		
+    		if (Pots.contains(potname)){    			
     			RPLang.sendMessage(p, "playerlistener.denypotion");
     			return true;
     		}        	    		
@@ -274,9 +287,9 @@ public class RPUtil {
             		if (RedProtect.WE && RPConfig.getBool("purge.regen.enable")){
             			if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
             				if (RedProtect.AWE){
-                    			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                    			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                     		} else {
-                    			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null);
+                    			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                     		}                		
                     		delay=delay+10;
             			} else {
