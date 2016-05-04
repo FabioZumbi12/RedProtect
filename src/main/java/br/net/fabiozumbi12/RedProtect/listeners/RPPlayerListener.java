@@ -711,7 +711,7 @@ public class RPPlayerListener implements Listener{
         		return;
         	}
         	
-           	if (!r.AllowCommands(p, msg.split(" ")[0])){
+           	if (!r.AllowCommands(p, msg)){
            		if (msg.startsWith("/rp") || msg.startsWith("/redprotect")){
            			return;
            		}
@@ -720,7 +720,7 @@ public class RPPlayerListener implements Listener{
         		return;
            	}
            	
-        	if (!r.DenyCommands(p, msg.split(" ")[0])){
+        	if (!r.DenyCommands(p, msg)){
            		if (msg.startsWith("/rp") || msg.startsWith("/redprotect")){
            			return;
            		}

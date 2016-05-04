@@ -2378,8 +2378,26 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 			try{
-				String[] cmds = value.toString().replace(" ", "").split(",");
-				return cmds.length > 0;
+				String[] cmds = value.toString().split(",");
+				for (String cmd:cmds){
+					if (cmds.length > 0 && (cmd.contains("cmd:") || cmd.contains("arg:"))){
+						String[] cmdargs = cmd.split(" ");
+						for (String cmd1:cmdargs){
+							if (cmd1.startsWith("cmd:")){
+								if (cmd1.split(":")[1].length() == 0){
+									return false;
+								}
+							}
+                            if (cmd1.startsWith("arg:")){
+								if (cmd1.split(":")[1].length() == 0){
+									return false;
+								}
+							}
+						}
+					} else {
+						return false;
+					}
+				}
 			} catch (Exception e){
 				return false;
 			}		

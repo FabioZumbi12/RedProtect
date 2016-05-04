@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1026,35 +1027,78 @@ public class Region implements Serializable{
 		return getFlagBool("allow-create-portal");
 	}
 	
-	public boolean AllowCommands(Player p, String Command) {
+	public boolean AllowCommands(Player p, String fullcmd) {
 		if (!flagExists("allow-cmds")){
 			return true;
 		}
 		
-		Command = Command.replace("/", "");
+		String Command = fullcmd.replace("/", "").split(" ")[0];
+		List<String> argsRaw = Arrays.asList(fullcmd.replace("/"+Command+" ", "").split(" "));
+		
 		//As Whitelist
-		String[] cmds = flags.get("allow-cmds").toString().replace(" ", "").split(",");
-		for (String cmd:cmds){
-			if (cmd.replace("/", "").equalsIgnoreCase(Command)){
-				return true;
+		String[] flagCmds = flags.get("allow-cmds").toString().split(",");
+		for (String cmd:flagCmds){
+			if (cmd.startsWith(" ")){
+				cmd = cmd.substring(1);
+			}
+			String[] cmdarg = cmd.split(" ");
+			if (cmdarg.length == 2){
+				if (cmdarg[0].startsWith("cmd:") && cmdarg[0].split(":")[1].equalsIgnoreCase(Command) && 
+						cmdarg[1].startsWith("arg:") && argsRaw.contains(cmdarg[1].split(":")[1])){
+					return true;
+				}
+				if (cmdarg[1].startsWith("cmd:") && cmdarg[1].split(":")[1].equalsIgnoreCase(Command) && 
+						cmdarg[0].startsWith("arg:") && argsRaw.contains(cmdarg[0].split(":")[1])){
+					return true;
+				}
+			} else {
+				if (cmdarg[0].startsWith("cmd:") && cmdarg[0].split(":")[1].equalsIgnoreCase(Command)){
+					return true;
+				}
+				if (cmdarg[0].startsWith("arg:") && argsRaw.contains(cmdarg[0].split(":")[1])){
+					return true;
+				}
 			}
 		}
+		
 		return false;
 	}
 	
-	public boolean DenyCommands(Player p, String Command) {
+	public boolean DenyCommands(Player p, String fullcmd) {
 		if (!flagExists("deny-cmds")){
 			return true;
 		}
 		
-		Command = Command.replace("/", "");
-		//As BlackList
-		String[] cmds = flags.get("deny-cmds").toString().replace(" ", "").split(",");
-		for (String cmd:cmds){
-			if (cmd.replace("/", "").equalsIgnoreCase(Command)){
-				return false;
+		String Command = fullcmd.replace("/", "").split(" ")[0];
+		List<String> argsRaw = Arrays.asList(fullcmd.replace("/"+Command+" ", "").split(" "));
+		
+		//As Blacklist
+		String[] flagCmds = flags.get("deny-cmds").toString().split(",");
+		for (String cmd:flagCmds){
+			
+			if (cmd.startsWith(" ")){
+				cmd = cmd.substring(1);
 			}
-		}		
+			String[] cmdarg = cmd.split(" ");
+			if (cmdarg.length == 1){
+				if (cmdarg[0].startsWith("cmd:") && cmdarg[0].split(":")[1].equalsIgnoreCase(Command)){
+					return false;
+				}
+				if (cmdarg[0].startsWith("arg:") && argsRaw.contains(cmdarg[0].split(":")[1])){
+					return false;
+				}
+			} else {
+				if (cmdarg[0].startsWith("cmd:") && cmdarg[0].split(":")[1].equalsIgnoreCase(Command) && 
+						cmdarg[1].startsWith("arg:") && argsRaw.contains(cmdarg[1].split(":")[1])){
+					return false;
+				}
+				if (cmdarg[1].startsWith("cmd:") && cmdarg[1].split(":")[1].equalsIgnoreCase(Command) && 
+						cmdarg[0].startsWith("arg:") && argsRaw.contains(cmdarg[0].split(":")[1])){
+					return false;
+				}
+			}
+		}
+		
 		return true;
 	}
 	
