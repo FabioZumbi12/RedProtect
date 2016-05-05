@@ -72,7 +72,7 @@ public class RPEntityListener implements Listener{
         RedProtect.logger.debug("Spawn monster " + event.getEntityType().name());
         
         //spawn arms on armor stands
-        if ((e instanceof ArmorStand) && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
+        if (!RedProtect.v.startsWith("1.7") && (e instanceof ArmorStand) && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
         	ArmorStand as = (ArmorStand) e;
         	as.setArms(true);
         }
