@@ -2682,6 +2682,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			int i = 0;
 			for (String key:RPLang.helpStrings()){
 				if (RedProtect.ph.hasGenPerm(player, key)) {
+					if (key.equalsIgnoreCase("flaggui")){
+						continue;
+					}
 					i++;					
 					
 					if (i > (page*5)-5 && i <= page*5){
