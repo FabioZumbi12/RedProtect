@@ -189,7 +189,7 @@ public class RPBlockListener implements Listener{
     	
         try {
 
-            if (r != null && !r.canBuild(p) && !r.canPlace(b)) {
+            if (r != null && !r.canBuild(p) && !r.canPlace(b.getType())) {
             	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             } else {
@@ -246,7 +246,7 @@ public class RPBlockListener implements Listener{
     		}
         }
              
-        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canBreak(b)){
+        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canBreak(b.getType())){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         	return;
@@ -276,7 +276,7 @@ public class RPBlockListener implements Listener{
 			e.setCancelled(true);
 			return;
 		}		
-		
+				
 		try {
 			for (Block block:p.getLineOfSight((HashSet<Byte>)null, 8)){
 				if (block == null){
@@ -346,7 +346,7 @@ public class RPBlockListener implements Listener{
     	    	
     	if ((ent instanceof ItemFrame || ent instanceof Painting) && remover instanceof Monster) {
     		Region r = RedProtect.rm.getTopRegion(l);
-    		if (r != null && !r.canFire()){
+    		if (r != null && !r.canMobLoot()){
     			e.setCancelled(true);
         		return;
     		}

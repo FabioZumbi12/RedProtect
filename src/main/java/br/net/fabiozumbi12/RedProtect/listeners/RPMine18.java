@@ -46,7 +46,7 @@ public class RPMine18 implements Listener{
         Player p = e.getPlayer();
         if (r == null){
         	//global flags
-        	if (ent.getType().equals(EntityType.ARMOR_STAND)) {
+        	if (ent instanceof ArmorStand) {
                 if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".build")) {
                 	e.setCancelled(true);
                     return;
@@ -55,7 +55,7 @@ public class RPMine18 implements Listener{
         	return;
         }
         
-        if (ent.getType().equals(EntityType.ARMOR_STAND)) {
+        if (ent instanceof ArmorStand) {
             if (r != null && !r.canBuild(p)) {
                 if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                 	RPLang.sendMessage(p, "playerlistener.region.cantedit");
@@ -134,7 +134,7 @@ public class RPMine18 implements Listener{
 		} 
 		
 		if (e1 instanceof ArmorStand){
-        	if (r1 != null && !r1.canBuild(p)){
+        	if (r1 != null && !r1.canBuild(p) && !r1.canBreak(e1.getType())){
             	e.setCancelled(true);
             	RPLang.sendMessage(p, "blocklistener.region.cantbreak");
             	return;
@@ -147,16 +147,21 @@ public class RPMine18 implements Listener{
     	if (e.isCancelled()) {
             return;
         }
-    	String v = RedProtect.serv.getBukkitVersion(); 
-    	if (!v.contains("1.8")) {
+    	
+    	if (!RedProtect.v.startsWith("1.8") && !RedProtect.v.startsWith("1.9")) {
             return;
         }
     	Player p = e.getPlayer();
     	Location l = e.getClickedBlock().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);		
+		Material m = p.getItemInHand().getType();
 		
-    	if (p.getItemInHand().getType().equals(Material.ARMOR_STAND)){
-        	if (r != null && !r.canBuild(p)){
+		if (RedProtect.v.startsWith("1.9") && e.getItem() != null){
+			m = e.getItem().getType();
+		}
+		
+    	if (m.equals(Material.ARMOR_STAND)){
+        	if (r != null && !r.canBuild(p) && !r.canPlace(m)){
         		e.setCancelled(true);
         		RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             	return;

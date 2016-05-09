@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -921,26 +922,39 @@ public class Region implements Serializable{
 		return false;
 	}
 	
-	public boolean canPlace(Block b) {
+	public boolean canPlace(Material b) {
     	if (!flagExists("allow-place")){
     		return false;
     	}
     	String[] blocks = getFlagString("allow-place").replace(" ", "").split(",");
 		for (String block:blocks){
-			if (block.toUpperCase().equals(b.getType().name())){
+			if (block.toUpperCase().equals(b.name())){
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public boolean canBreak(Block b) {
+	public boolean canBreak(EntityType e) {
+    	if (!flagExists("allow-break")){
+    		return false;
+    	}
+    	String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
+		for (String block:blocks){			
+			if (block.toUpperCase().equals(e.name())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean canBreak(Material b) {
     	if (!flagExists("allow-break")){
     		return false;
     	}
     	String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
 		for (String block:blocks){
-			if (block.toUpperCase().equals(b.getType().name())){
+			if (block.toUpperCase().equals(b.name())){
 				return true;
 			}
 		}

@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.RedProtect.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
@@ -161,8 +160,12 @@ public class RPEntityListener implements Listener{
                     Player p2 = (Player)e2; 
                     if (r1 != null) {
                     	Material mp2 = p2.getItemInHand().getType();
-                    	if (Bukkit.getVersion().startsWith("1.9")){
-                    		mp2 = p2.getItemOnCursor().getType();
+                    	if (RedProtect.v.startsWith("1.9")){
+                    		if (p2.getInventory().getItemInMainHand() != null){
+                    			mp2 = p2.getInventory().getItemInMainHand().getType();
+                    		} else {
+                    			mp2 = p2.getInventory().getItemInOffHand().getType();
+                    		}                    		
                         } 
                     	if (mp2.equals(Material.EGG) && !r1.canProtectiles(p2)){
                     		e.setCancelled(true);
@@ -206,12 +209,12 @@ public class RPEntityListener implements Listener{
             } 
             else if ((e1 instanceof Hanging) && e2 instanceof Player){
             	Player p2 = (Player)e2;
-            	if (r1 != null && !r1.canBuild(p2)){
+            	if (r1 != null && !r1.canBuild(p2) && !r1.canBreak(e1.getType())){
             		e.setCancelled(true);
             		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                     return;
             	}                
-                if (r2 != null && !r2.canBuild(p2)){
+                if (r2 != null && !r2.canBuild(p2) && !r2.canBreak(e1.getType())){
                 	e.setCancelled(true);
                 	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                     return;

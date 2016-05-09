@@ -386,7 +386,7 @@ public class RPPlayerListener implements Listener{
                 	      event.setCancelled(true);
                 	      return;
                 } 
-                else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && 
+                else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) && 
                 		(itemInHand.getType().equals(Material.FLINT_AND_STEEL) || 
                 		itemInHand.getType().equals(Material.WATER_BUCKET) || 
                 		itemInHand.getType().equals(Material.BUCKET) || 
@@ -1462,14 +1462,14 @@ public class RPPlayerListener implements Listener{
     	if (e.isCancelled()) {
             return;
         }
-    	RedProtect.logger.debug("Is Entity Listener - HangingBreakByEntityEvent event");
+    	RedProtect.logger.debug("Is RPPlayerListener - HangingBreakByEntityEvent event");
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
         Region r = RedProtect.rm.getTopRegion(loc);
         
         if (ent instanceof Player) {
             Player player = (Player)ent; 
-            if (r != null && !r.canBuild(player)) {
+            if (r != null && !r.canBuild(player) && !r.canBreak(e.getEntity().getType())) {
             	RPLang.sendMessage(player, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             }
