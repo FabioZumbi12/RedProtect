@@ -21,7 +21,7 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/FastAsyncWorldEdit.jar</systemPath>
 		</dependency>
-		<!--
+		
 		<dependency>
 			<groupId>craftbukkit-1.9</groupId>
 			<artifactId>craftbukkit-1.9</artifactId>
@@ -29,8 +29,8 @@
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/craftbukkit-1.9.jar</systemPath>
 		</dependency>
-         bukkit
-        <dependency>
+		
+        <!-- <dependency>
 			<groupId>Bukkit</groupId>
 			<artifactId>Bukkit</artifactId>
 			<version>v1</version>
