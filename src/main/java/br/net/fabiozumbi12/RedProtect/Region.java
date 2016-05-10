@@ -336,7 +336,11 @@ public class Region implements Serializable{
         for (String pname:this.leaders){
         	Player play = RedProtect.serv.getPlayer(pname);
             if (RedProtect.OnlineMode && pname != null && !pname.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))){
-            	play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
+            	try {
+            		UUID.fromString(RPUtil.PlayerToUUID(pname));
+            		play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
+            	} catch (Exception e){            		
+            	}            	
         	}            
         	if (pname != null && play != null && play.isOnline()){
         		today = ChatColor.GREEN + "Online!";
@@ -345,9 +349,11 @@ public class Region implements Serializable{
         } 
         for (String pname:this.admins){
         	Player play = RedProtect.serv.getPlayer(pname);
-            if (RedProtect.OnlineMode && pname != null && !pname.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))){
-            	play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
-        	}            
+        	try {
+        		UUID.fromString(RPUtil.PlayerToUUID(pname));
+        		play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
+        	} catch (Exception e){            		
+        	}             
         	if (pname != null && play != null && play.isOnline()){
         		today = ChatColor.GREEN + "Online!";
         		break;
