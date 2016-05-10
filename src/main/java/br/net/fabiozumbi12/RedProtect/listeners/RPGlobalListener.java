@@ -3,7 +3,10 @@ package br.net.fabiozumbi12.RedProtect.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.server.v1_9_R1.EntityPlayer;
+
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -119,11 +122,11 @@ public class RPGlobalListener implements Listener{
     			}
     		}
     		    		
-    		//EntityPlayer eplay = ((CraftPlayer)p).getHandle();
-            if (p.isGliding() && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
-                Vector vec = new Vector(0.0D, p.getLocation().getDirection().getY(), 0.0D);
+    		EntityPlayer eplay = ((CraftPlayer)p).getHandle();    		    		
+    		if ((eplay.cB() || p.isGliding()) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
+    			Vector vec = new Vector(0.0D, p.getLocation().getDirection().getY(), 0.0D);
                 p.setVelocity(p.getVelocity().add(vec.multiply(0.1D*RPConfig.getGlobalFlagDouble(p.getWorld().getName()+".elytra.boost")/2)));
-            }
+    		}
     	}    	
     }
         
