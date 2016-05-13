@@ -726,8 +726,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r != null){
         			if (r.getArea() < RPConfig.getEcoInt("max-area-toget-value")){
-        				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(RPEconomy.getRegionValue(r)) + " " +RPConfig.getEcoString("economy-name")));
-        				RedProtect.logger.debug("Region Value: "+RPEconomy.getRegionValue(r));
+        				r.setValue(RPEconomy.getRegionValue(r));
+        				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " +RPConfig.getEcoString("economy-name")));
+        				
+        				RedProtect.logger.debug("Region Value: "+r.getValue());
             			return true;
         			} else {
         				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-value").toString()));
@@ -1362,12 +1364,13 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     		} 
         	
         	if (args.length == 1){
+        		r.setValue(RPEconomy.getRegionValue(r));
         		if (r.isLeader(player)){
-        			sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), RPEconomy.getRegionValue(r));
+        			sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), r.getValue());
         		} else {
-        			sellHandler(r, player, r.getLeaders().get(0), RPEconomy.getRegionValue(r));            		
+        			sellHandler(r, player, r.getLeaders().get(0), r.getValue());            		
         		}
-        		RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" for "+RPEconomy.getRegionValue(r));
+        		RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" for "+r.getValue());
         		return true;
         		
         	}        	
@@ -1377,18 +1380,20 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		try {
         			long value = Long.valueOf(args[1]);
     				if (player.hasPermission("redprotect.eco.setvalue")){
+    					r.setValue(value);
     					if (r.isLeader(player)){
-    	        			sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), value);
+    	        			sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), r.getValue());
     	        		} else {
-    	        			sellHandler(r, player, r.getLeaders().get(0), value);            		
+    	        			sellHandler(r, player, r.getLeaders().get(0), r.getValue());            		
     	        		}
-    					RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" for "+RPEconomy.getRegionValue(r));
+    					RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" for "+r.getValue());
     					return true;
     				}    				
     			} catch (NumberFormatException e){
     				if (player.hasPermission("redprotect.eco.others")){
-    					sellHandler(r, player, RPUtil.PlayerToUUID(args[1]), RPEconomy.getRegionValue(r));
-    					RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" in name of player "+args[1]+" for "+RPEconomy.getRegionValue(r));
+    					r.setValue(RPEconomy.getRegionValue(r));
+    					sellHandler(r, player, RPUtil.PlayerToUUID(args[1]), r.getValue());
+    					RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" in name of player "+args[1]+" for "+r.getValue());
             			return true;
                 	}   				
     			}
@@ -1399,6 +1404,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		try {
         			long value = Long.valueOf(args[2]);
     				if (player.hasPermission("redprotect.eco.setvalue")){
+    					r.setValue(value);
     					sellHandler(r, player, RPUtil.PlayerToUUID(args[1]), value);
     					RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" in name of player "+args[1]+" for "+value);
     					return true;
