@@ -55,7 +55,6 @@ public class RPEconomy {
 		    }
 		  }
 		}
-		r.setValue(regionCost);
 		return regionCost;		
 	}
 
