@@ -1760,12 +1760,13 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 		Double money = RedProtect.econ.getBalance(player);
 		if (money >= value){
 			String rname = r.getName();
+			ArrayList<String> sellers = new ArrayList<>(r.getLeaders()); 
 			if (RPEconomy.BuyRegion(r, RPUtil.PlayerToUUID(player.getName()))){
 				RedProtect.econ.withdrawPlayer(player, value);				
-				for (String leadersList:r.getLeaders()){	
-					OfflinePlayer offp = RedProtect.serv.getOfflinePlayer(RPUtil.UUIDtoPlayer(leadersList));
-					if (!leadersList.equals(RPConfig.getString("region-settings.default-leader")) && offp != null){
-						RedProtect.econ.depositPlayer(offp, value/r.leaderSize());
+				for (String seller : sellers){	
+					OfflinePlayer offp = RedProtect.serv.getOfflinePlayer(RPUtil.UUIDtoPlayer(seller));
+					if (!seller.equals(RPConfig.getString("region-settings.default-leader")) && offp != null){
+						RedProtect.econ.depositPlayer(offp, value / sellers.size());
 						if (offp.isOnline()){
 							RPLang.sendMessage(offp.getPlayer(), RPLang.get("economy.region.buy.bought").replace("{player}", player.getName()).replace("{region}", rname).replace("{world}", r.getWorld()));
 						}
