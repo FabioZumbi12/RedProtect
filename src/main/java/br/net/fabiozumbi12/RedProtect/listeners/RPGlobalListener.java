@@ -122,8 +122,16 @@ public class RPGlobalListener implements Listener{
     			}
     		}
     		    		
+    		boolean first19 = false;
+    		try {
+    			Class.forName("org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer");
+   			    first19 = true;
+    			} catch(Exception ex) {
+    				first19 = false;
+    			}
+    		
     		EntityPlayer eplay = ((CraftPlayer)p).getHandle();    		    		
-    		if ((eplay.cB() || p.isGliding()) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
+    		if (((first19 && eplay.cB()) || p.isGliding()) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
     			Vector vec = new Vector(0.0D, p.getLocation().getDirection().getY(), 0.0D);
                 p.setVelocity(p.getVelocity().add(vec.multiply(0.1D*RPConfig.getGlobalFlagDouble(p.getWorld().getName()+".elytra.boost")/2)));
     		}
