@@ -165,6 +165,11 @@ public class RPConfig{
     	            	}
     	            	worlds.remove("example_world");
     	            	RedProtect.plugin.getConfig().set("allowed-claim-worlds", worlds);
+    	            }
+    	            
+    	            //add needed claim worlds to config
+    	            if (RedProtect.plugin.getConfig().getStringList("needed-claim-worlds").get(0).equals("example_world")) {
+    	            	RedProtect.plugin.getConfig().set("needed-claim-worlds", new ArrayList<String>());
     	            }    
     	            
     	            //add worlds to color list
@@ -509,6 +514,10 @@ public class RPConfig{
 	
     public static boolean isAllowedWorld(Player p) {
 		return RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
+	}
+    
+    public static boolean isNeededWorld(Player p) {
+		return RedProtect.plugin.getConfig().getStringList("needed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
 	}
 
 	public static SortedSet<String> getAllFlags() {

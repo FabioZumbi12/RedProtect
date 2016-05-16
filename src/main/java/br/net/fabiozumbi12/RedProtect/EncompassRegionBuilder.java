@@ -38,7 +38,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
         int oldFacing = 0;
         int curFacing = 0;
         
-        if (!RPConfig.isAllowedWorld(p)){
+        if (!RPConfig.isAllowedWorld(p) && !RPConfig.isNeededWorld(p)){
         	this.setErrorSign(e, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
         }                

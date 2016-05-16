@@ -90,6 +90,10 @@ region-settings:
 allowed-claim-worlds:
 - example_world
 
+# Worlds where players can't build without claim
+needed-claim-worlds:
+- example_world
+
 wands:
   # Item used to define and redefine regions.
   adminWandID: 374
