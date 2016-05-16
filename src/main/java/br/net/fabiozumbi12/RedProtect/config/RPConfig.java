@@ -517,8 +517,8 @@ public class RPConfig{
 	}
     
     public static boolean isNeededWorld(Player p) {
-		return RedProtect.plugin.getConfig().getStringList("needed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
-	}
+    	return RedProtect.plugin.getConfig().getStringList("needed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
+    }
 
 	public static SortedSet<String> getAllFlags() {
 		SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());

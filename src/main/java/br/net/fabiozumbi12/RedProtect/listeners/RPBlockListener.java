@@ -195,20 +195,20 @@ public class RPBlockListener implements Listener{
             } else {
             	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
             		if (r == null && RPConfig.isNeededWorld(p)) {
-                    	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
-                        e.setCancelled(true);
-                        return;
-                    }
+            			RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+            			e.setCancelled(true);
+            			return;
+            		}
             		if (antih && m != null && (m.equals(Material.HOPPER) || m.name().contains("RAIL"))){
-	            		int x = b.getX();
-	            		int y = b.getY();
-	            		int z = b.getZ();
-	            		Block ib = w.getBlockAt(x, y+1, z);
-	            		if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
-	            			RPLang.sendMessage(p, "blocklistener.container.chestinside");
-	            			e.setCancelled(true);
-	            			return;
-	            		} 
+            			int x = b.getX();
+            			int y = b.getY();
+            			int z = b.getZ();
+            			Block ib = w.getBlockAt(x, y+1, z);
+            			if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
+            				RPLang.sendMessage(p, "blocklistener.container.chestinside");
+            				e.setCancelled(true);
+            				return;
+            			} 
             		}
             	}
             }
@@ -242,10 +242,10 @@ public class RPBlockListener implements Listener{
         
         if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")){
         	if (r == null && RPConfig.isNeededWorld(p)) {
-            	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
-                e.setCancelled(true);
-                return;
-            }
+        		RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+        		e.setCancelled(true);
+        		return;
+        	}
         	
         	int x = b.getX();
     		int y = b.getY();
