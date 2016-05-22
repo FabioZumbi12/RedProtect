@@ -256,7 +256,7 @@ public class RPPlayerListener implements Listener{
         	//other blocks and interactions       	
         	if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){ 
         		Material hand = itemInHand.getType()
-;            	if (hand.equals(Material.ENDER_PEARL) && r.canEnderPearl(p)){
+;            	if (hand.equals(Material.ENDER_PEARL) && r.canTeleport(p)){
         			//allow if is ender pearl allowed on region
         			return;
         		} else if ((hand.equals(Material.BOW) || hand.equals(Material.SNOW_BALL) || hand.equals(Material.EGG)) && !r.canProtectiles(p)){
@@ -670,11 +670,11 @@ public class RPPlayerListener implements Listener{
     	}
     	
     	if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)){
-    		if (rfrom != null && !rfrom.canEnderPearl(p)){
+    		if (rfrom != null && !rfrom.canTeleport(p)){
         		RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);    		
         	}
-        	if (rto != null && !rto.canEnderPearl(p)){
+        	if (rto != null && !rto.canTeleport(p)){
         		RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);    		
         	}

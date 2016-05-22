@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect.listeners;
 
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TippedArrow;
@@ -9,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
@@ -19,6 +22,30 @@ public class RPMine19 implements Listener{
 
 	public RPMine19(){
 		RedProtect.logger.debug("Loaded RPMine19...");
+	}
+	
+	@EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent e){
+    	if (e.isCancelled()) {
+            return;
+        }
+    	
+    	final Player p = e.getPlayer();
+    	Location lfrom = e.getFrom();
+    	Location lto = e.getTo();
+    	final Region rfrom = RedProtect.rm.getTopRegion(lfrom);
+    	final Region rto = RedProtect.rm.getTopRegion(lto);
+    	
+    	if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)){
+    		if (rfrom != null && !rfrom.canTeleport(p)){
+        		RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                e.setCancelled(true);    		
+        	}
+        	if (rto != null && !rto.canTeleport(p)){
+        		RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                e.setCancelled(true);    		
+        	}
+    	}
 	}
 	
 	@EventHandler

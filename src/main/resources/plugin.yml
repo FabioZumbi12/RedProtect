@@ -65,6 +65,7 @@ permissions:
       redprotect.flag.iceform-player: true
       redprotect.flag.iceform-entity: true
       redprotect.flag.allow-fly: true
+      redprotect.flag.teleport: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false
@@ -94,7 +95,6 @@ permissions:
       redprotect.admin.flag.enter: true
       redprotect.admin.flag.up-skills: true
       redprotect.admin.flag.can-back: true
-      redprotect.admin.flag.enderpearl: true
       redprotect.admin.flag.allow-mod: true
       redprotect.admin.flag.enter-with-itens: true
       redprotect.admin.flag.deny-with-itens: true

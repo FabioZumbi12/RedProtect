@@ -147,3 +147,10 @@ gui-flags:
     description: '&6Description: &aAllow players with'
     description1: '&afly enabled to fly on this region.'
     description2: ''
+  teleport:
+    slot: 11
+    material: ENDER_PEARL
+    name: '&e=> Allow Teleport'
+    description: '&6Description: &aAllow players to'
+    description1: '&ateleport on this region using itens'
+    description2: '&alike ender pearls and chorus fruits.'

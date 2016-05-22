@@ -48,13 +48,13 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             RedProtect.plugin.disable();
             return;
         }
-        this.dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
+        this.dbname = RPConfig.getString("mysql.db-name") + "_" + this.world.getName();
         Statement st = null;
         try {
             if (!this.checkDBExists()) {
                 Connection con = DriverManager.getConnection(this.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
                 st = con.createStatement();                
-                st.executeUpdate("CREATE DATABASE " + this.dbname);
+                st.executeUpdate("CREATE DATABASE '" + this.dbname+"'");
                 RedProtect.logger.info("Created database '" + this.dbname + "'!");
                 st.close();
                 st = null;

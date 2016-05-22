@@ -674,7 +674,7 @@ public class RPUtil {
 	        	if (!checkDBExists(dbname)) {
 	                Connection con = DriverManager.getConnection(url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 	                st = con.createStatement();
-	                st.executeUpdate("CREATE DATABASE " + dbname);
+	                st.executeUpdate("CREATE DATABASE '" + dbname+"'");
 	                RedProtect.logger.info("Created database '" + dbname + "'!");
 	                st.close();
 	                st = null;

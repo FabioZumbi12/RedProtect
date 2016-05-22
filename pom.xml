@@ -1,16 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>RedProtect</groupId>
+  <groupId>br.net.fabiozumbi12.RedProtect</groupId>
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>6.5</version>
+  <version>6.5.9</version>
+  <url>http://spigotmc.org/resources/redprotect.15841/</url>
   <dependencies>
 		<!--Spigot-API-->
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.9.2-R0.1-SNAPSHOT</version>
+          <version>1.9.4-R0.1-SNAPSHOT</version>
           <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
         </dependency>
         
@@ -23,11 +24,11 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>craftbukkit-1.9</groupId>
-			<artifactId>craftbukkit-1.9</artifactId>
+			<groupId>spigot-1.9</groupId>
+			<artifactId>spigot-1.9</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/craftbukkit-1.9.jar</systemPath>
+			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
 		</dependency>
 		
         <!-- <dependency>
@@ -143,11 +144,40 @@
      
   </repositories>
 
+  <scm>
+     <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
+     <developerConnection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</developerConnection>
+     <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
+     <tag>${project.version}</tag>
+  </scm>
+    
   <build>
-    <finalName>${project.name}-${project.version}-SNAPSHOT</finalName>
+    <finalName>${project.name}-${buildNumber}</finalName>
     <defaultGoal>clean package install</defaultGoal>
+    <resources>
+        <resource>
+            <targetPath>.</targetPath>
+            <filtering>true</filtering>
+            <directory>src/main/resources/</directory>
+        </resource>
+    </resources>
+    
     <plugins>
-
+      
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.10</version>
+          <executions>
+              <execution>
+                  <id>parse-version</id>
+                  <goals>
+                      <goal>parse-version</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -171,20 +201,42 @@
           </goals>
           <configuration>          
           <outputDirectory>${project.basedir}/release</outputDirectory>
-          <resources>
+          <resources>          
             <resource>
-              <directory>target/</directory>
-              <includes>
-                <include>${build.finalName}.jar</include>
-              </includes>
+              <directory>${project.basedir}/target/</directory>
               <filtering>false</filtering>
+              <includes>
+                <include>*.jar</include>
+              </includes>              
             </resource>
           </resources>
           </configuration>
         </execution>
       </executions>  
-     </plugin> 
+     </plugin>      
      
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>true</doCheck>
+          <doUpdate>true</doUpdate>
+          <format>${project.version}-b{0,number}</format>
+          <items>
+            <item>buildNumber0</item>
+          </items>
+        </configuration>
+      </plugin>
+          
     </plugins>
   </build>
 </project>

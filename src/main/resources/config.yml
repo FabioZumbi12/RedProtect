@@ -193,6 +193,7 @@ flags:
   iceform-player: true
   iceform-entity: true
   allow-fly: false
+  teleport: false
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.
@@ -219,6 +220,7 @@ flags-configuration:
   - iceform-player
   - iceform-entity
   - allow-fly
+  - teleport
   # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}
   # Delay the player can change a flag after last change.

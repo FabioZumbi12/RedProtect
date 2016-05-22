@@ -907,11 +907,11 @@ public class Region implements Serializable{
         return true;
 	}
 	
-	public boolean canEnderPearl(Player p) {
-		if (!flagExists("enderpearl")){
+	public boolean canTeleport(Player p) {
+		if (!flagExists("teleport")){
     		return checkAllowedPlayer(p);
     	}
-        return getFlagBool("enderpearl") || checkAllowedPlayer(p);
+        return getFlagBool("teleport") || checkAllowedPlayer(p);
 	}
 	
     

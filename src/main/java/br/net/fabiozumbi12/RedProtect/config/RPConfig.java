@@ -234,6 +234,18 @@ public class RPConfig{
         				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
         			}
         			
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.1D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.1D);        				
+        				
+        				List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+        				
+        				if (!flags.contains("teleport")){
+        					flags.add("teleport");            				
+        				}
+        				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
+        				RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
+        			}
+        			
         			/*------------------------------------------------------------------------------------*/
         			
         			//load protections file

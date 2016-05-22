@@ -27,17 +27,7 @@ public class RegionManager{
     
     public void loadAll() throws Exception {
         for (World w : Bukkit.getWorlds()) {
-            if (this.regionManagers.containsKey(w)) {
-                continue;
-            }
-            WorldRegionManager mgr;
-            if (RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
-                mgr = new WorldMySQLRegionManager(w);
-            } else {
-            	mgr = new WorldFlatFileRegionManager(w);
-            }
-            mgr.load();
-            this.regionManagers.put(w, mgr);
+            load(w);
         }
     }
     

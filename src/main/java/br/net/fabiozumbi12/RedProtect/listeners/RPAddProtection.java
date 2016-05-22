@@ -99,6 +99,9 @@ public class RPAddProtection implements Listener{
 				}
 			}
 		}
+
+		String regexIP = RPConfig.getProtString("chat-protection.anti-ip.custom-ip-regex");
+		String regexUrl = RPConfig.getProtString("chat-protection.anti-ip.custom-url-regex");
 		
 		//check ip and website
 		if (RPConfig.getProtBool("chat-protection.anti-ip.enabled")){
@@ -108,10 +111,7 @@ public class RPAddProtection implements Listener{
 				if (Pattern.compile(check).matcher(nmsg).find()){	
 					return;
 				}
-			}
-			
-			String regexIP = RPConfig.getProtString("chat-protection.anti-ip.custom-ip-regex");
-			String regexUrl = RPConfig.getProtString("chat-protection.anti-ip.custom-url-regex");			
+			}		
 			
 			//continue
 			if (Pattern.compile(regexIP).matcher(nmsg).find()){	
@@ -146,58 +146,56 @@ public class RPAddProtection implements Listener{
 						nmsg = nmsg.replaceAll("(?i)"+word, RPConfig.getProtMsg("chat-protection.anti-ip.replace-by-word"));
 					}
 				}
-			}			
-			
-			//capitalization verify
-			if (RPConfig.getProtBool("chat-protection.chat-enhancement.enabled")){
-				if (!Pattern.compile(regexIP).matcher(nmsg).find() && !Pattern.compile(regexUrl).matcher(nmsg).find()){
-					nmsg = nmsg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+nmsg.substring(1).toLowerCase();
-					/*String[] messages = nmsg.split("(?<=[.!?])");
-					StringBuilder finalmsg = new StringBuilder(); 
-					boolean first = true;
-					for (String msgw:messages){
-						if (msgw.length() <= 0){
-							continue;
-						}
-						if (first){
-							finalmsg.append(msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
-							first = false;
-						} else if (msgw.startsWith(" ")){
-							finalmsg.append(msgw.substring(0, 2).toUpperCase()+msgw.substring(2).toLowerCase());
-						} else {
-							finalmsg.append(" "+msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
-						}
-					}					
-					nmsg = finalmsg.toString();*/
-					if (RPConfig.getProtBool("chat-protection.chat-enhancement.end-with-dot") && !nmsg.endsWith("?") && !nmsg.endsWith("!") && !nmsg.endsWith(".") && nmsg.split(" ").length > 2){
-						nmsg = nmsg+".";
-					}
-					
-					if (RPConfig.getProtBool("chat-protection.chat-enhancement.colorize-playernames")){
-						for (Player play:Bukkit.getOnlinePlayers()){
-							if (StringUtils.containsIgnoreCase(nmsg, play.getName()) && !play.equals(p)){
-								nmsg = nmsg.replaceAll("(?i)\\b"+play.getName()+"\\b",
-										RPConfig.getProtMsg("chat-protection.chat-enhancement.colorize-prefix-color")+play.getName()+ChatColor.RESET);
-								break;
-							}
-						}
-					}
-					
-					if (RPConfig.getProtBool("chat-protection.chat-enhancement.anti-flood.enable")){						
-						for (String flood:RPConfig.getProtStringList("chat-protection.chat-enhancement.anti-flood.whitelist-flood-characs")){
-							if (Pattern.compile("(["+flood+"])\\1+").matcher(nmsg).find()){
-								e.setMessage(nmsg);	
-								return;
-							}
-						}
-						nmsg = nmsg.replaceAll("([A-Za-z])\\1+", "$1$1");
-					}
-				}				
-			}
-			
-			e.setMessage(nmsg);			
+			}					
 		}
 		
+		//capitalization verify
+		if (RPConfig.getProtBool("chat-protection.chat-enhancement.enabled")){
+			if (!Pattern.compile(regexIP).matcher(nmsg).find() && !Pattern.compile(regexUrl).matcher(nmsg).find()){
+				nmsg = nmsg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+nmsg.substring(1).toLowerCase();
+				/*String[] messages = nmsg.split("(?<=[.!?])");
+				StringBuilder finalmsg = new StringBuilder(); 
+				boolean first = true;
+				for (String msgw:messages){
+					if (msgw.length() <= 0){
+						continue;
+					}
+					if (first){
+						finalmsg.append(msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
+						first = false;
+					} else if (msgw.startsWith(" ")){
+						finalmsg.append(msgw.substring(0, 2).toUpperCase()+msgw.substring(2).toLowerCase());
+					} else {
+						finalmsg.append(" "+msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
+					}
+				}					
+				nmsg = finalmsg.toString();*/
+				if (RPConfig.getProtBool("chat-protection.chat-enhancement.end-with-dot") && !nmsg.endsWith("?") && !nmsg.endsWith("!") && !nmsg.endsWith(".") && nmsg.split(" ").length > 2){
+					nmsg = nmsg+".";
+				}
+				
+				if (RPConfig.getProtBool("chat-protection.chat-enhancement.colorize-playernames")){
+					for (Player play:Bukkit.getOnlinePlayers()){
+						if (StringUtils.containsIgnoreCase(nmsg, play.getName()) && !play.equals(p)){
+							nmsg = nmsg.replaceAll("(?i)\\b"+play.getName()+"\\b",
+									RPConfig.getProtMsg("chat-protection.chat-enhancement.colorize-prefix-color")+play.getName()+ChatColor.RESET);
+							break;
+						}
+					}
+				}
+				
+				if (RPConfig.getProtBool("chat-protection.chat-enhancement.anti-flood.enable")){						
+					for (String flood:RPConfig.getProtStringList("chat-protection.chat-enhancement.anti-flood.whitelist-flood-characs")){
+						if (Pattern.compile("(["+flood+"])\\1+").matcher(nmsg).find()){
+							e.setMessage(nmsg);	
+							return;
+						}
+					}
+					nmsg = nmsg.replaceAll("([A-Za-z])\\1+", "$1$1");
+				}
+			}				
+		}
+		e.setMessage(nmsg);	
 	}	
 	
 	private void addURLspam(final Player p){
