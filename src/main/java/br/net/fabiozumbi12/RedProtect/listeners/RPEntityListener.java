@@ -84,7 +84,7 @@ public class RPEntityListener implements Listener{
                 event.setCancelled(true);
             }
         }
-        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player))) {
+        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && !(e instanceof ArmorStand) && !(e instanceof Hanging)) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {
@@ -156,7 +156,7 @@ public class RPEntityListener implements Listener{
             } 
             
             if (e1 instanceof Player) {
-                if (e2 instanceof Player) {                	
+                if (e2 instanceof Player && !e1.equals(e2)) {                	
                     Player p2 = (Player)e2; 
                     if (r1 != null) {
                     	Material mp2 = p2.getItemInHand().getType();

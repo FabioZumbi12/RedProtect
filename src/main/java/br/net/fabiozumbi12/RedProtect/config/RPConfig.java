@@ -465,8 +465,12 @@ public class RPConfig{
 		return values;    	
     }
     
+    public static String getString(String key, String def){		
+		return RedProtect.plugin.getConfig().getString(key, def);
+	}
+    
     public static String getString(String key){		
-		return RedProtect.plugin.getConfig().getString(key);
+		return RedProtect.plugin.getConfig().getString(key,"");
 	}
     
     public static Integer getInt(String key){		

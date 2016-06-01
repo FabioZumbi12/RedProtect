@@ -35,6 +35,9 @@ public class RPGui implements Listener{
 
 	public RPGui(String name, Player player, Region region,Plugin plugin, boolean edit, int MaxSlot){
 		this.edit = edit;
+		if (name.length() >= 16){
+			name = name.substring(0, 16);
+		}
 		this.name = name;
 		this.player = player;
 		this.region = region;

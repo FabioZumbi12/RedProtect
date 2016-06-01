@@ -582,7 +582,7 @@ public class RPPlayerListener implements Listener{
     		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
     	}
         
-        if (e.getEntityType().equals(EntityType.PLAYER) && r.flagExists("pvp") && !r.canPVP(p)){
+        if (e.getEntityType().equals(EntityType.PLAYER) && !p.equals((Player)e.getEntity()) && r.flagExists("pvp") && !r.canPVP(p)){
         	RPLang.sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
         }

@@ -2458,7 +2458,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	sender.sendMessage("-----");        	
         	if (RPConfig.getBool("region-settings.region-list.simple-listing")){
         		for (World w:Bukkit.getWorlds()){
-        			String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName()));
+        			String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));
         			Set<Region> wregions = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
         			if (wregions.size() > 0){
         				Iterator<Region> it = wregions.iterator();        				

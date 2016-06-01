@@ -1,2 +1,3 @@
 /target/
 /buildNumber.properties
+/wercker.yml

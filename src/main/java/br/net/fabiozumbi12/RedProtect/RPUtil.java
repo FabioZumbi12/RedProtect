@@ -86,7 +86,7 @@ public class RPUtil {
     			PotionMeta pot = (PotionMeta) result.getItemMeta();
     			potname = pot.getBasePotionData().getType().name();
     		}
-    		if (RedProtect.v.startsWith("1.7") || RedProtect.v.startsWith("1.8")){
+    		if ((RedProtect.v.startsWith("1.7") || RedProtect.v.startsWith("1.8")) && Potion.fromItemStack(result) != null){
     			potname = Potion.fromItemStack(result).getType().name();
     		}    		
     		if (Pots.contains(potname)){    			
