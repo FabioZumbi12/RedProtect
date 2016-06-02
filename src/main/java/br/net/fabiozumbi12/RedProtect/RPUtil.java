@@ -49,6 +49,7 @@ import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.config.RPYaml;
 import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
+import br.net.fabiozumbi12.RedProtect.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 import com.earth2me.essentials.Essentials;
@@ -248,6 +249,7 @@ public class RPUtil {
     	int i = 0;
     	int pls = 0;
     	int origupdt = 0;
+    	int namesupdt = 0;
     	int purged = 0;
     	int sell = 0;
     	int dateint = 0;
@@ -334,23 +336,16 @@ public class RPUtil {
         	}
         	
         	//Update player names
-        	if (RedProtect.OnlineMode){
-        		/*if (!isUUID(r.getCreator()) && r.getCreator() != null){
-            		RedProtect.logger.warning("Creator from: " + r.getCreator());
-            		RedProtect.logger.warning("To UUID: " + PlayerToUUID(r.getCreator()));
-            		r.setCreator(PlayerToUUID(r.getCreator()));      
-            		origupdt++;
-            	}*/
-            	
-        		List<String> leadersl = r.getLeaders();
-            	List<String> adminsl = r.getAdmins();
-            	List<String> membersl = r.getMembers(); 
+        	List<String> leadersl = r.getLeaders();
+        	List<String> adminsl = r.getAdmins();
+        	List<String> membersl = r.getMembers(); 
+        	
+        	if (RedProtect.OnlineMode){        		
             	for (int l = 0; l < leadersl.size(); l++){
             		String pname = leadersl.get(l);
             		if (!isUUID(pname) && pname != null){
                 		RedProtect.logger.warning("Leader from: " + pname);
-                		leadersl.remove(l);
-                		leadersl.add(l, PlayerToUUID(pname));
+                		leadersl.set(l, PlayerToUUID(pname));
                 		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));
                 		origupdt++;
             		}             		
@@ -359,8 +354,7 @@ public class RPUtil {
             		String pname = adminsl.get(o);
             		if (!isUUID(pname) && pname != null){
                 		RedProtect.logger.warning("Admin from: " + pname);
-                		adminsl.remove(o);
-                		adminsl.add(o, PlayerToUUID(pname));
+                		adminsl.set(o, PlayerToUUID(pname));
                 		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));
                 		origupdt++;
             		}             		
@@ -368,9 +362,8 @@ public class RPUtil {
             	for (int m = 0; m < membersl.size(); m++){
             		String pname = membersl.get(m);     		
             		if (!isUUID(pname) && pname != null){
-                		RedProtect.logger.warning("Member from: " + pname);   
-            			membersl.remove(m);
-                		membersl.add(m, PlayerToUUID(pname));
+                		RedProtect.logger.warning("Member from: " + pname);
+                		membersl.set(m, PlayerToUUID(pname));
                 		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));  
                 		origupdt++;
             		}              		
@@ -381,12 +374,59 @@ public class RPUtil {
             	if (origupdt > 0){
             		pls++;
             	}            	
-        	}  
+        	} /*
+        	//if Offline Mode
+        	else {
+        		for (int l = 0; l < leadersl.size(); l++){
+        			if (isUUID(leadersl.get(l))){
+        				try {
+							String name = MojangUUIDs.getNameOf(leadersl.get(l)).toLowerCase();
+							RedProtect.logger.warning("Leader from: " + leadersl.get(l));
+							leadersl.set(l, name);
+							RedProtect.logger.warning("UUID To name: " + name); 
+							namesupdt++;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+        			}
+        		}
+        		
+        		for (int a = 0; a < adminsl.size(); a++){
+        			if (isUUID(adminsl.get(a))){
+        				try {
+							String name = MojangUUIDs.getNameOf(adminsl.get(a)).toLowerCase();
+							RedProtect.logger.warning("Admin from: " + leadersl.get(a));
+							adminsl.set(a, name);
+							RedProtect.logger.warning("UUID To name: " + name); 
+							namesupdt++;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+        			}
+        		}
+        		
+        		for (int m = 0; m < membersl.size(); m++){
+        			if (isUUID(membersl.get(m))){
+        				try {
+							String name = MojangUUIDs.getNameOf(membersl.get(m)).toLowerCase();
+							membersl.set(m, name);
+							RedProtect.logger.warning("UUID To name: " + name); 
+							namesupdt++;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+        			}
+        		}
+        		r.setLeaders(leadersl);
+            	r.setAdmins(adminsl);
+            	r.setMembers(membersl);
+            	if (namesupdt > 0){
+            		pls++;
+            	} 
+        	}*/
         	
         	//import essentials last visit for player dates
-        	if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.Ess){
-        		List<String> adminsl = r.getAdmins();
-            	List<String> leadersl = r.getLeaders();    
+        	if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.Ess){ 
             	Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
             	List<Long> dates = new ArrayList<Long>(); 
             	
