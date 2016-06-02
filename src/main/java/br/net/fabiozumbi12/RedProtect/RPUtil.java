@@ -340,50 +340,74 @@ public class RPUtil {
         	List<String> adminsl = r.getAdmins();
         	List<String> membersl = r.getMembers(); 
         	
-        	if (RedProtect.OnlineMode){        		
+        	if (RedProtect.OnlineMode){ 
+        		
+        		if (origupdt >= 90 || namesupdt>= 90){
+            		try {
+						Thread.sleep(100L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+            	}
+        		
             	for (int l = 0; l < leadersl.size(); l++){
             		String pname = leadersl.get(l);
-            		if (!isUUID(pname) && pname != null){
+            		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
+            			String uuid = MojangUUIDs.getUUID(pname);
+            			if (uuid == null){
+            				uuid = PlayerToUUID(pname);
+            			}
                 		RedProtect.logger.warning("Leader from: " + pname);
-                		leadersl.set(l, PlayerToUUID(pname));
-                		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));
+                		leadersl.set(l, uuid);
+                		RedProtect.logger.warning("To UUID: " + uuid);
                 		origupdt++;
             		}             		
             	} 
             	for (int o = 0; o < adminsl.size(); o++){
             		String pname = adminsl.get(o);
-            		if (!isUUID(pname) && pname != null){
+            		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
+            			String uuid = MojangUUIDs.getUUID(pname);
+            			if (uuid == null){
+            				uuid = PlayerToUUID(pname);
+            			}
                 		RedProtect.logger.warning("Admin from: " + pname);
-                		adminsl.set(o, PlayerToUUID(pname));
-                		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));
+                		adminsl.set(o, uuid);
+                		RedProtect.logger.warning("To UUID: " + uuid);
                 		origupdt++;
             		}             		
             	}        	
             	for (int m = 0; m < membersl.size(); m++){
             		String pname = membersl.get(m);     		
-            		if (!isUUID(pname) && pname != null){
+            		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
+            			String uuid = MojangUUIDs.getUUID(pname);
+            			if (uuid == null){
+            				uuid = PlayerToUUID(pname);
+            			}
                 		RedProtect.logger.warning("Member from: " + pname);
-                		membersl.set(m, PlayerToUUID(pname));
-                		RedProtect.logger.warning("To UUID: " + PlayerToUUID(pname));  
+                		membersl.set(m, uuid);
+                		RedProtect.logger.warning("To UUID: " + uuid);  
                 		origupdt++;
             		}              		
             	}
             	r.setLeaders(leadersl);
             	r.setAdmins(adminsl);
-            	r.setMembers(membersl);
+            	r.setMembers(membersl);            	
             	if (origupdt > 0){
             		pls++;
             	}            	
-        	} /*
+        	} 
         	//if Offline Mode
         	else {
         		for (int l = 0; l < leadersl.size(); l++){
-        			if (isUUID(leadersl.get(l))){
+        			if (isUUIDs(leadersl.get(l)) && !RPUtil.isDefaultServer(leadersl.get(l))){
         				try {
-							String name = MojangUUIDs.getNameOf(leadersl.get(l)).toLowerCase();
+							String name = MojangUUIDs.getName(leadersl.get(l));
+							if (name == null){
+								name = UUIDtoPlayer(leadersl.get(l));
+							}
 							RedProtect.logger.warning("Leader from: " + leadersl.get(l));
-							leadersl.set(l, name);
-							RedProtect.logger.warning("UUID To name: " + name); 
+							leadersl.set(l, name.toLowerCase());
+							RedProtect.logger.warning("To UUID: " + name); 
 							namesupdt++;
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -392,12 +416,15 @@ public class RPUtil {
         		}
         		
         		for (int a = 0; a < adminsl.size(); a++){
-        			if (isUUID(adminsl.get(a))){
+        			if (isUUIDs(adminsl.get(a)) && !RPUtil.isDefaultServer(adminsl.get(a))){
         				try {
-							String name = MojangUUIDs.getNameOf(adminsl.get(a)).toLowerCase();
+							String name = MojangUUIDs.getName(adminsl.get(a));
+							if (name == null){
+								name = UUIDtoPlayer(adminsl.get(a));
+							}
 							RedProtect.logger.warning("Admin from: " + leadersl.get(a));
-							adminsl.set(a, name);
-							RedProtect.logger.warning("UUID To name: " + name); 
+							adminsl.set(a, name.toLowerCase());
+							RedProtect.logger.warning("To UUID: " + name); 
 							namesupdt++;
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -406,11 +433,15 @@ public class RPUtil {
         		}
         		
         		for (int m = 0; m < membersl.size(); m++){
-        			if (isUUID(membersl.get(m))){
+        			if (isUUIDs(membersl.get(m)) && !RPUtil.isDefaultServer(membersl.get(m))){
         				try {
-							String name = MojangUUIDs.getNameOf(membersl.get(m)).toLowerCase();
-							membersl.set(m, name);
-							RedProtect.logger.warning("UUID To name: " + name); 
+							String name = MojangUUIDs.getName(membersl.get(m));
+							if (name == null){
+								name = UUIDtoPlayer(membersl.get(m));
+							}
+							RedProtect.logger.warning("Member from: " + leadersl.get(m));
+							membersl.set(m, name.toLowerCase());
+							RedProtect.logger.warning("To UUID: " + name); 
 							namesupdt++;
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -423,7 +454,7 @@ public class RPUtil {
             	if (namesupdt > 0){
             		pls++;
             	} 
-        	}*/
+        	}
         	
         	//import essentials last visit for player dates
         	if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.Ess){ 
@@ -526,7 +557,7 @@ public class RPUtil {
     	}
     	
     	//check if is already UUID
-    	if (isUUID(PlayerName) || RPConfig.getString("region-settings.default-leader").equalsIgnoreCase(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))){
+    	if (isUUIDs(PlayerName) || isDefaultServer(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))){
     		return PlayerName;
     	}
     	
@@ -545,7 +576,7 @@ public class RPUtil {
 	    	if (onp != null){
 	    		uuid = onp.getUniqueId().toString();
 	    	}
-		}
+		}    	
 		return uuid;    	
     }
     
@@ -555,11 +586,11 @@ public class RPUtil {
     	}
     	
     	//check if is UUID
-    	if (uuid.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader")) || !isUUID(uuid)){
+    	if (isDefaultServer(uuid) || !isUUIDs(uuid)){
     		return uuid;
     	}
     	
-    	String PlayerName = null;
+    	String PlayerName = uuid;
     	UUID uuids = null;
     	
     	if (!RedProtect.OnlineMode){
@@ -576,18 +607,19 @@ public class RPUtil {
 	    	if (onp != null){
 	    		PlayerName = onp.getName();
 	    	}
-		}
-    	
+		}  	
 		return PlayerName;    	
     }
     
-	private static boolean isUUID(String uuid){
+	public static boolean isDefaultServer(String check){
+		return check.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"));
+	}
+	
+	public static boolean isUUIDs(String uuid){
     	if (uuid == null){
     		return false;
     	}
-    	if (uuid.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))){
-    		return true;
-    	}
+    	
     	try{
     		UUID.fromString(uuid);
     		return true;

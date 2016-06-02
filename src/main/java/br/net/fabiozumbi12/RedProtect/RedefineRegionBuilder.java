@@ -28,6 +28,19 @@ public class RedefineRegionBuilder extends RegionBuilder{
         }
         
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint());
+        
+        String pName = p.getUniqueId().toString();
+        if (!RedProtect.OnlineMode){
+        	pName = p.getName().toLowerCase();
+    	}
+        
+        int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
+        int totalArea = RedProtect.rm.getTotalRegionSize(pName);
+        if (pLimit >= 0 && totalArea + region.getArea() > pLimit) {
+        	this.setError(p, RPLang.get("regionbuilder.reach.limit"));
+            return;
+        }
+        
         List<String> othersName = new ArrayList<String>();
         Region otherrg = null;
         

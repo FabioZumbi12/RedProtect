@@ -45,6 +45,7 @@ import br.net.fabiozumbi12.RedProtect.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
+import br.net.fabiozumbi12.RedProtect.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 @SuppressWarnings("deprecation")
@@ -134,6 +135,20 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             sender.sendMessage(RPLang.get("general.color") + "---------------------------------------------------");
             return true;
         }
+		
+		if (args.length == 2){
+			if (args[0].equalsIgnoreCase("test-uuid")){
+				
+				try {
+					String name = MojangUUIDs.getUUID(args[1]);
+					RedProtect.logger.warning("Leader from: " + args[1]);
+					RedProtect.logger.warning("UUID To name: " + name); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
+				return true;
+			}
+		}
 		
         if (!(sender instanceof Player)) {        	
         	if (args.length == 1) {    
@@ -970,15 +985,15 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 return true;
         	}
         	
-            if (checkCmd(args[0], "redefine")) {
-                if (!RedProtect.ph.hasGenPerm(player, "redefine")) {
-                    RPLang.sendMessage(player, "no.permission");
-                    return true;
-                }
-                
+            if (checkCmd(args[0], "redefine")) {                                
                 Region oldRect = RedProtect.rm.getRegion(args[1], player.getWorld());
                 if (oldRect == null) {
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                    return true;
+                }
+                
+                if (!RedProtect.ph.hasRegionPermLeader(player, "redefine", oldRect)) {
+                    RPLang.sendMessage(player, "no.permission");
                     return true;
                 }
                                 
