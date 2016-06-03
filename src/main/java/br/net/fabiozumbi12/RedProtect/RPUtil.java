@@ -342,7 +342,7 @@ public class RPUtil {
         	
         	if (RedProtect.OnlineMode){ 
         		
-        		if (origupdt >= 90 || namesupdt>= 90){
+        		if (origupdt >= 90 || namesupdt >= 90){
             		try {
 						Thread.sleep(100L);
 					} catch (InterruptedException e) {
@@ -422,7 +422,7 @@ public class RPUtil {
 							if (name == null){
 								name = UUIDtoPlayer(adminsl.get(a));
 							}
-							RedProtect.logger.warning("Admin from: " + leadersl.get(a));
+							RedProtect.logger.warning("Admin from: " + adminsl.get(a));
 							adminsl.set(a, name.toLowerCase());
 							RedProtect.logger.warning("To UUID: " + name); 
 							namesupdt++;
@@ -439,7 +439,7 @@ public class RPUtil {
 							if (name == null){
 								name = UUIDtoPlayer(membersl.get(m));
 							}
-							RedProtect.logger.warning("Member from: " + leadersl.get(m));
+							RedProtect.logger.warning("Member from: " + membersl.get(m));
 							membersl.set(m, name.toLowerCase());
 							RedProtect.logger.warning("To UUID: " + name); 
 							namesupdt++;

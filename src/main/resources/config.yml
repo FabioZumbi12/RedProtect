@@ -256,8 +256,12 @@ update-check:
 performance:
   # DIsable player move event to improve performance? Note: Disabling this will make some flags do not work, like deny enter, execute commands and effects.
   disable-onPlayerMoveEvent-handler: false
-  # Disable piston track? Disabling this will allow players to get blocks from protected regions to unprotected.
-  disable-PistonEvent-handler: false
+  piston:
+    # Disable piston track? Disabling this will allow players to get blocks from protected regions to unprotected using pistons.
+    disable-PistonEvent-handler: false
+    use-piston-restricter: false
+    # Fire the piston extract/retract every x ticks. Server default is 1 tick/event. Value in ticks.
+    restrict-piston-event: 10
 
 hooks:
   essentials:

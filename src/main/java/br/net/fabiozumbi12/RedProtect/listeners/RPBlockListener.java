@@ -51,6 +51,8 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 public class RPBlockListener implements Listener{
 	
 	private static RPContainer cont = new RPContainer();
+	private List<String> pistonExtendDelay = new ArrayList<String>();
+	private List<String> pistonRetractDelay = new ArrayList<String>();
 	
 	public RPBlockListener(){
 		RedProtect.logger.debug("Loaded RPBlockListener...");
@@ -512,6 +514,16 @@ public class RPBlockListener implements Listener{
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
 			return;
 		}
+		
+		//delay piston
+		if (RPConfig.getBool("performance.piston.use-piston-restricter")){
+			if (pistonExtendDelay.contains(e.getBlock().getLocation().toString())){
+				e.setCancelled(true);
+			} else {
+				delayExtendPiston(e.getBlock().getLocation().toString());
+			}
+		}		
+				
 		Block piston = e.getBlock();
 		List<Block> blocks = e.getBlocks();
 		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
@@ -537,6 +549,24 @@ public class RPBlockListener implements Listener{
 		}	
 	}
 		
+    private void delayExtendPiston(final String location){
+    	pistonExtendDelay.add(location);
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
+			public void run() {
+				pistonExtendDelay.remove(location);
+				} 
+			},RPConfig.getInt("performance.piston.restrict-piston-event"));
+    }
+    
+    private void delayRetractPiston(final String location){
+    	pistonRetractDelay.add(location);
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
+			public void run() {
+				pistonRetractDelay.remove(location);
+				} 
+			},RPConfig.getInt("performance.piston.restrict-piston-event"));
+    }
+    
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPistonRetract(BlockPistonRetractEvent e){
@@ -544,6 +574,17 @@ public class RPBlockListener implements Listener{
 		if (RPConfig.getBool("performance.disable-PistonEvent-handler")){
 			return;
 		}
+		
+		//delay piston
+		if (RPConfig.getBool("performance.piston.use-piston-restricter")){
+			if (pistonRetractDelay.contains(e.getBlock().getLocation().toString())){
+				e.setCancelled(true);
+			} else {
+				delayRetractPiston(e.getBlock().getLocation().toString());
+			}
+		}
+		
+		
 		World w = e.getBlock().getWorld();
 		Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
 		Block piston = e.getBlock();
