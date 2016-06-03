@@ -24,6 +24,8 @@ package br.net.fabiozumbi12.RedProtect.hooks;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.json.simple.JSONArray;
@@ -41,14 +43,22 @@ public class MojangUUIDs {
 			   return null;
 		   }
 		   JSONArray array = (JSONArray) new JSONParser().parse(line);
+		   HashMap<Long, String> names = new HashMap<Long, String>();
+		   String name = "";
 		   for (Object profile : array) {
 			   JSONObject jsonProfile = (JSONObject) profile;
 			   if (jsonProfile.containsKey("changedToAt")){
+				   names.put((long)jsonProfile.get("changedToAt"), (String)jsonProfile.get("name"));
 				   continue;
 			   }			   
-			   String name = (String) jsonProfile.get("name");
+			   name = (String) jsonProfile.get("name");
+		   }	
+		   if (!names.isEmpty()){
+			   Long key = Collections.max(names.keySet());
+			   return names.get(key);
+		   } else {
 			   return name;
-		   }		   
+		   }
 		} catch (Exception ex) {
 		   ex.printStackTrace();
 		}

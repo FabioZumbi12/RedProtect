@@ -117,6 +117,7 @@ permissions:
     description: "Recommended Admin permsisions."
     default: op
     children:
+      redprotect.flag.special: true
       redprotect.admin.delete: true
       redprotect.admin.removeadmin: true
       redprotect.admin.addadmin: true
