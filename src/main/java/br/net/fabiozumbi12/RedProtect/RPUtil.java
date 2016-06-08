@@ -351,7 +351,7 @@ public class RPUtil {
             	}
         		
             	for (int l = 0; l < leadersl.size(); l++){
-            		String pname = leadersl.get(l);
+            		String pname = leadersl.get(l).replace("[", "").replace("]", "");
             		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
             			String uuid = MojangUUIDs.getUUID(pname);
             			if (uuid == null){
@@ -364,7 +364,7 @@ public class RPUtil {
             		}             		
             	} 
             	for (int o = 0; o < adminsl.size(); o++){
-            		String pname = adminsl.get(o);
+            		String pname = adminsl.get(o).replace("[", "").replace("]", "");
             		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
             			String uuid = MojangUUIDs.getUUID(pname);
             			if (uuid == null){
@@ -377,7 +377,7 @@ public class RPUtil {
             		}             		
             	}        	
             	for (int m = 0; m < membersl.size(); m++){
-            		String pname = membersl.get(m);     		
+            		String pname = membersl.get(m).replace("[", "").replace("]", "");     		
             		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
             			String uuid = MojangUUIDs.getUUID(pname);
             			if (uuid == null){

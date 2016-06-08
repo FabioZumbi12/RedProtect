@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -163,7 +164,7 @@ public class RPGui implements Listener{
 		}
 	}
 		
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	void onInventoryClick(InventoryClickEvent event){	
 		if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getInventory().getTitle().equals(this.name)){
     		return;
