@@ -88,15 +88,14 @@ import de.Keyle.MyPet.api.player.MyPetPlayer;
 public class RPPlayerListener implements Listener{
 	
 	static RPContainer cont = new RPContainer();
-	private HashMap<Player, String> Ownerslist = new HashMap<Player,String>();
-	private HashMap<Player, String> PlayerCmd = new HashMap<Player, String>();
-	private HashMap<Player, Boolean> PvPState = new HashMap<Player, Boolean>();
+	private HashMap<String, String> Ownerslist = new HashMap<String,String>();
+	private HashMap<String, String> PlayerCmd = new HashMap<String, String>();
+	private HashMap<String, Boolean> PvPState = new HashMap<String, Boolean>();
 	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
-	private boolean is19;
+	private HashMap<String, Integer> viewDistances = new HashMap<String, Integer>();
     
     public RPPlayerListener() {
     	RedProtect.logger.debug("Loaded RPPlayerListener...");
-    	is19 = Bukkit.getBukkitVersion().startsWith("1.9");
     }
     
     @EventHandler
@@ -177,16 +176,8 @@ public class RPPlayerListener implements Listener{
         Region r = RedProtect.rm.getTopRegion(l);
                 
         //check if is a gui item
-        if (RPUtil.RemoveGuiItem(itemInHand)){
-        	if (!is19){
-        		p.setItemInHand(new ItemStack(Material.AIR));
-        	} else {
-        		if (itemInHand.equals(p.getInventory().getItemInMainHand())){
-        			p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-        		} else if (itemInHand.equals(p.getInventory().getItemInOffHand())){
-        			p.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-        		}        		
-        	}        	
+        if (RPUtil.RemoveGuiItem(itemInHand)){        	
+        	p.setItemInHand(new ItemStack(Material.AIR));       	
         	event.setCancelled(true);
         	return;
         }
@@ -254,10 +245,12 @@ public class RPPlayerListener implements Listener{
                     	
         } else { //if r != null >>
         	//other blocks and interactions       	
-        	if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){ 
-        		Material hand = itemInHand.getType()
-;            	if (hand.equals(Material.ENDER_PEARL) && r.canTeleport(p)){
-        			//allow if is ender pearl allowed on region
+        	if ((itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK")) || b == null)){ 
+        		Material hand = itemInHand.getType();
+        		if (hand.equals(Material.ENDER_PEARL) && !r.canTeleport(p)){
+        			RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                    event.setCancelled(true); 
+                    event.setUseItemInHand(Event.Result.DENY);
         			return;
         		} else if ((hand.equals(Material.BOW) || hand.equals(Material.SNOW_BALL) || hand.equals(Material.EGG)) && !r.canProtectiles(p)){
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");
@@ -303,7 +296,7 @@ public class RPPlayerListener implements Listener{
                 	} 
                 }               
                 
-                else if (b != null && b.getType().name().contains("LEVER")) {
+                else if (b != null && (b.getType().name().contains("LEVER") || b.getType().name().contains("REDSTONE"))) {
                     if (!r.canLever(p)) {
                         if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                             RPLang.sendMessage(p, "playerlistener.region.cantlever");
@@ -417,15 +410,9 @@ public class RPPlayerListener implements Listener{
     	}
     	
     	Region r = RedProtect.rm.getTopRegion(e.getWhoClicked().getLocation());
-    	if (r != null && e.getInventory().getTitle() != null){
-    		if (r.getName().length() > 16){
-        		if (e.getInventory().getTitle().equals(RPLang.get("gui.invflag").replace("{region}", r.getName().substring(0, 16)))){
-            		return;
-            	}
-        	} else {
-        		if (e.getInventory().getTitle().equals(RPLang.get("gui.invflag").replace("{region}", r.getName())) || e.getInventory().getTitle().equals(RPLang.get("gui.editflag"))){
-            		return;
-            	}
+    	if (r != null && e.getInventory().getTitle() != null){    		
+    		if (e.getInventory().getTitle().equals(RPUtil.getTitleName(r)) || e.getInventory().getTitle().equals(RPLang.get("gui.editflag"))){
+        		return;
         	}
     	}    	
     	
@@ -648,16 +635,16 @@ public class RPPlayerListener implements Listener{
         		return;
         	}
         	
-        	if (PlayerCmd.containsKey(p)){
-        		if (!rto.canBack(p) && PlayerCmd.get(p).startsWith("/back")){
+        	if (PlayerCmd.containsKey(p.getName())){
+        		if (!rto.canBack(p) && PlayerCmd.get(p.getName()).startsWith("/back")){
             		RPLang.sendMessage(p, "playerlistener.region.cantback");
             		e.setCancelled(true);
             	}
-        		if (!rto.AllowHome(p) && PlayerCmd.get(p).startsWith("/home")){
+        		if (!rto.AllowHome(p) && PlayerCmd.get(p.getName()).startsWith("/home")){
             		RPLang.sendMessage(p, "playerlistener.region.canthome");
             		e.setCancelled(true);
             	}
-        		PlayerCmd.remove(p);    		
+        		PlayerCmd.remove(p.getName());    		
         	}
     	}
     	
@@ -671,11 +658,11 @@ public class RPPlayerListener implements Listener{
     	
     	if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)){
     		if (rfrom != null && !rfrom.canTeleport(p)){
-        		RPLang.sendMessage(p, "playerlistener.region.cantuse");
+        		RPLang.sendMessage(p, "playerlistener.region.cantteleportitem");
                 e.setCancelled(true);    		
         	}
         	if (rto != null && !rto.canTeleport(p)){
-        		RPLang.sendMessage(p, "playerlistener.region.cantuse");
+        		RPLang.sendMessage(p, "playerlistener.region.cantteleportitem");
                 e.setCancelled(true);    		
         	}
     	}    	
@@ -699,7 +686,7 @@ public class RPPlayerListener implements Listener{
     	}
     	    	
     	if (msg.startsWith("/back") || msg.startsWith("/home")){
-    		PlayerCmd.put(p, msg);
+    		PlayerCmd.put(p.getName(), msg);
     	}
     	
        	Region r = RedProtect.rm.getTopRegion(p.getLocation());
@@ -815,7 +802,7 @@ public class RPPlayerListener implements Listener{
     		//Enter flag
             if (!r.canEnter(p)){
         		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
-        		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
+        		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");	
         	}
             
             //Mypet Flag
@@ -857,9 +844,9 @@ public class RPPlayerListener implements Listener{
         		RPLang.sendMessage(p, "playerlistener.region.cantfly");
         	} 
             
-            if (Ownerslist.get(p) != r.getName()){ 
-    			Region er = RedProtect.rm.getRegion(Ownerslist.get(p), p.getWorld());			
-    			Ownerslist.put(p, r.getName());
+            if (Ownerslist.get(p.getName()) != r.getName()){ 
+    			Region er = RedProtect.rm.getRegion(Ownerslist.get(p.getName()), p.getWorld());			
+    			Ownerslist.put(p.getName(), r.getName());
     			
     			//Execute listener:
     			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
@@ -875,10 +862,10 @@ public class RPPlayerListener implements Listener{
         	}
     	} else {
     		//if (r == null) >>
-    		if (Ownerslist.get(p) != null) { 
-    			Region er = RedProtect.rm.getRegion(Ownerslist.get(p), p.getWorld());    
-    			if (Ownerslist.containsKey(p)){
-            		Ownerslist.remove(p);
+    		if (Ownerslist.get(p.getName()) != null) {
+    			Region er = RedProtect.rm.getRegion(Ownerslist.get(p.getName()), p.getWorld());    
+    			if (Ownerslist.containsKey(p.getName())){
+            		Ownerslist.remove(p.getName());
             	}
     			
     			//Execute listener:
@@ -1019,7 +1006,7 @@ public class RPPlayerListener implements Listener{
         	if (r != null && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
         		PvPlayer pvpp = PvPlayer.get(p);
     			if (r.forcePVP() != pvpp.hasPvPEnabled()){
-					PvPState.put(p, pvpp.hasPvPEnabled());
+					PvPState.put(p.getName(), pvpp.hasPvPEnabled());
 					pvpp.setPvP(r.forcePVP());
 				}
         	}
@@ -1200,7 +1187,14 @@ public class RPPlayerListener implements Listener{
         	}    
         }        
                         
-        if (er != null){                	
+        if (er != null){   
+        	
+        	//set back view distance
+    		if (RedProtect.paper && viewDistances.containsKey(p.getName())){
+    			p.setViewDistance(viewDistances.get(p.getName()));
+        		viewDistances.remove(p.getName());
+        	}
+    		
         	//Exit effect
 			if (er.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
 				String[] effects = er.getFlagString("effects").split(",");
@@ -1267,11 +1261,11 @@ public class RPPlayerListener implements Listener{
             
             //Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
-        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.forcepvp.bypass")){
-        			if (PvPState.get(p).booleanValue() != PvPlayer.get(p).hasPvPEnabled()){
-        				PvPlayer.get(p).setPvP(PvPState.get(p).booleanValue());        			  
+        		if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")){
+        			if (PvPState.get(p.getName()).booleanValue() != PvPlayer.get(p).hasPvPEnabled()){
+        				PvPlayer.get(p).setPvP(PvPState.get(p.getName()).booleanValue());        			  
         			}
-        			PvPState.remove(p);  			
+        			PvPState.remove(p.getName());  			
         		}
         	}
             
@@ -1287,12 +1281,20 @@ public class RPPlayerListener implements Listener{
             }
         }
         
+        //Enter view distance
+        if (RedProtect.paper && r.getViewDistance() != 0){
+			if (!viewDistances.containsKey(p.getName())){
+				viewDistances.put(p.getName(), p.getViewDistance());
+			}
+			p.setViewDistance(r.getViewDistance());
+		}
+        
         //Enter check forcepvp flag
         if (RedProtect.PvPm){
         	if (r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
     			PvPlayer pvpp = PvPlayer.get(p);
     			if (r.forcePVP() != pvpp.hasPvPEnabled()){
-					PvPState.put(p, pvpp.hasPvPEnabled());
+					PvPState.put(p.getName(), pvpp.hasPvPEnabled());
 					pvpp.setPvP(r.forcePVP());
 				}
     		}
@@ -1323,8 +1325,8 @@ public class RPPlayerListener implements Listener{
   				RedProtect.logger.debug("Added task ID: " + TaskId+"_"+eff + " for player " + p.getName());
   			}
   		}
-        
-      //enter fly flag
+                
+        //enter fly flag
     	if (r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
     		p.setAllowFlight(r.getFlagBool("forcefly"));
     		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() { 
@@ -1350,13 +1352,19 @@ public class RPPlayerListener implements Listener{
     	
     	if (er != null){
     		
+    		//set back view distance
+    		if (RedProtect.paper && viewDistances.containsKey(p.getName())){
+    			p.setViewDistance(viewDistances.get(p.getName()));
+        		viewDistances.remove(p.getName());
+        	}
+    		
     		//Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
-        		if (PvPState.containsKey(p) && !p.hasPermission("redprotect.forcepvp.bypass")){
-        			if (PvPState.get(p).booleanValue() != PvPlayer.get(p).hasPvPEnabled()){
-        				PvPlayer.get(p).setPvP(PvPState.get(p).booleanValue());        			  
+        		if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")){
+        			if (PvPState.get(p.getName()).booleanValue() != PvPlayer.get(p).hasPvPEnabled()){
+        				PvPlayer.get(p).setPvP(PvPState.get(p.getName()).booleanValue());        			  
         			}
-        			PvPState.remove(p);  			
+        			PvPState.remove(p.getName());  			
         		}
         	}
             

@@ -148,7 +148,7 @@ public class RPMine18 implements Listener{
             return;
         }
     	
-    	if (!RedProtect.v.startsWith("1.8") && !RedProtect.v.startsWith("1.9")) {
+    	if (RedProtect.version <= 180) {
             return;
         }
     	Player p = e.getPlayer();
@@ -156,7 +156,7 @@ public class RPMine18 implements Listener{
 		Region r = RedProtect.rm.getTopRegion(l);		
 		Material m = p.getItemInHand().getType();
 		
-		if (RedProtect.v.startsWith("1.9") && e.getItem() != null){
+		if (RedProtect.version >= 190 && e.getItem() != null){
 			m = e.getItem().getType();
 		}
 		

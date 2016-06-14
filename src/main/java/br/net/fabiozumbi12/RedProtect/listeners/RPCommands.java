@@ -12,6 +12,8 @@ import java.util.TreeSet;
 
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -890,14 +892,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             	if (RedProtect.ph.hasGenPerm(player, "flaggui")) {
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				if (r.isAdmin(player) || r.isLeader(player) || RedProtect.ph.hasPerm(player, "redprotect.admin.flaggui")){
-        					if (r.getName().length() > 16){
-        						RPGui gui = new RPGui(RPLang.get("gui.invflag").replace("{region}", r.getName().substring(0, 16)), player, r, RedProtect.plugin, false, RPConfig.getGuiMaxSlot());
-        						gui.open();
-        					} else {
-        						RPGui gui = new RPGui(RPLang.get("gui.invflag").replace("{region}", r.getName()), player, r, RedProtect.plugin, false, RPConfig.getGuiMaxSlot());
-        						gui.open();
-        					}
+        				if (r.isAdmin(player) || r.isLeader(player) || RedProtect.ph.hasPerm(player, "redprotect.admin.flaggui")){        					
+        					RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, RedProtect.plugin, false, RPConfig.getGuiMaxSlot());
+        					gui.open();
                 			return true;
         				} else {
         					sendNoPermissionMessage(player);
@@ -2254,9 +2251,36 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             		RPLang.sendMessage(p, "cmdmanager.eco.changeflag");
             		return;
             	}
-            	
+            	/*
+            	if (RPConfig.getDefFlagsValues().containsKey("clan") && !RedProtect.ph.hasPerm(p, "redprotect.admin.flag.clan")){
+            		RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
+            		return;
+            	}
+            	*/
             	if (!value.equals("")){
             		if (RPConfig.getDefFlagsValues().containsKey(flag)) {
+            			
+            			//flag clan
+            			if (flag.equalsIgnoreCase("clan")){
+            				if (!RedProtect.SC || !RedProtect.ph.hasGenPerm(p, "redprotect.admin.flag.clan")){
+            					sendFlagHelp(p);
+                            	return; 
+            				}
+            				if (!RedProtect.clanManager.isClan(value)){
+            					RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.invalidclan").replace("{tag}", value));
+                        		return;
+            				}            				
+            				Clan clan = RedProtect.clanManager.getClan(value);
+            				if (!clan.isLeader(p)){
+            					RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
+                        		return;
+            				}  
+            				r.setFlag(flag, value);
+                            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
+                            RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+                            return;
+                    	}
+            			
             			if (objflag instanceof Boolean){
             				r.setFlag(flag, objflag);
                             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
@@ -2289,6 +2313,34 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 	return; 
 
             	} else {
+            		
+            		//flag clan
+        			if (flag.equalsIgnoreCase("clan")){
+        				if (RedProtect.SC){
+        					ClanPlayer clan = RedProtect.clanManager.getClanPlayer(p);
+        					if (clan == null){
+            					RPLang.sendMessage(p, "cmdmanager.region.flag.haveclan");
+                        		return;
+            				}
+            				if (!clan.isLeader()){
+            					RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
+                        		return;
+            				}  
+            				if (r.getFlagString(flag).equalsIgnoreCase("")){
+            					r.setFlag(flag, clan.getTag());   
+            					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+clan.getClan().getColorTag()+"'"));
+            				} else {            					
+            					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'"+r.getFlagString(flag)+"'"));
+            					r.setFlag(flag, "");
+            				}            				
+                            RedProtect.logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag)); 
+                            return;
+        				} else {
+        					sendFlagHelp(p);
+                        	return; 
+        				}        				
+                	}
+        			
             		if (RPConfig.getDefFlagsValues().containsKey(flag)) {
             			r.setFlag(flag, !r.getFlagBool(flag));
                         RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
@@ -2316,8 +2368,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 		String message = "";
 		if (flag.equalsIgnoreCase("effects")){                				
 			message = RPLang.get("cmdmanager.region.flag.usage"+flag);
+		} else if (flag.equalsIgnoreCase("view-distance")){                				
+			message = RPLang.get("cmdmanager.region.flag.usage"+flag); 
 		} else if (flag.equalsIgnoreCase("allow-enter-items")){                				
-			message = RPLang.get("cmdmanager.region.flag.usage"+flag);   
+			message = RPLang.get("cmdmanager.region.flag.usage"+flag); 
 		} else if (flag.equalsIgnoreCase("gamemode")){                				
 			message = RPLang.get("cmdmanager.region.flag.usage"+flag); 
 		} else if (flag.equalsIgnoreCase("deny-enter-items")){                				
@@ -2347,10 +2401,25 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 			try {
-				GameMode.valueOf(value.toString().toUpperCase());
+				GameMode.valueOf(((String)value).toUpperCase());
 			} catch (IllegalArgumentException e){
 				return false;
 			}			
+		}
+		
+		if (flag.equalsIgnoreCase("view-distance")){
+			if (!RedProtect.paper || !(value instanceof Integer)){
+				return false;
+			}
+		}
+		
+		if (flag.equalsIgnoreCase("setclan") && RedProtect.SC){
+			if (!(value instanceof String)){
+				return false;
+			}
+			if (RedProtect.clanManager.getClan((String)value) == null){
+				return false;
+			}
 		}
 		
 		if ((flag.equalsIgnoreCase("forcefly") || 
@@ -2388,7 +2457,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			return false;
 		}
 		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items") || flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
-			String[] valida = value.toString().replace(" ", "").split(",");
+			if (!(value instanceof String)){
+				return false;
+			}
+			String[] valida = ((String)value).replace(" ", "").split(",");
 			for (String item:valida){
 				if (Material.getMaterial(item.toUpperCase()) == null){
 					return false;
@@ -2400,7 +2472,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 			try{
-				String[] cmds = value.toString().split(",");
+				String[] cmds = ((String)value).split(",");
 				for (String cmd:cmds){
 					if (cmds.length > 0 && (cmd.contains("cmd:") || cmd.contains("arg:"))){
 						String[] cmdargs = cmd.split(" ");
@@ -2428,7 +2500,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] effects = value.toString().split(",");
+			String[] effects = ((String)value).split(",");
 			for (String eff:effects){
 				String[] effect = eff.split(" ");
 				if (effect.length < 2){

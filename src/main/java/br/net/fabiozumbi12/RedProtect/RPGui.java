@@ -2,6 +2,8 @@ package br.net.fabiozumbi12.RedProtect;
 
 import java.util.Arrays;
 
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -35,10 +37,7 @@ public class RPGui implements Listener{
 	private Inventory inv;
 
 	public RPGui(String name, Player player, Region region,Plugin plugin, boolean edit, int MaxSlot){
-		this.edit = edit;
-		if (name.length() >= 16){
-			name = name.substring(0, 16);
-		}
+		this.edit = edit;		
 		this.name = name;
 		this.player = player;
 		this.region = region;
@@ -69,17 +68,22 @@ public class RPGui implements Listener{
 		}
 				
 		allowEnchant = false;
-		String bukkitv = Bukkit.getVersion();
-		for (int i = 1; i <= 9; i++){
-			if (bukkitv.contains("1.8."+i) || bukkitv.contains("1.9."+i)){
-				allowEnchant = true;
-				break;
-			}			
+		if (RedProtect.version >= 181){
+			allowEnchant = true;
 		}	
 		
 		for (String flag:region.flags.keySet()){
-			if (!(region.flags.get(flag) instanceof Boolean)){
+			if (!(region.flags.get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")){
 				continue;
+			}
+			if (flag.equalsIgnoreCase("clan")){
+				if (!RedProtect.SC){
+					continue;
+				}
+				ClanPlayer cp = RedProtect.clanManager.getClanPlayer(player);
+				if (cp == null || !cp.isLeader()){
+					continue;
+				} 
 			}
 			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null && RPConfig.isFlagEnabled(flag)){
 				if (flag.equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
@@ -88,6 +92,17 @@ public class RPGui implements Listener{
 				
 				int i = RPConfig.getGuiSlot(flag);
 				
+				String fvalue = "";
+				if (flag.equalsIgnoreCase("clan")){
+					if (region.flags.get(flag).toString().equals("")){
+						fvalue = RPConfig.getGuiString("false");
+					} else {
+						fvalue = RPConfig.getGuiString("true");
+					}					
+				} else {
+					fvalue = RPConfig.getGuiString(region.flags.get(flag).toString());
+				}
+				
 				if (allowEnchant){
 					this.guiItens[i] = removeAttribute(RPConfig.getGuiItemStack(flag));
 				} else {
@@ -95,7 +110,7 @@ public class RPGui implements Listener{
 				}				
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
-				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(region.flags.get(flag).toString()),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
+				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+fvalue,"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 				if (allowEnchant){					
 					if (this.region.getFlagBool(flag)){
 						guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -207,19 +222,36 @@ public class RPGui implements Listener{
 	}
 	
 	private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event){
-		this.region.setFlag(flag, !this.region.getFlagBool(flag));
-		RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + this.region.getFlagBool(flag));
+		boolean flagv = false;
+		if (flag.equalsIgnoreCase("clan")){
+			Player p = (Player) event.getInventory().getHolder();
+			ClanPlayer cp = RedProtect.clanManager.getClanPlayer(p);			
+			if (this.region.getFlagString(flag).equals("")){	
+				this.region.setFlag(flag, cp.getTag());
+				flagv = true;
+				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+cp.getClan().getColorTag()+"'"));
+			} else {            					
+				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'"+this.region.getFlagString(flag)+"'"));
+				this.region.setFlag(flag, "");
+				flagv = false;
+			}
+		} else {
+			flagv = !this.region.getFlagBool(flag);
+			this.region.setFlag(flag, flagv);
+			RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + flagv);
+		}
+		
 		if (allowEnchant){
-			if (this.region.getFlagBool(flag)){
+			if (flagv){
 				itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
 			} else {
 				itemMeta.removeEnchant(Enchantment.DURABILITY);
 			}
 			itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}								
-		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(this.region.flags.get(flag).toString()),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
+		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(String.valueOf(flagv)),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 		event.getCurrentItem().setItemMeta(itemMeta);
-		RedProtect.logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+this.region.flags.get(flag).toString());
+		RedProtect.logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+String.valueOf(flagv));
 	}
 	
 	public void close(){

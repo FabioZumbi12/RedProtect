@@ -71,7 +71,7 @@ public class RPEntityListener implements Listener{
         RedProtect.logger.debug("Spawn monster " + event.getEntityType().name());
         
         //spawn arms on armor stands
-        if (!RedProtect.v.startsWith("1.7") && (e instanceof ArmorStand) && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
+        if (RedProtect.version <= 170 && (e instanceof ArmorStand) && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
         	ArmorStand as = (ArmorStand) e;
         	as.setArms(true);
         }
@@ -84,7 +84,7 @@ public class RPEntityListener implements Listener{
                 event.setCancelled(true);
             }
         }
-        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && !(!RedProtect.v.startsWith("1.7") && e instanceof ArmorStand) && !(e instanceof Hanging)) {
+        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && !(RedProtect.version <= 170 && e instanceof ArmorStand) && !(e instanceof Hanging)) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {
@@ -160,7 +160,7 @@ public class RPEntityListener implements Listener{
                     Player p2 = (Player)e2; 
                     if (r1 != null) {
                     	Material mp2 = p2.getItemInHand().getType();
-                    	if (RedProtect.v.startsWith("1.9")){
+                    	if (RedProtect.version >= 190){
                     		if (p2.getInventory().getItemInMainHand() != null){
                     			mp2 = p2.getInventory().getItemInMainHand().getType();
                     		} else {

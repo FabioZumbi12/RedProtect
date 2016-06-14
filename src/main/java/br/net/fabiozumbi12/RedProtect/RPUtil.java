@@ -65,11 +65,11 @@ public class RPUtil {
     	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
     	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
     		String potname = "";
-    		if (RedProtect.v.startsWith("1.9")){
+    		if (RedProtect.version >= 190){
     			PotionMeta pot = (PotionMeta) result.getItemMeta();
     			potname = pot.getBasePotionData().getType().name();
     		}
-    		if (RedProtect.v.startsWith("1.7") || RedProtect.v.startsWith("1.8")){
+    		if (RedProtect.version <= 180){
     			potname = Potion.fromItemStack(result).getType().name();
     		} 
     		if (Pots.contains(potname)){
@@ -83,11 +83,11 @@ public class RPUtil {
     	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
     	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
     		String potname = "";
-    		if (RedProtect.v.startsWith("1.9")){
+    		if (RedProtect.version >= 190){
     			PotionMeta pot = (PotionMeta) result.getItemMeta();
     			potname = pot.getBasePotionData().getType().name();
     		}
-    		if ((RedProtect.v.startsWith("1.7") || RedProtect.v.startsWith("1.8")) && Potion.fromItemStack(result) != null){
+    		if (RedProtect.version <= 180 && Potion.fromItemStack(result) != null){
     			potname = Potion.fromItemStack(result).getType().name();
     		}    		
     		if (Pots.contains(potname)){    			
@@ -243,7 +243,8 @@ public class RPUtil {
     		}
     	}
     }
-            
+           
+    //TODO read all db
     static void ReadAllDB(Set<Region> regions) {     	
     	RedProtect.logger.info("Loaded " + regions.size() + " regions (" + RPConfig.getString("file-type") + ")");
     	int i = 0;
@@ -505,7 +506,16 @@ public class RPUtil {
     			String rname = r.getName().replace("/", "|");
     			RedProtect.rm.renameRegion(rname, r);
     			cfm++;
-    		}        	
+    		}       
+        	
+        	if (RedProtect.SC){
+        		//remove deleted clans from regions
+        		for (String flag:r.flags.keySet()){
+        			if (flag.equalsIgnoreCase("clan") && !RedProtect.clanManager.isClan(r.getFlagString(flag))){
+        				r.setFlag(flag, "");
+        			}
+        		}
+        	}
         }     
         
         if (delay > 0){
@@ -955,7 +965,15 @@ public class RPUtil {
 		return regionName;
 	}
 
-	public static boolean RemoveGuiItem(ItemStack item) {    	
+	public static String getTitleName(Region r){
+		String name = RPLang.get("gui.invflag").replace("{region}", r.getName());
+		if (name.length() > 16){
+			name = name.substring(0, 16);    			
+		}
+		return name;
+	}
+	
+	public static boolean RemoveGuiItem(ItemStack item) {
     	if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()){
     		try{
     			String lore = item.getItemMeta().getLore().get(1);

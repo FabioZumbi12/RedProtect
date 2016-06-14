@@ -4,17 +4,25 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>6.5.13</version>
+  <version>6.6.0</version>
   <url>http://spigotmc.org/resources/redprotect.15841/</url>
   <dependencies>
-		<!--Spigot-API-->
+  
+		<dependency>
+			<groupId>paper-api</groupId>
+			<artifactId>paper-api</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/paper-api-1.10-R0.1-20160609.044554-1.jar</systemPath>
+		</dependency>
+		
+        <!--Spigot-API-->
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.9.4-R0.1-SNAPSHOT</version>
-          <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
+          <version>1.10-R0.1-SNAPSHOT</version>
         </dependency>
-        
+		
         <dependency>
 			<groupId>FastAsyncWorldEdit</groupId>
 			<artifactId>FastAsyncWorldEdit</artifactId>
@@ -23,7 +31,7 @@
 			<systemPath>D:/ProjetosBukkit/APIs/FastAsyncWorldEdit.jar</systemPath>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>spigot-1.9</groupId>
 			<artifactId>spigot-1.9</artifactId>
 			<version>v1</version>
@@ -31,13 +39,22 @@
 			<systemPath>D:/ProjetosBukkit/APIs/spigot-1.9.jar</systemPath>
 		</dependency>
 		
-        <!-- <dependency>
+        <dependency>
 			<groupId>Bukkit</groupId>
 			<artifactId>Bukkit</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/KCauldron-1.7.10-1481.145-server.jar</systemPath>
 		</dependency> -->
+		
+		<dependency>
+			<groupId>SimpleClans</groupId>
+			<artifactId>sSimpleClans</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/SimpleClans.jar</systemPath>
+		</dependency>
+		
 		<dependency>
 			<groupId>repo.libs</groupId>
 			<artifactId>AsyncWorldEdit</artifactId>
@@ -118,6 +135,11 @@
      <repository>
             <id>libs-repo</id>
             <url>http://areaz12server.net.br/maven/</url>
+     </repository>
+     
+     <repository>
+            <id>paper-repo</id>
+            <url>repo.destroystokyo.com/content/repositories/snapshots</url>
      </repository>
      
      <repository>

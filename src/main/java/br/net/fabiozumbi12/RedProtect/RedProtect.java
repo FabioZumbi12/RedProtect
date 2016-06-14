@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.milkbowl.vault.economy.Economy;
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
+import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -71,10 +73,13 @@ public class RedProtect extends JavaPlugin {
 	public static boolean GP;
 	public static boolean WE;
 	public static boolean AWE;
+	public static boolean SC;
+	public static ClanManager clanManager;
 	static boolean Dyn;
 	public static Dynmap dynmap;
 	public static Economy econ;
-	public static String v;
+	public static int version;
+	public static boolean paper = false;
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -100,6 +105,7 @@ public class RedProtect extends JavaPlugin {
             Dyn = checkDyn();
             WE = checkWe();
             AWE = checkAWe();
+            SC = checkSP();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
@@ -114,11 +120,12 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPWorldListener(), this);  
             serv.getPluginManager().registerEvents(new RPAddProtection(), this);
             
-            v = RedProtect.serv.getBukkitVersion();
-            if (v.contains("1.8") || v.contains("1.9")){
+            version = getBukkitVersion();
+            
+            if (version >= 180){
             	serv.getPluginManager().registerEvents(new RPMine18(), this);
             }
-            if (v.contains("1.9")){
+            if (version >= 190){
             	serv.getPluginManager().registerEvents(new RPMine19(), this);
             }
             
@@ -169,6 +176,10 @@ public class RedProtect extends JavaPlugin {
             if (Mc){
             	RedProtect.logger.info("MagicCarpet found. Hooked.");
             }
+            if (SC){
+            	clanManager = SimpleClans.getInstance().getClanManager();
+            	logger.info("SimpleClans found. Hooked.");
+            }
             if (Dyn && RPConfig.getBool("hooks.dynmap.enable")){
             	RedProtect.logger.info("Dynmap found. Hooked.");
             	RedProtect.logger.info("Loading dynmap markers...");
@@ -180,7 +191,12 @@ public class RedProtect extends JavaPlugin {
             	RPUtil.ReadAllDB(rm.getAllRegions());
         	} else {
         		RedProtect.logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");        		
-        	}            
+        	}   
+            
+            if (Package.getPackage("com.destroystokyo.paper") != null){
+            	RedProtect.logger.info("PaperSpigot/Paperclip detected. Admin flag 'view-distance' enabled.");
+            	paper = true;
+            }
             
             RedProtect.logger.sucess(RedProtect.pdf.getFullName() + " enabled.");  
             
@@ -203,6 +219,19 @@ public class RedProtect extends JavaPlugin {
                 this.disable();
         	}
         }
+    }
+    
+    private int getBukkitVersion(){
+    	String name = Bukkit.getServer().getClass().getPackage().getName();
+		String v = name.substring(name.lastIndexOf('.') + 1) + ".";
+    	String[] version = v.replace('_', '.').split("\\.");
+		
+		int lesserVersion = 0;
+		try {
+			lesserVersion = Integer.parseInt(version[2]);
+		} catch (NumberFormatException ex){				
+		}
+		return Integer.parseInt((version[0]+version[1]).substring(1)+lesserVersion);
     }
     
 	private boolean CheckUpdate() {
@@ -355,6 +384,14 @@ public class RedProtect extends JavaPlugin {
 	private boolean checkAWe() {
 		Plugin pAWe = Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");
     	if (pAWe != null && pAWe.isEnabled()){
+    		return true;
+    	}
+    	return false;
+	}
+	
+	private boolean checkSP() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
+    	if (p != null && p.isEnabled()){
     		return true;
     	}
     	return false;

@@ -177,7 +177,12 @@ public class RegionManager{
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
         if (RedProtect.Dyn){
-        	RedProtect.dynmap.addMark(r);
+        	try {
+        		RedProtect.dynmap.addMark(r);
+        	} catch (Exception ex){
+        		ex.printStackTrace();
+        		RedProtect.logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
+        	}        	
         }
     }
     
@@ -186,14 +191,18 @@ public class RegionManager{
     }
     
     public void remove(Region r) {
-    	if (RedProtect.Dyn){
-    		RedProtect.dynmap.removeMark(r);
-    	}    	
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
+    	Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
         while (rms.hasNext()) {
             rms.next().remove(r);
         }
-        
+    	if (RedProtect.Dyn){    		
+    		try {
+    			RedProtect.dynmap.removeMark(r);
+        	} catch (Exception ex){
+        		ex.printStackTrace();
+        		RedProtect.logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
+        	}
+    	}        
     }
     
     public Set<Region> getRegions(Player p, int x, int y, int z){

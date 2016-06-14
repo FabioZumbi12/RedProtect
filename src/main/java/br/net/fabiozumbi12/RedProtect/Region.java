@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,7 +52,7 @@ public class Region implements Serializable{
 	private boolean tosave = true;
 	
 	
-	/**Get unique ID of region based on name of region + world.
+	/**Get unique ID of region based on name of "region + @ + world".
 	 * @return {@code id string}
 	 */
 	public String getID(){
@@ -588,14 +590,22 @@ public class Region implements Serializable{
         return this.admins.contains(RPUtil.PlayerToUUID(player));
     }
     
-	public boolean isMember(Player player) {
-        return this.members.contains(RPUtil.PlayerToUUID(player.getName()));
+	public boolean isMember(Player player) {		
+        return getPlayerClan(player) || this.members.contains(RPUtil.PlayerToUUID(player.getName()));
     }
 	
 	public boolean isMember(String player) {
         return this.members.contains(RPUtil.PlayerToUUID(player));
     }
     
+	private boolean getPlayerClan(Player p){
+		if (!RedProtect.SC){
+			return false;
+		}
+		ClanPlayer clan = RedProtect.clanManager.getClanPlayer(p);
+		return clan != null && clan.getTag().equalsIgnoreCase(getFlagString("clan"));
+	}
+	
 	/** Add an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      * @param uuid - UUID or Player Name.
      */
@@ -811,6 +821,20 @@ public class Region implements Serializable{
     }	
 	
 	//---------------------- Admin Flags --------------------------// 
+    public String getClan(){
+    	if (!flagExists("clan")){
+    		return "";
+    	}
+    	return getFlagString("clan");
+    }
+    
+    public int getViewDistance(){
+    	if (!flagExists("view-distance")){
+    		return 0;
+    	}
+    	return new Integer(getFlagString("view-distance"));
+    }
+    
     public boolean canPlayerDamage() {
     	if (!flagExists("player-damage")){
     		return true;

@@ -3,7 +3,7 @@ main: ${project.groupId}.${project.artifactId}
 version: ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
-softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap]
+softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap, SimpleClans]
 url: ${project.url}
 commands:
   RedProtect:
@@ -66,6 +66,7 @@ permissions:
       redprotect.flag.iceform-entity: true
       redprotect.flag.allow-fly: true
       redprotect.flag.teleport: true
+      redprotect.flag.clan: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false
@@ -113,6 +114,8 @@ permissions:
       redprotect.admin.flag.gamemode: true
       redprotect.admin.flag.pvparena: true
       redprotect.admin.flag.forcepvp: true
+      redprotect.admin.flag.clan: true
+      redprotect.admin.flag.view-distance: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op
