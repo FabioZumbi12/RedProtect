@@ -21,6 +21,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -34,7 +35,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
-import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class RPEntityListener implements Listener{
@@ -70,12 +70,6 @@ public class RPEntityListener implements Listener{
            
         RedProtect.logger.debug("Spawn monster " + event.getEntityType().name());
         
-        //spawn arms on armor stands
-        if (RedProtect.version <= 170 && (e instanceof ArmorStand) && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
-        	ArmorStand as = (ArmorStand) e;
-        	as.setArms(true);
-        }
-        
         if (e instanceof Monster) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
@@ -84,13 +78,106 @@ public class RPEntityListener implements Listener{
                 event.setCancelled(true);
             }
         }
-        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && !(RedProtect.version <= 170 && e instanceof ArmorStand) && !(e instanceof Hanging)) {
+        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.version >= 170 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {
             	RedProtect.logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void entityFire(EntityCombustByEntityEvent e){
+    	Entity e1 = e.getEntity();
+        Entity e2 = e.getCombuster();
+        
+        if (e2 == null) {
+            return;
+        }
+        
+        RedProtect.logger.debug("EntityCombustByEntityEvent - Is EntityCombustByEntityEvent event."); 
+        
+        
+        if (e2 instanceof Projectile) {
+        	Projectile a = (Projectile)e2;                
+            if (a.getShooter() instanceof Entity){
+            	e2 = (Entity)a.getShooter(); 
+            }
+            a = null;
+            if (e2 == null) {
+                return;
+            }
+        }            
+        
+        Region r1 = RedProtect.rm.getTopRegion(e1.getLocation());
+        Region r2 = RedProtect.rm.getTopRegion(e2.getLocation());
+        
+        if (r1 != null && !r1.canFire() && !(e2 instanceof Player)){
+    		e.setCancelled(true);
+    		return;
+    	}
+        
+        if (e1 instanceof Player) {
+            if (e2 instanceof Player && !e1.equals(e2)) {                	
+                Player p2 = (Player)e2; 
+                if (r1 != null) {                	
+                    if (r2 != null) {                    	
+                        if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
+                            e.setCancelled(true);
+                            RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
+                            return;
+                        }
+                    }
+                    else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
+                        e.setCancelled(true);
+                        RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
+                        return;
+                    }
+                }
+                else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
+                    e.setCancelled(true);
+                    RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
+                    return;
+                }
+            }                
+        } 
+        else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
+        	if (r1 != null && e2 instanceof Player) {
+                Player p2 = (Player)e2;
+                if (!r1.canInteractPassives(p2)) {
+                    e.setCancelled(true);
+                    RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
+                    return;
+                }
+            }                
+        } 
+        else if (e1 instanceof Hanging && e2 instanceof Player){
+        	Player p2 = (Player)e2;
+        	if (r1 != null && !r1.canBuild(p2) && !r1.canBreak(e1.getType())){
+        		e.setCancelled(true);
+        		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
+                return;
+        	}                
+            if (r2 != null && !r2.canBuild(p2) && !r2.canBreak(e1.getType())){
+            	e.setCancelled(true);
+            	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
+                return;
+            }                
+        } 
+        else if (e1 instanceof Hanging && e2 instanceof Monster){
+        	if (r1 != null || r2 != null){
+        		RedProtect.logger.debug("Cancelled ItemFrame drop Item");
+        		e.setCancelled(true);
+                return;
+        	}
+        }
+        else if (e2 instanceof Explosive){
+        	if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())){
+        		e.setCancelled(true);
+                return;
+        	}
         }
     }
     
@@ -103,15 +190,8 @@ public class RPEntityListener implements Listener{
         
         Entity ent = e.getEntity();
         Region r = RedProtect.rm.getTopRegion(ent.getLocation());
-        if (ent instanceof Player){        	
-        	if (r != null && r.flagExists("invincible")){
-        		if (r.getFlagBool("invincible")){
-        			e.setCancelled(true);        			
-        		}
-        	}        	
-        }
-        
-        if (ent instanceof Animals || ent instanceof Villager || ent instanceof Golem) {
+                
+        if (ent instanceof LivingEntity && !(ent instanceof Monster)) {
         	if (r != null && r.flagExists("invincible")){
         		if (r.getFlagBool("invincible")){
         			if (ent instanceof Animals){
@@ -133,6 +213,7 @@ public class RPEntityListener implements Listener{
             }
             
             RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event."); 
+            
             
             if (e2 instanceof Projectile) {
             	Projectile a = (Projectile)e2;                
@@ -207,7 +288,7 @@ public class RPEntityListener implements Listener{
                     }
                 }                
             } 
-            else if ((e1 instanceof Hanging) && e2 instanceof Player){
+            else if (e1 instanceof Hanging && e2 instanceof Player){
             	Player p2 = (Player)e2;
             	if (r1 != null && !r1.canBuild(p2) && !r1.canBreak(e1.getType())){
             		e.setCancelled(true);
@@ -220,14 +301,14 @@ public class RPEntityListener implements Listener{
                     return;
                 }                
             } 
-            else if ((e1 instanceof Hanging) && e2 instanceof Monster){
+            else if (e1 instanceof Hanging && e2 instanceof Monster){
             	if (r1 != null || r2 != null){
             		RedProtect.logger.debug("Cancelled ItemFrame drop Item");
             		e.setCancelled(true);
                     return;
             	}
             }
-            else if ((e1 instanceof Explosive)){
+            else if (e2 instanceof Explosive){
             	if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())){
             		e.setCancelled(true);
                     return;

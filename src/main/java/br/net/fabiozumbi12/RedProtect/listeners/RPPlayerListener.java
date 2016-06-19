@@ -245,7 +245,7 @@ public class RPPlayerListener implements Listener{
                     	
         } else { //if r != null >>
         	//other blocks and interactions       	
-        	if ((itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK")) || b == null)){ 
+        	if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){ 
         		Material hand = itemInHand.getType();
         		if (hand.equals(Material.ENDER_PEARL) && !r.canTeleport(p)){
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");

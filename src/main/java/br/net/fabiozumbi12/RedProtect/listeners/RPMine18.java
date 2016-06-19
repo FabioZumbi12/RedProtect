@@ -7,14 +7,18 @@ import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import net.digiex.magiccarpet.Carpet;
 import net.digiex.magiccarpet.MagicCarpet;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -33,7 +37,21 @@ public class RPMine18 implements Listener{
 	static RPContainer cont = new RPContainer();
 	static HashMap<Player, String> Ownerslist = new HashMap<Player, String>();
     
-    
+	@EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+    	if (event.isCancelled()) {
+            return;
+        }
+    	
+    	Entity e = event.getEntity();
+    	
+    	//spawn arms on armor stands
+        if (e instanceof ArmorStand && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
+        	ArmorStand as = (ArmorStand) e;
+        	as.setArms(true);
+        }        
+	}
+	
     @EventHandler
     public void onAttemptInteractAS(PlayerInteractAtEntityEvent e) {
         if (e.isCancelled()) {
@@ -66,6 +84,48 @@ public class RPMine18 implements Listener{
         }
     } 
     
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void entityFire(EntityCombustByEntityEvent e){
+    	if (e.isCancelled()) {
+            return;
+        }
+    	
+        Entity e1 = e.getEntity();
+        Entity e2 = e.getCombuster();
+        Location loc = e1.getLocation();
+         
+        if (e2 instanceof Projectile) {
+        	Projectile a = (Projectile)e2;                
+            if (a.getShooter() instanceof Entity){
+            	e2 = (Entity)a.getShooter(); 
+            }
+            a = null;
+            if (e2 == null) {
+                return;
+            }
+        }
+        
+		Region r1 = RedProtect.rm.getTopRegion(loc);
+		
+		if (r1 == null){
+			//global flags
+			if (e1 instanceof ArmorStand && e2 instanceof Player){
+				if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build")){
+                	e.setCancelled(true);
+                	return;
+                }                
+            }
+		} else {
+			if (e1 instanceof ArmorStand && e2 instanceof Player){
+	        	if (!r1.canBuild(((Player)e2)) && !r1.canBreak(e1.getType())){
+	            	e.setCancelled(true);
+	            	RPLang.sendMessage(e2, "blocklistener.region.cantbreak");
+	            	return;
+	            }                                  
+	        }
+		}
+    }
+    
 	@EventHandler
     public void onEntityDamageByPet(EntityDamageByEntityEvent e) {
     	if (e.isCancelled()) {
@@ -75,71 +135,37 @@ public class RPMine18 implements Listener{
         Entity e1 = e.getEntity();
         Entity e2 = e.getDamager();
         Location loc = e1.getLocation();
-        
-        Player p = null;        
-        if (e.getDamager() instanceof Player){
-        	p = (Player)e.getDamager();
-        } else if (e.getDamager() instanceof Arrow){
-        	Arrow proj = (Arrow)e.getDamager();
-        	if (proj.getShooter() instanceof Player){
-        		p = (Player) proj.getShooter();
-        	}        	
-        } else if (e.getDamager() instanceof Fish){
-        	Fish fish = (Fish)e.getDamager();
-        	if (fish.getShooter() instanceof Player){
-        		p = (Player) fish.getShooter();
-        	} 
-        } else if (e.getDamager() instanceof Egg){
-        	Egg Egg = (Egg)e.getDamager();
-        	if (Egg.getShooter() instanceof Player){
-        		p = (Player) Egg.getShooter();
-        	} 
-        } else if (e.getDamager() instanceof Snowball){
-        	Snowball Snowball = (Snowball)e.getDamager();
-        	if (Snowball.getShooter() instanceof Player){
-        		p = (Player) Snowball.getShooter();
-        	} 
-        } else if (e.getDamager() instanceof Fireball){
-        	Fireball Fireball = (Fireball)e.getDamager();
-        	if (Fireball.getShooter() instanceof Player){
-        		p = (Player) Fireball.getShooter();
-        	} 
-        } else if (e.getDamager() instanceof SmallFireball){
-        	SmallFireball SmallFireball = (SmallFireball)e.getDamager();
-        	if (SmallFireball.getShooter() instanceof Player){
-        		p = (Player) SmallFireball.getShooter();
-        	} 
-        } else {
-        	e.isCancelled();
-        	return;
-        }         
-
-        if (p == null){
-        	return;
+         
+        if (e2 instanceof Projectile) {
+        	Projectile a = (Projectile)e2;                
+            if (a.getShooter() instanceof Entity){
+            	e2 = (Entity)a.getShooter(); 
+            }
+            a = null;
+            if (e2 == null) {
+                return;
+            }
         }
         
 		Region r1 = RedProtect.rm.getTopRegion(loc);
 		
 		if (r1 == null){
 			//global flags
-			if (e1 instanceof ArmorStand){
-            	if (e2 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build")){
-                    	e.setCancelled(true);
-                    	return;
-                    }
-                }                  
+			if (e1 instanceof ArmorStand && e2 instanceof Player){
+				if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build")){
+                	e.setCancelled(true);
+                	return;
+                }                
             }
-            return;
-		} 
-		
-		if (e1 instanceof ArmorStand){
-        	if (r1 != null && !r1.canBuild(p) && !r1.canBreak(e1.getType())){
-            	e.setCancelled(true);
-            	RPLang.sendMessage(p, "blocklistener.region.cantbreak");
-            	return;
-            }                                  
-        }
+		} else {
+			if (e1 instanceof ArmorStand && e2 instanceof Player){
+	        	if (!r1.canBuild(((Player)e2)) && !r1.canBreak(e1.getType())){
+	            	e.setCancelled(true);
+	            	RPLang.sendMessage(e2, "blocklistener.region.cantbreak");
+	            	return;
+	            }                                  
+	        }
+		}
 	}
     
     @EventHandler

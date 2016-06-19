@@ -64,7 +64,7 @@ public class RPMine19 implements Listener{
         }
         
         if (r != null){
-        	if ((itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK")) || b == null)){ 
+        	if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){ 
         		Material hand = itemInHand.getType();
         		if (hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)){
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");

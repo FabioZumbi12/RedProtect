@@ -259,6 +259,28 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	if(args.length == 2){
         		
+        		//rp removeall <player>
+        		if (checkCmd(args[0], "removeall")) {
+        			int removed = RedProtect.rm.removeAll(args[1]);
+        			if (removed <= 0){
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneremoved"));
+        			} else {
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.removed").replace("{regions}", removed+"").replace("{player}", args[1]));
+        			}        			
+        			return true;
+        		}
+        		
+        		//rp regenall <player>
+        		if (checkCmd(args[0], "regenall")) {
+        			int regen = RedProtect.rm.regenAll(args[1]);
+        			if (regen <= 0){
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneregenerated"));
+        			} else {
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.regenerated").replace("{regions}", regen+"").replace("{player}", args[1]));
+        			}
+        			return true;
+        		}
+        		
         		//rp regen stop
         		if (args[0].equalsIgnoreCase("regen") && args[1].equalsIgnoreCase("stop")) {
         			if (!RedProtect.WE){
@@ -910,6 +932,34 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args.length == 2) {      
         	
+        	//rp removeall <player>
+    		if (checkCmd(args[0], "removeall") && sender.hasPermission("redprotect.removeall")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			int removed = RedProtect.rm.removeAll(args[1]);
+    			if (removed <= 0){
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneremoved"));
+    			} else {
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.removed").replace("{regions}", removed+"").replace("{player}", args[1]));
+    			}        			
+    			return true;
+    		}
+    		
+    		//rp regenall <player>
+    		if (checkCmd(args[0], "regenall") && sender.hasPermission("redprotect.regenall")) {
+    			if (!RedProtect.WE){
+    				return true;
+    			}
+    			int regen = RedProtect.rm.regenAll(args[1]);
+    			if (regen <= 0){
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneregenerated"));
+    			} else {
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.regenerated").replace("{regions}", regen+"").replace("{player}", args[1]));
+    			}
+    			return true;
+    		}
+    		
         	//rp regen stop
     		if (args[0].equalsIgnoreCase("regen") && args[1].equalsIgnoreCase("stop") && player.hasPermission("redprotect.regen")) {
     			if (!RedProtect.WE){

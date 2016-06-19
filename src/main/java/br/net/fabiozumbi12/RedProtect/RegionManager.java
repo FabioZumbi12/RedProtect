@@ -13,6 +13,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
+import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 /**
  * Get the region database from here. All functions for manage regions can be found in this variable. 
@@ -156,22 +158,12 @@ public class RegionManager{
         return this.regionManagers.get(world).getRegions(player);
     }
     
-    public int getPlayerRegions(String player, String w){
-    	int regs = 0;
-    	Set<Region> regions = getRegions(player, w);
-    	if (regions != null){
-    		regs = regions.size();
-    	}
-    	return regs;
+    public int getPlayerRegions(String player, String w){    	
+    	return getRegions(player, w).size();
     }
     
     public int getPlayerRegions(String player, World w){
-    	int regs = 0;
-    	Set<Region> regions = getRegions(player, w);
-    	if (regions != null){
-    		regs = regions.size();
-    	}
-    	return regs;
+    	return getRegions(player, w).size();
     }
     
     public void add(Region r, World w) {
@@ -209,6 +201,35 @@ public class RegionManager{
     	return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);    	
     }
 
+    public int removeAll(String player){
+    	int qtd = 0;
+    	for (WorldRegionManager wrm:this.regionManagers.values()){
+    		Iterator<Region> it = wrm.getRegions(player).iterator();
+    		while (it.hasNext()){
+    			wrm.remove(it.next());
+    			qtd++;
+    		}
+    	}
+    	return qtd;
+    }
+    
+    public int regenAll(String player){
+    	int delay = 0;
+    	Iterator<Region> it = getRegions(player).iterator();
+    	while (it.hasNext()){
+    		Region r = it.next();
+    		if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
+				if (RedProtect.AWE){
+        			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+        		} else {
+        			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+        		}                		
+        		delay=delay+10;
+			}
+    	}
+    	return delay/10;
+    }
+    
     /**
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      * @return {@code Region} - Or null if no regions on this location.

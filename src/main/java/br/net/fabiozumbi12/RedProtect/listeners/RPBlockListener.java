@@ -65,6 +65,11 @@ public class RPBlockListener implements Listener{
 		}
 	}
 	
+
+    public void blockBurn(BlockBurnEvent e){
+    	
+    }
+    
     @EventHandler(priority = EventPriority.HIGH)
     public void onSignPlace(SignChangeEvent e) {   
     	RedProtect.logger.debug("BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
@@ -427,15 +432,15 @@ public class RPBlockListener implements Listener{
     	Block b = e.getBlock();
 
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
-    	if (!cont.canWorldBreak(b)){
-    		e.setCancelled(true);
-    		return;
-    	}    	
-		if (r != null && !r.canFire()){
+    	if (r != null && !r.canFire()){
 			e.setCancelled(true);
     		return;
 		}
-    	return;
+    	
+    	if (!cont.canWorldBreak(b)){
+    		e.setCancelled(true);
+    		return;
+    	}
     }
     
 	@EventHandler

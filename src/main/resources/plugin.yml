@@ -170,6 +170,8 @@ permissions:
       redprotect.eco.bypass: true
       redprotect.gui.edit: true
       redprotect.use-claim-modes: true
+      redprotect.removeall: true
+      redprotect.regenall: true
   redprotect.eco.use:
     description: "Economy permissions."
     default: false

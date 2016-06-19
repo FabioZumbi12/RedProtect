@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
 import static br.net.fabiozumbi12.RedProtect.Fanciful.TextualComponent.rawText;
 
 import com.google.gson.JsonArray;
@@ -21,8 +22,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
+
 import br.net.fabiozumbi12.RedProtect.Fanciful.util.ArrayWrapper;
 import br.net.fabiozumbi12.RedProtect.Fanciful.util.Reflection;
+
 import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -639,11 +642,16 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			// Find the field and its value, completely bypassing obfuscation
 			Class<?> chatSerializerClazz;
 
-			String version = Reflection.getVersion();
-			double majorVersion = Double.parseDouble(version.replace('_', '.').substring(1, 4));
-			int lesserVersion = Integer.parseInt(version.substring(6, 7));
+			String[] version = Reflection.getVersion().replace('_', '.').split("\\.");			
+			int majorVersion = Integer.parseInt((version[0]+version[1]).substring(1));
+			
+			int lesserVersion = 0;
+			try {
+				lesserVersion = Integer.parseInt(version[2]);
+			} catch (NumberFormatException ex){				
+			}
 
-			if (majorVersion < 1.8 || (majorVersion == 1.8 && lesserVersion == 1)) {
+			if (majorVersion < 18 || (majorVersion == 18 && lesserVersion == 1)) {
 				chatSerializerClazz = Reflection.getNMSClass("ChatSerializer");
 			} else {
 				chatSerializerClazz = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
