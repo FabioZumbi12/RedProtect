@@ -341,16 +341,15 @@ public class RPUtil {
         	List<String> adminsl = r.getAdmins();
         	List<String> membersl = r.getMembers(); 
         	
-        	if (RedProtect.OnlineMode){ 
-        		
-        		if (origupdt >= 90 || namesupdt >= 90){
-            		try {
-						Thread.sleep(100L);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-            	}
-        		
+        	if (origupdt >= 90 || namesupdt >= 90){
+        		try {
+					Thread.sleep(100L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+        	}
+        	
+        	if (RedProtect.OnlineMode){
             	for (int l = 0; l < leadersl.size(); l++){
             		String pname = leadersl.get(l).replace("[", "").replace("]", "");
             		if (!isUUIDs(pname) && pname != null && !RPUtil.isDefaultServer(pname)){
