@@ -279,6 +279,8 @@ public class RPConfig{
                     	gflags.set(w.getName()+".iceform-by.player", gflags.getBoolean(w.getName()+".iceform-by.player", false));
                     	gflags.set(w.getName()+".iceform-by.entity", gflags.getBoolean(w.getName()+".iceform-by.entity", true));
                     	gflags.set(w.getName()+".interact", gflags.getBoolean(w.getName()+".interact", true));
+                    	gflags.set(w.getName()+".if-interact-false.allow-blocks", gflags.getStringList(w.getName()+".if-interact-false.allow-blocks"));
+                    	gflags.set(w.getName()+".if-interact-false.allow-entities", gflags.getStringList(w.getName()+".if-interact-false.allow-entities"));
                     	gflags.set(w.getName()+".use-minecart", gflags.getBoolean(w.getName()+".use-minecart", true));
                     	gflags.set(w.getName()+".entity-block-damage", gflags.getBoolean(w.getName()+".entity-block-damage", false));
                     	gflags.set(w.getName()+".explosion-entity-damage", gflags.getBoolean(w.getName()+".explosion-entity-damage", true));
@@ -550,11 +552,11 @@ public class RPConfig{
 		return RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
 	}
     
-    public static boolean needClaimToBuild(Player p, Block b) { 
-    	boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN");
+    public static boolean needClaimToBuild(Player p, Block b) {     	
     	boolean bool = RedProtect.plugin.getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
-    		if (getBool("needed-claim-to-build.allow-only-protections-blocks")){    			
+    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks")){   
+    			boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN");
     			if (!blocks){
     				RPLang.sendMessage(p, "need.claim.blockids");
     			} else {

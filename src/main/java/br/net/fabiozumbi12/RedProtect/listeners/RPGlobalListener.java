@@ -6,24 +6,18 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Fish;
 import org.bukkit.entity.Golem;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ShulkerBullet;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
@@ -59,15 +53,21 @@ import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
-@SuppressWarnings("deprecation")
 public class RPGlobalListener implements Listener{
 	
 	public RPGlobalListener(){
 		RedProtect.logger.debug("Loaded RPGlobalListener...");		
 	}
 	
-	private boolean allowBuild(Player p, Block b){
-		return (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build")) || p.hasPermission("redprotect.bypass.world");
+	private boolean allowBuild(Player p, Block b, int fat){
+		if (fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
+			return true;
+		}
+		if (fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
+			return true;
+		}
+		
+		return p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build"));
 	}
 	
 	@EventHandler
@@ -163,11 +163,7 @@ public class RPGlobalListener implements Listener{
 	            return;
 	        }
 		} else {
-			if (!allowBuild(p, b)){
-				if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
-					return;
-				}
-				
+			if (!allowBuild(p, b, 1)){
 				e.setCancelled(true);
 				RedProtect.logger.debug("RPGlobalListener - Can't Build!");
 				return;
@@ -184,13 +180,9 @@ public class RPGlobalListener implements Listener{
 
 		Block b = e.getBlock();
 		Player p = e.getPlayer();
-		World w = p.getWorld();
 		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
 		
-		if (r == null && !allowBuild(p, b)){
-			if (RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
-				return;
-			}
+		if (r == null && !allowBuild(p, b, 2)){			
 			e.setCancelled(true);
 			return;
 		}
@@ -247,6 +239,9 @@ public class RPGlobalListener implements Listener{
         	}
         } else {
         	if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world")){
+        		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())){
+        			return;
+        		} 
         		e.setUseItemInHand(Event.Result.DENY);
     			e.setCancelled(true);
     			return;
@@ -260,6 +255,7 @@ public class RPGlobalListener implements Listener{
             return;
         }
 
+    	Player p = e.getPlayer();
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
@@ -268,12 +264,15 @@ public class RPGlobalListener implements Listener{
 		}
         
         if (ent instanceof Minecart || ent instanceof Boat){
-        	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".use-minecart") && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
+        	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
                 return;
             }
         } else {
-        	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".interact") && !e.getPlayer().hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
+        	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
+        		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-entities").contains(ent.getType().name())){
+        			return;
+        		} 
                 e.setCancelled(true);
                 return;
             }
@@ -295,7 +294,7 @@ public class RPGlobalListener implements Listener{
         
         if (ent instanceof Player) { 
         	Player p = (Player)ent;
-            if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build") && !p.hasPermission("redprotect.bypass.world")) {
+            if (!allowBuild(p, null, 0) && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
             }
         }
@@ -313,7 +312,7 @@ public class RPGlobalListener implements Listener{
 			return;
 		}
 		
-    	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".build") && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
+    	if (!allowBuild(e.getPlayer(), null, 0) && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
     		e.setCancelled(true);
 			return;
     	}
@@ -352,7 +351,7 @@ public class RPGlobalListener implements Listener{
                     e.setCancelled(true);
                     return;
                 }
-            }
+            }        	
 		}
         
         if (e2 instanceof Player) {
@@ -386,10 +385,16 @@ public class RPGlobalListener implements Listener{
                     return;
                 }
             }
+        	if (e1 instanceof Hanging) {
+            	if (!allowBuild(p, null, 0)){
+                    e.setCancelled(true);
+                    return;
+                }
+            }
         }
         
-        if (e2 instanceof SmallFireball) {
-        	SmallFireball proj = (SmallFireball)e2;
+        if (e2 instanceof Projectile) {
+        	Projectile proj = (Projectile)e2;
         	if (proj.getShooter() instanceof Player){
         		Player p = (Player)proj.getShooter();  
         		
@@ -412,163 +417,7 @@ public class RPGlobalListener implements Listener{
                     }
                 }
         	}        	
-        }
-        
-        if (e2 instanceof Fireball) {
-        	Fireball proj = (Fireball)e2;
-        	if (proj.getShooter() instanceof Player){
-        		Player p = (Player)proj.getShooter();  
-        		
-            	if (e1 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".pvp") && !p.hasPermission("redprotect.bypass.world")) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }        
-            	if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-passives") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            	if (e1 instanceof Monster) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-        	}        	
-        }
-        
-        if (e2 instanceof Snowball) {
-        	Snowball proj = (Snowball)e2;
-        	if (proj.getShooter() instanceof Player){
-        		Player p = (Player)proj.getShooter();  
-        		
-            	if (e1 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".pvp") && !p.hasPermission("redprotect.bypass.world")) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }        
-            	if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-passives") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            	if (e1 instanceof Monster) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-        	}        	
-        }
-        
-        if (e2 instanceof Arrow) {
-        	Arrow proj = (Arrow)e2;
-        	if (proj.getShooter() instanceof Player){
-        		Player p = (Player)proj.getShooter();  
-        		
-            	if (e1 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".pvp") && !p.hasPermission("redprotect.bypass.world")) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }        
-            	if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-passives") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            	if (e1 instanceof Monster) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-        	}        	
-        }
-        
-        if (RedProtect.version >= 190 && e2 instanceof SpectralArrow) {
-        	SpectralArrow proj = (SpectralArrow)e2;
-        	if (proj.getShooter() instanceof Player){
-        		Player p = (Player)proj.getShooter();  
-        		
-            	if (e1 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".pvp") && !p.hasPermission("redprotect.bypass.world")) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }        
-            	if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-passives") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            	if (e1 instanceof Monster) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-        	}        	
-        }
-        
-        if (RedProtect.version >= 190 && e2 instanceof ShulkerBullet) {
-        	ShulkerBullet proj = (ShulkerBullet)e2;
-        	if (proj.getShooter() instanceof Player){
-        		Player p = (Player)proj.getShooter();  
-        		
-            	if (e1 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".pvp") && !p.hasPermission("redprotect.bypass.world")) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }        
-            	if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-passives") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            	if (e1 instanceof Monster) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-        	}        	
-        }
-        
-        if (e2 instanceof Fish) {
-        	Fish fish = (Fish)e2;
-        	if (fish.getShooter() instanceof Player){
-        		Player p = (Player)fish.getShooter();  
-        		
-            	if (e1 instanceof Player) {
-                    if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".pvp") && !p.hasPermission("redprotect.bypass.world")) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }        
-            	if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-passives") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            	if (e1 instanceof Monster) {
-                	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
-                        e.setCancelled(true);
-                        return;
-                    }
-                }             
-        	}
-        }		
+        }        		
 	}
 
 	@EventHandler
