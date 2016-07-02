@@ -20,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -547,6 +548,22 @@ public class RPConfig{
 	
     public static boolean isAllowedWorld(Player p) {
 		return RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
+	}
+    
+    public static boolean needClaimToBuild(Player p, Block b) { 
+    	boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN");
+    	boolean bool = RedProtect.plugin.getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
+    	if (bool){
+    		if (getBool("needed-claim-to-build.allow-only-protections-blocks")){    			
+    			if (!blocks){
+    				RPLang.sendMessage(p, "need.claim.blockids");
+    			} else {
+        			return false;
+        		}
+    		} 
+    		RPLang.sendMessage(p, "need.claim.tobuild");    		
+    	}
+		return bool;
 	}
 
 	public static SortedSet<String> getAllFlags() {

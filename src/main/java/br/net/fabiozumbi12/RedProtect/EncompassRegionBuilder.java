@@ -41,7 +41,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
         if (!RPConfig.isAllowedWorld(p)){
         	this.setErrorSign(e, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
-        }                
+        }  
         
         if (regionName == null || regionName.equals("")) {
         	regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
