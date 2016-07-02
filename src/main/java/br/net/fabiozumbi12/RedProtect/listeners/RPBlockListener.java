@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -65,11 +66,6 @@ public class RPBlockListener implements Listener{
 		}
 	}
 	
-
-    public void blockBurn(BlockBurnEvent e){
-    	
-    }
-    
     @EventHandler(priority = EventPriority.HIGH)
     public void onSignPlace(SignChangeEvent e) {   
     	RedProtect.logger.debug("BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
@@ -157,8 +153,32 @@ public class RPBlockListener implements Listener{
                 RedProtect.rm.add(r, RedProtect.serv.getWorld(r.getWorld()));
                 return;
             }
+        } 
+        else if (RPConfig.getBool("region-settings.enable-flag-sign") && line1.equalsIgnoreCase("[flag]") && signr != null){
+        	if (signr.flags.containsKey(lines[1])){
+        		String flag = lines[1];
+        		if (!(signr.flags.get(flag) instanceof Boolean)){
+        			RPLang.sendMessage(p, RPLang.get("playerlistener.region.sign.cantflag"));
+        			b.breakNaturally();
+    				return;
+    			}
+        		if (RedProtect.ph.hasPerm(p, "redprotect.flag."+flag)){
+    				if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.ph.hasPerm(p, "redprotect.admin.flag."+flag)) {    					
+    					e.setLine(1, flag);    	
+    					e.setLine(2, ChatColor.DARK_AQUA+""+ChatColor.BOLD+signr.getName());
+    					e.setLine(3, RPLang.get("region.value")+" "+RPLang.translBool(signr.getFlagString(flag)));
+    					RPLang.sendMessage(p, "playerlistener.region.sign.placed");
+    					RPConfig.putSign(signr.getID(), b.getLocation());
+        				return;
+    				}
+        		}
+        		RPLang.sendMessage(p,"cmdmanager.region.flag.nopermregion");
+        		b.breakNaturally();
+        	} else {
+        		RPLang.sendMessage(p, "playerlistener.region.sign.invalidflag");
+        		b.breakNaturally();
+        	}
         }
-        return;
     }
     
     void setErrorSign(SignChangeEvent e, Player p, String error) {
@@ -228,7 +248,11 @@ public class RPBlockListener implements Listener{
     	
     	Player p = e.getPlayer();
     	Block b = e.getBlock();
-    	if (RPUtil.pBorders.containsKey(p) && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))){
+    	List<Location> locs = new ArrayList<Location>();
+    	if (RedProtect.showingBlocks.containsKey(p.getName())){
+    		locs = RedProtect.showingBlocks.get(p.getName());
+    	}
+    	if ((RPUtil.pBorders.containsKey(p) || locs.contains(b.getLocation())) && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))){
     		RPLang.sendMessage(p, "blocklistener.cantbreak.borderblock");
     		e.setCancelled(true);
     		return;

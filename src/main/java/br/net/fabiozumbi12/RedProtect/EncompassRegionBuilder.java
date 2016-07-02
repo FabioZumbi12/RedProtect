@@ -167,7 +167,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         
                         List<String> othersName = new ArrayList<String>();
                         Region otherrg = null;
-                        List<Location> limitlocs = region.getLimitLocs(minby, maxby);
+                        List<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
                                      
                         //check retangular region
                         for (Block bkloc:blocks){
@@ -209,7 +209,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         
                         //check if same area
                         otherrg = RedProtect.rm.getTopRegion(region.getCenterLoc());
-                        if (otherrg != null && otherrg.get4Points(current.getY()).equals(region.get4Points(current.getY()))){
+                        if (otherrg != null && otherrg.get4Points(current.getY()).equals(region.get4Points(current.getY())) && !p.hasPermission("redprotect.bypass")){
                         	this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                             return;
                         }

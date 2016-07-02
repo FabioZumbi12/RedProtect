@@ -156,6 +156,7 @@ permissions:
       redprotect.limit.claim.unlimited: true
       redprotect.limit.blocks.unlimited: true
       redprotect.bypass: true
+      redprotect.bypass.world: true
       redprotect.bypass.nether-roof: true
       redprotect.bypass.addleader: true
       redprotect.bypass.velocity: true

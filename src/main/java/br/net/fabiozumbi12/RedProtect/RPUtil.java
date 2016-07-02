@@ -69,7 +69,7 @@ public class RPUtil {
     			PotionMeta pot = (PotionMeta) result.getItemMeta();
     			potname = pot.getBasePotionData().getType().name();
     		}
-    		if (RedProtect.version <= 180){
+    		if (RedProtect.version <= 180 && Potion.fromItemStack(result) != null){
     			potname = Potion.fromItemStack(result).getType().name();
     		} 
     		if (Pots.contains(potname)){
@@ -266,7 +266,9 @@ public class RPUtil {
 			RedProtect.logger.severe("The 'date-format' don't match with date 'now'!!");
 		}
 		
-        for (Region r:regions){        	
+        for (Region r:regions){    
+        	r.updateSigns();
+        	
         	//purge regions
         	if (RPConfig.getBool("purge.enabled")){
         		Date regiondate = null;

@@ -108,6 +108,9 @@ public class RPLang {
 		if (Lang.get("_lang.version") != null){
 			int langv = Integer.parseInt(Lang.get("_lang.version").replace(".", ""));
 			int rpv = Integer.parseInt(RedProtect.pdf.getVersion().replace(".", ""));
+			if (RedProtect.pdf.getVersion().length() > Lang.get("_lang.version").length()){
+				langv = Integer.parseInt(Lang.get("_lang.version").replace(".", "")+0);
+			}
 			if (langv < rpv || langv == 0){
 				RedProtect.logger.warning("Your lang file is outdated. Probally need strings updates!");
 				RedProtect.logger.warning("Lang file version: "+Lang.get("_lang.version"));

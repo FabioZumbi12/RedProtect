@@ -47,6 +47,7 @@ public class RedProtect extends JavaPlugin {
     public static List<String> changeWait = new ArrayList<String>();
     public static List<String> tpWait = new ArrayList<String>();
     public static HashMap<Player,String> alWait = new HashMap<Player,String>();
+	public static HashMap<String, List<Location>> showingBlocks = new HashMap<String, List<Location>>();
     public static RPPermissionHandler ph;
     public static RPLogger logger = new RPLogger();
     public static Server serv;    
@@ -59,7 +60,8 @@ public class RedProtect extends JavaPlugin {
     public static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
     public static String pathGui = String.valueOf(RedProtect.pathMain) + File.separator + "guiconfig.yml"; 
     public static String protections = String.valueOf(RedProtect.pathMain) + File.separator + "protections.yml"; 
-    public static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";;
+    public static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";
+    public static String PathSigns = String.valueOf(RedProtect.pathMain) + File.separator + "signs.yml";
     public static boolean BossBar;
     public static boolean MyChunk;
     public static boolean MyPet;

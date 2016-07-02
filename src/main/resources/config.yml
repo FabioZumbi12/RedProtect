@@ -45,7 +45,7 @@ region-settings:
   # Border block type when use /rp border.
   border:
     material: GLOWSTONE
-    time-showing: 5
+    time-showing: 10
   region-list:
     # Show simple list with only name of region or all region info.
     simple-listing: true
@@ -85,6 +85,8 @@ region-settings:
   - '{membername}'
   # Time in seconds to wait player accept leadership request
   leadership-request-time: 20
+  # Enable flag signs
+  enable-flag-sign: true
 
 # World that player can claim regions.
 allowed-claim-worlds:

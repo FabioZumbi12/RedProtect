@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -32,11 +34,12 @@ import br.net.fabiozumbi12.RedProtect.RedProtect;
 
 public class RPConfig{
 	
-	static FileConfiguration configs = new RPYaml();
-	static YamlConfiguration gflags = new RPYaml();
-	static RPYaml GuiItems = new RPYaml();
-	static YamlConfiguration Prots = new RPYaml();
-	static RPYaml EconomyConfig = new RPYaml();
+	private static RPYaml configs = new RPYaml();
+	private static YamlConfiguration gflags = new RPYaml();
+	private static RPYaml signs = new RPYaml();
+	private static RPYaml GuiItems = new RPYaml();
+	private static RPYaml Prots = new RPYaml();
+	private static RPYaml EconomyConfig = new RPYaml();
 	public static List<String> AdminFlags = Arrays.asList("view-distance","forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
 			
 	public static void init(RedProtect plugin) {
@@ -49,6 +52,7 @@ public class RPConfig{
     	            File globalflags = new File(RedProtect.pathglobalFlags);
     	            File protections = new File(RedProtect.protections);
     	            File logs = new File(RedProtect.pathLogs);
+    	            File signsf = new File(RedProtect.PathSigns);
     	            
     	            if (!main.exists()) {
     	                main.mkdir();
@@ -69,6 +73,15 @@ public class RPConfig{
     	            	try {
 							globalflags.createNewFile();//create globalflags file
 	    	                RedProtect.logger.info("Created globalflags file: " + RedProtect.pathglobalFlags);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+    	            }
+    	            
+    	            if (!signsf.exists()) {
+    	            	try {
+    	            		signsf.createNewFile();//create PathSigns file
+	    	                RedProtect.logger.info("Created signs file: " + RedProtect.PathSigns);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -358,6 +371,13 @@ public class RPConfig{
     	                RedProtect.logger.info("Created folder: " + RedProtect.pathLogs);        	    		
         	    	}
         			
+        			//Load signs file
+        			try {
+    	            	signs.load(signsf);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+        			
         			save();        			
     	            RedProtect.logger.info("All configurations loaded!");
 	}
@@ -490,12 +510,14 @@ public class RPConfig{
     	File guiconfig = new File(RedProtect.pathGui);
     	File blockvalues = new File(RedProtect.pathBlockValues);
     	File protections = new File(RedProtect.protections);
+    	File signsf = new File(RedProtect.PathSigns);
     	try {
 			RedProtect.plugin.saveConfig();
 			gflags.save(globalflags);
 			GuiItems.save(guiconfig);
 			EconomyConfig.save(blockvalues);
 			Prots.save(protections);
+			signs.save(signsf);
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
 			e.printStackTrace();
@@ -524,7 +546,7 @@ public class RPConfig{
 	}
 	
     public static boolean isAllowedWorld(Player p) {
-		return RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
+		return RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
 	}
 
 	public static SortedSet<String> getAllFlags() {
@@ -594,6 +616,46 @@ public class RPConfig{
         	finalyml.set(key, obj);    	            	   	            	
         }  
         return finalyml;
+	}
+	
+	public static List<Location> getSigns(String rid){
+		List<Location> locs = new ArrayList<Location>();
+		for (String s:signs.getStringList(rid)){
+			String[] val = s.split(",");
+			if (Bukkit.getWorld(val[0]) == null){
+				continue;
+			}
+			locs.add(new Location(Bukkit.getWorld(val[0]),Double.valueOf(val[1]),Double.valueOf(val[2]),Double.valueOf(val[3])));
+		}
+		return locs;
+	}
+	
+	public static void putSign(String rid, Location loc){
+		List<String> lsigns = signs.getStringList(rid);
+		String locs = loc.getWorld().getName()+","+loc.getX()+","+loc.getY()+","+loc.getZ();
+		if (!lsigns.contains(locs)){
+			lsigns.add(locs);
+			saveSigns(rid, lsigns);
+		}
+	}
+	
+	public static void removeSign(String rid, Location loc){
+		List<String> lsigns = signs.getStringList(rid);
+		String locs = loc.getWorld().getName()+","+loc.getX()+","+loc.getY()+","+loc.getZ();
+		if (lsigns.contains(locs)){
+			lsigns.remove(locs);
+			saveSigns(rid, lsigns);
+		}
+	}
+	
+	private static void saveSigns(String rid, List<String> locs){
+		signs.set(rid, locs);
+		try {
+			signs.save(new File(RedProtect.PathSigns));
+		} catch (IOException e) {
+			RedProtect.logger.severe("Problems during save file:");
+			e.printStackTrace();
+		}
 	}
 }
    

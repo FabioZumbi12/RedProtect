@@ -78,7 +78,7 @@ public class RPEntityListener implements Listener{
                 event.setCancelled(true);
             }
         }
-        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.version >= 170 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
+        if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.version >= 180 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {

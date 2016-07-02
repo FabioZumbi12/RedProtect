@@ -17,6 +17,11 @@ public class DefineRegionBuilder extends RegionBuilder{
         	pName = p.getName().toLowerCase();
     	}
         
+        if (!RPConfig.isAllowedWorld(p)){
+        	this.setError(p, RPLang.get("regionbuilder.region.worldnotallowed"));
+            return;
+        }
+        
         String pRName = RPUtil.UUIDtoPlayer(p.getName());
         String wmsg = "";
         if (leader.equals(RPConfig.getString("region-settings.default-leader"))){
@@ -92,25 +97,43 @@ public class DefineRegionBuilder extends RegionBuilder{
         List<String> othersName = new ArrayList<String>();
         Region otherrg = null;
         
-        for (int locx = region.getMinMbrX();  locx < region.getMaxMbrX(); locx++){
-        	for (int locz = region.getMinMbrZ();  locz < region.getMaxMbrZ(); locz++){
-        		otherrg = RedProtect.rm.getTopRegion(new Location(p.getWorld(), locx, p.getLocation().getBlockY(), locz));
-        		if (otherrg != null){
-                	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){                		
-                		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
-                        return;
-                	}
-                	if (!othersName.contains(otherrg.getName())){
-                		othersName.add(otherrg.getName());
-                	}
-                }
-        		/*
-        		for (int locy = region.getMinY();  locy < region.getMaxY(); locy++){
-        			 
-        		}        	
-        		*/	 
+        //check if same area
+        otherrg = RedProtect.rm.getTopRegion(region.getCenterLoc());
+        if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
+        	this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+        	return;
+        }
+        
+        //check regions inside region
+        for (Region r:RedProtect.rm.getRegionsByWorld(p.getWorld())){
+        	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
+        		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
+        			this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                	return;
+            	}
+        		if (!othersName.contains(r.getName())){
+            		othersName.add(r.getName());
+            	}
         	}
-        } 
+        }
+        
+        //check borders for other regions
+        List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
+        for (Location loc:limitlocs){
+        	otherrg = RedProtect.rm.getTopRegion(loc);
+        	
+        	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
+        	
+    		if (otherrg != null){                    			
+            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
+            		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                    return;
+            	}
+            	if (!othersName.contains(otherrg.getName())){
+            		othersName.add(otherrg.getName());
+            	}
+            }
+        }
         
         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.Vault && !p.hasPermission("redprotect.eco.bypass")){
         	Double peco = RedProtect.econ.getBalance(p);

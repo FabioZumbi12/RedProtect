@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -67,10 +68,43 @@ public class Region implements Serializable{
 		this.tosave = save;
 	}
 	
-    public void setFlag(String Name, Object value) {
+    public void setFlag(String fname, Object value) {
     	setToSave(true);
-    	this.flags.put(Name, value);
-    	RedProtect.rm.updateLiveFlags(this, Name, value.toString());
+    	this.flags.put(fname, value);
+    	RedProtect.rm.updateLiveFlags(this, fname, value.toString());
+    	updateSigns(fname);
+    }
+    
+    public void updateSigns(){
+    	for (String s:this.flags.keySet()){
+    		updateSigns(s);
+    	}
+    }
+    
+    public void updateSigns(String fname){
+    	if (!RPConfig.getBool("region-settings.enable-flag-sign")){
+    		return;
+    	}
+    	List<Location> locs = RPConfig.getSigns(this.getID());
+        if (locs.size() > 0){
+    		for (Location loc:locs){
+    			if (loc.getBlock().getState() instanceof Sign){
+    				Sign s = (Sign) loc.getBlock().getState();
+    				String[] lines = s.getLines();
+    				if (lines[0].equalsIgnoreCase("[flag]")){
+    					if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))){
+    						s.setLine(3, RPLang.get("region.value")+" "+RPLang.translBool(getFlagString(fname)));
+    						s.update();
+    						RPConfig.putSign(this.getID(), loc);
+    					}
+    				} else {
+        				RPConfig.removeSign(this.getID(), loc);
+        			}
+    			} else {
+    				RPConfig.removeSign(this.getID(), loc);
+    			}
+    		}
+    	}
     }
     
     public void removeFlag(String Name) {
@@ -781,7 +815,7 @@ public class Region implements Serializable{
     	String flaginfo = "";
     	for (String flag:this.flags.keySet()){    		
     		if (RPConfig.getDefFlags().contains(flag)){
-    			String flagValue = this.flags.get(flag).toString();
+    			String flagValue = getFlagString(flag);
     			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
     				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": " + RPLang.translBool(flagValue);
     			} else {
@@ -794,7 +828,7 @@ public class Region implements Serializable{
 			}
     		
     		if (RPConfig.AdminFlags.contains(flag)){    			
-    			String flagValue = this.flags.get(flag).toString();
+    			String flagValue = getFlagString(flag);
     			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
     				flaginfo = flaginfo + ", " + ChatColor.AQUA + flag + ": " + RPLang.translBool(flagValue);
     			} else {
@@ -879,7 +913,7 @@ public class Region implements Serializable{
 			return true;
 		}
 		
-		String[] items = flags.get("allow-enter-items").toString().replace(" ", "").split(",");
+		String[] items = getFlagString("allow-enter-items").replace(" ", "").split(",");
 		List<String> inv = new ArrayList<String>();
 		List<String> mats = new ArrayList<String>();
 		for (ItemStack slot:p.getInventory()){
@@ -921,7 +955,7 @@ public class Region implements Serializable{
 				continue;
 			}
 			
-			String[] items = flags.get("deny-enter-items").toString().replace(" ", "").split(",");
+			String[] items = getFlagString("deny-enter-items").replace(" ", "").split(",");
 			for (String comp:items){
 				if (SlotType.equalsIgnoreCase(comp)){
 					return false;
@@ -1080,7 +1114,7 @@ public class Region implements Serializable{
 		List<String> argsRaw = Arrays.asList(fullcmd.replace("/"+Command+" ", "").split(" "));
 		
 		//As Whitelist
-		String[] flagCmds = flags.get("allow-cmds").toString().split(",");
+		String[] flagCmds = getFlagString("allow-cmds").split(",");
 		for (String cmd:flagCmds){
 			if (cmd.startsWith(" ")){
 				cmd = cmd.substring(1);
@@ -1117,7 +1151,7 @@ public class Region implements Serializable{
 		List<String> argsRaw = Arrays.asList(fullcmd.replace("/"+Command+" ", "").split(" "));
 		
 		//As Blacklist
-		String[] flagCmds = flags.get("deny-cmds").toString().split(",");
+		String[] flagCmds = getFlagString("deny-cmds").split(",");
 		for (String cmd:flagCmds){
 			
 			if (cmd.startsWith(" ")){
@@ -1324,7 +1358,7 @@ public class Region implements Serializable{
 		return locBlocks;
 	}
 	
-	public List<Location> getLimitLocs(int miny, int maxy){
+	public List<Location> getLimitLocs(int miny, int maxy, boolean define){
 		final List<Location> locBlocks = new ArrayList<Location>();
 		Location loc1 = this.getMinLocation();
 		Location loc2 = this.getMaxLocation();
@@ -1335,7 +1369,7 @@ public class Region implements Serializable{
                 for (int y = (int) miny; y <= (int) maxy; ++y) {
                     if ((z == loc1.getZ() || z == loc2.getZ() ||
                         x == loc1.getX() || x == loc2.getX())
-                        && new Location(w,x,y,z).getBlock().getType().name().contains(RPConfig.getString("region-settings.block-id"))) {
+                        && (define || new Location(w,x,y,z).getBlock().getType().name().contains(RPConfig.getString("region-settings.block-id")))) {
                     	locBlocks.add(new Location(w,x,y,z));                    	                   	
                     }
                 }
