@@ -248,11 +248,8 @@ public class RPBlockListener implements Listener{
     	
     	Player p = e.getPlayer();
     	Block b = e.getBlock();
-    	List<Location> locs = new ArrayList<Location>();
-    	if (RedProtect.showingBlocks.containsKey(p.getName())){
-    		locs = RedProtect.showingBlocks.get(p.getName());
-    	}
-    	if ((RPUtil.pBorders.containsKey(p) || locs.contains(b.getLocation())) && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))){
+    	
+    	if (RPUtil.pBorders.containsKey(p.getName()) && b != null && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))){
     		RPLang.sendMessage(p, "blocklistener.cantbreak.borderblock");
     		e.setCancelled(true);
     		return;
@@ -328,8 +325,14 @@ public class RPBlockListener implements Listener{
     public void onEntityExplode(EntityExplodeEvent e) {
     	RedProtect.logger.debug("Is BlockListener - EntityExplodeEvent event");
     	List<Block> toRemove = new ArrayList<Block>();
+    	if (e.getEntity() == null){
+    		return;
+    	}
     	Region or = RedProtect.rm.getTopRegion(e.getEntity().getLocation());
         for (Block b:e.blockList()) {
+        	if (b == null){
+        		continue;
+        	}
         	RedProtect.logger.debug("Blocks: "+b.getType().name());
         	Location l = b.getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);

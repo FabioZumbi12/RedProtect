@@ -213,34 +213,9 @@ public class RPPlayerListener implements Listener{
                 
                 //show preview border
                 if (RedProtect.firstLocationSelections.containsKey(p) && RedProtect.secondLocationSelections.containsKey(p)){       
-                	if (RedProtect.showingBlocks.containsKey(p.getName())){
-                		for (Location loc:RedProtect.showingBlocks.get(p.getName())){
-    						loc.getBlock().setType(Material.AIR);
-                    	}
-                	}
-                	
-                	final List<Location> locs = get4Points(RedProtect.firstLocationSelections.get(p),RedProtect.secondLocationSelections.get(p),p.getLocation().getBlockY());
-                	RedProtect.showingBlocks.put(p.getName(), locs);   
-                	for (Location loc:locs){
-                		if (loc.getBlock().getType().equals(Material.AIR)){
-                			loc.getBlock().setType(RPConfig.getMaterial("region-settings.border.material"));
-                		}
-                	}
-                	Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
-						@Override
-						public void run() {		
-							if (RedProtect.showingBlocks.containsKey(p.getName())){
-								for (Location loc:RedProtect.showingBlocks.get(p.getName())){
-									loc.getBlock().setType(Material.AIR);
-			                	}
-								RedProtect.showingBlocks.remove(p.getName());
-							}
-							
-						}                		
-                	}, RPConfig.getInt("region-settings.border.time-showing")*20);
-                }
-                return;
-                
+                	RPUtil.addBorder(p, get4Points(RedProtect.firstLocationSelections.get(p),RedProtect.secondLocationSelections.get(p),p.getLocation().getBlockY()));                	
+                }                
+                return;                
             }
             if (itemInHand.getTypeId() == RPConfig.getInt("wands.infoWandID")) {
             	r = RedProtect.rm.getTopRegion(l);

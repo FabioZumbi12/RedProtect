@@ -47,7 +47,6 @@ public class RedProtect extends JavaPlugin {
     public static List<String> changeWait = new ArrayList<String>();
     public static List<String> tpWait = new ArrayList<String>();
     public static HashMap<Player,String> alWait = new HashMap<Player,String>();
-	public static HashMap<String, List<Location>> showingBlocks = new HashMap<String, List<Location>>();
     public static RPPermissionHandler ph;
     public static RPLogger logger = new RPLogger();
     public static Server serv;    

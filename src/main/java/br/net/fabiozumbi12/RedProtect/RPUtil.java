@@ -58,8 +58,9 @@ import com.earth2me.essentials.User;
 @SuppressWarnings("deprecation")
 public class RPUtil {
     static int backup = 0; 
-    public static HashMap<Player, HashMap<Location, Material>> pBorders = new HashMap<Player, HashMap<Location, Material>>();
+    public static HashMap<String, HashMap<Location, Material>> pBorders = new HashMap<String, HashMap<Location, Material>>();
 	public static boolean stopRegen = false;
+	private static HashMap<String, Integer> borderIds = new HashMap<String, Integer>();
     
     public static boolean denyPotion(ItemStack result){
     	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
@@ -69,7 +70,7 @@ public class RPUtil {
     			PotionMeta pot = (PotionMeta) result.getItemMeta();
     			potname = pot.getBasePotionData().getType().name();
     		}
-    		if (RedProtect.version <= 180 && Potion.fromItemStack(result) != null){
+    		if (RedProtect.version < 190 && Potion.fromItemStack(result) != null){
     			potname = Potion.fromItemStack(result).getType().name();
     		} 
     		if (Pots.contains(potname)){
@@ -880,22 +881,28 @@ public class RPUtil {
 		return prior;
 	}
 	
-	
 	/** Show the border of region for defined seconds.
-	 * @param p
-	 * @param loc1
-	 * @param loc2
+	 * @param p Player.
+	 * @param locs {@code List<Location>}.
 	 */
-	public static void addBorder(final Player p, Region r) {		
-		if (pBorders.containsKey(p)){
-			RPLang.sendMessage(p, "cmdmanager.showingborder");
-			return;
+	public static void addBorder(final Player p, List<Location> locs) {	
+		final World w = p.getWorld();
+		boolean msg = true;
+		if (pBorders.containsKey(p.getName())){
+    		for (Location loc:pBorders.get(p.getName()).keySet()){
+    			w.getBlockAt(loc).setType(pBorders.get(p.getName()).get(loc));            			
+    		}	    
+    		if (borderIds.containsKey(p.getName())){
+    			Bukkit.getScheduler().cancelTask(borderIds.get(p.getName()));
+    			borderIds.remove(p.getName());
+    		}	            		
+    		pBorders.remove(p.getName());
+    		msg = false;
 		}
 		
-		final World w = p.getWorld();
 		final HashMap<Location, Material> borderBlocks = new HashMap<Location, Material>();				
 		
-		for (Location loc:r.get4Points(p.getLocation().getBlockY())){
+		for (Location loc:locs){
 			loc.setY(p.getLocation().getBlockY());
 			Block b = w.getBlockAt(loc);
         	if (b.isEmpty() || b.isLiquid()){
@@ -906,20 +913,26 @@ public class RPUtil {
 		if (borderBlocks.isEmpty()){
 			RPLang.sendMessage(p, "cmdmanager.bordernospace");
 		} else {
-			RPLang.sendMessage(p, "cmdmanager.addingborder");
-			pBorders.put(p, borderBlocks);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable(){
+			if (msg){
+				RPLang.sendMessage(p, "cmdmanager.addingborder");
+			}			
+			pBorders.put(p.getName(), borderBlocks);
+			int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable(){
 				@Override
 				public void run() {
-					if (pBorders.containsKey(p)){
-	            		for (Location loc:pBorders.get(p).keySet()){
-	            			w.getBlockAt(loc).setType(pBorders.get(p).get(loc));            			
-	            		}
-	            		pBorders.remove(p);
+					if (pBorders.containsKey(p.getName())){
+	            		for (Location loc:pBorders.get(p.getName()).keySet()){
+	            			w.getBlockAt(loc).setType(pBorders.get(p.getName()).get(loc));            			
+	            		}	    
+	            		if (borderIds.containsKey(p.getName())){
+	            			borderIds.remove(p.getName());
+	            		}	            		
+	            		pBorders.remove(p.getName());
 	            		RPLang.sendMessage(p, "cmdmanager.removingborder");
 					}
 				}    		
-	    	}, RPConfig.getInt("region-settings.border.time-showing")*20); 
+	    	}, RPConfig.getInt("region-settings.border.time-showing")*20);
+			borderIds.put(p.getName(), taskid);
 		}		             
     }		
 	

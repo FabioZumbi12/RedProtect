@@ -716,7 +716,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	if (checkCmd(args[0], "border") && RedProtect.ph.hasGenPerm(player, "border")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r != null){
-        			RPUtil.addBorder(player, r);
+        			RPUtil.addBorder(player, r.get4Points(player.getLocation().getBlockY()));
         			return true;
         		} else {
     				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
