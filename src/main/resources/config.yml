@@ -7,7 +7,7 @@
 # <       configuration file in this link: https://goo.gl/SEbYBZ       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 7.0
+config-version: 7.3
 # Enable debug messages
 debug-messages: false
 
@@ -87,6 +87,8 @@ region-settings:
   leadership-request-time: 20
   # Enable flag signs
   enable-flag-sign: true
+  # Deny players to build near other regions. Distance in blocks. 0 to disable and > 0 to enable distance.
+  deny-build-near: 0
 
 # World that player can claim regions.
 allowed-claim-worlds:
@@ -204,6 +206,7 @@ flags:
   allow-fly: false
   teleport: false
   clan: ''
+  ender-chest: true
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.
@@ -231,6 +234,9 @@ flags-configuration:
   - iceform-entity
   - allow-fly
   - teleport
+  - clan
+  - ender-chest
+  
   # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}
   # Delay the player can change a flag after last change.
@@ -264,7 +270,7 @@ update-check:
   auto-update: false
 
 performance:
-  # DIsable player move event to improve performance? Note: Disabling this will make some flags do not work, like deny enter, execute commands and effects.
+  # Disable player move event to improve performance? Note: Disabling this will make some flags do not work, like deny enter, execute commands and effects.
   disable-onPlayerMoveEvent-handler: false
   piston:
     # Disable piston track? Disabling this will allow players to get blocks from protected regions to unprotected using pistons.

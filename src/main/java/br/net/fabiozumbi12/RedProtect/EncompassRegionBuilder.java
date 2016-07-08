@@ -170,7 +170,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         List<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
                                      
                         //check retangular region
-                        for (Block bkloc:blocks){
+                        for (Block bkloc:blocks){                        	                        	
                         	if (!limitlocs.contains(bkloc.getLocation())){
                         		this.setErrorSign(e, RPLang.get("regionbuilder.neeberetangle"));
                         		return;
@@ -191,9 +191,14 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         }
                                                 
                         //check borders for other regions
-                        for (Location loc:limitlocs){
-                        	otherrg = RedProtect.rm.getTopRegion(loc);
+                        for (Location loc:limitlocs){                        	
+
+                        	//check regions near
+                        	if (!RPUtil.canBuildNear(p, loc)){
+                            	return;    	
+                            }
                         	
+                        	otherrg = RedProtect.rm.getTopRegion(loc);                        	
                         	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
                         	
                     		if (otherrg != null){                    			

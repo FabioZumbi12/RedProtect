@@ -1247,6 +1247,13 @@ public class Region implements Serializable{
         return getFlagBool("pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
     }
     
+    public boolean canEnderChest(Player p) {
+    	if (!RPConfig.isFlagEnabled("ender-chest")){
+    		return RPConfig.getBool("flags.ender-chest") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("ender-chest") || checkAllowedPlayer(p);
+    }
+    
     public boolean canChest(Player p) {
     	if (!RPConfig.isFlagEnabled("chest")){
     		return RPConfig.getBool("flags.chest") || checkAllowedPlayer(p);

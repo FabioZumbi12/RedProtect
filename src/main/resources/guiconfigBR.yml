@@ -161,3 +161,10 @@ gui-flags:
     description: '&6Descrição: &aCompartilha essa RP com'
     description1: '&atodos membros do seu clan de uma vez só,'
     description2: '&acom apenas um clique.'
+  ender-chest:
+    slot: 13
+    material: ENDER_CHEST
+    name: '&e=> Permite Abrir EnderChest'
+    description: '&bDescrição: &aPermite players abrirem'
+    description1: '&aou usarem Baús do Fim nessa RP.'
+    description2: ''

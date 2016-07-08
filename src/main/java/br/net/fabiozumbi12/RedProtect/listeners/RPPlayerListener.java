@@ -329,18 +329,29 @@ public class RPPlayerListener implements Listener{
             			return;
                 	}
                 }
-                else if (b.getState() instanceof InventoryHolder ||
-                		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name())){   
+        		else if (b.getType().equals(Material.ENDER_CHEST)){
+        			if (!r.canEnderChest(p)) {
+        				if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
+                            RPLang.sendMessage(p, "playerlistener.region.cantopen");
+                            event.setCancelled(true);
+                            return;
+                        } else {
+                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", r.getLeadersDesc()));
+                        }
+        			}        			
+        		}
+                else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getState() instanceof InventoryHolder ||
+                		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){   
                 	
                 	if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
-                            if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
-                                RPLang.sendMessage(p, "playerlistener.region.cantopen");
-                                event.setCancelled(true);
-                                return;
-                            }
-                            else {
-                                RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", r.getLeadersDesc()));
-                            }
+                		if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
+                            RPLang.sendMessage(p, "playerlistener.region.cantopen");
+                            event.setCancelled(true);
+                            return;
+                        }
+                        else {
+                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", r.getLeadersDesc()));
+                        }
                 	} 
                 }               
                 
@@ -1555,6 +1566,7 @@ public class RPPlayerListener implements Listener{
     	Player p = e.getPlayer();
     	Location l = e.getBlockClicked().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
+		
     	if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
     		e.setCancelled(true);
 			return;
@@ -1569,6 +1581,7 @@ public class RPPlayerListener implements Listener{
     	Player p = e.getPlayer();
     	Location l = e.getBlockClicked().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
+		
     	if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
     		e.setCancelled(true);
 			return;

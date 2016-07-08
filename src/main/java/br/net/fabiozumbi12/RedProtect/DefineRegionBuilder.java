@@ -120,8 +120,13 @@ public class DefineRegionBuilder extends RegionBuilder{
         //check borders for other regions
         List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
         for (Location loc:limitlocs){
-        	otherrg = RedProtect.rm.getTopRegion(loc);
         	
+        	//check regions near
+        	if (!RPUtil.canBuildNear(p, loc)){
+            	return;    	
+            }
+        	
+        	otherrg = RedProtect.rm.getTopRegion(loc);        	
         	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
         	
     		if (otherrg != null){                    			

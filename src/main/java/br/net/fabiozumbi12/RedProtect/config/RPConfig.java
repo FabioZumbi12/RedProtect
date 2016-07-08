@@ -255,6 +255,14 @@ public class RPConfig{
         				}
         				configUp++;
         			}
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.3D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.3D);        				
+        				
+        				if (!flags.contains("ender-chest")){
+        					flags.add("ender-chest");            				
+        				}
+        				configUp++;
+        			}
         			
         			if (configUp > 0){
         				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   

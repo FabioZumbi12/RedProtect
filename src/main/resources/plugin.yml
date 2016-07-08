@@ -47,6 +47,7 @@ permissions:
     children:
       redprotect.flag.pvp: true
       redprotect.flag.chest: true
+      redprotect.flag.ender-chest: true
       redprotect.flag.lever: true
       redprotect.flag.button: true
       redprotect.flag.door: true

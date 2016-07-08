@@ -204,38 +204,41 @@ public class RPBlockListener implements Listener{
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
         
-        if (r != null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
+        if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
         	return;
         }
-        
-    	if (r != null && m != null && !r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))){
-    		RPLang.sendMessage(p, "blocklistener.region.cantplace");
-            e.setCancelled(true);
-        	return;
-        }
-    	
-        try {
-
-            if (r != null && !r.canBuild(p) && !r.canPlace(b.getType())) {
-            	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+        	
+        if (r != null){
+        	
+        	if (m != null && !r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))){
+        		RPLang.sendMessage(p, "blocklistener.region.cantplace");
                 e.setCancelled(true);
-            } else {
-            	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
-            			(m.equals(Material.HOPPER) || m.name().contains("RAIL"))){
-            		int x = b.getX();
-            		int y = b.getY();
-            		int z = b.getZ();
-            		Block ib = w.getBlockAt(x, y+1, z);
-            		if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
-            			RPLang.sendMessage(p, "blocklistener.container.chestinside");
-            			e.setCancelled(true);
-            			return;
-            		} 
-            	}
+            	return;
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+        	
+            try {
+
+                if (!r.canBuild(p) && !r.canPlace(b.getType())) {
+                	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+                    e.setCancelled(true);
+                } else {
+                	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
+                			(m.equals(Material.HOPPER) || m.name().contains("RAIL"))){
+                		int x = b.getX();
+                		int y = b.getY();
+                		int z = b.getZ();
+                		Block ib = w.getBlockAt(x, y+1, z);
+                		if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
+                			RPLang.sendMessage(p, "blocklistener.container.chestinside");
+                			e.setCancelled(true);
+                			return;
+                		} 
+                	}
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }        
     }    	
     
     @EventHandler(priority = EventPriority.LOWEST)

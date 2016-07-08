@@ -38,6 +38,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -48,6 +49,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
+import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
@@ -156,6 +158,11 @@ public class RPGlobalListener implements Listener{
 			return;
 		}
 		
+		if (!RPUtil.canBuildNear(p, b.getLocation())){        	
+            e.setCancelled(true);
+        	return;    	
+        }
+		
 		if (item.name().contains("MINECART") || item.name().contains("BOAT")){
 			if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")){
 	            e.setCancelled(true);
@@ -180,9 +187,17 @@ public class RPGlobalListener implements Listener{
 
 		Block b = e.getBlock();
 		Player p = e.getPlayer();
-		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
+		Region r = RedProtect.rm.getTopRegion(b.getLocation());		
+		if (r != null){
+			return;
+		}
 		
-		if (r == null && !allowBuild(p, b, 2)){			
+		if (!RPUtil.canBuildNear(p, b.getLocation())){        	
+            e.setCancelled(true);
+        	return;    	
+        }
+		
+		if (!allowBuild(p, b, 2)){			
 			e.setCancelled(true);
 			return;
 		}
@@ -311,6 +326,34 @@ public class RPGlobalListener implements Listener{
 		if (r != null){
 			return;
 		}
+		
+		if (!RPUtil.canBuildNear(e.getPlayer(), l)){        	
+            e.setCancelled(true);
+        	return;    	
+        }
+		
+    	if (!allowBuild(e.getPlayer(), null, 0) && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
+    		e.setCancelled(true);
+			return;
+    	}
+    }
+	
+	@EventHandler
+	public void onBucketFill(PlayerBucketFillEvent e){
+    	if (e.isCancelled()) {
+            return;
+        }
+
+    	Location l = e.getBlockClicked().getLocation();
+		Region r = RedProtect.rm.getTopRegion(l);	
+		if (r != null){
+			return;
+		}
+		
+		if (!RPUtil.canBuildNear(e.getPlayer(), l)){        	
+            e.setCancelled(true);
+        	return;    	
+        }
 		
     	if (!allowBuild(e.getPlayer(), null, 0) && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
     		e.setCancelled(true);

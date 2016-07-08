@@ -1157,4 +1157,27 @@ public class RPUtil {
 		RPConfig.save();
 		return saved;
 	}
+
+	public static boolean canBuildNear(Player p, Location loc) {
+		if (RPConfig.getInt("region-settings.deny-build-near") == 0){
+			return true;
+		}
+		int x = loc.getBlockX();
+		int y = loc.getBlockY();
+		int z = loc.getBlockZ();
+		int radius = RPConfig.getInt("region-settings.deny-build-near");
+		
+		for (int ix = x-radius; ix <= x+radius; ++ix) {
+			for (int iy = y-radius; iy <= y+radius; ++iy) {
+				for (int iz = z-radius; iz <= z+radius; ++iz) {
+					Region reg = RedProtect.rm.getTopRegion(new Location(p.getWorld(),ix, iy, iz));
+					if (reg != null && !reg.canBuild(p)){
+						RPLang.sendMessage(p, RPLang.get("blocklistener.cantbuild.nearrp").replace("{distance}", ""+radius));
+						return false;
+					}
+				}
+            }
+		}		
+		return true;
+	}
 }
