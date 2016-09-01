@@ -21,7 +21,6 @@ permissions:
     description: "Recommended User permissions."
     default: true
     children:
-      redprotect.create: true
       redprotect.near: true
       redprotect.own.border: true
       redprotect.own.addmember: true
@@ -117,10 +116,19 @@ permissions:
       redprotect.admin.flag.forcepvp: true
       redprotect.admin.flag.clan: true
       redprotect.admin.flag.view-distance: true
+      redprotect.admin.flag.can-pickup: true
+      redprotect.admin.flag.can-drop: true
+      redprotect.admin.flag.keep-inventory: true
+      redprotect.admin.flag.keep-levels: true
+      redprotect.admin.flag.cmd-onhealth: true
+      redprotect.admin.flag.can-death: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op
     children:
+      redprotect.magicwand: true
+      redprotect.admin.create: true
+      redprotect.admin.claim: true
       redprotect.flag.special: true
       redprotect.admin.delete: true
       redprotect.admin.removeadmin: true
@@ -133,8 +141,7 @@ permissions:
       redprotect.admin.priority: true
       redprotect.admin.rename: true
       redprotect.admin.welcome: true
-      redprotect.admin.define: true
-      redprotect.admin.claim: true
+      redprotect.admin.define: true      
       redprotect.admin.reload: true
       redprotect.admin.save-all: true
       redprotect.admin.load-all: true
@@ -151,7 +158,6 @@ permissions:
       redprotect.admin.setminy: true
       redprotect.admin.border: true
       redprotect.teleport.other: true
-      redprotect.flag.special: true
       redprotect.other.limit: true
       redprotect.other.claimlimit: true
       redprotect.limit.claim.unlimited: true
@@ -161,7 +167,6 @@ permissions:
       redprotect.bypass.nether-roof: true
       redprotect.bypass.addleader: true
       redprotect.bypass.velocity: true
-      redprotect.magicwand: true
       redprotect.update: true
       redprotect.regen: true
       redprotect.signspy: true
@@ -174,6 +179,20 @@ permissions:
       redprotect.use-claim-modes: true
       redprotect.removeall: true
       redprotect.regenall: true
+      redprotect.command-range-bypass: true
+      redprotect.add-rent: true
+      redprotect.del-rent: true
+      redprotect.edit-rent: true
+      redprotect.renew-rent: true
+      redprotect.rent.others: true
+  redprotect.bypass-chat:
+    description: "Permissions to bypass chat checks."
+    default: false
+    children:
+      redprotect.chat.bypass-spam: true
+      redprotect.chat.bypass-censor: true
+      redprotect.chat.bypass-anti-ip: true
+      redprotect.chat.bypass-enhancement: true
   redprotect.eco.use:
     description: "Economy permissions."
     default: false

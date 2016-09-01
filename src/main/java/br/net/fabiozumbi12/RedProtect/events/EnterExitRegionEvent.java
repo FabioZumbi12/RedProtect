@@ -25,7 +25,7 @@ public class EnterExitRegionEvent extends Event implements Cancellable{
 	private Player player;
 	private Region ExitedRegion;
 	private Region EnteredRegion;
-	private boolean cancelled;
+	private boolean cancelled = false;
 	
 	
 	public EnterExitRegionEvent(Region ExitedRegion, Region EnteredRegion, Player player){

@@ -3,9 +3,9 @@ package br.net.fabiozumbi12.RedProtect;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,17 +27,19 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 
 	private String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
 	private String reconnect = "?autoReconnect=true";
-	private String dbname;
-	private boolean dbexists = false;
+	private String dbname = RPConfig.getString("mysql.db-name");
+	private boolean tblexists = false;
+	private String tableName;
     private Connection dbcon;
 
     private HashMap<String, Region> regions;
     private World world;
     
-    public WorldMySQLRegionManager(World world){
+    public WorldMySQLRegionManager(World world) throws SQLException{
         super();
         this.regions = new HashMap<String, Region>();
         this.world = world;
+        this.tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
         
         this.dbcon = null;
         try {
@@ -48,28 +50,17 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             RedProtect.plugin.disable();
             return;
         }
-        this.dbname = RPConfig.getString("mysql.db-name") + "_" + this.world.getName();
-        Statement st = null;
+        PreparedStatement st = null;
         try {
-            if (!this.checkDBExists()) {
-                Connection con = DriverManager.getConnection(this.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-                st = con.createStatement();                
-                st.executeUpdate("CREATE DATABASE '" + this.dbname+"'");
-                RedProtect.logger.info("Created database '" + this.dbname + "'!");
+            if (!this.checkTableExists()) {    
+            	Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+                
+                st = con.prepareStatement("CREATE TABLE " + tableName + " (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(16), value Long not null, tppoint mediumtext, rent longtext, flags longtext) CHARACTER SET utf8 COLLATE utf8_general_ci");
+                st.executeUpdate();
                 st.close();
                 st = null;
-                con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-                st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null, tppoint varchar(16))");
-                st.close();
-                st = null;
-                RedProtect.logger.info("Created table: 'Region'!");    
-                st = con.createStatement();
-                st.executeUpdate("CREATE TABLE region_flags(region varchar(20) NOT NULL, flag varchar(20) NOT NULL, value varchar(255) NOT NULL)");
-                st.close();
-                st = null;
-                RedProtect.logger.info("Created table: 'Region Flags'!"); 
-                con.close();
+                RedProtect.logger.info("Created table: "+tableName+"!");  
+                
             }
             ConnectDB();
             addNewColumns();
@@ -82,31 +73,24 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         }
         finally {
             if (st != null) {
-                try {
-					st.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+            	st.close();					
             }
         }
     }
     
-	private boolean checkDBExists() {
-        if (this.dbexists) {            
+	private boolean checkTableExists() {
+        if (this.tblexists) {            
             return true;
         }     
         try {   
-        	RedProtect.logger.debug("Checking if database exists... " + this.url + this.dbname);
-        	Connection con = DriverManager.getConnection(this.url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+        	RedProtect.logger.debug("Checking if table exists... " + tableName);
+        	Connection con = DriverManager.getConnection(this.url + this.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
             DatabaseMetaData meta = con.getMetaData();
-            ResultSet rs = meta.getCatalogs();
-            while (rs.next()) {
-                String listOfDatabases = rs.getString("TABLE_CAT");
-                if (listOfDatabases.equalsIgnoreCase(this.dbname)) {
-                	con.close();
-                	rs.close();
-                    return true;
-                }                
+            ResultSet rs = meta.getTables(null, null, tableName, null);
+            if (rs.next()) {
+            	con.close();
+            	rs.close();
+            	return true;               
             }    
             con.close();
         	rs.close();
@@ -116,56 +100,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         return false;
     }
     
-	private void addNewColumns(){
-		try{
-			DatabaseMetaData meta = this.dbcon.getMetaData();			
-			ResultSet rs = meta.getColumns(null, null, "region", "value");
-	    	if (!rs.next()){
-	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD value Long not null");
-			    st.close();
-			    RedProtect.logger.info("Created column 'value'!");
-	    	}
-	    	rs.close();	    	
-	    	rs = meta.getColumns(null, null, "region", "maxY");
-	    	if (!rs.next()){
-	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD maxY int default '255'");
-			    st.close();
-			    RedProtect.logger.info("Created column 'maxY'!");
-	    	}
-	    	rs.close();	    	
-	    	rs = meta.getColumns(null, null, "region", "minY");
-	    	if (!rs.next()){
-	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD minY int default '0'");
-			    st.close();
-			    RedProtect.logger.info("Created column 'minY'!");
-	    	}
-	    	rs.close();
-	    	rs = meta.getColumns(null, null, "region", "tppoint");
-	    	if (!rs.next()){
-	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD tppoint varchar(20)");
-			    st.close();
-			    RedProtect.logger.info("Created column 'tppoint'!");
-	    	}
-	    	rs.close();	    	
-	    	rs = meta.getColumns(null, null, "region", "leaders");
-	    	if (!rs.next()){
-	    		Statement st = this.dbcon.createStatement();        			
-			    st.executeUpdate("ALTER TABLE region ADD leaders varchar(255)");
-			    st.close();
-			    RedProtect.logger.info("Created column 'leaders'!");
-	    	}
-	    	rs.close();
-		} catch(Exception ex){
-			RedProtect.logger.severe("Cold not add the colluns to table region.");        		        
-		}    		 
-	}
+	private void addNewColumns(){}
 	
-	/*-------------------------------------- Live Actions -------------------------------------------*/
 	
+	/*-------------------------------------- Live Actions -------------------------------------------*/	
     @Override
     public void remove(Region r) {
     	removeLiveRegion(r);
@@ -176,12 +114,9 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     private void removeLiveRegion(Region r) {
         if (this.regionExists(r.getName())) {
             try {
-                Statement st = this.dbcon.createStatement();
-                st.executeUpdate("DELETE FROM region WHERE name = '" + r.getName() + "'");
-                st.close();
-                st = this.dbcon.createStatement();
-                st.executeUpdate("DELETE FROM region_flags WHERE region = '" + r.getName() + "'");
-                st.close();
+                PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM "+tableName+" WHERE name = '" + r.getName() + "'");
+                st.executeUpdate();
+                st.close();                
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -197,14 +132,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     private void addLiveRegion(Region r){
     	if (!this.regionExists(r.getName())) {
             try {                
-                Statement st = this.dbcon.createStatement();
-                for (String flag:r.flags.keySet()){
-                	st = this.dbcon.createStatement();       
-                	st.executeUpdate("INSERT INTO region_flags (region,flag,value) VALUES ('" + r.getName() + "', '" + flag + "', '" + r.flags.get(flag).toString()+"')");
-                	st.close();
-                }          
-                st = this.dbcon.createStatement();
-                st.executeUpdate("INSERT INTO region (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value) VALUES "
+                PreparedStatement st = null;                
+                st = this.dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,flags) VALUES "
                 		+ "('" +r.getName() + "', '" + 
                 		r.getLeaders().toString().replace("[", "").replace("]", "") + "', '" + 
                 		r.getAdmins().toString().replace("[", "").replace("]", "") + "', '" + 
@@ -221,7 +150,11 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 		r.getWelcome() + "', '" + 
                 		r.getPrior() + "', '" + 
                 		r.getWorld() + "', '" + 
-                		r.getValue()+"')");                    
+                		r.getValue()+"', '" +
+                		r.getTPPointString()+"', '" +
+                		r.getRentString()+"', '" +
+                		r.getFlagStrings()+"')");    
+                st.executeUpdate();
                 st.close();
             }
             catch (SQLException e) {
@@ -232,25 +165,36 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     
     @Override
     public void removeLiveFlags(String rname, String flag){
-    	try{
-    	Statement st = null;      
-    	if (flagExists(rname,flag)){
-    		st = this.dbcon.createStatement();
-            st.executeUpdate("DELETE FROM region_flags WHERE region = '" + rname + "' AND flag = '"+flag+"'");
+    	try {
+    		PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM "+tableName+" WHERE name='"+rname+"' AND world='"+this.world.getName()+"'");
+            ResultSet rs = st.executeQuery();   
+            if (rs.next()){
+            	String flags = rs.getString("flags");
+                String flagsStrings = flags;
+                for (String flago:flags.split(",")){
+                	String key = flago.split(":")[0];
+                	if (key.equals(flag)){
+                		flagsStrings = flagsStrings.replace(flago, "").replace(",,", ",");
+                		st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET flags='"+flagsStrings+"' WHERE name='" + rname + "'");
+                        st.executeUpdate();                    
+                        break;
+                	}
+                }
+            }            
             st.close();
-    	} 
-    	} catch (SQLException e){
-    		RedProtect.logger.severe("RedProtect can't remove flag " + flag + " from " + rname + ", please verify the Mysql Connection and table structures.");
+            rs.close();
+        } 
+    	catch (SQLException e) {
+        	RedProtect.logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
             e.printStackTrace();
-    	}        
+        } 
     }
     
     @Override
     public void updateLiveRegion(String rname, String columm, String value){
-    	try {                
-            Statement st = this.dbcon.createStatement();
-            st = this.dbcon.createStatement();
-            st.executeUpdate("UPDATE region SET "+columm+"='"+value+"' WHERE name='" + rname + "'");
+    	try {
+            PreparedStatement st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET "+columm+"='"+value+"' WHERE name='" + rname + "'");
+            st.executeUpdate();
             st.close();
         }
         catch (SQLException e) {
@@ -261,21 +205,29 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     
     @Override
     public void updateLiveFlags(String rname, String flag, String value){
-    	try{
-    	Statement st = null;      
-    	if (flagExists(rname,flag)){
-    		st = this.dbcon.createStatement();       
-        	st.executeUpdate("UPDATE region_flags SET value='"+value+"' WHERE region='"+rname+"' AND flag ='"+flag+"'");
-        	st.close();
-    	} else {
-    		st = this.dbcon.createStatement();       
-        	st.executeUpdate("INSERT INTO region_flags (region,flag,value) VALUES ('"+rname+"', '"+flag+"', '"+value+"')");
-        	st.close();
-    	}
-    	} catch (SQLException e){
-    		RedProtect.logger.severe("RedProtect can't update the region " + rname + ", please verify the Mysql Connection and table structures.");
+    	try {
+    		PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM "+tableName+" WHERE name='"+rname+"' AND world='"+this.world.getName()+"'");
+            ResultSet rs = st.executeQuery();   
+            if (rs.next()){
+            	String flags = rs.getString("flags");
+                String flagsStrings = flags;
+                for (String flago:flags.split(",")){
+                	String key = flago.split(":")[0];
+                	if (key.equals(flag)){
+                		flagsStrings = flagsStrings.replace(flago, key+":"+value);
+                		st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET flags='"+flagsStrings+"' WHERE name='" + rname + "'");
+                        st.executeUpdate();                    
+                        break;
+                	}
+                }
+            }            
+            st.close();
+            rs.close();
+        }
+        catch (SQLException e) {
+        	RedProtect.logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
             e.printStackTrace();
-    	}        
+        }       
     }
     
     @Override
@@ -284,9 +236,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     		ConnectDB();
     	}
     	try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM region WHERE world='"+this.world.getName()+"'");            
-            if (rs.next()){ 
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM "+tableName+" WHERE world='"+this.world.getName()+"'");
+            ResultSet rs = st.executeQuery();            
+            while (rs.next()){ 
+            	RedProtect.logger.debug("Load Region: "+rs.getString("name")+", World: "+this.world.getName());
             	List<String> leaders = new ArrayList<String>();
             	List<String> admins = new ArrayList<String>();
                 List<String> members = new ArrayList<String>();
@@ -327,36 +280,13 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 		leaders.add(leader);
                 	}                	
                 }
-                
-                //------------> Compatibility
-                DatabaseMetaData meta = this.dbcon.getMetaData();			
-                ResultSet rsc = meta.getColumns(null, null, "region", "owners");
-    	    	if (rsc.next()){
-    	    		for (String admin:rs.getString("owners").split(", ")){
-    	    			admins.add(admin);               	
-                    }
-    	    		st.executeUpdate("ALTER TABLE region DROP COLUMN owners");
-    	    	}
-    	    	rsc.close();
-    			rsc = meta.getColumns(null, null, "region", "creator");
-    	    	if (rsc.next()){
-    	    		String creator = rs.getString("creator");
-    	    		leaders.add(creator);
-    	    		if (admins.contains(creator)){
-    	    			admins.remove(creator);
-    	    		}
-    	    		st.executeUpdate("ALTER TABLE region DROP COLUMN creator");
-    	    	}
-    	    	rsc.close();
-    	    	//<----------- Compatibility
-    	    	
-                Statement fst = this.dbcon.createStatement();
-                ResultSet frs = fst.executeQuery("SELECT value,flag FROM region_flags WHERE region = '" + rname + "'");
-                while (frs.next()){
-                	flags.put(frs.getString("flag"), RPUtil.parseObject(frs.getString("value")));
-                }   
-                fst.close();
-                frs.close();
+                for (String flag:rs.getString("flags").split(",")){                	
+                	String key = flag.split(":")[0];
+                	String replace = new String(key+":");
+                	if (replace.length() <= flag.length()){
+                		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
+                	}                	              	
+                }
                 
                 regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint));
             } 
@@ -374,8 +304,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     public Set<Region> getRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
     	try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE leaders LIKE '%"+uuid+"%'");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName+" WHERE leaders LIKE '%"+uuid+"%'");
+            ResultSet rs = st.executeQuery();
             while (rs.next()) {
             	regionsp.add(this.getRegion(rs.getString("name")));
             }
@@ -392,8 +322,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     public Set<Region> getMemberRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<Region>();
     	try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE leaders LIKE '%"+uuid+"%' OR admins LIKE '%"+uuid+"%'");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName+" WHERE leaders LIKE '%"+uuid+"%' OR admins LIKE '%"+uuid+"%'");
+            ResultSet rs = st.executeQuery();
             while (rs.next()) {
             	regionsp.add(this.getRegion(rs.getString("name")));
             }
@@ -416,8 +346,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     			return null;
     		}
     		try {
-                Statement st = this.dbcon.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM region WHERE name='"+rname+"' AND world='"+this.world.getName()+"'");            
+                PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM "+tableName+" WHERE name='"+rname+"' AND world='"+this.world.getName()+"'");
+                ResultSet rs = st.executeQuery();            
                 if (rs.next()){ 
                 	List<String> leaders = new ArrayList<String>();
                 	List<String> admins = new ArrayList<String>();
@@ -435,6 +365,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
                     long value = rs.getLong("value");
+                    String rent = rs.getString("rent");
                     
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")){
@@ -458,38 +389,16 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     		leaders.add(leader);
                     	}                	
                     }
+                    for (String flag:rs.getString("flags").split(",")){
+                    	String key = flag.split(":")[0];
+                    	flags.put(key, RPUtil.parseObject(flag.substring(new String(key+":").length())));
+                    }
                     
-                    //------------> Compatibility
-                    DatabaseMetaData meta = this.dbcon.getMetaData();			
-                    ResultSet rsc = meta.getColumns(null, null, "region", "owners");
-        	    	if (rsc.next()){
-        	    		for (String admin:rs.getString("owners").split(", ")){
-        	    			admins.add(admin);               	
-                        }
-        	    		st.executeUpdate("ALTER TABLE region DROP COLUMN owners");
-        	    	}
-        	    	rsc.close();
-        			rsc = meta.getColumns(null, null, "region", "creator");
-        	    	if (rsc.next()){
-        	    		String creator = rs.getString("creator");
-        	    		leaders.add(creator);
-        	    		if (admins.contains(creator)){
-        	    			admins.remove(creator);
-        	    		}
-        	    		st.executeUpdate("ALTER TABLE region DROP COLUMN creator");
-        	    	}
-        	    	rsc.close();
-        	    	//<----------- Compatibility
-        	    	
-                    Statement fst = this.dbcon.createStatement();
-                    ResultSet frs = fst.executeQuery("SELECT value,flag FROM region_flags WHERE region = '" + rname + "'");
-                    while (frs.next()){
-                    	flags.put(frs.getString("flag"), RPUtil.parseObject(frs.getString("value")));
-                    }   
-                    fst.close();
-                    frs.close();
-                    
-                    regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint));
+                    Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint);
+                    if (rent.split(":").length >= 3){
+                    	reg.setRentString(rent);
+                    }
+                    regions.put(rname, reg);
                 } else {
                 	return null;
                 }
@@ -516,17 +425,13 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     @Override
     public int save() {
 		return 0;
-		}    
-
-	
-    
-    
+	}  
             
     @Override
     public int getTotalRegionSize(String uuid) {
 		int total = 0;
 		for (Region r2 : this.getRegions(uuid)) {
-        	total += r2.getArea();
+			total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
 		return total;
     }
@@ -538,8 +443,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         Set<Region> ret = new HashSet<Region>();
         
         try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE ABS(centerX-" + px + ")<=" + radius + " AND ABS(centerZ-" + pz + ")<=" + radius);
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName+" WHERE ABS(centerX-" + px + ")<=" + radius + " AND ABS(centerZ-" + pz + ")<=" + radius);
+            ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 ret.add(this.getRegion(rs.getString("name")));
             }
@@ -555,8 +460,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     private boolean regionExists(String name) {
         int total = 0;
         try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name = '" + name + "'");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM "+tableName+" WHERE name = '" + name + "'");
+            ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
             }
@@ -569,23 +474,6 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         return total > 0;
     }
     
-    private boolean flagExists(String rname, String flag) {
-        int total = 0;
-        try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region_flags WHERE region = '"+rname+"' AND flag='"+flag+"'");
-            if (rs.next()) {
-                total = rs.getInt("COUNT(*)");
-            }
-            st.close();
-            rs.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return total > 0;
-    }
-        
     public World getWorld() {
         return this.world;
     }    
@@ -594,8 +482,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	public Set<Region> getRegions(int x, int y, int z) {
 		Set<Region> regionl = new HashSet<Region>();		
 		try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name FROM region WHERE " + x + "<=maxMbrX AND " + x + ">=minMbrX AND " + z + "<=maxMbrZ AND " + z + ">=minMbrZ AND " + y + "<=maxY AND " + y + ">=minY");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName+" WHERE " + x + "<=maxMbrX AND " + x + ">=minMbrX AND " + z + "<=maxMbrZ AND " + z + ">=minMbrZ AND " + y + "<=maxY AND " + y + ">=minY");
+            ResultSet rs = st.executeQuery();
             while (rs.next()) {
             	regionl.add(this.getRegion(rs.getString("name")));
             }
@@ -689,17 +577,19 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 
 	@Override
 	public void clearRegions() {
+		regions.clear();
+		/*
 		try {
-            Statement st = this.dbcon.createStatement();
+            PreparedStatement st = this.dbcon.prepareStatement();
             st.executeUpdate("DELETE FROM region_flags WHERE region = '*'");
 
-            st = this.dbcon.createStatement();
+            st = this.dbcon.prepareStatement();
             st.executeUpdate("DELETE FROM region WHERE name = '*'");
             st.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
-        }		
+        }		*/
 	}
 
 	@Override
@@ -716,7 +606,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     private boolean ConnectDB() {
     	try {
 			this.dbcon = DriverManager.getConnection(this.url + this.dbname+ this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-			RedProtect.logger.info("Conected to "+this.dbname+" via Mysql!");
+			RedProtect.logger.info("Conected to "+this.tableName+" via Mysql!");
 			return true;
 		} catch (SQLException e) {			
 			e.printStackTrace();
@@ -729,8 +619,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	public int getTotalRegionNum(){
 		int total = 0;
 		try {
-            Statement st = this.dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM "+tableName);
+            ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
             }
@@ -738,7 +628,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             rs.close();
         }
         catch (SQLException e) {
-        	RedProtect.logger.severe("Error on get total of regions for "+dbname+"!");
+        	RedProtect.logger.severe("Error on get total of regions for "+tableName+"!");
             e.printStackTrace();
         }
 		return total;

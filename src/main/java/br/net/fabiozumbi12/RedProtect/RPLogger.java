@@ -11,6 +11,10 @@ import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 public class RPLogger{
 	private SortedMap<Integer,String> MainLog = new TreeMap<Integer,String>();
 	   
+	public void clear(String s) {
+    	Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+    }
+	
 	public void sucess(String s) {
     	Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "Redprotect: [&a&l"+s+"&r]"));
     }

@@ -31,6 +31,7 @@ flat-file:
 # If file-type: mysql, configuration:
 mysql:
   db-name: redprotect
+  table-prefix: rp_
   user-name: root
   user-pass: redprotect
   host: localhost
@@ -38,7 +39,12 @@ mysql:
   region-cache-minutes: 2
 
 region-settings:
-  # The name of leader for regions created with /rp define. 
+  # Claim mode allowed for normal players (without permission 'redprotect.admin.claim'). Options: BLOCK or WAND.
+  # -> If BLOCK, the players needs to surround your house with the block type in configuration, and place a sign under this fence with [rp] on first line.
+  # -> If wand, the players will need a wand (default glass_bottle), click on two point of your region, and then use /rp claim [name of region] to claim te region.
+  # Dont need the claim and create perms anymore.
+  claim-type:
+  # The name of leader for regions created with /rp define or regions without leaders. 
   default-leader: '#server#'
   # Colors of world to show on /rp info and /rp list.
   world-colors:
@@ -51,6 +57,8 @@ region-settings:
     simple-listing: true
     # If running server 1.8+ enable hover and teleport click on simple list.
     hover-and-click-teleport: true
+    # Show region areas on list?
+    show-area: true
   # Automatically set max y to 256 and min y to 0 (sky to bedrock).
   autoexpandvert-ondefine: true
   # Deny break/place blocks under chests.
@@ -65,11 +73,11 @@ region-settings:
     mode: keep
     # Allow players to decide what mode to use? If true, the player need to set the line 4 of the sign with [keep], [drop], [remove], [give] or a translation you is using on 'lang.ini'.
     allow-player-decide: false
-    # If 'allow-player-decide' is true, player need to have the permission 'redprotect.use-claim-modes' to use modes on signs?
+    # If 'allow-player-decide' is true, player need to have the permission 'redprotect.use-claim-modes' to use modes on signs.
     use-perm: false
-  # Limit of blocks/region.
+  # Limit of blocks/region until the player have other blocks permission.
   limit-amount: 8000
-  # Limit of claims a player can have.
+  # Limit of claims a player can have until have other permission fro claims.
   claim-amount: 20
   # Block used to protect regions.
   block-id: FENCE
@@ -89,6 +97,16 @@ region-settings:
   enable-flag-sign: true
   # Deny players to build near other regions. Distance in blocks. 0 to disable and > 0 to enable distance.
   deny-build-near: 0
+
+  rent:
+    # Set the default rent level of players renting region. Options: member, admin, leader.
+    default-level: admin
+    # Allow who pay for rent to add more players in rent regions?
+    add-player: false
+    # The amount of days or mounts the command to renew will be added. The sintax is: <number>:<type>. The types are: DAY or MONTH.
+    command-renew-adds: 1:MONTH
+    # Renew in anytime or only on renew date?
+    renew-anytime: false
 
 # World that player can claim regions.
 allowed-claim-worlds:
@@ -256,6 +274,8 @@ purge:
     enable: false
     # Max area size to automatic regen the region.
     max-area-regen: 500
+    # Show regen logs if using AsyncWorldEdit.
+    awe-logs: true
   ignore-regions-from-players:
   
 # Put regions to sell after x time the player dont came online.
@@ -302,4 +322,9 @@ hooks:
     fix-piston-getblocks: true
   armor-stands:
     spawn-arms: true
+  mcmmo:
+    # Fix players leveling with creeper explosions on flag fire disabled.
+    fix-acrobatics-fireoff-leveling: true
+    # Fix the ability berserk making players and mobs invisible around who activated the ability.
+    fix-berserk-invisibility: true
        

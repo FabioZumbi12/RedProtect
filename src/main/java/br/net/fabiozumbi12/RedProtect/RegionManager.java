@@ -48,9 +48,10 @@ public class RegionManager{
     }
     
     public void unloadAll() {
-    	for (World w:RedProtect.serv.getWorlds()){
-    		unload(w);
+    	for (WorldRegionManager mgr:this.regionManagers.values()){
+    		mgr.clearRegions();
     	}
+    	this.regionManagers.clear();
     }
     
     public void unload(World w) {
@@ -59,7 +60,7 @@ public class RegionManager{
         }
         WorldRegionManager mgr = this.regionManagers.get(w);
         mgr.save();
-        mgr.closeConn();
+        mgr.closeConn();        
         this.regionManagers.remove(w);
     }
     

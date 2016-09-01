@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
@@ -70,7 +72,7 @@ public class RPUtil {
     			PotionMeta pot = (PotionMeta) result.getItemMeta();
     			potname = pot.getBasePotionData().getType().name();
     		}
-    		if (RedProtect.version < 190 && Potion.fromItemStack(result) != null){
+    		if (RedProtect.version < 190 && Potion.fromItemStack(result) != null && Potion.fromItemStack(result).getType() != null){
     			potname = Potion.fromItemStack(result).getType().name();
     		} 
     		if (Pots.contains(potname)){
@@ -97,6 +99,50 @@ public class RPUtil {
     		}        	    		
     	}
     	return false;
+    }
+    
+    public static long getNowMillis(){
+    	SimpleDateFormat sdf = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));			
+		Calendar cal = Calendar.getInstance();
+		try {
+			cal.setTime(sdf.parse(sdf.format(cal.getTime())));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return cal.getTimeInMillis();
+    }
+    
+    public static BlockFace getPlayerDirection(Player player){
+
+    	float direction = player.getLocation().getYaw();   
+        direction = direction % 360;
+
+        if(direction < 0)
+            direction += 360;
+
+        direction = Math.round(direction / 45);
+
+        switch((int)direction){
+
+            case 0:
+                return BlockFace.WEST;
+            case 1:
+                return BlockFace.NORTH_WEST;
+            case 2:
+                return BlockFace.NORTH;
+            case 3:
+                return BlockFace.NORTH_EAST;
+            case 4:
+                return BlockFace.EAST;
+            case 5:
+                return BlockFace.SOUTH_EAST;
+            case 6:
+                return BlockFace.SOUTH;
+            case 7:
+                return BlockFace.SOUTH_WEST;
+            default:
+                return BlockFace.WEST;
+        }
     }
     
 	public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
@@ -269,9 +315,15 @@ public class RPUtil {
 		
         for (Region r:regions){    
         	r.updateSigns();
+        	boolean serverRegion = false;
+        	
+        	if (r.isLeader(RPConfig.getString("region-settings.default-leader"))){
+        		serverRegion = true;
+        		r.setDate(DateNow());
+        	} 
         	
         	//purge regions
-        	if (RPConfig.getBool("purge.enabled")){
+        	if (RPConfig.getBool("purge.enabled") && !serverRegion){
         		Date regiondate = null;
             	try {
     				regiondate = dateformat.parse(r.getDate());
@@ -282,9 +334,7 @@ public class RPUtil {
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);            	
             	
             	for (String play:RPConfig.getStringList("purge.ignore-regions-from-players")){
-            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || 
-            				r.isAdmin(RPUtil.PlayerToUUID(play)) ||
-            				r.isLeader(RPConfig.getString("region-settings.default-leader"))){
+            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
             			continue;
             		}
     			}           	
@@ -312,7 +362,7 @@ public class RPUtil {
         	}    
         	
         	//sell rergions
-        	if (RPConfig.getBool("sell.enabled")){
+        	if (RPConfig.getBool("sell.enabled") && !serverRegion){
         		Date regiondate = null;
             	try {
     				regiondate = dateformat.parse(r.getDate());
@@ -323,9 +373,7 @@ public class RPUtil {
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
             	
             	for (String play:RPConfig.getStringList("sell.ignore-regions-from-players")){
-            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || 
-            				r.isAdmin(RPUtil.PlayerToUUID(play)) ||
-            				r.isLeader(RPConfig.getString("region-settings.default-leader"))){
+            		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
             			continue;
             		}
     			}           	
@@ -674,6 +722,145 @@ public class RPUtil {
 		return db;
 	}
     
+    public static boolean mysqlToYml(){
+    	HashMap<String,Region> regions = new HashMap<String, Region>();
+    	int saved = 1;
+    	
+        try {
+        	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name")+"?autoReconnect=true", RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+            	
+        	for (World world:Bukkit.getWorlds()){
+            	String tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
+                PreparedStatement st = dbcon.prepareStatement("SELECT * FROM "+tableName+" WHERE world='"+world.getName()+"'");
+                ResultSet rs = st.executeQuery();            
+                while (rs.next()){ 
+                	List<String> leaders = new ArrayList<String>();
+                	List<String> admins = new ArrayList<String>();
+                    List<String> members = new ArrayList<String>();
+                    HashMap<String, Object> flags = new HashMap<String, Object>();                      
+                    
+                    int maxMbrX = rs.getInt("maxMbrX");
+                    int minMbrX = rs.getInt("minMbrX");
+                    int maxMbrZ = rs.getInt("maxMbrZ");
+                    int minMbrZ = rs.getInt("minMbrZ");
+                    int maxY = rs.getInt("maxY");
+                    int minY = rs.getInt("minY");
+                    int prior = rs.getInt("prior");
+                    String rname = rs.getString("name");
+                    String date = rs.getString("date");
+                    String wel = rs.getString("wel");
+                    long value = rs.getLong("value");
+                    
+                    Location tppoint = null;
+                    if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")){
+                    	String tpstring[] = rs.getString("tppoint").split(",");
+                        tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]), 
+                        		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
+                    }                    
+                                        
+                    for (String member:rs.getString("members").split(", ")){
+                    	if (member.length() > 0){
+                    		members.add(member);
+                    	}                	
+                    }
+                    for (String admin:rs.getString("admins").split(", ")){
+                    	if (admin.length() > 0){
+                    		admins.add(admin);
+                    	}                	
+                    }
+                    for (String leader:rs.getString("leaders").split(", ")){
+                    	if (leader.length() > 0){
+                    		leaders.add(leader);
+                    	}                	
+                    }
+                    for (String flag:rs.getString("flags").split(",")){
+                    	String key = flag.split(":")[0];
+                    	String replace = new String(key+":");
+                    	if (replace.length() <= flag.length()){
+                    		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
+                    	} 
+                    }                    
+                    regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint));
+                } 
+                st.close(); 
+                rs.close();  
+                
+                //write to yml
+                RPYaml fileDB = new RPYaml();
+                File datf = new File(RedProtect.pathData, "data_" + world.getName() + ".yml");
+                
+                for (Region r:regions.values()){
+        			if (r.getName() == null){
+        				continue;
+        			}
+        			
+        			if (RPConfig.getBool("flat-file.region-per-file")) {
+        				if (!r.toSave()){
+            				continue;
+            			}
+        				fileDB = new RPYaml();
+                    	datf = new File(RedProtect.pathData, world.getName()+File.separator+r.getName()+".yml");        	
+                    }
+        			
+        			fileDB = RPUtil.addProps(fileDB, r);   
+        			saved++;
+        			
+        			if (RPConfig.getBool("flat-file.region-per-file")) {
+        				saveYaml(fileDB, datf);
+        				r.setToSave(false);
+        			}
+        		}	 
+        		
+        		if (!RPConfig.getBool("flat-file.region-per-file")) {
+        			backupRegions(fileDB, world.getName());
+        			saveYaml(fileDB, datf);
+        		} else {
+        			//remove deleted regions
+        			File wfolder = new File(RedProtect.pathData + world.getName());
+        			if (wfolder.exists()){
+        				File[] listOfFiles = new File(RedProtect.pathData + world.getName()).listFiles();    				
+                		for (File region:listOfFiles){
+                			if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))){
+                				region.delete();
+                			}
+                		}
+        			}        			
+        		}
+            }  
+        	dbcon.close();
+        	
+        	if (saved > 0){
+    			RedProtect.logger.sucess((saved-1) + " regions converted to Yml with sucess!");
+    		}        	
+    	} catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+    	return true;
+    }
+    
+    public static void backupRegions(RPYaml fileDB, String world) {
+        if (!RPConfig.getBool("flat-file.backup") || fileDB.getKeys(true).isEmpty()) {
+            return;
+        }
+        
+        File bfolder = new File(RedProtect.pathData+"backups"+File.separator);
+        if (!bfolder.exists()){
+        	bfolder.mkdir();
+        }
+        
+        File folder = new File(RedProtect.pathData+"backups"+File.separator+world+File.separator);
+        if (!folder.exists()){
+        	folder.mkdir();
+        	RedProtect.logger.info("Created folder: " + folder.getPath()); 
+        }
+        
+        //Save backup
+        if (RPUtil.genFileName(folder.getPath()+File.separator, true) != null){
+        	RPUtil.SaveToZipYML(RPUtil.genFileName(folder.getPath()+File.separator, true), "data_" + world + ".yml", fileDB); 
+        }		       
+    }
+    
 	public static boolean ymlToMysql() throws Exception{
 		if (!RPConfig.getString("file-type").equalsIgnoreCase("yml")){
 			return false;
@@ -684,42 +871,38 @@ public class RPUtil {
 		
 		for (World world:Bukkit.getWorlds()){
 			
-			String dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
+			String dbname = RPConfig.getString("mysql.db-name");
 		    String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
+		    String tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
 		    
 			Connection dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 			
 			for (Region r:RedProtect.rm.getRegionsByWorld(world)){
-				if (!regionExists(r.getName(),dbname)) {
-		            try {                
-		                Statement st = null;
-		                for (String flag:r.flags.keySet()){
-		                	st = dbcon.createStatement();       
-		                	st.executeUpdate("INSERT INTO region_flags (region,flag,value) VALUES ('" + r.getName() + "', '" + flag + "', '" + r.flags.get(flag).toString()+"')");
-		                	st.close();
-		                }          
-		                st = dbcon.createStatement();
-		                RedProtect.logger.debug("Region info - Region: "+ r.getName() +" | Leaders:" + r.getLeadersDesc() + "(Size: "+r.getArea()+")");
-		                st.executeUpdate("INSERT INTO region (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,maxy,miny,centerX,centerZ,date,wel,prior,value,world) VALUES "
+				if (!regionExists(r.getName(), tableName)) {
+					try {                
+		                PreparedStatement st = null; 
+		                st = dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,flags) VALUES "
 		                		+ "('" +r.getName() + "', '" + 
-		                		r.getLeaders().toString().replace("[", "").replace("]", "")  + "', '" + 
-		                		r.getAdmins().toString().replace("[", "").replace("]", "")  + "', '" + 
+		                		r.getLeaders().toString().replace("[", "").replace("]", "") + "', '" + 
+		                		r.getAdmins().toString().replace("[", "").replace("]", "") + "', '" + 
 		                		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
 		                		r.getMaxMbrX() + "', '" + 
 		                		r.getMinMbrX() + "', '" + 
 		                		r.getMaxMbrZ() + "', '" + 
 		                		r.getMinMbrZ() + "', '" + 
-		                		r.getMaxY() + "', '" + 
-		                		r.getMinY() + "', '" + 
+		                		r.getMinY() + "', '" +
+		                		r.getMaxY() + "', '" +
 		                		r.getCenterX() + "', '" + 
 		                		r.getCenterZ() + "', '" + 
 		                		r.getDate() + "', '" +
 		                		r.getWelcome() + "', '" + 
 		                		r.getPrior() + "', '" + 
-		                		r.getValue() + "', '" + 
-		                		r.getWorld()+"')");                    
+		                		r.getWorld() + "', '" + 
+		                		r.getValue()+"', '" +
+		                		r.getTPPointString()+"', '" +
+		                		r.getFlagStrings()+"')");    
+		                st.executeUpdate();
 		                st.close();
-		                RedProtect.logger.sucess("["+counter+"]Converted region to Mysql: " + r.getName());
 		                counter++;
 		            }
 		            catch (SQLException e) {
@@ -741,9 +924,9 @@ public class RPUtil {
 	private static void initMysql() throws Exception{
 		for (World world:Bukkit.getWorlds()){
 			
-		    String dbname = RPConfig.getString("mysql.db-name") + "_" + world.getName();
 		    String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
 		    String reconnect = "?autoReconnect=true";
+		    String tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
 		    
 	        try {
 	            Class.forName("com.mysql.jdbc.Driver");
@@ -752,30 +935,18 @@ public class RPUtil {
 	            RedProtect.logger.severe("Couldn't find the driver for MySQL! com.mysql.jdbc.Driver.");
 	            return;
 	        }
-	        Statement st = null;
-	        
+	        PreparedStatement st = null;	        
 	        try {
-	        	if (!checkDBExists(dbname)) {
-	                Connection con = DriverManager.getConnection(url, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-	                st = con.createStatement();
-	                st.executeUpdate("CREATE DATABASE '" + dbname+"'");
-	                RedProtect.logger.info("Created database '" + dbname + "'!");
+	        	if (!checkTableExists(tableName)) {
+	        		//create db
+	                Connection con = DriverManager.getConnection(url+RPConfig.getString("mysql.db-name")+reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));  
+	                st = con.prepareStatement("CREATE TABLE " + tableName + " (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(16), value Long not null, tppoint mediumtext, flags longtext) CHARACTER SET utf8 COLLATE utf8_general_ci");
+	                st.executeUpdate();
 	                st.close();
 	                st = null;
-	                con = DriverManager.getConnection(url + dbname + reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins varchar(255), members varchar(255), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(64), prior int, world varchar(16), value Long not null, tppoint varchar(16))");
-	                st.close();
-	                st = null;
-	                RedProtect.logger.info("Created table: 'Region'!");    
-	                st = con.createStatement();
-	                st.executeUpdate("CREATE TABLE region_flags(region varchar(20) NOT NULL, flag varchar(20) NOT NULL, value varchar(255) NOT NULL)");
-	                st.close();
-	                st = null;
-	                RedProtect.logger.info("Created table: 'Region Flags'!"); 
-	                con.close();
+	                RedProtect.logger.info("Created table: "+tableName+"!");  
 	            }
-	        	ConnectDB(url,dbname,reconnect);
+	        	ConnectDB(tableName);
 	        }
 	        catch (CommandException e3) {
 	            RedProtect.logger.severe("Couldn't connect to mysql! Make sure you have mysql turned on and installed properly, and the service is started.");
@@ -790,36 +961,35 @@ public class RPUtil {
 	                st.close();
 	            }
 	        }
-		}
-	    
+		}	    
 	}
 		
-	private static boolean ConnectDB(final String url,final String dbname,final String reconnect) {
+	private static boolean ConnectDB(String tableName) {
+		String reconnect = "?autoReconnect=true";
     	try {
     		@SuppressWarnings("unused")
-			Connection dbcon = DriverManager.getConnection(url + dbname+ reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-			RedProtect.logger.info("Conected to "+dbname+" via Mysql!");
+			Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name")+reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+			RedProtect.logger.info("Conected to "+tableName+" via Mysql!");
 			return true;
 		} catch (SQLException e) {			
 			e.printStackTrace();
-			RedProtect.logger.severe("["+dbname+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
+			RedProtect.logger.severe("["+tableName+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
 			return false;
 		}		
 	}
 	
-	private static boolean regionExists(String name, String dbname) {
+	private static boolean regionExists(String name, String tableName) {
         int total = 0;
         String reconnect = "?autoReconnect=true";
         try {
-        	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+dbname+reconnect,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-            Statement st = dbcon.createStatement();
-            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM region WHERE name='"+name+"'");
+        	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name")+reconnect,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+        	PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM "+tableName+" WHERE name = '" + name + "'");
+            ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
             }
             st.close();
             rs.close();
-            dbcon.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -827,22 +997,19 @@ public class RPUtil {
         return total > 0;
     }		
 	
-	private static boolean checkDBExists(String dbname) throws SQLException {
+	private static boolean checkTableExists(String tableName) throws SQLException {
         try {
-        	RedProtect.logger.debug("Checking if database exists... " + dbname);
-        	Connection con = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/",RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-            DatabaseMetaData meta = con.getMetaData();
-            ResultSet rs = meta.getCatalogs();
-            while (rs.next()) {
-                String listOfDatabases = rs.getString("TABLE_CAT");
-                if (listOfDatabases.equalsIgnoreCase(dbname)) {
-                	con.close();
-                	rs.close();
-                    return true;
-                }
-            }
-            rs.close();
+        	RedProtect.logger.debug("Checking if table exists... " + tableName);
+        	Connection con = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name"),RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+        	DatabaseMetaData meta = con.getMetaData();
+            ResultSet rs = meta.getTables(null, null, tableName, null);
+            if (rs.next()) {
+            	con.close();
+            	rs.close();
+            	return true;               
+            }    
             con.close();
+        	rs.close();
         } catch (SQLException e){
         	e.printStackTrace();
         }        
@@ -1024,10 +1191,11 @@ public class RPUtil {
     	List<String> admins = fileDB.getStringList(rname+".admins");
     	List<String> members = fileDB.getStringList(rname+".members");
     	//String creator = fileDB.getString(rname+".creator");	    	  
-    	String welcome = fileDB.getString(rname+".welcome");
-    	int prior = fileDB.getInt(rname+".priority");
-    	String date = fileDB.getString(rname+".lastvisit");
-    	long value = fileDB.getLong(rname+".value");
+    	String welcome = fileDB.getString(rname+".welcome", "");
+    	int prior = fileDB.getInt(rname+".priority", 0);
+    	String date = fileDB.getString(rname+".lastvisit", "");
+    	long value = fileDB.getLong(rname+".value", 0);
+    	String rent = fileDB.getString(rname+".rent", "");
     	
     	Location tppoint = null;
         if (!fileDB.getString(rname+".tppoint", "").equalsIgnoreCase("")){
@@ -1063,7 +1231,9 @@ public class RPUtil {
     			newr.flags.put(flag,fileDB.get(rname+".flags."+flag));
     		}
     	}
-    	
+    	if (rent.split(":").length >= 3){
+    		newr.setRentString(rent);
+    	}
     	return newr;
 	}
 	
@@ -1084,8 +1254,9 @@ public class RPUtil {
 		fileDB.set(rname+".minZ",r.getMinMbrZ());	
 		fileDB.set(rname+".maxY",r.getMaxY());
 		fileDB.set(rname+".minY",r.getMinY());
+		fileDB.set(rname+".rent", r.getRentString());
+		fileDB.set(rname+".value",r.getValue());	
 		fileDB.set(rname+".flags",r.flags);	
-		fileDB.set(rname+".value",r.getValue());
 		
 		Location loc = r.getTPPoint();
 		if (loc != null){
@@ -1179,5 +1350,30 @@ public class RPUtil {
             }
 		}		
 		return true;
+	}
+
+	public static int simuleTotalRegionSize(String player, Region r2) {
+		int total = 0;
+		int regs = 0;			
+		for (Location loc:r2.get4Points(r2.getCenterY())){		
+			Map<Integer, Region> pregs = RedProtect.rm.getGroupRegion(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			pregs.remove(r2.getPrior());				
+			Region other = null;
+			if (pregs.size() > 0){
+				other = pregs.get(Collections.max(pregs.keySet()));
+			} else {
+				continue;
+			}				
+			//RedProtect.logger.severe("Reg: "+other.getName());
+			if (!r2.equals(other) && r2.getPrior() > other.getPrior() && other.isLeader(player)){
+				regs++;
+				//RedProtect.logger.severe("Reg added: "+other.getName());
+			}
+		}			
+		//RedProtect.logger.severe("Regs size: "+regs);
+		if (regs == 0 || regs != 4){
+			total += r2.getArea();
+		} 
+		return total;
 	}
 }

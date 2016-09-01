@@ -21,9 +21,23 @@ public class RPYaml extends YamlConfiguration {
 
   public void Yaml() {}
 
-  @Override
-  public void load(File file) throws FileNotFoundException, IOException,   InvalidConfigurationException {
-    load(new FileInputStream(file));
+  private File file;
+
+  public File getFile(){
+	  return this.file;
+  }
+  
+  public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
+	  this.file = file;
+	  load(new FileInputStream(file));
+  }
+  
+  /**Save to file if loaded by {@code load(File file)}.
+  * @throws IOException If file is null.
+  */
+  public void save() throws IOException{
+	  Validate.notNull(file, "File cannot be null");
+	  save(this.file);
   }
 
   @Override

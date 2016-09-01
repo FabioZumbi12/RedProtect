@@ -80,8 +80,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         		for (Region r:regions.values()){
         			if (r.getName() == null){
         				continue;
-        			}
-        			
+        			}        			
         			
         			if (RPConfig.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
@@ -101,7 +100,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         		}	 
         		
         		if (!RPConfig.getBool("flat-file.region-per-file")) {
-        			this.backupRegions(fileDB);
+        			RPUtil.backupRegions(fileDB, world);
         			saveYaml(fileDB, datf);
     			} else {
     				//remove deleted regions
@@ -113,8 +112,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                 				region.delete();
                 			}
                 		}
-    				}
-    				
+    				}    				
     			}
             }
         }
@@ -133,29 +131,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		}
     }
     
-    private void backupRegions(RPYaml fileDB) {
-        if (!RPConfig.getBool("flat-file.backup") || fileDB.getKeys(true).isEmpty()) {
-            return;
-        }
-        
-        File bfolder = new File(RedProtect.pathData+"backups"+File.separator);
-        if (!bfolder.exists()){
-        	bfolder.mkdir();
-        }
-        
-        File folder = new File(RedProtect.pathData+"backups"+File.separator+this.world.getName()+File.separator);
-        if (!folder.exists()){
-        	folder.mkdir();
-        	RedProtect.logger.info("Created folder: " + folder.getPath()); 
-        }
-        
-        //Save backup
-        if (RPUtil.genFileName(folder.getPath()+File.separator, true) != null){
-        	RPUtil.SaveToZipYML(RPUtil.genFileName(folder.getPath()+File.separator, true), "data_" + this.world.getName() + ".yml", fileDB); 
-        }
-		       
-    }
-    
     @Override
     public int getTotalRegionSize(String uuid) {
 		Set<Region> regionslist = new HashSet<Region>();
@@ -165,8 +140,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 			}
 		}
 		int total = 0;
-		for (Region r2 : regionslist) {
-        	total += r2.getArea();
+		for (Region r2 : regionslist) {			
+			total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
 		return total;
     }

@@ -38,7 +38,7 @@ public class RPAddProtection implements Listener{
 		}
 		
 		//antispam
-		if (RPConfig.getProtBool("chat-protection.antispam.enabled")){	
+		if (RPConfig.getProtBool("chat-protection.antispam.enabled") && !p.hasPermission("redprotect.chat.bypass-spam")){	
 			
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
@@ -82,7 +82,8 @@ public class RPAddProtection implements Listener{
 		String nmsg = msg;
 		
 		//censor
-		if (RPConfig.getProtBool("chat-protection.censor.enabled")){
+		if (RPConfig.getProtBool("chat-protection.censor.enabled") && !p.hasPermission("redprotect.chat.bypass-censor")){
+						
 			for (String word:RPConfig.getProtStringList("chat-protection.censor.replace-words")){
 				if (!StringUtils.containsIgnoreCase(nmsg, word)){
 					continue;
@@ -104,8 +105,8 @@ public class RPAddProtection implements Listener{
 		String regexUrl = RPConfig.getProtString("chat-protection.anti-ip.custom-url-regex");
 		
 		//check ip and website
-		if (RPConfig.getProtBool("chat-protection.anti-ip.enabled")){
-			
+		if (RPConfig.getProtBool("chat-protection.anti-ip.enabled") && !p.hasPermission("redprotect.chat.bypass-anti-ip")){
+						
 			//check whitelist
 			for (String check:RPConfig.getProtStringList("chat-protection.anti-ip.whitelist-words")){
 				if (Pattern.compile(check).matcher(nmsg).find()){	
@@ -150,7 +151,8 @@ public class RPAddProtection implements Listener{
 		}
 		
 		//capitalization verify
-		if (RPConfig.getProtBool("chat-protection.chat-enhancement.enabled")){
+		if (RPConfig.getProtBool("chat-protection.chat-enhancement.enabled") && !p.hasPermission("redprotect.chat.bypass-enhancement")){
+						
 			if (!Pattern.compile(regexIP).matcher(nmsg).find() && !Pattern.compile(regexUrl).matcher(nmsg).find()){
 				nmsg = nmsg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+nmsg.substring(1).toLowerCase();
 				/*String[] messages = nmsg.split("(?<=[.!?])");

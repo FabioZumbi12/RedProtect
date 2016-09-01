@@ -186,7 +186,7 @@ public class RPMine18 implements Listener{
 			m = e.getItem().getType();
 		}
 		
-    	if (m.equals(Material.ARMOR_STAND)){
+    	if (m.equals(Material.ARMOR_STAND) || m.equals(Material.END_CRYSTAL)){
         	if (r != null && !r.canBuild(p) && !r.canPlace(m)){
         		e.setCancelled(true);
         		RPLang.sendMessage(p, "blocklistener.region.cantbuild");

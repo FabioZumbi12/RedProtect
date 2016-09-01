@@ -62,30 +62,9 @@ public class RPEconomy {
 		return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) +" &2"+ RPConfig.getEcoString("economy-name");
 	}
 	
-	public static String getFormatted(long value){
-		/*
-		String[] locale = RPConfig.getEcoString("economy-locale").split("-");
-		NumberFormat curr = NumberFormat.getCurrencyInstance(new Locale(locale[0], locale[1]));
-		String format = "";
-		for (int i = 0; i < 3; i++){
-			if (isNumber(curr.format(value).substring(i, i+2))){
-				format = RPConfig.getEcoString("economy-symbol") + " " + curr.format(value).substring(i);
-				break;
-			}
-		}	*/
+	public static String getFormatted(long value){		
 		return RPConfig.getEcoString("economy-symbol") + value;
 	}
-	
-	/*
-	private static boolean isNumber(String num){
-		try{
-			Integer.parseInt(num);
-			return true;
-		} catch (NumberFormatException e){			
-		}
-		return false;
-	}
-	*/
 	
 	public static boolean putToSell(Region r, String uuid, long value) {
 		try {

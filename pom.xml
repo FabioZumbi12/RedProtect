@@ -4,17 +4,17 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>6.6.4</version>
+  <version>7.0.0</version>
   <url>http://spigotmc.org/resources/redprotect.15841/</url>
   <dependencies>
-  
+        <!--
 		<dependency>
 			<groupId>paper-api</groupId>
 			<artifactId>paper-api</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/paper-api-1.10-R0.1-20160609.044554-1.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		
         <!--Spigot-API-->
         <dependency>

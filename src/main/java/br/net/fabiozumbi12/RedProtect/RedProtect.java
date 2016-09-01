@@ -199,7 +199,11 @@ public class RedProtect extends JavaPlugin {
             	paper = true;
             }
             
-            RedProtect.logger.sucess(RedProtect.pdf.getFullName() + " enabled.");  
+            RedProtect.logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
+            RedProtect.logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    /");
+            RedProtect.logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
+            RedProtect.logger.clear("&a¯ "+RedProtect.pdf.getFullName() + " enabled");
+            RedProtect.logger.clear("");
             
             if (RPConfig.getBool("update-check.enable")){
             	RedProtect.logger.info("Checking for update..."); 

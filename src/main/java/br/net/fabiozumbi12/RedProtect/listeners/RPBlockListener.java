@@ -96,12 +96,7 @@ public class RPBlockListener implements Listener{
             this.setErrorSign(e, p, RPLang.get("blocklistener.sign.wronglines"));
             return;
         }
-        
-        if (!RedProtect.ph.hasPerm(p, "redprotect.create")) {
-            this.setErrorSign(e, p, RPLang.get("blocklistener.region.nopem"));
-            return;
-        }
-                
+                        
         if (RPConfig.getBool("server-protection.sign-spy.enabled") && !(lines[0].isEmpty() && lines[1].isEmpty() && lines[2].isEmpty() && lines[3].isEmpty())){
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+b.getX()).replace("{y}", ""+b.getY()).replace("{z}", ""+b.getZ()).replace("{world}", b.getWorld().getName()));
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
@@ -144,6 +139,12 @@ public class RPBlockListener implements Listener{
         }
         
         if (line1.equalsIgnoreCase("[rp]")){
+
+            if (!RPConfig.getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") && !p.hasPermission("redprotect.admin.create")) {
+                this.setErrorSign(e, p, RPLang.get("blocklistener.region.claimmode"));
+                return;
+            }
+            
         	RegionBuilder rb = new EncompassRegionBuilder(e);
         	if (rb.ready()) {
                 Region r = rb.build();
@@ -337,14 +338,15 @@ public class RPBlockListener implements Listener{
         		continue;
         	}
         	RedProtect.logger.debug("Blocks: "+b.getType().name());
-        	Location l = b.getLocation();
-        	Region r = RedProtect.rm.getTopRegion(l);
+        	Location l = b.getLocation();        	
         	if (!cont.canWorldBreak(b)){
         		RedProtect.logger.debug("canWorldBreak Called!");
         		//e.setCancelled(true);
         		toRemove.add(b);
         		continue;
-        	}        	
+        	}    
+        	
+        	Region r = RedProtect.rm.getTopRegion(l);
         	if (r == null){
         		continue;
         	}
@@ -532,11 +534,8 @@ public class RPBlockListener implements Listener{
 		Vehicle cart = e.getVehicle();
 		Player p = (Player) e.getAttacker();
 		Region r = RedProtect.rm.getTopRegion(cart.getLocation());
-		if (r == null){
-			return;
-		}
 		
-		if (!r.canMinecart(p)){
+		if (r != null && !r.canMinecart(p)){
 			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
 			e.setCancelled(true);
 			return;

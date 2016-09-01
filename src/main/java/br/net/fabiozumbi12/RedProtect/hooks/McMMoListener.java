@@ -1,14 +1,18 @@
 package br.net.fabiozumbi12.RedProtect.hooks;
 
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
+import com.gmail.nossr50.datatypes.skills.AbilityType;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerExperienceEvent;
 import com.gmail.nossr50.events.fake.FakeEntityDamageByEntityEvent;
@@ -27,7 +31,7 @@ public class McMMoListener implements Listener{
 			return;
 		}
 	
-		RedProtect.logger.debug("Mcmmo McMMOPlayerExperienceEvent event.");
+		RedProtect.logger.debug("Mcmmo McMMOPlayerExperienceEvent event. Skill "+e.getSkill().name());
 		
 		Player p = e.getPlayer();
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
@@ -36,6 +40,10 @@ public class McMMoListener implements Listener{
 		}
 		
 		if (!r.canSkill(p)){
+			e.setCancelled(true);
+		}
+		
+		if (RPConfig.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(SkillType.ACROBATICS) && (!r.canFire() || !r.canDeath(p))){
 			e.setCancelled(true);
 		}
 		/*
@@ -50,10 +58,21 @@ public class McMMoListener implements Listener{
 		if (e.isCancelled()){
 			return;
 		}
-		
+				
 		RedProtect.logger.debug("Mcmmo McMMOPlayerAbilityActivateEvent event.");
 		
 		Player p = e.getPlayer();
+		
+		//try to fix invisibility on bersek
+		if (RPConfig.getBool("hooks.mcmmo.fix-berserk-invisibility") && e.getAbility().equals(AbilityType.BERSERK)){
+			p.damage(0);
+			for (Entity ent:p.getNearbyEntities(10, 10, 10)){
+				if (ent instanceof LivingEntity){
+					((LivingEntity)ent).damage(0);
+				}					
+			}			
+		}		
+		
 		Region r = RedProtect.rm.getTopRegion(p.getLocation());
 		if (r == null){
 			return;

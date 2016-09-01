@@ -5,6 +5,8 @@ If you, server owner, use the old redProtect plugin, you can upgrade for this ve
 Full features and description on BukkitDev: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/  
 And now on Spigot too: https://www.spigotmc.org/resources/redprotect.15841/
 
+Chat with the developer online on Discord: https://discord.gg/RyEVJC3
+
 #WIKI
 See the WIKI for Help with commands, permissions and all features: https://github.com/FabioZumbi12/RedProtect/wiki
 

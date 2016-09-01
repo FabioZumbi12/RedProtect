@@ -30,7 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.FileUtil;
 
-import br.net.fabiozumbi12.RedProtect.config.RPYaml;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 
 public class RPConfig{
@@ -41,7 +40,7 @@ public class RPConfig{
 	private static RPYaml GuiItems = new RPYaml();
 	private static RPYaml Prots = new RPYaml();
 	private static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("view-distance","forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","enderpearl", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("can-death", "cmd-onhealth" ,"keep-inventory", "keep-levels", "can-pickup", "can-drop","view-distance","forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","teleport", "enter", "up-skills", "can-back", "for-sale");	
 			
 	public static void init(RedProtect plugin) {
 
@@ -183,6 +182,10 @@ public class RPConfig{
     	            
     	            //add worlds to color list
     	            for (World w:RedProtect.serv.getWorlds()){
+    	            	if (RedProtect.plugin.getConfig().getString("region-settings.claim-type.worlds."+w.getName()) == null) {
+    	            		RedProtect.plugin.getConfig().set("region-settings.claim-type.worlds."+w.getName(), "BLOCK");
+    	            	}
+    	            	
 	            		if (RedProtect.plugin.getConfig().getString("region-settings.world-colors."+w.getName()) == null) {
 	            			if (w.getEnvironment().equals(Environment.NORMAL)){
 	            				RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&a&l");			            		
@@ -306,6 +309,14 @@ public class RPConfig{
                     	gflags.set(w.getName()+".deny-item-usage.items", gflags.getStringList(w.getName()+".deny-item-usage.items"));
                     	gflags.set(w.getName()+".player-velocity.walk-speed", gflags.getDouble(w.getName()+".player-velocity.walk-speed", -1));
                     	gflags.set(w.getName()+".player-velocity.fly-speed", gflags.getDouble(w.getName()+".player-velocity.fly-speed", -1));
+                    	gflags.set(w.getName()+".on-enter-cmds", gflags.getStringList(w.getName()+".on-enter-cmds"));
+                    	gflags.set(w.getName()+".on-exit-cmds", gflags.getStringList(w.getName()+".on-exit-cmds"));
+                    	if (!gflags.contains(w.getName()+".command-ranges")){
+                    		gflags.set(w.getName()+".command-ranges.home.min-range", gflags.getDouble(w.getName()+".command-ranges.home.min-range", 0));
+                        	gflags.set(w.getName()+".command-ranges.home.max-range", gflags.getDouble(w.getName()+".command-ranges.home.max-range", w.getMaxHeight()));
+                        	gflags.set(w.getName()+".command-ranges.home.message", gflags.getString(w.getName()+".command-ranges.home.message", "&cYou cant use /home when mining or in caves!"));
+                    	}                    	
+                    	
                     	w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
                     	RedProtect.logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
                     }
@@ -393,6 +404,18 @@ public class RPConfig{
     	            RedProtect.logger.info("All configurations loaded!");
 	}
     
+	public static String getWorldClaimType(String w){
+		return RedProtect.plugin.getConfig().getString("region-settings.claim-type.worlds."+w);
+	}
+	
+	public static boolean hasGlobalKey(String path){
+		return gflags.contains(path);
+	}
+	
+	public static String getGlobalFlagString(String string) {		
+		return gflags.getString(string);
+	}
+	
 	public static double getGlobalFlagDouble(String key){		
 		return gflags.getDouble(key);
 	}
@@ -563,7 +586,7 @@ public class RPConfig{
     public static boolean needClaimToBuild(Player p, Block b) {     	
     	boolean bool = RedProtect.plugin.getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
-    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks")){   
+    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") && getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK")){   
     			boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN");
     			if (!blocks){
     				RPLang.sendMessage(p, "need.claim.blockids");

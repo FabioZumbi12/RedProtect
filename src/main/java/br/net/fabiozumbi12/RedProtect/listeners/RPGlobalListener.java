@@ -3,10 +3,12 @@ package br.net.fabiozumbi12.RedProtect.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Creeper;
@@ -21,6 +23,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -61,7 +64,13 @@ public class RPGlobalListener implements Listener{
 		RedProtect.logger.debug("Loaded RPGlobalListener...");		
 	}
 	
-	private boolean allowBuild(Player p, Block b, int fat){
+	/**
+	 * @param p - Player
+	 * @param b - Block
+	 * @param fat - 1 = Place Block | 2 = Break Block
+	 * @return Boolean - Can build or not.
+	 */
+	private boolean bypassBuild(Player p, Block b, int fat){
 		if (fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
 			return true;
 		}
@@ -170,7 +179,7 @@ public class RPGlobalListener implements Listener{
 	            return;
 	        }
 		} else {
-			if (!allowBuild(p, b, 1)){
+			if (!bypassBuild(p, b, 1)){
 				e.setCancelled(true);
 				RedProtect.logger.debug("RPGlobalListener - Can't Build!");
 				return;
@@ -197,7 +206,7 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-		if (!allowBuild(p, b, 2)){			
+		if (!bypassBuild(p, b, 2)){			
 			e.setCancelled(true);
 			return;
 		}
@@ -219,6 +228,17 @@ public class RPGlobalListener implements Listener{
         } else {
         	l = p.getLocation();
         }
+		
+		if (b != null && b.getState() instanceof Sign){
+			Sign s = (Sign) b.getState();
+			if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RPLang.get("_redprotect.prefix")))){				
+				b.setType(Material.AIR);
+				e.setUseInteractedBlock(Result.DENY);
+				e.setUseItemInHand(Result.DENY);
+				e.setCancelled(true);
+				return;
+			}
+		}
 		
 		Region r = RedProtect.rm.getTopRegion(l);
 		
@@ -309,7 +329,7 @@ public class RPGlobalListener implements Listener{
         
         if (ent instanceof Player) { 
         	Player p = (Player)ent;
-            if (!allowBuild(p, null, 0) && !p.hasPermission("redprotect.bypass.world")) {
+            if (!bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
             }
         }
@@ -332,7 +352,7 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-    	if (!allowBuild(e.getPlayer(), null, 0) && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
+    	if (!bypassBuild(e.getPlayer(), null, 0)) {
     		e.setCancelled(true);
 			return;
     	}
@@ -355,7 +375,7 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-    	if (!allowBuild(e.getPlayer(), null, 0) && !e.getPlayer().hasPermission("redprotect.bypass.world")) {
+    	if (!bypassBuild(e.getPlayer(), null, 0)) {
     		e.setCancelled(true);
 			return;
     	}
@@ -429,7 +449,7 @@ public class RPGlobalListener implements Listener{
                 }
             }
         	if (e1 instanceof Hanging) {
-            	if (!allowBuild(p, null, 0)){
+            	if (!bypassBuild(p, null, 0)){
                     e.setCancelled(true);
                     return;
                 }
@@ -616,20 +636,28 @@ public class RPGlobalListener implements Listener{
     
     @EventHandler
     public void MonsterBlockBreak(EntityChangeBlockEvent event) {
-    	if (event.isCancelled()) {
-            return;
+    	Entity e = event.getEntity();    	
+    	Block b = event.getBlock();
+    	Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
+    	if (r != null){
+      	   return;
         }
     	
-    	RedProtect.logger.debug("Is EntityChangeBlockEvent event");
-    	Entity e = event.getEntity();    	
+    	if (b != null){
+    		RedProtect.logger.debug("RPGlobalListener - Is EntityChangeBlockEvent event. Block: "+b.getType().name());
+    	}
+    	
     	if (e instanceof Monster) {
-            Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
-            if (r != null){
-         	   return;
-            }
             if (!RPConfig.getGlobalFlagBool(e.getWorld().getName()+".entity-block-damage")){
             	event.setCancelled(true);
             }
+    	}
+    	if (e instanceof Player){
+    		Player p = (Player) e;
+    		if (!bypassBuild(p, b, 2)){
+    			event.setCancelled(true);
+    			return;
+			}			
     	}
     }
     

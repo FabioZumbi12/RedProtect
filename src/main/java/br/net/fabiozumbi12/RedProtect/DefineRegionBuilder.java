@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -11,7 +12,7 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class DefineRegionBuilder extends RegionBuilder{
 	
-    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String leader, List<String> leaders) {  	
+    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String leader, List<String> leaders, boolean admin) {  	
         String pName = p.getUniqueId().toString();
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
@@ -89,7 +90,9 @@ public class DefineRegionBuilder extends RegionBuilder{
         int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.rm.getTotalRegionSize(pName);
         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
-        if (pLimit >= 0 && totalArea + region.getArea() > pLimit) {
+        int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
+        int actualArea = totalArea+regionarea;        
+        if (pLimit >= 0 && actualArea > pLimit) {
         	this.setError(p, RPLang.get("regionbuilder.reach.limit"));
             return;
         }
@@ -121,10 +124,11 @@ public class DefineRegionBuilder extends RegionBuilder{
         List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
         for (Location loc:limitlocs){
         	
+        	/*
         	//check regions near
         	if (!RPUtil.canBuildNear(p, loc)){
             	return;    	
-            }
+            }*/
         	
         	otherrg = RedProtect.rm.getTopRegion(loc);        	
         	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
@@ -158,17 +162,24 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
         
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        p.sendMessage(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
-        p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (totalArea + region.getArea()) + "\n" + 
-        RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea()))));
+        if (!admin){
+        	p.sendMessage(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
+            p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? ChatColor.GREEN+""+regionarea:ChatColor.RED+"- "+regionarea) + "\n" + 
+            RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
+        }        
         p.sendMessage(RPLang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior());
-        
-        if (othersName.size() > 0){
-        	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+        if (othersName.size() > 0){        	
         	p.sendMessage(RPLang.get("regionbuilder.overlapping"));
         	p.sendMessage(RPLang.get("region.regions") + " " + othersName);
+        	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         }
         
+        if (RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
+        	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
+        	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+        }                        
+                
         this.r = region;
         RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" DEFINED region "+region.getName());
         return;

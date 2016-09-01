@@ -7,17 +7,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.primesoft.asyncworldedit.AsyncWorldEditMain;
+import org.primesoft.asyncworldedit.AsyncWorldEditBukkit;
 import org.primesoft.asyncworldedit.api.blockPlacer.IBlockPlacer;
 import org.primesoft.asyncworldedit.api.blockPlacer.IBlockPlacerListener;
-import org.primesoft.asyncworldedit.api.blockPlacer.IJobEntryListener;
-import org.primesoft.asyncworldedit.blockPlacer.entries.JobEntry;
-import org.primesoft.asyncworldedit.playerManager.PlayerEntry;
+import org.primesoft.asyncworldedit.api.blockPlacer.entries.IJobEntry;
+import org.primesoft.asyncworldedit.playerManager.PlayerManager;
 import org.primesoft.asyncworldedit.worldedit.AsyncEditSessionFactory;
 import org.primesoft.asyncworldedit.worldedit.world.AsyncWorld;
 
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 import com.sk89q.worldedit.EditSession;
@@ -52,31 +52,42 @@ public class AWEListener {
 					wreg = csel.getRegionSelector().getRegion();
 				} catch (IncompleteRegionException e1) {
 					e1.printStackTrace();
+					return;
 				}
 		    	
-		    	AsyncWorldEditMain aweMain = (AsyncWorldEditMain)Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");	    		
+		    	AsyncWorldEditBukkit aweMain = (AsyncWorldEditBukkit)Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");	    		
 	    		IBlockPlacer bPlacer = aweMain.getBlockPlacer();
+	    		/*
 	            final IJobEntryListener stateListener = new IJobEntryListener() {
 	                @Override
-	                public void jobStateChanged(JobEntry job) {
-	                    String name = job.getName();
-	                    RedProtect.logger.info("State: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                public void jobStateChanged(IJobEntry job) {
+	                	if (job.getPlayer().getName().equals("redprotect")){
+	                		String name = job.getName();
+		                    RedProtect.logger.info("State: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                	}	                    
 	                }
-	            };
+	            };*/
 
 	            final IBlockPlacerListener listener = new IBlockPlacerListener() {
 	                @Override
-	                public void jobAdded(JobEntry job) {
-	                    String name = job.getName();
-	                    job.addStateChangedListener(stateListener);
-	                    RedProtect.logger.warning("JobAdded: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                public void jobAdded(IJobEntry job) {
+	                	/*if (job.getPlayer().getName().equals("redprotect")){
+	                		String name = job.getName();
+		                    //job.addStateChangedListener(stateListener);
+		                    RedProtect.logger.warning("JobAdded: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                	}*/	                    
 	                }
 
 	                @Override
-	                public void jobRemoved(JobEntry job) {
-	                    String name = job.getName();
-	                    job.addStateChangedListener(stateListener);
-	                    RedProtect.logger.sucess("JobDone: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+	                public void jobRemoved(IJobEntry job) {
+	                	if (job.getPlayer().getName().equals("redprotect")){
+	                		String name = job.getName();
+		                    //job.addStateChangedListener(stateListener);
+	                		if (RPConfig.getBool("purge.regen.awe-logs") && job.isTaskDone()){
+	                			RedProtect.logger.sucess("JobDone: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.getStatusString());
+	                		}		                    
+	                	}
+	                	
 	                }
 	            };
 	            
@@ -86,15 +97,14 @@ public class AWEListener {
 	    		eSessions.put(r.getID(),ess);
 	    		int delayCount = 1+delay/10;
 	    		
-                if (sender != null){
-		    		
-	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess)){
+                if (sender != null){		    		
+	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerManager(aweMain).createFakePlayer("redprotect", UUID.randomUUID())).regenerate(wreg, ess)){
 	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
 	    			} else {
 	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
 	    			}
 	    		} else {
-	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerEntry("WorldEdit", UUID.randomUUID())).regenerate(wreg, ess)){
+	    			if (AsyncWorld.wrap(wreg.getWorld(), new PlayerManager(aweMain).createFakePlayer("redprotect", UUID.randomUUID())).regenerate(wreg, ess)){
 	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
 	    			} else {
 	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
