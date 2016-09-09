@@ -583,7 +583,7 @@ public class RPPlayerListener implements Listener{
     	    		
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
     	Player p = null;        
         

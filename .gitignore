@@ -1,3 +1,4 @@
 /target/
 /buildNumber.properties
 /wercker.yml
+/pom.xml
