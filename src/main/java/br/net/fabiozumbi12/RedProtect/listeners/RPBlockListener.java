@@ -139,8 +139,8 @@ public class RPBlockListener implements Listener{
         }
         
         if (line1.equalsIgnoreCase("[rp]")){
-
-            if (!RPConfig.getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") && !p.hasPermission("redprotect.admin.create")) {
+        	String claimmode = RPConfig.getWorldClaimType(p.getWorld().getName());
+            if ((!claimmode.equalsIgnoreCase("BLOCK") && !claimmode.equalsIgnoreCase("BOTH")) && !p.hasPermission("redprotect.admin.create")) {
                 this.setErrorSign(e, p, RPLang.get("blocklistener.region.claimmode"));
                 return;
             }

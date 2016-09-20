@@ -191,8 +191,8 @@ public class RPPlayerListener implements Listener{
         }
         
         if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){        	
-            
-            if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && (RPConfig.getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("WAND") || p.hasPermission("redprotect.admin.claim"))) {
+        	String claimmode = RPConfig.getWorldClaimType(p.getWorld().getName());
+            if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
             	
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 	if (!RPUtil.canBuildNear(p, b.getLocation())){        	

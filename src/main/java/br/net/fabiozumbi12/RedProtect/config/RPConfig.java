@@ -586,7 +586,7 @@ public class RPConfig{
     public static boolean needClaimToBuild(Player p, Block b) {     	
     	boolean bool = RedProtect.plugin.getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
-    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") && getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK")){   
+    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") && (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK"))){   
     			boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN");
     			if (!blocks){
     				RPLang.sendMessage(p, "need.claim.blockids");

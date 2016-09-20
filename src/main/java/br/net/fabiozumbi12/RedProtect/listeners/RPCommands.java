@@ -80,7 +80,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     }
     
     private boolean checkCmd(String arg, String cmd){
-    	return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd));
+    	return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd)) || arg.equalsIgnoreCase(cmd);
     }
     
     @Override
@@ -890,7 +890,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	//rp claim
         	if (checkCmd(args[0], "claim")){
-        		if (!RPConfig.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("WAND") && !player.hasPermission("redprotect.admin.claim")) {
+        		String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
+        		if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) && !player.hasPermission("redprotect.admin.claim")) {
                     RPLang.sendMessage(player, "blocklistener.region.blockmode");
                     return true;
                 }
@@ -1119,7 +1120,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	//rp claim [nameOfRegion]
         	if (checkCmd(args[0], "claim")){
-        		if (!RPConfig.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("WAND") && !player.hasPermission("redprotect.admin.claim")) {
+        		String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
+        		if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) && !player.hasPermission("redprotect.admin.claim")) {
                     RPLang.sendMessage(player, "blocklistener.region.blockmode");
                     return true;
                 }
@@ -1302,7 +1304,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	//rp claim [regionName] [leader]
         	if (checkCmd(args[0], "claim")){
-        		if (!RPConfig.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("WAND") && !player.hasPermission("redprotect.admin.claim")) {
+        		String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
+        		if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) && !player.hasPermission("redprotect.admin.claim")) {
                     RPLang.sendMessage(player, "blocklistener.region.blockmode");
                     return true;
                 }
@@ -1382,7 +1385,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         if (args.length == 4 || args.length == 5){
         	
         	//rp add-rent <player> <valor> <date>
-        	if (checkCmd(args[0], "add-rent") && player.hasPermission("redprotect.add rent") && RedProtect.Vault){
+        	if (checkCmd(args[0], "add-rent") && player.hasPermission("redprotect.add-rent") && RedProtect.Vault){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r == null){
         			RPLang.sendMessage(player, "cmdmanager.region.todo.that");

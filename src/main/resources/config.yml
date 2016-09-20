@@ -39,9 +39,10 @@ mysql:
   region-cache-minutes: 2
 
 region-settings:
-  # Claim mode allowed for normal players (without permission 'redprotect.admin.claim'). Options: BLOCK or WAND.
+  # Claim mode allowed for normal players (without permission 'redprotect.admin.claim'). Options: BLOCK, WAND or BOTH.
   # -> If BLOCK, the players needs to surround your house with the block type in configuration, and place a sign under this fence with [rp] on first line.
-  # -> If wand, the players will need a wand (default glass_bottle), click on two point of your region, and then use /rp claim [name of region] to claim te region.
+  # -> If WAND, the players will need a wand (default glass_bottle), click on two point of your region, and then use /rp claim [name of region] to claim te region.
+  # -> If BOTH, will allow both claim type protections.
   # Dont need the claim and create perms anymore.
   claim-type:
   # The name of leader for regions created with /rp define or regions without leaders. 
