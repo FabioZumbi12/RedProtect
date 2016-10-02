@@ -174,7 +174,7 @@
   </scm>
     
   <build>
-    <finalName>${project.name}-free</finalName>
+    <finalName>${project.name}-${buildNumber}</finalName>
     <defaultGoal>clean install</defaultGoal>
     <resources>
         <resource>
@@ -230,7 +230,8 @@
           </items>
         </configuration>
       </plugin>
-            
+     
+      <!-- 
       <plugin>
         <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
@@ -257,6 +258,7 @@
                  </libs>
             </configuration>
     </plugin>
+     -->
           
     </plugins>
   </build>

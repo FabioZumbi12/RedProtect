@@ -193,12 +193,7 @@ public class RedProtect extends JavaPlugin {
         	} else {
         		RedProtect.logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");        		
         	}   
-            
-            if (Package.getPackage("com.destroystokyo.paper") != null){
-            	RedProtect.logger.info("PaperSpigot/Paperclip detected. Admin flag 'view-distance' enabled.");
-            	paper = true;
-            }
-            
+                        
             RedProtect.logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
             RedProtect.logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    /");
             RedProtect.logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
