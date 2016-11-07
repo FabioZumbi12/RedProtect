@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>7.0.1</version>
+  <version>7.0.3</version>
   <url>http://spigotmc.org/resources/redprotect.15841/</url>
   <dependencies>
         <!--
@@ -121,12 +121,17 @@
             <artifactId>EssentialsX</artifactId>
             <version>2.0.1</version>
             <scope>provided</scope>
-        </dependency>
-        
+        </dependency>        
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>3.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.0.8</version>
+            <scope>provided</scope>
         </dependency>
         
   </dependencies>
@@ -162,6 +167,11 @@
      <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
+     </repository>
+     
+     <repository>
+            <id>placeholderapi</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
      </repository>
      
   </repositories>

@@ -73,7 +73,7 @@ public class RPMine19 implements Listener{
     		}
         }
 	}
-	
+		
 	@EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e){
     	if (e.isCancelled()) {

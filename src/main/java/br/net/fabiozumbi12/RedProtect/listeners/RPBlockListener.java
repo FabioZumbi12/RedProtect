@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.ItemFrame;
@@ -27,6 +28,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -672,4 +674,25 @@ public class RPBlockListener implements Listener{
 		}		
 	}	
 	
+
+	@EventHandler
+    public void onBlockForm(BlockFormEvent event) { 
+		RedProtect.logger.debug("Is Blockform event!");		
+		if (event.isCancelled()){
+			return;
+		}
+		
+		BlockState b = event.getNewState();
+		if (b == null){
+			return;
+		}
+		RedProtect.logger.debug("Is Blockform event: "+b.getType().name());		
+		
+		if (b.getType().name().equals("SNOW")){
+			Region r = RedProtect.rm.getTopRegion(b.getLocation());
+			if (r != null && !r.canIceForm()){
+				event.setCancelled(true);
+			}
+		}
+	}
 }

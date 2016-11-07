@@ -129,10 +129,10 @@ gui-flags:
   iceform-entity:
     slot: 22
     material: ICE
-    name: '&e=> Allow Ice Form by Entity'
+    name: '&e=> Allow Ice Form by World'
     description: '&6Description: &aAllow ice form'
-    description1: '&aby entitys like SnowMan.'
-    description2: ''
+    description1: '&aby entitys like SnowMan and by'
+    description2: '&aweather like snow.'
   iceform-player:
     slot: 4
     material: PACKED_ICE

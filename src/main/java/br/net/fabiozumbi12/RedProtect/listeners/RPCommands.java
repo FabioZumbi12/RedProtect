@@ -1160,7 +1160,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 if (rb.ready()) {
                     Region r2 = rb.build();
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                    RedProtect.rm.remove(oldRect);
+                    RedProtect.rm.remove(oldRect, RedProtect.serv.getWorld(oldRect.getWorld()));
                     RedProtect.rm.add(r2, player.getWorld());
                     RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" REDEFINED region "+r2.getName());
                 }
@@ -2118,7 +2118,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			
             String rname = r.getName();
             String w = r.getWorld();
-            RedProtect.rm.remove(r);
+            RedProtect.rm.remove(r, RedProtect.serv.getWorld(w));
             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.deleted") +" "+ rname);
             RedProtect.logger.addLog("(World "+w+") Player "+p.getName()+" REMOVED region "+rname);
         }
@@ -2156,7 +2156,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return;
 			}
 
-            RedProtect.rm.remove(r);
+            RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()));
             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.deleted") +" "+ rname);
             RedProtect.logger.addLog("(World "+world+") Player "+p.getName()+" REMOVED region "+rname);
         }
@@ -2277,6 +2277,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             }
             
             final Player pVictim = RedProtect.serv.getPlayer(sVictim);
+            
+            int claimLimit = RedProtect.ph.getPlayerClaimLimit(pVictim);
+            int claimused = RedProtect.rm.getPlayerRegions(pVictim.getName(),pVictim.getWorld()); 
+            boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
+            if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited){
+            	RPLang.sendMessage(p, RPLang.get("cmdmanager.region.addleader.limit").replace("{player}", pVictim.getName()));
+            	return;
+            }
             
             final String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if ((pVictim == null || pVictim != null && !pVictim.isOnline()) && !p.hasPermission("redprotect.bypass.addleader")){

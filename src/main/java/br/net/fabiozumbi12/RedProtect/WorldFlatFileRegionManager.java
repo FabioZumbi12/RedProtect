@@ -33,7 +33,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
     @Override
     public void remove(Region r) {
-        if (this.regions.containsKey(r.getName())){
+        if (this.regions.containsValue(r)){
         	this.regions.remove(r.getName());
         }
     }

@@ -772,11 +772,11 @@ public class Region implements Serializable{
     	this.members.clear();
     	RedProtect.rm.updateLiveRegion(this, "members", "");
     }
-    
+    /*
     public void delete() {
         RedProtect.rm.remove(this);
     }
-    
+    */
     public int getArea() {
     	return Math.abs((this.maxMbrX - this.minMbrX)+1) * Math.abs((this.maxMbrZ - this.minMbrZ)+1);    	
     }
@@ -1449,15 +1449,15 @@ public class Region implements Serializable{
 		return getFlagBool("iceform-player");
 	}
 	
-	/**Allow ice form by entity.
+	/**Allow ice form by entity and by world.
 	 * 
 	 * @return boolean
 	 */
 	public boolean canIceForm() {
-		if (!RPConfig.isFlagEnabled("iceform-entity")){
-    		return RPConfig.getBool("flags.iceform-entity");
+		if (!RPConfig.isFlagEnabled("iceform-world")){
+    		return RPConfig.getBool("flags.iceform-world");
     	}
-		return getFlagBool("iceform-entity");
+		return getFlagBool("iceform-world");
 	}
 	
 	public boolean FlowDamage() {

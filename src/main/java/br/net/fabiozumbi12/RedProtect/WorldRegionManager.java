@@ -15,7 +15,11 @@ public interface WorldRegionManager {
     
     int getTotalRegionSize(String p0);
     
-    Set<Region> getRegions(String pname);
+    /**Get the player regions. If running in Online mode need UUID, and if Offline mode give playername.
+     * @param p0 - UUID as String or playername.
+     * @return Set of regions
+     */
+    Set<Region> getRegions(String p0);
     
     Set<Region> getRegionsNear(Player p0, int p1);
 

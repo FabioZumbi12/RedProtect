@@ -24,6 +24,7 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
 import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
+import br.net.fabiozumbi12.RedProtect.hooks.RPPlaceHoldersAPI;
 import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPAddProtection;
 import br.net.fabiozumbi12.RedProtect.listeners.RPBlockListener;
@@ -40,6 +41,7 @@ public class RedProtect extends JavaPlugin {
 	public static PluginDescriptionFile pdf;
     public static RedProtect plugin;
 	private int taskid;
+	private boolean PlaceHolderAPI;
 	public static boolean Update;
 	public static String UptVersion;
 	public static String UptLink;    
@@ -107,6 +109,7 @@ public class RedProtect extends JavaPlugin {
             WE = checkWe();
             AWE = checkAWe();
             SC = checkSP();
+            PlaceHolderAPI = checkPHAPI();
             JarFile = this.getFile();
             initVars();
             RPConfig.init(this);
@@ -186,6 +189,10 @@ public class RedProtect extends JavaPlugin {
             	RedProtect.logger.info("Loading dynmap markers...");
             	dynmap = new Dynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
             	RedProtect.logger.info("Dynmap markers loaded!");
+            }
+            if (PlaceHolderAPI){
+            	new RPPlaceHoldersAPI(this).hook();
+            	logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
             }
             
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
@@ -395,5 +402,13 @@ public class RedProtect extends JavaPlugin {
     		return true;
     	}
     	return false;
+	}
+	
+	private boolean checkPHAPI() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+		return false;
 	}
 }

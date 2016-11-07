@@ -353,7 +353,8 @@ public class RPUtil {
             				continue;
             			}                			
             		} else {
-            			r.delete();
+            			RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()));
+            			//r.delete();
             			purged++;
             			RedProtect.logger.warning("Purging " + r.getName() + " - Days: " + days);
             		}

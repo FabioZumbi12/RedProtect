@@ -183,11 +183,9 @@ public class RegionManager{
     	this.regionManagers.get(w).save();
     }
     
-    public void remove(Region r) {
-    	Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            rms.next().remove(r);
-        }
+    public void remove(Region r, World w) {    	
+    	WorldRegionManager rms = this.regionManagers.get(w);
+    	rms.remove(r);
     	if (RedProtect.Dyn){    		
     		try {
     			RedProtect.dynmap.removeMark(r);
@@ -354,7 +352,7 @@ public class RegionManager{
 		Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
 				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint());
 		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));		
-		this.remove(old);		
+		this.remove(old, RedProtect.serv.getWorld(old.getWorld()));		
 	}
     
 }

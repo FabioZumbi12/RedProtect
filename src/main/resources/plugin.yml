@@ -63,7 +63,7 @@ permissions:
       redprotect.flag.mob-loot: true
       redprotect.flag.flow-damage: true
       redprotect.flag.iceform-player: true
-      redprotect.flag.iceform-entity: true
+      redprotect.flag.iceform-world: true
       redprotect.flag.allow-fly: true
       redprotect.flag.teleport: true
       redprotect.flag.clan: true

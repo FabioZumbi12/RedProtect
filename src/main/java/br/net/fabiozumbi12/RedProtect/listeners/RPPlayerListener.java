@@ -195,7 +195,7 @@ public class RPPlayerListener implements Listener{
             if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
             	
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                	if (!RPUtil.canBuildNear(p, b.getLocation())){        	
+                	if (!RPUtil.canBuildNear(p, l)){        	
                         event.setCancelled(true);
                     	return;    	
                     }
@@ -204,7 +204,7 @@ public class RPPlayerListener implements Listener{
                     event.setCancelled(true);              
                 }
                 else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
-                	if (!RPUtil.canBuildNear(p, b.getLocation())){        	
+                	if (!RPUtil.canBuildNear(p, l)){        	
                         event.setCancelled(true);
                     	return;    	
                     }

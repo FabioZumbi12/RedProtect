@@ -126,13 +126,13 @@ gui-flags:
     description: '&6Descrição: &aPermite que'
     description1: '&aLava e Agua removam blocos'
     description2: '&aao escorrerem.'
-  iceform-entity:
+  iceform-world:
     slot: 22
     material: ICE
-    name: '&e=> Permite Formar Gelo por Mobs'
+    name: '&e=> Permite Formar Gelo Natural'
     description: '&6Descrição: &aPermitir formar'
-    description1: '&agelo por mobs como Boneco de Gelo.'
-    description2: ''
+    description1: '&agelo por mobs como Boneco de Gelo'
+    description2: '&ae pelo tempo como neve.'
   iceform-player:
     slot: 4
     material: PACKED_ICE

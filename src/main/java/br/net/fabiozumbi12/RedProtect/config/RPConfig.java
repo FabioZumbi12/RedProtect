@@ -266,6 +266,15 @@ public class RPConfig{
         				}
         				configUp++;
         			}
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.4D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.4D);        				
+        				
+        				if (flags.contains("iceform-entity")){
+        					flags.add("iceform-world"); 
+        					flags.remove("iceform-entity");  
+        				}
+        				configUp++;
+        			}
         			
         			if (configUp > 0){
         				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
@@ -288,7 +297,7 @@ public class RPConfig{
                     	gflags.set(w.getName()+".if-build-false.place-blocks", gflags.getStringList(w.getName()+".if-build-false.place-blocks"));
                     	gflags.set(w.getName()+".pvp", gflags.getBoolean(w.getName()+".pvp", true));
                     	gflags.set(w.getName()+".iceform-by.player", gflags.getBoolean(w.getName()+".iceform-by.player", false));
-                    	gflags.set(w.getName()+".iceform-by.entity", gflags.getBoolean(w.getName()+".iceform-by.entity", true));
+                    	gflags.set(w.getName()+".iceform-by.world", gflags.getBoolean(w.getName()+".iceform-by.world", true));
                     	gflags.set(w.getName()+".interact", gflags.getBoolean(w.getName()+".interact", true));
                     	gflags.set(w.getName()+".if-interact-false.allow-blocks", gflags.getStringList(w.getName()+".if-interact-false.allow-blocks"));
                     	gflags.set(w.getName()+".if-interact-false.allow-entities", gflags.getStringList(w.getName()+".if-interact-false.allow-entities"));
