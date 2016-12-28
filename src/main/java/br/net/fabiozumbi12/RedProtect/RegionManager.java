@@ -151,19 +151,23 @@ public class RegionManager{
     }
     
     public Set<Region> getRegions(String player, World w) {
+    	player = RPUtil.PlayerToUUID(player);
         return this.regionManagers.get(w).getRegions(player);
     }
 
     public Set<Region> getRegions(String player, String w) {
+    	player = RPUtil.PlayerToUUID(player);
     	World world = Bukkit.getWorld(w);    	
         return this.regionManagers.get(world).getRegions(player);
     }
     
-    public int getPlayerRegions(String player, String w){    	
+    public int getPlayerRegions(String player, String w){  
+    	player = RPUtil.PlayerToUUID(player);
     	return getRegions(player, w).size();
     }
     
     public int getPlayerRegions(String player, World w){
+    	player = RPUtil.PlayerToUUID(player);
     	return getRegions(player, w).size();
     }
     
@@ -350,7 +354,7 @@ public class RegionManager{
 	@SuppressWarnings("deprecation")
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
-				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint());
+				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));		
 		this.remove(old, RedProtect.serv.getWorld(old.getWorld()));		
 	}

@@ -33,9 +33,12 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
 			return String.valueOf(RedProtect.ph.getPlayerBlockLimit(p));
 		}	
 		if (arg.startsWith("region_flag_value_")){
-			Region r = RedProtect.rm.getTopRegion(p.getLocation());
-			String value = r.getFlagString(arg.replace("region_flag_value_", ""));
-			if (r != null && value != null){				
+			Region r = RedProtect.rm.getTopRegion(p.getLocation());			
+			if (r != null){
+				String value = r.getFlagString(arg.replace("region_flag_value_", ""));
+				if (value == null){
+					return null;
+				}				
 				if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
 					return RPLang.translBool(value);
 				}

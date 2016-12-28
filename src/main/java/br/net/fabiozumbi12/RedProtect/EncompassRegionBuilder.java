@@ -165,7 +165,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         }
                         
                         
-                        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, rx, rz, 0, w.getMaxHeight(), 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null);
+                        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, rx, rz, 0, w.getMaxHeight(), 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
                         
                         List<String> othersName = new ArrayList<String>();
                         Region otherrg = null;

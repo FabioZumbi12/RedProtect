@@ -12,18 +12,17 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class DefineRegionBuilder extends RegionBuilder{
 	
-    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String leader, List<String> leaders, boolean admin) {  	
-        String pName = p.getUniqueId().toString();
-        if (!RedProtect.OnlineMode){
-        	pName = p.getName().toLowerCase();
-    	}
-        
+    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String leader, List<String> leaders, boolean admin) {  
         if (!RPConfig.isAllowedWorld(p)){
         	this.setError(p, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
         }
         
+        //region leader
+        String pName = RPUtil.PlayerToUUID(p.getName());
+        //for region name
         String pRName = RPUtil.UUIDtoPlayer(p.getName());
+        
         String wmsg = "";
         if (leader.equals(RPConfig.getString("region-settings.default-leader"))){
         	pName = leader;
@@ -75,7 +74,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         	maxy = p.getWorld().getMaxHeight();
         }
         
-        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null);
+        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
         
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	

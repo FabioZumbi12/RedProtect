@@ -46,19 +46,19 @@ public class RPLang {
 	public static void init(RedProtect plugin) {
 		
 		RPLang.plugin = plugin;
-		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang" + RPConfig.getString("language") + ".ini";
-		resLang = "lang" + RPConfig.getString("language") + ".ini";
+		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang_" + RPConfig.getString("language") + ".properties";
+		resLang = "lang_" + RPConfig.getString("language") + ".properties";
 		
 		File lang = new File(pathLang);			
 		if (!lang.exists()) {
 			if (plugin.getResource(resLang) == null){		
-				RPConfig.setConfig("language", "EN-US");
+				RPConfig.setConfig("language", "en-EN");
 				RPConfig.save();
-				resLang = "langEN-US.ini";	
-				pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "langEN-US.ini";
+				resLang = "lang_en-EN.properties";	
+				pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang_en-EN.properties";
 			}
 			plugin.saveResource(resLang, false);//create lang file
-            RedProtect.logger.info("Created config file: " + pathLang);
+            RedProtect.logger.info("Created language file: " + pathLang);
         }
 		
 		loadLang();
@@ -70,7 +70,7 @@ public class RPLang {
 	    BaseLang.clear();
 	    Properties properties = new Properties();
 	    try {
-	    	InputStream fileInput = RedProtect.class.getClassLoader().getResourceAsStream("langEN-US.ini");	      
+	    	InputStream fileInput = RedProtect.class.getClassLoader().getResourceAsStream("lang_en-EN.properties");	      
 	        Reader reader = new InputStreamReader(fileInput, "UTF-8");
 	        properties.load(reader);
 	    }

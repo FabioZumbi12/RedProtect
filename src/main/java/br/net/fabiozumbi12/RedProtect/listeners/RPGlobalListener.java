@@ -16,8 +16,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Vehicle;
@@ -297,6 +299,13 @@ public class RPGlobalListener implements Listener{
         if (r != null){
 			return;
 		}
+        
+        if (ent instanceof ItemFrame || ent instanceof Painting) {
+            if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".build")) {
+                e.setCancelled(true);
+                return;
+            }
+        } 
         
         if (ent instanceof Minecart || ent instanceof Boat){
         	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")) {

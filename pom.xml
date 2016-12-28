@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>7.0.3</version>
+  <version>7.0.4</version>
   <url>http://spigotmc.org/resources/redprotect.15841/</url>
   <dependencies>
         <!--
@@ -16,11 +16,10 @@
 			<systemPath>D:/ProjetosBukkit/APIs/paper-api-1.10-R0.1-20160609.044554-1.jar</systemPath>
 		</dependency> -->
 		
-        <!--Spigot-API-->
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.10-R0.1-SNAPSHOT</version>
+          <version>1.11-R0.1-SNAPSHOT</version>
         </dependency>
 		
         <dependency>
@@ -49,7 +48,7 @@
 		
 		<dependency>
 			<groupId>SimpleClans</groupId>
-			<artifactId>sSimpleClans</artifactId>
+			<artifactId>SimpleClans</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
 			<systemPath>D:/ProjetosBukkit/APIs/SimpleClans.jar</systemPath>
@@ -64,11 +63,6 @@
 			<groupId>repo.libs</groupId>
 			<artifactId>worldedit</artifactId>
 			<version>v6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>repo.libs</groupId>
-			<artifactId>BossBarAPI</artifactId>
-			<version>v1</version>
 		</dependency>
 		<dependency>
 			<groupId>repo.libs</groupId>
@@ -133,20 +127,19 @@
             <version>2.0.8</version>
             <scope>provided</scope>
         </dependency>
-        
+        <dependency>
+		    <groupId>org.inventivetalent</groupId>
+		    <artifactId>bossbarapi</artifactId>
+		    <version>2.4.1</version>
+	    </dependency>
+	
   </dependencies>
   
   <repositories>
      <repository>
             <id>libs-repo</id>
             <url>http://areaz12server.net.br/maven/</url>
-     </repository>
-     
-     <repository>
-            <id>paper-repo</id>
-            <url>https://repo.destroystokyo.com/content/repositories/snapshots</url>
-     </repository>
-     
+     </repository>     
      <repository>
 	        <id>maven-restlet</id>
 	        <name>Public online Restlet repository</name>
@@ -167,13 +160,16 @@
      <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
-     </repository>
-     
+     </repository>     
      <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
      </repository>
-     
+     <repository>
+		<id>inventive-repo</id>
+		<url>https://repo.inventivetalent.org/content/groups/public/</url>
+	 </repository>
+	 
   </repositories>
 
   <scm>
@@ -216,8 +212,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>        
       </plugin>
       
@@ -241,34 +237,16 @@
         </configuration>
       </plugin>
      
-      <!-- 
       <plugin>
-        <groupId>com.github.wvengen</groupId>
-          <artifactId>proguard-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                 <phase>package</phase>
-                 <goals><goal>proguard</goal></goals>
-              </execution>
-            </executions>
-            <configuration>
-               <options>
-                 <option>-keepattributes *Annotation*</option>
-                 <option>-keep class ${project.groupId}.${project.artifactId} { *; }</option>
-                 <option>-keep class ${project.groupId}.API.* { *; }</option>
-                 <option>-dontshrink</option>
-                 <option>-dontoptimize</option>   
-                 <option>-ignorewarnings</option>     
-                 <option>-dontnote</option>                 
-                 </options>
-                 <injar>${project.name}-free.jar</injar>
-                 <outjar>${project.name}-${buildNumber}.jar</outjar>
-                 <libs>
-                    <lib>${java.home}/lib/rt.jar</lib>
-                 </libs>
-            </configuration>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>2.5</version>
+      <configuration>
+        <encoding>UTF-8</encoding>
+        <nonFilteredFileExtensions>
+          <nonFilteredFileExtension>schematic</nonFilteredFileExtension>
+        </nonFilteredFileExtensions>
+      </configuration>
     </plugin>
-     -->
           
     </plugins>
   </build>

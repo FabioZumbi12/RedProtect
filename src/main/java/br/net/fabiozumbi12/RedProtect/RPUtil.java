@@ -43,7 +43,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
-
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
@@ -172,7 +171,7 @@ public class RPUtil {
     		return false;
     	}
     }
-    
+        
     static void SaveToZipYML(File file, String ZippedFile, RPYaml yml){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
@@ -781,7 +780,7 @@ public class RPUtil {
                     		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
                     	} 
                     }                    
-                    regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint));
+                    regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true));
                 } 
                 st.close(); 
                 rs.close();  
@@ -1111,7 +1110,7 @@ public class RPUtil {
 			if (Bukkit.getWorlds().contains(claim.getGreaterBoundaryCorner().getWorld())){
 				World w = claim.getGreaterBoundaryCorner().getWorld();
 				String pname = claim.getOwnerName().replace(" ", "_").toLowerCase();
-				if (RedProtect.OnlineMode){
+				if (RedProtect.OnlineMode && claim.ownerID != null){
 					pname = claim.ownerID.toString();
 				}
 				List<String> leaders = new ArrayList<String>();
@@ -1122,7 +1121,7 @@ public class RPUtil {
 				newmax.setY(w.getMaxHeight());
 				
 				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), new ArrayList<String>(), new ArrayList<String>(), leaders, 
-						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null);				
+						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null, true);				
 				
 				Region other = RedProtect.rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
 				if (other != null && r.getWelcome().equals(other.getWelcome())){
@@ -1197,6 +1196,7 @@ public class RPUtil {
     	String date = fileDB.getString(rname+".lastvisit", "");
     	long value = fileDB.getLong(rname+".value", 0);
     	String rent = fileDB.getString(rname+".rent", "");
+    	boolean candel = fileDB.getBoolean(rname+".candelete", true);
     	
     	Location tppoint = null;
         if (!fileDB.getString(rname+".tppoint", "").equalsIgnoreCase("")){
@@ -1219,7 +1219,7 @@ public class RPUtil {
         }
         //compatibility <------
     	fileDB = RPUtil.fixdbFlags(fileDB, rname);    	
-  	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint);
+  	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
     	for (String flag:RPConfig.getDefFlags()){
     		if (fileDB.get(rname+".flags."+flag) != null){
   			    newr.flags.put(flag,fileDB.get(rname+".flags."+flag)); 
@@ -1258,6 +1258,7 @@ public class RPUtil {
 		fileDB.set(rname+".rent", r.getRentString());
 		fileDB.set(rname+".value",r.getValue());	
 		fileDB.set(rname+".flags",r.flags);	
+		fileDB.set(rname+".candelete",r.canDelete());	
 		
 		Location loc = r.getTPPoint();
 		if (loc != null){
@@ -1377,4 +1378,37 @@ public class RPUtil {
 		} 
 		return total;
 	}
+		
+	public static String regionNameConfiorm(String regionName, Player p){		
+		String pRName = RPUtil.UUIDtoPlayer(p.getName());
+		if (regionName.equals("")) {
+            int i = 0;            
+            regionName = RPUtil.StripName(pRName)+"_"+0;            
+            while (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
+            	++i;
+            	regionName = RPUtil.StripName(pRName)+"_"+i;   
+            }            
+            if (regionName.length() > 16) {
+            	RPLang.sendMessage(p, "regionbuilder.autoname.error");
+                return null;
+            }
+        }
+        if (regionName.contains("@")) {
+            p.sendMessage(RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
+            return null;
+        }
+        
+        //region name conform
+        regionName = regionName.replace("/", "|");        
+        if (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
+        	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+            return null;
+        }
+        if (regionName.length() < 3 || regionName.length() > 16) {
+        	RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return null;
+        }
+        
+        return regionName;
+	}	
 }

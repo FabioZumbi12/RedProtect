@@ -43,7 +43,7 @@ public class McMMoListener implements Listener{
 			e.setCancelled(true);
 		}
 		
-		if (RPConfig.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(SkillType.ACROBATICS) && (!r.canFire() || !r.canDeath(p))){
+		if (RPConfig.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(SkillType.ACROBATICS) && (!r.canFire() || !r.canDeath())){
 			e.setCancelled(true);
 		}
 		/*

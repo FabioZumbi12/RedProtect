@@ -21,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
@@ -164,7 +165,7 @@ public class RPPlayerListener implements Listener{
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {    	
     	RedProtect.logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());    	
-    	
+    	    	
         final Player p = event.getPlayer();
         Block b = event.getClickedBlock();
         ItemStack itemInHand = event.getItem();
@@ -245,7 +246,7 @@ public class RPPlayerListener implements Listener{
         Region r = RedProtect.rm.getTopRegion(l);
         //start player checks
         if (r == null){
-        	if (b != null && (b.getState() instanceof InventoryHolder ||
+        	if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
             		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){ 
         		Boolean out = RPConfig.getBool("private.allow-outside");
             	if (out && !cont.canOpen(b, p)) {
@@ -343,7 +344,7 @@ public class RPPlayerListener implements Listener{
                         }
         			}        			
         		}
-                else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getState() instanceof InventoryHolder ||
+                else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
                 		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){   
                 	
                 	if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
@@ -504,7 +505,7 @@ public class RPPlayerListener implements Listener{
         RedProtect.logger.debug("RPPlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
         Location l = e.getLocation();
                 
-        if (e instanceof ItemFrame) {       
+        if (e instanceof ItemFrame || e instanceof Painting) {       
         	Region r = RedProtect.rm.getTopRegion(l);
             if (r != null && !r.canBuild(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantedit");
@@ -576,7 +577,7 @@ public class RPPlayerListener implements Listener{
           		RedProtect.logger.debug("Cmd on healt: true");
           	}
           	
-            if (!r.canDeath(play) && play.getHealth() <= 1){
+            if (!r.canDeath() && play.getHealth() <= 1){
         		e.setCancelled(true);
         	}  
         }
@@ -682,6 +683,14 @@ public class RPPlayerListener implements Listener{
         		e.setCancelled(true); 
         		return;
         	}
+        	
+        	//enter max players flag
+            if (rto.maxPlayers() != -1){
+            	if (!checkMaxPlayer(p, rto)){
+            		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(rto.maxPlayers())));	
+            		e.setCancelled(true); 
+            	}
+            } 
         	
         	if (PlayerCmd.containsKey(p.getName())){
         		if (!rto.canBack(p) && PlayerCmd.get(p.getName()).startsWith("/back")){
@@ -940,6 +949,14 @@ public class RPPlayerListener implements Listener{
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");	
         	}
             
+            //enter max players flag
+            if (r.maxPlayers() != -1){
+            	if (!checkMaxPlayer(p, r)){
+            		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
+            		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
+            	}
+            }            
+            
             //Mypet Flag
 			if (RedProtect.MyPet && !r.canPet(p)) {
 				if (MyPetApi.getPlayerManager().isMyPetPlayer(p)) {
@@ -1012,13 +1029,35 @@ public class RPPlayerListener implements Listener{
     			//---
     			noRegionFlags(er, p);    	
     			if (er != null && !er.getWelcome().equalsIgnoreCase("hide ") && RPConfig.getBool("notify.region-exit")){
-    				SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"));
+    				if (RedProtect.version >= 1110){
+    					SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), "RED");
+    				} else {
+    					SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), null);
+    				}    				
     			}    			
         	}   			
     	}  	
     }
     
-    private Location DenyEnterPlayer(World wFrom, Location from, Location to, Player p, Region r) {
+    private boolean checkMaxPlayer(Player p, Region r) {  
+    	if (r.canBuild(p)){
+    		return true;
+    	}
+    	int ttl = 0;
+    	for (Player onp:p.getWorld().getPlayers()){
+    		if (onp == p){continue;}
+        	Region reg = RedProtect.rm.getTopRegion(onp.getLocation());
+        	if (reg != null && reg == r){
+        		ttl++;
+        	}
+        }
+    	if (ttl >= r.maxPlayers()){
+    		return false;
+    	}
+		return true;
+	}
+
+	private Location DenyEnterPlayer(World wFrom, Location from, Location to, Player p, Region r) {
     	Location setTo = to;
     	for (int i = 0; i < r.getArea()+10; i++){
     		Region r1 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ());
@@ -1081,12 +1120,13 @@ public class RPPlayerListener implements Listener{
     }
     
     @EventHandler
-    public void onPortalCreate(PortalCreateEvent e){    	
+    public void onPortalCreate(PortalCreateEvent e){   
     	List<Block> blocks = e.getBlocks();
     	for (Block b:blocks){
     		Region r = RedProtect.rm.getTopRegion(b.getLocation());
     		if (r != null && !r.canCreatePortal()){
     			e.setCancelled(true);
+    			break;
     		}
     	}    	
     }
@@ -1230,28 +1270,36 @@ public class RPPlayerListener implements Listener{
         }
     }
             
-    public void SendNotifyMsg(Player p, String notify){
+    public void SendNotifyMsg(Player p, String notify, String color){
     	if (!notify.equals("")){
     		if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
-    			if (RedProtect.BossBar){
-    				BossBarAPI.setMessage(p,notify);
+    			if (RedProtect.version >= 1110){
+    				RPMine111.sendBarMsg(notify, color, p);
     			} else {
-    				p.sendMessage(notify);
-    			}
+    				if (RedProtect.BossBar){
+        				BossBarAPI.setMessage(p,notify);
+        			} else {
+        				p.sendMessage(notify);
+        			}
+    			}    			
     		} 
     		if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
     			p.sendMessage(notify);
     		}
     	}
     }
-
-    public void SendWelcomeMsg(Player p, String wel){
+    
+    public void SendWelcomeMsg(final Player p, String wel){
 		if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("BOSSBAR")){
-			if (RedProtect.BossBar){
-				BossBarAPI.setMessage(p,wel);
+			if (RedProtect.version >= 1110){
+				RPMine111.sendBarMsg(wel, "GREEN", p);
 			} else {
-				p.sendMessage(wel);
-			}
+				if (RedProtect.BossBar){
+					BossBarAPI.setMessage(p,wel);
+				} else {
+					p.sendMessage(wel);
+				}
+			}			
 		} 
 		if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("CHAT")){
 			p.sendMessage(wel);
@@ -1298,7 +1346,11 @@ public class RPPlayerListener implements Listener{
         		m = m.replace("{leaders}", leaderstring);
         		m = m.replace("{region}", r.getName());
 			} 
-			SendNotifyMsg(p, m);
+			if (RedProtect.version >= 1110){
+				SendNotifyMsg(p, m, "GREEN");
+			} else {
+				SendNotifyMsg(p, m, null);
+			}			
 		} else {
 			SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": "+ ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', r.getWelcome()));
     		return;        			

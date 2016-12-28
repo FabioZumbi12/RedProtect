@@ -40,7 +40,7 @@ public class RPConfig{
 	private static RPYaml GuiItems = new RPYaml();
 	private static RPYaml Prots = new RPYaml();
 	private static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("can-death", "cmd-onhealth" ,"keep-inventory", "keep-levels", "can-pickup", "can-drop","view-distance","forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","teleport", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList("cropsfarm","max-players","can-death", "cmd-onhealth" ,"keep-inventory", "keep-levels", "can-pickup", "can-drop","view-distance","forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","teleport", "enter", "up-skills", "can-back", "for-sale");	
 			
 	public static void init(RedProtect plugin) {
 
@@ -52,7 +52,7 @@ public class RPConfig{
     	            File globalflags = new File(RedProtect.pathglobalFlags);
     	            File protections = new File(RedProtect.protections);
     	            File logs = new File(RedProtect.pathLogs);
-    	            File signsf = new File(RedProtect.PathSigns);
+    	            File signsf = new File(RedProtect.pathSigns);
     	            
     	            if (!main.exists()) {
     	                main.mkdir();
@@ -81,7 +81,7 @@ public class RPConfig{
     	            if (!signsf.exists()) {
     	            	try {
     	            		signsf.createNewFile();//create PathSigns file
-	    	                RedProtect.logger.info("Created signs file: " + RedProtect.PathSigns);
+	    	                RedProtect.logger.info("Created signs file: " + RedProtect.pathSigns);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -100,6 +100,11 @@ public class RPConfig{
     	            if (!protections.exists()) {
     	            	plugin.saveResource("protections.yml", false);//create protections file    	            	
     	                RedProtect.logger.info("Created protections file: " + RedProtect.protections);
+    	            }
+    	            
+    	            if (!new File(RedProtect.pathSchematic+File.separator+"house1.schematic").exists()) { 
+    	            	plugin.saveResource("schematics"+File.separator+"house1.schematic", false);//save schematic file     	            		            	    	            	
+    	                RedProtect.logger.info("Saved schematic file: house1.schematic");
     	            }
     	            
     	            //------------------------------ Add default Values ----------------------------//
@@ -272,6 +277,12 @@ public class RPConfig{
         				if (flags.contains("iceform-entity")){
         					flags.add("iceform-world"); 
         					flags.remove("iceform-entity");  
+        				}
+        				if (!flags.contains("can-grow")){
+        					flags.add("can-grow");            				
+        				}
+        				if (!plugin.getConfig().contains("flags.can-grow")){
+        					plugin.getConfig().set("flags.can-grow", true);
         				}
         				configUp++;
         			}
@@ -553,7 +564,7 @@ public class RPConfig{
     	File guiconfig = new File(RedProtect.pathGui);
     	File blockvalues = new File(RedProtect.pathBlockValues);
     	File protections = new File(RedProtect.protections);
-    	File signsf = new File(RedProtect.PathSigns);
+    	File signsf = new File(RedProtect.pathSigns);
     	try {
 			RedProtect.plugin.saveConfig();
 			gflags.save(globalflags);
@@ -710,7 +721,7 @@ public class RPConfig{
 	private static void saveSigns(String rid, List<String> locs){
 		signs.set(rid, locs);
 		try {
-			signs.save(new File(RedProtect.PathSigns));
+			signs.save(new File(RedProtect.pathSigns));
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
 			e.printStackTrace();

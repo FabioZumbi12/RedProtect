@@ -258,7 +258,8 @@ public class RPGui implements Listener{
 		this.guiItens = null;
 		this.name = null;
 		this.player = null;
-		this.region = null;
+		RedProtect.openGuis.remove(this.region.getID());
+		this.region = null;		
 		try {
 			this.finalize();
 		} catch (Throwable e) {
@@ -267,9 +268,19 @@ public class RPGui implements Listener{
 	}
 	
 	public void open(){	
+		if (RedProtect.openGuis.contains(this.region.getID())){
+			RPLang.sendMessage(player, "cmdmanager.region.rpgui-open");
+			try {
+				this.finalize();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+			return;
+		}
 		Inventory inv = Bukkit.createInventory(player, this.size, this.name);
 	    inv.setContents(this.guiItens);
 	    player.openInventory(inv);
 	    this.inv = inv;
+	    RedProtect.openGuis.add(this.region.getID());
 	}
 }

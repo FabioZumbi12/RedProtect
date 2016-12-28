@@ -54,8 +54,21 @@ public class Region implements Serializable{
 	public Map<String, Long> rentDate = new HashMap<String, Long>();
 	private boolean waiting = false;
 	private int rentTask = 0;
+	private boolean canDelete = true;
 	
-
+	public boolean canDelete(){
+		return this.canDelete;
+	}
+	
+	public void setCanDelete(boolean canDelete){
+		this.canDelete = canDelete;
+	}
+	
+	@Override
+	public String toString(){
+		return this.getID();		
+	}
+	
 	/**Get unique ID of region based on name of "region + @ + world".
 	 * @return {@code id string}
 	 */
@@ -584,6 +597,11 @@ public class Region implements Serializable{
         
     }
     
+	private String conformName(String name){
+		name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
+		return name;
+	}
+	
 	/**
 	 * Represents the region created by player.
      * @param name Name of region.
@@ -599,7 +617,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an admin or leader.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> admins, List<String> members, List<String> leaders, Location minLoc, Location maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint) {
+    public Region(String name, List<String> admins, List<String> members, List<String> leaders, Location minLoc, Location maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel) {
     	super();        
         this.maxMbrX = maxLoc.getBlockX();
         this.minMbrX = minLoc.getBlockX();
@@ -609,13 +627,14 @@ public class Region implements Serializable{
         this.minY = minLoc.getBlockY();
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
         this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
-        this.name = name;
+        this.name = conformName(name);
         this.admins = admins;
         this.members = members;
         this.leaders = leaders;    
         this.flags = flags;
         this.value = value;
         this.tppoint = tppoint;
+        this.canDelete = candel;
         
         if (worldName != null){
             this.world = worldName;
@@ -653,7 +672,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an admin or leader.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> admins, List<String> members, List<String> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint) {
+    public Region(String name, List<String> admins, List<String> members, List<String> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel) {
     	super();
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
         this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
@@ -663,13 +682,14 @@ public class Region implements Serializable{
         this.minMbrZ = minMbrZ;
         this.maxY = maxY;
         this.minY = minY;
-        this.name = name;
+        this.name = conformName(name);
         this.admins = admins;
         this.members = members;
         this.leaders = leaders;    
         this.flags = flags;
         this.value = value;
         this.tppoint = tppoint;
+        this.canDelete = candel;
         
         if (worldName != null){
             this.world = worldName;
@@ -706,7 +726,7 @@ public class Region implements Serializable{
      * @param welcome Set a welcome message.
      * @param value A value in server economy.
      */
-    public Region(String name, List<String> admins, List<String> members, List<String> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location tppoint) {
+    public Region(String name, List<String> admins, List<String> members, List<String> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location tppoint, boolean candel) {
     	super();
         this.prior = prior;
         this.world = worldName;
@@ -716,6 +736,7 @@ public class Region implements Serializable{
         int size = x.length;
         this.value = value;
         this.tppoint = tppoint;
+        this.canDelete = candel;
           	    
         if (size != z.length) {
             throw new Error(RPLang.get("region.xy"));
@@ -731,7 +752,7 @@ public class Region implements Serializable{
         }
         this.admins = admins;
         this.members = members;
-        this.name = name;
+        this.name = conformName(name);
         this.leaders = leaders;
         this.maxMbrX = x[0];
         this.minMbrX = x[0];
@@ -1033,7 +1054,14 @@ public class Region implements Serializable{
 	
 	//---------------------- Admin Flags --------------------------// 
 
-	public boolean canDeath(Player play) {
+    public int maxPlayers() {
+		if (!flagExists("max-players")){
+    		return -1;
+    	}
+		return new Integer(getFlagString("max-players"));
+	}
+    
+	public boolean canDeath() {
 		if (!flagExists("can-death")){
     		return true;
     	}
@@ -1258,6 +1286,24 @@ public class Region implements Serializable{
     	}
 		if (b.getType().toString().contains("LOG") || b.getType().toString().contains("LEAVES")){
 			return getFlagBool("treefarm");
+		}
+		return false;
+	}
+	
+	public boolean canCrops(Block b) {
+		if (!flagExists("cropsfarm")){
+    		return false;
+    	}
+		if (b.getType().equals(Material.CROPS)
+				|| b.getType().equals(Material.CARROT)
+				|| b.getType().equals(Material.POTATO)
+				|| b.getType().equals(Material.CARROT)
+				 || b.getType().equals(Material.PUMPKIN_STEM)
+				 || b.getType().equals(Material.MELON_STEM)
+				 || b.getType().name().contains("CHORUS_")
+				 || b.getType().name().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("SUGAR_CANE")){
+			return getFlagBool("cropsfarm");
 		}
 		return false;
 	}
@@ -1571,6 +1617,13 @@ public class Region implements Serializable{
     	}
 		return getFlagBool("allow-home") || checkAllowedPlayer(p);
 	}
+    
+    public boolean canGrow() {
+    	if (!RPConfig.isFlagEnabled("can-grow")){
+    		return RPConfig.getBool("flags.can-grow");
+    	}
+		return getFlagBool("can-grow");
+	}
 	//--------------------------------------------------------------//
 	
 	public long getValue() {	
@@ -1660,5 +1713,4 @@ public class Region implements Serializable{
 		}
 		return "["+leaderList.toString().substring(2)+"]";
 	}
-
 }

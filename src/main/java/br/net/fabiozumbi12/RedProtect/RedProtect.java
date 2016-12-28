@@ -54,15 +54,16 @@ public class RedProtect extends JavaPlugin {
     public static Server serv;    
     public static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
     public static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
-    public static String pathMain = "plugins" + File.separator + "RedProtect" + File.separator;
-    public static String pathLogs = "plugins" + File.separator + "RedProtect" + File.separator + "logs" + File.separator;
-    public static String pathData = String.valueOf(RedProtect.pathMain) + File.separator + "data" + File.separator;
-    public static String pathConfig = String.valueOf(RedProtect.pathMain) + File.separator + "config.yml";
-    public static String pathglobalFlags = String.valueOf(RedProtect.pathMain) + File.separator + "globalflags.yml"; 
-    public static String pathGui = String.valueOf(RedProtect.pathMain) + File.separator + "guiconfig.yml"; 
-    public static String protections = String.valueOf(RedProtect.pathMain) + File.separator + "protections.yml"; 
-    public static String pathBlockValues = String.valueOf(RedProtect.pathMain) + File.separator + "economy.yml";
-    public static String PathSigns = String.valueOf(RedProtect.pathMain) + File.separator + "signs.yml";
+    public static String pathMain = "plugins" + File.separator + "RedProtect";
+    public static String pathLogs = pathMain + File.separator + "logs" + File.separator;
+    public static String pathData = pathMain + File.separator + "data" + File.separator;
+    public static String pathConfig = pathMain + File.separator + "config.yml";
+    public static String pathglobalFlags = pathMain + File.separator + "globalflags.yml"; 
+    public static String pathGui = pathMain + File.separator + "guiconfig.yml"; 
+    public static String protections = pathMain + File.separator + "protections.yml"; 
+    public static String pathBlockValues = pathMain + File.separator + "economy.yml";
+    public static String pathSigns = pathMain + File.separator + "signs.yml";
+    public static String pathSchematic = pathMain + File.separator + "schematics";
     public static boolean BossBar;
     public static boolean MyChunk;
     public static boolean MyPet;
@@ -83,6 +84,8 @@ public class RedProtect extends JavaPlugin {
 	public static Economy econ;
 	public static int version;
 	public static boolean paper = false;
+	public static List<String> openGuis = new ArrayList<String>();
+	public static List<String> confiemStart = new ArrayList<String>();
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -93,7 +96,7 @@ public class RedProtect extends JavaPlugin {
     }
     
     public void onEnable() {
-        try {
+        try {        	       	
             plugin = this;
             BossBar = checkBM();
             MyChunk = checkMyChunk();
@@ -125,6 +128,7 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPAddProtection(), this);
             
             version = getBukkitVersion();
+            logger.debug("Version String: "+version);
             
             if (version >= 180){
             	serv.getPluginManager().registerEvents(new RPMine18(), this);

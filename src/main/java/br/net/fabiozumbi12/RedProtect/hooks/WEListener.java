@@ -1,21 +1,28 @@
 package br.net.fabiozumbi12.RedProtect.hooks;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
+import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.internal.LocalWorldAdapter;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.DataException;
 
 @SuppressWarnings("deprecation")
 public class WEListener {
@@ -28,6 +35,19 @@ public class WEListener {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void pasteWithWE(Player p, File file) {
+		World world = p.getWorld();	
+		Location loc = p.getLocation();
+		
+		EditSession es = new EditSession(new BukkitWorld(world), 999999999);		
+		try {
+			CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
+			cc.paste(es, new com.sk89q.worldedit.Vector(loc.getX(),loc.getY(),loc.getZ()), false);
+		} catch (DataException | IOException | MaxChangedBlocksException e) {
+			e.printStackTrace();
+		}		
 	}
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {

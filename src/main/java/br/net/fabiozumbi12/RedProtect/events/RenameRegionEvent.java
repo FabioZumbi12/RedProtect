@@ -42,6 +42,10 @@ public class RenameRegionEvent extends Event implements Cancellable {
 		return this.oldName;
 	}
 	
+	public String getNewID(){
+		return this.newName+"@"+this.region.getWorld();
+	}
+	
 	@Override
 	public boolean isCancelled() {
 		return this.isCancelled;

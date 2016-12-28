@@ -14,8 +14,8 @@ debug-messages: false
 # Log all commands used by players
 log-actions: true
 
-# Available: EN-US, PT-BR, ZH-CN
-language: EN-US
+# Available: en-EN, pt-BR, zh-CN, de-DE
+language: en-EN
 
 # Available: yml and mysql
 file-type: yml
@@ -109,6 +109,11 @@ region-settings:
     # Renew in anytime or only on renew date?
     renew-anytime: false
 
+  # First home settings
+  first-home:
+    # Player can remove the protectio of first home after this amount of claims. Use -1 to do not allow to delete.
+    can-delete-after-claims: 10  
+
 # World that player can claim regions.
 allowed-claim-worlds:
 - example_world
@@ -200,6 +205,8 @@ server-protection:
        enable: false
        need-world-to-teleport: none
        location: world, 0, 90, 0
+  # Deny structures like trees to bypass region borders?
+  deny-structure-bypass-regions: true
 
 # Default values for new regions.
 flags:
@@ -300,6 +307,11 @@ performance:
     # Fire the piston extract/retract every x ticks. Server default is 1 tick/event. Value in ticks.
     restrict-piston-event: 10
 
+# This is the schematics configs for RedProtect.
+schematics:
+  # Schematic file name to use with /rp start.
+  first-house-file: 'house1.schematic'
+
 hooks:
   essentials:
     # Import last visits from Essentials to RedProtect Regions.
@@ -328,4 +340,6 @@ hooks:
     fix-acrobatics-fireoff-leveling: true
     # Fix the ability berserk making players and mobs invisible around who activated the ability.
     fix-berserk-invisibility: true
-       
+  worldedit:
+    # Use WorldEdit to paste newbie home-schematics (/rp start)? *RedProtect already can paste schematics without WorldEdit, but dont support NBT tags like chest contents and sign messages.
+    use-for-schematics: true

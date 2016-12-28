@@ -67,6 +67,7 @@ permissions:
       redprotect.flag.allow-fly: true
       redprotect.flag.teleport: true
       redprotect.flag.clan: true
+      redprotect.flag.can-grow: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false
@@ -122,6 +123,8 @@ permissions:
       redprotect.admin.flag.keep-levels: true
       redprotect.admin.flag.cmd-onhealth: true
       redprotect.admin.flag.can-death: true
+      redprotect.admin.flag.max-players: true
+      redprotect.admin.flag.cropsfarm: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op
@@ -185,6 +188,7 @@ permissions:
       redprotect.edit-rent: true
       redprotect.renew-rent: true
       redprotect.rent.others: true
+      redprotect.start: true
   redprotect.bypass-chat:
     description: "Permissions to bypass chat checks."
     default: false

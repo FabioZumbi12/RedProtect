@@ -26,6 +26,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockFormEvent;
@@ -41,6 +42,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 import br.net.fabiozumbi12.RedProtect.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
@@ -280,7 +282,7 @@ public class RPBlockListener implements Listener{
     		}
         }
              
-        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canBreak(b.getType())){
+        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         	return;
@@ -305,7 +307,8 @@ public class RPBlockListener implements Listener{
 				|| b.getType().equals(Material.POTATO)
 				|| b.getType().equals(Material.CARROT)
 				 || b.getType().equals(Material.PUMPKIN_STEM)
-				 || b.getType().equals(Material.MELON_STEM)) && r != null && !r.canBuild(p)){
+				 || b.getType().equals(Material.MELON_STEM)
+				 || b.getType().name().contains("BEETROOT_BLOCK")) && r != null && !r.canBuild(p)){
 			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
 			e.setCancelled(true);
 			return;
@@ -496,6 +499,21 @@ public class RPBlockListener implements Listener{
          	 e.setCancelled(true);      
          	return;
    	    }
+    	
+    	//deny blocks spread in/out regions
+    	Region rfrom = RedProtect.rm.getTopRegion(bfrom.getLocation());
+    	if (rfrom != null && r != null && rfrom != r){
+			e.setCancelled(true);
+			return;
+		}
+		if (rfrom == null && r != null){
+			e.setCancelled(true);
+			return;
+		}
+		if (rfrom != null && r == null){
+			e.setCancelled(true);
+			return;
+		}
     }
 	    
 	@EventHandler
@@ -515,13 +533,54 @@ public class RPBlockListener implements Listener{
 		if (e.isCancelled()){
     		return;
     	}
-		Block b = e.getSource();
-		RedProtect.logger.debug("Is BlockSpreadEvent event, source is " + b.getType().name());
-		Region r = RedProtect.rm.getTopRegion(b.getLocation());
-		if ((b.getType().equals(Material.FIRE) || b.getType().name().contains("LAVA")) && r != null && !r.canFire()){
+				
+		Block bfrom = e.getSource();
+		Block bto = e.getBlock();
+		RedProtect.logger.debug("Is BlockSpreadEvent event, source is " + bfrom.getType().name());
+		Region rfrom = RedProtect.rm.getTopRegion(bfrom.getLocation());
+		Region rto = RedProtect.rm.getTopRegion(bto.getLocation());
+		if ((bfrom.getType().equals(Material.FIRE) || bfrom.getType().name().contains("LAVA")) && rfrom != null && !rfrom.canFire()){
 			e.setCancelled(true);
 			return;
 		}
+		
+		//deny blocks spread in/out regions
+		if (rfrom != null && rto != null && rfrom != rto){
+			e.setCancelled(true);
+			return;
+		}
+		if (rfrom == null && rto != null){
+			e.setCancelled(true);
+			return;
+		}
+		if (rfrom != null && rto == null){
+			e.setCancelled(true);
+			return;
+		}		
+	}
+	
+	@EventHandler
+	public void onStructureGrow(StructureGrowEvent e){
+		RedProtect.logger.debug("RPBlockListener - Is StructureGrowEvent event");
+		if (!RPConfig.getBool("deny-structure-bypass-regions")){
+			return;
+		}
+		Region rfrom = RedProtect.rm.getTopRegion(e.getLocation());
+		for (BlockState bstt:e.getBlocks()){
+			Region rto = RedProtect.rm.getTopRegion(bstt.getLocation());
+			Block bloc = bstt.getLocation().getBlock();
+			//deny blocks spread in/out regions
+			if (rfrom != null && rto != null && rfrom != rto){
+				bstt.setType(bloc.getType());
+			}
+			if (rfrom == null && rto != null){
+				bstt.setType(bloc.getType());
+			}
+			if (rfrom != null && rto == null){
+				bstt.setType(bloc.getType());
+			}
+			bstt.update();
+		}		
 	}
 	
 	@EventHandler
@@ -674,10 +733,21 @@ public class RPBlockListener implements Listener{
 		}		
 	}	
 	
+	@EventHandler
+    public void onBlockGrow(BlockGrowEvent event) {
+		RedProtect.logger.debug("RPBlockListener - Is BlockGrowEvent event: "+event.getNewState().getType().name());	
+		if (event.isCancelled()){
+			return;
+		}
+		Region r = RedProtect.rm.getTopRegion(event.getBlock().getLocation());
+		if (r != null && !r.canGrow()){
+			event.setCancelled(true);
+		}		
+	}
 
 	@EventHandler
     public void onBlockForm(BlockFormEvent event) { 
-		RedProtect.logger.debug("Is Blockform event!");		
+		RedProtect.logger.debug("RPBlockListener - Is Blockform event!");		
 		if (event.isCancelled()){
 			return;
 		}

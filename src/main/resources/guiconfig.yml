@@ -71,7 +71,7 @@ gui-flags:
     description1: '&aMagic Carpet in your region'
     description2: ''
   minecart:
-    slot: 18
+    slot: 17
     material: MINECART
     name: '&e=> Allow Place Minecarts'
     description: '&6Description: &aAllow no members to place,'
@@ -167,4 +167,11 @@ gui-flags:
     name: '&e=> Allow EnderChest Access'
     description: '&bDescription: &aAllow players to'
     description1: '&ause ender chests on this region.'
+    description2: ''
+  can-grow:
+    slot: 18
+    material: WHEAT
+    name: '&e=> Allow Farms to Grow'
+    description: '&bDescription: &aChoose if farms'
+    description1: '&ain this region will grow or not.'
     description2: ''
