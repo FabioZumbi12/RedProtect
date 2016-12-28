@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>jar</packaging>
   <name>RedProtect</name>
-  <version>7.0.4</version>
+  <version>7.1.0</version>
   <url>http://spigotmc.org/resources/redprotect.15841/</url>
   <dependencies>
         <!--
