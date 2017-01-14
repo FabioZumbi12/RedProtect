@@ -342,4 +342,10 @@ hooks:
     fix-berserk-invisibility: true
   worldedit:
     # Use WorldEdit to paste newbie home-schematics (/rp start)? *RedProtect already can paste schematics without WorldEdit, but dont support NBT tags like chest contents and sign messages.
-    use-for-schematics: true
+    use-for-schematics: true    
+  asyncworldedit:
+    # Use AsyncWorldEdit for regen regions? (need WorldEdit).
+    use-for-regen: false
+  factions:
+    # Allow players claim Factions chunks under Redprotect regions?
+    claim-over-rps: false    

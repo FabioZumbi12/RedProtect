@@ -19,10 +19,9 @@
 
 package org.jnbt;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.world.storage.InvalidFormatException;
-
 import java.util.Map;
+
+import org.bukkit.util.Vector;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -175,13 +174,13 @@ public final class NBTUtils {
      * @return child tag
      * @throws InvalidFormatException
      */
-    public static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws InvalidFormatException {
+    public static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws Exception {
         if (!items.containsKey(key)) {
-            throw new InvalidFormatException("Missing a \"" + key + "\" tag");
+            throw new Exception("Missing a \"" + key + "\" tag");
         }
         Tag tag = items.get(key);
         if (!expected.isInstance(tag)) {
-            throw new InvalidFormatException(key + " tag is not of tag type " + expected.getName());
+            throw new Exception(key + " tag is not of tag type " + expected.getName());
         }
         return expected.cast(tag);
     }

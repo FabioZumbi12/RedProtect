@@ -12,6 +12,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -38,6 +40,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -222,6 +225,7 @@ public class RPGlobalListener implements Listener{
         }
 		Player p = e.getPlayer();	
 		Block b = e.getClickedBlock();
+		ItemStack itemInHand = e.getItem();
 		Location l = null;
 		
 		if (b != null){
@@ -264,26 +268,50 @@ public class RPGlobalListener implements Listener{
     		}
         }
     	
-		if (r != null){
+		if (b == null || r != null){
 			return;
 		}
 		
-		if (b != null && b.getType().name().contains("RAIL") || b.getType().name().contains("WATER")){
-            if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")){
-        		e.setUseItemInHand(Event.Result.DENY);
+		if (b.getType().equals(Material.DRAGON_EGG) ||
+				b.getType().name().equalsIgnoreCase("BED") ||
+        		b.getType().name().contains("NOTE_BLOCK") ||
+        		b.getType().name().contains("CAKE")){
+			
+        	if (!bypassBuild(p, null, 0)){
+        		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         		e.setCancelled(true);
-    			return;		
+                return;
         	}
-        } else {
-        	if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world")){
-        		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())){
-        			return;
-        		} 
-        		e.setUseItemInHand(Event.Result.DENY);
-    			e.setCancelled(true);
+        }
+		
+		if (itemInHand != null){
+			if (itemInHand.getType().name().startsWith("BOAT") || itemInHand.getType().name().contains("MINECART")){				
+				if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")){
+	        		e.setUseItemInHand(Event.Result.DENY);
+	        		e.setCancelled(true);
+	    			return;	
+	        	}
+			}
+			if (itemInHand.getType().equals(Material.PAINTING)|| itemInHand.getType().equals(Material.ITEM_FRAME)){
+				if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.allow-blocks").contains(itemInHand.getType().name())){
+	    			return;
+	    		} 
+				if (!bypassBuild(p, null, 0)){
+	        		e.setUseItemInHand(Event.Result.DENY);
+	        		e.setCancelled(true);
+	    			return;		
+	        	}
+			}
+        } 
+		
+		if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world")){
+    		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())){
     			return;
-    		}
-        }	
+    		} 
+    		e.setUseItemInHand(Event.Result.DENY);
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 	@EventHandler
@@ -301,7 +329,7 @@ public class RPGlobalListener implements Listener{
 		}
         
         if (ent instanceof ItemFrame || ent instanceof Painting) {
-            if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".build")) {
+            if (!bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
                 return;
             }
@@ -312,15 +340,15 @@ public class RPGlobalListener implements Listener{
                 e.setCancelled(true);
                 return;
             }
-        } else {
-        	if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
-        		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-entities").contains(ent.getType().name())){
-        			return;
-        		} 
-                e.setCancelled(true);
-                return;
-            }
-        }      
+        } 
+        
+        if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
+    		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-entities").contains(ent.getType().name())){
+    			return;
+    		} 
+            e.setCancelled(true);
+            return;
+        }
 	}
 	
 	@EventHandler
@@ -457,7 +485,7 @@ public class RPGlobalListener implements Listener{
                     return;
                 }
             }
-        	if (e1 instanceof Hanging) {
+        	if (e1 instanceof Hanging || e1 instanceof EnderCrystal) {
             	if (!bypassBuild(p, null, 0)){
                     e.setCancelled(true);
                     return;
@@ -484,6 +512,12 @@ public class RPGlobalListener implements Listener{
                 }
             	if (e1 instanceof Monster) {
                 	if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".player-hurt-monsters") && !p.hasPermission("redprotect.bypass.world")){
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+            	if (e1 instanceof Hanging || e1 instanceof EnderCrystal) {
+                	if (!bypassBuild(p, null, 0)){
                         e.setCancelled(true);
                         return;
                     }
@@ -574,26 +608,33 @@ public class RPGlobalListener implements Listener{
         if (e == null) {
             return;
         }
-        if (e instanceof Monster && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-monsters")) {
-        	Location l = event.getLocation();
-            Region r = RedProtect.rm.getTopRegion(l);
-            if (r == null && 
-            		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+        
+        Location l = event.getLocation();
+        Region r = RedProtect.rm.getTopRegion(l);
+        if (r != null){
+        	return;
+        }
+        
+        if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-whiter")){        	
+            event.setCancelled(true);
+            return;
+        }        
+        if (e instanceof Monster && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-monsters")) {        	
+            if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
-                event.setCancelled(true);
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
+            	event.setCancelled(true);
+                return;
             }
         }
-        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-passives")) {
-        	Location l = event.getLocation();
-            Region r = RedProtect.rm.getTopRegion(l);
-            if (r == null && 
-            		(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-passives")) {        	
+            if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
-                event.setCancelled(true);
+                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
+            	event.setCancelled(true);
+                return;
             }
         }
     }

@@ -98,7 +98,7 @@ public class RPSchematics {
         } catch (Exception e) {
             // No offset data
         }
-         
+                
         Map<Integer, BlockState> blist = new HashMap<Integer, BlockState>();
         Location pos1 = loc;
         Location pos2 = loc;
@@ -192,7 +192,7 @@ public class RPSchematics {
         	for (Integer key:blist.keySet()){
         		Block b = blist.get(key).getBlock();
         		//paste schematic
-        		b.setTypeIdAndData(blocks[key], blockData[key], true);
+        		b.setTypeIdAndData(blocks[key], blockData[key], true);        		      		
         	}
         }
         
@@ -226,5 +226,5 @@ public class RPSchematics {
             throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
         }
         return expected.cast(tag);
-    }	
+    }	    
 }

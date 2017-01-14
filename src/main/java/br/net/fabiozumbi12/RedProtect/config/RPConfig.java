@@ -40,9 +40,52 @@ public class RPConfig{
 	private static RPYaml GuiItems = new RPYaml();
 	private static RPYaml Prots = new RPYaml();
 	private static RPYaml EconomyConfig = new RPYaml();
-	public static List<String> AdminFlags = Arrays.asList("cropsfarm","max-players","can-death", "cmd-onhealth" ,"keep-inventory", "keep-levels", "can-pickup", "can-drop","view-distance","forcepvp","forcefly", "gamemode", "player-damage", "can-hunger", "can-projectiles", "allow-place", "allow-break", "can-pet", "allow-cmds", "deny-cmds", "allow-create-portal", "portal-exit", "portal-enter", "allow-mod", "allow-enter-items", "deny-enter-items", "pvparena", "player-enter-command", "server-enter-command", "player-exit-command", "server-exit-command", "invincible", "effects", "treefarm", "minefarm", "pvp", "sign","teleport", "enter", "up-skills", "can-back", "for-sale");	
+	public static List<String> AdminFlags = Arrays.asList(
+			"spawn-wither",
+			"cropsfarm",
+			"max-players",
+			"can-death", 
+			"cmd-onhealth" ,
+			"keep-inventory", 
+			"keep-levels", 
+			"can-pickup", 
+			"can-drop",
+			"view-distance",
+			"forcepvp",
+			"forcefly", 
+			"gamemode", 
+			"player-damage", 
+			"can-hunger", 
+			"can-projectiles", 
+			"allow-place", 
+			"allow-break", 
+			"can-pet", 
+			"allow-cmds", 
+			"deny-cmds", 
+			"allow-create-portal", 
+			"portal-exit", 
+			"portal-enter", 
+			"allow-mod", 
+			"allow-enter-items", 
+			"deny-enter-items", 
+			"pvparena", 
+			"player-enter-command", 
+			"server-enter-command", 
+			"player-exit-command", 
+			"server-exit-command", 
+			"invincible", 
+			"effects", 
+			"treefarm", 
+			"minefarm", 
+			"pvp", 
+			"sign",
+			"teleport", 
+			"enter", 
+			"up-skills", 
+			"can-back", 
+			"for-sale");	
 			
-	public static void init(RedProtect plugin) {
+	public static void init() {
 
     	            File main = new File(RedProtect.pathMain);
     	            File data = new File(RedProtect.pathData);
@@ -65,7 +108,7 @@ public class RPConfig{
     	            }    	            
     	                	            
     	            if (!config.exists()) {
-    	            	plugin.saveResource("config.yml", false);//create config file    	            	
+    	            	RedProtect.plugin.saveResource("config.yml", false);//create config file    	            	
     	                RedProtect.logger.info("Created config file: " + RedProtect.pathConfig);
     	            } 
     	            
@@ -88,22 +131,22 @@ public class RPConfig{
     	            }
     	            
     	            if (!gui.exists()) {
-    	            	plugin.saveResource("guiconfig.yml", false);//create guiconfig file    	            	
+    	            	RedProtect.plugin.saveResource("guiconfig.yml", false);//create guiconfig file    	            	
     	                RedProtect.logger.info("Created guiconfig file: " + RedProtect.pathGui);
     	            }
     	            
     	            if (!bvalues.exists()) {
-    	            	plugin.saveResource("economy.yml", false);//create blockvalues file    	            	
+    	            	RedProtect.plugin.saveResource("economy.yml", false);//create blockvalues file    	            	
     	                RedProtect.logger.info("Created economy file: " + RedProtect.pathBlockValues);
     	            }
     	            
     	            if (!protections.exists()) {
-    	            	plugin.saveResource("protections.yml", false);//create protections file    	            	
+    	            	RedProtect.plugin.saveResource("protections.yml", false);//create protections file    	            	
     	                RedProtect.logger.info("Created protections file: " + RedProtect.protections);
     	            }
     	            
     	            if (!new File(RedProtect.pathSchematic+File.separator+"house1.schematic").exists()) { 
-    	            	plugin.saveResource("schematics"+File.separator+"house1.schematic", false);//save schematic file     	            		            	    	            	
+    	            	RedProtect.plugin.saveResource("schematics"+File.separator+"house1.schematic", false);//save schematic file     	            		            	    	            	
     	                RedProtect.logger.info("Saved schematic file: house1.schematic");
     	            }
     	            
@@ -119,7 +162,7 @@ public class RPConfig{
     	            	RedProtect.logger.severe("Old config file detected and copied to 'configBKP.yml'. Remember to check your old config file and set the new as you want!");
     	            	File bkpfile = new File(RedProtect.pathMain + File.separator + "configBKP.yml");
     	            	FileUtil.copy(config, bkpfile);
-    	            	plugin.saveResource("config.yml", true);  
+    	            	RedProtect.plugin.saveResource("config.yml", true);  
     	            	RedProtect.plugin.getConfig();
     	            } else {
     	            	try {
@@ -129,7 +172,7 @@ public class RPConfig{
     					}
     	            }
     	            
-    	            configs = inputLoader(plugin.getResource("config.yml"));  
+    	            configs = inputLoader(RedProtect.plugin.getResource("config.yml"));  
                     for (String key:configs.getKeys(true)){                        	
     	            	configs.set(key, RedProtect.plugin.getConfig().get(key));    	            	   	            	
     	            }                        
@@ -271,8 +314,8 @@ public class RPConfig{
         				}
         				configUp++;
         			}
-        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.4D){
-        				RedProtect.plugin.getConfig().set("config-version", 7.4D);        				
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.5D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.5D);        				
         				
         				if (flags.contains("iceform-entity")){
         					flags.add("iceform-world"); 
@@ -281,8 +324,8 @@ public class RPConfig{
         				if (!flags.contains("can-grow")){
         					flags.add("can-grow");            				
         				}
-        				if (!plugin.getConfig().contains("flags.can-grow")){
-        					plugin.getConfig().set("flags.can-grow", true);
+        				if (!RedProtect.plugin.getConfig().contains("flags.can-grow")){
+        					RedProtect.plugin.getConfig().set("flags.can-grow", true);
         				}
         				configUp++;
         			}
@@ -331,6 +374,7 @@ public class RPConfig{
                     	gflags.set(w.getName()+".player-velocity.fly-speed", gflags.getDouble(w.getName()+".player-velocity.fly-speed", -1));
                     	gflags.set(w.getName()+".on-enter-cmds", gflags.getStringList(w.getName()+".on-enter-cmds"));
                     	gflags.set(w.getName()+".on-exit-cmds", gflags.getStringList(w.getName()+".on-exit-cmds"));
+                    	gflags.set(w.getName()+".spawn-wither", gflags.getBoolean(w.getName()+".spawn-wither", true));
                     	if (!gflags.contains(w.getName()+".command-ranges")){
                     		gflags.set(w.getName()+".command-ranges.home.min-range", gflags.getDouble(w.getName()+".command-ranges.home.min-range", 0));
                         	gflags.set(w.getName()+".command-ranges.home.max-range", gflags.getDouble(w.getName()+".command-ranges.home.max-range", w.getMaxHeight()));
@@ -351,7 +395,7 @@ public class RPConfig{
 						e.printStackTrace();
 					}
                     
-                    RPYaml GuiBase = inputLoader(plugin.getResource("guiconfig.yml")); 
+                    RPYaml GuiBase = inputLoader(RedProtect.plugin.getResource("guiconfig.yml")); 
                     
                     GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));   
                     GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue")); 
@@ -379,7 +423,7 @@ public class RPConfig{
 						e.printStackTrace();
 					}
                     
-                    RPYaml tempEco = inputLoader(plugin.getResource("economy.yml"));
+                    RPYaml tempEco = inputLoader(RedProtect.plugin.getResource("economy.yml"));
                     for (String key:tempEco.getKeys(false)){
                     	if (EconomyConfig.get(key) == null){
                     		EconomyConfig.set(key, tempEco.get(key));

@@ -222,7 +222,7 @@ public class RegionManager{
     	while (it.hasNext()){
     		Region r = it.next();
     		if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
-				if (RedProtect.AWE){
+				if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
         			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
         		} else {
         			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);

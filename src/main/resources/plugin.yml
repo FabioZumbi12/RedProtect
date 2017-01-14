@@ -3,7 +3,7 @@ main: ${project.groupId}.${project.artifactId}
 version: ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
-softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap, SimpleClans]
+softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap, SimpleClans, Factions]
 url: ${project.url}
 commands:
   RedProtect:
@@ -125,6 +125,7 @@ permissions:
       redprotect.admin.flag.can-death: true
       redprotect.admin.flag.max-players: true
       redprotect.admin.flag.cropsfarm: true
+      redprotect.admin.flag.spawn-wither: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op

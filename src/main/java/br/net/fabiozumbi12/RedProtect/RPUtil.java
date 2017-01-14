@@ -43,6 +43,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
+
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.TaskChain;
@@ -63,6 +64,17 @@ public class RPUtil {
 	public static boolean stopRegen = false;
 	private static HashMap<String, Integer> borderIds = new HashMap<String, Integer>();
     
+	public static List<Location> get4Points(Location min, Location max, int y){
+		List <Location> locs = new ArrayList<Location>();
+		min.setY(y);
+		max.setY(y);
+		locs.add(min);		
+		locs.add(new Location(min.getWorld(),min.getX(),y,min.getZ()+(max.getZ()-min.getZ())));
+		locs.add(max);
+		locs.add(new Location(min.getWorld(),min.getX()+(max.getX()-min.getX()),y,min.getZ()));
+		return locs;		
+	}
+	
     public static boolean denyPotion(ItemStack result){
     	List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
     	if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))){
@@ -341,7 +353,7 @@ public class RPUtil {
             	if (days > RPConfig.getInt("purge.remove-oldest")){                		
             		if (RedProtect.WE && RPConfig.getBool("purge.regen.enable")){
             			if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
-            				if (RedProtect.AWE){
+            				if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
                     			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                     		} else {
                     			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);

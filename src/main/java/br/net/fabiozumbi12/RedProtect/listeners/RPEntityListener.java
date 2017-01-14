@@ -14,11 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -70,6 +72,15 @@ public class RPEntityListener implements Listener{
            
         RedProtect.logger.debug("Spawn monster " + event.getEntityType().name());
         
+        if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)){
+        	Location l = event.getLocation();
+            Region r = RedProtect.rm.getTopRegion(l);
+            if (r != null && !r.canSpawnWhiter()){
+            	event.isCancelled();
+            	return;
+            }
+        }
+        	
         if (e instanceof Monster) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);
@@ -78,6 +89,7 @@ public class RPEntityListener implements Listener{
                 event.setCancelled(true);
             }
         }
+        
         if (e instanceof LivingEntity && (!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.version >= 180 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
         	Location l = event.getLocation();
             Region r = RedProtect.rm.getTopRegion(l);

@@ -1053,7 +1053,14 @@ public class Region implements Serializable{
     }	
 	
 	//---------------------- Admin Flags --------------------------// 
-
+    
+	public boolean canSpawnWhiter() {
+		if (!flagExists("spawn-wither")){
+    		return true;
+    	}
+		return getFlagBool("spawn-wither");
+	}
+	
     public int maxPlayers() {
 		if (!flagExists("max-players")){
     		return -1;

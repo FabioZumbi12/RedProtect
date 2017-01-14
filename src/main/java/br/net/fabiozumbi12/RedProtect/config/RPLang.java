@@ -43,9 +43,7 @@ public class RPLang {
 		return values;
 	}
 	
-	public static void init(RedProtect plugin) {
-		
-		RPLang.plugin = plugin;
+	public static void init() {		
 		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang_" + RPConfig.getString("language") + ".properties";
 		resLang = "lang_" + RPConfig.getString("language") + ".properties";
 		

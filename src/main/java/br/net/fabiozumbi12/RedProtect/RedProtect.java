@@ -24,6 +24,7 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
 import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
+import br.net.fabiozumbi12.RedProtect.hooks.RPFactions;
 import br.net.fabiozumbi12.RedProtect.hooks.RPPlaceHoldersAPI;
 import br.net.fabiozumbi12.RedProtect.hooks.SkillAPIListener;
 import br.net.fabiozumbi12.RedProtect.listeners.RPAddProtection;
@@ -42,6 +43,7 @@ public class RedProtect extends JavaPlugin {
     public static RedProtect plugin;
 	private int taskid;
 	private boolean PlaceHolderAPI;
+	private boolean Fac;
 	public static boolean Update;
 	public static String UptVersion;
 	public static String UptLink;    
@@ -112,11 +114,12 @@ public class RedProtect extends JavaPlugin {
             WE = checkWe();
             AWE = checkAWe();
             SC = checkSP();
+            Fac = checkFac();
             PlaceHolderAPI = checkPHAPI();
             JarFile = this.getFile();
             initVars();
-            RPConfig.init(this);
-            RPLang.init(this);
+            RPConfig.init();
+            RPLang.init();
             rm.loadAll();
             OnlineMode = serv.getOnlineMode();
             
@@ -197,6 +200,10 @@ public class RedProtect extends JavaPlugin {
             if (PlaceHolderAPI){
             	new RPPlaceHoldersAPI(this).hook();
             	logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+            }
+            if (Fac){
+            	serv.getPluginManager().registerEvents(new RPFactions(), this);
+            	RedProtect.logger.info("Factions found. Hooked.");
             }
             
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
@@ -410,6 +417,14 @@ public class RedProtect extends JavaPlugin {
 	
 	private boolean checkPHAPI() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+		return false;
+	}
+	
+	private boolean checkFac() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
     	if (p != null && p.isEnabled()){
     		return true;
     	}

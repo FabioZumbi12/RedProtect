@@ -284,7 +284,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             		return true;
             	}      
         		if (args[0].equalsIgnoreCase("reload-config")) {
-        			RPConfig.init(RedProtect.plugin);
+        			RPConfig.init();
         			RedProtect.logger.sucess("RedProtect Plus configs reloaded!");
         			return true;
         		}
@@ -397,7 +397,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         				return true;
         			}
         			
-        			if (RedProtect.AWE){
+        			if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
         				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender, false);        				
         			} else {
         				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
@@ -688,7 +688,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			if (RedProtect.AWE){
+    			if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
     				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender, false);        				
     			} else {
     				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
@@ -972,7 +972,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	}
         	
         	if (args[0].equalsIgnoreCase("reload-config") && player.hasPermission("redprotect.admin.reload")) {
-    			RPConfig.init(RedProtect.plugin);
+    			RPConfig.init();
     			RPLang.sendMessage(player, "cmdmanager.reloaded");
     			return true;
     		}
@@ -1280,7 +1280,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			if (RedProtect.AWE){
+    			if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
     				AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0,sender, false);        				
     			} else {
     				WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);

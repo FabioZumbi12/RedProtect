@@ -126,7 +126,7 @@ gui-flags:
     description: '&6Description: &aAllow liquids to'
     description1: '&aremove blocks on flow.'
     description2: ''
-  iceform-entity:
+  iceform-world:
     slot: 22
     material: ICE
     name: '&e=> Allow Ice Form by World'

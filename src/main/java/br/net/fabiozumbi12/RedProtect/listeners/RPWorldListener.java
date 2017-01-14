@@ -26,7 +26,7 @@ public class RPWorldListener implements Listener {
         World w = e.getWorld();
         try {
             RedProtect.rm.load(w);
-            RPConfig.init(RedProtect.plugin);    
+            RPConfig.init();    
             RedProtect.logger.warning("World loaded: " + w.getName());            
         }
         catch (Exception ex) {

@@ -75,11 +75,9 @@ public class RPMine18 implements Listener{
         
         if (ent instanceof ArmorStand) {
             if (r != null && !r.canBuild(p)) {
-                if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
-                	RPLang.sendMessage(p, "playerlistener.region.cantedit");
-                    e.setCancelled(true);
-                    return;
-                }                
+            	RPLang.sendMessage(p, "playerlistener.region.cantedit");
+                e.setCancelled(true);
+                return;               
             }
         }
     } 

@@ -10,9 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Explosive;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
@@ -25,11 +25,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -118,28 +118,57 @@ public class RPBlockListener implements Listener{
         	}
         }
         
-        if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN)) && (line1.equalsIgnoreCase("private") || line1.equalsIgnoreCase("[private]") || line1.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
-        	Region r = RedProtect.rm.getTopRegion(b.getLocation());        
+        String priv = RPLang.get("blocklistener.container.signline");
+        String more = RPLang.get("blocklistener.container.signline.more");
+        if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN))) { 
         	Boolean out = RPConfig.getBool("private.allow-outside");
-        	if (out || r != null){
-        		if (cont.isContainer(b)){
-            		int length = p.getName().length();
-                    if (length > 16) {
-                      length = 16;
-                    }
-                	e.setLine(1, p.getName().substring(0, length));
-                	RPLang.sendMessage(p, "blocklistener.container.protected");
-                    return;
+        	if (line1.equalsIgnoreCase("more") || 
+            		line1.equalsIgnoreCase("[more]") || 
+            		line1.equalsIgnoreCase(more) || 
+            		line1.equalsIgnoreCase("["+more+"]")){
+        		if (out || signr != null){
+            		if (cont.isContainer(b, true)){
+                		int length = p.getName().length();
+                        if (length > 16) {
+                          length = 16;
+                        }
+                    	RPLang.sendMessage(p, "blocklistener.container.protected.added");
+                        return;
+                	} else {
+                		RPLang.sendMessage(p, "blocklistener.container.protected.notadded");
+                		b.breakNaturally();
+                		return;
+                	}
             	} else {
-            		RPLang.sendMessage(p, "blocklistener.container.notprotected");
+            		RPLang.sendMessage(p, "blocklistener.container.notregion");
             		b.breakNaturally();
             		return;
-            	}
-        	} else {
-        		RPLang.sendMessage(p, "blocklistener.container.notregion");
-        		b.breakNaturally();
-        		return;
-        	}        	
+            	} 
+        	}
+        	if (line1.equalsIgnoreCase("private") || 
+        		line1.equalsIgnoreCase("[private]") || 
+        		line1.equalsIgnoreCase(priv) || 
+        		line1.equalsIgnoreCase("["+priv+"]")){        		
+            	if (out || signr != null){
+            		if (cont.isContainer(b, false)){
+                		int length = p.getName().length();
+                        if (length > 16) {
+                          length = 16;
+                        }
+                    	e.setLine(1, p.getName().substring(0, length));
+                    	RPLang.sendMessage(p, "blocklistener.container.protected");
+                        return;
+                	} else {
+                		RPLang.sendMessage(p, "blocklistener.container.notprotected");
+                		b.breakNaturally();
+                		return;
+                	}
+            	} else {
+            		RPLang.sendMessage(p, "blocklistener.container.notregion");
+            		b.breakNaturally();
+            		return;
+            	}  
+        	}        	      	
         }
         
         if (line1.equalsIgnoreCase("[rp]")){
@@ -237,7 +266,7 @@ public class RPBlockListener implements Listener{
                 			RPLang.sendMessage(p, "blocklistener.container.chestinside");
                 			e.setCancelled(true);
                 			return;
-                		} 
+                		}
                 	}
                 }
             } catch (Throwable t) {
@@ -279,8 +308,21 @@ public class RPBlockListener implements Listener{
     			RPLang.sendMessage(p, "blocklistener.container.breakinside");
     			e.setCancelled(true);
     			return;
-    		}
+    		}  
         }
+        
+        //remove more sign
+        if (b.getType().equals(Material.WALL_SIGN)){
+			Material btype = cont.getBlockRelative(b).getType();
+			BlockFace[] aside = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+			for (BlockFace bf:aside){
+				Block brel = b.getRelative(bf);
+				if (brel != null && brel.getType().equals(Material.WALL_SIGN) && cont.validateMoreSign(brel) && cont.getBlockRelative(brel).getType().equals(btype)){
+					brel.breakNaturally();
+					break;
+				}
+			}
+		}
              
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
@@ -343,15 +385,15 @@ public class RPBlockListener implements Listener{
         		continue;
         	}
         	RedProtect.logger.debug("Blocks: "+b.getType().name());
-        	Location l = b.getLocation();        	
-        	if (!cont.canWorldBreak(b)){
+        	Location l = b.getLocation();     
+        	Region r = RedProtect.rm.getTopRegion(l);
+        	if (r != null && !r.canFire() || !cont.canWorldBreak(b)){
         		RedProtect.logger.debug("canWorldBreak Called!");
         		//e.setCancelled(true);
         		toRemove.add(b);
         		continue;
         	}    
         	
-        	Region r = RedProtect.rm.getTopRegion(l);
         	if (r == null){
         		continue;
         	}
@@ -360,11 +402,6 @@ public class RPBlockListener implements Listener{
         		toRemove.add(b);
     			continue;
         	} 
-        	
-        	if (e.getEntity() instanceof Explosive && !r.canFire()){
-        		toRemove.add(b);
-    			continue;
-        	}  
         	
         	if (e.getEntity() instanceof LivingEntity && !r.canMobLoot()){
         		toRemove.add(b);
