@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.hooks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.dynmap.DynmapAPI;
@@ -12,6 +13,7 @@ import org.dynmap.markers.MarkerSet;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public class Dynmap {
 
@@ -24,23 +26,31 @@ public class Dynmap {
 		Dyn = dyn;
 		MApi = Dyn.getMarkerAPI();
 		MSet = MApi.getMarkerSet(RPConfig.getString("hooks.dynmap.marks-groupname"));
-		if (MSet == null){
+		if (MSet == null){			
 			MSet = MApi.createMarkerSet("RedProtect", RPConfig.getString("hooks.dynmap.marks-groupname"), null, false);
 		}
+		MSet.setHideByDefault(RPConfig.getBool("hooks.dynmap.hide-by-default"));
 		MSet.setLayerPriority(RPConfig.getInt("hooks.dynmap.layer-priority"));
 		MSet.setLabelShow(RPConfig.getBool("hooks.dynmap.show-label"));
 		MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")));
 	    int minzoom = RPConfig.getInt("hooks.dynmap.min-zoom");
 	    if (minzoom > 0) {
+	    	MSet.setMinZoom(minzoom);
+	    } else {
 	    	MSet.setMinZoom(0);
 	    }
-	    MSet.setHideByDefault(false);		
 	    
 	    //start set markers
 		for (World w:Bukkit.getWorlds()){
 			for (Region r:RedProtect.rm.getRegionsByWorld(w)){
     			addMark(r);
     		}
+		}
+	}
+	
+	public void removeAll(World w){
+		for (Region r:RedProtect.rm.getRegionsByWorld(w)){
+			removeMark(r);
 		}
 	}
 	
@@ -72,14 +82,35 @@ public class Dynmap {
 		} else {
 			am.setCornerLocations(x, z);
 		}		
-		am.setRangeY(r.getMinLocation().getY(), r.getMaxLocation().getY());
+		
+		String rName = RPLang.get("region.name")+" <span style=\"font-weight:bold;\">"+r.getName()+"</span><br>";
+		String area = RPLang.get("region.area")+" <span style=\"font-weight:bold;\">"+r.getArea()+"</span>"; 		
+		am.setDescription(ChatColor.stripColor(rName+area));
+		
+		if (RPConfig.getBool("hooks.dynmap.show-leaders-admins")){			
+			String leader = RPLang.get("region.leaders")+" <span style=\"font-weight:bold;\">"+r.getLeadersDesc()+"</span><br>"; 
+			String admin = RPLang.get("region.admins")+" <span style=\"font-weight:bold;\">"+r.getAdminDesc()+"</span><br>"; 						
+			am.setDescription(ChatColor.stripColor(rName+leader+admin+area));
+		}		
+		
+		int center = -1;
+		if (RPConfig.getBool("hooks.dynmap.cuboid-region.enabled")){
+			am.setRangeY(r.getMinLocation().getY(), r.getMaxLocation().getY());
+		} else {
+			center = RPConfig.getInt("hooks.dynmap.cuboid-region.if-disable-set-center");
+			am.setRangeY(center, center);			
+		}
+		
 		
 		if (RPConfig.getBool("hooks.dynmap.show-icon")){
 			Marker m = MSet.findMarker(r.getID());
+			if (center == -1){
+				center = r.getCenterY();
+			}
 			if (m == null){		    				
-				m = MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), r.getCenterY(), r.getCenterZ(), MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")), true);
+				m = MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")), true);
 			} else {
-				m.setLocation(r.getWorld(), r.getCenterX(), r.getCenterY(), r.getCenterZ());
+				m.setLocation(r.getWorld(), r.getCenterX(), center, r.getCenterZ());
 			}
 		}
 	}

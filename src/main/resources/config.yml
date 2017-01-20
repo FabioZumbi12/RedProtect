@@ -207,6 +207,21 @@ server-protection:
        location: world, 0, 90, 0
   # Deny structures like trees to bypass region borders?
   deny-structure-bypass-regions: true
+  
+  # Enable kill aura or freekill checker?
+  check-killaura-freekill:
+    enable: false
+    # This will count every block the player wall without fail to aim on player
+    check-rate: 30
+    # What multiples of check-rate is considered kh or fk?
+    rate-multiples: 5
+    # Time to reset checks between attacker hits.
+    time-between-trys: 3
+    # Debug everu try? Used to see the try count on every block the player walk. Will be sequential if the player is using kill aura and will go to more than 60, 80 more than 100 if is free kill.
+    debug-trys: false
+    
+  # Test hack client (beta)
+  check-player-client: true
 
 # Default values for new regions.
 flags:
@@ -319,6 +334,8 @@ hooks:
   dynmap:
     # Enable hook to show all regions on dynmap plugin?
     enable: true
+    # Hide the Redprotect tab group by default?
+    hide-by-default: true
     # Group to show on hide/show tab map.
     marks-groupname: RedProtect
     # If you use another region mark plugin.
@@ -329,6 +346,12 @@ hooks:
     show-icon: true
     # Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png
     marker-icon: shield
+    # Show leaders and admin?
+    show-leaders-admins: true
+    # Cuboid region config.
+    cuboid-region:
+       enabled: true
+       if-disable-set-center: 60
     min-zoom: 0
   magiccarpet:
     # Fix pistons allow get mc blocks.

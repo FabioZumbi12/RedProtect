@@ -48,8 +48,11 @@ public class RegionManager{
     }
     
     public void unloadAll() {
-    	for (WorldRegionManager mgr:this.regionManagers.values()){
-    		mgr.clearRegions();
+    	for (World w:this.regionManagers.keySet()){
+    		regionManagers.get(w).clearRegions();
+    		if (RedProtect.Dyn){
+    			RedProtect.dynmap.removeAll(w);
+    		}    		
     	}
     	this.regionManagers.clear();
     }

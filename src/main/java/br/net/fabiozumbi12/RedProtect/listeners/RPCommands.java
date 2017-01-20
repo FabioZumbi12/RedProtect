@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
@@ -421,7 +423,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         				return true;
         			}
         			
-        			if (RedProtect.AWE){
+        			if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
         				if (AWEListener.undo(r.getID())){
         					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
         				} else {
@@ -608,6 +610,79 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         if (args.length == 1) {
         	
+        	//rp list-areas
+        	if (checkCmd(args[0], "list-areas") && player.hasPermission("redprotect.list-areas")) {
+        		sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
+            	RPLang.sendMessage(sender,RPLang.get("cmdmanager.region.created.area-list"));
+            	sender.sendMessage("-----");    
+        		for (World w:Bukkit.getWorlds()){
+        			Set<Region> wregions = new HashSet<Region>();
+        			for (Region r:RedProtect.rm.getRegionsByWorld(w)){
+        				SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
+        				Date now = null;
+        				try {
+        					now = dateformat.parse(RPUtil.DateNow());
+        				} catch (ParseException e1) {
+        					RedProtect.logger.severe("The 'date-format' don't match with date 'now'!!");
+        				}
+        				Date regiondate = null;
+                    	try {
+            				regiondate = dateformat.parse(r.getDate());
+            			} catch (ParseException e) {
+            				RedProtect.logger.severe("The 'date-format' don't match with region date!!");
+            				e.printStackTrace();
+            			}
+        				Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                    	for (String play:RPConfig.getStringList("purge.ignore-regions-from-players")){
+                    		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
+                    			continue;
+                    		}
+            			}
+                    	if (!r.isLeader(RPConfig.getString("region-settings.default-leader")) && days > RPConfig.getInt("purge.remove-oldest") && r.getArea() >= RPConfig.getInt("purge.regen.max-area-regen")){  
+                    		wregions.add(r);
+                    	}
+        			}
+        			if (wregions.size() == 0){
+    					continue;
+    				}
+        			Iterator<Region> it = wregions.iterator();
+        			String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));   
+        			if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.ph.hasRegionPermAdmin(sender, "teleport", null)){        				
+        				boolean first = true;            			         			         			
+            			FancyMessage fancy = new FancyMessage();
+            			while (it.hasNext()){
+            				Region r = it.next();
+            				String rname = RPLang.get("general.color")+", "+ChatColor.GRAY+r.getName()+"("+r.getArea()+")";
+            				if (first){
+            					rname = rname.substring(3);
+            					first = false;
+            				}
+            				if (!it.hasNext()){
+            					rname = rname+RPLang.get("general.color")+".";
+            				}
+            				fancy.text(rname).color(ChatColor.DARK_GRAY)
+                    				.tooltip(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
+                    				.command("/rp "+getCmd("teleport")+" "+r.getName()+" "+r.getWorld())
+                    				.then(" ");
+            			} 
+            			sender.sendMessage(RPLang.get("general.color")+RPLang.get("region.world").replace(":", "")+" "+colorChar+w.getName()+"["+wregions.size()+"]"+ChatColor.RESET+": ");
+            			fancy.send(sender);
+            			sender.sendMessage("-----");
+        			} else {
+        				String worldregions = "";
+            			while (it.hasNext()){
+            				Region r = it.next();
+            				worldregions = worldregions+RPLang.get("general.color")+", "+ChatColor.GRAY+r.getName()+"("+r.getArea()+")";
+            			}
+            			sender.sendMessage(RPLang.get("general.color")+RPLang.get("region.world").replace(":", "")+" "+colorChar+w.getName()+"["+wregions.size()+"]"+ChatColor.RESET+": "); 
+            			sender.sendMessage(worldregions.substring(3)+RPLang.get("general.color")+".");
+            			sender.sendMessage("-----");  
+        			}
+        			
+        		}
+        		return true;
+        	}
+        	
         	//rp start
         	if (checkCmd(args[0], "start") && player.hasPermission("redprotect.start")) {
         		if (!RPConfig.isAllowedWorld(player)){
@@ -707,7 +782,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			if (RedProtect.AWE){
+    			if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
     				if (AWEListener.undo(r.getID())){
     					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
     				} else {
@@ -1304,7 +1379,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			if (RedProtect.AWE){
+    			if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
     				if (AWEListener.undo(r.getID())){
     					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
     				} else {

@@ -31,7 +31,6 @@ public class RPLang {
 	//static List<String> langString = new ArrayList<String>();
     static String pathLang; 
     static String resLang; 
-    static RedProtect plugin;
 	
 	public static SortedSet<String> helpStrings(){
 		SortedSet<String> values = new TreeSet<String>();
@@ -43,19 +42,20 @@ public class RPLang {
 		return values;
 	}
 	
-	public static void init() {		
-		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang_" + RPConfig.getString("language") + ".properties";
+	public static void init() {	
 		resLang = "lang_" + RPConfig.getString("language") + ".properties";
+		pathLang = String.valueOf(RedProtect.pathMain) + File.separator + resLang;		
 		
 		File lang = new File(pathLang);			
-		if (!lang.exists()) {
-			if (plugin.getResource(resLang) == null){		
+		if (!lang.exists()) {			
+			if (RedProtect.plugin.getResource(resLang) == null){
 				RPConfig.setConfig("language", "en-EN");
 				RPConfig.save();
 				resLang = "lang_en-EN.properties";	
 				pathLang = String.valueOf(RedProtect.pathMain) + File.separator + "lang_en-EN.properties";
-			}
-			plugin.saveResource(resLang, false);//create lang file
+			}			
+			
+			RedProtect.plugin.saveResource(resLang, false);//create lang file
             RedProtect.logger.info("Created language file: " + pathLang);
         }
 		

@@ -1705,18 +1705,19 @@ public class Region implements Serializable{
 		}
 		StringBuilder adminsList = new StringBuilder();
 		for (String admin:this.admins){
-			adminsList.append(", "+admin);
+			adminsList.append(", "+RPUtil.UUIDtoPlayer(admin));
 		}
 		return "["+adminsList.toString().substring(2)+"]";
 	}
 	
 	public String getLeadersDesc() {
 		if (this.leaders.size() == 0){
-			return "[none]";
+			addLeader(RPConfig.getString("region-settings.default-leader"));
+			return this.leaders.get(0);
 		}
 		StringBuilder leaderList = new StringBuilder();
 		for (String leader:this.leaders){
-			leaderList.append(", "+leader);
+			leaderList.append(", "+RPUtil.UUIDtoPlayer(leader));
 		}
 		return "["+leaderList.toString().substring(2)+"]";
 	}

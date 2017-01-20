@@ -43,7 +43,7 @@ public class RedProtect extends JavaPlugin {
     public static RedProtect plugin;
 	private int taskid;
 	private boolean PlaceHolderAPI;
-	private boolean Fac;
+	private boolean Fac;	
 	public static boolean Update;
 	public static String UptVersion;
 	public static String UptLink;    
@@ -205,7 +205,6 @@ public class RedProtect extends JavaPlugin {
             	serv.getPluginManager().registerEvents(new RPFactions(), this);
             	RedProtect.logger.info("Factions found. Hooked.");
             }
-            
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
             	RPUtil.ReadAllDB(rm.getAllRegions());
         	} else {

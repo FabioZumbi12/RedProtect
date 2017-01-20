@@ -224,7 +224,7 @@ public class RPEntityListener implements Listener{
                 return;
             }
             
-            RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event."); 
+            RedProtect.logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event. Damager: "+e2.getType().name()); 
             
             
             if (e2 instanceof Projectile) {
@@ -237,6 +237,9 @@ public class RPEntityListener implements Listener{
                     return;
                 }
             }            
+            
+            RedProtect.logger.debug("EntityDamageByEntityEvent event. Damager Player: "+e2.getType().name()); 
+            RedProtect.logger.debug("Cause: "+de.getCause().name()); 
             
             Region r1 = RedProtect.rm.getTopRegion(e1.getLocation());
             Region r2 = RedProtect.rm.getTopRegion(e2.getLocation());

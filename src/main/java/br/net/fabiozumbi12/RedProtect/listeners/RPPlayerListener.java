@@ -6,7 +6,6 @@ import java.util.List;
 
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -65,6 +64,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BlockIterator;
 import org.inventivetalent.bossbar.BossBarAPI;
 
 import br.net.fabiozumbi12.RedProtect.RPContainer;
@@ -93,6 +93,9 @@ public class RPPlayerListener implements Listener{
 	private HashMap<String, Boolean> PvPState = new HashMap<String, Boolean>();
 	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
 	private HashMap<String, HashMap<Integer, Location>> deathLocs = new HashMap<String, HashMap<Integer, Location>>();
+	private HashMap<String,Integer> dmgp = new HashMap<String,Integer>();
+	private HashMap<String,Integer> trys = new HashMap<String,Integer>();
+	private HashMap<String,Integer> matchRate = new HashMap<String,Integer>();
     
     public RPPlayerListener() {
     	RedProtect.logger.debug("Loaded RPPlayerListener...");
@@ -541,6 +544,21 @@ public class RPPlayerListener implements Listener{
         }
     	    		
     }
+        
+    private void startCheckRate(final String pname){
+    	int task = Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
+			@Override
+			public void run() {
+				trys.remove(pname);
+				matchRate.remove(pname);
+				dmgp.remove(pname);
+			}        		
+    	}, RPConfig.getInt("server-protection.check-killaura-freekill.time-between-trys")).getTaskId();
+    	if (dmgp.containsKey(pname)){
+    		Bukkit.getScheduler().cancelTask(dmgp.get(pname));        		
+    	}        	
+    	dmgp.put(pname, task);
+    }
     
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
@@ -561,13 +579,19 @@ public class RPPlayerListener implements Listener{
         	RedProtect.logger.debug("Player: " + p.getName()); 
         } else {
         	RedProtect.logger.debug("Player: is null"); 
+        	return;
         }
         
         RedProtect.logger.debug("Damager: " + e.getDamager().getType().name()); 
         
+        //check killaura or freekill
+        if (RPConfig.getBool("server-protection.check-killaura-freekill.enable")){
+        	startCheckRate(p.getName());
+        }
+        
         Location l = e.getEntity().getLocation();
         Region r = RedProtect.rm.getTopRegion(l);
-        if (r == null || p == null){
+        if (r == null){
         	return;
         }
         
@@ -857,6 +881,27 @@ public class RPPlayerListener implements Listener{
     	}    	
     }
     
+    private static Entity getTarget(final Player player) {
+    	try {
+    		BlockIterator iterator = new BlockIterator(player.getWorld(), player
+                    .getLocation().toVector(), player.getEyeLocation()
+                    .getDirection(), 0, 10);
+            while (iterator.hasNext()) {
+                Block item = iterator.next();
+                for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
+                	int acc = 2;
+                	for (int y = -acc; y < acc; y++){
+                		if (entity.getLocation().getBlock()
+                                .getRelative(0, y, 0).equals(item)) {
+                            return entity;
+                        }
+                	}
+                }
+            }
+    	} catch(IllegalStateException ex){}    	
+        return null;
+    }
+    
     @EventHandler
     public void onPlayerMovement(PlayerMoveEvent e){
     	if (e.isCancelled() || RPConfig.getBool("performance.disable-onPlayerMoveEvent-handler")) {
@@ -865,8 +910,38 @@ public class RPPlayerListener implements Listener{
     	
     	Player p = e.getPlayer();
     	
-    	//test antixray
-    	//RPAntiXray.sendOtherBlock(p);
+    	//test player target
+    	if (RPConfig.getBool("server-protection.check-killaura-freekill.enable")){
+    		Entity pent = getTarget(p);
+    		int trysp = 0;
+    		int mrate = 0;
+        	if (pent != null && pent instanceof Player && dmgp.containsKey(((Player)pent).getName())){
+        		if (trys.containsKey(p.getName())){
+        			trysp = trys.get(p.getName());
+        		}
+        		trysp++;
+        		trys.put(p.getName(), trysp);
+        		if (RPConfig.getBool("server-protection.check-killaura-freekill.debug-trys")){
+        			RedProtect.logger.warning("Player: "+p.getName()+" | Try count: "+trysp);
+        		} 
+        		if (trysp % RPConfig.getInt("server-protection.check-killaura-freekill.check-rate") == 0){
+        			RedProtect.logger.warning("Player: "+p.getName()+" | Check Rate Match: ("+trysp+")");
+        			if (matchRate.containsKey(p.getName())){
+        				mrate = matchRate.get(p.getName());
+            		}
+        			mrate++;
+        			matchRate.put(p.getName(), mrate);
+        			if (mrate == RPConfig.getInt("server-protection.check-killaura-freekill.rate-multiples")){
+        				RedProtect.logger.severe("Player: "+p.getName()+" | MATCH RATE! Possible Hack or FreeKill: ("+mrate+")");
+        				matchRate.put(p.getName(), 0);
+        			}
+        		}        		
+        	} else {
+        		trys.remove(p.getName());
+        		matchRate.remove(p.getName());
+        	}
+    	}
+    	
     	
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
@@ -912,7 +987,16 @@ public class RPPlayerListener implements Listener{
             		e.setTo(DenyEnterPlayer(w, lfrom, e.getTo(), p, r));
             		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
             	}
-            }            
+            }      
+            
+            //remove pots
+            if (!r.allowPotions(p)){
+            	for (PotionEffect pot:p.getActivePotionEffects()){
+            		if (pot.getDuration() < 36000){
+            			p.removePotionEffect(pot.getType());
+            		}           		
+            	}            	
+            }
             
             //Mypet Flag
 			if (RedProtect.MyPet && !r.canPet(p)) {
