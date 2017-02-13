@@ -168,7 +168,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 		r.getValue()+"', '" +
                 		r.getTPPointString()+"', '" +
                 		r.getRentString()+"', '" +
-                		r.canDelete()+"', '" +
+                		(r.canDelete() ? 1 : 0)+"', '" +
                 		r.getFlagStrings()+"')");    
                 st.executeUpdate();
                 st.close();

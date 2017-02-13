@@ -324,8 +324,27 @@ public class RPConfig{
         				if (!flags.contains("can-grow")){
         					flags.add("can-grow");            				
         				}
-        				if (!RedProtect.plugin.getConfig().contains("flags.can-grow")){
-        					RedProtect.plugin.getConfig().set("flags.can-grow", true);
+        				configUp++;
+        			}
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.6D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.6D);        				
+        				
+        				if (flags.contains("allow-potions")){
+        					flags.remove("allow-potions");  
+        				}
+        				if (!flags.contains("use-potions")){
+        					flags.add("use-potions");            				
+        				}
+        				if (!flags.contains("allow-effects")){
+        					flags.add("allow-effects");            				
+        				}
+        				configUp++;
+        			}
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.7D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.7D);        				
+        				
+        				if (!flags.contains("allow-spawner")){
+        					flags.add("allow-spawner");            				
         				}
         				configUp++;
         			}

@@ -230,7 +230,6 @@ flags:
   lever: false
   button: false
   door: false
-  allow-potions: true
   smart-door: true
   spawn-monsters: true
   spawn-animals: true
@@ -248,6 +247,10 @@ flags:
   teleport: false
   clan: ''
   ender-chest: true
+  can-grow: true
+  use-potions: true
+  allow-effects: true
+  allow-spawner: false
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.

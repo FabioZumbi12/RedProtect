@@ -64,7 +64,7 @@ gui-flags:
     description1: '&akill or interact with passives mobs in'
     description2: '&athis region.'
   allow-magiccarpet:
-    slot: 8
+    slot: 7
     material: GLASS
     name: '&e=> Allow Magic Carpet'
     description: '&6Description: &aAllow players walk with'
@@ -105,13 +105,20 @@ gui-flags:
     description: '&6Description: &aAllow natural spawn of'
     description1: '&amonsters in this region.'
     description2: ''
-  allow-potions:
-    slot: 7
+  use-potions:
+    slot: 15
     material: GLASS_BOTTLE
-    name: '&e=> Allow Potions'
+    name: '&e=> Allow Use Potions'
     description: '&6Description: &aAllow use or throw'
-    description1: '&aany type of potions for no members'
+    description1: '&aany type of potions for non members'
     description2: '&aof region.'
+  allow-effects:
+    slot: 16
+    material: BLAZE_ROD
+    name: '&e=> Allow Effects'
+    description: '&6Description: &aAllow or cancel all'
+    description1: '&atype of effects for non members'
+    description2: '&aof this region.'
   mob-loot:
     slot: 23
     material: GRASS
@@ -141,7 +148,7 @@ gui-flags:
     description1: '&aby players using frost walk'
     description2: '&aenchant.'
   allow-fly:
-    slot: 16
+    slot: 8
     material: FEATHER
     name: '&e=> Allow Fly'
     description: '&6Description: &aAllow players with'
@@ -175,3 +182,10 @@ gui-flags:
     description: '&bDescription: &aChoose if farms'
     description1: '&ain this region will grow or not.'
     description2: ''
+  allow-spawner:
+    slot: 11
+    material: MOB_SPAWNER
+    name: '&e=> Allow Place or Break Spawners'
+    description: '&bDescription: &aAllow non members'
+    description1: '&aof this region to break or'
+    description2: '&aplace mob spawners.'

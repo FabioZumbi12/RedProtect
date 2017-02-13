@@ -67,7 +67,10 @@ permissions:
       redprotect.flag.allow-fly: true
       redprotect.flag.teleport: true
       redprotect.flag.clan: true
-      redprotect.flag.can-grow: true
+      redprotect.flag.ender-chest: true
+      redprotect.flag.use-potions: true
+      redprotect.flag.allow-effects: true
+      redprotect.flag.allow-spawner: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false

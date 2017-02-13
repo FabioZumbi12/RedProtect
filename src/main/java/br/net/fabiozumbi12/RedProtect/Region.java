@@ -1477,6 +1477,17 @@ public class Region implements Serializable{
 	
 	//---------------------- Player Flags --------------------------//
 
+	/**Allow non members of this region to break/place spawners.
+	 * 
+	 * @return boolean
+	 */
+	public boolean allowSpawner(Player p) {
+		if (!RPConfig.isFlagEnabled("allow-spawner")){
+    		return RPConfig.getBool("flags.allow-spawner");
+    	}
+		return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
+	}
+	
 	/**Allow players with fly enabled fly on this region.
 	 * 
 	 * @return boolean
@@ -1485,10 +1496,7 @@ public class Region implements Serializable{
 		if (!RPConfig.isFlagEnabled("allow-fly")){
     		return RPConfig.getBool("flags.allow-fly");
     	}
-		if (checkAllowedPlayer(p)){
-			return true;
-		}
-		return getFlagBool("allow-fly");
+		return getFlagBool("allow-fly") || checkAllowedPlayer(p);
 	}
 	
 	/**Allow ice form by players.
@@ -1527,11 +1535,18 @@ public class Region implements Serializable{
         return getFlagBool("mob-loot");
     }
 	
-	public boolean allowPotions(Player p) {
-    	if (!RPConfig.isFlagEnabled("allow-potions")){
-    		return RPConfig.getBool("flags.allow-potions");
+	public boolean usePotions(Player p) {
+    	if (!RPConfig.isFlagEnabled("use-potions")){
+    		return RPConfig.getBool("flags.use-potions");
     	}    	
-        return getFlagBool("allow-potions");
+        return getFlagBool("use-potions") || checkAllowedPlayer(p);
+    }
+	
+	public boolean allowEffects(Player p) {
+    	if (!RPConfig.isFlagEnabled("allow-effects")){
+    		return RPConfig.getBool("flags.allow-effects");
+    	}    	
+        return getFlagBool("allow-effects") || checkAllowedPlayer(p);
     }
     
     public boolean canPVP(Player p) {

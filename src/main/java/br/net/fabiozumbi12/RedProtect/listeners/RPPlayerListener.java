@@ -6,6 +6,7 @@ import java.util.List;
 
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -67,6 +68,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.inventivetalent.bossbar.BossBarAPI;
 
+import com.earth2me.essentials.User;
+
 import br.net.fabiozumbi12.RedProtect.RPContainer;
 import br.net.fabiozumbi12.RedProtect.RPDoor;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
@@ -75,10 +78,6 @@ import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.events.EnterExitRegionEvent;
-
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
@@ -262,7 +261,7 @@ public class RPPlayerListener implements Listener{
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);
                     return;
-        		} else if (hand.equals(Material.POTION) && !r.allowPotions(p)){
+        		} else if (hand.equals(Material.POTION) && !r.usePotions(p)){
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);
@@ -990,7 +989,7 @@ public class RPPlayerListener implements Listener{
             }      
             
             //remove pots
-            if (!r.allowPotions(p)){
+            if (!r.allowEffects(p)){
             	for (PotionEffect pot:p.getActivePotionEffects()){
             		if (pot.getDuration() < 36000){
             			p.removePotionEffect(pot.getType());
@@ -1299,7 +1298,7 @@ public class RPPlayerListener implements Listener{
     	RedProtect.logger.debug("Is PotionSplashEvent event.");
         
     	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
-    	if (r != null && !r.allowPotions(p)){
+    	if (r != null && !r.usePotions(p)){
     		RPLang.sendMessage(p, "playerlistener.region.cantuse");
     		e.setCancelled(true);
     		return;
@@ -1501,8 +1500,10 @@ public class RPPlayerListener implements Listener{
 	    		if (PlayertaskID.containsValue(p.getName())){
 	    			if (r.flagExists("forcefly")){
 	    				p.setAllowFlight(r.getFlagBool("forcefly"));
+	    				p.setFlying(r.getFlagBool("forcefly"));
 	    			} else {
 	    				p.setAllowFlight(false);	
+	    				p.setFlying(false);
 	    			}	    			
 					List<String> removeTasks = new ArrayList<String>();
 					for (String taskId:PlayertaskID.keySet()){
@@ -1606,12 +1607,15 @@ public class RPPlayerListener implements Listener{
         //enter fly flag
     	if (r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
     		p.setAllowFlight(r.getFlagBool("forcefly"));
+    		p.setFlying(r.getFlagBool("forcefly"));
     		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() { 
 					public void run() {
 						if (p.isOnline() && r.flagExists("forcefly")){
 							p.setAllowFlight(r.getFlagBool("forcefly")); 
+							p.setFlying(r.getFlagBool("forcefly"));
 						} else {
 							p.setAllowFlight(false); 
+							p.setFlying(false);
 							try {
 								this.finalize();
 							} catch (Throwable e) {
@@ -1683,6 +1687,7 @@ public class RPPlayerListener implements Listener{
         	if (er.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
         		if (PlayertaskID.containsValue(p.getName())){
         			p.setAllowFlight(false);	
+        			p.setFlying(false);
     				List<String> removeTasks = new ArrayList<String>();
     				for (String taskId:PlayertaskID.keySet()){
     					int id = Integer.parseInt(taskId.split("_")[0]);
@@ -1733,9 +1738,7 @@ public class RPPlayerListener implements Listener{
     	}
     	
     	if (RedProtect.Ess){
-    		Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-    		User essp = ess.getOfflineUser(e.getName());
-        	
+    		User essp = RedProtect.pless.getOfflineUser(e.getName());        	
         	if (essp != null && !essp.getConfigUUID().equals(e.getUniqueId())){
             	e.setKickMessage(RPLang.get("playerlistener.capfilter.kickmessage").replace("{nick}", essp.getName()));
             	e.setLoginResult(Result.KICK_OTHER);

@@ -130,7 +130,7 @@ public class RPMine19 implements Listener{
     	RedProtect.logger.debug("Is LingeringPotionSplashEvent event.");
         
     	Region r = RedProtect.rm.getTopRegion(ent.getLocation());
-    	if (r != null && !r.allowPotions(p)){
+    	if (r != null && !r.allowEffects(p)){
     		RPLang.sendMessage(p, "playerlistener.region.cantuse");
     		e.setCancelled(true);
     		return;

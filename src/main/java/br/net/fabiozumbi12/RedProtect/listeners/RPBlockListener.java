@@ -250,6 +250,10 @@ public class RPBlockListener implements Listener{
             	return;
             }
         	
+        	if (b.getType().equals(Material.MOB_SPAWNER) && r.allowSpawner(p)){
+            	return;
+        	}
+        	
             try {
 
                 if (!r.canBuild(p) && !r.canPlace(b.getType())) {
@@ -280,8 +284,7 @@ public class RPBlockListener implements Listener{
     	RedProtect.logger.debug("BlockListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
     	if (e.isCancelled()) {
             return;
-        }
-    	
+        }    	
     	
     	Player p = e.getPlayer();
     	Block b = e.getBlock();
@@ -323,6 +326,10 @@ public class RPBlockListener implements Listener{
 				}
 			}
 		}
+        
+        if (r != null && b.getType().equals(Material.MOB_SPAWNER) && r.allowSpawner(p)){    		
+        	return;
+    	}
              
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");

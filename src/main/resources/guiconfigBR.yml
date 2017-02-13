@@ -97,7 +97,7 @@ gui-flags:
     description: '&6Descrição: &aPermitir players com Tapete Mágico'
     description1: '&aandarem nesta região com ele ativado.'
     description2: ''
-    slot: 8
+    slot: 7
   smart-door:
     slot: 1
     material: IRON_DOOR
@@ -105,13 +105,20 @@ gui-flags:
     description: '&6Descrição: &aPermite membros abrirem'
     description1: '&aportas de ferro e portas duplas juntas.'
     description2: ''
-  allow-potions:
-    slot: 7
+  use-potions:
+    slot: 15
     material: GLASS_BOTTLE
-    name: '&e=> Permitir Poções'
+    name: '&e=> Permitir Usar Poções'
     description: '&6Descrição: &aPermite usar ou jogar'
-    description1: '&aqualquer tipo de poção por não membros'
-    description2: '&anesta região.'
+    description1: '&aqualquer tipo de poção por não'
+    description2: '&amembros da região.'
+  allow-effects:
+    slot: 16
+    material: BLAZE_ROD
+    name: '&e=> Permitir Efeitos'
+    description: '&6Descrição: &aPermite ou cancela'
+    description1: '&atodos efeitos dos não membros'
+    description2: '&adesta região.'
   mob-loot:
     slot: 23
     material: GRASS

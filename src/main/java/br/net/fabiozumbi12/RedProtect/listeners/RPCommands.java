@@ -44,13 +44,13 @@ import org.bukkit.potion.PotionEffectType;
 import br.net.fabiozumbi12.RedProtect.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.RPGui;
+import br.net.fabiozumbi12.RedProtect.RPSchematics;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.RedefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Updater;
-import br.net.fabiozumbi12.RedProtect.RPSchematics;
 import br.net.fabiozumbi12.RedProtect.Fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
@@ -553,10 +553,13 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                         		}
                         	}
                     	}               		
-                    	                    	
+                    	                
+                    	if (RedProtect.Ess){
+                    		RedProtect.pless.getUser(play).setLastLocation();
+                    	}
                     	play.teleport(loc);
             			RPLang.sendMessage(play,RPLang.get("cmdmanager.region.teleport") + " " + args[2]);     
-            			sender.sendMessage(ChatColor.AQUA + "Player teleported to " + args[2]);
+            			sender.sendMessage(ChatColor.AQUA + "Player "+play.getName()+" teleported to " + args[2]);
                 		return true;
                 	} else {
                 		sender.sendMessage(RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
@@ -3199,6 +3202,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     	
     	if (loc != null){
     		if (play != null){
+    			if (RedProtect.Ess){
+    				RedProtect.pless.getUser(p).setLastLocation();
+            	}
     			play.teleport(loc);
     			RPLang.sendMessage(play, RPLang.get("cmdmanager.region.teleport") + " " + rname);   			
     			RPLang.sendMessage(p, RPLang.get("cmdmanager.region.tpother") + " " + rname);
@@ -3223,6 +3229,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			public void run() {
     				if (RedProtect.tpWait.contains(p.getName())){
                 		RedProtect.tpWait.remove(p.getName());
+                		if (RedProtect.Ess){
+            				RedProtect.pless.getUser(p).setLastLocation();
+                		}                		
                 		p.teleport(loc);
                 		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.teleport") + " " + rname);
     				}

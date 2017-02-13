@@ -15,14 +15,14 @@ import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
-public class Dynmap {
+public class RPDynmap {
 
 	private static DynmapAPI Dyn;
 	static MarkerSet MSet;
 	private static MarkerAPI MApi;
 
 	  
-	public Dynmap(DynmapAPI dyn){
+	public RPDynmap(DynmapAPI dyn){
 		Dyn = dyn;
 		MApi = Dyn.getMarkerAPI();
 		MSet = MApi.getMarkerSet(RPConfig.getString("hooks.dynmap.marks-groupname"));

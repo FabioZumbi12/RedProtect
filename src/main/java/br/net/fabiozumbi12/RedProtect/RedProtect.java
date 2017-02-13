@@ -19,9 +19,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 
+import com.earth2me.essentials.Essentials;
+
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.hooks.Dynmap;
+import br.net.fabiozumbi12.RedProtect.hooks.RPDynmap;
 import br.net.fabiozumbi12.RedProtect.hooks.MPListener;
 import br.net.fabiozumbi12.RedProtect.hooks.McMMoListener;
 import br.net.fabiozumbi12.RedProtect.hooks.RPFactions;
@@ -81,8 +83,9 @@ public class RedProtect extends JavaPlugin {
 	public static boolean AWE;
 	public static boolean SC;
 	public static ClanManager clanManager;
+	public static Essentials pless;	
 	static boolean Dyn;
-	public static Dynmap dynmap;
+	public static RPDynmap dynmap;
 	public static Economy econ;
 	public static int version;
 	public static boolean paper = false;
@@ -157,6 +160,7 @@ public class RedProtect extends JavaPlugin {
             	RedProtect.logger.info("PvPManager found. Hooked.");   
             }
             if (Ess){
+            	pless = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
             	RedProtect.logger.info("Essentials found. Hooked.");
             }
             if (WE){
@@ -194,7 +198,7 @@ public class RedProtect extends JavaPlugin {
             if (Dyn && RPConfig.getBool("hooks.dynmap.enable")){
             	RedProtect.logger.info("Dynmap found. Hooked.");
             	RedProtect.logger.info("Loading dynmap markers...");
-            	dynmap = new Dynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+            	dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
             	RedProtect.logger.info("Dynmap markers loaded!");
             }
             if (PlaceHolderAPI){
