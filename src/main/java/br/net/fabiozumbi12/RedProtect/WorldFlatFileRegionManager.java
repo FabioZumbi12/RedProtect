@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -40,7 +43,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         
     @Override
     public Set<Region> getRegions(String pname) {
-    	Set<Region> regionsp = new HashSet<Region>();
+    	SortedSet<Region> regionsp = new TreeSet<Region>(Comparator.comparing(Region::getName));
 		for (Region r:regions.values()){
 			if (r.isLeader(pname)){
 				regionsp.add(r);

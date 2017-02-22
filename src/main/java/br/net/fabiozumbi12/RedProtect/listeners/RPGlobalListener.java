@@ -135,9 +135,10 @@ public class RPGlobalListener implements Listener{
     			}
     		}
     		    		 		    		
-    		if (p.isGliding() && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
+    		double boost = RPConfig.getGlobalFlagDouble(p.getWorld().getName()+".elytra.boost");
+    		if (boost > 0 && p.isGliding() && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".elytra.allow")){
     			Vector vec = new Vector(0.0D, p.getLocation().getDirection().getY(), 0.0D);
-                p.setVelocity(p.getVelocity().add(vec.multiply(0.1D*RPConfig.getGlobalFlagDouble(p.getWorld().getName()+".elytra.boost")/2)));
+                p.setVelocity(p.getVelocity().add(vec.multiply(0.1D*boost/2)));
     		}
     	}    	
     }
@@ -601,6 +602,7 @@ public class RPGlobalListener implements Listener{
 	
 	@EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
+		RedProtect.logger.debug("RPGlobalListener - Is CreatureSpawnEvent event! Cancelled? " + event.isCancelled());
     	if (event.isCancelled()) {
             return;
         }
@@ -615,7 +617,7 @@ public class RPGlobalListener implements Listener{
         	return;
         }
         
-        if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-whiter")){        	
+        if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-wither")){ 
             event.setCancelled(true);
             return;
         }        

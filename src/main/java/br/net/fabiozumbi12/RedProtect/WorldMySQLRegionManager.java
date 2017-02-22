@@ -8,11 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -319,7 +322,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     
     @Override
     public Set<Region> getRegions(String uuid) {
-    	Set<Region> regionsp = new HashSet<Region>();
+    	SortedSet<Region> regionsp = new TreeSet<Region>(Comparator.comparing(Region::getName));
     	try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName+" WHERE leaders LIKE '%"+uuid+"%'");
             ResultSet rs = st.executeQuery();
