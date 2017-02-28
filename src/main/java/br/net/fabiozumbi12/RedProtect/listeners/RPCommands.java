@@ -125,7 +125,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	}
     	} else {
     		if (args.length == 1){
-    			List<String> consolecmds = Arrays.asList("files-to-single", "single-to-files", "flag", "teleport", "ymlTomysql", "mysqlToYml", "setconfig", "reload", "reload-config", "save-all", "load-all", "limit", "claimlimit", "list-all");
+    			List<String> consolecmds = Arrays.asList("files-to-single", "single-to-files", "flag", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "limit", "claimlimit", "list-all");
         		for (String command:consolecmds){
     				if (command.startsWith(args[0])){
     					tab.add(command);
@@ -2190,7 +2190,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
 	private static void handlePrioritySingle(Player p, int prior, String region) {
     	Region r = RedProtect.rm.getRegion(region, p.getWorld());
-    	if (RedProtect.ph.hasRegionPermLeader(p, "delete", r)) {
+    	if (RedProtect.ph.hasRegionPermLeader(p, "priority", r)) {
     		if (r != null){
     			r.setPrior(prior);
     			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.priority.set").replace("{region}", r.getName()) + " " + prior);
@@ -3336,8 +3336,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			sender.sendMessage(ChatColor.GOLD + "rp gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
 			sender.sendMessage(ChatColor.GOLD + "rp save-all " + ChatColor.DARK_AQUA + "- Save all regions to database");
 			sender.sendMessage(ChatColor.GOLD + "rp load-all " + ChatColor.DARK_AQUA + "- Load all regions from database");
+			sender.sendMessage(ChatColor.GOLD + "rp reload-config " + ChatColor.DARK_AQUA + "- Reload only the config");
 			sender.sendMessage(ChatColor.GOLD + "rp reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
-			
 		}
 		sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
 	}

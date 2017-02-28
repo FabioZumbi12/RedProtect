@@ -30,8 +30,7 @@ public class RPPermissionHandler{
     		return regionPermAdmin((Player)sender, s, poly);
     	} else {
     		return true;
-    	}
-        
+    	}        
     }
     
     public boolean hasRegionPermLeader(Player p, String s, Region poly) {

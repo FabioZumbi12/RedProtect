@@ -334,7 +334,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	}
 	
 	@Override
-	public void updateLiveRegion(String rname, String columm, String value) {}
+	public void updateLiveRegion(String rname, String columm, Object value) {}
 
 	@Override
 	public void closeConn() {

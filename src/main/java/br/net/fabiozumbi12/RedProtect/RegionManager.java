@@ -21,7 +21,8 @@ import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
  */
 public class RegionManager{
 	
-	HashMap<World, WorldRegionManager> regionManagers;
+	private HashMap<World, WorldRegionManager> regionManagers;
+	private HashMap<Location, Region> bLoc = new HashMap<Location, Region>();
     
     protected RegionManager() {
         this.regionManagers = new HashMap<World, WorldRegionManager>();
@@ -241,11 +242,32 @@ public class RegionManager{
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getTopRegion(Location loc){
-    	if (!this.regionManagers.containsKey(loc.getWorld())){
-    		return null;
+    	if (bLoc.containsKey(loc.getBlock().getLocation())){
+    		RedProtect.logger.debug("Get from cache: "+loc.getBlock().getLocation().toString());
+    		return bLoc.get(loc.getBlock().getLocation());
+    	} else {
+        	if (!this.regionManagers.containsKey(loc.getWorld())){
+        		return null;
+        	}
+        	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());  
+        	Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        	Location remove = null;
+        	for (Location locKey:bLoc.keySet()){
+        		if (r != null && bLoc.get(locKey).equals(r)){
+        			remove = locKey;
+        			break;
+        		}
+        	}
+        	if (remove != null){
+        		bLoc.remove(remove);
+        	}
+        	
+        	if (r != null){
+        		bLoc.put(loc.getBlock().getLocation(), r);
+        		RedProtect.logger.debug("Get from DB: "+loc.getBlock().getLocation().toString());
+        	}        	
+        	return r;
     	}
-    	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());    	
-		return rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
     
     /**
@@ -330,7 +352,7 @@ public class RegionManager{
     	this.regionManagers.clear();
     }
 
-	public void updateLiveRegion(Region r, String columm, String value) {
+	public void updateLiveRegion(Region r, String columm, Object value) {
 		WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));    	
 		rm.updateLiveRegion(r.getName(), columm, value);
 	}
@@ -358,6 +380,7 @@ public class RegionManager{
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
 				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+		newr.setRentString(old.getRentString());
 		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));		
 		this.remove(old, RedProtect.serv.getWorld(old.getWorld()));		
 	}

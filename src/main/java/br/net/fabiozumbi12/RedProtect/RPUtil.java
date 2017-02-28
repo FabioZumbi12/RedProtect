@@ -751,6 +751,7 @@ public class RPUtil {
                     String rname = rs.getString("name");
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
+					String rent = rs.getString("rent");
                     long value = rs.getLong("value");
                     
                     Location tppoint = null;
@@ -782,7 +783,11 @@ public class RPUtil {
                     		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
                     	} 
                     }                    
-                    regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true));
+                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
+                    if (rent.split(":").length >= 3){
+              	    	newr.setRentString(rent);
+              		}
+                    regions.put(rname, newr);
                 } 
                 st.close(); 
                 rs.close();  
@@ -867,6 +872,7 @@ public class RPUtil {
 		if (!RPConfig.getString("file-type").equalsIgnoreCase("yml")){
 			return false;
 		}
+		RedProtect.rm.saveAll();
 		
 		initMysql();//Create tables
 		int counter = 1;
@@ -882,27 +888,30 @@ public class RPUtil {
 			for (Region r:RedProtect.rm.getRegionsByWorld(world)){
 				if (!regionExists(r.getName(), tableName)) {
 					try {                
-		                PreparedStatement st = null; 
-		                st = dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,flags) VALUES "
-		                		+ "('" +r.getName() + "', '" + 
-		                		r.getLeaders().toString().replace("[", "").replace("]", "") + "', '" + 
-		                		r.getAdmins().toString().replace("[", "").replace("]", "") + "', '" + 
-		                		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
-		                		r.getMaxMbrX() + "', '" + 
-		                		r.getMinMbrX() + "', '" + 
-		                		r.getMaxMbrZ() + "', '" + 
-		                		r.getMinMbrZ() + "', '" + 
-		                		r.getMinY() + "', '" +
-		                		r.getMaxY() + "', '" +
-		                		r.getCenterX() + "', '" + 
-		                		r.getCenterZ() + "', '" + 
-		                		r.getDate() + "', '" +
-		                		r.getWelcome() + "', '" + 
-		                		r.getPrior() + "', '" + 
-		                		r.getWorld() + "', '" + 
-		                		r.getValue()+"', '" +
-		                		r.getTPPointString()+"', '" +
-		                		r.getFlagStrings()+"')");    
+		                PreparedStatement st = dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) "
+		                		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");    
+		                st.setString(1, r.getName());
+		                st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
+		                st.setString(3, r.getAdmins().toString().replace("[", "").replace("]", ""));
+		                st.setString(4, r.getMembers().toString().replace("[", "").replace("]", ""));
+		                st.setInt(5, r.getMaxMbrX());
+		                st.setInt(6, r.getMinMbrX());
+		                st.setInt(7, r.getMaxMbrZ());
+		                st.setInt(8, r.getMinMbrZ());
+		                st.setInt(9, r.getMinY());
+		                st.setInt(10, r.getMaxY());
+		                st.setInt(11, r.getCenterX());
+		                st.setInt(12, r.getCenterZ());
+		                st.setString(13, r.getDate());
+		                st.setString(14, r.getWelcome());
+		                st.setInt(15, r.getPrior());
+		                st.setString(16, r.getWorld());
+		                st.setLong(17, r.getValue());
+		                st.setString(18, r.getTPPointString());
+		                st.setString(19, r.getRentString());
+		                st.setInt(20, r.canDelete() ? 1 : 0);
+		                st.setString(21, r.getFlagStrings());
+						
 		                st.executeUpdate();
 		                st.close();
 		                counter++;

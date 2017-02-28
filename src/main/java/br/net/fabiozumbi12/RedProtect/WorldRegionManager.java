@@ -41,7 +41,7 @@ public interface WorldRegionManager {
 
 	Set<Region> getMemberRegions(String pname);
 
-	void updateLiveRegion(String rname, String columm, String value);
+	void updateLiveRegion(String rname, String columm, Object value);
 
 	void closeConn();
 

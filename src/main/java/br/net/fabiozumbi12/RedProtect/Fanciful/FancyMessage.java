@@ -615,6 +615,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
                 }
                 Player player = (Player) sender;
                 try {
+                	if (!player.isOnline()){
+                		return;
+                	}
 			Object handle = Reflection.getHandle(player);
 			Object connection = Reflection.getField(handle.getClass(), "playerConnection").get(handle);
 			Reflection.getMethod(connection.getClass(), "sendPacket", Reflection.getNMSClass("Packet")).invoke(connection, createChatPacket(jsonString));

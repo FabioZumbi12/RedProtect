@@ -145,6 +145,7 @@ public class Region implements Serializable{
 		} else if (value instanceof Integer){
 			rent.put(player, (Integer)value);
 		}
+		RedProtect.rm.updateLiveRegion(this, "rent", getRentString());
 	}
 	
 	public void addrent(String player, Integer value, Long renewal, String rank){
@@ -856,7 +857,7 @@ public class Region implements Serializable{
         if (!this.leaders.contains(pinfo)) {
             this.leaders.add(pinfo);            
         }
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
@@ -879,7 +880,7 @@ public class Region implements Serializable{
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);            
         }
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
@@ -902,7 +903,7 @@ public class Region implements Serializable{
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);            
         }
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
@@ -927,7 +928,7 @@ public class Region implements Serializable{
         }
         RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
     }
     
     /** Remove an admin to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -949,6 +950,8 @@ public class Region implements Serializable{
             this.members.add(pinfo);
         }
         RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
     }
     
     /** Remove an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -970,6 +973,8 @@ public class Region implements Serializable{
             this.admins.add(pinfo);
         }
         RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
     }
     
     public boolean getFlagBool(String key) {

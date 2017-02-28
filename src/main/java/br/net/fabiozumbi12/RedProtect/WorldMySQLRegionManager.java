@@ -150,29 +150,30 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     private void addLiveRegion(Region r){
     	if (!this.regionExists(r.getName())) {
             try {                
-                PreparedStatement st = null;                
-                st = this.dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) VALUES "
-                		+ "('" +r.getName() + "', '" + 
-                		r.getLeaders().toString().replace("[", "").replace("]", "") + "', '" + 
-                		r.getAdmins().toString().replace("[", "").replace("]", "") + "', '" + 
-                		r.getMembers().toString().replace("[", "").replace("]", "") + "', '" + 
-                		r.getMaxMbrX() + "', '" + 
-                		r.getMinMbrX() + "', '" + 
-                		r.getMaxMbrZ() + "', '" + 
-                		r.getMinMbrZ() + "', '" + 
-                		r.getMinY() + "', '" +
-                		r.getMaxY() + "', '" +
-                		r.getCenterX() + "', '" + 
-                		r.getCenterZ() + "', '" + 
-                		r.getDate() + "', '" +
-                		r.getWelcome() + "', '" + 
-                		r.getPrior() + "', '" + 
-                		r.getWorld() + "', '" + 
-                		r.getValue()+"', '" +
-                		r.getTPPointString()+"', '" +
-                		r.getRentString()+"', '" +
-                		(r.canDelete() ? 1 : 0)+"', '" +
-                		r.getFlagStrings()+"')");    
+                PreparedStatement st = dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) "
+		                		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");    
+		                st.setString(1, r.getName());
+		                st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
+		                st.setString(3, r.getAdmins().toString().replace("[", "").replace("]", ""));
+		                st.setString(4, r.getMembers().toString().replace("[", "").replace("]", ""));
+		                st.setInt(5, r.getMaxMbrX());
+		                st.setInt(6, r.getMinMbrX());
+		                st.setInt(7, r.getMaxMbrZ());
+		                st.setInt(8, r.getMinMbrZ());
+		                st.setInt(9, r.getMinY());
+		                st.setInt(10, r.getMaxY());
+		                st.setInt(11, r.getCenterX());
+		                st.setInt(12, r.getCenterZ());
+		                st.setString(13, r.getDate());
+		                st.setString(14, r.getWelcome());
+		                st.setInt(15, r.getPrior());
+		                st.setString(16, r.getWorld());
+		                st.setLong(17, r.getValue());
+		                st.setString(18, r.getTPPointString());
+		                st.setString(19, r.getRentString());
+		                st.setInt(20, r.canDelete() ? 1 : 0);
+		                st.setString(21, r.getFlagStrings());
+						
                 st.executeUpdate();
                 st.close();
             }
@@ -194,7 +195,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 	String key = flago.split(":")[0];
                 	if (key.equals(flag)){
                 		flagsStrings = flagsStrings.replace(flago, "").replace(",,", ",");
-                		st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET flags='"+flagsStrings+"' WHERE name='" + rname + "'");
+                		st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET flags = ? WHERE name='" + rname + "'");
+                		st.setString(1, flagsStrings);
                         st.executeUpdate();                    
                         break;
                 	}
@@ -210,9 +212,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     }
     
     @Override
-    public void updateLiveRegion(String rname, String columm, String value){
+    public void updateLiveRegion(String rname, String columm, Object value){
     	try {
-            PreparedStatement st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET "+columm+"='"+value+"' WHERE name='" + rname + "'");
+            PreparedStatement st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET "+columm+" = ? WHERE name='" + rname + "'");
+            st.setObject(1, value);
             st.executeUpdate();
             st.close();
         }
@@ -234,7 +237,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 	String key = flago.split(":")[0];
                 	if (key.equals(flag)){
                 		flagsStrings = flagsStrings.replace(flago, key+":"+value);
-                		st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET flags='"+flagsStrings+"' WHERE name='" + rname + "'");
+                		st = this.dbcon.prepareStatement("UPDATE "+tableName+" SET flags = ? WHERE name='" + rname + "'");
+                		st.setString(1, flagsStrings);
                         st.executeUpdate();                    
                         break;
                 	}
@@ -275,6 +279,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 String world = rs.getString("world");
                 String date = rs.getString("date");
                 String wel = rs.getString("wel");
+				String rent = rs.getString("rent");
                 long value = rs.getLong("value");
                 boolean candel = rs.getBoolean("candelete");
                 
@@ -284,7 +289,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]), 
                     		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                 }                    
-                                    
+                				
                 for (String member:rs.getString("members").split(", ")){
                 	if (member.length() > 0){
                 		members.add(member);
@@ -300,15 +305,37 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 		leaders.add(leader);
                 	}                	
                 }
+				
+				//compatibility ------------>
+                try {
+                	if (rs.getString("owners") != null){
+                		for (String owner:rs.getString("owners").split(", ")){
+                        	if (owner.length() > 0 && !leaders.contains(owner)){
+                        		leaders.add(owner);
+                        	}                	
+                        }
+                    }
+                    if (rs.getString("creator") != null){
+                    	String creator = rs.getString("creator");
+                    	if (creator.length() > 0 && !leaders.contains(creator)){
+                    		leaders.add(creator);
+                    	}
+                    }                    
+                } catch (Exception ex){}
+                //<------------ compatibility
+				
                 for (String flag:rs.getString("flags").split(",")){                	
                 	String key = flag.split(":")[0];
                 	String replace = new String(key+":");
                 	if (replace.length() <= flag.length()){
                 		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
                 	}                	              	
-                }
-                
-                regions.put(rname, new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel));
+                }                
+                Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                if (rent.split(":").length >= 3){
+              	    newr.setRentString(rent);
+              	}
+                regions.put(rname, newr);
             } 
             st.close(); 
             rs.close();                           
@@ -591,7 +618,18 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	@Override
 	public Set<Region> getAllRegions() {		
 		Set<Region> allregions = new HashSet<Region>();		
-		//allregions.addAll(regions.values());
+		try {
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+            	allregions.add(getRegion(rs.getString("name")));
+            }
+            st.close();
+            rs.close();
+        }
+		catch (SQLException e) {
+            e.printStackTrace();
+        } 
 		return allregions;
 	}
 
