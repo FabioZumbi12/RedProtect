@@ -179,7 +179,8 @@
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.0.1</version>
-            <scope>provided</scope>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/EssentialsX-2.0.1.jar</systemPath>
         </dependency> 
         <dependency>
             <groupId>me.clip</groupId>
@@ -187,12 +188,7 @@
             <version>2.0.8</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-		    <groupId>org.inventivetalent</groupId>
-		    <artifactId>bossbarapi</artifactId>
-		    <version>2.4.1</version>
-	    </dependency>
-	
+        
   </dependencies>
   
   <repositories>    
@@ -210,17 +206,9 @@
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
      <repository>
-            <id>ess-repo</id>
-            <url>http://ci.drtshock.net/plugin/repository/everything</url>
-     </repository>     
-     <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
      </repository>
-     <repository>
-		<id>inventive-repo</id>
-		<url>https://repo.inventivetalent.org/content/groups/public/</url>
-	 </repository>
 	 
   </repositories>
 
