@@ -83,7 +83,7 @@ public class RPAddProtection implements Listener{
 		
 		//censor
 		if (RPConfig.getProtBool("chat-protection.censor.enabled") && !p.hasPermission("redprotect.chat.bypass-censor")){
-						
+			int act = 0;
 			for (String word:RPConfig.getProtStringList("chat-protection.censor.replace-words")){
 				if (!StringUtils.containsIgnoreCase(nmsg, word)){
 					continue;
@@ -97,6 +97,13 @@ public class RPAddProtection implements Listener{
 					nmsg = nmsg.replaceAll("(?i)"+"\\b"+Pattern.quote(word)+"\\b", replaceby);
 				} else {
 					nmsg = nmsg.replaceAll("(?i)"+word, replaceby);
+				}
+				act++;
+			}
+			if (act > 0){
+				String action = RPConfig.getProtString("chat-protection.censor.cmd-action");
+				if (!action.isEmpty()){
+					RPUtil.performCommand(RedProtect.serv.getConsoleSender(), action);
 				}
 			}
 		}

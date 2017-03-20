@@ -334,7 +334,7 @@ public class RPPlayerListener implements Listener{
                 	} 
                 }               
                 
-                else if (b.getType().name().contains("LEVER") || b.getType().name().contains("REDSTONE")) {
+                else if (b.getType().name().contains("LEVER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
                     if (!r.canLever(p)) {
                     	RPLang.sendMessage(p, "playerlistener.region.cantlever");
                         event.setCancelled(true);

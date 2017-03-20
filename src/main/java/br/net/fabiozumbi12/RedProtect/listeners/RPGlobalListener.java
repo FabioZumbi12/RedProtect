@@ -18,6 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
@@ -40,6 +41,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -47,10 +49,12 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.ItemStack;
@@ -85,6 +89,45 @@ public class RPGlobalListener implements Listener{
 		
 		return p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build"));
 	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamage(EntityDamageEvent e) {
+		Region r = RedProtect.rm.getTopRegion(e.getEntity().getLocation());
+    	if (r != null){
+    		return;
+    	}
+    	Entity ent = e.getEntity();
+    	if (ent instanceof LivingEntity && !(ent instanceof Monster)){
+    		if (RPConfig.getGlobalFlagBool(ent.getWorld().getName()+".invincible")){
+    			if (ent instanceof Animals){
+    				((Animals)ent).setTarget(null);
+    			}
+    			e.setCancelled(true); 
+        	}
+    	}    	    	
+	}
+	
+	@EventHandler
+    public void PlayerDropItem(PlayerDropItemEvent e){    	
+    	Location l = e.getItemDrop().getLocation();
+    	Player p = e.getPlayer();
+    	Region r = RedProtect.rm.getTopRegion(l);
+    	
+    	if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".player-candrop")){
+    		e.setCancelled(true);
+    	}
+    }
+	
+	@EventHandler
+    public void PlayerPickup(PlayerPickupItemEvent e){
+    	Location l = e.getItem().getLocation();
+    	Player p = e.getPlayer();
+    	Region r = RedProtect.rm.getTopRegion(l);
+    	
+    	if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".player-canpickup")){
+    		e.setCancelled(true);
+    	}
+    }
 	
 	@EventHandler
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {

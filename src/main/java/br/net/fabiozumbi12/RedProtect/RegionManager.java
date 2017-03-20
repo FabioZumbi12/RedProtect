@@ -1,8 +1,10 @@
 package br.net.fabiozumbi12.RedProtect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +56,7 @@ public class RegionManager{
     		if (RedProtect.Dyn){
     			RedProtect.dynmap.removeAll(w);
     		}    		
+    		this.bLoc.clear();
     	}
     	this.regionManagers.clear();
     }
@@ -194,6 +197,7 @@ public class RegionManager{
     public void remove(Region r, World w) {    	
     	WorldRegionManager rms = this.regionManagers.get(w);
     	rms.remove(r);
+    	removeCache(r);
     	if (RedProtect.Dyn){    		
     		try {
     			RedProtect.dynmap.removeMark(r);
@@ -207,13 +211,28 @@ public class RegionManager{
     public Set<Region> getRegions(Player p, int x, int y, int z){
     	return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);    	
     }
-
+    
+    private void removeCache(Region r){
+    	Set<Location> itloc = bLoc.keySet();
+    	List<Location> toRemove = new ArrayList<Location>();
+    	for (Location loc:itloc){
+    		if (bLoc.containsKey(loc) && bLoc.get(loc).getID().equals(r.getID())){
+    			toRemove.add(loc);
+    		}
+    	}
+    	for (Location loc:toRemove){
+    		bLoc.remove(loc);
+    	}
+    }
+    
     public int removeAll(String player){
     	int qtd = 0;
     	for (WorldRegionManager wrm:this.regionManagers.values()){
     		Iterator<Region> it = wrm.getRegions(player).iterator();
     		while (it.hasNext()){
-    			wrm.remove(it.next());
+    			Region r = it.next();
+    			wrm.remove(r);
+    			removeCache(r);
     			qtd++;
     		}
     	}
@@ -380,7 +399,9 @@ public class RegionManager{
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
 				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
-		newr.setRentString(old.getRentString());
+		if (old.getRentString().split(":").length >= 3){
+			newr.setRentString(old.getRentString());
+		}		
 		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()));		
 		this.remove(old, RedProtect.serv.getWorld(old.getWorld()));		
 	}

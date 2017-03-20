@@ -259,7 +259,7 @@ public class RPUtil {
                 }
                 ++i;
             }           
-        return rname;
+        return rname.replace(".", "-");
     }
     
     static String formatName(String name) {
@@ -733,7 +733,8 @@ public class RPUtil {
             	
         	for (World world:Bukkit.getWorlds()){
             	String tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
-                PreparedStatement st = dbcon.prepareStatement("SELECT * FROM "+tableName+" WHERE world='"+world.getName()+"'");
+                PreparedStatement st = dbcon.prepareStatement("SELECT * FROM "+tableName+" WHERE world=?");
+                st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();            
                 while (rs.next()){ 
                 	List<String> leaders = new ArrayList<String>();
@@ -886,7 +887,7 @@ public class RPUtil {
 			Connection dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 			
 			for (Region r:RedProtect.rm.getRegionsByWorld(world)){
-				if (!regionExists(r.getName(), tableName)) {
+				if (!regionExists(dbcon, r.getName(), tableName)) {
 					try {                
 		                PreparedStatement st = dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) "
 		                		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");    
@@ -951,13 +952,13 @@ public class RPUtil {
 	        	if (!checkTableExists(tableName)) {
 	        		//create db
 	                Connection con = DriverManager.getConnection(url+RPConfig.getString("mysql.db-name")+reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));  
-	                st = con.prepareStatement("CREATE TABLE " + tableName + " (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(16), value Long not null, tppoint mediumtext, flags longtext) CHARACTER SET utf8 COLLATE utf8_general_ci");
+	                st = con.prepareStatement("CREATE TABLE " + tableName + " (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(16), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
 	                st.executeUpdate();
 	                st.close();
 	                st = null;
 	                RedProtect.logger.info("Created table: "+tableName+"!");  
 	            }
-	        	ConnectDB(tableName);
+	        	addNewColumns(tableName);
 	        }
 	        catch (CommandException e3) {
 	            RedProtect.logger.severe("Couldn't connect to mysql! Make sure you have mysql turned on and installed properly, and the service is started.");
@@ -975,26 +976,34 @@ public class RPUtil {
 		}	    
 	}
 		
-	private static boolean ConnectDB(String tableName) {
-		String reconnect = "?autoReconnect=true";
-    	try {
-    		@SuppressWarnings("unused")
-			Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name")+reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-			RedProtect.logger.info("Conected to "+tableName+" via Mysql!");
-			return true;
-		} catch (SQLException e) {			
+	private static void addNewColumns(String tableName){
+		try {
+			String url = "jdbc:mysql://"+RPConfig.getString("mysql.host")+"/";
+			Connection con = DriverManager.getConnection(url + RPConfig.getString("mysql.db-name"), RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
+			DatabaseMetaData md = con.getMetaData();
+			ResultSet rs = md.getColumns(null, null, tableName, "candelete");
+			if (!rs.next()) {				
+				PreparedStatement st = con.prepareStatement("ALTER TABLE `"+tableName+"` ADD `candelete` tinyint(1) NOT NULL default '1'");
+				st.executeUpdate();
+			}
+			rs.close();
+			rs = md.getColumns(null, null, tableName, "rent");
+			if (!rs.next()) {				
+				PreparedStatement st = con.prepareStatement("ALTER TABLE `"+tableName+"` ADD `rent` longtext");
+				st.executeUpdate();
+			}
+			rs.close();
+			con.close();			
+		} catch (SQLException e) {
 			e.printStackTrace();
-			RedProtect.logger.severe("["+tableName+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
-			return false;
 		}		
 	}
 	
-	private static boolean regionExists(String name, String tableName) {
+	private static boolean regionExists(Connection dbcon, String name, String tableName) {
         int total = 0;
-        String reconnect = "?autoReconnect=true";
         try {
-        	Connection dbcon = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name")+reconnect,RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
-        	PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM "+tableName+" WHERE name = '" + name + "'");
+        	PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM "+tableName+" WHERE name = ?");
+        	st.setString(1, name);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
@@ -1188,6 +1197,7 @@ public class RPUtil {
     }
 	
 	public static Region loadProps(RPYaml fileDB, String rname, World world){
+		rname = rname.replace(".", "-");
 		if (fileDB.getString(rname+".name") == null){
 			return null;
 		}
@@ -1250,6 +1260,8 @@ public class RPUtil {
 	}
 	
 	public static RPYaml addProps(RPYaml fileDB, Region r){
+		RedProtect.logger.debug("Region ID: "+r.getID());
+		RedProtect.logger.debug("Region: "+r.getName());
 		String rname = r.getName().replace(".", "-");					
 		fileDB.createSection(rname);
 		fileDB.set(rname+".name",rname);
@@ -1266,7 +1278,7 @@ public class RPUtil {
 		fileDB.set(rname+".minZ",r.getMinMbrZ());	
 		fileDB.set(rname+".maxY",r.getMaxY());
 		fileDB.set(rname+".minY",r.getMinY());
-		fileDB.set(rname+".rent", r.getRentString());
+		fileDB.set(rname+".rent",r.getRentString());
 		fileDB.set(rname+".value",r.getValue());	
 		fileDB.set(rname+".flags",r.flags);	
 		fileDB.set(rname+".candelete",r.canDelete());	

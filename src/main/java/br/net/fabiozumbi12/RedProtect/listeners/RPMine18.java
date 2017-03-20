@@ -168,7 +168,7 @@ public class RPMine18 implements Listener{
     
     @EventHandler
     public void onInteractAS(PlayerInteractEvent e){
-    	if (e.isCancelled()) {
+    	if (e.isCancelled() || e.getClickedBlock() == null) {
             return;
         }
     	

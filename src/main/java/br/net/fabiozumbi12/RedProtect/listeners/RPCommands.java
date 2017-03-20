@@ -876,9 +876,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	if (checkCmd(args[0], "settp") && RedProtect.ph.hasGenPerm(player, "settp")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r != null){
-        			r.setTPPoint(player.getLocation());
-        			RPLang.sendMessage(player, "cmdmanager.region.settp.ok");
-        			return true;
+        			if (RedProtect.ph.hasRegionPermLeader(player, "settp", r)){
+        				r.setTPPoint(player.getLocation());
+            			RPLang.sendMessage(player, "cmdmanager.region.settp.ok");
+            			return true;
+        			} else {
+        				RPLang.sendMessage(player, "playerlistener.region.cantuse");
+        				return true;    
+        			}        			
         		} else {
     				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return true;    
@@ -887,10 +892,16 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	if (checkCmd(args[0], "deltp") && RedProtect.ph.hasGenPerm(player, "deltp")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
+        		
         		if (r != null){
-        			r.setTPPoint(null);
-        			RPLang.sendMessage(player, "cmdmanager.region.settp.removed");
-        			return true;
+        			if (RedProtect.ph.hasRegionPermLeader(player, "deltp", r)){
+        				r.setTPPoint(null);
+            			RPLang.sendMessage(player, "cmdmanager.region.settp.removed");
+            			return true;
+            		} else {
+            			RPLang.sendMessage(player, "playerlistener.region.cantuse");
+        				return true;    
+            		}
         		} else {
     				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return true;    
@@ -948,16 +959,21 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	if (checkCmd(args[0], "value") && RedProtect.ph.hasGenPerm(player, "value")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r != null){
-        			if (r.getArea() < RPConfig.getEcoInt("max-area-toget-value")){
-        				r.setValue(RPEconomy.getRegionValue(r));
-        				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " +RPConfig.getEcoString("economy-name")));
-        				
-        				RedProtect.logger.debug("Region Value: "+r.getValue());
-            			return true;
+        			if (RedProtect.ph.hasRegionPermLeader(player, "value", r)){
+        				if (r.getArea() < RPConfig.getEcoInt("max-area-toget-value")){
+            				r.setValue(RPEconomy.getRegionValue(r));
+            				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " +RPConfig.getEcoString("economy-name")));
+            				
+            				RedProtect.logger.debug("Region Value: "+r.getValue());
+                			return true;
+            			} else {
+            				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-value").toString()));
+            				return true;
+            			}
         			} else {
-        				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-value").toString()));
-        				return true;
-        			}
+        				RPLang.sendMessage(player, "playerlistener.region.cantuse");
+        				return true;  
+        			}        			
         		} else {
     				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return true;
@@ -1113,7 +1129,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             	if (RedProtect.ph.hasGenPerm(player, "flaggui")) {
         			Region r = RedProtect.rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				if (r.isAdmin(player) || r.isLeader(player) || RedProtect.ph.hasPerm(player, "redprotect.admin.flaggui")){
+        				if (RedProtect.ph.hasRegionPermAdmin(player, "flaggui", r)){
         					RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, RedProtect.plugin, false, RPConfig.getGuiMaxSlot());        					
         					gui.open();
                 			return true;
@@ -1280,6 +1296,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
                     RedProtect.rm.remove(oldRect, RedProtect.serv.getWorld(oldRect.getWorld()));
                     RedProtect.rm.add(r2, player.getWorld());
+                    
+                    RedProtect.firstLocationSelections.remove(player);
+                    RedProtect.secondLocationSelections.remove(player);
+                                        
                     RedProtect.logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" REDEFINED region "+r2.getName());
                 }
                 return true;
@@ -2307,12 +2327,12 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     
 	private static void handleInfoTop(Player p) {  
     	Region r = RedProtect.rm.getTopRegion(p.getLocation());
-    	Map<Integer, Region> groupr = RedProtect.rm.getGroupRegion(p.getLocation());
-    	if (RedProtect.ph.hasRegionPermAdmin(p, "info", r) || r.isForSale()) {
-            if (r == null) {
+		if (r == null) {
                 sendNotInRegionMessage(p);
                 return;
-            }
+        }
+    	Map<Integer, Region> groupr = RedProtect.rm.getGroupRegion(p.getLocation());
+    	if (RedProtect.ph.hasRegionPermAdmin(p, "info", r) || r.isForSale()) {            
             p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
             p.sendMessage(r.info());
             p.sendMessage(RPLang.get("general.color") + "----------------------------------");
@@ -2700,8 +2720,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     	Object objflag = RPUtil.parseObject(value);
     	
     	if (RedProtect.ph.hasPerm(p, "redprotect.flag."+ flag) || flag.equalsIgnoreCase("info")) {                
-            if (r.isAdmin(p) || r.isLeader(p) || RedProtect.ph.hasPerm(p, "redprotect.admin.flag."+flag)) {
-            	
+            if (RedProtect.ph.hasRegionPermAdmin(p, "flag."+flag, r)) {            	
             	if (flag.equalsIgnoreCase("info") || flag.equalsIgnoreCase("i")) {            
                     p.sendMessage(RPLang.get("general.color") + "------------[" + RPLang.get("cmdmanager.region.flag.values") + "]------------");
                     p.sendMessage(r.getFlagInfo());

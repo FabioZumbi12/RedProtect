@@ -46,6 +46,8 @@ chat-protection:
     # List of words (case insensitive).
     replace-words:
     - word1
+    # Actions. Add a command to execute when a player write some of this words. Default is ''.
+    cmd-action: ''
 
   # Anti-IP and websites
   anti-ip:

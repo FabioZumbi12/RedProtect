@@ -54,7 +54,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
     @Override
     public Set<Region> getMemberRegions(String uuid) {
-    	Set<Region> regionsp = new HashSet<Region>();
+    	SortedSet<Region> regionsp = new TreeSet<Region>(Comparator.comparing(Region::getName));
 		for (Region r:regions.values()){
 			if (r.isLeader(uuid) || r.isAdmin(uuid)){
 				regionsp.add(r);
@@ -216,7 +216,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getRegionsNear(Player player, int radius) {
     	int px = player.getLocation().getBlockX();
         int pz = player.getLocation().getBlockZ();
-        Set<Region> ret = new HashSet<Region>();
+        SortedSet<Region> ret = new TreeSet<Region>(Comparator.comparing(Region::getName));
         
 		for (Region r:regions.values()){
 			RedProtect.logger.debug("Radius: " + radius);
@@ -323,7 +323,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
 	@Override
 	public Set<Region> getAllRegions() {
-		Set<Region> allregions = new HashSet<Region>();
+		SortedSet<Region> allregions = new TreeSet<Region>(Comparator.comparing(Region::getName));
 		allregions.addAll(regions.values());
 		return allregions;
 	}
@@ -349,7 +349,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	public void updateLiveFlags(String rname, String flag, String value) {}
 
 	@Override
-	public void removeLiveFlags(String rname, String flag) {}
-	
+	public void removeLiveFlags(String rname, String flag) {}	
 	
 }

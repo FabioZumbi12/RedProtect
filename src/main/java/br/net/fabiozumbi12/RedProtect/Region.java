@@ -627,8 +627,7 @@ public class Region implements Serializable{
         this.maxY = maxLoc.getBlockY();
         this.minY = minLoc.getBlockY();
         this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
-        this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
-        this.name = conformName(name);
+        this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};        
         this.admins = admins;
         this.members = members;
         this.leaders = leaders;    
@@ -654,6 +653,7 @@ public class Region implements Serializable{
         } else {
         	this.date = RPUtil.DateNow();
         }
+        this.name = conformName(name);
     }
     
     /**
@@ -683,7 +683,6 @@ public class Region implements Serializable{
         this.minMbrZ = minMbrZ;
         this.maxY = maxY;
         this.minY = minY;
-        this.name = conformName(name);
         this.admins = admins;
         this.members = members;
         this.leaders = leaders;    
@@ -709,6 +708,7 @@ public class Region implements Serializable{
         } else {
         	this.date = RPUtil.DateNow();
         }
+        this.name = conformName(name);
     }
     
     /**
@@ -753,7 +753,6 @@ public class Region implements Serializable{
         }
         this.admins = admins;
         this.members = members;
-        this.name = conformName(name);
         this.leaders = leaders;
         this.maxMbrX = x[0];
         this.minMbrX = x[0];
@@ -775,6 +774,7 @@ public class Region implements Serializable{
                 this.minMbrZ = z[i];
             }
         }
+        this.name = conformName(name);
     }
 
     public void clearLeaders(){

@@ -394,6 +394,9 @@ public class RPConfig{
                     	gflags.set(w.getName()+".on-enter-cmds", gflags.getStringList(w.getName()+".on-enter-cmds"));
                     	gflags.set(w.getName()+".on-exit-cmds", gflags.getStringList(w.getName()+".on-exit-cmds"));
                     	gflags.set(w.getName()+".spawn-wither", gflags.getBoolean(w.getName()+".spawn-wither", true));
+                    	gflags.set(w.getName()+".invincible", gflags.getBoolean(w.getName()+".invincible", false));
+                    	gflags.set(w.getName()+".player-candrop", gflags.getBoolean(w.getName()+".player-candrop", true));
+                    	gflags.set(w.getName()+".player-canpickup", gflags.getBoolean(w.getName()+".player-canpickup", true));
                     	if (!gflags.contains(w.getName()+".command-ranges")){
                     		gflags.set(w.getName()+".command-ranges.home.min-range", gflags.getDouble(w.getName()+".command-ranges.home.min-range", 0));
                         	gflags.set(w.getName()+".command-ranges.home.max-range", gflags.getDouble(w.getName()+".command-ranges.home.max-range", w.getMaxHeight()));
