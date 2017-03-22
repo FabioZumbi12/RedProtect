@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>pom</packaging>
   <name>RedProtect</name>
-  <version>7.1.3</version>
+  <version>${pluginVersion}</version>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
@@ -56,6 +56,10 @@
             <targetPath>.</targetPath>
             <filtering>true</filtering>
             <directory>src/main/resources/</directory>
+        </resource>
+        <resource>
+            <directory>src/main/java/br/net/fabiozumbi12/redprotect/</directory>
+            <filtering>true</filtering>
         </resource>
     </resources>
     
@@ -123,6 +127,7 @@
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <pluginVersion>7.1.3</pluginVersion>
   </properties>
   
   <modules>

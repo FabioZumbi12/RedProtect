@@ -39,17 +39,14 @@ import br.net.fabiozumbi12.redprotect.listeners.RPWorldListener;
 
 @Plugin(id = "redprotect", 
 name = "RedProtect", 
-version = "7.1.3",
+version = "${buildNumber}",
 authors="FabioZumbi12", 
 description="Complete antigrief plugin")
 public class RedProtect {
 	public static Game game;
 	public static PluginContainer plugin;
 	private static UUID taskid;
-	private CommandManager cmdService;
-	public static boolean Update;
-	public static String UptVersion;
-	public static String UptLink;    
+	private CommandManager cmdService; 
     public static RegionManager rm;
     public static List<String> changeWait = new ArrayList<String>();
     public static List<String> tpWait = new ArrayList<String>();
