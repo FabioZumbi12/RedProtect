@@ -11,6 +11,9 @@ Spigot: https://www.spigotmc.org/resources/redprotect.15841/
 Bukkit: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/  
 Sponge: https://ore.spongepowered.org/FabioZumbi12/RedProtect
 
+## Source:
+The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
+
 ## Dev builds: 
 Available on jenkins: [![Build Status](http://158.69.121.149:8080/buildStatus/icon?job=RedProtect)](http://158.69.121.149:8080/job/RedProtect/)
 
