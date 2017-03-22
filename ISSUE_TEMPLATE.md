@@ -1,3 +1,5 @@
+--> Click on PREVIEW tab!
+
 ## Fill all info below to help us to find the problem are you having or with your suggestion:
 
 _Put if is the **Spigot** or **Sponge** version._
