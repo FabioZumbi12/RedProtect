@@ -532,7 +532,7 @@ public class RPBlockListener implements Listener{
     	}		
     	Block b = e.getToBlock();
     	Block bfrom = e.getBlock();
-		RedProtect.logger.debug("Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
+		RedProtect.logger.debug("RPBlockListener - Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
     	Region r = RedProtect.rm.getTopRegion(b.getLocation());
     	if (r != null && bfrom.isLiquid() && !r.canFlow()){
           	 e.setCancelled(true);   
@@ -553,11 +553,7 @@ public class RPBlockListener implements Listener{
 		if (rfrom == null && r != null){
 			e.setCancelled(true);
 			return;
-		}
-		if (rfrom != null && r == null){
-			e.setCancelled(true);
-			return;
-		}
+		}		
     }
 	    
 	@EventHandler

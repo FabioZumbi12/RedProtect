@@ -366,6 +366,7 @@ public class RPConfig{
                     
                     for (World w:RedProtect.serv.getWorlds()){
                     	gflags.set(w.getName()+".build", gflags.getBoolean(w.getName()+".build", true));
+                    	gflags.set(w.getName()+".liquid-flow", gflags.getBoolean(w.getName()+".liquid-flow", true));
                     	gflags.set(w.getName()+".if-build-false.break-blocks", gflags.getStringList(w.getName()+".if-build-false.break-blocks"));
                     	gflags.set(w.getName()+".if-build-false.place-blocks", gflags.getStringList(w.getName()+".if-build-false.place-blocks"));
                     	gflags.set(w.getName()+".pvp", gflags.getBoolean(w.getName()+".pvp", true));

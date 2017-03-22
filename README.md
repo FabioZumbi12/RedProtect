@@ -13,3 +13,5 @@ See the WIKI for Help with commands, permissions and all features: https://githu
 #Sponge Version:
 Theres a release of this same plugin as is on Bukkit, but for Sponge.
 Try it now: https://forums.spongepowered.org/t/bukkit-port-redprotect-6-4-0-alpha/11846/
+
+Dev Builds: [![Build Status](http://158.69.121.149:8080/buildStatus/icon?job=RedProtect - Bukkit)](http://158.69.121.149:8080/job/RedProtect%20-%20Bukkit/)

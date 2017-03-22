@@ -34,6 +34,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -88,6 +89,22 @@ public class RPGlobalListener implements Listener{
 		}
 		
 		return p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build"));
+	}
+	
+	@EventHandler
+    public void onFlow(BlockFromToEvent e){
+		RedProtect.logger.debug("RPGlobalListener - Is BlockFromToEvent event");
+		if (e.isCancelled()){
+    		return;
+    	}
+		Block b = e.getToBlock();
+    	Block bfrom = e.getBlock();
+		RedProtect.logger.debug("RPGlobalListener - Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
+    	Region r = RedProtect.rm.getTopRegion(b.getLocation());
+    	if (r == null && bfrom.isLiquid() && !RPConfig.getGlobalFlagBool(b.getWorld().getName()+".liquid-flow")){
+         	 e.setCancelled(true);   
+         	 return;
+    	}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
