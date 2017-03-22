@@ -131,7 +131,7 @@ public class RPPlayerListener implements Listener{
     	RedProtect.logger.debug("RPPlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());  
     	Player p = (Player) e.getEntity();
     	Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());
-    	if (r != null && !r.canIceForm(p)){
+    	if (r != null && (e.getBlock().getType().equals(Material.ICE) || e.getBlock().getType().equals(Material.SNOW)) && !r.canIceForm(p)){
     		e.setCancelled(true);
     	}
     }

@@ -798,7 +798,7 @@ public class RPBlockListener implements Listener{
 		}
 		RedProtect.logger.debug("Is Blockform event: "+b.getType().name());		
 		
-		if (b.getType().name().equals("SNOW")){
+		if (b.getType().equals(Material.SNOW) || b.getType().equals(Material.ICE)){
 			Region r = RedProtect.rm.getTopRegion(b.getLocation());
 			if (r != null && !r.canIceForm()){
 				event.setCancelled(true);
