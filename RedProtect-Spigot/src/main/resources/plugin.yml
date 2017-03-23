@@ -1,5 +1,5 @@
-name: ${project.name}
-main: ${project.groupId}.${project.artifactId}
+name: RedProtect
+main: br.net.fabiozumbi12.RedProtect.RedProtect
 version: ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.

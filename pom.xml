@@ -49,7 +49,7 @@
   </repositories>
   
   <build>
-    <finalName>${project.name}-${buildNumber}</finalName>
+    <finalName>RedProtect-${buildNumber}</finalName>
     <defaultGoal>clean install</defaultGoal>
     <resources>
         <resource>
