@@ -39,7 +39,7 @@ import br.net.fabiozumbi12.redprotect.listeners.RPWorldListener;
 
 @Plugin(id = "redprotect", 
 name = "RedProtect", 
-version = "${buildNumber}",
+version = RedProtect.MAGIC_VERSION,
 authors="FabioZumbi12", 
 description="Complete antigrief plugin")
 public class RedProtect {
@@ -60,6 +60,9 @@ public class RedProtect {
     public static RPConfig cfgs;
     public static EconomyService econ;
     public static HashMap<Player,String> alWait = new HashMap<Player,String>();
+    
+    // Field set by javassist-maven-plugin
+ 	static final String MAGIC_VERSION = "SET_BY_MAGIC";
         
     @Listener
 	public void onStopServer(GameStoppingServerEvent e) {

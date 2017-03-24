@@ -1,0 +1,14 @@
+[
+    {
+        "modid": "redprotect",
+        "name": "RedProtect",
+        "version": "${buildNumber}",
+        "description": "Complete antigrief plugin",
+        "authorList": [
+            "FabioZumbi12"
+        ],
+        "requiredMods": [
+            "spongeapi@${spongeVersion}"
+        ]
+    }
+]
