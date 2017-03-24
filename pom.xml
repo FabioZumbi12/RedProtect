@@ -60,7 +60,7 @@
   </pluginRepositories>
   
   <build>
-    <finalName>RedProtect-${buildNumber}</finalName>
+    <finalName>${project.name}-${buildNumber}</finalName>
     <defaultGoal>clean install</defaultGoal>
     <resources>
         <resource>
