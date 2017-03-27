@@ -186,7 +186,7 @@ public class RPBlockListener{
     @Listener
     public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
     	RedProtect.logger.debug("blocks","BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
-    	World w = e.getTargetWorld();
+    	World w = p.getWorld();
     	
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
@@ -237,7 +237,7 @@ public class RPBlockListener{
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Break e, @First Player p) {
     	RedProtect.logger.debug("blocks","BlockListener - Is ChangeBlockEvent.Break event!");
-    	World w = e.getTargetWorld();
+    	World w = p.getWorld();
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
         

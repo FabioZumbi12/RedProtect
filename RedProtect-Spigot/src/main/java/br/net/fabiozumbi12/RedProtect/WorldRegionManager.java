@@ -29,6 +29,8 @@ public interface WorldRegionManager {
     
     Set<Region> getRegions(int x, int y, int z); 
     
+    Set<Region> getInnerRegions(Region region); 
+    
     Region getTopRegion(int x, int y, int z);
     
     Region getLowRegion(int x, int y, int z);

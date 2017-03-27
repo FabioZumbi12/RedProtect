@@ -49,7 +49,7 @@ public class RPWorldListener {
     
     @Listener
     public void onChunkUnload(ChunkLoad e) {
-    	World w = e.getTargetWorld();
+    	World w = e.getEntities().get(0).getWorld();
     	if (!RedProtect.cfgs.getGlobalFlag(w.getName(), "remove-entities-not-allowed-to-spawn")){
     		return;
     	}

@@ -26,12 +26,7 @@
         <snapshots>
             <enabled>true</enabled>
         </snapshots>
-    </repository>
-    <repository>
-            <id>kitteh-repo</id>
-            <url>http://repo.kitteh.org/content/groups/public</url>
-    </repository>
-    
+    </repository>    
     <!-- Spigot repo -->
     <repository>
 	        <id>maven-restlet</id>
@@ -52,13 +47,6 @@
      </repository>
   </repositories>
   
-  <pluginRepositories>
-        <pluginRepository>
-            <id>kitteh-repo</id>
-            <url>http://repo.kitteh.org/content/groups/public</url>
-        </pluginRepository>
-  </pluginRepositories>
-  
   <build>
     <finalName>${project.name}-${buildNumber}</finalName>
     <defaultGoal>clean install</defaultGoal>
@@ -67,16 +55,12 @@
             <targetPath>.</targetPath>
             <filtering>true</filtering>
             <directory>src/main/resources/</directory>
-        </resource>
-        <resource>
-            <directory>src/main/java/br/net/fabiozumbi12/redprotect/</directory>
-            <filtering>true</filtering>
-        </resource>
+        </resource>        
     </resources>
     
     <plugins>
-      
-      <!-- Parse Version to plugin.yml 
+    
+    <!-- Parse Version to plugin.yml -->
       <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
@@ -90,7 +74,21 @@
               </execution>
           </executions>
       </plugin>
-      -->
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>templating-maven-plugin</artifactId>
+        <version>1.0.0</version>
+            <executions>
+               <execution>
+                  <id>filter-src</id>
+                    <goals>
+                      <goal>filter-sources</goal>
+                    </goals>
+               </execution>
+            </executions>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -139,7 +137,6 @@
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <pluginVersion>7.1.3</pluginVersion>
-    <javassist-plugin.version>1.1.0-KITTEH</javassist-plugin.version>
   </properties>
   
   <modules>

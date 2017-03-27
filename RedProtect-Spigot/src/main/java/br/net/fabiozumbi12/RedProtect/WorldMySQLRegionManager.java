@@ -549,6 +549,30 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         return this.world;
     }    
         
+    @Override
+	public Set<Region> getInnerRegions(Region region) {
+		Set<Region> regionl = new HashSet<Region>();		
+		try {
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM "+tableName+" WHERE maxMbrX<=? AND maxY<=? AND maxMbrZ<=? AND minMbrX>=? AND minY>=? AND minMbrZ>=?");
+            st.setInt(1, region.getMaxMbrX());
+            st.setInt(2, region.getMaxY());
+            st.setInt(3, region.getMaxMbrZ());
+            st.setInt(4, region.getMinMbrX());
+            st.setInt(5, region.getMinY());
+            st.setInt(6, region.getMinMbrZ());
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+            	regionl.add(this.getRegion(rs.getString("name")));
+            }
+            st.close();
+            rs.close();
+        }
+		catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return regionl;
+	}
+    
 	@Override
 	public Set<Region> getRegions(int x, int y, int z) {
 		Set<Region> regionl = new HashSet<Region>();		

@@ -90,7 +90,7 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
         
-        int pLimit = RedProtect.ph.getPlayerLimit(p);
+        int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.rm.getTotalRegionSize(pName);
         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
@@ -166,7 +166,6 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
         
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
-
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit)));
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? "&a"+regionarea:"&c- "+regionarea) + "\n" +
         RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - actualArea))));

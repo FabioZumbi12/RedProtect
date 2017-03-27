@@ -191,7 +191,7 @@ public class RPGlobalListener{
 		RedProtect.logger.debug("default","RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 		
 		BlockState b = e.getTransactions().get(0).getOriginal().getState();
-		World w = e.getTargetWorld();
+		World w = p.getWorld();
 		Region r = RedProtect.rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get());
 		
 		if (r == null && !RedProtect.cfgs.getGlobalFlag(w.getName(),"build") && !p.hasPermission("redprotect.bypass")){
@@ -459,7 +459,7 @@ public class RPGlobalListener{
             }
     	}
     	
-		if (b.getFinal().getState().getType().equals(BlockTypes.FIRE) && !RedProtect.cfgs.getGlobalFlag(e.getTargetWorld().getName(),"fire-block-damage")){
+		if (b.getFinal().getState().getType().equals(BlockTypes.FIRE) && !RedProtect.cfgs.getGlobalFlag(b.getOriginal().getLocation().get().getExtent().getName(),"fire-block-damage")){
 			e.setCancelled(true);
     		return;
 		}   	   	

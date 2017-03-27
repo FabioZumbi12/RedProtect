@@ -231,7 +231,7 @@ public class RPCommands implements CommandCallable {
                 		sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.noplayer.thisname").toString().replace("{player}", args[1])));
                 		return cmdr;
                 	}
-                	int limit = RedProtect.ph.getPlayerLimit(offp);
+                	int limit = RedProtect.ph.getPlayerBlockLimit(offp);
                     if (limit < 0 || RedProtect.ph.hasPerm(offp, "redprotect.limit.blocks.unlimited")) {
                     	sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.nolimit")));
                         return cmdr;
@@ -416,6 +416,25 @@ public class RPCommands implements CommandCallable {
         
         if (args.length == 1) {
         	
+        	String claimmode = RedProtect.cfgs.getWorldClaimType(player.getWorld().getName());
+        	if (claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH") || RedProtect.ph.hasGenPerm(player, "redefine")){
+        		//rp pos1
+        		if (checkCmd(args[0], "pos1")){
+                	Location<World> pl = player.getLocation();
+                	RedProtect.firstLocationSelections.put(player, pl);
+            		player.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (&6" + pl.getBlockX() + RPLang.get("general.color") + ", &6" + pl.getBlockY() + RPLang.get("general.color") + ", &6" + pl.getBlockZ() + RPLang.get("general.color") + ")."));
+            		return cmdr;
+            	}
+            	
+            	//rp pos2
+            	if (checkCmd(args[0], "pos2")){
+                	Location<World> pl = player.getLocation();
+                	RedProtect.secondLocationSelections.put(player, pl);
+            		player.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (&6" + pl.getBlockX() + RPLang.get("general.color") + ", &6" + pl.getBlockY() + RPLang.get("general.color") + ", &6" + pl.getBlockZ() + RPLang.get("general.color") + ")."));
+            		return cmdr;
+            	}
+        	}
+        	
         	if (args[0].equalsIgnoreCase("test-perms")) {
         		//player.sendMessage(RPUtil.toText("&cIdentifier on 0: "+player.getParents().get(0).getIdentifier()));
         		Set<Context> contexts = new HashSet<Context>();
@@ -580,7 +599,6 @@ public class RPCommands implements CommandCallable {
         	
         	//rp claim
         	if (checkCmd(args[0], "claim")){
-        		String claimmode = RedProtect.cfgs.getWorldClaimType(player.getWorld().getName());
         		if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) && !RedProtect.ph.hasGenPerm(player, "claim")) {
                     RPLang.sendMessage(player, "blocklistener.region.blockmode");
                     return cmdr;
@@ -795,16 +813,17 @@ public class RPCommands implements CommandCallable {
         	}
         	
             if (checkCmd(args[0], "redefine")) {
-                if (!RedProtect.ph.hasUserPerm(player, "redefine")) {
-                    RPLang.sendMessage(player, "no.permission");
-                    return cmdr;
-                }
-                
-                Region oldRect = RedProtect.rm.getRegion(args[1], player.getWorld());
+            	Region oldRect = RedProtect.rm.getRegion(args[1], player.getWorld());
                 if (oldRect == null) {
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return cmdr;
                 }
+                
+                if (!RedProtect.ph.hasRegionPermLeader(player, "redefine", oldRect)) {
+                    RPLang.sendMessage(player, "no.permission");
+                    return cmdr;
+                }
+                
                 RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player));
                 if (rb.ready()) {
                     Region r2 = rb.build();
@@ -1269,7 +1288,7 @@ public class RPCommands implements CommandCallable {
             }
             
             if (args.length == 1) {
-            	int limit = RedProtect.ph.getPlayerLimit(player);
+            	int limit = RedProtect.ph.getPlayerBlockLimit(player);
                 if (limit < 0 || RedProtect.ph.hasPerm(player, "redprotect.limit.blocks.unlimited")) {
                     RPLang.sendMessage(player,"cmdmanager.nolimit");
                     return cmdr;
@@ -1295,7 +1314,7 @@ public class RPCommands implements CommandCallable {
             		RPLang.sendMessage(player,RPLang.get("cmdmanager.noplayer.thisname").toString().replace("{player}", args[1]));
             		return cmdr;
             	}
-            	int limit = RedProtect.ph.getPlayerLimit(offp);
+            	int limit = RedProtect.ph.getPlayerBlockLimit(offp);
                 if (limit < 0 || RedProtect.ph.hasPerm(offp, "redprotect.limit.blocks.unlimited")) {
                     RPLang.sendMessage(player, "cmdmanager.nolimit");
                     return cmdr;
@@ -2685,7 +2704,7 @@ public class RPCommands implements CommandCallable {
 			Player player = (Player)sender;		
 			int i = 0;
 			for (String key:RPLang.helpStrings()){
-				if (RedProtect.ph.hasUserPerm(player, key)) {
+				if (RedProtect.ph.hasUserPerm(player, key) || ((key.equals("pos1") || key.equals("pos1")) && RedProtect.ph.hasGenPerm(player, "redefine"))) {
 					i++;					
 					
 					if (i > (page*5)-5 && i <= page*5){

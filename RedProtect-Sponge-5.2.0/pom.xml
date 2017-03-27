@@ -19,89 +19,9 @@
       <artifactId>spongeapi</artifactId>
       <version>${spongeVersion}</version>
       <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
-            <groupId>de.icongmbh.oss.maven.plugins</groupId>
-            <artifactId>javassist-maven-plugin</artifactId>
-            <version>${javassist-plugin.version}</version>
-            <optional>true</optional>
-            <scope>provided</scope>
-    </dependency>    
+    </dependency> 
   </dependencies>
-  <build>
-  <plugins>
-           <!-- Parse Version to sponge plugin -->
-           <plugin>
-                <groupId>de.icongmbh.oss.maven.plugins</groupId>
-                <artifactId>javassist-maven-plugin</artifactId>
-                <version>${javassist-plugin.version}</version>
-                <configuration>
-                    <includeTestClasses>false</includeTestClasses>
-                    <transformerClasses>
-                        <transformerClass>
-                            <className>br.net.fabiozumbi12.redprotect.config.Transform</className>
-                            <properties>
-                                <property>
-                                    <name>version</name>
-                                    <value>${project.version}</value>
-                                </property>
-                            </properties>
-                        </transformerClass>
-                    </transformerClasses>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>javassist</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>br.net.fabiozumbi12.RedProtect</groupId>
-                        <artifactId>RedProtect-Sponge-5.2.0</artifactId>
-                        <version>${pluginVersion}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-       </plugins>
-  <pluginManagement>
-  	<plugins>
-  		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-  		<plugin>
-  			<groupId>org.eclipse.m2e</groupId>
-  			<artifactId>lifecycle-mapping</artifactId>
-  			<version>1.0.0</version>
-  			<configuration>
-  				<lifecycleMappingMetadata>
-  					<pluginExecutions>
-  						<pluginExecution>
-  							<pluginExecutionFilter>
-  								<groupId>
-  									de.icongmbh.oss.maven.plugins
-  								</groupId>
-  								<artifactId>
-  									javassist-maven-plugin
-  								</artifactId>
-  								<versionRange>
-  									[${javassist-plugin.version},)
-  								</versionRange>
-  								<goals>
-  									<goal>javassist</goal>
-  								</goals>
-  							</pluginExecutionFilter>
-  							<action>
-  								<ignore></ignore>
-  							</action>
-  						</pluginExecution>
-  					</pluginExecutions>
-  				</lifecycleMappingMetadata>
-  			</configuration>
-  		</plugin>
-  	</plugins>
-  </pluginManagement>
-  </build>
+  
   <properties>
   	<spongeVersion>5.2.0-SNAPSHOT</spongeVersion>
   </properties>

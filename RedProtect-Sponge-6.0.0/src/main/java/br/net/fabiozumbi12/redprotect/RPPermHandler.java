@@ -42,7 +42,7 @@ public class RPPermHandler{
         return GeneralPermHandler(p, s);
     }
     
-    public int getPlayerLimit(User p) {
+    public int getPlayerBlockLimit(User p) {
         return LimitHandler(p);
     }
     

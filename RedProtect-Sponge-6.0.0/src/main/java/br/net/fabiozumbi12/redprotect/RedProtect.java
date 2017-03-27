@@ -29,6 +29,7 @@ import org.spongepowered.api.world.World;
 
 import br.net.fabiozumbi12.redprotect.config.RPConfig;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
+import br.net.fabiozumbi12.redprotect.config.VersionData;
 import br.net.fabiozumbi12.redprotect.listeners.RPBlockListener;
 import br.net.fabiozumbi12.redprotect.listeners.RPCommands;
 import br.net.fabiozumbi12.redprotect.listeners.RPEntityListener;
@@ -39,7 +40,7 @@ import br.net.fabiozumbi12.redprotect.listeners.RPWorldListener;
 
 @Plugin(id = "redprotect", 
 name = "RedProtect", 
-version = RedProtect.MAGIC_VERSION,
+version = VersionData.VERSION,
 authors="FabioZumbi12", 
 description="Complete antigrief plugin")
 public class RedProtect {
@@ -60,10 +61,7 @@ public class RedProtect {
     public static RPConfig cfgs;
     public static EconomyService econ;
     public static HashMap<Player,String> alWait = new HashMap<Player,String>();
-    
-    // Field set by javassist-maven-plugin
- 	static final String MAGIC_VERSION = "SET_BY_MAGIC";
-        
+            
     @Listener
 	public void onStopServer(GameStoppingServerEvent e) {
     	for (Player p:game.getServer().getOnlinePlayers()){

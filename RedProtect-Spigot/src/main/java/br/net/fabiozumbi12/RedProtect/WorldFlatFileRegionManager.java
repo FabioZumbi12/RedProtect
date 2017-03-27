@@ -242,6 +242,17 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         return this.world;
     }       
     
+    @Override
+	public Set<Region> getInnerRegions(Region region) {
+		Set<Region> regionl = new HashSet<Region>();
+		for (Region r:regions.values()){
+			if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
+				regionl.add(r);
+			}
+		}
+		return regionl;
+	}
+    
 	@Override
 	public Set<Region> getRegions(int x, int y, int z) {
 		Set<Region> regionl = new HashSet<Region>();

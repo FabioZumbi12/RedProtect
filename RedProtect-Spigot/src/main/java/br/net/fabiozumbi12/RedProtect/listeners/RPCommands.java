@@ -611,8 +611,27 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         //commands as player
         final Player player = (Player)sender;
         
-        if (args.length == 1) {
+        if (args.length == 1) {        	
         	
+        	String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
+        	if (claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH") || RedProtect.ph.hasGenPerm(player, "redefine")){
+        		//rp pos1
+        		if (checkCmd(args[0], "pos1")){
+                	Location pl = player.getLocation();
+                	RedProtect.firstLocationSelections.put(player, pl);
+            		player.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
+            		return true;
+            	}
+            	
+            	//rp pos2
+            	if (checkCmd(args[0], "pos2")){
+                	Location pl = player.getLocation();
+                	RedProtect.secondLocationSelections.put(player, pl);
+            		player.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
+            		return true;
+            	}
+        	}
+        	        	
         	//rp list-areas
         	if (checkCmd(args[0], "list-areas") && player.hasPermission("redprotect.list-areas")) {
         		sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
@@ -680,8 +699,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             			sender.sendMessage(RPLang.get("general.color")+RPLang.get("region.world").replace(":", "")+" "+colorChar+w.getName()+"["+wregions.size()+"]"+ChatColor.RESET+": "); 
             			sender.sendMessage(worldregions.substring(3)+RPLang.get("general.color")+".");
             			sender.sendMessage("-----");  
-        			}
-        			
+        			}        			
         		}
         		return true;
         	}
@@ -1024,7 +1042,6 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	//rp claim
         	if (checkCmd(args[0], "claim")){
-        		String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
         		if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) && !player.hasPermission("redprotect.admin.claim")) {
                     RPLang.sendMessage(player, "blocklistener.region.blockmode");
                     return true;
@@ -2720,7 +2737,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     	Object objflag = RPUtil.parseObject(value);
     	
     	if (RedProtect.ph.hasPerm(p, "redprotect.flag."+ flag) || flag.equalsIgnoreCase("info")) {                
-            if (RedProtect.ph.hasRegionPermAdmin(p, "flag."+flag, r)) {            	
+            if (r.isAdmin(p) || r.isLeader(p) || RedProtect.ph.hasRegionPermAdmin(p, "redprotect.admin.flag."+flag, r)) {            	
             	if (flag.equalsIgnoreCase("info") || flag.equalsIgnoreCase("i")) {            
                     p.sendMessage(RPLang.get("general.color") + "------------[" + RPLang.get("cmdmanager.region.flag.values") + "]------------");
                     p.sendMessage(r.getFlagInfo());
@@ -3321,7 +3338,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			Player player = (Player)sender;		
 			int i = 0;
 			for (String key:RPLang.helpStrings()){
-				if (RedProtect.ph.hasGenPerm(player, key)) {
+				if (RedProtect.ph.hasGenPerm(player, key) || ((key.equals("pos1") || key.equals("pos1")) && RedProtect.ph.hasGenPerm(player, "redefine"))) {
 					if (key.equalsIgnoreCase("flaggui")){
 						continue;
 					}

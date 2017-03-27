@@ -212,6 +212,10 @@ public class RegionManager{
     	return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);    	
     }
     
+    public Set<Region> getInnerRegions(Region region, World w){
+    	return this.regionManagers.get(w).getInnerRegions(region);    	
+    }
+    
     private void removeCache(Region r){
     	Set<Location> itloc = bLoc.keySet();
     	List<Location> toRemove = new ArrayList<Location>();

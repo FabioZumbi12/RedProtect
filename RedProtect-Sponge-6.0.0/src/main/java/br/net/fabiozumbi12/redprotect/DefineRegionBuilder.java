@@ -90,7 +90,7 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
         
-        int pLimit = RedProtect.ph.getPlayerLimit(p);
+        int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.rm.getTotalRegionSize(pName);
         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);

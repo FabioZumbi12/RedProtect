@@ -97,7 +97,7 @@ public class RPPermissionHandler{
         if (poly == null) {
             return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
         }
-        return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p)));
+        return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && poly.isLeader(p));
     }
     
     private boolean regionPermAdmin(Player p, String s, Region poly){

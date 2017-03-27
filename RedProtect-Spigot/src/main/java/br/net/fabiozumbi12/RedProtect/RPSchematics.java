@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -152,22 +153,55 @@ public class RPSchematics {
         
         Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), Arrays.asList(pName), new int[] { pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX() }, new int[] { pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ() }, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
         
-        //chek regions inside region
-        Region otherrg = RedProtect.rm.getTopRegion(region.getCenterLoc());
+        
+        
+        List<String> othersName = new ArrayList<String>();
+        Region otherrg = null;
+        
+        //check if same area
+        otherrg = RedProtect.rm.getTopRegion(region.getCenterLoc());
         if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
-        	p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+        	p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
         	return;
         }
         
-        //check other regions in borders
-        for (Location wild:region.getLimitLocs(pos1.getBlockY(), pos2.getBlockY(), false)){
-        	otherrg = RedProtect.rm.getTopRegion(wild);
-        	if (otherrg != null && !p.hasPermission("redprotect.bypass")){
-        		p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
-        	    return;
+        //check regions inside region
+        for (Region r:RedProtect.rm.getRegionsByWorld(p.getWorld())){
+        	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
+        		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
+        			p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+                	return;
+            	}
+        		if (!othersName.contains(r.getName())){
+            		othersName.add(r.getName());
+            	}
         	}
         }
         
+        //check borders for other regions
+        List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
+        for (Location locr:limitlocs){
+        	
+        	/*
+        	//check regions near
+        	if (!RPUtil.canBuildNear(p, loc)){
+            	return;    	
+            }*/
+        	
+        	otherrg = RedProtect.rm.getTopRegion(locr);        	
+        	RedProtect.logger.debug("protection Block is: " + locr.getBlock().getType().name());
+        	
+    		if (otherrg != null){                    			
+            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
+            		p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+                	return;
+            	}
+            	if (!othersName.contains(otherrg.getName())){
+            		othersName.add(otherrg.getName());
+            	}
+            }
+        }
+                
         //check cost per block
         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.Vault && !p.hasPermission("redprotect.eco.bypass")){
         	Double peco = RedProtect.econ.getBalance(p);
