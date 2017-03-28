@@ -1,5 +1,8 @@
 package br.net.fabiozumbi12.redprotect.API;
 
+import br.net.fabiozumbi12.redprotect.RPEconomy;
+import br.net.fabiozumbi12.redprotect.Region;
+
 public class RPEconomyAPI {
 	
 	/**
@@ -11,7 +14,7 @@ public class RPEconomyAPI {
 	 * @return {@code true} if successfull sell flag. {@code false} if theres an error on sell the region and the money will return to player.
 	 */
 	
-	/*
+	
 	public static boolean SellRegion(Region region, String owner, long value){
 		return RPEconomy.putToSell(region, owner, value);
 	}
@@ -24,7 +27,7 @@ public class RPEconomyAPI {
 	 * @return {@code true} if successfull buy. {@code false} if theres an error on buy the region and the money will return to player.
 	 */
 	
-	/*
+	
 	public static boolean BuyRegion(Region region, String owner){
 		return RPEconomy.BuyRegion(region, owner);
 	}
@@ -36,11 +39,9 @@ public class RPEconomyAPI {
 	 * @return {@code Long} value of the region.
 	 */
 	
-	/*
+	
 	public static long getRegionValue(Region region){
 		return RPEconomy.getRegionValue(region);
 	}
-	
-	*/
-	
+		
 }
