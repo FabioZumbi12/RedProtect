@@ -116,7 +116,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         }
         
         if (!hasAny){
-        	this.setError(p, "regionbuilder.needinside");
+        	this.setError(p, RPLang.get("regionbuilder.needinside"));
         	return;
         }
         
