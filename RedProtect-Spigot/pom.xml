@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.RedProtect</groupId>
     <artifactId>RedProtect</artifactId>
-    <version>7.1.3</version>
+    <version>${pluginVersion}</version>
   </parent>
   <artifactId>RedProtect-Spigot</artifactId>
   
