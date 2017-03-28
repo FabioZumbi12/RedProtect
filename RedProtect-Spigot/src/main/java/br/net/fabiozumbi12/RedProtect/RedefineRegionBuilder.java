@@ -99,13 +99,12 @@ public class RedefineRegionBuilder extends RegionBuilder{
         	otherrg = RedProtect.rm.getTopRegion(loc);        	
         	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
         	
-        	
-        	if (checkID(region, otherrg)){
-        		hasAny = true;
-        		continue;
-        	}
-        	
-    		if (otherrg != null){                    			
+    		if (otherrg != null){     
+    			if (checkID(region, otherrg)){
+            		hasAny = true;
+            		continue;
+            	}
+    			
             	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
             		this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                     return;
