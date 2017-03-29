@@ -214,11 +214,7 @@ public class RegionManager{
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getTopRegion(World w, int x, int y, int z){
-    	if (!this.regionManagers.containsKey(w)){
-    		return null;
-    	}
-    	WorldRegionManager rm = this.regionManagers.get(w);    	
-		return rm.getTopRegion(x, y, z);
+    	return getTopRegion(new Location<World>(w,x,y,z));
     }
     
     /**

@@ -684,7 +684,6 @@ public class RPCommands implements CommandCallable {
                         while (i.hasNext()) {
                             Region r = i.next();
                             player.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + " | "+RPLang.get("region.center")+" (&6X,Z"+RPLang.get("general.color")+"): &6" +  r.getCenterX() + ", "  + r.getCenterZ()));
-                            player.sendMessage(RPUtil.toText(RPLang.get("region.regions") + " " + regions.size()));
                         }
                         player.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
                     }

@@ -262,11 +262,12 @@ public class RegionManager{
     
     /**
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
-     * @return {@code Region} - Or null if no regions on this location.
+     * @return {@code Region} - Or null if no regions on this location.     
+     * @param loc Location
      */
     public Region getTopRegion(Location loc){
     	if (bLoc.containsKey(loc.getBlock().getLocation())){
-    		RedProtect.logger.debug("Get from cache: "+loc.getBlock().getLocation().toString());
+    		RedProtect.logger.debug("Get from cache");
     		return bLoc.get(loc.getBlock().getLocation());
     	} else {
         	if (!this.regionManagers.containsKey(loc.getWorld())){
@@ -287,7 +288,7 @@ public class RegionManager{
         	
         	if (r != null){
         		bLoc.put(loc.getBlock().getLocation(), r);
-        		RedProtect.logger.debug("Get from DB: "+loc.getBlock().getLocation().toString());
+        		RedProtect.logger.debug("Get from DB");
         	}        	
         	return r;
     	}
@@ -295,18 +296,24 @@ public class RegionManager{
     
     /**
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
+     * 
+     * @param w World
+     * @param x Location x
+     * @param y Location y
+     * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getTopRegion(World w, int x, int y, int z){
-    	if (!this.regionManagers.containsKey(w)){
-    		return null;
-    	}
-    	WorldRegionManager rm = this.regionManagers.get(w);    	
-		return rm.getTopRegion(x, y, z);
+    	return getTopRegion(new Location(w,x,y,z));
     }
     
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
+     * 
+     * @param w World
+     * @param x Location x
+     * @param y Location y
+     * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getLowRegion(World w, int x, int y, int z){
@@ -330,6 +337,11 @@ public class RegionManager{
     }
     
     /** Get regions in a group region. If no other regions, return the unique region on location.
+     *      
+     * @param w World
+     * @param x Location x
+     * @param y Location y
+     * @param z Location z
      * @return {@code Map<Integer,Region>} - Indexed by priority
      */
     public Map<Integer,Region> getGroupRegion(World w, int x, int y, int z){

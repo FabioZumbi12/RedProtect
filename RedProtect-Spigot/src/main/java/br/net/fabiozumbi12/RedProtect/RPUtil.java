@@ -1056,7 +1056,7 @@ public class RPUtil {
         Region topRegion = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
         Region lowRegion = RedProtect.rm.getLowRegion(RedProtect.serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
         
-        if ((topRegion != null && topRegion.equals(region)) || (lowRegion != null && lowRegion.equals(region))){
+        if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))){
         	return prior;
         }
         

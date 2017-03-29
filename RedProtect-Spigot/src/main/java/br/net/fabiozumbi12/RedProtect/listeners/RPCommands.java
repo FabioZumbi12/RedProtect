@@ -620,15 +620,23 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 	Location pl = player.getLocation();
                 	RedProtect.firstLocationSelections.put(player, pl);
             		player.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
-            		return true;
-            	}
+            		//show preview border
+                    if (RedProtect.firstLocationSelections.containsKey(player) && RedProtect.secondLocationSelections.containsKey(player)){       
+                    	RPUtil.addBorder(player, RPUtil.get4Points(RedProtect.firstLocationSelections.get(player),RedProtect.secondLocationSelections.get(player),player.getLocation().getBlockY()));                	
+                    }
+                    return true;
+        		}
             	
             	//rp pos2
             	if (checkCmd(args[0], "pos2")){
                 	Location pl = player.getLocation();
                 	RedProtect.secondLocationSelections.put(player, pl);
             		player.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
-            		return true;
+            		//show preview border
+                    if (RedProtect.firstLocationSelections.containsKey(player) && RedProtect.secondLocationSelections.containsKey(player)){       
+                    	RPUtil.addBorder(player, RPUtil.get4Points(RedProtect.firstLocationSelections.get(player),RedProtect.secondLocationSelections.get(player),player.getLocation().getBlockY()));                	
+                    }
+                    return true;
             	}
         	}
         	        	
@@ -1130,8 +1138,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                         RPLang.sendMessage(player,RPLang.get("general.color") + "------------------------------------");
                         while (i.hasNext()) {
                             Region r = i.next();
-                            RPLang.sendMessage(player,RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + ChatColor.translateAlternateColorCodes('&', " | Center (&6X,Z"+RPLang.get("general.color")+"): &6") +  r.getCenterX() + ", "  + r.getCenterZ());
-                            RPLang.sendMessage(player,RPLang.get("region.regions") + " " + regions.size());
+                            player.sendMessage(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + ChatColor.translateAlternateColorCodes('&', " | Center (&6X,Z"+RPLang.get("general.color")+"): &6") +  r.getCenterX() + ", "  + r.getCenterZ());
+                            
                         }
                         RPLang.sendMessage(player,RPLang.get("general.color") + "------------------------------------");
                     }
