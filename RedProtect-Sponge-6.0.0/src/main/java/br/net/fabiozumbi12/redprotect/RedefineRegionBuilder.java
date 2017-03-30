@@ -42,15 +42,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
     	}
-        
-        int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),region.getWorld());    
-        boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
-        if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
-        	this.setError(p, RPLang.get("regionbuilder.claim.limit"));
-            return;
-        }
-        
+                
         int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.rm.getTotalRegionSize(pName);
         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
@@ -140,6 +132,12 @@ public class RedefineRegionBuilder extends RegionBuilder{
         		return;
         	}
         }
+        
+        RedProtect.rm.remove(old, w);
+        
+        int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
+        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),region.getWorld());    
+        boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
         
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit)));

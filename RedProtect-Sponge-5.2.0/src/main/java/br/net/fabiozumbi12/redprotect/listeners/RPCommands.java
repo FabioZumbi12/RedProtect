@@ -827,7 +827,6 @@ public class RPCommands implements CommandCallable {
                 if (rb.ready()) {
                     Region r2 = rb.build();
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                    RedProtect.rm.remove(oldRect, player.getWorld());
                     RedProtect.rm.add(r2, player.getWorld());
 					
 					RedProtect.firstLocationSelections.remove(player);

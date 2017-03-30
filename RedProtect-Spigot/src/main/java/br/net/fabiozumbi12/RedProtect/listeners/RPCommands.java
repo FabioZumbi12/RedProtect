@@ -1319,7 +1319,6 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 if (rb.ready()) {
                     Region r2 = rb.build();
                     RPLang.sendMessage(player,RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                    RedProtect.rm.remove(oldRect, RedProtect.serv.getWorld(oldRect.getWorld()));
                     RedProtect.rm.add(r2, player.getWorld());
                     
                     RedProtect.firstLocationSelections.remove(player);
