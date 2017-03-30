@@ -733,7 +733,7 @@ public class RPUtil {
             	
         	for (World world:Bukkit.getWorlds()){
             	String tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
-                PreparedStatement st = dbcon.prepareStatement("SELECT * FROM "+tableName+" WHERE world=?");
+                PreparedStatement st = dbcon.prepareStatement("SELECT * FROM `"+tableName+"` WHERE world=?");
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();            
                 while (rs.next()){ 
@@ -889,7 +889,7 @@ public class RPUtil {
 			for (Region r:RedProtect.rm.getRegionsByWorld(world)){
 				if (!regionExists(dbcon, r.getName(), tableName)) {
 					try {                
-		                PreparedStatement st = dbcon.prepareStatement("INSERT INTO "+tableName+" (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) "
+		                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `"+tableName+"` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) "
 		                		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");    
 		                st.setString(1, r.getName());
 		                st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
@@ -952,7 +952,7 @@ public class RPUtil {
 	        	if (!checkTableExists(tableName)) {
 	        		//create db
 	                Connection con = DriverManager.getConnection(url+RPConfig.getString("mysql.db-name")+reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));  
-	                st = con.prepareStatement("CREATE TABLE " + tableName + " (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(16), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
+	                st = con.prepareStatement("CREATE TABLE `"+tableName+"` (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
 	                st.executeUpdate();
 	                st.close();
 	                st = null;
@@ -1002,7 +1002,7 @@ public class RPUtil {
 	private static boolean regionExists(Connection dbcon, String name, String tableName) {
         int total = 0;
         try {
-        	PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM "+tableName+" WHERE name = ?");
+        	PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM `"+tableName+"` WHERE name = ?");
         	st.setString(1, name);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
