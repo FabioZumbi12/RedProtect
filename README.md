@@ -15,7 +15,7 @@ Sponge: https://ore.spongepowered.org/FabioZumbi12/RedProtect
 The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
 
 ## Dev builds: 
-Available on jenkins: [![Build Status](http://158.69.121.149:8080/buildStatus/icon?job=RedProtect)](http://158.69.121.149:8080/job/RedProtect/)
+Available on jenkins: [![Build Status](http://areaz12server.net.br:8080/buildStatus/icon?job=RedProtect)](http://areaz12server.net.br:8080/job/RedProtect/)
 
 ## Jenkins Builds:
 
