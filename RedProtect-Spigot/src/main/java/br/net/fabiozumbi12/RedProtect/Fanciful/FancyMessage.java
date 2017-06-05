@@ -1,5 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Fanciful;
 
+import static br.net.fabiozumbi12.RedProtect.Fanciful.TextualComponent.rawText;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -15,18 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import static br.net.fabiozumbi12.RedProtect.Fanciful.TextualComponent.rawText;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
-
-import br.net.fabiozumbi12.RedProtect.Fanciful.util.ArrayWrapper;
-import br.net.fabiozumbi12.RedProtect.Fanciful.util.Reflection;
-
-import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,6 +28,15 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import br.net.fabiozumbi12.RedProtect.Fanciful.util.ArrayWrapper;
+import br.net.fabiozumbi12.RedProtect.Fanciful.util.Reflection;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
 
 /**
  * Represents a formattable message. Such messages can use elements such as colors, formatting codes, hover and click data, and other features provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.
@@ -225,28 +224,6 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	public FancyMessage achievementTooltip(final String name) {
 		onHover("show_achievement", new JsonString("achievement." + name));
 		return this;
-	}
-
-	/**
-	 * Set the behavior of the current editing component to display information about an achievement when the client hovers over the text.
-	 * <p>Tooltips do not inherit display characteristics, such as color and styles, from the message component on which they are applied.</p>
-	 * @param which The achievement to display.
-	 * @return This builder instance.
-	 */
-	public FancyMessage achievementTooltip(final Achievement which) {
-		try {
-			Object achievement = Reflection.getMethod(Reflection.getOBCClass("CraftStatistic"), "getNMSAchievement", Achievement.class).invoke(null, which);
-			return achievementTooltip((String) Reflection.getField(Reflection.getNMSClass("Achievement"), "name").get(achievement));
-		} catch (IllegalAccessException e) {
-                        Bukkit.getLogger().log(Level.WARNING, "Could not access method.", e);
-			return this;
-		} catch (IllegalArgumentException e) {
-                        Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
-                        return this;
-                } catch (InvocationTargetException e) {
-                        Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
-                        return this;
-                }
 	}
 
 	/**

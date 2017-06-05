@@ -1,6 +1,5 @@
 package br.net.fabiozumbi12.RedProtect.hooks;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -41,7 +40,7 @@ public class RPDynmap {
 	    }
 	    
 	    //start set markers
-		for (World w:Bukkit.getWorlds()){
+		for (World w:RedProtect.serv.getWorlds()){
 			for (Region r:RedProtect.rm.getRegionsByWorld(w)){
     			addMark(r);
     		}

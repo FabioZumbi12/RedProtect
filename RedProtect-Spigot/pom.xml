@@ -193,6 +193,6 @@
   </dependencies>
 
   <properties>
-  	<mineVersion>1.11.2-R0.1-SNAPSHOT</mineVersion>
+  	<mineVersion>1.12-pre5-SNAPSHOT</mineVersion>
   </properties>
 </project>

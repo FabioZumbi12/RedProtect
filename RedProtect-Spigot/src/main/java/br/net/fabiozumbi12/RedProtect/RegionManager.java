@@ -373,10 +373,8 @@ public class RegionManager{
     }
     
     public Set<Region> getRegionsByWorld(World w){
-    	Set<Region> regions = new HashSet<Region>();
     	WorldRegionManager rm = this.regionManagers.get(w);
-    	regions.addAll(rm.getAllRegions());
-    	return regions;
+    	return rm.getAllRegions();
     }
     
     public void clearDB(){

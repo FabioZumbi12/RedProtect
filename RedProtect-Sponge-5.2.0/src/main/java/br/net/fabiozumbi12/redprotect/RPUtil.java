@@ -1128,7 +1128,7 @@ public class RPUtil {
 				continue;
 			}				
 			//RedProtect.logger.severe("Reg: "+other.getName());
-			if (!r2.equals(other) && r2.getPrior() > other.getPrior() && other.isLeader(player)){
+			if (!r2.getID().equals(other.getID()) && r2.getPrior() > other.getPrior() && other.isLeader(player)){
 				regs++;
 				//RedProtect.logger.severe("Reg added: "+other.getName());
 			}

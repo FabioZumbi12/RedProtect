@@ -339,7 +339,6 @@ public class RPBlockListener implements Listener{
                 
     }
     
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e){
 		RedProtect.logger.debug("BlockListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
@@ -364,7 +363,7 @@ public class RPBlockListener implements Listener{
 		}		
 				
 		try {
-			for (Block block:p.getLineOfSight((HashSet<Byte>)null, 8)){
+			for (Block block:p.getLineOfSight((HashSet<Material>)null, 8)){
 				if (block == null){
 					continue;
 				}

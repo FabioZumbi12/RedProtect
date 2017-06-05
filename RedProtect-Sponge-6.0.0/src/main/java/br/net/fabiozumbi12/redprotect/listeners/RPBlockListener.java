@@ -556,48 +556,6 @@ public class RPBlockListener{
 	
 	/*
 	@Listener
-	public void onPistonExtend(BlockPistonExtendEvent e){
-		if (RedProtect.cfgs.getBool("performance.disable-PistonEvent-handler")){
-			return;
-		}
-		Block piston = e.getBlock();
-		List<Block> blocks = e.getBlocks();
-		Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
-		for (Block b:blocks){
-			Region br = RedProtect.rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
-			if (pr == null && br != null || (pr != null && br != null && pr != br)){
-				e.setCancelled(true);
-			}
-		}	
-	}
-		
-	@Listener
-	public void onPistonRetract(BlockPistonRetractEvent e){
-		if (RedProtect.cfgs.getBool("performance.disable-PistonEvent-handler")){
-			return;
-		}
-		Block piston = e.getBlock();
-		if (Bukkit.getVersion().contains("1.7")){
-			Block block = e.getBlock();
-			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
-			Region br = RedProtect.rm.getTopRegion(block.getLocation());
-			if (pr == null && br != null || (pr != null && br != null && pr != br)){
-				e.setCancelled(true);				
-			}
-		} else {
-			List<Block> blocks = e.getBlocks();
-			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
-			for (Block b:blocks){
-				Region br = RedProtect.rm.getTopRegion(b.getLocation());
-				if (pr == null && br != null || (pr != null && br != null && pr != br)){
-					e.setCancelled(true);				
-				}
-			}
-		}
-	}
-	*/
-	/*
-	@Listener
 	public void onLeafDecay(ChangeBlockEvent.Decay e){		
 		for (Transaction<BlockSnapshot> t:e.getTransactions()){
 			Location<World> loc = t.getOriginal().getLocation().get();

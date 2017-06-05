@@ -40,7 +40,6 @@ public class RPYaml extends YamlConfiguration {
 	  save(this.file);
   }
 
-  @Override
   public void load(InputStream stream) throws IOException, InvalidConfigurationException {
     Validate.notNull(stream, "Stream cannot be null");
 
