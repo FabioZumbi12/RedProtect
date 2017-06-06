@@ -190,9 +190,15 @@
             <scope>provided</scope>
         </dependency>
         
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+        
   </dependencies>
 
   <properties>
-  	<mineVersion>1.12-pre5-SNAPSHOT</mineVersion>
+  	<mineVersion>1.12-pre6-SNAPSHOT</mineVersion>
   </properties>
 </project>

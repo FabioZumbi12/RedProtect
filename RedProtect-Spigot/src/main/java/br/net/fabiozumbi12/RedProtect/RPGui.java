@@ -22,6 +22,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
@@ -104,7 +108,7 @@ public class RPGui implements Listener{
 				}
 				
 				if (allowEnchant){
-					this.guiItens[i] = removeAttribute(RPConfig.getGuiItemStack(flag));
+					this.guiItens[i] = removeAttributes(RPConfig.getGuiItemStack(flag));
 				} else {
 					this.guiItens[i] = RPConfig.getGuiItemStack(flag);					
 				}				
@@ -213,12 +217,13 @@ public class RPGui implements Listener{
 	    }
 	}
 	
-	private ItemStack removeAttribute(ItemStack stack) {
-	    // May need to clone this ItemStack as a CraftItemStack
-	    ItemStack craftStack = NbtFactory.getCraftItemStack(stack);
-	 
-	    NbtFactory.fromItemTag(craftStack).put("AttributeModifiers", NbtFactory.createList());
-	    return craftStack;
+	private static ItemStack removeAttributes(ItemStack item) {
+	    if (!MinecraftReflection.isCraftItemStack(item)) {
+	        item = MinecraftReflection.getBukkitItemStack(item);
+	    }
+	    NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
+	    compound.put(NbtFactory.ofList("AttributeModifiers"));
+	    return item;
 	}
 	
 	private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event){
