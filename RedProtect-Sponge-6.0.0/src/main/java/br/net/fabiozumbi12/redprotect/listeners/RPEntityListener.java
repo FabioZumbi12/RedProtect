@@ -69,7 +69,7 @@ public class RPEntityListener {
             }
             
             Optional<SpawnCause> cause = event.getCause().first(SpawnCause.class);            
-            RedProtect.logger.debug("entity","SpawnCause: "+cause.get().getType().getName());
+            RedProtect.logger.debug("entity","SpawnCause: "+(cause.isPresent() ? cause.get().getType().getName():" null"));
             if (e instanceof Wither && cause.isPresent() && cause.get().getType().equals(SpawnTypes.PLACEMENT)){            	
                 Region r = RedProtect.rm.getTopRegion(e.getLocation());
                 if (r != null && !r.canSpawnWhiter()){

@@ -5,7 +5,7 @@
     <artifactId>RedProtect</artifactId>
     <version>${pluginVersion}</version>
   </parent>
-  <artifactId>RedProtect-Sponge-6.0.0</artifactId>
+  <artifactId>RedProtect-Sponge-6.1.0</artifactId>
 
   <dependencies>
     <dependency>
@@ -23,6 +23,6 @@
   </dependencies>
   
   <properties>
-  	<spongeVersion>6.0.0-SNAPSHOT</spongeVersion>
+  	<spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
   </properties>
 </project>
