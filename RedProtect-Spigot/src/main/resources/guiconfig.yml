@@ -189,3 +189,10 @@ gui-flags:
     description: '&bDescription: &aAllow non members'
     description1: '&aof this region to break or'
     description2: '&aplace mob spawners.'
+  leaves-decay:
+    slot: 9
+    material: LEAVES
+    name: '&e=> Allow Leaves Decay or Not'
+    description: '&bDescription: &aAllow leaves decay'
+    description1: '&anaturally or not.'
+    description2: ''

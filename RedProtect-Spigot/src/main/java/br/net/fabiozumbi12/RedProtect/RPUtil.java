@@ -112,6 +112,51 @@ public class RPUtil {
     	return false;
     }
     
+    private static boolean isSecure(Location loc){
+    	Block b = loc.add(0, -1, 0).getBlock();
+    	return (!b.isLiquid() && !b.isEmpty()) || b.getType().name().contains("LAVA");
+    }
+    
+    public static Location DenyEnterPlayer(World wFrom, Location from, Location to, Player p, Region r, boolean checkSec) {
+    	Location setTo = to;
+    	for (int i = 0; i < r.getArea()+10; i++){
+    		Region r1 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ());
+    		Region r2 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockY(), from.getBlockZ());
+    		Region r3 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ()+i);
+    		Region r4 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ()-i);
+    		Region r5 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ()+i);
+    		Region r6 = RedProtect.rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockY(), from.getBlockZ()-i);
+    		if (r1 != r){
+    			setTo = from.add(+i, 0, 0);    			  
+    			break;
+    		} 
+    		if (r2 != r){
+    			setTo = from.add(-i, 0, 0);
+    			break;
+    		} 
+    		if (r3 != r){
+    			setTo = from.add(0, 0, +i);
+    			break;
+    		} 
+    		if (r4 != r){
+    			setTo = from.add(0, 0, -i);
+    			break;
+    		} 
+    		if (r5 != r){
+    			setTo = from.add(+i, 0, +i);
+    			break;
+    		} 
+    		if (r6 != r){
+    			setTo = from.add(-i, 0, -i);
+    			break;
+    		} 
+		}    	
+    	if (checkSec && !isSecure(setTo)){
+			wFrom.getBlockAt(setTo.clone().add(0, -1, 0)).setType(Material.GRASS);
+		} 
+    	return setTo;
+	}
+    
     public static long getNowMillis(){
     	SimpleDateFormat sdf = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));			
 		Calendar cal = Calendar.getInstance();

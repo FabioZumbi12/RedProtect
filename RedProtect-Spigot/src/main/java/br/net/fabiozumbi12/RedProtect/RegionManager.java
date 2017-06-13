@@ -93,13 +93,13 @@ public class RegionManager{
         return this.regionManagers.get(Bukkit.getWorld(w)).getRegion(rname);
     }
     
-    public int getTotalRegionSize(String uuid) {
-        int ret = 0;
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            ret += rms.next().getTotalRegionSize(uuid);
+    public int getTotalRegionSize(String uuid, String world) {
+        World w = Bukkit.getWorld(world);
+        if (w == null){
+        	return 0;
         }
-        return ret;
+        WorldRegionManager rms = this.regionManagers.get(w);        
+        return rms.getTotalRegionSize(uuid);
     }
     
     public Set<Region> getWorldRegions(String player, World w) {

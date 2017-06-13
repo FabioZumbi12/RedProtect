@@ -7,7 +7,7 @@
 # <       configuration file in this link: https://goo.gl/HepyPX       > #
 # +--------------------------------------------------------------------+ #
 
-config-version: 7.4
+config-version: 7.8
 # Enable debug messages
 debug-messages: false
 
@@ -112,7 +112,10 @@ region-settings:
   # First home settings
   first-home:
     # Player can remove the protectio of first home after this amount of claims. Use -1 to do not allow to delete.
-    can-delete-after-claims: 10  
+    can-delete-after-claims: 10
+
+  # Delay before a kicked player can back to a region (in seconds).
+  delay-after-kick-region: 60  
 
 # World that player can claim regions.
 allowed-claim-worlds:
@@ -251,6 +254,7 @@ flags:
   use-potions: true
   allow-effects: true
   allow-spawner: false
+  leaves-decay: false
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.
@@ -280,6 +284,7 @@ flags-configuration:
   - teleport
   - clan
   - ender-chest
+  - leaves-decay
   
   # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}

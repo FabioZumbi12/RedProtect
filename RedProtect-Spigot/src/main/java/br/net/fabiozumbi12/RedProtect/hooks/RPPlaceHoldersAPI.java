@@ -24,7 +24,7 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
 			return String.valueOf(RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
 		}
 		if (arg.equals("player_used_blocks")){
-			return String.valueOf(RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(p.getName())));
+			return String.valueOf(RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
 		}
 		if (arg.equals("player_total_claims")){
 			return String.valueOf(RedProtect.ph.getPlayerClaimLimit(p));

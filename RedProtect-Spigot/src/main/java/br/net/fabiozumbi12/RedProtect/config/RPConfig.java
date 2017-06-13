@@ -348,6 +348,14 @@ public class RPConfig{
         				}
         				configUp++;
         			}
+        			if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.8D){
+        				RedProtect.plugin.getConfig().set("config-version", 7.8D);        				
+        				
+        				if (!flags.contains("leaves-decay")){
+        					flags.add("leaves-decay");            				
+        				}
+        				configUp++;
+        			}
         			
         			if (configUp > 0){
         				RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);   
@@ -402,6 +410,8 @@ public class RPConfig{
                     	gflags.set(w.getName()+".invincible", gflags.getBoolean(w.getName()+".invincible", false));
                     	gflags.set(w.getName()+".player-candrop", gflags.getBoolean(w.getName()+".player-candrop", true));
                     	gflags.set(w.getName()+".player-canpickup", gflags.getBoolean(w.getName()+".player-canpickup", true));
+                    	gflags.set(w.getName()+".rain.trys-before-rain", gflags.getInt(w.getName()+".rain.trys-before-rain", 3));
+                    	gflags.set(w.getName()+".rain.duration", gflags.getInt(w.getName()+".rain.duration", 60));
                     	if (!gflags.contains(w.getName()+".command-ranges")){
                     		gflags.set(w.getName()+".command-ranges.home.min-range", gflags.getDouble(w.getName()+".command-ranges.home.min-range", 0));
                         	gflags.set(w.getName()+".command-ranges.home.max-range", gflags.getDouble(w.getName()+".command-ranges.home.max-range", w.getMaxHeight()));

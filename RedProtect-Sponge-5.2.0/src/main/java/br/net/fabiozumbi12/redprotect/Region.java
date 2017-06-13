@@ -1397,7 +1397,26 @@ public class Region implements Serializable{
 	}
 	
 	
-	//---------------------- Player Flags --------------------------//
+	//---------------------- Player Flags --------------------------//	
+
+	public boolean leavesDecay() {
+		if (!RedProtect.cfgs.isFlagEnabled("leaves-decay")){
+    		return RedProtect.cfgs.getBool("flags.leaves-decay");
+    	}
+		return getFlagBool("leaves-decay");
+	}
+	
+	/**Allow non members of this region to break/place spawners.
+	 * 
+	 * @return boolean
+	 */
+	public boolean allowSpawner(Player p) {
+		if (!RedProtect.cfgs.isFlagEnabled("allow-spawner")){
+    		return RedProtect.cfgs.getBool("flags.allow-spawner");
+    	}
+		return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
+	}
+	
 	public boolean canTeleport(Player p) {
 		if (!RedProtect.cfgs.isFlagEnabled("teleport")){
     		return checkAllowedPlayer(p) || RedProtect.cfgs.getBool("flags.teleport");
@@ -1413,10 +1432,7 @@ public class Region implements Serializable{
 		if (!RedProtect.cfgs.isFlagEnabled("allow-fly")){
     		return RedProtect.cfgs.getBool("flags.allow-fly");
     	}
-		if (checkAllowedPlayer(p)){
-			return true;
-		}
-		return getFlagBool("allow-fly");
+		return getFlagBool("allow-fly") || checkAllowedPlayer(p);
 	}
 	
 	public boolean FlowDamage() {

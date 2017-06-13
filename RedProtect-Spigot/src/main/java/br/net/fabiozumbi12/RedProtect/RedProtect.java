@@ -2,7 +2,9 @@ package br.net.fabiozumbi12.RedProtect;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.milkbowl.vault.economy.Economy;
@@ -91,6 +93,7 @@ public class RedProtect extends JavaPlugin {
 	public static boolean paper = false;
 	public static List<String> openGuis = new ArrayList<String>();
 	public static List<String> confiemStart = new ArrayList<String>();
+	public static HashMap<String, List<String>> denyEnter = new HashMap<String, List<String>>();
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -240,6 +243,35 @@ public class RedProtect extends JavaPlugin {
                 this.disable();
         	}
         }
+    }
+    
+    public boolean denyEnterRegion(String rid, String player){
+    	if (denyEnter.containsKey(player)){
+    		if (denyEnter.get(player).contains(rid)){
+        		return false;
+        	}
+    		List<String> regs = denyEnter.get(player);
+    		regs.add(rid);
+    		denyEnter.put(player, regs);
+    	} else {
+    		denyEnter.put(player, new LinkedList<String>(Arrays.asList(rid)));
+    	}    	
+    	
+    	Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+			@Override
+			public void run() {
+				if (denyEnter.containsKey(player)){
+					List<String> regs = denyEnter.get(player);
+					regs.remove(rid);
+					if (regs.isEmpty()){
+						denyEnter.remove(player);
+					} else {
+						denyEnter.put(player, regs);
+					}
+				}
+			}    		
+    	}, RPConfig.getInt("region-settings.delay-after-kick-region")*20);
+    	return true;
     }
     
     private int getBukkitVersion(){

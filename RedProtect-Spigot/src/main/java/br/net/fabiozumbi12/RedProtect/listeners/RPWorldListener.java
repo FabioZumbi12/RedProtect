@@ -1,12 +1,16 @@
 package br.net.fabiozumbi12.RedProtect.listeners;
 
+import java.util.HashMap;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Tameable;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.EventHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.Listener;
@@ -17,8 +21,36 @@ import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 
 public class RPWorldListener implements Listener {
     
+	private HashMap<World, Integer> rainCounter = new HashMap<World, Integer>();
+	
     public RPWorldListener() {
         RedProtect.logger.debug("Loaded RPEntityListener...");
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onWeatherChange(WeatherChangeEvent e) {    
+    	World w = e.getWorld();
+    	int trys = RPConfig.getGlobalFlagInt(w.getName()+".rain.trys-before-rain");
+    	if (e.toWeatherState()){
+    		if (!rainCounter.containsKey(w)){
+    			rainCounter.put(w, trys);
+    			e.setCancelled(true);
+    		} else {
+    			int acTry = rainCounter.get(w);
+    			if (acTry-1 <= 0){    
+    				Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
+						@Override
+						public void run() {
+							w.setWeatherDuration(RPConfig.getGlobalFlagInt(w.getName()+".rain.duration")*20);
+						}    					
+    				}, 40);    				
+    				rainCounter.put(w, trys);
+    			} else {
+    				rainCounter.put(w, acTry-1);
+        			e.setCancelled(true);
+    			}
+    		}    		
+    	}
     }
     
     @EventHandler(priority = EventPriority.NORMAL)

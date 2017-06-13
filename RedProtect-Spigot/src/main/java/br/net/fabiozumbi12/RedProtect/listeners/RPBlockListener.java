@@ -238,7 +238,20 @@ public class RPBlockListener implements Listener{
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
         
-        if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
+        if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
+    			(m.equals(Material.HOPPER) || m.name().contains("RAIL"))){
+    		int x = b.getX();
+    		int y = b.getY();
+    		int z = b.getZ();
+    		Block ib = w.getBlockAt(x, y+1, z);
+    		if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
+    			RPLang.sendMessage(p, "blocklistener.container.chestinside");
+    			e.setCancelled(true);
+    			return;
+    		}
+    	}
+        
+        if (r == null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
         	return;
         }
         	
@@ -254,27 +267,9 @@ public class RPBlockListener implements Listener{
             	return;
         	}
         	
-            try {
-
-                if (!r.canBuild(p) && !r.canPlace(b.getType())) {
-                	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
-                    e.setCancelled(true);
-                } else {
-                	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
-                			(m.equals(Material.HOPPER) || m.name().contains("RAIL"))){
-                		int x = b.getX();
-                		int y = b.getY();
-                		int z = b.getZ();
-                		Block ib = w.getBlockAt(x, y+1, z);
-                		if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
-                			RPLang.sendMessage(p, "blocklistener.container.chestinside");
-                			e.setCancelled(true);
-                			return;
-                		}
-                	}
-                }
-            } catch (Throwable t) {
-                t.printStackTrace();
+        	if (!r.canBuild(p) && !r.canPlace(b.getType())) {
+            	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+                e.setCancelled(true);
             }
         }        
     }    	
@@ -297,11 +292,7 @@ public class RPBlockListener implements Listener{
         World w = p.getWorld();
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(b.getLocation());
-        
-        if (r != null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
-        	return;
-        }
-        
+                        
         if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")){
         	int x = b.getX();
     		int y = b.getY();
@@ -312,6 +303,10 @@ public class RPBlockListener implements Listener{
     			e.setCancelled(true);
     			return;
     		}  
+        }
+        
+        if (r == null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
+        	return;
         }
         
         //remove more sign
@@ -766,8 +761,11 @@ public class RPBlockListener implements Listener{
 	@EventHandler
 	public void onLeafDecay(LeavesDecayEvent e){
 		RedProtect.logger.debug("RPBlockListener - Is LeavesDecayEvent event");
+		if (e.isCancelled()){
+			return;
+		}
 		Region r = RedProtect.rm.getTopRegion(e.getBlock().getLocation());		
-		if (r != null && !r.canFlow()){
+		if (r != null && !r.leavesDecay()){
          	 e.setCancelled(true);           	  
 		}		
 	}	

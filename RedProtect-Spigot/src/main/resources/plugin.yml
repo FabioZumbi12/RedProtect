@@ -38,6 +38,7 @@ permissions:
       redprotect.own.priority: true
       redprotect.own.flaggui: true
       redprotect.own.near: true
+      redprotect.own.kick: true
       redprotect.infowand: true
   redprotect.flag.all:
     description: "Access to edit all flags."
@@ -71,6 +72,7 @@ permissions:
       redprotect.flag.allow-effects: true
       redprotect.flag.allow-spawner: true
       redprotect.flag.can-grow: true
+      redprotect.flag.leaves-decay: true
   redprotect.vip:
     description: "Recommended Vip permissions."
     default: false

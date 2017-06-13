@@ -165,6 +165,13 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 		
         if (!(sender instanceof Player)) {        	
         	if (args.length == 1) {    
+        		
+        		if (args[0].equalsIgnoreCase("clear-kicks")){
+        			RedProtect.denyEnter.clear();
+        			RedProtect.logger.sucess("All region kicks was clear");
+        			return true;
+                }
+        		
         		if (args[0].equalsIgnoreCase("single-to-files")) {
         			RedProtect.logger.sucess("["+RPUtil.SingleToFiles()+"]"+" regions converted to your own files with success");
         			return true;
@@ -359,7 +366,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     }
                     
                     int currentUsed = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
-                    sender.sendMessage(RPLang.get("cmdmanager.yourclaims") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                    ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                    sender.sendMessage(RPLang.get("cmdmanager.yourclaims") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                     return true;
         		}
         		
@@ -375,8 +383,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                         return true;
                     }
                     
-                    int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()));
-                    sender.sendMessage(RPLang.get("cmdmanager.yourarea") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                    int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld().getName());
+                    ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                    sender.sendMessage(RPLang.get("cmdmanager.yourarea") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                     return true;
         		}
         		
@@ -471,7 +480,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     }
                     
                     int currentUsed = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), w).size();
-                    sender.sendMessage(RPLang.get("cmdmanager.yourclaims") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                    ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                    sender.sendMessage(RPLang.get("cmdmanager.yourclaims") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                     return true;
         		}
         		        		
@@ -518,6 +528,42 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	}
         	        	
         	if (args.length == 4) {        		
+        		//rp kick <player> [region] [world]
+                if (checkCmd(args[0], "kick")){
+                	Region r = RedProtect.rm.getRegion(args[2], args[3]); 
+    				
+    				if (r == null){
+    	    			sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+    					return true;
+    	    		}
+        			
+        			Player visit = Bukkit.getPlayer(args[1]);
+    				if (visit == null){
+    					sender.sendMessage("No online players with name "+args[1]);
+    					return true;
+    				}	
+            		
+            		if (r.canBuild(visit)){
+            			sender.sendMessage("You cant kick members of a region");
+        				return true;
+        			}
+        			Region rv = RedProtect.rm.getTopRegion(visit.getLocation());
+        			if (rv == null || rv != null && !rv.getID().equals(r.getID())){
+        				sender.sendMessage("This player is not on this region");
+        				return true;
+        			}
+        			
+        			RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), visit, r, true);
+        			
+        			String sec = String.valueOf(RPConfig.getInt("region-settings.delay-after-kick-region"));
+        			if (RedProtect.plugin.denyEnterRegion(r.getID(), visit.getName())){
+        				sender.sendMessage("The player "+visit.getName()+" has been kicked from "+r.getName()+" by "+sec+" seconds.");
+        			} else {
+        				sender.sendMessage("This player is already kicked from this region by "+sec);
+        			}
+        			return true;			
+                }
+                
         		if (checkCmd(args[0], "teleport")){
         			//rp teleport <player> <region> <world>
                 	Player play = RedProtect.serv.getPlayer(args[1]);
@@ -1596,6 +1642,56 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	}
         }
         
+        //rp kick <player> [region] [world]
+        if (checkCmd(args[0], "kick")){
+        	if (args.length == 2 || args.length == 4){        		
+            	Region r = RedProtect.rm.getTopRegion(player.getLocation()); 
+            	
+				if (r == null){
+	    			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+					return true;
+	    		}
+				
+    			if (args.length == 4){
+    				r = RedProtect.rm.getRegion(args[2], args[3]); 
+    				if (r == null){
+    	    			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+    					return true;
+    	    		}    							
+    			} 
+    			
+    			if (!RedProtect.ph.hasRegionPermMember(player, "kick", r)) {
+	                RPLang.sendMessage(player, "no.permission");
+	                return true;
+	            }	
+    			
+    			Player visit = Bukkit.getPlayer(args[1]);
+				if (visit == null){
+					RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+					return true;
+				}	
+        		
+        		if (r.canBuild(visit)){
+    				RPLang.sendMessage(player, "cmdmanager.cantkick.member");
+    				return true;
+    			}
+    			Region rv = RedProtect.rm.getTopRegion(visit.getLocation());
+    			if (rv == null || rv != null && !rv.getID().equals(r.getID())){
+    				RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
+    				return true;
+    			}
+    			
+    			String sec = String.valueOf(RPConfig.getInt("region-settings.delay-after-kick-region"));
+    			if (RedProtect.plugin.denyEnterRegion(r.getID(), visit.getName())){
+    				RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), visit, r, true);
+    				RPLang.sendMessage(player, RPLang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
+    			} else {
+    				RPLang.sendMessage(player, RPLang.get("cmdmanager.already.cantenter").replace("{time}", sec));
+    			}
+    			return true;
+        	}			
+        }
+        
         //rp expand-vert [region] [world]
         if (checkCmd(args[0], "expand-vert")){
     		if (!RedProtect.ph.hasGenPerm(player, "expandvert")) {
@@ -1891,8 +1987,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 if (!RedProtect.OnlineMode){
                 	uuid = player.getName().toLowerCase();
                 }
-                int currentUsed = RedProtect.rm.getTotalRegionSize(uuid);
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                int currentUsed = RedProtect.rm.getTotalRegionSize(uuid, player.getWorld().getName());
+                ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                 return true;
             }            
 
@@ -1913,8 +2010,9 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                     return true;
                 }
                 
-                int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()));
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld().getName());
+                ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                 return true;
             }
             RPLang.sendMessage(player,RPLang.get("correct.usage") + " " + RPLang.get("cmdmanager.help.limit"));
@@ -1935,7 +2033,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 }
 
                 int currentUsed = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(player.getName()), player.getWorld()).size();
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourclaims") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourclaims") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                 return true;
             }            
 
@@ -1957,7 +2056,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 }
                 
                 int currentUsed = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
-                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourclaims") + currentUsed + RPLang.get("general.color") + "/" + ChatColor.GOLD + limit + RPLang.get("general.color"));
+                ChatColor color = currentUsed >= limit ? ChatColor.RED:ChatColor.GOLD;
+                RPLang.sendMessage(player,RPLang.get("cmdmanager.yourclaims") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
                 return true;
             }
             RPLang.sendMessage(player,RPLang.get("correct.usage") + " " + RPLang.get("cmdmanager.help.claimlimit"));

@@ -234,7 +234,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         
                         int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
                         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
-                        int totalArea = RedProtect.rm.getTotalRegionSize(pName);
+                        int totalArea = RedProtect.rm.getTotalRegionSize(pName, p.getWorld().getName());
                         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
                         int actualArea = totalArea+regionarea;
                         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {

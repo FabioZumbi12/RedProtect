@@ -1165,6 +1165,10 @@ public class Region implements Serializable{
 	}
     
 	public boolean canEnter(Player p) {
+		if (RedProtect.denyEnter.containsKey(p.getName()) && RedProtect.denyEnter.get(p.getName()).contains(this.getID())){
+			return checkAllowedPlayer(p);
+		}
+		
 		if (!flagExists("enter")){
     		return true;
     	}
@@ -1480,8 +1484,15 @@ public class Region implements Serializable{
 	}
 	
 	
-	//---------------------- Player Flags --------------------------//
+	//---------------------- Player Flags --------------------------//	
 
+	public boolean leavesDecay() {
+		if (!RPConfig.isFlagEnabled("leaves-decay")){
+    		return RPConfig.getBool("flags.leaves-decay");
+    	}
+		return getFlagBool("leaves-decay");
+	}
+	
 	/**Allow non members of this region to break/place spawners.
 	 * 
 	 * @return boolean
@@ -1741,4 +1752,5 @@ public class Region implements Serializable{
 		}
 		return "["+leaderList.toString().substring(2)+"]";
 	}
+	
 }

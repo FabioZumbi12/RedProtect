@@ -245,82 +245,62 @@ public class RPConfig{
                     /*------------- ---- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
+    	            List<String> flags = new LinkedList<String>(Arrays.asList());
     	            int update = 0;
         			if (getNodes("config-version").getDouble() < 6.8D){
         				getNodes("config-version").setValue(6.8D);
         				
-						try {
-							List<String> flags = new LinkedList<String>(Arrays.asList());
-							flags.addAll(getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class)));
-							if (!flags.contains("smart-door")){
-	        					flags.add("smart-door");
-	        					getNodes("flags.smart-door").setValue(true);
-	        				}
-	        				if (!flags.contains("allow-potions")){
-	        					flags.add("allow-potions");    
-	        					getNodes("flags.allow-potions").setValue(true);
-	        				}
-	        				if (!flags.contains("mob-loot")){
-	        					flags.add("mob-loot");     
-	        					getNodes("flags.mob-loot").setValue(false);
-	        				}
-	        				if (!flags.contains("flow-damage")){
-	        					flags.add("flow-damage");     
-	        					getNodes("flags.flow-damage").setValue(false);
-	        				}
-	        				getNodes("flags-configuration.enabled-flags").setValue(flags);
-	        				update++;
-						} catch (ObjectMappingException e) {
-							e.printStackTrace();
-						}        				
+						if (!flags.contains("smart-door")){
+							flags.add("smart-door");
+							getNodes("flags.smart-door").setValue(true);
+						}
+						if (!flags.contains("allow-potions")){
+							flags.add("allow-potions");    
+							getNodes("flags.allow-potions").setValue(true);
+						}
+						if (!flags.contains("mob-loot")){
+							flags.add("mob-loot");     
+							getNodes("flags.mob-loot").setValue(false);
+						}
+						if (!flags.contains("flow-damage")){
+							flags.add("flow-damage");     
+							getNodes("flags.flow-damage").setValue(false);
+						}	        				
+						update++;        				
         			}
         			
         			if (getNodes("config-version").getDouble() < 6.9D){
         				getNodes("config-version").setValue(6.9D);
-        				try {
-							List<String> flags = new LinkedList<String>(Arrays.asList());
-							flags.addAll(getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class)));
-							if (!flags.contains("allow-fly")){
-	        					flags.add("allow-fly");
-	        					getNodes("flags.allow-fly").setValue(true);
-	        				}
-							if (!flags.contains("can-grow")){
-	        					flags.add("can-grow");
-	        					getNodes("flags.can-grow").setValue(true);
-	        				}
-							if (!flags.contains("teleport")){
-	        					flags.add("teleport");
-	        					getNodes("flags.teleport").setValue(false);
-	        				}
-	        				getNodes("flags-configuration.enabled-flags").setValue(flags);   	
-	        				update++;
-						} catch (ObjectMappingException e) {
-							e.printStackTrace();
-						}  
+        				if (!flags.contains("allow-fly")){
+							flags.add("allow-fly");
+							getNodes("flags.allow-fly").setValue(true);
+						}
+						if (!flags.contains("can-grow")){
+							flags.add("can-grow");
+							getNodes("flags.can-grow").setValue(true);
+						}
+						if (!flags.contains("teleport")){
+							flags.add("teleport");
+							getNodes("flags.teleport").setValue(false);
+						}	
+						update++;  
         			}
         			
         			if (getNodes("config-version").getDouble() < 7.0D){
         				getNodes("config-version").setValue(7.0D);
-        				try {
-							List<String> flags = new LinkedList<String>(Arrays.asList());
-							flags.addAll(getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class)));
-							if (!flags.contains("allow-effects")){
-	        					flags.add("allow-effects");
-	        					getNodes("flags.allow-effects").setValue(true);
-	        				}
-							if (!flags.contains("use-potions")){
-	        					flags.add("use-potions");
-	        					getNodes("flags.use-potions").setValue(true);
-	        				}
-							if (flags.contains("allow-potions")){
-	        					flags.remove("allow-potions");
-	        					getNodes("flags").removeChild("allow-potions");
-	        				}
-	        				getNodes("flags-configuration.enabled-flags").setValue(flags);   	
-	        				update++;
-						} catch (ObjectMappingException e) {
-							e.printStackTrace();
-						}  
+        				if (!flags.contains("allow-effects")){
+							flags.add("allow-effects");
+							getNodes("flags.allow-effects").setValue(true);
+						}
+						if (!flags.contains("use-potions")){
+							flags.add("use-potions");
+							getNodes("flags.use-potions").setValue(true);
+						}
+						if (flags.contains("allow-potions")){
+							flags.remove("allow-potions");
+							getNodes("flags").removeChild("allow-potions");
+						}	
+						update++;  
         			}
         			
         			if (getNodes("config-version").getDouble() < 7.1D){
@@ -329,7 +309,21 @@ public class RPConfig{
         				update++;
         			}
         			
+        			if (getNodes("config-version").getDouble() < 7.2D){
+        				getNodes("config-version").setValue(7.2D);
+        				if (!flags.contains("allow-spawner")){
+        					flags.add("allow-spawner");
+        					getNodes("flags.allow-spawner").setValue(false);
+        				}
+        				if (!flags.contains("leaves-decay")){
+        					flags.add("leaves-decay");
+        					getNodes("flags.leaves-decay").setValue(false);
+        				}
+        				update++;
+        			}
+        			
         			if (update > 0){
+        				getNodes("flags-configuration.enabled-flags").setValue(flags);
         				RedProtect.logger.warning("Configuration UPDATED!");
         			}
         			/*---------------------------------------- Global Flags for worlds loaded --------------------------------------------*/
