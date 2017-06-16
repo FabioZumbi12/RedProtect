@@ -11,6 +11,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import br.net.fabiozumbi12.redprotect.hooks.WEListener;
+
 import com.flowpowered.math.vector.Vector3i;
 
 /**
@@ -231,6 +233,33 @@ public class RegionManager{
     	}
     	WorldRegionManager rm = this.regionManagers.get(w);    	
 		return rm.getLowRegion(x, y, z);
+    }
+    
+    public int removeAll(String player){
+    	int qtd = 0;
+    	for (WorldRegionManager wrm:this.regionManagers.values()){
+    		Iterator<Region> it = wrm.getRegions(player).iterator();
+    		while (it.hasNext()){
+    			Region r = it.next();
+    			wrm.remove(r);
+    			removeCache(r);
+    			qtd++;
+    		}
+    	}
+    	return qtd;
+    }
+    
+    public int regenAll(String player){
+    	int delay = 0;
+    	Iterator<Region> it = getRegions(player).iterator();
+    	while (it.hasNext()){
+    		Region r = it.next();
+    		if (r.getArea() <= RedProtect.cfgs.getInt("purge.regen.max-area-regen")){
+    			WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);               		
+        		delay=delay+10;
+			}
+    	}
+    	return delay/10;
     }
     
     /**

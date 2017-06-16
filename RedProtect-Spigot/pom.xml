@@ -161,11 +161,11 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>worldedit-bukkit-6.1.5</groupId>
-			<artifactId>worldedit-bukkit-6.1.5</artifactId>
+			<groupId>worldedit-bukkit</groupId>
+			<artifactId>worldedit-bukkit</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/worldedit-bukkit-6.1.5.jar</systemPath>
+			<systemPath>${project.basedir}/libs/worldedit-bukkit-6.1.7.2.jar</systemPath>
 		</dependency>
 		
 		<!-- end of local repos -->

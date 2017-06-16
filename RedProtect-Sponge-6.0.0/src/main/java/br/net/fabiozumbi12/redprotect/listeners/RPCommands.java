@@ -60,6 +60,7 @@ import br.net.fabiozumbi12.redprotect.config.RPConfig;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 import br.net.fabiozumbi12.redprotect.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.redprotect.events.RenameRegionEvent;
+import br.net.fabiozumbi12.redprotect.hooks.WEListener;
 
 
 public class RPCommands implements CommandCallable {
@@ -198,6 +199,16 @@ public class RPCommands implements CommandCallable {
         	
         	if(args.length == 2){
         		   		
+        		//rp regen stop
+        		if (checkCmd(args[0], "regen") && args[1].equalsIgnoreCase("stop")) {
+        			if (!RedProtect.WE){
+        				return cmdr;
+        			}
+        			RPUtil.stopRegen = true;
+        			RPLang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
+        			return cmdr;
+        		}
+        		
         		//rp list <player>
         		if (checkCmd(args[0], "list")){        			
         			getRegionforList(sender, RPUtil.PlayerToUUID(args[1]), 1);
@@ -416,6 +427,40 @@ public class RPCommands implements CommandCallable {
         
         if (args.length == 1) {
         	
+        	//rp regen
+    		if (checkCmd(args[0], "regen") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			Region r = RedProtect.rm.getTopRegion(player.getLocation());
+    			if (r == null){
+    				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+    				return cmdr;
+    			}
+    			
+    			WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
+    			return cmdr;
+    		}
+    		
+    		//rp undo
+    		if (args[0].equalsIgnoreCase("undo") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			Region r = RedProtect.rm.getTopRegion(player.getLocation());
+    			if (r == null){
+    				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+    				return cmdr;
+    			}
+    			
+    			if (WEListener.undo(r.getID())){
+                	RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+				} else {
+					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+				}      			
+    			return cmdr;
+    		}
+    		
         	String claimmode = RedProtect.cfgs.getWorldClaimType(player.getWorld().getName());
         	if (claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH") || RedProtect.ph.hasGenPerm(player, "redefine")){
         		//rp pos1
@@ -753,6 +798,30 @@ public class RPCommands implements CommandCallable {
         
         if (args.length == 2) {      
         	        	        	
+        	//rp regenall <player>
+    		if (checkCmd(args[0], "regenall") && sender.hasPermission("redprotect.regenall")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			int regen = RedProtect.rm.regenAll(args[1]);
+    			if (regen <= 0){
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneregenerated"));
+    			} else {
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.regenerated").replace("{regions}", regen+"").replace("{player}", args[1]));
+    			}
+    			return cmdr;
+    		}
+    		
+        	//rp regen stop
+    		if (checkCmd(args[0], "regen") && args[1].equalsIgnoreCase("stop") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			RPUtil.stopRegen = true;
+    			RPLang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
+    			return cmdr;
+    		}
+    		
         	if (checkCmd(args[0], "help")) {
         		try{
         			int page = Integer.parseInt(args[1]);

@@ -57,12 +57,14 @@ import org.spongepowered.api.world.World;
 import com.google.common.reflect.TypeToken;
 
 import br.net.fabiozumbi12.redprotect.config.RPLang;
+import br.net.fabiozumbi12.redprotect.hooks.WEListener;
 
 @SuppressWarnings("deprecation")
 public class RPUtil {
     static int backup = 0; 
     public static HashMap<Player, HashMap<Location<World>, BlockState>> pBorders = new HashMap<Player, HashMap<Location<World>, BlockState>>();
     private static HashMap<String, UUID> borderIds = new HashMap<String, UUID>();
+	public static boolean stopRegen;
         
     public static Text toText(String str){
     	return TextSerializers.FORMATTING_CODE.deserialize(str);
@@ -254,6 +256,7 @@ public class RPUtil {
     	}
     }
     
+    //TODO read all db
     static void ReadAllDB(Set<Region> regions){     	
     	RedProtect.logger.info("Loaded " + regions.size() + " regions (" + RedProtect.cfgs.getString("file-type") + ")");
     	int i = 0;
@@ -268,7 +271,12 @@ public class RPUtil {
     	int skipped = 0;
     	Date now = null;   	 
     	SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.cfgs.getString("region-settings.date-format"));
-
+    	
+    	boolean checkNames = RedProtect.cfgs.getBool("hooks.check-uuid-names-onstart");        	
+    	if (!checkNames){
+    		RedProtect.logger.warning("Name Update is disabled! Enable on config to update UUID/Names to Names/UUID if you change your server from Online mode to Offline mode.");
+    	}
+    	
 		try {
 			now = dateformat.parse(DateNow());
 		} catch (ParseException e1) {
@@ -306,13 +314,9 @@ public class RPUtil {
         			purged++;
         			RedProtect.logger.warning("Purging " + r.getName() + " - Days: " + days);
         			
-            		/*if (RedProtect.WE && RedProtect.cfgs.getBool("purge.regen.enable")){
+        			if (RedProtect.WE && RedProtect.cfgs.getBool("purge.regen.enable")){
             			if (r.getArea() <= RedProtect.cfgs.getInt("purge.regen.max-area-regen")){
-            				if (RedProtect.AWE && RedProtect.cfgs.getBool("hooks.asyncworldedit.use-for-regen")){
-                    			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
-                    		} else {
-                    			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
-                    		}                		
+            				WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);                		
                     		delay=delay+10;
             			} else {
             				skipped++;
@@ -323,7 +327,7 @@ public class RPUtil {
             			//r.delete();
             			purged++;
             			RedProtect.logger.warning("Purging " + r.getName() + " - Days: " + days);
-            		}*/
+            		}
             		continue;
             	}
         	}    
@@ -367,7 +371,7 @@ public class RPUtil {
 				}
         	}
         	
-        	if (!serverRegion){
+        	if (!serverRegion && checkNames){
         		if (RedProtect.OnlineMode){
                 	for (int l = 0; l < leadersl.size(); l++){
                 		String pname = leadersl.get(l).replace("[", "").replace("]", "");
@@ -474,46 +478,6 @@ public class RPUtil {
                 		pls++;
                 	} 
             	}
-        		/*
-        		//import essentials last visit for player dates
-            	if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.Ess){ 
-                	Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-                	List<Long> dates = new ArrayList<Long>(); 
-                	
-                	for (int o = 0; o < adminsl.size(); o++){
-                		String pname = adminsl.get(o);  
-                		User essp = null;
-                		if (RedProtect.OnlineMode){
-                			essp = ess.getUser(UUID.fromString(pname));
-                		} else {
-                			essp = ess.getOfflineUser(pname);
-                		}
-                		if (essp != null){
-                			dates.add(essp.getLastLogout());
-                			RedProtect.logger.info("Updated user date: "+pname+" - "+dateformat.format(essp.getLastLogout()));
-                		}            		
-                	}        	
-                	for (int m = 0; m < leadersl.size(); m++){
-                		String pname = leadersl.get(m); 
-                		User essp = null;
-                		if (RedProtect.OnlineMode){
-                			essp = ess.getUser(UUID.fromString(pname));
-                		} else {
-                			essp = ess.getOfflineUser(pname);
-                		}            		
-                		if (essp != null){
-                			dates.add(essp.getLastLogout());
-                			RedProtect.logger.info("Updated user date: "+pname+" - "+dateformat.format(essp.getLastLogout()));
-                		}
-                	} 
-                	
-                	if (dates.size() > 0){
-                		Date lastvisit = new Date(Collections.max(dates));
-                		r.setDate(dateformat.format(lastvisit));
-            			RedProtect.logger.info("Updated "+ dates.size() +" last visit users ("+dateformat.format(lastvisit)+")");
-            			dates.clear();
-                	}
-            	}*/
         	}
         	     	
         	if (pls > 0){

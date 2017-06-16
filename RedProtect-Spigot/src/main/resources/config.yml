@@ -336,6 +336,9 @@ schematics:
   first-house-file: 'house1.schematic'
 
 hooks:
+  # Convert/check names if need to update to/from UUID/names on server start?
+  check-uuid-names-onstart: false
+  
   essentials:
     # Import last visits from Essentials to RedProtect Regions.
     import-lastvisits: false

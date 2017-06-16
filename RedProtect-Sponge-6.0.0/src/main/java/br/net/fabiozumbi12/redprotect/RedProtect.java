@@ -20,6 +20,7 @@ import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
@@ -42,8 +43,10 @@ import br.net.fabiozumbi12.redprotect.listeners.RPWorldListener;
 name = "RedProtect", 
 version = VersionData.VERSION,
 authors="FabioZumbi12", 
-description="Complete antigrief plugin")
+description="Complete antigrief plugin",
+dependencies=@Dependency(id = "worldedit", optional = true))
 public class RedProtect {
+	public static boolean WE;
 	public static Game game;
 	public static PluginContainer plugin;
 	private static UUID taskid;
@@ -182,8 +185,14 @@ public class RedProtect {
         cfgs = new RPConfig();
         RPLang.init();
         
+        WE = checkWE();
+        
         ph = new RPPermHandler();
         rm = new RegionManager();
     }
+
+	private boolean checkWE() {
+		return Sponge.getPluginManager().getPlugin("worldedit").isPresent();
+	}
     
 }

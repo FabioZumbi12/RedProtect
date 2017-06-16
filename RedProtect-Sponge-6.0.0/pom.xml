@@ -20,6 +20,15 @@
       <version>${spongeVersion}</version>
       <classifier>javadoc</classifier>
     </dependency>  
+    
+    <dependency>
+	  <groupId>worldedit</groupId>
+	  <artifactId>worldedit</artifactId>
+	  <version>v1</version>
+	  <scope>system</scope>
+	  <systemPath>${project.basedir}/libs/worldedit-sponge-6.1.8-SNAPSHOT-dist.jar</systemPath>
+	</dependency>	
+	
   </dependencies>
   
   <properties>
