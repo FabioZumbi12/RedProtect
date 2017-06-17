@@ -1435,7 +1435,7 @@ public class RPUtil {
 		int total = 0;
 		int regs = 0;			
 		for (Location loc:r2.get4Points(r2.getCenterY())){		
-			Map<Integer, Region> pregs = RedProtect.rm.getGroupRegion(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			Map<Integer, Region> pregs = RedProtect.rm.getGroupRegion(loc);
 			pregs.remove(r2.getPrior());				
 			Region other = null;
 			if (pregs.size() > 0){
@@ -1452,7 +1452,8 @@ public class RPUtil {
 		//RedProtect.logger.severe("Regs size: "+regs);
 		if (regs == 0 || regs != 4){
 			total += r2.getArea();
-		} 
+		}
+		
 		return total;
 	}
 		

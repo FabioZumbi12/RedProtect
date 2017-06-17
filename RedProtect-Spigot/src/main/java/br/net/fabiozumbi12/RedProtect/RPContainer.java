@@ -254,7 +254,6 @@ public class RPContainer {
 		if (validateMoreSign(b) && validateMore(b, p.getName())){
 			return true;
 		}
-		RedProtect.logger.severe("False!");
 		return false;
 	}
 	
