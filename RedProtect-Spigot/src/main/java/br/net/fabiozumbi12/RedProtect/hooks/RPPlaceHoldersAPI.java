@@ -17,20 +17,24 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
 
 	@Override
 	public String onPlaceholderRequest(Player p, String arg) {
+		String text = "";
 		if (arg.equals("player_in_region")){
-			return RedProtect.rm.getTopRegion(p.getLocation()).getName();
+			Region r = RedProtect.rm.getTopRegion(p.getLocation());
+			text = r == null ? RPLang.get("region.wilderness"):r.getName();
 		}
-		if (arg.equals("player_used_claims")){
-			return String.valueOf(RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
+		if (arg.equals("player_used_claims")){			
+			text = String.valueOf(RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
 		}
 		if (arg.equals("player_used_blocks")){
-			return String.valueOf(RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
+			text = String.valueOf(RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
 		}
 		if (arg.equals("player_total_claims")){
-			return String.valueOf(RedProtect.ph.getPlayerClaimLimit(p));
+			int l = RedProtect.ph.getPlayerClaimLimit(p);
+			text = l == -1 ? RPLang.get("regionbuilder.area.unlimited"):String.valueOf(l);
 		}
 		if (arg.equals("player_total_blocks")){
-			return String.valueOf(RedProtect.ph.getPlayerBlockLimit(p));
+			int l = RedProtect.ph.getPlayerBlockLimit(p);
+			text = l == -1 ? RPLang.get("regionbuilder.area.unlimited"):String.valueOf(l);
 		}	
 		if (arg.startsWith("region_flag_value_")){
 			Region r = RedProtect.rm.getTopRegion(p.getLocation());			
@@ -42,9 +46,12 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
 				if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){
 					return RPLang.translBool(value);
 				}
-				return value;
+				text = value;
+			} else {
+				text = "--";
 			}
 		}
-		return null;
+		
+		return text;
 	}
 }
