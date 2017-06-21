@@ -519,6 +519,66 @@ public class RPCommands implements CommandCallable {
                 sender.sendMessage(RPUtil.toText(RPLang.get("general.color")+"---------------------------------------------------"));
                 return cmdr;
     		}
+        	
+        	if (checkCmd(args[0], "laccept")){
+        		if (RedProtect.alWait.containsKey(player)){
+        			//info = region+world+pname
+        			String info = RedProtect.alWait.get(player);
+        			
+        			Player lsender = Sponge.getServer().getPlayer(info.split("@")[2]).get();
+        			Region r = RedProtect.rm.getRegion(info.split("@")[0],info.split("@")[1]);
+        			
+        			String VictimUUID = player.getName();
+    				if (RedProtect.OnlineMode){
+    					VictimUUID = player.getUniqueId().toString();
+    				}
+    				
+        			if (r != null){
+        				
+        				if (RedProtect.ph.getPlayerClaimLimit(player) == (RedProtect.rm.getRegions(VictimUUID,r.getWorld()).size()+1)){
+        					RPLang.sendMessage(player,"regionbuilder.claim.limit");
+        					return cmdr;
+        				}
+        				
+        				r.addLeader(VictimUUID);                        
+        				RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + lsender.getName());
+        				if (lsender != null && lsender.isOnline()){
+        					RPLang.sendMessage(lsender, RPLang.get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName()));
+        				}
+        			} else {        				
+        				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+        			}
+        			RedProtect.alWait.remove(player);
+        			return cmdr;
+        		} else {
+        			RPLang.sendMessage(player, "cmdmanager.norequests");
+        			return cmdr;
+        		}
+        	}
+        	
+        	if (checkCmd(args[0], "ldeny")){
+        		if (RedProtect.alWait.containsKey(player)){
+        			//info = region+world+pname
+        			String info = RedProtect.alWait.get(player);
+        			
+        			Player lsender = Sponge.getServer().getPlayer(info.split("@")[2]).get();
+        			Region r = RedProtect.rm.getRegion(info.split("@")[0],info.split("@")[1]);
+        			
+        			if (r != null){                      
+        				RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));
+        				if (lsender != null && lsender.isOnline()){
+        					RPLang.sendMessage(lsender, RPLang.get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName()));
+        				}
+        			} else {        				
+        				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+        			}
+        			RedProtect.alWait.remove(player);
+        			return cmdr;
+        		} else {
+        			RPLang.sendMessage(player, "cmdmanager.norequests");
+        			return cmdr;
+        		}
+        	}
         	        	
         	if (checkCmd(args[0], "settp") && RedProtect.ph.hasGenPerm(player, "settp")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());

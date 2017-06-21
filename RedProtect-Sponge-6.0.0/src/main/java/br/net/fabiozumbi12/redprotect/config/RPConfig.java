@@ -245,7 +245,12 @@ public class RPConfig{
                     /*------------- ---- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-    	            List<String> flags = new LinkedList<String>(Arrays.asList());
+    	            List<String> flags = new LinkedList<String>(Arrays.asList());    	            
+    	            try {
+						flags = getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class));
+					} catch (ObjectMappingException e) {
+						e.printStackTrace();
+					}
     	            int update = 0;
         			if (getNodes("config-version").getDouble() < 6.8D){
         				getNodes("config-version").setValue(6.8D);

@@ -79,6 +79,10 @@ public class RegionManager{
         return this.regionManagers.get(w).getRegion(rid.split("@")[0]);
     }
     
+    public Region getRegion(String rname, String w) {
+        return this.regionManagers.get(Sponge.getServer().getWorld(w).get()).getRegion(rname);
+    }
+    
     public Region getRegion(String rname, World w) {
         return this.regionManagers.get(w).getRegion(rname);
     }
