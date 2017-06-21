@@ -25,6 +25,7 @@ import org.spongepowered.api.entity.vehicle.Boat;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.entity.vehicle.minecart.TNTMinecart;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.action.InteractEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
@@ -59,7 +60,7 @@ public class RPGlobalListener{
 		RedProtect.logger.debug("default","Loaded RPGlobalListener...");
 	}
 	
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerDropItem(DropItemEvent.Dispense e, @Root EntitySpawnCause cause){
     	if (!(cause.getEntity() instanceof Player)) {
             return;
@@ -75,7 +76,7 @@ public class RPGlobalListener{
     	}    	
     }
 	
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onItemPickup(CollideEntityEvent event, @Root Player p) {
     	for (Entity ent:event.getEntities()){
     		if (!(ent instanceof Item)){
@@ -88,7 +89,7 @@ public class RPGlobalListener{
     	}
     }
 	
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onFlow(ChangeBlockEvent.Place e, @First BlockSnapshot source){		
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
 		
@@ -133,7 +134,7 @@ public class RPGlobalListener{
    	    }   	
     }
 	
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onDecay(ChangeBlockEvent.Decay e, @First BlockSnapshot source){
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
 		boolean allowDecay = RedProtect.cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","leaves-decay");
@@ -144,7 +145,7 @@ public class RPGlobalListener{
     	}
 	}
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
 		RedProtect.logger.debug("default","RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + e.isCancelled());
 		
@@ -179,14 +180,14 @@ public class RPGlobalListener{
 		}		
 	}
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onChangeWeather(ChangeWorldWeatherEvent e) {
 		if (!RedProtect.cfgs.getGlobalFlag(e.getTargetWorld().getName(),"allow-weather") && !e.getWeather().equals(Weathers.CLEAR)){
 			e.setCancelled(true);
 		}
 	}
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onBlockBreak(ChangeBlockEvent.Break e, @First Player p) {
 		RedProtect.logger.debug("default","RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 		
@@ -203,7 +204,7 @@ public class RPGlobalListener{
 		}
 	}
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onPlayerInteract(InteractEvent e, @First Player p){
 		RedProtect.logger.debug("default","RPGlobalListener - Is InteractEvent event! Cancelled? " + e.isCancelled());
 		if (!e.getInteractionPoint().isPresent()){
@@ -246,7 +247,7 @@ public class RPGlobalListener{
         }	
 	}
 	
-	/*@Listener	
+	/*@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onPlayerInteractBlock(InteractBlockEvent e, @First Player p) {
 		Region r = RedProtect.rm.getTopRegion(new Location<World>(p.getWorld(), e.getInteractionPoint().get()));
 		
@@ -262,7 +263,7 @@ public class RPGlobalListener{
         }
 	}*/
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onPlayerInteract(InteractEntityEvent e, @First Player p) {
 		
         Entity ent = e.getTargetEntity();
@@ -290,7 +291,7 @@ public class RPGlobalListener{
         }      
 	}
 			
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onBucketUse(UseItemStackEvent.Start e, @First Player p){    	
     	Location<World> l = p.getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);	
@@ -309,7 +310,7 @@ public class RPGlobalListener{
     	}*/
     }
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onEntityDamageEntity(DamageEntityEvent e) {
 		
         Entity e1 = e.getTargetEntity();
@@ -431,7 +432,7 @@ public class RPGlobalListener{
         }        
 	}
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onEntityExplode(ExplosionEvent.Detonate e) {
     	    	
     	World w = e.getTargetWorld();
@@ -445,7 +446,7 @@ public class RPGlobalListener{
         }
     }
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onBlockBurn(ChangeBlockEvent.Modify e){
 		Transaction<BlockSnapshot> b = e.getTransactions().get(0);
 		Region r = RedProtect.rm.getTopRegion(b.getOriginal().getLocation().get());
@@ -465,7 +466,7 @@ public class RPGlobalListener{
 		}   	   	
     }
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onFireSpread(NotifyNeighborBlockEvent  e, @First BlockSnapshot source){
 		
 		Map<Direction, BlockState> dirs = e.getNeighbors();
@@ -486,7 +487,7 @@ public class RPGlobalListener{
     	}
 	}
 	
-	@Listener	
+	@Listener(order = Order.FIRST, beforeModifications = true)	
 	@IsCancelled(Tristate.FALSE)
     public void onCreatureSpawn(SpawnEntityEvent event) {
     	

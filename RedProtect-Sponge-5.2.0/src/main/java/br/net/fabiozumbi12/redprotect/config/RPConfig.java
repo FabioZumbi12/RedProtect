@@ -326,7 +326,7 @@ public class RPConfig{
         				}
         				update++;
         			}
-        			
+        			        			
         			if (update > 0){
         				getNodes("flags-configuration.enabled-flags").setValue(flags);
         				RedProtect.logger.warning("Configuration UPDATED!");

@@ -325,7 +325,7 @@ public class RPConfig{
         					getNodes("flags.leaves-decay").setValue(false);
         				}
         				update++;
-        			}
+        			}        			
         			
         			if (update > 0){
         				getNodes("flags-configuration.enabled-flags").setValue(flags);

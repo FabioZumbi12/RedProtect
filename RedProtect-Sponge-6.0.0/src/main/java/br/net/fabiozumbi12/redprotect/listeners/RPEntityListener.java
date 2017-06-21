@@ -27,6 +27,7 @@ import org.spongepowered.api.entity.projectile.explosive.fireball.Fireball;
 import org.spongepowered.api.entity.projectile.source.ProjectileSource;
 import org.spongepowered.api.entity.weather.Lightning;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
@@ -56,7 +57,7 @@ public class RPEntityListener {
 	
     static RPContainer cont = new RPContainer();     
         
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     @IsCancelled(Tristate.FALSE)
     public void onCreatureSpawn(SpawnEntityEvent event) {
     	
@@ -100,7 +101,7 @@ public class RPEntityListener {
     	}    	
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onEntityDamage(DamageEntityEvent e) {
     	
         //victim
@@ -237,7 +238,7 @@ public class RPEntityListener {
         }
     }
         
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPotionSplash(LaunchProjectileEvent event) {
     	
     	if (event.getTargetEntity() instanceof ThrownPotion){
@@ -287,7 +288,7 @@ public class RPEntityListener {
     	} 
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
 	public void onInteractEvent(InteractEntityEvent.Secondary e, @First Player p){
 		Entity et = e.getTargetEntity();
 		Location<World> l = et.getLocation();
@@ -308,7 +309,7 @@ public class RPEntityListener {
 		}
 	}
       
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void WitherBlockBreak(ChangeBlockEvent.Break event, @First Entity e) {    	    	
     	if (e instanceof Monster) {
     		BlockSnapshot b = event.getTransactions().get(0).getOriginal();
@@ -325,7 +326,7 @@ public class RPEntityListener {
     }
     
     /*
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onEntityExplode(EntityExplodeEvent e) {
     	if (e.isCancelled()){
     		return;

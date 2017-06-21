@@ -28,6 +28,7 @@ import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.entity.projectile.ThrownPotion;
 import org.spongepowered.api.entity.projectile.source.ProjectileSource;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
@@ -82,7 +83,7 @@ public class RPPlayerListener{
     	RedProtect.logger.debug("player","Loaded RPPlayerListener...");
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onConsume(UseItemStackEvent.Start e, @First Player p){
         ItemStack stack = e.getItemStackInUse().createStack();
         RedProtect.logger.debug("player", "Is UseItemStackEvent.Start event. Item: "+stack.getItem().getName());
@@ -114,7 +115,7 @@ public class RPPlayerListener{
     }
     
     //listen left click
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractLeft(InteractBlockEvent.Primary event, @First Player p) {
         BlockSnapshot b = event.getTargetBlock();
         Location<World> l = null;
@@ -154,7 +155,7 @@ public class RPPlayerListener{
     }
     
     //listen right click
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractRight(InteractBlockEvent.Secondary event, @First Player p) {
     	
         BlockSnapshot b = event.getTargetBlock();
@@ -224,7 +225,7 @@ public class RPPlayerListener{
 	}
     
     //listen all
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractBlock(InteractBlockEvent event, @First Player p) {
     	RedProtect.logger.debug("player","RPPlayerListener - InteractBlockEvent canceled? " + event.isCancelled());
     	
@@ -426,7 +427,7 @@ public class RPPlayerListener{
     }
     
     /*
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void MoveItem(ClickInventoryEvent e, @First Player p){
     	Container cont = e.getTargetInventory().getProperties(Names.);
     	
@@ -449,7 +450,7 @@ public class RPPlayerListener{
     }
     	*/
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerInteract(InteractEntityEvent e, @First Player p) {
         Entity ent = e.getTargetEntity();
         RedProtect.logger.debug("player","RPPlayerListener - Is InteractEntityEvent event: " + ent.getType().getName());
@@ -486,7 +487,7 @@ public class RPPlayerListener{
         }        
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onEntityDamageEvent(DamageEntityEvent e) { 
     	//victim
     	Entity e1 = e.getTargetEntity(); 
@@ -568,7 +569,7 @@ public class RPPlayerListener{
         }        
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onEntityDamageByEntityEvent(InteractEntityEvent.Primary e, @First Player p) {
         Entity e1 = e.getTargetEntity();        
         RedProtect.logger.debug("player","RPLayerListener: Is EntityDamageByEntityEvent event. Victim: "+e.getTargetEntity().getType().getName()); 
@@ -586,7 +587,7 @@ public class RPPlayerListener{
         }        
 	}
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerMovement(MoveEntityEvent e){
     	if (!(e.getTargetEntity() instanceof Player) || RedProtect.cfgs.getBool("performance.disable-onPlayerMoveEvent-handler")) {
             return;
@@ -722,7 +723,7 @@ public class RPPlayerListener{
     	}  	
     }
     
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerTeleport(MoveEntityEvent.Teleport e, @First Player p){
     	TeleportType tcause = TeleportTypes.UNKNOWN;
     	if (e.getCause().containsType(TeleportCause.class)){
@@ -851,7 +852,7 @@ public class RPPlayerListener{
 		return true;
 	}
 
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerCommand(SendCommandEvent e, @First Player p){
     	
     	if (RedProtect.tpWait.contains(p.getName())){
@@ -915,7 +916,7 @@ public class RPPlayerListener{
        	}    	
     }     
         
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerHarvest(HarvestEntityEvent.TargetPlayer e){
     	RedProtect.logger.debug("player","RPLayerListener: Is HarvestEntityEvent");
     	
@@ -932,7 +933,7 @@ public class RPPlayerListener{
     	}  
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerDie(DestructEntityEvent.Death e){    	 
     	if (!(e.getTargetEntity() instanceof Player)){
     		return;
@@ -986,7 +987,7 @@ public class RPPlayerListener{
     	return new Transform<World>(setTo).setRotation(to.getRotation());
 	}
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPortalCreate(ConstructPortalEvent e){
     	Region r = RedProtect.rm.getTopRegion(e.getPortalLocation());
 		if (r != null && !r.canCreatePortal()){
@@ -994,7 +995,7 @@ public class RPPlayerListener{
 		}   	
     }
     
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerLogout(ClientConnectionEvent.Disconnect e){
     	stopTaskPlayer(e.getTargetEntity());
     	if (RedProtect.tpWait.contains(e.getTargetEntity().getName())){
@@ -1002,7 +1003,7 @@ public class RPPlayerListener{
     	}
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerLogin(ClientConnectionEvent.Login e){
     	RedProtect.logger.debug("player","Is ClientConnectionEvent.Login event. Player "+e.getTargetUser().getName());
     	
@@ -1031,7 +1032,7 @@ public class RPPlayerListener{
     	}    	    	
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerTrownPotion(LaunchProjectileEvent e){ 
     	
     	Entity ent = e.getTargetEntity();    	
@@ -1401,7 +1402,7 @@ public class RPPlayerListener{
 		}
     }
         
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
 	public void onHunger(HealEntityEvent e){
     	if (!(e.getTargetEntity() instanceof Player)){
     		return;
@@ -1415,7 +1416,7 @@ public class RPPlayerListener{
     	}
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onItemPickup(CollideEntityEvent event, @Root Player p) {
     	RedProtect.logger.debug("player","Is CollideEntityEvent(ItemPickup) event.");
     	for (Entity ent:event.getEntities()){
@@ -1431,7 +1432,7 @@ public class RPPlayerListener{
     	}
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerDropItemGui(DropItemEvent.Pre e, @Root Player p){
     	e.getDroppedItems().forEach(item -> {
     		if (RPUtil.isGuiItem(item.createStack())){
@@ -1441,7 +1442,7 @@ public class RPPlayerListener{
     	});
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerDropItem(DropItemEvent.Dispense e, @Root EntitySpawnCause cause){
     	if (!(cause.getEntity() instanceof Player)) {
             return;
@@ -1460,7 +1461,7 @@ public class RPPlayerListener{
     	}    	
     }
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerMoveInv(InteractInventoryEvent.Close e, @Root Player p){
     	RPUtil.removeGuiItem(p);
     }

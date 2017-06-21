@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.material.Crops;
 
 import br.net.fabiozumbi12.RedProtect.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
@@ -345,13 +346,9 @@ public class RPBlockListener implements Listener{
 		Block b = p.getLocation().getBlock();
 		Location l = e.getClickedBlock().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);
-		if ((b.getType().equals(Material.CROPS)
-				|| b.getType().equals(Material.CARROT)
-				|| b.getType().equals(Material.POTATO)
-				|| b.getType().equals(Material.CARROT)
+		if ((b instanceof Crops
 				 || b.getType().equals(Material.PUMPKIN_STEM)
-				 || b.getType().equals(Material.MELON_STEM)
-				 || b.getType().name().contains("BEETROOT_BLOCK")) && r != null && !r.canBuild(p)){
+				 || b.getType().equals(Material.MELON_STEM)) && r != null && !r.canBuild(p)){
 			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
 			e.setCancelled(true);
 			return;
@@ -524,27 +521,27 @@ public class RPBlockListener implements Listener{
 		if (e.isCancelled()){
     		return;
     	}		
-    	Block b = e.getToBlock();
+    	Block bto = e.getToBlock();
     	Block bfrom = e.getBlock();
-		RedProtect.logger.debug("RPBlockListener - Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
-    	Region r = RedProtect.rm.getTopRegion(b.getLocation());
-    	if (r != null && bfrom.isLiquid() && !r.canFlow()){
+		RedProtect.logger.debug("RPBlockListener - Is BlockFromToEvent event is to " + bto.getType().name() + " from " + bfrom.getType().name());
+    	Region rto = RedProtect.rm.getTopRegion(bto.getLocation());
+    	if (rto != null && bfrom.isLiquid() && !rto.canFlow()){
           	 e.setCancelled(true);   
           	 return;
     	}
     	
-    	if (r != null && !b.isEmpty() && !r.FlowDamage()){
+    	if (rto != null && !bto.isEmpty() && !rto.FlowDamage()){
          	 e.setCancelled(true);      
          	return;
    	    }
     	
     	//deny blocks spread in/out regions
     	Region rfrom = RedProtect.rm.getTopRegion(bfrom.getLocation());
-    	if (rfrom != null && r != null && rfrom != r){
+    	if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)){
 			e.setCancelled(true);
 			return;
 		}
-		if (rfrom == null && r != null){
+		if (rfrom == null && rto != null){
 			e.setCancelled(true);
 			return;
 		}		
@@ -579,7 +576,7 @@ public class RPBlockListener implements Listener{
 		}
 		
 		//deny blocks spread in/out regions
-		if (rfrom != null && rto != null && rfrom != rto){
+		if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)){
 			e.setCancelled(true);
 			return;
 		}
@@ -604,7 +601,7 @@ public class RPBlockListener implements Listener{
 			Region rto = RedProtect.rm.getTopRegion(bstt.getLocation());
 			Block bloc = bstt.getLocation().getBlock();
 			//deny blocks spread in/out regions
-			if (rfrom != null && rto != null && rfrom != rto){
+			if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)){
 				bstt.setType(bloc.getType());
 			}
 			if (rfrom == null && rto != null){
@@ -648,6 +645,7 @@ public class RPBlockListener implements Listener{
 		if (RPConfig.getBool("performance.piston.use-piston-restricter")){
 			if (pistonExtendDelay.contains(e.getBlock().getLocation().toString())){
 				e.setCancelled(true);
+				return;
 			} else {
 				delayExtendPiston(e.getBlock().getLocation().toString());
 			}
@@ -662,8 +660,9 @@ public class RPBlockListener implements Listener{
 			RedProtect.logger.debug("BlockPistonExtendEvent event - Block: "+b.getType().name());
 			RedProtect.logger.debug("BlockPistonExtendEvent event - Relative: "+b.getRelative(e.getDirection()).getType().name());
 			Region br = RedProtect.rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
-			if (pr == null && br != null || (pr != null && br != null && pr != br)){
+			if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))){
 				e.setCancelled(true);
+				return;
 			}
 			if (antih){
         		int x = b.getX();
@@ -708,6 +707,7 @@ public class RPBlockListener implements Listener{
 		if (RPConfig.getBool("performance.piston.use-piston-restricter")){
 			if (pistonRetractDelay.contains(e.getBlock().getLocation().toString())){
 				e.setCancelled(true);
+				return;
 			} else {
 				delayRetractPiston(e.getBlock().getLocation().toString());
 			}
@@ -722,8 +722,9 @@ public class RPBlockListener implements Listener{
 			RedProtect.logger.debug("BlockPistonRetractEvent not 1.8 event - Block: "+b.getType().name());
 			Region pr = RedProtect.rm.getTopRegion(piston.getLocation());
 			Region br = RedProtect.rm.getTopRegion(b.getLocation());
-			if (pr == null && br != null || (pr != null && br != null && pr != br)){
-				e.setCancelled(true);				
+			if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))){
+				e.setCancelled(true);	
+				return;
 			}
 			if (antih){
         		int x = b.getX();
@@ -741,8 +742,9 @@ public class RPBlockListener implements Listener{
 			for (Block b:blocks){
 				RedProtect.logger.debug("BlockPistonRetractEvent 1.8 event - Block: "+b.getType().name());
 				Region br = RedProtect.rm.getTopRegion(b.getLocation());
-				if (pr == null && br != null || (pr != null && br != null && pr != br)){
-					e.setCancelled(true);				
+				if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))){
+					e.setCancelled(true);
+					return;
 				}
 				if (antih){
 	        		int x = b.getX();

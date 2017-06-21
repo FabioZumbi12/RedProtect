@@ -1646,4 +1646,13 @@ public class Region implements Serializable{
 		}
 		return "["+leaderList.toString().substring(2)+"]";
 	}
+
+	public boolean sameLeaders(Region r) {
+		for (String l:this.leaders){
+			if (r.getLeaders().contains(l)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

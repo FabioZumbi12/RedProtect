@@ -7,6 +7,7 @@ import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
@@ -29,7 +30,7 @@ public class RPMine18 {
 	
 	static RPContainer cont = new RPContainer();    
     
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onAttemptInteractAS(InteractEntityEvent e, @First Player p) {
                 
         Entity ent = e.getTargetEntity();
@@ -74,7 +75,7 @@ public class RPMine18 {
         }
     } 
     
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onEntityDamage(DamageEntityEvent e, @First Entity e2) {
     	    	
         Entity e1 = e.getTargetEntity();
@@ -114,7 +115,7 @@ public class RPMine18 {
         }        
 	} 
     
-	@Listener
+	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onBlockExplode(ExplosionEvent.Detonate e){
 		RedProtect.logger.debug("default","Is BlockListener - BlockExplodeEvent event");
 		
