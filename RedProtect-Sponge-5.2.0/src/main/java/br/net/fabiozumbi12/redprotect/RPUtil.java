@@ -170,10 +170,14 @@ public class RPUtil {
     
     
     static File genFileName(String Path, Boolean isBackup){
+    	File f = new File(Path);
+    	if (!f.exists()){
+    		f.mkdir();
+    	}
     	int count = 1;
 		String date = DateNow().replace("/", "-");
-    	File logfile = new File(Path+date+"-"+count+".zip");
-    	File files[] = new File(Path).listFiles();
+    	File logfile = new File(f,date+"-"+count+".zip");
+    	File files[] = f.listFiles();
 		HashMap<Long, File> keyFiles = new HashMap<Long, File>();
     	if (files.length >= RedProtect.cfgs.getInt("flat-file.max-backups") && isBackup){
     		for (File key:files){
