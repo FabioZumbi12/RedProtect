@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.redprotect;
+package br.net.fabiozumbi12.redprotect.actions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,6 +22,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import br.net.fabiozumbi12.redprotect.RPUtil;
+import br.net.fabiozumbi12.redprotect.RedProtect;
+import br.net.fabiozumbi12.redprotect.Region;
+import br.net.fabiozumbi12.redprotect.RegionBuilder;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 
 public class EncompassRegionBuilder extends RegionBuilder{
@@ -219,7 +223,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         region.setPrior(RPUtil.getUpdatedPrior(region));
                         
                         int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
-                        int claimused = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()),w).size();
+                        int claimused = RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()),w);
                         boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
                         if (claimused >= claimLimit && claimLimit != -1) {
                             this.setErrorSign(e, RPLang.get("regionbuilder.claim.limit"));
@@ -228,7 +232,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         
                         int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
                         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
-                        int totalArea = RedProtect.rm.getTotalRegionSize(pName);
+                        int totalArea = RedProtect.rm.getTotalRegionSize(pName, p.getWorld().getName());
                         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
                         int actualArea = 0;
                         if (regionarea > 0){

@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.redprotect;
+package br.net.fabiozumbi12.redprotect.actions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,6 +11,10 @@ import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import br.net.fabiozumbi12.redprotect.RPUtil;
+import br.net.fabiozumbi12.redprotect.RedProtect;
+import br.net.fabiozumbi12.redprotect.Region;
+import br.net.fabiozumbi12.redprotect.RegionBuilder;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 
 public class RedefineRegionBuilder extends RegionBuilder{
@@ -35,16 +39,16 @@ public class RedefineRegionBuilder extends RegionBuilder{
         }
         
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
-
+        
         region.setPrior(RPUtil.getUpdatedPrior(region));    
         
         String pName = p.getUniqueId().toString();
         if (!RedProtect.OnlineMode){
         	pName = p.getName().toLowerCase();
     	}
-        
+                
         int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
-        int totalArea = RedProtect.rm.getTotalRegionSize(pName);
+        int totalArea = RedProtect.rm.getTotalRegionSize(pName, p.getWorld().getName());
         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
         int actualArea = 0;
@@ -97,9 +101,9 @@ public class RedefineRegionBuilder extends RegionBuilder{
         	
         	otherrg = RedProtect.rm.getTopRegion(loc);        	
         	RedProtect.logger.debug("blocks", "protection Block is: " + loc.getBlock().getType().getName());
-        	        	
-    		if (otherrg != null){
-            	if (checkID(region, otherrg)){
+        	
+    		if (otherrg != null){        
+    			if (checkID(region, otherrg)){
             		hasAny = true;
             		continue;
             	}
@@ -139,7 +143,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         RedProtect.rm.remove(old, w);
         
         int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),region.getWorld());    
+        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),w);    
         boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
         
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));

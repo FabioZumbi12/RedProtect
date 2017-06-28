@@ -117,6 +117,12 @@ region-settings:
   # Delay before a kicked player can back to a region (in seconds).
   delay-after-kick-region: 60  
 
+  # Use claim limit per worlds?
+  claimlimit-per-world: true
+
+  # Use block limit per worlds?
+  blocklimit-per-world: true
+
 # World that player can claim regions.
 allowed-claim-worlds:
 - example_world

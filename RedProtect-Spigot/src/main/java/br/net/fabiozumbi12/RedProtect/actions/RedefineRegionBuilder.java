@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import br.net.fabiozumbi12.RedProtect.RPUtil;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
@@ -135,7 +139,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         RedProtect.rm.remove(old, w);
         
         int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),region.getWorld());    
+        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),w);    
         boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
         
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");

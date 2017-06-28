@@ -45,12 +45,12 @@ import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Crops;
 
-import br.net.fabiozumbi12.RedProtect.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.RPContainer;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 

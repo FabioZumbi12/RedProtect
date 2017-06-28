@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.actions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +15,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import br.net.fabiozumbi12.RedProtect.RPUtil;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
+import br.net.fabiozumbi12.RedProtect.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 

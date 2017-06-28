@@ -48,14 +48,14 @@ import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.redprotect.DefineRegionBuilder;
 import br.net.fabiozumbi12.redprotect.RPEconomy;
 import br.net.fabiozumbi12.redprotect.RPGui;
 import br.net.fabiozumbi12.redprotect.RPUtil;
 import br.net.fabiozumbi12.redprotect.RedProtect;
-import br.net.fabiozumbi12.redprotect.RedefineRegionBuilder;
 import br.net.fabiozumbi12.redprotect.Region;
 import br.net.fabiozumbi12.redprotect.RegionBuilder;
+import br.net.fabiozumbi12.redprotect.actions.DefineRegionBuilder;
+import br.net.fabiozumbi12.redprotect.actions.RedefineRegionBuilder;
 import br.net.fabiozumbi12.redprotect.config.RPConfig;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 import br.net.fabiozumbi12.redprotect.events.DeleteRegionEvent;
@@ -270,7 +270,7 @@ public class RPCommands implements CommandCallable {
                         return cmdr;
                     }
                     
-                    int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()));
+                    int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()),offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName():null);
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.yourarea").toString() + currentUsed + RPLang.get("general.color") + "/&e" + limit + RPLang.get("general.color")));
                     return cmdr;
         		}
@@ -1504,7 +1504,7 @@ public class RPCommands implements CommandCallable {
                 if (!RedProtect.OnlineMode){
                 	uuid = player.getName().toLowerCase();
                 }
-                int currentUsed = RedProtect.rm.getTotalRegionSize(uuid);
+                int currentUsed = RedProtect.rm.getTotalRegionSize(uuid,player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName():null);
                 RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea").toString() + currentUsed + RPLang.get("general.color") + "/&e" + limit + RPLang.get("general.color"));
                 return cmdr;
             }            
@@ -1527,7 +1527,7 @@ public class RPCommands implements CommandCallable {
                     return cmdr;
                 }
                 
-                int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()));
+                int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()),offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName():null);
                 RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea").toString() + currentUsed + RPLang.get("general.color") + "/&e" + limit + RPLang.get("general.color"));
                 return cmdr;
             }

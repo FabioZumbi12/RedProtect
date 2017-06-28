@@ -98,8 +98,17 @@ public class RegionManager{
         if (w == null){
         	return 0;
         }
-        WorldRegionManager rms = this.regionManagers.get(w);        
-        return rms.getTotalRegionSize(uuid);
+        int size = 0;
+    	if (RPConfig.getBool("region-settings.blocklimit-per-world")){
+    		WorldRegionManager rms = this.regionManagers.get(w);   
+    		size = rms.getTotalRegionSize(uuid);
+    	} else {
+    		for (World wr:Bukkit.getWorlds()){
+    			WorldRegionManager rms = this.regionManagers.get(wr);   
+        		size += rms.getTotalRegionSize(uuid);
+    		}    		
+    	}             
+        return size;
     }
     
     public Set<Region> getWorldRegions(String player, World w) {
@@ -168,14 +177,15 @@ public class RegionManager{
         return this.regionManagers.get(world).getRegions(player);
     }
     
-    public int getPlayerRegions(String player, String w){  
-    	player = RPUtil.PlayerToUUID(player);
-    	return getRegions(player, w).size();
-    }
-    
     public int getPlayerRegions(String player, World w){
     	player = RPUtil.PlayerToUUID(player);
-    	return getRegions(player, w).size();
+    	int size = 0;
+    	if (RPConfig.getBool("region-settings.claimlimit-per-world")){
+    		size = getRegions(player, w).size();
+    	} else {
+    		size = getRegions(player).size();
+    	}
+    	return size;
     }
     
     public void add(Region r, World w) {

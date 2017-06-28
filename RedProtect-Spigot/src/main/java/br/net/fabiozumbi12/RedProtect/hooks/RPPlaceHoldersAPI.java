@@ -23,7 +23,7 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
 			text = r == null ? RPLang.get("region.wilderness"):r.getName();
 		}
 		if (arg.equals("player_used_claims")){			
-			text = String.valueOf(RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
+			text = String.valueOf(RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()));
 		}
 		if (arg.equals("player_used_blocks")){
 			text = String.valueOf(RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));

@@ -7,7 +7,7 @@ import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
 public abstract class RegionBuilder{
 	
-    Region r;
+    protected Region r;
     
     public RegionBuilder() {
         this.r = null;
@@ -21,13 +21,12 @@ public abstract class RegionBuilder{
         return this.r;
     }
     
-    void setErrorSign(SignChangeEvent e, String error) {
+    protected void setErrorSign(SignChangeEvent e, String error) {
         e.setLine(0, RPLang.get("regionbuilder.signerror"));
         this.setError(e.getPlayer(), error);
     }
     
-    void setError(Player p, String error) {
+    protected void setError(Player p, String error) {
     	RPLang.sendMessage(p, RPLang.get("regionbuilder.error") + "(" + error + ")");
-
     }
 }

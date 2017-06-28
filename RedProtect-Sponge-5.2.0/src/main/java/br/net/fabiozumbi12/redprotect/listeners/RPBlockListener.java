@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.redprotect.listeners;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -35,12 +36,12 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.explosion.Explosion;
 
-import br.net.fabiozumbi12.redprotect.EncompassRegionBuilder;
 import br.net.fabiozumbi12.redprotect.RPContainer;
 import br.net.fabiozumbi12.redprotect.RPUtil;
 import br.net.fabiozumbi12.redprotect.RedProtect;
 import br.net.fabiozumbi12.redprotect.Region;
 import br.net.fabiozumbi12.redprotect.RegionBuilder;
+import br.net.fabiozumbi12.redprotect.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 
 public class RPBlockListener{

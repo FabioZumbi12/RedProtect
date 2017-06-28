@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.redprotect;
+package br.net.fabiozumbi12.redprotect.actions;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -12,6 +12,10 @@ import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import br.net.fabiozumbi12.redprotect.RPUtil;
+import br.net.fabiozumbi12.redprotect.RedProtect;
+import br.net.fabiozumbi12.redprotect.Region;
+import br.net.fabiozumbi12.redprotect.RegionBuilder;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 
 public class DefineRegionBuilder extends RegionBuilder{
@@ -83,7 +87,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	
         int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()),p.getWorld()).size();
+        int claimused = RedProtect.rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()),p.getWorld());
         boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
         if (claimused >= claimLimit && claimLimit != -1) {
         	this.setError(p, RPLang.get("regionbuilder.claim.limit"));
@@ -91,7 +95,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
         
         int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
-        int totalArea = RedProtect.rm.getTotalRegionSize(pName);
+        int totalArea = RedProtect.rm.getTotalRegionSize(pName, p.getWorld().getName());
         boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
         int actualArea = 0;
@@ -169,7 +173,6 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
         
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
-
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit)));
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? "&a"+regionarea:"&c- "+regionarea) + "\n" +
         RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - actualArea))));

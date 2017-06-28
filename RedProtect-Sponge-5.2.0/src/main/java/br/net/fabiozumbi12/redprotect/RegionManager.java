@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.spongepowered.api.Sponge;
@@ -87,13 +88,19 @@ public class RegionManager{
         return this.regionManagers.get(w).getRegion(rname);
     }
     
-    public int getTotalRegionSize(String uuid) {
-        int ret = 0;
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            ret += rms.next().getTotalRegionSize(uuid);
-        }
-        return ret;
+    public int getTotalRegionSize(String uuid, String world) {
+    	Optional<World> w = Sponge.getServer().getWorld(world);
+    	int size = 0;
+    	if (RedProtect.cfgs.getBool("region-settings.blocklimit-per-world") && w.isPresent()){
+    		WorldRegionManager rms = this.regionManagers.get(w.get());   
+    		size = rms.getTotalRegionSize(uuid);
+    	} else {
+    		for (World wr:Sponge.getServer().getWorlds()){
+    			WorldRegionManager rms = this.regionManagers.get(wr);   
+        		size += rms.getTotalRegionSize(uuid);
+    		}    		
+    	} 
+        return size;
     }
     
     public Set<Region> getWorldRegions(String player, World w) {
@@ -145,14 +152,15 @@ public class RegionManager{
         return this.regionManagers.get(world).getRegions(player);
     }
     
-    public int getPlayerRegions(String player, String w){  
-    	player = RPUtil.PlayerToUUID(player);
-    	return getRegions(player, w).size();
-    }
-    
     public int getPlayerRegions(String player, World w){
     	player = RPUtil.PlayerToUUID(player);
-    	return getRegions(player, w).size();
+    	int size = 0;
+    	if (RedProtect.cfgs.getBool("region-settings.claimlimit-per-world")){
+    		size = getRegions(player, w).size();
+    	} else {
+    		size = getRegions(player).size();
+    	}
+    	return size;
     }
     
     public void add(Region r, World w) {
