@@ -278,7 +278,7 @@ public class RPBlockListener{
         if (r != null && b.getState().getType().equals(BlockTypes.MOB_SPAWNER) && r.allowSpawner(p)){
     		return;
     	}
-        
+                
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b)){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);

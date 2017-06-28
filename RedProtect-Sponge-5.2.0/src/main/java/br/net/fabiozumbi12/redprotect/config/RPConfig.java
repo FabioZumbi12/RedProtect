@@ -325,8 +325,17 @@ public class RPConfig{
         					getNodes("flags.leaves-decay").setValue(false);
         				}
         				update++;
-        			}
-        			        			
+        			}        			        	
+
+        			if (getNodes("config-version").getDouble() < 7.3D){
+        				getNodes("config-version").setValue(7.3D);
+        				if (!flags.contains("build")){
+        					flags.add("build");
+        					getNodes("flags.build").setValue(false);
+        				}
+        				update++;
+        			} 
+        			
         			if (update > 0){
         				getNodes("flags-configuration.enabled-flags").setValue(flags);
         				RedProtect.logger.warning("Configuration UPDATED!");

@@ -22,6 +22,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Crops;
 
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
@@ -998,14 +999,7 @@ public class Region implements Serializable{
     	}
         return this.flags.get(key).toString();
     }
-    
-    public boolean canBuild(Player p) {
-    	if (flagExists("for-sale") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
-    		return false;
-    	}
-        return checkAllowedPlayer(p);
-    }
-    
+        
     public int adminSize() {
         return this.admins.size();
     }
@@ -1310,10 +1304,7 @@ public class Region implements Serializable{
 		if (!flagExists("cropsfarm")){
     		return false;
     	}
-		if (b.getType().equals(Material.CROPS)
-				|| b.getType().equals(Material.CARROT)
-				|| b.getType().equals(Material.POTATO)
-				|| b.getType().equals(Material.CARROT)
+		if (b instanceof Crops
 				 || b.getType().equals(Material.PUMPKIN_STEM)
 				 || b.getType().equals(Material.MELON_STEM)
 				 || b.getType().name().contains("CHORUS_")
@@ -1484,7 +1475,16 @@ public class Region implements Serializable{
 	}
 	
 	
-	//---------------------- Player Flags --------------------------//	
+	//---------------------- Player Flags --------------------------//
+    public boolean canBuild(Player p) {
+    	if (flagExists("for-sale") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+    		return false;
+    	}
+    	if (!RPConfig.isFlagEnabled("build")){
+    		return RPConfig.getBool("flags.build") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("build") || checkAllowedPlayer(p);
+    }
 
 	public boolean leavesDecay() {
 		if (!RPConfig.isFlagEnabled("leaves-decay")){

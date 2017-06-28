@@ -970,13 +970,6 @@ public class Region implements Serializable{
         return this.flags.get(key).toString();
     }
     
-    public boolean canBuild(Player p) {
-    	if (flagExists("for-sale") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
-    		return false;
-    	}
-        return checkAllowedPlayer(p);
-    }
-    
     public int adminSize() {
         return this.admins.size();
     }
@@ -1398,6 +1391,15 @@ public class Region implements Serializable{
 	
 	
 	//---------------------- Player Flags --------------------------//
+	public boolean canBuild(Player p) {
+    	if (flagExists("for-sale") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+    		return false;
+    	}
+    	if (!RedProtect.cfgs.isFlagEnabled("build")){
+    		return RedProtect.cfgs.getBool("flags.build") || checkAllowedPlayer(p);
+    	}
+        return getFlagBool("build") || checkAllowedPlayer(p);
+    }
 	
 	public boolean leavesDecay() {
 		if (!RedProtect.cfgs.isFlagEnabled("leaves-decay")){

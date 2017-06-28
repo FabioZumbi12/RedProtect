@@ -255,6 +255,7 @@ flags:
   allow-effects: true
   allow-spawner: false
   leaves-decay: false
+  build: false
 
 flags-configuration:
   # Duration for timed flags like potions effects, jump, etc.
@@ -285,6 +286,7 @@ flags-configuration:
   - clan
   - ender-chest
   - leaves-decay
+  - build
   
   # Command to use if players with pvp off enter in a region with 'pvparena' enabled.
   pvparena-nopvp-kick-cmd: spawn {player}

@@ -348,7 +348,10 @@ public class RPBlockListener implements Listener{
 		Region r = RedProtect.rm.getTopRegion(l);
 		if ((b instanceof Crops
 				 || b.getType().equals(Material.PUMPKIN_STEM)
-				 || b.getType().equals(Material.MELON_STEM)) && r != null && !r.canBuild(p)){
+				 || b.getType().equals(Material.MELON_STEM)
+				 || b.getType().name().contains("CHORUS_")
+				 || b.getType().name().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("SUGAR_CANE")) && r != null && !r.canBuild(p)){
 			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
 			e.setCancelled(true);
 			return;

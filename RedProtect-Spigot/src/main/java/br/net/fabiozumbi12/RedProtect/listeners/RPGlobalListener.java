@@ -41,10 +41,10 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -61,6 +61,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.material.Crops;
 import org.bukkit.util.Vector;
 
 import br.net.fabiozumbi12.RedProtect.RPUtil;
@@ -91,7 +92,7 @@ public class RPGlobalListener implements Listener{
 		
 		return p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build"));
 	}
-	
+		
 	@EventHandler
 	public void onLeafDecay(LeavesDecayEvent e){
 		RedProtect.logger.debug("RPBlockListener - Is LeavesDecayEvent event");
@@ -338,7 +339,7 @@ public class RPGlobalListener implements Listener{
 		}
 		
 		Region r = RedProtect.rm.getTopRegion(l);
-		
+				
 		//deny item usage
 		List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName()+".deny-item-usage.items");
     	if (e.getItem() != null && items.contains(e.getItem().getType().name())){
@@ -361,7 +362,17 @@ public class RPGlobalListener implements Listener{
     	
 		if (b == null || r != null){
 			return;
-		}
+		}		
+
+		if ((b instanceof Crops
+				 || b.getType().equals(Material.PUMPKIN_STEM)
+				 || b.getType().equals(Material.MELON_STEM)
+				 || b.getType().name().contains("CHORUS_")
+				 || b.getType().name().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("SUGAR_CANE")) && !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".allow-crops-trample")){
+			e.setCancelled(true);
+			return;
+		}	
 		
 		if (b.getType().equals(Material.DRAGON_EGG) ||
 				b.getType().name().equalsIgnoreCase("BED") ||

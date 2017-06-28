@@ -20,7 +20,6 @@ permissions:
     description: "Recommended User permissions."
     default: true
     children:
-      redprotect.near: true
       redprotect.own.border: true
       redprotect.own.addmember: true
       redprotect.own.delete: true
@@ -44,6 +43,7 @@ permissions:
     description: "Access to edit all flags."
     default: true
     children:
+      redprotect.flag.build: true
       redprotect.flag.pvp: true
       redprotect.flag.chest: true
       redprotect.flag.ender-chest: true
