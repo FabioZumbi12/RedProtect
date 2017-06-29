@@ -268,6 +268,23 @@ public class RPBlockListener implements Listener{
             	return;
         	}
         	
+        	if (b instanceof Crops
+     			 || b.getType().equals(Material.PUMPKIN_STEM)
+   				 || b.getType().equals(Material.MELON_STEM)
+   				 || b.getType().name().contains("CROPS")
+   				 || b.getType().name().contains("SOIL")
+   				 || b.getType().name().contains("CHORUS_")
+   				 || b.getType().name().contains("BEETROOT_BLOCK")
+   				 || b.getType().name().contains("SUGAR_CANE")){
+        		if (!r.canCrops(p)){
+               		RPLang.sendMessage(p, "blocklistener.region.cantplace");
+           			e.setCancelled(true);
+           			return;
+               	} else {
+               		return;
+               	}
+        	}
+        	
         	if (!r.canBuild(p) && !r.canPlace(b.getType())) {
             	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
@@ -327,7 +344,23 @@ public class RPBlockListener implements Listener{
         	return;
     	}
              
-        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())){
+        if (r != null && (b instanceof Crops
+  				 || b.getType().equals(Material.PUMPKIN_STEM)
+				 || b.getType().equals(Material.MELON_STEM)
+				 || b.getType().name().contains("CROPS")
+				 || b.getType().name().contains("CHORUS_")
+				 || b.getType().name().contains("BEETROOT_BLOCK")
+				 || b.getType().name().contains("SUGAR_CANE"))){
+        	if (!r.canCrops(p)){
+        		RPLang.sendMessage(p, "blocklistener.region.cantbreak");
+    			e.setCancelled(true);
+    			return;
+        	} else {
+        		return;
+        	}
+		}
+        
+        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canBreak(b.getType())){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         	return;
@@ -343,19 +376,8 @@ public class RPBlockListener implements Listener{
         }
     	
 		Player p = e.getPlayer();
-		Block b = p.getLocation().getBlock();
 		Location l = e.getClickedBlock().getLocation();
 		Region r = RedProtect.rm.getTopRegion(l);
-		if ((b instanceof Crops
-				 || b.getType().equals(Material.PUMPKIN_STEM)
-				 || b.getType().equals(Material.MELON_STEM)
-				 || b.getType().name().contains("CHORUS_")
-				 || b.getType().name().contains("BEETROOT_BLOCK")
-				 || b.getType().toString().contains("SUGAR_CANE")) && r != null && !r.canBuild(p)){
-			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
-			e.setCancelled(true);
-			return;
-		}		
 				
 		try {
 			for (Block block:p.getLineOfSight((HashSet<Material>)null, 8)){

@@ -63,6 +63,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Crops;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
@@ -414,7 +415,32 @@ public class RPPlayerListener implements Listener{
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
                     return;
-                }                    
+                }  
+                else if (r != null && 
+                		((b instanceof Crops
+         				 || b.getType().equals(Material.PUMPKIN_STEM)
+        				 || b.getType().equals(Material.MELON_STEM)
+        				 || b.getType().name().contains("CROPS")
+        				 || b.getType().name().contains("SOIL")
+        				 || b.getType().name().contains("CHORUS_")
+        				 || b.getType().name().contains("BEETROOT_BLOCK")
+        				 || b.getType().name().contains("SUGAR_CANE")) 
+        				 || 
+        				 (itemInHand != null &&
+        				 (itemInHand.getType().name().contains("SEEDS")
+        				 || itemInHand.getType().equals(Material.NETHER_WARTS)
+        				 || itemInHand.getType().equals(Material.SUGAR_CANE)
+        				 || itemInHand.getType().equals(Material.COCOA))))){
+                	if (!r.canCrops(p)){
+                		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+            			event.setCancelled(true);
+            			event.setUseItemInHand(Event.Result.DENY);
+                        event.setUseInteractedBlock(Event.Result.DENY);
+            			return;
+                	} else {
+                		return;
+                	}        		
+        		}
                 else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b)){
                 	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 	event.setCancelled(true);  

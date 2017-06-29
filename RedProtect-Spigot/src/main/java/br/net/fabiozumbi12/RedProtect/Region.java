@@ -22,7 +22,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Crops;
 
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
@@ -1300,19 +1299,11 @@ public class Region implements Serializable{
 		return false;
 	}
 	
-	public boolean canCrops(Block b) {
+	public boolean canCrops(Player p) {
 		if (!flagExists("cropsfarm")){
     		return false;
     	}
-		if (b instanceof Crops
-				 || b.getType().equals(Material.PUMPKIN_STEM)
-				 || b.getType().equals(Material.MELON_STEM)
-				 || b.getType().name().contains("CHORUS_")
-				 || b.getType().name().contains("BEETROOT_BLOCK")
-				 || b.getType().toString().contains("SUGAR_CANE")){
-			return getFlagBool("cropsfarm");
-		}
-		return false;
+		return getFlagBool("cropsfarm") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canSkill(Player p) {
