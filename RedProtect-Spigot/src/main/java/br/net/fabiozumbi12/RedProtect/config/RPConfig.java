@@ -34,12 +34,12 @@ import br.net.fabiozumbi12.RedProtect.RedProtect;
 
 public class RPConfig{
 	
-	private static RPYaml configs = new RPYaml();
-	private static YamlConfiguration gflags = new RPYaml();
-	private static RPYaml signs = new RPYaml();
-	private static RPYaml GuiItems = new RPYaml();
-	private static RPYaml Prots = new RPYaml();
-	private static RPYaml EconomyConfig = new RPYaml();
+	private static RPYaml configs;
+	private static YamlConfiguration gflags;
+	private static RPYaml signs;
+	private static RPYaml GuiItems;
+	private static RPYaml Prots;
+	private static RPYaml EconomyConfig;
 	public static List<String> AdminFlags = Arrays.asList(
 			"spawn-wither",
 			"cropsfarm",
@@ -86,6 +86,13 @@ public class RPConfig{
 			"for-sale");	
 			
 	public static void init() {
+		
+		configs = new RPYaml();
+		gflags = new RPYaml();
+		signs = new RPYaml();
+		GuiItems = new RPYaml();
+		Prots = new RPYaml();
+		EconomyConfig = new RPYaml();
 
     	            File main = new File(RedProtect.pathMain);
     	            File data = new File(RedProtect.pathData);
@@ -809,7 +816,11 @@ public class RPConfig{
 	}
 	
 	private static void saveSigns(String rid, List<String> locs){
-		signs.set(rid, locs);
+		if (locs.isEmpty()){
+			signs.set(rid, null);
+		} else {
+			signs.set(rid, locs);
+		}		
 		try {
 			signs.save(new File(RedProtect.pathSigns));
 		} catch (IOException e) {
