@@ -220,9 +220,18 @@ public class RPCommentedConfig {
 				+ "teleport-player:\n"
 				+ "on-join: and on-leave: Teleport player on join the server.\n"
 				+ "need-world-to-teleport: The player need to be in this world to be teleported? Use 'none' for all worlds.\n"
-				+ "location: The location, using as world, x, y, z."
-				+ "");
-		
+				+ "location: The location, using as world, x, y, z.\n"
+				+ "\n"
+				+ "deny-structure-bypass-regions: Deny structures like trees to bypass region borders?\n"
+				+ "\n"
+				+ "check-killaura-freekill:\n"
+				+ "enable: Enable kill aura or freekill checker?\n"
+				+ "check-rate: This will count every block the player wall without fail to aim on player.\n"
+				+ "rate-multiples: What multiples of check-rate is considered kh or fk?\n"
+				+ "time-between-trys: Time to reset checks between attacker hits.\n"
+				+ "debug-trys: Debug everu try? Used to see the try count on every block the player walk. Will be sequential if the player is using kill aura and will go to more than 60, 80 more than 100 if is free kill.\n"
+				+ "\n"
+				+ "check-player-client: Test client hack (beta)");		
 		setDefault("server-protection.deny-potions", Arrays.asList("INVISIBILITY"), null);
 		setDefault("server-protection.deny-playerdeath-by", Arrays.asList("SUFFOCATION"), null);
 		setDefault("server-protection.deny-commands-on-worlds.world", Arrays.asList("command"), null);
