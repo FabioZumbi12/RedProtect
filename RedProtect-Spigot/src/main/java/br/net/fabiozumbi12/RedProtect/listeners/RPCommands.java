@@ -294,6 +294,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             	}      
         		if (args[0].equalsIgnoreCase("reload-config")) {
         			RPConfig.init();
+        			RPLang.init();
         			RedProtect.logger.sucess("RedProtect Plus configs reloaded!");
         			return true;
         		}
@@ -1138,6 +1139,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	
         	if (args[0].equalsIgnoreCase("reload-config") && player.hasPermission("redprotect.admin.reload")) {
     			RPConfig.init();
+    			RPLang.init();
     			RPLang.sendMessage(player, "cmdmanager.reloaded");
     			return true;
     		}

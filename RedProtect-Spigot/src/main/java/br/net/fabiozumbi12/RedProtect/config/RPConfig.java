@@ -22,19 +22,16 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.FileUtil;
-
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 
 public class RPConfig{
 	
-	private static RPYaml configs;
+	private static RPCommentedConfig comConfig;
 	private static YamlConfiguration gflags;
 	private static RPYaml signs;
 	private static RPYaml GuiItems;
@@ -87,17 +84,18 @@ public class RPConfig{
 			
 	public static void init() {
 		
-		configs = new RPYaml();
+		//configs = new RPYaml();
 		gflags = new RPYaml();
 		signs = new RPYaml();
 		GuiItems = new RPYaml();
 		Prots = new RPYaml();
-		EconomyConfig = new RPYaml();
-
+		EconomyConfig = new RPYaml();		
+		comConfig = new RPCommentedConfig();
+		
     	            File main = new File(RedProtect.pathMain);
     	            File data = new File(RedProtect.pathData);
     	            File gui = new File(RedProtect.pathGui);
-    	            File config = new File(RedProtect.pathConfig);
+    	            //File config = new File(RedProtect.pathConfig);
     	            File bvalues = new File(RedProtect.pathBlockValues);
     	            File globalflags = new File(RedProtect.pathglobalFlags);
     	            File protections = new File(RedProtect.protections);
@@ -113,11 +111,9 @@ public class RPConfig{
     	                data.mkdir();
     	                RedProtect.logger.info("Created folder: " + RedProtect.pathData);
     	            }    	            
-    	                	            
-    	            if (!config.exists()) {
-    	            	RedProtect.plugin.saveResource("config.yml", false);//create config file    	            	
-    	                RedProtect.logger.info("Created config file: " + RedProtect.pathConfig);
-    	            } 
+    	            
+    	            //init config
+    	            comConfig.addDef();
     	            
     	            if (!globalflags.exists()) {
     	            	try {
@@ -156,40 +152,7 @@ public class RPConfig{
     	            	RedProtect.plugin.saveResource("schematics"+File.separator+"house1.schematic", false);//save schematic file     	            		            	    	            	
     	                RedProtect.logger.info("Saved schematic file: house1.schematic");
     	            }
-    	            
-    	            //------------------------------ Add default Values ----------------------------//
-    	            FileConfiguration temp = new RPYaml();
-    	            try {
-    	            	temp.load(config);
-					} catch (Exception e) {
-						e.printStackTrace();
-					} 
-    	            
-    	            if (!temp.contains("config-version")){
-    	            	RedProtect.logger.severe("Old config file detected and copied to 'configBKP.yml'. Remember to check your old config file and set the new as you want!");
-    	            	File bkpfile = new File(RedProtect.pathMain + File.separator + "configBKP.yml");
-    	            	FileUtil.copy(config, bkpfile);
-    	            	RedProtect.plugin.saveResource("config.yml", true);  
-    	            	RedProtect.plugin.getConfig();
-    	            } else {
-    	            	try {
-    						RedProtect.plugin.getConfig().load(config);
-    					} catch (IOException | InvalidConfigurationException e) {
-    						e.printStackTrace();
-    					}
-    	            }
-    	            
-    	            configs = inputLoader(RedProtect.plugin.getResource("config.yml"));  
-                    for (String key:configs.getKeys(true)){                        	
-    	            	configs.set(key, RedProtect.plugin.getConfig().get(key));    	            	   	            	
-    	            }                        
-                    for (String key:configs.getKeys(false)){    
-                    	RedProtect.plugin.getConfig().set(key, configs.get(key));
-                    	RedProtect.logger.debug("Set key: "+key);
-                    }  
-                    
-                    //--------------------------------------------------------------------------//
-                    
+    	                	            
                     RedProtect.logger.info("Server version: " + RedProtect.serv.getBukkitVersion());
                     
                     // check if can enable json support
@@ -663,12 +626,12 @@ public class RPConfig{
     	File protections = new File(RedProtect.protections);
     	File signsf = new File(RedProtect.pathSigns);
     	try {
-			RedProtect.plugin.saveConfig();
 			gflags.save(globalflags);
 			GuiItems.save(guiconfig);
 			EconomyConfig.save(blockvalues);
 			Prots.save(protections);
 			signs.save(signsf);
+			comConfig.saveConfig();
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
 			e.printStackTrace();
