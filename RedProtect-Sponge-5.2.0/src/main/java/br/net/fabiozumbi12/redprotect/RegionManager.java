@@ -1,8 +1,10 @@
 package br.net.fabiozumbi12.redprotect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -177,12 +179,16 @@ public class RegionManager{
         removeCache(r);
     }
     	
-	private void removeCache(Region r){
+    private void removeCache(Region r){
     	Set<Vector3i> itloc = bLoc.keySet();
+    	List<Vector3i> toRemove = new ArrayList<Vector3i>();
     	for (Vector3i loc:itloc){
     		if (bLoc.containsKey(loc) && bLoc.get(loc).getID().equals(r.getID())){
-    			bLoc.remove(loc);
+    			toRemove.add(loc);
     		}
+    	}
+    	for (Vector3i loc:toRemove){
+    		bLoc.remove(loc);
     	}
     }
 	
