@@ -1410,7 +1410,7 @@ public class RPPlayerListener implements Listener{
 		*/
 
     	//enter Gamemode flag
-    	if (r.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
+    	if (r.canEnter(p) && r.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){
     		p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
     	}
     	
@@ -1420,7 +1420,7 @@ public class RPPlayerListener implements Listener{
 		}
 		
 		//Enter command as player
-        if (r.flagExists("player-enter-command") && !p.hasPermission("redprotect.admin.flag.player-enter-command")){
+        if (r.canEnter(p) && r.flagExists("player-enter-command") && !p.hasPermission("redprotect.admin.flag.player-enter-command")){
         	String[] cmds = r.getFlagString("player-enter-command").split(",");
         	for (String cmd:cmds){
         		if (cmd.startsWith("/")){
@@ -1431,7 +1431,7 @@ public class RPPlayerListener implements Listener{
         }
         
         //Enter command as console
-        if (r.flagExists("server-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
+        if (r.canEnter(p) && r.flagExists("server-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
         	String[] cmds = r.getFlagString("server-enter-command").split(",");
         	for (String cmd:cmds){
         		if (cmd.startsWith("/")){
@@ -1442,7 +1442,7 @@ public class RPPlayerListener implements Listener{
         }
         
         //Enter MagicCarpet
-        if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.Mc){
+        if (r.canEnter(p) && r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.Mc){
         	if (MagicCarpet.getCarpets().getCarpet(p) != null){
         		MagicCarpet.getCarpets().remove(p);
         		RPLang.sendMessage(p, "playerlistener.region.cantmc");
@@ -1558,7 +1558,7 @@ public class RPPlayerListener implements Listener{
         
         //Enter check forcepvp flag
         if (RedProtect.PvPm){
-        	if (r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
+        	if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
     			PvPlayer pvpp = PvPlayer.get(p);
     			if (r.forcePVP() != pvpp.hasPvPEnabled()){
 					PvPState.put(p.getName(), pvpp.hasPvPEnabled());
@@ -1568,7 +1568,7 @@ public class RPPlayerListener implements Listener{
         }        
         
         //Enter effect
-        if (r.flagExists("effects")/* && !p.hasPermission("redprotect.admin.flag.effects")*/){
+        if (r.canEnter(p) && r.flagExists("effects")/* && !p.hasPermission("redprotect.admin.flag.effects")*/){
   			String[] effects = r.getFlagString("effects").split(",");
   			for (String effect:effects){
   				String eff = effect.split(" ")[0];
@@ -1594,7 +1594,7 @@ public class RPPlayerListener implements Listener{
   		}
                 
         //enter fly flag
-    	if (r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+    	if (r.canEnter(p) && r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
     		p.setAllowFlight(r.getFlagBool("forcefly"));
     		p.setFlying(r.getFlagBool("forcefly"));
     		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable() { 

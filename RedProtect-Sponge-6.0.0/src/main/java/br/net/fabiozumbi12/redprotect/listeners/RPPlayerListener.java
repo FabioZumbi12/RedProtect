@@ -590,13 +590,31 @@ public class RPPlayerListener{
     
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerMovement(MoveEntityEvent e){
-    	if (!(e.getTargetEntity() instanceof Player) || RedProtect.cfgs.getBool("performance.disable-onPlayerMoveEvent-handler")) {
+    	if (RedProtect.cfgs.getBool("performance.disable-onPlayerMoveEvent-handler")) {
             return;
         }
+    	Entity ent = e.getTargetEntity();
     	
-    	RedProtect.logger.debug("player", "PlayerMoveEvent - Entity name: "+e.getTargetEntity().getType().getName());    
+    	Player p = null;
     	
-    	Player p = (Player) e.getTargetEntity();
+    	if (ent instanceof Player){
+    		p = (Player)ent;
+    	} else if (ent.get(Keys.PASSENGERS).isPresent()){
+    		for (UUID eent:ent.get(Keys.PASSENGERS).get()){
+        		if (Sponge.getServer().getPlayer(eent).isPresent()){
+        			p = Sponge.getServer().getPlayer(eent).get();
+        			break;
+        		}
+        	}
+    	} else {
+    		return;
+    	}
+    	
+    	if (p == null){
+    		return;
+    	}
+    	
+    	RedProtect.logger.debug("player", "PlayerMoveEvent - Entity name: "+ent.getType().getName());
     	    	
     	if (e.getFromTransform() != e.getToTransform() && RedProtect.tpWait.contains(p.getName())){
     		RedProtect.tpWait.remove(p.getName());
@@ -637,6 +655,9 @@ public class RPPlayerListener{
     		//enter max players flag
             if (r.maxPlayers() != -1){
             	if (!checkMaxPlayer(p, r)){
+            		if (!(p.getBaseVehicle() instanceof Player)){
+                		p.getBaseVehicle().clearPassengers();
+                	}
             		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
             		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
             	}
@@ -653,18 +674,27 @@ public class RPPlayerListener{
             
             //Enter flag
             if (!r.canEnter(p)){
+            	if (!(p.getBaseVehicle() instanceof Player)){
+            		p.getBaseVehicle().clearPassengers();
+            	}
         		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
         	}
             
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
+            	if (!(p.getBaseVehicle() instanceof Player)){
+            		p.getBaseVehicle().clearPassengers();
+            	}
         		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
         	}
             
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
+            	if (!(p.getBaseVehicle() instanceof Player)){
+            		p.getBaseVehicle().clearPassengers();
+            	}
         		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
         	}
@@ -1114,7 +1144,7 @@ public class RPPlayerListener{
     		return;
     	}
     	
-    	if (r.flagExists("enter") && !r.canEnter(p)){
+    	if (!r.canEnter(p)){
     		return;
     	}
     	
@@ -1147,7 +1177,7 @@ public class RPPlayerListener{
     private void RegionFlags(final Region r, Region er, final Player p){  
     	
     	//enter Gamemode flag
-    	if (r.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){    		
+    	if (r.canEnter(p) && r.flagExists("gamemode") && !p.hasPermission("redprotect.admin.flag.gamemode")){    		
     		p.offer(Keys.GAME_MODE, (GameMode)RPUtil.getRegistryFor(GameMode.class, r.getFlagString("gamemode")));
     	}
     	
@@ -1157,7 +1187,7 @@ public class RPPlayerListener{
 		}
 		
 		//Enter command as player
-        if (r.flagExists("player-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
+        if (r.canEnter(p) && r.flagExists("player-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
         	String[] cmds = r.getFlagString("player-enter-command").split(",");
         	for (String cmd:cmds){
         		if (cmd.startsWith("/")){
@@ -1168,7 +1198,7 @@ public class RPPlayerListener{
         }
         
         //Enter command as console
-        if (r.flagExists("server-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
+        if (r.canEnter(p) && r.flagExists("server-enter-command") && !p.hasPermission("redprotect.admin.flag.server-enter-command")){
         	String[] cmds = r.getFlagString("server-enter-command").split(",");
         	for (String cmd:cmds){
         		if (cmd.startsWith("/")){
@@ -1268,7 +1298,7 @@ public class RPPlayerListener{
         }
         
         //Enter effect
-        if (r.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
+        if (r.canEnter(p) && r.flagExists("effects") && !p.hasPermission("redprotect.admin.flag.effects")){
   			String[] effects = r.getFlagString("effects").split(",");
   			for (String effect:effects){
   				String eff = effect.split(" ")[0];
@@ -1298,7 +1328,7 @@ public class RPPlayerListener{
   		}
         
       //enter fly flag
-    	if (r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.gameMode().get().equals(GameModes.SURVIVAL) || p.gameMode().get().equals(GameModes.ADVENTURE))){
+    	if (r.canEnter(p) && r.flagExists("forcefly") && !p.hasPermission("redprotect.admin.flag.forcefly") && (p.gameMode().get().equals(GameModes.SURVIVAL) || p.gameMode().get().equals(GameModes.ADVENTURE))){
     		p.offer(Keys.IS_FLYING, r.getFlagBool("forcefly")); 
     		String TaskId = Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(new Runnable() { 
 					public void run() {
