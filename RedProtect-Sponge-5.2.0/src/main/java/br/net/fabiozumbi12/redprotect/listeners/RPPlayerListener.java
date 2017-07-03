@@ -70,6 +70,7 @@ import br.net.fabiozumbi12.redprotect.RPUtil;
 import br.net.fabiozumbi12.redprotect.RedProtect;
 import br.net.fabiozumbi12.redprotect.Region;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
+import br.net.fabiozumbi12.redprotect.events.EnterExitRegionEvent;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener{
@@ -636,6 +637,7 @@ public class RPPlayerListener{
     		//enter max players flag
             if (r.maxPlayers() != -1){
             	if (!checkMaxPlayer(p, r)){
+            		p.getBaseVehicle().clearPassengers();
             		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
             		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
             	}
@@ -652,18 +654,21 @@ public class RPPlayerListener{
             
             //Enter flag
             if (!r.canEnter(p)){
+            	p.getBaseVehicle().clearPassengers();
         		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
         	}
             
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
+            	p.getBaseVehicle().clearPassengers();
         		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
         	}
             
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
+            	p.getBaseVehicle().clearPassengers();
         		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, p, r));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
         	}
@@ -689,9 +694,8 @@ public class RPPlayerListener{
     			Ownerslist.put(p, r.getName());
     			
     			//Execute listener:
-    			//EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
-    			//Sponge.getPluginManager().callEvent(event);
-    			if (e.isCancelled()){
+    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
+    			if (Sponge.getEventManager().post(event)){
     				return;
     			}
     			//--
@@ -709,9 +713,8 @@ public class RPPlayerListener{
             	}
     			
     			//Execute listener:
-    			//EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
-    			//Bukkit.getPluginManager().callEvent(event);    			
-    			if (e.isCancelled()){
+    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
+    			if (Sponge.getEventManager().post(event)){
     				return;
     			}
     			//---
@@ -770,6 +773,7 @@ public class RPPlayerListener{
             } 
             
         	if (!rto.canEnter(p)){
+        		p.getBaseVehicle().clearPassengers();
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
         		e.setCancelled(true); 
         		return;

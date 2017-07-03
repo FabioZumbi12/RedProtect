@@ -70,6 +70,7 @@ import br.net.fabiozumbi12.redprotect.RPUtil;
 import br.net.fabiozumbi12.redprotect.RedProtect;
 import br.net.fabiozumbi12.redprotect.Region;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
+import br.net.fabiozumbi12.redprotect.events.EnterExitRegionEvent;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener{
@@ -689,9 +690,8 @@ public class RPPlayerListener{
     			Ownerslist.put(p, r.getName());
     			
     			//Execute listener:
-    			//EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
-    			//Sponge.getPluginManager().callEvent(event);
-    			if (e.isCancelled()){
+    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
+    			if (Sponge.getEventManager().post(event)){
     				return;
     			}
     			//--
@@ -709,9 +709,8 @@ public class RPPlayerListener{
             	}
     			
     			//Execute listener:
-    			//EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
-    			//Bukkit.getPluginManager().callEvent(event);    			
-    			if (e.isCancelled()){
+    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
+    			if (Sponge.getEventManager().post(event)){
     				return;
     			}
     			//---
