@@ -198,6 +198,28 @@ public class RPCommands implements CommandCallable {
         	} 
         	
         	if(args.length == 2){
+        		
+        		//rp removeall <player>
+        		if (checkCmd(args[0], "removeall")) {
+        			int removed = RedProtect.rm.removeAll(args[1]);
+        			if (removed <= 0){
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneremoved"));
+        			} else {
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.removed").replace("{regions}", removed+"").replace("{player}", args[1]));
+        			}        			
+        			return cmdr;
+        		}
+        		
+        		//rp regenall <player>
+        		if (checkCmd(args[0], "regenall")) {
+        			int regen = RedProtect.rm.regenAll(args[1]);
+        			if (regen <= 0){
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneregenerated"));
+        			} else {
+        				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.regenerated").replace("{regions}", regen+"").replace("{player}", args[1]));
+        			}
+        			return cmdr;
+        		}
         		   		
         		//rp regen stop
         		if (checkCmd(args[0], "regen") && args[1].equalsIgnoreCase("stop")) {
@@ -857,7 +879,21 @@ public class RPCommands implements CommandCallable {
         }
         
         if (args.length == 2) {      
-        	        	        	
+        	        	 
+        	//rp removeall <player>
+    		if (checkCmd(args[0], "removeall") && sender.hasPermission("redprotect.removeall")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			int removed = RedProtect.rm.removeAll(args[1]);
+    			if (removed <= 0){
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneremoved"));
+    			} else {
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.removed").replace("{regions}", removed+"").replace("{player}", args[1]));
+    			}        			
+    			return cmdr;
+    		}
+    		
         	//rp regenall <player>
     		if (checkCmd(args[0], "regenall") && sender.hasPermission("redprotect.regenall")) {
     			if (!RedProtect.WE){
@@ -891,14 +927,15 @@ public class RPCommands implements CommandCallable {
         		}
                 return cmdr;
             }        	
-        	        	
+        	       
+        	//rp define [nameOfRegion]
         	if (checkCmd(args[0], "define")){
         		if (!RedProtect.ph.hasGenPerm(player, "define")) {
                     RPLang.sendMessage(player, "no.permission");
                     return cmdr;
                 }
         		String serverName = RedProtect.cfgs.getString("region-settings.default-leader");
-                String name = RPUtil.nameGen(serverName, player.getWorld().getName());
+                String name = args[1];
                 
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player), name, serverName, new LinkedList<String>(), true);
                 if (rb2.ready()) {                	
@@ -991,6 +1028,50 @@ public class RPCommands implements CommandCallable {
         
         if (args.length == 3) { 
         	
+        	//rp regen <region> <world>
+    		if (checkCmd(args[0], "regen") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			World w = RedProtect.serv.getWorld(args[2]).get();
+    			if (w == null){
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
+                	return cmdr;
+                }
+    			Region r = RedProtect.rm.getRegion(args[1], w);
+    			if (r == null){
+    				RPLang.sendMessage(sender, RPLang.get("correct.usage") + " &eInvalid region: " + args[1]);
+    				return cmdr;
+    			}
+    			
+    			WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);  			
+    			return cmdr;
+    		}
+    		
+    		//rp undo <region> <world>
+    		if (args[0].equalsIgnoreCase("undo") && player.hasPermission("redprotect.regen")) {
+    			if (!RedProtect.WE){
+    				return cmdr;
+    			}
+    			World w = RedProtect.serv.getWorld(args[2]).get();
+    			if (w == null){
+    				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
+                	return cmdr;
+                }
+    			Region r = RedProtect.rm.getRegion(args[1], w);
+    			if (r == null){
+    				RPLang.sendMessage(sender, RPLang.get("correct.usage") + " &eInvalid region: " + args[1]);
+    				return cmdr;
+    			}
+    			
+    			if (WEListener.undo(r.getID())){
+                	RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+				} else {
+					RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+				}       			
+    			return cmdr;
+    		}
+    		
         	//rp edit-rent <player> <valor/date>
         	if (checkCmd(args[0], "edit-rent") && RedProtect.ph.hasUserPerm(player, "edit-rent")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());

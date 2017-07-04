@@ -927,14 +927,15 @@ public class RPCommands implements CommandCallable {
         		}
                 return cmdr;
             }        	
-        	        	
+        	       
+        	//rp define [nameOfRegion]
         	if (checkCmd(args[0], "define")){
         		if (!RedProtect.ph.hasGenPerm(player, "define")) {
                     RPLang.sendMessage(player, "no.permission");
                     return cmdr;
                 }
         		String serverName = RedProtect.cfgs.getString("region-settings.default-leader");
-                String name = RPUtil.nameGen(serverName, player.getWorld().getName());
+                String name = args[1];
                 
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player), name, serverName, new LinkedList<String>(), true);
                 if (rb2.ready()) {                	
