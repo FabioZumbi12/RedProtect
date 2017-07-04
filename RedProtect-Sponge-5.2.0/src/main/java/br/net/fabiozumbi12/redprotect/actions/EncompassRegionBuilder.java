@@ -334,7 +334,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                 this.setErrorSign(e, RPLang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getLocation().get().getBlockX() + ", y: " + current.getLocation().get().getBlockY() + ", z: " + current.getLocation().get().getBlockZ() + ")"));
                 Location<World> newbl = current.getLocation().get();  
                 newbl.add(0, 1, 0);
-                newbl.setBlockType(BlockTypes.STANDING_SIGN, Cause.of(NamedCause.simulated(p)));
+                newbl.setBlockType(BlockTypes.STANDING_SIGN, Cause.source(NamedCause.simulated(p)).build());
                 BlockSnapshot newb = newbl.createSnapshot();
                 newb.get(Keys.SIGN_LINES).get().set(0, Text.of(TextColors.RED,"xxxxxxxxxxxxxx"));
                 newb.get(Keys.SIGN_LINES).get().set(1, Text.of(RPLang.get("_redprotect.prefix")));
