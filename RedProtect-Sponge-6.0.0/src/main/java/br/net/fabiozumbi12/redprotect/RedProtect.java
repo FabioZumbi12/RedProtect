@@ -38,6 +38,7 @@ import br.net.fabiozumbi12.redprotect.listeners.RPGlobalListener;
 import br.net.fabiozumbi12.redprotect.listeners.RPMine18;
 import br.net.fabiozumbi12.redprotect.listeners.RPPlayerListener;
 import br.net.fabiozumbi12.redprotect.listeners.RPWorldListener;
+import br.net.fabiozumbi12.redprotect.listeners.RPAddProtection;
 
 @Plugin(id = "redprotect", 
 name = "RedProtect", 
@@ -92,7 +93,8 @@ public class RedProtect {
             game.getEventManager().registerListeners(plugin, new RPPlayerListener());
             game.getEventManager().registerListeners(plugin, new RPEntityListener());
             game.getEventManager().registerListeners(plugin, new RPWorldListener());              
-            game.getEventManager().registerListeners(plugin, new RPMine18());
+            game.getEventManager().registerListeners(plugin, new RPMine18());            
+            game.getEventManager().registerListeners(plugin, new RPAddProtection());
             
             loadRegions();
             

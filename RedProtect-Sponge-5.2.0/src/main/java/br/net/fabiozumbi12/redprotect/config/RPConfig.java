@@ -234,10 +234,9 @@ public class RPConfig{
 					protCfgs.getNode("chat-protection","censor","by-word").setValue(protCfgs.getNode("chat-protection","censor","by-word").getString("censored"));
 					protCfgs.getNode("chat-protection","censor","replace-partial-word").setValue(protCfgs.getNode("chat-protection","censor","replace-partial-word").getBoolean(false));
 					protCfgs.getNode("chat-protection","censor","action","cmd").setValue(protCfgs.getNode("chat-protection","censor","action","cmd").getString(""));
-					protCfgs.getNode("chat-protection","censor","action","only-on-channels").setValue(protCfgs.getNode("chat-protection","censor","action","only-on-channels").getList(TypeToken.of(String.class), Arrays.asList("global")));
 					protCfgs.getNode("chat-protection","censor","action","partial-words").setValue(protCfgs.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
 					protCfgs.getNode("chat-protection","censor","replace-words")
-					.setValue(protCfgs.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("world")));
+					.setValue(protCfgs.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("word")));
 					
 					protCfgs.getNode("chat-protection","anti-ip","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","enable").getBoolean(true));
 					protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
@@ -672,6 +671,7 @@ public class RPConfig{
 			configManager.save(config);	
 			gFlagsManager.save(gflags);
 			ecoManager.save(ecoCfgs);
+			protManager.save(protCfgs);
 			saveGui();
 		} catch (IOException e) {
 			RedProtect.logger.severe("Problems during save file:");
@@ -797,7 +797,7 @@ public class RPConfig{
 	}
 	        
 	public String getProtString(Object... key){
-		return protCfgs.getNode(key).getString(key.toString());
+		return protCfgs.getNode(key).getString();
 	}
 	
 	public Text getProtMsg(Object... key){

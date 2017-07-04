@@ -31,6 +31,7 @@ import org.spongepowered.api.plugin.Dependency;
 import br.net.fabiozumbi12.redprotect.config.RPConfig;
 import br.net.fabiozumbi12.redprotect.config.RPLang;
 import br.net.fabiozumbi12.redprotect.config.VersionData;
+import br.net.fabiozumbi12.redprotect.listeners.RPAddProtection;
 import br.net.fabiozumbi12.redprotect.listeners.RPBlockListener;
 import br.net.fabiozumbi12.redprotect.listeners.RPCommands;
 import br.net.fabiozumbi12.redprotect.listeners.RPEntityListener;
@@ -93,6 +94,7 @@ public class RedProtect {
             game.getEventManager().registerListeners(plugin, new RPEntityListener());
             game.getEventManager().registerListeners(plugin, new RPWorldListener());              
             game.getEventManager().registerListeners(plugin, new RPMine18());
+            game.getEventManager().registerListeners(plugin, new RPAddProtection());
             
             loadRegions();
             
