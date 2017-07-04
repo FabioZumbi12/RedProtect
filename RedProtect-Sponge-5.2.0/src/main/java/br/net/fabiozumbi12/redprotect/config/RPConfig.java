@@ -81,19 +81,23 @@ public class RPConfig{
 			"for-sale");	
 	
 	
-	private File defConfig = new File(RedProtect.configDir+"config.conf");
+	private File defConfig = new File(RedProtect.configDir,"config.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 	private CommentedConfigurationNode tempConfig;
 	
-	private File guiConfig = new File(RedProtect.configDir+"guiconfig.conf");
+	private File guiConfig = new File(RedProtect.configDir,"guiconfig.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> guiManager;
 	private CommentedConfigurationNode gui;
 	
-	private File gFlagsConfig = new File(RedProtect.configDir+"globalflags.conf");	
+	private File gFlagsConfig = new File(RedProtect.configDir,"globalflags.conf");	
 	private ConfigurationLoader<CommentedConfigurationNode> gFlagsManager;	
 	private CommentedConfigurationNode gflags;
 	
-	private File ecoFile = new File(RedProtect.configDir+"economy.conf");
+	private File protFile = new File(RedProtect.configDir,"protections.conf");
+	private ConfigurationLoader<CommentedConfigurationNode> protManager;
+	private CommentedConfigurationNode protCfgs;
+	
+	private File ecoFile = new File(RedProtect.configDir,"economy.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
 	private CommentedConfigurationNode ecoCfgs;
 	
@@ -201,7 +205,60 @@ public class RPConfig{
 					ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
 					ecoCfgs = ecoManager.load();
 					
-				} catch (IOException e1) {
+					/*--------------------- protections.conf ---------------------------*/
+					protManager = HoconConfigurationLoader.builder().setFile(protFile).build();	
+					protCfgs = protManager.load();
+					
+					protCfgs.getNode("chat-protection","chat-enhancement","enable").setValue(protCfgs.getNode("chat-protection","chat-enhancement","enable").getBoolean(true));
+					protCfgs.getNode("chat-protection","chat-enhancement","end-with-dot").setValue(protCfgs.getNode("chat-protection","chat-enhancement","end-with-dot").getBoolean(true));
+					protCfgs.getNode("chat-protection","chat-enhancement","minimum-lenght").setValue(protCfgs.getNode("chat-protection","chat-enhancement","minimum-lenght").getInt(3));
+					
+					protCfgs.getNode("chat-protection","anti-flood","enable").setValue(protCfgs.getNode("chat-protection","anti-flood","enable").getBoolean(true));
+					protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs")
+					.setValue(protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs").getList(TypeToken.of(String.class), Arrays.asList("k")));
+					
+					protCfgs.getNode("chat-protection","caps-filter","enable").setValue(protCfgs.getNode("chat-protection","caps-filter","enable").getBoolean(true));
+					protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").setValue(protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").getInt(3));
+					
+					protCfgs.getNode("chat-protection","antispam","enable").setValue(protCfgs.getNode("chat-protection","antispam","enable").getBoolean(false));
+					protCfgs.getNode("chat-protection","antispam","time-beteween-messages").setValue(protCfgs.getNode("chat-protection","antispam","time-beteween-messages").getInt(1));
+					protCfgs.getNode("chat-protection","antispam","count-of-same-message").setValue(protCfgs.getNode("chat-protection","antispam","count-of-same-message").getInt(5));
+					protCfgs.getNode("chat-protection","antispam","time-beteween-same-messages").setValue(protCfgs.getNode("chat-protection","antispam","time-beteween-same-messages").getInt(10));
+					protCfgs.getNode("chat-protection","antispam","colldown-msg").setValue(protCfgs.getNode("chat-protection","antispam","colldown-msg").getString("&6Slow down your messages!"));
+					protCfgs.getNode("chat-protection","antispam","wait-message").setValue(protCfgs.getNode("chat-protection","antispam","wait-message").getString("&cWait to send the same message again!"));
+					protCfgs.getNode("chat-protection","antispam","cmd-action").setValue(protCfgs.getNode("chat-protection","antispam","cmd-action").getString("kick {player} Relax, slow down your messages frequency ;)"));
+					
+					protCfgs.getNode("chat-protection","censor","enable").setValue(protCfgs.getNode("chat-protection","censor","enable").getBoolean(true));
+					protCfgs.getNode("chat-protection","censor","replace-by-symbol").setValue(protCfgs.getNode("chat-protection","censor","replace-by-symbol").getBoolean(true));
+					protCfgs.getNode("chat-protection","censor","by-symbol").setValue(protCfgs.getNode("chat-protection","censor","by-symbol").getString("*"));
+					protCfgs.getNode("chat-protection","censor","by-word").setValue(protCfgs.getNode("chat-protection","censor","by-word").getString("censored"));
+					protCfgs.getNode("chat-protection","censor","replace-partial-word").setValue(protCfgs.getNode("chat-protection","censor","replace-partial-word").getBoolean(false));
+					protCfgs.getNode("chat-protection","censor","action","cmd").setValue(protCfgs.getNode("chat-protection","censor","action","cmd").getString(""));
+					protCfgs.getNode("chat-protection","censor","action","only-on-channels").setValue(protCfgs.getNode("chat-protection","censor","action","only-on-channels").getList(TypeToken.of(String.class), Arrays.asList("global")));
+					protCfgs.getNode("chat-protection","censor","action","partial-words").setValue(protCfgs.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
+					protCfgs.getNode("chat-protection","censor","replace-words")
+					.setValue(protCfgs.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("world")));
+					
+					protCfgs.getNode("chat-protection","anti-ip","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","enable").getBoolean(true));
+					protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
+					protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
+					protCfgs.getNode("chat-protection","anti-ip","check-for-words")
+					.setValue(protCfgs.getNode("chat-protection","anti-ip","check-for-words").getList(TypeToken.of(String.class), Arrays.asList("www.google.com")));
+					protCfgs.getNode("chat-protection","anti-ip","whitelist-words")
+					.setValue(protCfgs.getNode("chat-protection","anti-ip","whitelist-words").getList(TypeToken.of(String.class), Arrays.asList("www.myserver.com","prntscr.com","gyazo.com","www.youtube.com")));
+					protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").getString("cancel"));
+					protCfgs.getNode("chat-protection","anti-ip","cancel-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-msg").getString("&cYou cant send websites or ips on chat"));
+					protCfgs.getNode("chat-protection","anti-ip","replace-by-word").setValue(protCfgs.getNode("chat-protection","anti-ip","replace-by-word").getString("-removed-"));
+					protCfgs.getNode("chat-protection","anti-ip","punish","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","enable").getBoolean(false));
+					protCfgs.getNode("chat-protection","anti-ip","punish","max-attempts").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","max-attempts").getInt(3));
+					protCfgs.getNode("chat-protection","anti-ip","punish","mute-or-cmd").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-or-cmd").getString("mute"));
+					protCfgs.getNode("chat-protection","anti-ip","punish","mute-duration").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-duration").getInt(1));
+					protCfgs.getNode("chat-protection","anti-ip","punish","mute-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-msg").getString("&cYou have been muted for send IPs or URLs on chat!"));
+					protCfgs.getNode("chat-protection","anti-ip","punish","unmute-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","unmute-msg").getString("&aYou can chat again!"));
+					protCfgs.getNode("chat-protection","anti-ip","punish","cmd-punish").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","cmd-punish").getString("tempban {player} 10m &cYou have been warned about send links or IPs on chat!"));
+					
+					
+				} catch (IOException | ObjectMappingException e1) {
 					RedProtect.logger.severe("The default configuration could not be loaded or created!");
 					e1.printStackTrace();
 				}
@@ -325,8 +382,8 @@ public class RPConfig{
         					getNodes("flags.leaves-decay").setValue(false);
         				}
         				update++;
-        			}        			        	
-
+        			}        
+        			
         			if (getNodes("config-version").getDouble() < 7.3D){
         				getNodes("config-version").setValue(7.3D);
         				if (!flags.contains("build")){
@@ -416,7 +473,7 @@ public class RPConfig{
 		
 		try {
 			//RedProtect.logger.debug("default","Writing global flags for world "+ w.getName() + "...");
-        	gflags.getNode(w.getName(),"build").setValue(gflags.getNode(w.getName(),"build").getBoolean(true));
+			gflags.getNode(w.getName(),"build").setValue(gflags.getNode(w.getName(),"build").getBoolean(true));
         	gflags.getNode(w.getName(),"if-build-false","break-blocks").setValue(gflags.getNode(w.getName(),"if-build-false","break-blocks").getList(TypeToken.of(String.class)));
         	gflags.getNode(w.getName(),"if-build-false","place-blocks").setValue(gflags.getNode(w.getName(),"if-build-false","place-blocks").getList(TypeToken.of(String.class)));
         	gflags.getNode(w.getName(),"pvp").setValue(gflags.getNode(w.getName(),"pvp").getBoolean(false));
@@ -449,7 +506,7 @@ public class RPConfig{
         		gflags.getNode(w.getName(),"command-ranges","home","min-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","min-range").getDouble(0));  
         		gflags.getNode(w.getName(),"command-ranges","home","max-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","max-range").getDouble(w.getBlockMax().getY()));  
         		gflags.getNode(w.getName(),"command-ranges","home","message").setValue(gflags.getNode(w.getName(),"command-ranges","home","message").getString("&cYou cant use /home when mining or in caves!"));        		
-        	}   
+        	}      	
             //write gflags to gflags file
             gFlagsManager.save(gflags);
 		} catch (IOException | ObjectMappingException e) {
@@ -593,7 +650,7 @@ public class RPConfig{
 	}
     
     private CommentedConfigurationNode getNodes(String key){    	
-    	Object[] args = key.split("\\.");    	
+    	Object[] args = key.split("\\.");
     	return config.getNode(args);
     }
     
@@ -655,22 +712,7 @@ public class RPConfig{
 		return ecoCfgs.getNode("enchantments","values",enchantment).getInt();
 	}
 	
-	public String getEcoString(String key){
-		return ecoCfgs.getNode(key).getString("&4Missing economy string for &c"+key);
-	}
-	
-	public Integer getEcoInt(String key){
-		return ecoCfgs.getNode(key).getInt();
-	}
 
-	public boolean getEcoBool(String key) {
-		return ecoCfgs.getNode(key).getBoolean();
-	}
-
-	public String getWorldClaimType(String w) {		
-		return getNodes("region-settings.claim-types.worlds."+w).getString("");
-	}
-	
 	public boolean hasGlobalKey(Object... path){
 		return gflags.getNode(path).hasMapChildren();
 	}
@@ -704,6 +746,22 @@ public class RPConfig{
 		return new ArrayList<String>();
 	}
     
+	public String getEcoString(String key){
+		return ecoCfgs.getNode(key).getString("&4Missing economy string for &c"+key);
+	}
+	
+	public Integer getEcoInt(String key){
+		return ecoCfgs.getNode(key).getInt();
+	}
+
+	public boolean getEcoBool(String key) {
+		return ecoCfgs.getNode(key).getBoolean();
+	}
+
+	public String getWorldClaimType(String w) {		
+		return getNodes("region-settings.claim-types.worlds."+w).getString("");
+	}
+	
 	public boolean needClaimToBuild(Player p, BlockSnapshot b) {     	
     	boolean bool = getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
@@ -718,6 +776,36 @@ public class RPConfig{
     		RPLang.sendMessage(p, "need.claim.tobuild");    		
     	}
 		return bool;
+	}
+	
+	//protection methods		
+	public int getProtInt(Object... key){
+		return protCfgs.getNode(key).getInt();
+	}
+	
+	public boolean getProtBool(Object... key){
+		return protCfgs.getNode(key).getBoolean();
+	}
+	
+	public List<String> getProtStringList(Object... key){
+		try {
+			return protCfgs.getNode(key).getList(TypeToken.of(String.class), new ArrayList<String>());
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<String>();
+	}
+	        
+	public String getProtString(Object... key){
+		return protCfgs.getNode(key).getString(key.toString());
+	}
+	
+	public Text getProtMsg(Object... key){
+		return RPUtil.toText(protCfgs.getNode(key).getString());
+	}
+	
+	public Text getURLTemplate() {
+		return RPUtil.toText(protCfgs.getNode("general","URL-template").getString());
 	}
 }
    
