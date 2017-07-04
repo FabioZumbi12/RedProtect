@@ -75,6 +75,7 @@ public class RPAddProtection implements Listener{
 				} else {
 					p.sendMessage(RPConfig.getProtMsg("chat-protection.antispam.wait-message"));
 				}
+				e.setCancelled(true);
 				return;
 			}			
 		}
@@ -159,26 +160,8 @@ public class RPAddProtection implements Listener{
 		
 		//capitalization verify
 		if (RPConfig.getProtBool("chat-protection.chat-enhancement.enabled") && !p.hasPermission("redprotect.chat.bypass-enhancement")){
-						
 			if (!Pattern.compile(regexIP).matcher(nmsg).find() && !Pattern.compile(regexUrl).matcher(nmsg).find()){
 				nmsg = nmsg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+nmsg.substring(1).toLowerCase();
-				/*String[] messages = nmsg.split("(?<=[.!?])");
-				StringBuilder finalmsg = new StringBuilder(); 
-				boolean first = true;
-				for (String msgw:messages){
-					if (msgw.length() <= 0){
-						continue;
-					}
-					if (first){
-						finalmsg.append(msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
-						first = false;
-					} else if (msgw.startsWith(" ")){
-						finalmsg.append(msgw.substring(0, 2).toUpperCase()+msgw.substring(2).toLowerCase());
-					} else {
-						finalmsg.append(" "+msgw.substring(0, 1).toUpperCase()+msgw.substring(1).toLowerCase());
-					}
-				}					
-				nmsg = finalmsg.toString();*/
 				if (RPConfig.getProtBool("chat-protection.chat-enhancement.end-with-dot") && !nmsg.endsWith("?") && !nmsg.endsWith("!") && !nmsg.endsWith(".") && nmsg.split(" ").length > 2){
 					nmsg = nmsg+".";
 				}
@@ -213,7 +196,7 @@ public class RPAddProtection implements Listener{
 				UrlSpam.put(p, 1);
 			} else {
 				UrlSpam.put(p, UrlSpam.get(p)+1);
-				p.sendMessage("UrlSpam: "+UrlSpam.get(p));
+				//p.sendMessage("UrlSpam: "+UrlSpam.get(p));
 				if (UrlSpam.get(p) >= RPConfig.getProtInt("chat-protection.anti-ip.punish.max-attempts")){
 					if (RPConfig.getProtString("chat-protection.anti-ip.punish.mute-or-cmd").equalsIgnoreCase("mute")){
 						muted.add(p.getName());
