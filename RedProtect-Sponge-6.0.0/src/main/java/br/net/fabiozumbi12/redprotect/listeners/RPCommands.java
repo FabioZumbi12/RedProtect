@@ -935,7 +935,7 @@ public class RPCommands implements CommandCallable {
                     return cmdr;
                 }
         		String serverName = RedProtect.cfgs.getString("region-settings.default-leader");
-                String name = args[1];
+                String name = args[1].replace("/", "|");;
                 
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.firstLocationSelections.get(player), RedProtect.secondLocationSelections.get(player), name, serverName, new LinkedList<String>(), true);
                 if (rb2.ready()) {                	
@@ -958,7 +958,7 @@ public class RPCommands implements CommandCallable {
                     RPLang.sendMessage(player, "blocklistener.region.blockmode");
                     return cmdr;
                 }
-                String name = args[1];
+                String name = args[1].replace("/", "|");;
                 String leader = player.getUniqueId().toString();
                 if (!RedProtect.OnlineMode){
                 	leader = player.getName().toLowerCase();
