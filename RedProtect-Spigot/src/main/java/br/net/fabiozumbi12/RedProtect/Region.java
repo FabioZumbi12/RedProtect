@@ -1307,10 +1307,10 @@ public class Region implements Serializable{
 		if (b instanceof Crops
 				|| b.getType().equals(Material.PUMPKIN_STEM)
 				 || b.getType().equals(Material.MELON_STEM)
-				 || b.getType().name().contains("CROPS")
-				 || b.getType().name().contains("SOIL")
-				 || b.getType().name().contains("CHORUS_")
-				 || b.getType().name().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("CROPS")
+				 || b.getType().toString().contains("SOIL")
+				 || b.getType().toString().contains("CHORUS_")
+				 || b.getType().toString().contains("BEETROOT_BLOCK")
 				 || b.getType().toString().contains("SUGAR_CANE")){
 			return getFlagBool("cropsfarm");
 			
