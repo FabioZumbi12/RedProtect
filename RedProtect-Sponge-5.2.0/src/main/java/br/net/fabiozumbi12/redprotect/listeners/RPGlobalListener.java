@@ -12,6 +12,7 @@ import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.explosive.PrimedTNT;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.Ambient;
+import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.Villager;
 import org.spongepowered.api.entity.living.animal.Animal;
@@ -355,7 +356,7 @@ public class RPGlobalListener{
                     return;
                 }
             }
-        	if (e1 instanceof Hanging) {
+        	if (e1 instanceof Hanging || e1 instanceof ArmorStand) {
             	if (!RedProtect.cfgs.getGlobalFlag(e1.getWorld().getName(),"build")){
                     e.setCancelled(true);
                     return;
@@ -391,7 +392,7 @@ public class RPGlobalListener{
         			return;
         		}
             }
-        	if (e1 instanceof Hanging) {
+        	if (e1 instanceof Hanging || e1 instanceof ArmorStand) {
             	if (!RedProtect.cfgs.getGlobalFlag(e1.getWorld().getName(),"build") && !p.hasPermission("redprotect.bypass")){
                     e.setCancelled(true);
                     return;
@@ -422,7 +423,7 @@ public class RPGlobalListener{
                         return;
                     }
                 }
-            	if (e1 instanceof Hanging) {
+            	if (e1 instanceof Hanging || e1 instanceof ArmorStand) {
                 	if (!RedProtect.cfgs.getGlobalFlag(e1.getWorld().getName(),"build") && !p.hasPermission("redprotect.bypass")){
                         e.setCancelled(true);
                         return;

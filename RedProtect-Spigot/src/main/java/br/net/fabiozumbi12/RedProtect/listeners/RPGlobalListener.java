@@ -10,6 +10,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderCrystal;
@@ -88,11 +89,10 @@ public class RPGlobalListener implements Listener{
 		}
 		if (fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
 			return true;
-		}
-		
+		}		
 		return p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build"));
 	}
-		
+	
 	@EventHandler
 	public void onLeafDecay(LeavesDecayEvent e){
 		RedProtect.logger.debug("RPBlockListener - Is LeavesDecayEvent event");
@@ -382,7 +382,7 @@ public class RPGlobalListener implements Listener{
         		b.getType().name().contains("NOTE_BLOCK") ||
         		b.getType().name().contains("CAKE")){
 			
-        	if (!bypassBuild(p, null, 0)){
+        	if (!bypassBuild(p, (Block)null, 0)){
         		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         		e.setCancelled(true);
                 return;
@@ -397,11 +397,8 @@ public class RPGlobalListener implements Listener{
 	    			return;	
 	        	}
 			}
-			if (itemInHand.getType().equals(Material.PAINTING)|| itemInHand.getType().equals(Material.ITEM_FRAME)){
-				if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.allow-blocks").contains(itemInHand.getType().name())){
-	    			return;
-	    		} 
-				if (!bypassBuild(p, null, 0)){
+			if (itemInHand.getType().equals(Material.PAINTING)|| itemInHand.getType().equals(Material.ITEM_FRAME) || itemInHand.getType().equals(Material.ARMOR_STAND)){				
+				if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(itemInHand.getType().name()) && !bypassBuild(p, (Block)null, 0)){
 	        		e.setUseItemInHand(Event.Result.DENY);
 	        		e.setCancelled(true);
 	    			return;		
@@ -434,7 +431,7 @@ public class RPGlobalListener implements Listener{
 		}
         
         if (ent instanceof ItemFrame || ent instanceof Painting) {
-            if (!bypassBuild(p, null, 0)) {
+            if (!bypassBuild(p, (Block)null, 0)) {
                 e.setCancelled(true);
                 return;
             }
@@ -471,7 +468,7 @@ public class RPGlobalListener implements Listener{
         
         if (ent instanceof Player) { 
         	Player p = (Player)ent;
-            if (!bypassBuild(p, null, 0)) {
+            if (!bypassBuild(p, (Block)null, 0)) {
                 e.setCancelled(true);
             }
         }
@@ -494,7 +491,7 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-    	if (!bypassBuild(e.getPlayer(), null, 0)) {
+    	if (!bypassBuild(e.getPlayer(), (Block)null, 0)) {
     		e.setCancelled(true);
 			return;
     	}
@@ -517,7 +514,7 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-    	if (!bypassBuild(e.getPlayer(), null, 0)) {
+    	if (!bypassBuild(e.getPlayer(), (Block)null, 0)) {
     		e.setCancelled(true);
 			return;
     	}
@@ -590,8 +587,8 @@ public class RPGlobalListener implements Listener{
                     return;
                 }
             }
-        	if (e1 instanceof Hanging || e1 instanceof EnderCrystal) {
-            	if (!bypassBuild(p, null, 0)){
+        	if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {        		
+            	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, (Block)null, 0)){
                     e.setCancelled(true);
                     return;
                 }
@@ -621,8 +618,8 @@ public class RPGlobalListener implements Listener{
                         return;
                     }
                 }
-            	if (e1 instanceof Hanging || e1 instanceof EnderCrystal) {
-                	if (!bypassBuild(p, null, 0)){
+            	if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {        		
+                	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, (Block)null, 0)){
                         e.setCancelled(true);
                         return;
                     }
