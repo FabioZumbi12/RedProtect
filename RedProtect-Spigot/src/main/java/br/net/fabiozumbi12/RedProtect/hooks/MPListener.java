@@ -100,7 +100,7 @@ public class MPListener implements Listener {
                 if (damager instanceof MyPetBukkitEntity) {
                     MyPetBukkitEntity mp2 = (MyPetBukkitEntity) damager;
                     Player p2 = mp2.getOwner().getPlayer();
-                    if (!r1.canPVP(p2)) {
+                    if (!r1.canPVP((Player)e1, p2)) {
                         e.setCancelled(true);
                         mp2.getMyPet().removePet();
                         for (PotionEffect ef : p2.getActivePotionEffects()) {

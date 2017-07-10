@@ -82,7 +82,7 @@ public class McMMoListener implements Listener{
 			p.sendMessage(RPLang.get("mcmmolistener.notallowed"));
 			e.setCancelled(true);
 		}
-		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED))){
+		if (!r.canPVP(p, null) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED))){
 			e.setCancelled(true);
 		}
 	}
@@ -100,7 +100,7 @@ public class McMMoListener implements Listener{
 		if (!r.canSkill(p)){
 			e.setCancelled(true);
 		}
-		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
+		if (!r.canPVP(p, null) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
 			e.setCancelled(true);
 		}
 	}
@@ -118,7 +118,7 @@ public class McMMoListener implements Listener{
 		if (!r.canSkill(p)){
 			e.setCancelled(true);
 		}
-		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
+		if (!r.canPVP(p, e.getDefender()) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
 			e.setCancelled(true);
 		}
 	}
@@ -135,7 +135,7 @@ public class McMMoListener implements Listener{
 		if (!r.canSkill(p)){
 			e.setCancelled(true);
 		}
-		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
+		if (!r.canPVP(p, null) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))){
 			e.setCancelled(true);
 		}
 	}
@@ -156,7 +156,7 @@ public class McMMoListener implements Listener{
 			}			
 			
 			if (e.getEntity() instanceof Player){
-				if (r != null && !r.canPVP(p)){
+				if (r != null && !r.canPVP(p, (Player)e.getEntity())){
 					RPLang.sendMessage(p, "entitylistener.region.cantpvp");
 					e.setCancelled(true);
 				}
@@ -178,7 +178,7 @@ public class McMMoListener implements Listener{
 		
 		if (e.getEntity() instanceof Player){
 			Player p = (Player) e.getEntity();
-			if (r != null && !r.canPVP(p)){
+			if (r != null && !r.canPVP(p, null)){
 				e.setCancelled(true);
 			}
 		}

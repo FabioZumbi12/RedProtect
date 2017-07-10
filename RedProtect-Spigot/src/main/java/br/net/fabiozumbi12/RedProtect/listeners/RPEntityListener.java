@@ -136,19 +136,19 @@ public class RPEntityListener implements Listener{
                 Player p2 = (Player)e2; 
                 if (r1 != null) {                	
                     if (r2 != null) {                    	
-                        if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
+                        if ((r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player)e1, p2))) {
                             e.setCancelled(true);
                             RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                             return;
                         }
                     }
-                    else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
+                    else if (r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                         return;
                     }
                 }
-                else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
+                else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player)e1, p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                     return;
@@ -274,19 +274,19 @@ public class RPEntityListener implements Listener{
                         		RPLang.sendMessage(p2, "playerlistener.region.cantuse");
                                 return;
                         	}
-                            if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
+                            if ((r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player)e1, p2))) {
                                 e.setCancelled(true);
                                 RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                                 return;
                             }
                         }
-                        else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
+                        else if (r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) {
                             e.setCancelled(true);
                             RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                             return;
                         }
                     }
-                    else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
+                    else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player)e1, p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                         return;
@@ -354,7 +354,7 @@ public class RPEntityListener implements Listener{
         for (Entity e2 : event.getAffectedEntities()) {
             Region r = RedProtect.rm.getTopRegion(e2.getLocation());
             if (event.getEntity() instanceof Player){
-            	if (r != null && r.flagExists("pvp") && !r.canPVP(shooter)) {
+            	if (r != null && r.flagExists("pvp") && !r.canPVP((Player)event.getEntity(), shooter)) {
                     event.setCancelled(true);
                     return;
                 }
