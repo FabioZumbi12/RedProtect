@@ -384,7 +384,11 @@ public class RPCommentedConfig {
 				+ "\n"
 				+ "asyncworldedit: Use AsyncWorldEdit for regen regions? (need WorldEdit).\n"
 				+ "\n"
-				+ "factions: Allow players claim Factions chunks under RedProtect regions?");
+				+ "factions: Allow players claim Factions chunks under RedProtect regions?\n"
+				+ "\n"
+				+ "simpleclans:\n"
+				+ "use-war: Enable Clan Wars from SimleClans.\n"
+				+ "war-on-server-regions: Allow war clans to pvp on #server# regions?");
 		setDefault("hooks.check-uuid-names-onstart", false, null);
 		setDefault("hooks.essentials.import-lastvisits", false, null);
 		setDefault("hooks.dynmap.enable", true, null);
@@ -405,6 +409,8 @@ public class RPCommentedConfig {
 		setDefault("hooks.worldedit.use-for-schematics", true, null);
 		setDefault("hooks.asyncworldedit.use-for-regen", false, null);
 		setDefault("hooks.factions.claim-over-rps", false, null);		
+		setDefault("hooks.simpleclans.use-war", false, null);	
+		setDefault("hooks.simpleclans.war-on-server-regions", false, null);
 	}
 	
 	private void setDefault(String key, Object def, String comment){

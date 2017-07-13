@@ -354,7 +354,7 @@ public class RPBlockListener implements Listener{
 				 || b.getType().toString().contains("CROPS")
 				 || b.getType().toString().contains("SOIL")
 				 || b.getType().toString().contains("CHORUS_")
-				 || b.getType().toString().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("BEETROOT_")
 				 || b.getType().toString().contains("SUGAR_CANE")) && !r.canCrops(b)){
 			RPLang.sendMessage(p, "blocklistener.region.cantbreak"); 
 			e.setCancelled(true); 

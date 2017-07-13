@@ -1301,7 +1301,7 @@ public class Region implements Serializable{
 				 || b.getType().toString().contains("CROPS")
 				 || b.getType().toString().contains("SOIL")
 				 || b.getType().toString().contains("CHORUS_")
-				 || b.getType().toString().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("BEETROOT_")
 				 || b.getType().toString().contains("SUGAR_CANE")){
 			return getFlagBool("cropsfarm");
 			
@@ -1560,7 +1560,7 @@ public class Region implements Serializable{
     }
     
     public boolean canPVP(Player attack, Player defend) {
-    	if (defend != null && RedProtect.SC && SCHook.inWar(this, attack, defend)){
+    	if (RPConfig.getBool("hooks.simpleclans.use-war") && defend != null && RedProtect.SC && SCHook.inWar(this, attack, defend)){    		
     		return true;
     	}
     	if (!RPConfig.isFlagEnabled("pvp")){

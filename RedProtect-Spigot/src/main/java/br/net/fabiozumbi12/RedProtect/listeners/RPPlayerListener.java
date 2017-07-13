@@ -271,6 +271,7 @@ public class RPPlayerListener implements Listener{
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);
+                    return;
         		}
             }
         	

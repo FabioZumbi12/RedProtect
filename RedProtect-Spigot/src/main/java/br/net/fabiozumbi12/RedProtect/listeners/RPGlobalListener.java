@@ -370,7 +370,7 @@ public class RPGlobalListener implements Listener{
 				 || b.getType().toString().contains("CROPS")
 				 || b.getType().toString().contains("SOIL")
 				 || b.getType().toString().contains("CHORUS_")
-				 || b.getType().toString().contains("BEETROOT_BLOCK")
+				 || b.getType().toString().contains("BEETROOT_")
 				 || b.getType().toString().contains("SUGAR_CANE")) && 
 				 !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".allow-crops-trample") && !p.hasPermission("redprotect.bypass.world")){
 			e.setCancelled(true);
@@ -382,7 +382,9 @@ public class RPGlobalListener implements Listener{
         		b.getType().name().contains("NOTE_BLOCK") ||
         		b.getType().name().contains("CAKE")){
 			
-        	if (!bypassBuild(p, (Block)null, 0)){
+        	if ((!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())
+        			|| !RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())) && 
+        			!bypassBuild(p, (Block)null, 0)){
         		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         		e.setCancelled(true);
                 return;
