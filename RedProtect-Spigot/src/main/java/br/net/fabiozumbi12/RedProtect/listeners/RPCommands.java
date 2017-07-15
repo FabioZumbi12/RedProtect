@@ -559,6 +559,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			
         			String sec = String.valueOf(RPConfig.getInt("region-settings.delay-after-kick-region"));
         			if (RedProtect.plugin.denyEnterRegion(r.getID(), visit.getName())){
+        				RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), visit, r, true);
         				sender.sendMessage("The player "+visit.getName()+" has been kicked from "+r.getName()+" by "+sec+" seconds.");
         			} else {
         				sender.sendMessage("This player is already kicked from this region by "+sec);
