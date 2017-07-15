@@ -58,6 +58,7 @@ import br.net.fabiozumbi12.RedProtect.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
 import br.net.fabiozumbi12.RedProtect.hooks.MojangUUIDs;
+import br.net.fabiozumbi12.RedProtect.hooks.SCHook;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
 
 @SuppressWarnings("deprecation")
@@ -1677,11 +1678,17 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				RPLang.sendMessage(player, "cmdmanager.cantkick.member");
     				return true;
     			}
+        		
     			Region rv = RedProtect.rm.getTopRegion(visit.getLocation());
     			if (rv == null || rv != null && !rv.getID().equals(r.getID())){
     				RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
     				return true;
     			}
+    			
+    			if (SCHook.inWar(r, player, visit)){
+    				RPLang.sendMessage(player, "cmdmanager.cantkick.war");
+        			return true;
+        		}
     			
     			String sec = String.valueOf(RPConfig.getInt("region-settings.delay-after-kick-region"));
     			if (RedProtect.plugin.denyEnterRegion(r.getID(), visit.getName())){
