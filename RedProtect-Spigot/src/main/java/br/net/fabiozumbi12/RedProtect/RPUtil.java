@@ -364,10 +364,7 @@ public class RPUtil {
     	SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
     	
     	boolean checkNames = RPConfig.getBool("hooks.check-uuid-names-onstart");        	
-    	if (!checkNames){
-    		RedProtect.logger.warning("Name Update is disabled! Enable on config to update UUID/Names to Names/UUID if you change your server from Online mode to Offline mode.");
-    	}
-    	
+    	    	
 		try {
 			now = dateformat.parse(DateNow());
 		} catch (ParseException e1) {
