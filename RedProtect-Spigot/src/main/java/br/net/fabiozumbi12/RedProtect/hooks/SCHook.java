@@ -16,6 +16,9 @@ public class SCHook {
 		
 	@SuppressWarnings("deprecation")
 	public static boolean inWar(Region r, Player attack, Player defend){
+		if (!RPConfig.getBool("hooks.simpleclans.use-war")){
+			return false;
+		}
 		if (!RPConfig.getBool("hooks.simpleclans.war-on-server-regions") && r.getLeaders().contains(RPConfig.getString("region-settings.default-leader"))){
 			return false;
 		}

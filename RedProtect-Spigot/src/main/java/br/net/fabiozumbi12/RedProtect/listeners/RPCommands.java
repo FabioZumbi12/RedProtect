@@ -1686,7 +1686,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;
     			}
     			
-    			if (SCHook.inWar(r, player, visit)){
+    			if (RedProtect.SC && SCHook.inWar(r, player, visit)){
     				RPLang.sendMessage(player, "cmdmanager.cantkick.war");
         			return true;
         		}
