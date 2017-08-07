@@ -17,47 +17,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A tag that has a name.
+ * The {@code TAG_Int_Array} tag.
  */
-public class NamedTag {
+public final class IntArrayTag extends Tag {
 
-    private final String name;
-    private final Tag tag;
+    private final int[] value;
 
     /**
-     * Create a new named tag.
+     * Creates the tag with an empty name.
      *
-     * @param name the name
-     * @param tag the tag
+     * @param value the value of the tag
      */
-    public NamedTag(String name, Tag tag) {
-        checkNotNull(name);
-        checkNotNull(tag);
-        this.name = name;
-        this.tag = tag;
+    public IntArrayTag(int[] value) {
+        super();
+        checkNotNull(value);
+        this.value = value;
     }
 
-    /**
-     * Get the name of the tag.
-     *
-     * @return the name
-     */
-    public String getName() {
-        return name;
+    @Override
+    public int[] getValue() {
+        return value;
     }
 
-    /**
-     * Get the tag.
-     *
-     * @return the tag
-     */
-    public Tag getTag() {
-        return tag;
+    @Override
+    public String toString() {
+        StringBuilder hex = new StringBuilder();
+        for (int b : value) {
+            String hexDigits = Integer.toHexString(b).toUpperCase();
+            if (hexDigits.length() == 1) {
+                hex.append("0");
+            }
+            hex.append(hexDigits).append(" ");
+        }
+        return "TAG_Int_Array(" + hex + ")";
     }
 
 }

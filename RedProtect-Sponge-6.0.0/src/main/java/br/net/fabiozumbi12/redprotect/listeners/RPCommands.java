@@ -2549,16 +2549,7 @@ public class RPCommands implements CommandCallable {
 		
 	}
 	
-	private static boolean validate(String flag, Object value) {
-		if (flag.equalsIgnoreCase("gamemode")){
-			if (!(value instanceof String)){
-				return false;
-			}
-			if (!RPUtil.testRegistry(GameMode.class, ((String)value))){
-				return false;
-			}					
-		}
-		
+	private static boolean validate(String flag, Object value) {				
 		if ((flag.equalsIgnoreCase("forcefly") || 
 				flag.equalsIgnoreCase("can-death") ||
 				flag.equalsIgnoreCase("can-pickup") ||
@@ -2598,6 +2589,33 @@ public class RPCommands implements CommandCallable {
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
+		
+		if (flag.equalsIgnoreCase("set-portal")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			String[] valida = ((String)value).split(" ");
+			if (valida.length != 2){
+				return false;
+			}
+			if (!Sponge.getServer().getWorld(valida[1]).isPresent()){
+				return false;
+			}
+			Region r = RedProtect.rm.getRegion(valida[0], valida[1]);
+			if (r == null){
+				return false;
+			}
+		}
+		
+		if (flag.equalsIgnoreCase("gamemode")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			if (!RPUtil.testRegistry(GameMode.class, ((String)value))){
+				return false;
+			}					
+		}
+		
 		if (flag.equalsIgnoreCase("max-players")){
 			try {
 				Integer.parseInt(value.toString());
@@ -2605,6 +2623,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")){
 			if (!(value instanceof String)){
 				return false;
@@ -2616,6 +2635,7 @@ public class RPCommands implements CommandCallable {
 				}
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
 			if (!(value instanceof String)){
 				return false;
@@ -2627,6 +2647,7 @@ public class RPCommands implements CommandCallable {
 				}
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("cmd-onhealth")){
 			if (!(value instanceof String)){
 				return false;
@@ -2647,6 +2668,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds")){
 			if (!(value instanceof String)){
 				return false;
@@ -2676,6 +2698,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}		
 		}
+		
 		if (flag.equalsIgnoreCase("effects")){
 			if (!(value instanceof String)){
 				return false;

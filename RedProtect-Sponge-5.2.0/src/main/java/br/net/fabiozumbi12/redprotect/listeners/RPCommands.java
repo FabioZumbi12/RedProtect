@@ -198,7 +198,7 @@ public class RPCommands implements CommandCallable {
         	} 
         	
         	if(args.length == 2){
-        		   		
+        		
         		//rp removeall <player>
         		if (checkCmd(args[0], "removeall")) {
         			int removed = RedProtect.rm.removeAll(args[1]);
@@ -220,7 +220,7 @@ public class RPCommands implements CommandCallable {
         			}
         			return cmdr;
         		}
-        		
+        		   		
         		//rp regen stop
         		if (checkCmd(args[0], "regen") && args[1].equalsIgnoreCase("stop")) {
         			if (!RedProtect.WE){
@@ -270,7 +270,7 @@ public class RPCommands implements CommandCallable {
                         return cmdr;
                     }
                     
-                    int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()),offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName():null);
+                    int currentUsed = RedProtect.rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName():null);
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.yourarea").toString() + currentUsed + RPLang.get("general.color") + "/&e" + limit + RPLang.get("general.color")));
                     return cmdr;
         		}
@@ -519,7 +519,7 @@ public class RPCommands implements CommandCallable {
                 sender.sendMessage(RPUtil.toText(RPLang.get("general.color")+"---------------------------------------------------"));
                 return cmdr;
     		}
-        	
+
         	if (checkCmd(args[0], "laccept")){
         		if (RedProtect.alWait.containsKey(player)){
         			//info = region+world+pname
@@ -579,7 +579,7 @@ public class RPCommands implements CommandCallable {
         			return cmdr;
         		}
         	}
-        	        	
+        	
         	if (checkCmd(args[0], "settp") && RedProtect.ph.hasGenPerm(player, "settp")){
         		Region r = RedProtect.rm.getTopRegion(player.getLocation());
         		if (r != null){
@@ -810,7 +810,7 @@ public class RPCommands implements CommandCallable {
                         player.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
                         while (i.hasNext()) {
                             Region r = i.next();
-                            player.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + " | "+RPLang.get("region.center")+" (&6X,Z"+RPLang.get("general.color")+"): &6" +  r.getCenterX() + ", "  + r.getCenterZ()));
+                            player.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + " | "+RPLang.get("region.center")+" (&6X,Z"+RPLang.get("general.color")+"): &6" +  r.getCenterX() + ", "  + r.getCenterZ()));                            
                         }
                         player.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
                     }
@@ -879,7 +879,7 @@ public class RPCommands implements CommandCallable {
         }
         
         if (args.length == 2) {      
-        	        	        	
+        	        	 
         	//rp removeall <player>
     		if (checkCmd(args[0], "removeall") && sender.hasPermission("redprotect.removeall")) {
     			if (!RedProtect.WE){
@@ -1026,8 +1026,8 @@ public class RPCommands implements CommandCallable {
         	}
         }
         
-        if (args.length == 3) {        	
-
+        if (args.length == 3) { 
+        	
         	//rp regen <region> <world>
     		if (checkCmd(args[0], "regen") && player.hasPermission("redprotect.regen")) {
     			if (!RedProtect.WE){
@@ -1505,7 +1505,7 @@ public class RPCommands implements CommandCallable {
                 if (!RedProtect.OnlineMode){
                 	uuid = player.getName().toLowerCase();
                 }
-                int currentUsed = RedProtect.rm.getTotalRegionSize(uuid,player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName():null);
+                int currentUsed = RedProtect.rm.getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName():null);
                 RPLang.sendMessage(player,RPLang.get("cmdmanager.yourarea").toString() + currentUsed + RPLang.get("general.color") + "/&e" + limit + RPLang.get("general.color"));
                 return cmdr;
             }            
@@ -2549,16 +2549,7 @@ public class RPCommands implements CommandCallable {
 		
 	}
 	
-	private static boolean validate(String flag, Object value) {
-		if (flag.equalsIgnoreCase("gamemode")){
-			if (!(value instanceof String)){
-				return false;
-			}
-			if (!RPUtil.testRegistry(GameMode.class, ((String)value))){
-				return false;
-			}					
-		}
-		
+	private static boolean validate(String flag, Object value) {				
 		if ((flag.equalsIgnoreCase("forcefly") || 
 				flag.equalsIgnoreCase("can-death") ||
 				flag.equalsIgnoreCase("can-pickup") ||
@@ -2598,6 +2589,33 @@ public class RPCommands implements CommandCallable {
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
+		
+		if (flag.equalsIgnoreCase("set-portal")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			String[] valida = ((String)value).split(" ");
+			if (valida.length != 2){
+				return false;
+			}
+			if (!Sponge.getServer().getWorld(valida[1]).isPresent()){
+				return false;
+			}
+			Region r = RedProtect.rm.getRegion(valida[0], valida[1]);
+			if (r == null){
+				return false;
+			}
+		}
+		
+		if (flag.equalsIgnoreCase("gamemode")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			if (!RPUtil.testRegistry(GameMode.class, ((String)value))){
+				return false;
+			}					
+		}
+		
 		if (flag.equalsIgnoreCase("max-players")){
 			try {
 				Integer.parseInt(value.toString());
@@ -2605,6 +2623,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")){
 			if (!(value instanceof String)){
 				return false;
@@ -2616,6 +2635,7 @@ public class RPCommands implements CommandCallable {
 				}
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
 			if (!(value instanceof String)){
 				return false;
@@ -2627,6 +2647,7 @@ public class RPCommands implements CommandCallable {
 				}
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("cmd-onhealth")){
 			if (!(value instanceof String)){
 				return false;
@@ -2647,6 +2668,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}
 		}
+		
 		if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds")){
 			if (!(value instanceof String)){
 				return false;
@@ -2676,6 +2698,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}		
 		}
+		
 		if (flag.equalsIgnoreCase("effects")){
 			if (!(value instanceof String)){
 				return false;

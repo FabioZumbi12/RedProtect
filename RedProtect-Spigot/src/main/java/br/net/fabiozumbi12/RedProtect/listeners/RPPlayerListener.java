@@ -1417,6 +1417,12 @@ public class RPPlayerListener implements Listener{
         	}                	
         }
         
+        //Check portal (/rp flag set-portal <rp> <world>
+        if (r.canEnter(p) && r.flagExists("set-portal")){
+        	String[] cmds = r.getFlagString("set-portal").split(" ");        	     
+        	RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), "rp teleport "+p.getName()+" "+cmds[0]+" "+cmds[1]);        	               	
+        }
+        
         //Enter MagicCarpet
         if (r.canEnter(p) && r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.Mc){
         	if (MagicCarpet.getCarpets().getCarpet(p) != null){

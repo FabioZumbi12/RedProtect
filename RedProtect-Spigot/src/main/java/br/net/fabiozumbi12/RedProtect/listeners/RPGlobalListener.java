@@ -71,6 +71,7 @@ import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 
+@SuppressWarnings("deprecation")
 public class RPGlobalListener implements Listener{
 	
 	public RPGlobalListener(){

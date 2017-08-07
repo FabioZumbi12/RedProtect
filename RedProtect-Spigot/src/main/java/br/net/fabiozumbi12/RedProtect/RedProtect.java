@@ -84,6 +84,7 @@ public class RedProtect extends JavaPlugin {
 	public static boolean WE;
 	public static boolean AWE;
 	public static boolean SC;
+	public static boolean PLib;
 	public static ClanManager clanManager;
 	public static Essentials pless;	
 	static boolean Dyn;
@@ -121,6 +122,7 @@ public class RedProtect extends JavaPlugin {
             AWE = checkAWe();
             SC = checkSP();
             Fac = checkFac();
+            PLib = checkPLib();
             PlaceHolderAPI = checkPHAPI();
             JarFile = this.getFile();
             initVars();
@@ -159,6 +161,9 @@ public class RedProtect extends JavaPlugin {
                 }
             }
             
+            if (PLib){
+            	RedProtect.logger.info("ProtocolLib found. Hidding Gui Flag item stats.");   
+            }            
             if (PvPm){
             	RedProtect.logger.info("PvPManager found. Hooked.");   
             }
@@ -460,6 +465,14 @@ public class RedProtect extends JavaPlugin {
 	
 	private boolean checkFac() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
+    	if (p != null && p.isEnabled()){
+    		return true;
+    	}
+		return false;
+	}
+	
+	private boolean checkPLib() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
     	if (p != null && p.isEnabled()){
     		return true;
     	}

@@ -47,7 +47,6 @@ public class RPConfig{
 			"keep-levels", 
 			"can-pickup", 
 			"can-drop",
-			"view-distance",
 			"forcepvp",
 			"forcefly", 
 			"gamemode", 
@@ -80,7 +79,8 @@ public class RPConfig{
 			"enter", 
 			"up-skills", 
 			"can-back", 
-			"for-sale");	
+			"for-sale",
+			"set-portal");	
 			
 	public static void init() {
 		

@@ -17,33 +17,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 /**
- * The {@code TAG_Float} tag.
+ * Represents a NBT tag.
  */
-public final class FloatTag extends Tag {
-
-    private final float value;
+public abstract class Tag {
 
     /**
-     * Creates the tag with an empty name.
-     *
-     * @param value the value of the tag
+     * Gets the value of this tag.
+     * 
+     * @return the value
      */
-    public FloatTag(float value) {
-        super();
-        this.value = value;
-    }
-
-    @Override
-    public Float getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "TAG_Float(" + value + ")";
-    }
+    public abstract Object getValue();
 
 }

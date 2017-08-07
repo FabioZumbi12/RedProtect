@@ -43,7 +43,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import br.net.fabiozumbi12.RedProtect.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.RPGui;
-import br.net.fabiozumbi12.RedProtect.RPSchematics;
 import br.net.fabiozumbi12.RedProtect.RPUtil;
 import br.net.fabiozumbi12.RedProtect.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Region;
@@ -60,6 +59,7 @@ import br.net.fabiozumbi12.RedProtect.hooks.AWEListener;
 import br.net.fabiozumbi12.RedProtect.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.hooks.SCHook;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.schematics.RPSchematics;
 
 @SuppressWarnings("deprecation")
 public class RPCommands implements CommandExecutor, TabCompleter{
@@ -2994,15 +2994,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 	private static void SendFlagUsageMessage(Player p, String flag) {
 		String message = "";
 		if (flag.equalsIgnoreCase("effects") ||
-				flag.equalsIgnoreCase("view-distance") ||
 				flag.equalsIgnoreCase("allow-enter-items") ||
 				flag.equalsIgnoreCase("deny-enter-items") ||
 				flag.equalsIgnoreCase("gamemode") ||
-				flag.equalsIgnoreCase("view-distance") ||
 				flag.equalsIgnoreCase("allow-cmds") || 
 				flag.equalsIgnoreCase("deny-cmds") || 
 				flag.equalsIgnoreCase("allow-break") || 
 				flag.equalsIgnoreCase("allow-place") ||
+				flag.equalsIgnoreCase("set-portal") ||
 				flag.equalsIgnoreCase("cmd-onhealth")){                				
 			message = RPLang.get("cmdmanager.region.flag.usage"+flag);
 		} else {
@@ -3023,32 +3022,6 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 	}
 
 	private static boolean validate(String flag, Object value) {
-		if (flag.equalsIgnoreCase("gamemode")){
-			if (!(value instanceof String)){
-				return false;
-			}
-			try {
-				GameMode.valueOf(((String)value).toUpperCase());
-			} catch (IllegalArgumentException e){
-				return false;
-			}			
-		}
-		
-		if (flag.equalsIgnoreCase("view-distance")){
-			if (!RedProtect.paper || !(value instanceof Integer)){
-				return false;
-			}
-		}
-		
-		if (flag.equalsIgnoreCase("setclan") && RedProtect.SC){
-			if (!(value instanceof String)){
-				return false;
-			}
-			if (RedProtect.clanManager.getClan((String)value) == null){
-				return false;
-			}
-		}
-		
 		if ((flag.equalsIgnoreCase("forcefly") || 
 				flag.equalsIgnoreCase("can-death") ||
 				flag.equalsIgnoreCase("can-pickup") ||
@@ -3088,6 +3061,44 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
+		
+		if (flag.equalsIgnoreCase("gamemode")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			try {
+				GameMode.valueOf(((String)value).toUpperCase());
+			} catch (IllegalArgumentException e){
+				return false;
+			}			
+		}
+		
+		if (flag.equalsIgnoreCase("setclan") && RedProtect.SC){
+			if (!(value instanceof String)){
+				return false;
+			}
+			if (RedProtect.clanManager.getClan((String)value) == null){
+				return false;
+			}
+		}
+		
+		if (flag.equalsIgnoreCase("set-portal")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			String[] valida = ((String)value).split(" ");
+			if (valida.length != 2){
+				return false;
+			}
+			if (Bukkit.getWorld(valida[1]) == null){
+				return false;
+			}
+			Region r = RedProtect.rm.getRegion(valida[0], valida[1]);
+			if (r == null){
+				return false;
+			}
+		}
+		
 		if (flag.equalsIgnoreCase("max-players")){
 			try {
 				Integer.parseInt(value.toString());

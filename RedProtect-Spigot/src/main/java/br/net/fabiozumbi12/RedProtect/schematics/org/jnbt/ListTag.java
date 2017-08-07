@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

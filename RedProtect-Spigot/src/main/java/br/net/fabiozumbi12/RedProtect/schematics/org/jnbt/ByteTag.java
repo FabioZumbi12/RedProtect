@@ -17,34 +17,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 /**
- * The {@code TAG_Double} tag.
- * 
+ * The {@code TAG_Byte} tag.
  */
-public final class DoubleTag extends Tag {
+public final class ByteTag extends Tag {
 
-    private final double value;
+    private final byte value;
 
     /**
      * Creates the tag with an empty name.
      *
      * @param value the value of the tag
      */
-    public DoubleTag(double value) {
+    public ByteTag(byte value) {
         super();
         this.value = value;
     }
 
     @Override
-    public Double getValue() {
+    public Byte getValue() {
         return value;
     }
 
     @Override
     public String toString() {
-        return "TAG_Double(" + value + ")";
+        return "TAG_Byte(" + value + ")";
     }
 
 }

@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect;
+package br.net.fabiozumbi12.RedProtect.schematics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,15 +15,18 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.jnbt.ByteArrayTag;
-import org.jnbt.CompoundTag;
-import org.jnbt.IntTag;
-import org.jnbt.NBTInputStream;
-import org.jnbt.NamedTag;
-import org.jnbt.ShortTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
 
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.ByteArrayTag;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.CompoundTag;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.IntTag;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.NBTInputStream;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.NamedTag;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.ShortTag;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.StringTag;
+import br.net.fabiozumbi12.RedProtect.schematics.org.jnbt.Tag;
+import br.net.fabiozumbi12.RedProtect.RPUtil;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.hooks.WEListener;
@@ -152,8 +155,6 @@ public class RPSchematics {
         }
         
         Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), Arrays.asList(pName), new int[] { pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX() }, new int[] { pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ() }, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
-        
-        
         
         List<String> othersName = new ArrayList<String>();
         Region otherrg = null;

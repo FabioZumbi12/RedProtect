@@ -17,33 +17,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 /**
- * The {@code TAG_Byte} tag.
+ * The {@code TAG_Int} tag.
  */
-public final class ByteTag extends Tag {
+public final class IntTag extends Tag {
 
-    private final byte value;
+    private final int value;
 
     /**
      * Creates the tag with an empty name.
      *
      * @param value the value of the tag
      */
-    public ByteTag(byte value) {
+    public IntTag(int value) {
         super();
         this.value = value;
     }
 
     @Override
-    public Byte getValue() {
+    public Integer getValue() {
         return value;
     }
 
     @Override
     public String toString() {
-        return "TAG_Byte(" + value + ")";
+        return "TAG_Int(" + value + ")";
     }
 
 }

@@ -1208,13 +1208,11 @@ public class RPPlayerListener{
         	}                	
         }
         
-        //Enter MagicCarpet
-        /*if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.Mc){
-        	if (MagicCarpet.getCarpets().getCarpet(p) != null){
-        		MagicCarpet.getCarpets().remove(p);
-        		RPLang.sendMessage(p, "playerlistener.region.cantmc");
-        	}        	
-        }*/
+        //Check portal (/rp flag set-portal <rp> <world>
+        if (r.canEnter(p) && r.flagExists("set-portal")){
+        	String[] cmds = r.getFlagString("set-portal").split(" ");        	     
+        	RedProtect.game.getCommandManager().process(RedProtect.serv.getConsole(), "rp teleport "+p.getName()+" "+cmds[0]+" "+cmds[1]);        	               	
+        }
         
         if (er != null){                	
         	//Exit effect

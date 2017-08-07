@@ -17,21 +17,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The {@code TAG_End} tag.
+ * The {@code TAG_String} tag.
  */
-public final class EndTag extends Tag {
+public final class StringTag extends Tag {
+
+    private final String value;
+
+    /**
+     * Creates the tag with an empty name.
+     *
+     * @param value the value of the tag
+     */
+    public StringTag(String value) {
+        super();
+        checkNotNull(value);
+        this.value = value;
+    }
 
     @Override
-    public Object getValue() {
-        return null;
+    public String getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
-        return "TAG_End";
+        return "TAG_String(" + value + ")";
     }
 
 }

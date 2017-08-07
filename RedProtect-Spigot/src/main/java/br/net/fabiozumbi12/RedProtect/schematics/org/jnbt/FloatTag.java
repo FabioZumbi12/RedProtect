@@ -17,33 +17,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 /**
- * The {@code TAG_Short} tag.
+ * The {@code TAG_Float} tag.
  */
-public final class ShortTag extends Tag {
+public final class FloatTag extends Tag {
 
-    private final short value;
+    private final float value;
 
     /**
      * Creates the tag with an empty name.
      *
      * @param value the value of the tag
      */
-    public ShortTag(short value) {
+    public FloatTag(float value) {
         super();
         this.value = value;
     }
 
     @Override
-    public Short getValue() {
+    public Float getValue() {
         return value;
     }
 
     @Override
     public String toString() {
-        return "TAG_Short(" + value + ")";
+        return "TAG_Float(" + value + ")";
     }
 
 }

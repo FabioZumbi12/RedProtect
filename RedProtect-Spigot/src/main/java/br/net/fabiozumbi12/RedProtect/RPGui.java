@@ -22,12 +22,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-
 import br.net.fabiozumbi12.RedProtect.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.hooks.RPProtocolLib;
 
 public class RPGui implements Listener{		
 
@@ -107,8 +104,8 @@ public class RPGui implements Listener{
 					fvalue = RPConfig.getGuiString(region.flags.get(flag).toString());
 				}
 				
-				if (allowEnchant){
-					this.guiItens[i] = removeAttributes(RPConfig.getGuiItemStack(flag));
+				if (RedProtect.PLib && allowEnchant){
+					this.guiItens[i] = RPProtocolLib.removeAttributes(RPConfig.getGuiItemStack(flag));
 				} else {
 					this.guiItens[i] = RPConfig.getGuiItemStack(flag);					
 				}				
@@ -216,16 +213,7 @@ public class RPGui implements Listener{
 			}			
 	    }
 	}
-	
-	private static ItemStack removeAttributes(ItemStack item) {
-	    if (!MinecraftReflection.isCraftItemStack(item)) {
-	        item = MinecraftReflection.getBukkitItemStack(item);
-	    }
-	    NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
-	    compound.put(NbtFactory.ofList("AttributeModifiers"));
-	    return item;
-	}
-	
+		
 	private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event){
 		boolean flagv = false;
 		if (flag.equalsIgnoreCase("clan")){

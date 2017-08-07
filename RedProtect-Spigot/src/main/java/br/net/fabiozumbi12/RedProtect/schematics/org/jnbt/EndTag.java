@@ -17,34 +17,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jnbt;
+package br.net.fabiozumbi12.RedProtect.schematics.org.jnbt;
 
 /**
- * The {@code TAG_Long} tag.
- * 
+ * The {@code TAG_End} tag.
  */
-public final class LongTag extends Tag {
-
-    private final long value;
-
-    /**
-     * Creates the tag with an empty name.
-     *
-     * @param value the value of the tag
-     */
-    public LongTag(long value) {
-        super();
-        this.value = value;
-    }
+public final class EndTag extends Tag {
 
     @Override
-    public Long getValue() {
-        return value;
+    public Object getValue() {
+        return null;
     }
 
     @Override
     public String toString() {
-        return "TAG_Long(" + value + ")";
+        return "TAG_End";
     }
 
 }
