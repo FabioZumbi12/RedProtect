@@ -2545,8 +2545,7 @@ public class RPCommands implements CommandCallable {
     	if (RedProtect.ph.hasAdminFlagPerm(p, "")){                		
         	p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.admlist") + " " + RedProtect.cfgs.AdminFlags));    
         	p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
-    	} 
-		
+    	} 		
 	}
 	
 	private static boolean validate(String flag, Object value) {				

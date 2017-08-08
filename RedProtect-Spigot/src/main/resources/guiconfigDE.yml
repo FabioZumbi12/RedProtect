@@ -1,0 +1,205 @@
+gui-strings:
+  'false': '&cNein'
+  'true': '&aJa'
+  value: '&bZulassen: '
+  separator: '&7|'
+gui-separator:
+  material: THIN_GLASS
+  data: 0
+gui-flags:
+  door:
+    slot: 0
+    material: WOOD_DOOR
+    name: '&e=> Türen benutzen An/Aus'
+    description: '&6Description: &aErlauben oder verbieten allen Spielern'
+    description1: '&aauf Eurer Zone Türen zu benutzen.'
+    description2: ''
+  smart-door:
+    slot: 1
+    material: IRON_DOOR
+    name: '&e=> Eisentüren/Doppeltüren Aus/An'
+    description: '&6Erklärung: &aErlauben oder verbieten das Spieler'
+    description1: '&abei euch doppel Türen, Eisentüren oder Eisen Falltüren'
+    description2: '&azu benutzen.'
+  pvp:
+    slot: 11
+    material: STONE_SWORD
+    name: '&e=> PvP An/Aus'
+    description: '&6Erklärung: &aAuf Eurer Zone  PvP zulassen'
+    description1: '&aoder zu verbieten.'
+    description2: ''
+  allow-home:
+    slot: 2
+    material: BED
+    name: '&e=> Sethome setzen An/Aus'
+    description: '&6Erklärung: &aErlauben oder verbieten Spielern'
+    description1: '&aauf Eurer Zone /sethome zu benutzen oder ein .'
+    description2: '&aBett-Spawnpunkt zu setzen'
+  chest:
+    slot: 4
+    material: TRAPPED_CHEST
+    name: '&e=> Truhen benutzen An/Aus'
+    description: '&6Erklärung: &aErlaubt oder verbietet Spielern'
+    description1: '&adas benutzen von Truhen auf Eurer Zone.'
+    description2: '&aDas beinhaltet auch Trichter, Zaubertische,Spender und Werfer'
+  lever:
+    slot: 5
+    material: LEVER
+    name: '&e=> Hebel'
+    description: '&6Erklärung: &aErlaubt oder verbietet'
+    description1: '&aSpielern das benutzen von Hebeln auf Eurer Zone.'
+    description2: ''
+  button:
+    slot: 6
+    material: WOOD_BUTTON
+    name: '&e=> Knöpfe'
+    description: '&6Erklärung: &aErlaubt oder verbietet Spielern auf '
+    description1: '&aEurer Zone Knöpfe zu bedienen oder zu verbieten'
+    description2: ''
+  passives:
+    slot: 7
+    material: SADDLE
+    name: '&e=> Tiere Töten An/Aus'
+    description: '&6Erklärung: &aErlaubt oder verbietet Spielern'
+    description1: '&afriedliche Mobs(z.b Schafe) zu töten'
+    description2: '&aauf deiner Zone.'
+  allow-magiccarpet:
+    slot: 9
+    material: GLASS
+    name: '&e=> Verzauberte Stiefel An/Aus'
+    description: '&6Erklärung: &aErlaubt'
+    description1: '&averzauberte Stiefel in Eurer Zone'
+    description2: '&aan zuziehen'
+  minecart:
+    slot: 24
+    material: MINECART
+    name: '&e=> Erlauben Minecarts zu setzen/abzubauen'
+    description: '&6Erklärung: &aErlauben oder verbieten das'
+    description1: '&aNicht Mitglieder in deiner Zone'
+    description2: '&aMinecarts setzen oder abbauen'
+  fire:
+    slot: 19
+    material: BLAZE_POWDER
+    name: '&e=> Feuer und Tnt Schaden An/Aus'
+    description: '&6Erklärung: &aErlauben oder verbieten das Feuer'
+    description1: '&aund Explosion auf deiner Zone Schaden anrichten.'
+    description2: ''
+  flow:
+    slot: 20
+    material: WATER_BUCKET
+    name: '&e=> Wasser und Lava fließen lassen'
+    description: '&6Erklärung: &aVerbieten/Erlauben das Wasser'
+    description1: '&aoder lava in deiner Zone fließt.'
+    description2: ''
+  spawn-animals:
+    slot: 25
+    material: EGG
+    name: '&e=> Tiere Spawn'
+    description: '&6Erklärung: &aErlauben oder verbieten das'
+    description1: '&aSpawn von friedlichen Mobs auf deiner Zone.'
+    description2: ''
+  spawn-monsters:
+    slot: 26
+    material: PUMPKIN
+    name: '&e=> Monster Spawnen'
+    description: '&6Erklärung: &aErlaubt oder verbietet das'
+    description1: '&anatürliche Spawnen von Monstern auf'
+    description2: '&aEurer Zone.'
+  use-potions:
+    slot: 15
+    material: GLASS_BOTTLE
+    name: '&e=> Zaubergetränke An/Aus'
+    description: '&6Description: &aErlaubt oder verbietet Spielern'
+    description1: '&aauf Eurer Zone Trink oder werfbare Flaschen anzuwenden.'
+    description2: ''
+  allow-effects:
+    slot: 16
+    material: BLAZE_ROD
+    name: '&e=> Effekte An/Aus'
+    description: '&6Erklärung: &aErlaubt oder verbietet auf'
+    description1: '&aEurer Zone jegliche Effekte z.b'
+    description2: '&a(Unsichtbarkeit, Stärke,Schnelligkeit usw)'
+  mob-loot:
+    slot: 23
+    material: GRASS
+    name: '&e=> Mob Griefing'
+    description: '&6Erklärung: &aErlaubt oder verbietet den Mobs'
+    description1: '&abei euch Explosionsschaden zu machen oder'
+    description2: '&aBlöcke zu entfernen.'
+  flow-damage:
+    slot: 21
+    material: LAVA_BUCKET
+    name: '&e=> Lava setzen An/Aus'
+    description: '&6Erklärung: &aErlaubt oder verbietet bei'
+    description1: '&aEuch Lava Eimer zu setzen.'
+    description2: ''
+  iceform-world:
+    slot: 12
+    material: ICE
+    name: '&e=> Eis/Schnee abbauen An/Aus'
+    description: '&6Description: &aErlaubt oder verbietet alle '
+    description1: '&aArten von Schnee oder Eis bei euch an oder'
+    description2: '&aabzubauen.'
+  iceform-player:
+    slot: 13
+    material: PACKED_ICE
+    name: '&e=> Eisläufer'
+    description: '&6Description: &aErlaubt oder verbietet das'
+    description1: '&abenutzen von Eisläufern auf Eurer Zone.'
+    description2: ''
+  allow-fly:
+    slot: 8
+    material: FEATHER
+    name: '&e=> Fliegen An/Aus'
+    description: '&6Description: &aErlaubt oder verbietet den'
+    description1: '&aSpieler zu fliegen wenn er die Eigenschaft zeitlich'
+    description2: '&aerworben hat (temporär)'
+  teleport:
+    slot: 10
+    material: ENDER_PEARL
+    name: '&e=> Enderperle & Chorusfrucht An/Aus'
+    description: '&6Erklärung: &aErlaubt oder verbietet das'
+    description1: '&abenutzen von Enderperlen und Chorusfrucht um sich'
+    description2: '&azu teleportieren.'
+  clan:
+    material: BOW
+    name: '&e=> Set Clan Region'
+    description: '&bErklärung: &aSet this region as'
+    description1: '&ayour clan home, adding all clan members'
+    description2: '&aat same time with on click.'
+    slot: 14
+  ender-chest:
+    slot: 3
+    material: ENDER_CHEST
+    name: '&e=> Endertruhe'
+    description: '&bErklärung: &aErlaubt oder verbietet es'
+    description1: '&aSpieler auf Eurer Zone die Endertruhe'
+    description2: '&azu benutzen.'
+  can-grow:
+    slot: 18
+    material: WHEAT
+    name: '&e=> Farmen An/Aus'
+    description: '&bErklärung: &aErlauben oder verbieten'
+    description1: '&adas Wachstum auf Eurer Zone'
+    description2: ''
+  allow-spawner:
+    slot: 22
+    material: MOB_SPAWNER
+    name: '&e=> Erlauben Spawner zu zerstören An/Aus'
+    description: '&bErklärung: &aErlauben oder verbieten'
+    description1: '&aauf Eurer Zone Spawner zu zerstören.'
+    description2: ''
+  leaves-decay:
+    slot: 17
+    material: LEAVES
+    name: '&e=> Lassen Sie Blätter zerfallen oder nicht An/Aus'
+    description: '&bErklärung: &aErlauben oder verbieten Blätter'
+    description1: '&anatürlich zu verschwinden.'
+    description2: ''
+  build:
+    slot: 14
+    material: COBBLESTONE
+    name: '&e=> Erlauben Bauen An/Aus'
+    description: '&bDescription: &aErlauben Sie Nichtmitglieder'
+    description1: '&adas bauen auf deiner Zone. Er kann dann Bauen und '
+    description2: '&aabbauen von Blöcken.'
