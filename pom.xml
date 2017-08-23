@@ -12,6 +12,14 @@
      <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
      <tag>${project.version}</tag>
   </scm>
+  
+  <distributionManagement>
+    <repository>
+        <id>internal.repo</id>
+        <name>Temporary Staging Repository</name>
+        <url>file://${project.build.directory}/mvn-repo</url>
+    </repository>
+  </distributionManagement>
     
   <repositories>
   
@@ -53,7 +61,7 @@
   
   <build>
     <finalName>${project.name}-${buildNumber}</finalName>
-    <defaultGoal>clean install</defaultGoal>
+    <defaultGoal>clean deploy</defaultGoal>
     <resources>
         <resource>
             <targetPath>.</targetPath>
@@ -149,6 +157,41 @@
         </nonFilteredFileExtensions>
       </configuration>
     </plugin>
+    
+    <!-- Deploy to github for maven repo -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+            <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.11</version>
+            <configuration>
+                <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                <merge>true</merge>
+                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                <includes><include>**/*</include></includes>
+                <repositoryName>RedProtect</repositoryName>      <!-- github repo name -->
+                <repositoryOwner>FabioZumbi12</repositoryOwner>    <!-- github username  -->
+            </configuration>
+            <executions>
+              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->              
+              <execution>
+                <id>deploying</id>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+        </plugin>
           
     </plugins>
   </build>
@@ -156,6 +199,7 @@
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <github.global.server>github</github.global.server>
     <pluginVersion>7.2.2</pluginVersion>
   </properties>
   

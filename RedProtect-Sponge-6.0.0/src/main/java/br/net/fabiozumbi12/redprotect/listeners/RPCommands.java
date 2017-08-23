@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult.Type;
-import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
@@ -501,16 +499,7 @@ public class RPCommands implements CommandCallable {
             		return cmdr;
             	}
         	}
-        	
-        	if (args[0].equalsIgnoreCase("test-perms")) {
-        		//player.sendMessage(RPUtil.toText("&cIdentifier on 0: "+player.getParents().get(0).getIdentifier()));
-        		Set<Context> contexts = new HashSet<Context>();
-        		contexts.add(new Context("parents", "group"));
-        		
-        		player.sendMessage(RPUtil.toText(player.getParents().get(0).getIdentifier()));
-        		
-        	}
-        	
+        	        	
         	if (args[0].isEmpty()) {
     			sender.sendMessage(RPUtil.toText(RPLang.get("general.color")+"---------------- "+RedProtect.plugin.getName()+" ----------------"));
                 sender.sendMessage(RPUtil.toText(RPLang.get("general.color")+"Developed by &eFabioZumbi12"+RPLang.get("general.color")+"."));
