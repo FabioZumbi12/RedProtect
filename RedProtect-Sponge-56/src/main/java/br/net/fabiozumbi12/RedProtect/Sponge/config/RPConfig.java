@@ -422,22 +422,24 @@ public class RPConfig{
                     	gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").getString("")));
                     }
                     
-                    if (Sponge.getRegistry().getAllOf(BlockType.class).size() != ecoCfgs.getNode("blocks","values").getChildrenList().size()){
-                    	for (BlockType mat:Sponge.getRegistry().getAllOf(BlockType.class)){
-                        	if (ecoCfgs.getNode("blocks","values",mat.getName()).getValue() == null){
-                        		ecoCfgs.getNode("blocks","values",mat.getName()).setValue(0.0);                		
+                    List<String> names = new ArrayList<String>();
+                    Sponge.getRegistry().getAllOf(BlockType.class).forEach((type)->{
+                    	names.add(type.getName());
+                    });
+                    
+                    Sponge.getRegistry().getAllOf(ItemType.class).forEach((type)->{
+                    	if (!names.contains(type.getName()))
+                    		names.add(type.getName());                    	
+                    });
+                    
+                    if (names.size() != ecoCfgs.getNode("items","values").getChildrenList().size()){
+                    	for (String mat:names){
+                        	if (ecoCfgs.getNode("items","values",mat).getValue() == null){
+                        		ecoCfgs.getNode("items","values",mat).setValue(0.0);                		
                         	}
                         }
                     }                    
-                    
-                    if (Sponge.getRegistry().getAllOf(ItemType.class).size() != ecoCfgs.getNode("items","values").getChildrenList().size()){
-                    	for (ItemType mat:Sponge.getRegistry().getAllOf(ItemType.class)){
-                        	if (ecoCfgs.getNode("items","values",mat.getName()).getValue() == null){
-                        		ecoCfgs.getNode("items","values",mat.getName()).setValue(0.0);                		
-                        	}
-                        }
-                    }
-                         
+                      
                     if (Sponge.getRegistry().getAllOf(Enchantment.class).size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
                     	for (Enchantment ench:Sponge.getRegistry().getAllOf(Enchantment.class)){
                         	if (ecoCfgs.getNode("enchantments","values",ench.getId()).getValue() == null){
