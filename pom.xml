@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>pom</packaging>
   <name>RedProtect</name>
-  <version>${pluginVersion}</version>
+  <version>7.3.0</version>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
@@ -57,11 +57,27 @@
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
      </repository>
+     <repository>
+            <id>sk89q-snapshots</id>
+            <url>http://maven.sk89q.com/repo/</url>
+     </repository>
+     <repository>
+            <id>EssentialsX</id>
+            <url>http://repo.ess3.net/content/groups/essentials</url>
+     </repository> 
   </repositories>
   
+  <dependencies>
+    <dependency>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-core</artifactId>
+      <version>LATEST</version>
+      <scope>provided</scope>
+    </dependency>  
+  </dependencies>
+  
   <build>
-    <finalName>${project.name}-${buildNumber}</finalName>
-    <defaultGoal>clean deploy</defaultGoal>
+    <finalName>${project.name}-${project.version}</finalName>
     <resources>
         <resource>
             <targetPath>.</targetPath>
@@ -87,22 +103,6 @@
           </executions>
       </plugin>
       
-      <!-- 
-           <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-gpg-plugin</artifactId>
-              <version>1.6</version>
-              <executions>
-                   <execution>
-                   <id>sign-artifacts</id>
-                   <phase>verify</phase>
-                   <goals>
-                      <goal>sign</goal>
-                   </goals>
-                   </execution>
-                </executions>
-            </plugin> -->
-            
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>templating-maven-plugin</artifactId>
@@ -127,26 +127,6 @@
         </configuration>        
       </plugin>
       
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <format>${project.version}-b{0,number}</format>
-          <items>
-            <item>buildNumber0</item>
-          </items>
-        </configuration>
-      </plugin>
-     
       <plugin>
       <artifactId>maven-resources-plugin</artifactId>
       <version>2.5</version>
@@ -170,19 +150,18 @@
       <plugin>
             <groupId>com.github.github</groupId>
             <artifactId>site-maven-plugin</artifactId>
-            <version>0.11</version>
+            <version>0.12</version>
             <configuration>
-                <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                <message>Maven artifacts for ${project.version}</message> 
+                <noJekyll>true</noJekyll>                                 
                 <merge>true</merge>
-                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
-                <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+                <branch>refs/heads/mvn-repo</branch>                       
                 <includes><include>**/*</include></includes>
-                <repositoryName>RedProtect</repositoryName>      <!-- github repo name -->
-                <repositoryOwner>FabioZumbi12</repositoryOwner>    <!-- github username  -->
+                <repositoryName>RedProtect</repositoryName>      
+                <repositoryOwner>FabioZumbi12</repositoryOwner>   
             </configuration>
-            <executions>
-              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->              
+            <executions>            
               <execution>
                 <id>deploying</id>
                 <goals>
@@ -191,21 +170,18 @@
                 <phase>deploy</phase>
               </execution>
             </executions>
-        </plugin>
-          
+        </plugin>          
     </plugins>
   </build>
   
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <github.global.server>github</github.global.server>
-    <pluginVersion>7.2.2</pluginVersion>
-  </properties>
-  
+    <github.global.server>github-user</github.global.server>
+  </properties>  
   <modules>
   	<module>RedProtect-Spigot</module>
-  	<module>RedProtect-Sponge-5.2.0</module>
-  	<module>RedProtect-Sponge-6.0.0</module>
+  	<module>RedProtect-Sponge-56</module>
+  	<module>RedProtect-Sponge-7</module>
   </modules>
 </project>

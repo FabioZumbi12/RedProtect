@@ -3,20 +3,12 @@
   <parent>
     <groupId>br.net.fabiozumbi12.RedProtect</groupId>
     <artifactId>RedProtect</artifactId>
-    <version>${pluginVersion}</version>
+    <version>7.3.0</version>
   </parent>
   <artifactId>RedProtect-Spigot</artifactId>
   
   <dependencies>
-        <!--
-		<dependency>
-			<groupId>paper-api</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>D:/ProjetosBukkit/APIs/paper-api-1.10-R0.1-20160609.044554-1.jar</systemPath>
-		</dependency> -->
-		
+  
         <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
@@ -119,23 +111,7 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/MyChunk.jar</systemPath>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>MyPet-1.2.1</groupId>
-			<artifactId>MyPet-1.2.1</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MyPet-1.2.1.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>MyPet-1.3.1</groupId>
-			<artifactId>MyPet-1.3.1</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MyPet-1.3.1.jar</systemPath>
-		</dependency>
-		 -->
+
 		<dependency>
 			<groupId>MyPet-2.2.8</groupId>
 			<artifactId>MyPet-2.2.8</artifactId>
@@ -159,17 +135,14 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/SkillAPI.jar</systemPath>
 		</dependency>
-		
-		<dependency>
-			<groupId>worldedit-bukkit</groupId>
-			<artifactId>worldedit-bukkit</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/worldedit-bukkit-6.1.7.2.jar</systemPath>
-		</dependency>
-		
-		<!-- end of local repos -->
 				
+		<!-- end of local repos -->
+		<dependency>
+           <groupId>com.sk89q.worldedit</groupId>
+           <artifactId>worldedit-bukkit</artifactId>
+           <version>LATEST</version>
+           <scope>provided</scope>
+        </dependency>
 		<dependency>
            <groupId>net.milkbowl.vault</groupId>
            <artifactId>VaultAPI</artifactId>            
@@ -178,11 +151,9 @@
         </dependency>
 		<dependency>
             <groupId>net.ess3</groupId>
-            <artifactId>EssentialsX</artifactId>
-            <version>2.0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/EssentialsX-2.0.1.jar</systemPath>
-        </dependency> 
+            <artifactId>Essentials</artifactId>
+            <version>2.14-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -201,4 +172,8 @@
   <properties>
   	<mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>
   </properties>
+  
+  <build>
+    <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+  </build>
 </project>
