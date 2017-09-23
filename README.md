@@ -17,12 +17,6 @@ The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
 ## Dev builds: 
 Available on jenkins: [![Build Status](http://areaz12server.net.br:8080/buildStatus/icon?job=RedProtect)](http://areaz12server.net.br:8080/job/RedProtect/)
 
-## Jenkins Builds:
-
-The jar buils are diferent of jenkins builds.  
-Jar builds represents internal test builds and test builds, and jenkins builds numbers represents public dev builds.  
-This mean jenkins can have new builds, but not new versions.
-
 ## Maven repository:
 Now you can hook with uchat using maven repository (from Github) to use in your projects.
 
