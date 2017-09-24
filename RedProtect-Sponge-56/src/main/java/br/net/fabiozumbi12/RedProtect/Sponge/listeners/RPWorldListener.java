@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.monster.Monster;
@@ -49,10 +50,11 @@ public class RPWorldListener {
     
     @Listener
     public void onChunkUnload(ChunkLoad e) {
-    	World w = e.getEntities().stream().findAny().get().getWorld();
-    	if (!RedProtect.cfgs.getGlobalFlag(w.getName(), "remove-entities-not-allowed-to-spawn")){
+    	Optional<Entity> wOpt = e.getEntities().stream().findFirst();
+    	if (!wOpt.isPresent() || !RedProtect.cfgs.getGlobalFlag(wOpt.get().getWorld().getName(), "remove-entities-not-allowed-to-spawn")){
     		return;
     	}
+    	World w = wOpt.get().getWorld();
     	List<Entity> ents = e.getEntities();
     	for (Entity ent:ents){
     		Region entr = RedProtect.rm.getTopRegion(ent.getLocation());
