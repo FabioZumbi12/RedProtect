@@ -10,6 +10,10 @@ import org.spongepowered.api.entity.living.player.User;
 
 public class RPPermHandler{
 	
+	public boolean hasPermOrBypass(Player p, String perm){
+		return p.hasPermission(perm) || p.hasPermission(perm+".bypass");
+	}
+	
 	public boolean hasPerm(Player p, String perm) {
         return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.admin"));
     }

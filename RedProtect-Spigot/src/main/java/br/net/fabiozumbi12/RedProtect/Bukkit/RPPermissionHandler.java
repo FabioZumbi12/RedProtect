@@ -13,6 +13,10 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 
 public class RPPermissionHandler{
       
+	public boolean hasPermOrBypass(Player p, String perm){
+		return p.hasPermission(perm) || p.hasPermission(perm+".bypass");
+	}
+	
     public boolean hasPerm(Player p, String perm) {
         return p != null && (p.hasPermission(perm) || p.isOp());
     }
