@@ -4,11 +4,12 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.impl.AbstractEvent;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 
-public class RenameRegionEvent implements Cancellable, Event {
+public class RenameRegionEvent extends AbstractEvent implements Cancellable, Event {
 	private Region region;
 	private String newName;
 	private String oldName;

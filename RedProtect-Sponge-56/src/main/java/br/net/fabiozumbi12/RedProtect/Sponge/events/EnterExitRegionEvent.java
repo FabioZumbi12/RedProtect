@@ -4,6 +4,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.impl.AbstractEvent;
+
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 
@@ -20,7 +22,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.Region;
  * @author FabioZumbi12
  *
  */
-public class EnterExitRegionEvent  implements Cancellable, Event{
+public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, Event{
 
 	private Player player;
 	private Region ExitedRegion;
