@@ -193,7 +193,7 @@ public class RegionManager{
     }
 	
     public Set<Region> getRegions(Player p, int x, int y, int z){
-    	return this.regionManagers.get(p.getLocation()).getRegions(x, y, z);    	
+    	return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);    	
     }
 		
     /**
