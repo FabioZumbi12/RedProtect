@@ -1089,6 +1089,9 @@ public class RPPlayerListener{
     }
             
     public void SendNotifyMsg(Player p, String notify){
+        if (RedProtect.cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")){
+            return;
+        }
     	if (!notify.equals("")){
     		/*if (RedProtect.cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
     			if (RedProtect.BossBar){
@@ -1104,6 +1107,9 @@ public class RPPlayerListener{
     }
 
     public void SendWelcomeMsg(Player p, String wel){
+        if (RedProtect.cfgs.getString("notify.welcome-mode").equalsIgnoreCase("OFF")){
+            return;
+        }
 		/*if (RedProtect.cfgs.getString("notify.welcome-mode").equalsIgnoreCase("BOSSBAR")){
 			if (RedProtect.BossBar){
 				BossbarAPI.setMessage(p,wel);

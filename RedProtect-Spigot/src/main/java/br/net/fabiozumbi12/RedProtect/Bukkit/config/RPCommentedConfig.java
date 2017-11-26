@@ -63,7 +63,9 @@ public class RPCommentedConfig {
 		setDefault("region-settings.region-list.simple-listing", true, "Show simple list with only name of region or all region info.");
 		setDefault("region-settings.region-list.hover-and-click-teleport", true, "If running server 1.8+ enable hover and teleport click on simple list.");
 		setDefault("region-settings.region-list.show-area", true, "Show region areas on list?");
-		setDefault("region-settings.autoexpandvert-ondefine", true, "Automatically set max y to 256 and min y to 0 (sky to bedrock).");
+		setDefault("region-settings.autoexpandvert-ondefine", true, "Automatically set max y to world max size and min y to 0 (sky to bedrock) on define command.");
+		setDefault("region-settings.claim.miny", -1, "Set the minimum height to region on claim. Default is 0 if set to -1. (can be set lower numbers than -1)");
+        setDefault("region-settings.claim.maxy", -1, "Set the maximum height to region on claim. Default is world max size if set to -1.");
 		setDefault("region-settings.anti-hopper", true, "Deny break/place blocks under chests.");
 		setDefault("region-settings.claim-modes.mode", "keep", "Default modes for claim regions. Modes available: keep, drop, remove or give.\n"
 				+ "-> keep: Nothing happens\n"
@@ -124,8 +126,8 @@ public class RPCommentedConfig {
 		
 		setDefault("notify", null, "Notifications configs");
 		setDefault("notify.region-exit", true, "Show region info(or wilderness message) when exit a region.");
-		setDefault("notify.region-enter-mode", "BOSSBAR", "How to show the messages? Available: BOSSBAR, CHAT. If plugin BoobarApi not installed, will show on chat.");
-		setDefault("notify.welcome-mode", "BOSSBAR", "Where to show the welcome message (/rp wel <message>)? Available: BOSSBAR, CHAT.");
+		setDefault("notify.region-enter-mode", "BOSSBAR", "How to show the messages? Available: BOSSBAR, CHAT or OFF. If plugin BoobarApi not installed, will show on chat.");
+		setDefault("notify.welcome-mode", "BOSSBAR", "Where to show the welcome message (/rp wel <message>)? Available: BOSSBAR, CHAT or OFF.");
 		
 		setDefault("netherProtection", null, "Deny players to go to nether roof.");		
 		setDefault("netherProtection.maxYsize", 128, "Max size of your world nether.");
@@ -298,7 +300,7 @@ public class RPCommentedConfig {
 	                + "# Strings containing the char & always need to be quoted").append('\n');
  		
  		for (String line:RedProtect.plugin.getConfig().getKeys(true)){ 			
- 			String[] key = line.split("\\"+RedProtect.plugin.getConfig().options().pathSeparator()); 			
+ 			String[] key = line.split("\\"+RedProtect.plugin.getConfig().options().pathSeparator());
  			String spaces = new String(); 			
  			for (int i = 0; i < key.length; i++){
  				if (i == 0) continue;

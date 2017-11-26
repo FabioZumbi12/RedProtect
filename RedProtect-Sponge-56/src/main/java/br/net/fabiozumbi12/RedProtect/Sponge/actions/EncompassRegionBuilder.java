@@ -166,8 +166,17 @@ public class EncompassRegionBuilder extends RegionBuilder{
                             rz[bl] = bz;
                             ++bl;
                         }
-                        
-                        Region region = new Region(regionName, new LinkedList<String>(), new LinkedList<String>(), leaders, rx, rz, 0, 256, 0, w.getName(), RPUtil.DateNow(), RedProtect.cfgs.getDefFlagsValues(), "", 0, null, true);
+
+                        int maxy = RedProtect.cfgs.getInt("region-settings.claim.maxy");
+                        int miny = RedProtect.cfgs.getInt("region-settings.claim.miny");
+                        if (maxy <= -1){
+                            maxy = w.getDimension().getBuildHeight();
+                        }
+                        if (miny == -1){
+                            miny = 0;
+                        }
+
+                        Region region = new Region(regionName, new LinkedList<String>(), new LinkedList<String>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.cfgs.getDefFlagsValues(), "", 0, null, true);
                         
                         List<String> othersName = new ArrayList<String>();
                         Region otherrg = null;

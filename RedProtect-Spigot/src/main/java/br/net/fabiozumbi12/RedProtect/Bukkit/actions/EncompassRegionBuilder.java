@@ -167,9 +167,17 @@ public class EncompassRegionBuilder extends RegionBuilder{
                             rz[bl] = bz;
                             ++bl;
                         }
+
+                        int maxy = RPConfig.getInt("region-settings.claim.maxy");
+                        int miny = RPConfig.getInt("region-settings.claim.miny");
+                        if (maxy <= -1){
+                            maxy = w.getMaxHeight();
+                        }
+                        if (miny == -1){
+                            miny = 0;
+                        }
                         
-                        
-                        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, rx, rz, 0, w.getMaxHeight(), 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
                         
                         List<String> othersName = new ArrayList<String>();
                         Region otherrg = null;
