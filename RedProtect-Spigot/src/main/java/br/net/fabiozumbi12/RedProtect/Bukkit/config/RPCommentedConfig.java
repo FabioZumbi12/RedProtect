@@ -59,7 +59,7 @@ public class RPCommentedConfig {
 		setDefault("region-settings.default-leader", "#server#", "The name of leader for regions created with /rp define or regions without leaders.");
 		setDefault("region-settings.world-colors", new ArrayList<String>(), "Colors of world to show on /rp info and /rp list.");
 		setDefault("region-settings.border.material", "GLOWSTONE", "Border block type when use /rp border.");
-		setDefault("region-settings.border.time-showing", "BLOCK", null);
+		setDefault("region-settings.border.time-showing", 5, "Seconds before hide the border.");
 		setDefault("region-settings.region-list.simple-listing", true, "Show simple list with only name of region or all region info.");
 		setDefault("region-settings.region-list.hover-and-click-teleport", true, "If running server 1.8+ enable hover and teleport click on simple list.");
 		setDefault("region-settings.region-list.show-area", true, "Show region areas on list?");
