@@ -1030,7 +1030,7 @@ public class RPPlayerListener implements Listener{
         		RPLang.sendMessage(p, "playerlistener.region.cantfly");
         	} 
             
-            if (Ownerslist.get(p.getName()).equals(r.getName())){
+            if (Ownerslist.get(p.getName()) != r.getName()){
     			Region er = RedProtect.rm.getRegion(Ownerslist.get(p.getName()), p.getWorld());			
     			Ownerslist.put(p.getName(), r.getName());
     			
