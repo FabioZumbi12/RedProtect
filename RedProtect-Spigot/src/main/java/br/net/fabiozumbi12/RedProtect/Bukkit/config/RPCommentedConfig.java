@@ -32,7 +32,7 @@ public class RPCommentedConfig {
 			}
 		}
 				
-		setDefault("config-version", 7.9, "Dont touch <3");
+		setDefault("config-version", 7.10, "Dont touch <3");
 		setDefault("debug-messages", false, "Enable debug messages");
 		setDefault("log-actions", true, "Log all commands used by players");
 		setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU");
@@ -318,14 +318,18 @@ public class RPCommentedConfig {
  				if (value instanceof String){
  					b.append(spaces+key[key.length-1]+": '"+value+"'\n");
  				} else if (value instanceof List<?>) {
- 					b.append(spaces+key[key.length-1]+":\n");
- 					for (Object lineCfg:(List<?>)value){
- 						if (lineCfg instanceof String){
- 							b.append(spaces+"- '"+lineCfg+"'\n");
- 		 				} else {
- 		 					b.append(spaces+"- "+lineCfg+"\n");
- 		 				}
- 					}
+					if (((List<?>)value).isEmpty()){
+						b.append(spaces+key[key.length-1]+": []\n");
+					} else {
+						b.append(spaces+key[key.length-1]+":\n");
+						for (Object lineCfg:(List<?>)value){
+							if (lineCfg instanceof String){
+								b.append(spaces+"- '"+lineCfg+"'\n");
+							} else {
+								b.append(spaces+"- "+lineCfg+"\n");
+							}
+						}
+					}
  				} else {
  					b.append(spaces+key[key.length-1]+": "+value+"\n");
  				}

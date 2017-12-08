@@ -1328,7 +1328,11 @@ public class RPPlayerListener implements Listener{
     	if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")){
     		return;
     	}
-    	
+
+		if (!r.canEnter(p)){
+			return;
+		}
+
     	String leaderstring = "";
     	String m = "";
     	//Enter-Exit notifications    
@@ -1356,7 +1360,6 @@ public class RPPlayerListener implements Listener{
 			}			
 		} else {
 			SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": "+ ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', r.getWelcome()));
-    		return;        			
 		}
     }
     
@@ -1504,17 +1507,7 @@ public class RPPlayerListener implements Listener{
             	}                	
             }
         }
-        
-        /*
-        //Enter view distance
-        if (RedProtect.paper && r.getViewDistance() != 0){
-			if (!viewDistances.containsKey(p.getName())){
-				viewDistances.put(p.getName(), p.getViewDistance());
-			}
-			p.setViewDistance(r.getViewDistance());
-		}
-        */
-        
+
         //Enter check forcepvp flag
         if (RedProtect.PvPm){
         	if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
@@ -1578,17 +1571,8 @@ public class RPPlayerListener implements Listener{
     }
         
     private void noRegionFlags(Region er, Player p){
-    	
     	if (er != null){
-    		
-    		/*
-    		//set back view distance
-    		if (RedProtect.paper && viewDistances.containsKey(p.getName())){
-    			p.setViewDistance(viewDistances.get(p.getName()));
-        		viewDistances.remove(p.getName());
-        	}
-    		*/
-    		
+
     		//Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.PvPm){
         		if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")){
@@ -1610,9 +1594,9 @@ public class RPPlayerListener implements Listener{
 				for (String effect:effects){
 					if (PlayertaskID.containsValue(p.getName())){						
 						String eff = effect.split(" ")[0];
-						String amplifier = effect.split(" ")[1];
-						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RPConfig.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
-						p.removePotionEffect(fulleffect.getType());
+						for (PotionEffect pot:p.getActivePotionEffects()){
+						    p.removePotionEffect(pot.getType());
+                        }
 						List<String> removeTasks = new ArrayList<String>();
 						for (String taskId:PlayertaskID.keySet()){
 							int id = Integer.parseInt(taskId.split("_")[0]);
@@ -1634,7 +1618,7 @@ public class RPPlayerListener implements Listener{
 			//exit fly flag
         	if (er.flagExists("forcefly") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
         		if (PlayertaskID.containsValue(p.getName())){
-        			p.setAllowFlight(false);	
+        			p.setAllowFlight(false);
         			p.setFlying(false);
     				List<String> removeTasks = new ArrayList<String>();
     				for (String taskId:PlayertaskID.keySet()){
@@ -1676,7 +1660,15 @@ public class RPPlayerListener implements Listener{
                 	RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), cmd.replace("{player}", p.getName()));
             	}                	
             }
-		}
+		} else {
+    	    if (PlayertaskID.containsKey(p.getName())){
+                p.setAllowFlight(false);
+                p.setFlying(false);
+                for (PotionEffect pot:p.getActivePotionEffects()){
+                    p.removePotionEffect(pot.getType());
+                }
+            }
+        }
     }
     
     @EventHandler

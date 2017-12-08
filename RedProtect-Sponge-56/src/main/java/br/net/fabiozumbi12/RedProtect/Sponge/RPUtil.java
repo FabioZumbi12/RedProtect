@@ -99,7 +99,7 @@ public class RPUtil {
 		return cal.getTimeInMillis();
     }
     
-    static void saveToZipFile(File file, String ZippedFile, CommentedConfigurationNode conf){
+    private static void saveToZipFile(File file, String ZippedFile, CommentedConfigurationNode conf){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry(ZippedFile);
@@ -129,7 +129,7 @@ public class RPUtil {
     	if (item.get(Keys.ITEM_LORE).isPresent()){
     		try{
     			String lore = item.get(Keys.ITEM_LORE).get().get(1).toPlain();
-    			if (RedProtect.cfgs.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.cfgs.getGuiString("separator"))){
+    			if (RedProtect.cfgs.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.cfgs.getGuiString("separator").toPlain())){
     				return true;
     			}
     		} catch (IndexOutOfBoundsException ex){    			
@@ -150,8 +150,8 @@ public class RPUtil {
 		}
 		return false;
     }
-    
-    static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb){
+
+    public static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry(ZippedFile);
@@ -165,8 +165,7 @@ public class RPUtil {
     		e.printStackTrace();
     	}    	
     }
-    
-    
+
     static File genFileName(String Path, Boolean isBackup){
     	File f = new File(Path);
     	if (!f.exists()){
@@ -199,7 +198,7 @@ public class RPUtil {
      * @return Name of region
      */
     public static String nameGen(String p, String World){
-    	String rname = "";
+    	String rname;
     	World w = RedProtect.serv.getWorld(World).get();    	
             int i = 0;
             while (true) {
@@ -217,7 +216,7 @@ public class RPUtil {
             }           
         return rname;
     }
-    
+    /*
     static String formatName(String name) {
         String s = name.substring(1).toLowerCase();
         String fs = name.substring(0, 1).toUpperCase();
@@ -234,12 +233,11 @@ public class RPUtil {
         }
         return ret;
     }
-    
+    */
     public static String DateNow(){
     	DateFormat df = new SimpleDateFormat(RedProtect.cfgs.getString("region-settings.date-format"));
-        Date today = Calendar.getInstance().getTime(); 
-        String now = df.format(today);
-		return now;    	
+        Date today = Calendar.getInstance().getTime();
+		return df.format(today);
     }
     
     static String HourNow(){
@@ -300,14 +298,16 @@ public class RPUtil {
     				e.printStackTrace();
     			}
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-            	
+
+            	boolean ignore = false;
             	for (String play:RedProtect.cfgs.getStringList("purge.ignore-regions-from-players")){
             		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
-            			continue;
+                        ignore = true;
+                        break;
             		}
     			}           	
             	
-            	if (days > RedProtect.cfgs.getInt("purge.remove-oldest")){ 
+            	if (!ignore && days > RedProtect.cfgs.getInt("purge.remove-oldest")){
             		RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()).get());
         			//r.delete();
         			purged++;
@@ -342,13 +342,16 @@ public class RPUtil {
     				e.printStackTrace();
     			}
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-            	
-            	List<String> players = new ArrayList<String>();
+
+				boolean ignore = false;
             	for (String play:RedProtect.cfgs.getStringList("sell.ignore-regions-from-players")){
-            		players.add(RPUtil.PlayerToUUID(play));
+                    if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
+                        ignore = true;
+                        break;
+                    }
     			}           	
             	
-            	if (days > RedProtect.cfgs.getInt("sell.sell-oldest")){        
+            	if (!ignore && days > RedProtect.cfgs.getInt("sell.sell-oldest")){
                 	RedProtect.logger.warning("Selling " + r.getName() + " - Days: " + days);
             		RPEconomy.putToSell(r, RedProtect.cfgs.getString("region-settings.default-leader"), RPEconomy.getRegionValue(r));
             		sell++;
@@ -706,7 +709,7 @@ public class RPUtil {
                     }
                     for (String flag:rs.getString("flags").split(",")){
                     	String key = flag.split(":")[0];
-                    	String replace = new String(key+":");
+                    	String replace = key+":";
                     	if (replace.length() <= flag.length()){
                     		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
                     	} 
@@ -826,9 +829,6 @@ public class RPUtil {
 		            catch (SQLException e) {
 		                e.printStackTrace();
 		            }
-		        } else {
-		        	//if exists jump
-		        	continue;
 		        }
 			}
 			dbcon.close();
@@ -1001,8 +1001,7 @@ public class RPUtil {
 	
 	/** Show the border of region for defined seconds.
 	 * @param p
-	 * @param loc1
-	 * @param loc2
+	 * @param locs
 	 */
 	public static void addBorder(final Player p, List<Location<World>> locs) {		
 		final World w = p.getWorld();
@@ -1038,21 +1037,18 @@ public class RPUtil {
 				RPLang.sendMessage(p, "cmdmanager.addingborder");
 			}			
 			pBorders.put(p, borderBlocks);
-			UUID taskid = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(new Runnable(){
-				@Override
-				public void run() {
-					if (pBorders.containsKey(p)){
-	            		for (Location<World> loc:pBorders.get(p).keySet()){
-	            			RedProtect.getPVHelper().setBlock(loc, pBorders.get(p).get(loc));         			
-	            		}
-	            		if (borderIds.containsKey(p.getName())){
-	            			borderIds.remove(p.getName());
-	            		}
-	            		pBorders.remove(p);
-	            		RPLang.sendMessage(p, "cmdmanager.removingborder");
-					}
-				}    		
-	    	}, RedProtect.cfgs.getInt("region-settings.border.time-showing"), TimeUnit.SECONDS).getTask().getUniqueId(); 
+			UUID taskid = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+                if (pBorders.containsKey(p)){
+                    for (Location<World> loc:pBorders.get(p).keySet()){
+                        RedProtect.getPVHelper().setBlock(loc, pBorders.get(p).get(loc));
+                    }
+                    if (borderIds.containsKey(p.getName())){
+                        borderIds.remove(p.getName());
+                    }
+                    pBorders.remove(p);
+                    RPLang.sendMessage(p, "cmdmanager.removingborder");
+                }
+            }, RedProtect.cfgs.getInt("region-settings.border.time-showing"), TimeUnit.SECONDS).getTask().getUniqueId();
 			borderIds.put(p.getName(), taskid);
 		}		
     }		

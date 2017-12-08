@@ -1029,17 +1029,9 @@ public class RPPlayerListener{
     	RedProtect.logger.debug("player","Is ClientConnectionEvent.Login event. Player "+e.getTargetUser().getName());
     	
     	User p = e.getTargetUser();
-    	//Location<World> l = e.getFromTransform().getLocation();
-    	//Adjust inside region
-    	//e.setToTransform(new Transform<World>(new Location<World>(l.getExtent(), l.getBlockX(), l.getBlockY()+0.1, l.getBlockZ())));
-    	
+
     	RedProtect.logger.debug("player","Is ClientConnectionEvent.Login event.");
-    	/*
-    	if (p.hasPermission("redprotect.update") && RedProtect.Update && !RedProtect.cfgs.getBool("update-check.auto-update")){
-    		RPLang.sendMessage(p, "&bAn update is available for RedProtect: " + RedProtect.UptVersion);
-    		RPLang.sendMessage(p, "&bUse /rp update to download and automatically install this update.");
-    	}
-    	*/
+
     	if (RedProtect.cfgs.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")){    		
         	String uuid = p.getUniqueId().toString();
         	if (!RedProtect.OnlineMode){
@@ -1138,7 +1130,7 @@ public class RPPlayerListener{
     }
     
     private void EnterExitNotify(Region r, Player p){
-    	if (!RedProtect.cfgs.getBool("notify.region-enter")){
+    	if (!RedProtect.cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")){
     		return;
     	}
     	
@@ -1146,29 +1138,28 @@ public class RPPlayerListener{
     		return;
     	}
     	
-    	String ownerstring = "";
+    	String leaderstring = "";
     	String m = "";
     	//Enter-Exit notifications    
         if (r.getWelcome().equals("")){
 			if (RedProtect.cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
 				for (int i = 0; i < r.getLeaders().size(); ++i) {
-    				ownerstring = ownerstring + ", " + RPUtil.UUIDtoPlayer(r.getLeaders().get(i)); 
+                    leaderstring = leaderstring + ", " + RPUtil.UUIDtoPlayer(r.getLeaders().get(i));
     	        }
 				
 				if (r.getLeaders().size() > 0) {
-		            ownerstring = ownerstring.substring(2);
+                    leaderstring = leaderstring.substring(2);
 		        }
 		        else {
-		            ownerstring = "None";
+                    leaderstring = "None";
 		        }
     			m = RPLang.get("playerlistener.region.entered"); 
-        		m = m.replace("{leaders}", ownerstring);
+        		m = m.replace("{leaders}", leaderstring);
         		m = m.replace("{region}", r.getName());
 			} 
 			SendNotifyMsg(p, m);
 		} else {
 			SendWelcomeMsg(p, "&6" + r.getName() + ": &r" + r.getWelcome());
-    		return;        			
 		}
     }
     
@@ -1247,9 +1238,11 @@ public class RPPlayerListener{
 	    	if (er.flagExists("forcefly") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.gameMode().get().equals(GameModes.SURVIVAL) || p.gameMode().get().equals(GameModes.ADVENTURE))){
 	    		if (PlayertaskID.containsValue(p.getName())){
 	    			if (r.flagExists("forcefly")){
-	    				p.offer(Keys.CAN_FLY, r.getFlagBool("forcefly"));	    				
+	    				p.offer(Keys.CAN_FLY, r.getFlagBool("forcefly"));
+                        p.offer(Keys.IS_FLYING, r.getFlagBool("forcefly"));
 	    			} else {
-	    				p.offer(Keys.CAN_FLY, false);	
+	    				p.offer(Keys.CAN_FLY, false);
+	    				p.offer(Keys.IS_FLYING, false);
 	    			}	    			
 					List<String> removeTasks = new ArrayList<String>();
 					for (String taskId:PlayertaskID.keySet()){
@@ -1325,12 +1318,15 @@ public class RPPlayerListener{
         
       //enter fly flag
     	if (r.canEnter(p) && r.flagExists("forcefly") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.gameMode().get().equals(GameModes.SURVIVAL) || p.gameMode().get().equals(GameModes.ADVENTURE))){
-    		p.offer(Keys.IS_FLYING, r.getFlagBool("forcefly")); 
-    		String TaskId = Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(new Runnable() { 
+            p.offer(Keys.CAN_FLY, r.getFlagBool("forcefly"));
+    	    p.offer(Keys.IS_FLYING, r.getFlagBool("forcefly"));
+            String TaskId = Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(new Runnable() {
 					public void run() {
 						if (p.isOnline() && r.flagExists("forcefly")){
+                            p.offer(Keys.CAN_FLY, r.getFlagBool("forcefly"));
 							p.offer(Keys.IS_FLYING, r.getFlagBool("forcefly")); 
 						} else {
+                            p.offer(Keys.CAN_FLY, false);
 							p.offer(Keys.IS_FLYING, false); 
 							try {
 								this.finalize();
@@ -1359,8 +1355,6 @@ public class RPPlayerListener{
 				for (String effect:effects){
 					if (PlayertaskID.containsValue(p.getName())){						
 						String eff = effect.split(" ")[0];
-						//String amplifier = effect.split(" ")[1];
-						//PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RedProtect.cfgs.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
 						p.remove(Keys.POTION_EFFECTS);
 						List<String> removeTasks = new ArrayList<String>();
 						for (String taskId:PlayertaskID.keySet()){
@@ -1383,6 +1377,7 @@ public class RPPlayerListener{
 			//exit fly flag
         	if (er.flagExists("forcefly") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.gameMode().get().equals(GameModes.SURVIVAL) || p.gameMode().get().equals(GameModes.ADVENTURE))){
         		if (PlayertaskID.containsValue(p.getName())){
+                    p.offer(Keys.CAN_FLY, false);
         			p.offer(Keys.IS_FLYING, false);
     				List<String> removeTasks = new ArrayList<String>();
     				for (String taskId:PlayertaskID.keySet()){
@@ -1424,7 +1419,14 @@ public class RPPlayerListener{
             		RedProtect.game.getCommandManager().process(RedProtect.serv.getConsole(), cmd.replace("{player}", p.getName()));
             	}                	
             }
-		}
+		} else {
+    	    //remove all if no regions
+            if (PlayertaskID.containsValue(p.getName())){
+                p.offer(Keys.CAN_FLY, false);
+                p.offer(Keys.IS_FLYING, false);
+                p.remove(Keys.POTION_EFFECTS);
+            }
+        }
     }
         
     @Listener(order = Order.FIRST, beforeModifications = true)

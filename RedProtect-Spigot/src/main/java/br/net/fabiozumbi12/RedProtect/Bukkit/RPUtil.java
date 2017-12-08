@@ -37,7 +37,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -61,7 +60,6 @@ import com.earth2me.essentials.User;
 
 @SuppressWarnings("deprecation")
 public class RPUtil {
-    static int backup = 0; 
     public static HashMap<String, HashMap<Location, Material>> pBorders = new HashMap<String, HashMap<Location, Material>>();
 	public static boolean stopRegen = false;
 	private static HashMap<String, Integer> borderIds = new HashMap<String, Integer>();
@@ -186,7 +184,7 @@ public class RPUtil {
 		}
 		return cal.getTimeInMillis();
     }
-    
+    /*
     public static BlockFace getPlayerDirection(Player player){
 
     	float direction = player.getLocation().getYaw();   
@@ -219,7 +217,7 @@ public class RPUtil {
                 return BlockFace.WEST;
         }
     }
-    
+    */
 	public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
 	    TaskChain.newChain().add(new TaskChain.GenericTask() {
 	        public void run() {
@@ -248,7 +246,7 @@ public class RPUtil {
     	}
     }
         
-    static void SaveToZipYML(File file, String ZippedFile, YamlConfiguration yml){
+    private static void SaveToZipYML(File file, String ZippedFile, YamlConfiguration yml){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry(ZippedFile);
@@ -307,7 +305,7 @@ public class RPUtil {
      * @return Name of region
      */
     public static String nameGen(String p, String World){
-    	String rname = "";
+    	String rname;
     	World w = RedProtect.serv.getWorld(World);    	
             int i = 0;
             while (true) {
@@ -325,7 +323,7 @@ public class RPUtil {
             }           
         return rname.replace(".", "-");
     }
-    
+    /*
     static String formatName(String name) {
         String s = name.substring(1).toLowerCase();
         String fs = name.substring(0, 1).toUpperCase();
@@ -342,12 +340,11 @@ public class RPUtil {
         }
         return ret;
     }
-    
+    */
     public static String DateNow(){
     	DateFormat df = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
-        Date today = Calendar.getInstance().getTime(); 
-        String now = df.format(today);
-		return now;    	
+        Date today = Calendar.getInstance().getTime();
+		return df.format(today);
     }
     
     static String HourNow(){
@@ -409,14 +406,16 @@ public class RPUtil {
     				e.printStackTrace();
     			}
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);            	
-            	
+
+            	boolean ignore = false;
             	for (String play:RPConfig.getStringList("purge.ignore-regions-from-players")){
             		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
-            			continue;
+            			ignore = true;
+            			break;
             		}
     			}           	
             	
-            	if (days > RPConfig.getInt("purge.remove-oldest")){                		
+            	if (!ignore && days > RPConfig.getInt("purge.remove-oldest")){
             		if (RedProtect.WE && RPConfig.getBool("purge.regen.enable")){
             			if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
             				if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
@@ -449,14 +448,16 @@ public class RPUtil {
     				e.printStackTrace();
     			}
             	Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-            	
+
+            	boolean ignore = false;
             	for (String play:RPConfig.getStringList("sell.ignore-regions-from-players")){
             		if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))){
-            			continue;
+            			ignore = true;
+            			break;
             		}
-    			}           	
-            	
-            	if (days > RPConfig.getInt("sell.sell-oldest")){        
+    			}
+
+            	if (!ignore && days > RPConfig.getInt("sell.sell-oldest")){
                 	RedProtect.logger.warning("Selling " + r.getName() + " - Days: " + days);
             		RPEconomy.putToSell(r, RPConfig.getString("region-settings.default-leader"), RPEconomy.getRegionValue(r));
             		sell++;
@@ -591,9 +592,8 @@ public class RPUtil {
                 	Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
                 	List<Long> dates = new ArrayList<Long>(); 
                 	
-                	for (int o = 0; o < adminsl.size(); o++){
-                		String pname = adminsl.get(o);  
-                		User essp = null;
+                	for (String pname:adminsl){
+                		User essp;
                 		if (RedProtect.OnlineMode){
                 			essp = ess.getUser(UUID.fromString(pname));
                 		} else {
@@ -603,10 +603,9 @@ public class RPUtil {
                 			dates.add(essp.getLastLogout());
                 			RedProtect.logger.info("Updated user date: "+pname+" - "+dateformat.format(essp.getLastLogout()));
                 		}            		
-                	}        	
-                	for (int m = 0; m < leadersl.size(); m++){
-                		String pname = leadersl.get(m); 
-                		User essp = null;
+                	}
+                	for (String pname:leadersl){
+                		User essp;
                 		if (RedProtect.OnlineMode){
                 			essp = ess.getUser(UUID.fromString(pname));
                 		} else {
@@ -729,7 +728,7 @@ public class RPUtil {
     	}
     	
     	String PlayerName = uuid;
-    	UUID uuids = null;
+    	UUID uuids;
     	
     	if (!RedProtect.OnlineMode){
 	    	PlayerName = uuid.toLowerCase();	    	
@@ -845,7 +844,7 @@ public class RPUtil {
                     }
                     for (String flag:rs.getString("flags").split(",")){
                     	String key = flag.split(":")[0];
-                    	String replace = new String(key+":");
+                    	String replace = key+":";
                     	if (replace.length() <= flag.length()){
                     		flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));  
                     	} 
@@ -986,9 +985,6 @@ public class RPUtil {
 		            catch (SQLException e) {
 		                e.printStackTrace();
 		            }
-		        } else {
-		        	//if exists jump
-		        	continue;
 		        }
 			}
 			dbcon.close();
@@ -1083,7 +1079,7 @@ public class RPUtil {
         return total > 0;
     }		
 	
-	private static boolean checkTableExists(String tableName) throws SQLException {
+	private static boolean checkTableExists(String tableName) {
         try {
         	RedProtect.logger.debug("Checking if table exists... " + tableName);
         	Connection con = DriverManager.getConnection("jdbc:mysql://"+RPConfig.getString("mysql.host")+"/"+RPConfig.getString("mysql.db-name"),RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
@@ -1104,16 +1100,14 @@ public class RPUtil {
 	
 	public static void startFlagChanger(final String r, final String flag, final Player p){
 		RedProtect.changeWait.add(r+flag);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-			public void run() {
-				if (RedProtect.changeWait.contains(r+flag)){
-					/*if (p != null && p.isOnline()){
-						RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
-					}*/
-					RedProtect.changeWait.remove(r+flag);				
-				} 
-			}
-			}, RPConfig.getInt("flags-configuration.change-flag-delay.seconds")*20);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+            if (RedProtect.changeWait.contains(r+flag)){
+                /*if (p != null && p.isOnline()){
+                    RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
+                }*/
+                RedProtect.changeWait.remove(r+flag);
+            }
+        }, RPConfig.getInt("flags-configuration.change-flag-delay.seconds")*20);
 	}
 	
 	public static int getUpdatedPrior(Region region) {
@@ -1174,21 +1168,18 @@ public class RPUtil {
 				RPLang.sendMessage(p, "cmdmanager.addingborder");
 			}			
 			pBorders.put(p.getName(), borderBlocks);
-			int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable(){
-				@Override
-				public void run() {
-					if (pBorders.containsKey(p.getName())){
-	            		for (Location loc:pBorders.get(p.getName()).keySet()){
-	            			w.getBlockAt(loc).setType(pBorders.get(p.getName()).get(loc));            			
-	            		}	    
-	            		if (borderIds.containsKey(p.getName())){
-	            			borderIds.remove(p.getName());
-	            		}	            		
-	            		pBorders.remove(p.getName());
-	            		RPLang.sendMessage(p, "cmdmanager.removingborder");
-					}
-				}    		
-	    	}, RPConfig.getInt("region-settings.border.time-showing")*20);
+			int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+                if (pBorders.containsKey(p.getName())){
+                    for (Location loc:pBorders.get(p.getName()).keySet()){
+                        w.getBlockAt(loc).setType(pBorders.get(p.getName()).get(loc));
+                    }
+                    if (borderIds.containsKey(p.getName())){
+                        borderIds.remove(p.getName());
+                    }
+                    pBorders.remove(p.getName());
+                    RPLang.sendMessage(p, "cmdmanager.removingborder");
+                }
+            }, RPConfig.getInt("region-settings.border.time-showing")*20);
 			borderIds.put(p.getName(), taskid);
 		}		             
     }		
