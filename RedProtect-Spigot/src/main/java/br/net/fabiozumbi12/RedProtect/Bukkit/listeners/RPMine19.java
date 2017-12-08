@@ -51,7 +51,7 @@ public class RPMine19 implements Listener{
     		RedProtect.tpWait.remove(p.getName());
     		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
     	}
-        
+        /*
         if (RPUtil.RemoveGuiItem(itemInHand)){ 
         	if (itemInHand.equals(p.getInventory().getItemInMainHand())){
     			p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
@@ -60,7 +60,7 @@ public class RPMine19 implements Listener{
     		} 
         	event.setCancelled(true);
         	return;
-        }
+        }*/
         
         if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)){ 
     		Material hand = itemInHand.getType();
@@ -69,8 +69,7 @@ public class RPMine19 implements Listener{
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true); 
                 event.setUseItemInHand(Event.Result.DENY);
-    			return;
-    		}
+            }
         }
 	}
 		

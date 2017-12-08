@@ -24,9 +24,9 @@ import br.net.fabiozumbi12.RedProtect.Sponge.Region;
  */
 public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, Event{
 
-	private Player player;
-	private Region ExitedRegion;
-	private Region EnteredRegion;
+	private final Player player;
+	private final Region ExitedRegion;
+	private final Region EnteredRegion;
 	private boolean cancelled;
 	
 	

@@ -3,11 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.schematics;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 import org.bukkit.Location;
@@ -103,7 +99,7 @@ public class RPSchematics {
             // No offset data
         }
                 
-        Map<Integer, BlockState> blist = new HashMap<Integer, BlockState>();
+        Map<Integer, BlockState> blist = new HashMap<>();
         Location pos1 = loc;
         Location pos2 = loc;
         int order = 0;
@@ -154,9 +150,9 @@ public class RPSchematics {
         	return;
         }
         
-        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), Arrays.asList(pName), new int[] { pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX() }, new int[] { pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ() }, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
+        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), Collections.singletonList(pName), new int[] { pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX() }, new int[] { pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ() }, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
         
-        List<String> othersName = new ArrayList<String>();
+        List<String> othersName = new ArrayList<>();
         Region otherrg = null;
         
         //check if same area

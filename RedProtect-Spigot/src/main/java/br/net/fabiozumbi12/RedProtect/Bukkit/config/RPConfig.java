@@ -39,7 +39,7 @@ public class RPConfig{
 	private static YamlConfiguration GuiItems;
 	private static YamlConfiguration Prots;
 	private static YamlConfiguration EconomyConfig;
-	public static List<String> AdminFlags = Arrays.asList(
+	public static final List<String> AdminFlags = Arrays.asList(
 			"spawn-wither",
 			"cropsfarm",
 			"max-players",
@@ -191,7 +191,7 @@ public class RPConfig{
 
         //add allowed claim worlds to config
         if (RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").get(0).equals("example_world")) {
-            List<String> worlds = new ArrayList<String>();
+            List<String> worlds = new ArrayList<>();
             for (World w:RedProtect.serv.getWorlds()){
                 worlds.add(w.getName());
                 RedProtect.logger.warning("Added world to claim list " + w.getName());
@@ -343,14 +343,14 @@ public class RPConfig{
             configUp++;
         }
         if (configUp > 0){
-            RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", (List<String>) flags);
+            RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", flags);
             RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
         }
 
         			/*------------------------------------------------------------------------------------*/
 
         //load protections file
-        Prots = updateFile(protections, "assets/redprotect/protections.yml");
+        Prots = updateFile(protections);
 
         			/*------------------------------------------------------------------------------------*/
 
@@ -564,7 +564,7 @@ public class RPConfig{
 	}
     
     public static int getGuiMaxSlot() {
-    	SortedSet<Integer> slots = new TreeSet<Integer>(new ArrayList<Integer>());
+    	SortedSet<Integer> slots = new TreeSet<>(new ArrayList<>());
     	for (String key:GuiItems.getKeys(true)){
     		if (key.contains(".slot")){
     			slots.add(GuiItems.getInt(key));
@@ -582,7 +582,7 @@ public class RPConfig{
     }
     
     public static HashMap<String, Object> getDefFlagsValues(){	
-    	HashMap<String,Object> flags = new HashMap<String,Object>();
+    	HashMap<String,Object> flags = new HashMap<>();
     	for (String flag:RedProtect.plugin.getConfig().getValues(true).keySet()){
     		if (flag.contains("flags.") && isFlagEnabled(flag.replace("flags.", ""))){
     			if (flag.replace("flags.", "").equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
@@ -599,8 +599,7 @@ public class RPConfig{
     }
     
     public static SortedSet<String> getDefFlags(){
-    	SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());
-		return values;    	
+        return new TreeSet<>(getDefFlagsValues().keySet());
     }
     
     public static String getString(String key, String def){		
@@ -685,8 +684,8 @@ public class RPConfig{
 	}
 
 	public static SortedSet<String> getAllFlags() {
-		SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());
-		values.addAll(new TreeSet<String>(AdminFlags));
+		SortedSet<String> values = new TreeSet<>(getDefFlagsValues().keySet());
+		values.addAll(new TreeSet<>(AdminFlags));
 		return values;
 	}
 
@@ -734,7 +733,7 @@ public class RPConfig{
 		return EconomyConfig.getBoolean(key);
 	}
 	
-	private static YamlConfiguration updateFile(File saved, String filename){
+	private static YamlConfiguration updateFile(File saved){
 		YamlConfiguration finalyml = new YamlConfiguration();    			
         try {
         	finalyml.load(saved);
@@ -742,7 +741,7 @@ public class RPConfig{
 			e.printStackTrace();
 		} 
                 			
-        YamlConfiguration tempProts = inputLoader(RedProtect.plugin.getResource(filename));  
+        YamlConfiguration tempProts = inputLoader(RedProtect.plugin.getResource("assets/redprotect/protections.yml"));
         for (String key:tempProts.getKeys(true)){    
         	Object obj = tempProts.get(key);
         	if (finalyml.get(key) != null){
@@ -754,7 +753,7 @@ public class RPConfig{
 	}
 	
 	public static List<Location> getSigns(String rid){
-		List<Location> locs = new ArrayList<Location>();
+		List<Location> locs = new ArrayList<>();
 		for (String s:signs.getStringList(rid)){
 			String[] val = s.split(",");
 			if (Bukkit.getWorld(val[0]) == null){

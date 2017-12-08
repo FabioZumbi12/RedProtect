@@ -87,15 +87,15 @@ import de.Keyle.MyPet.api.player.MyPetPlayer;
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener{
 	
-	static RPContainer cont = new RPContainer();
-	private HashMap<String, String> Ownerslist = new HashMap<String,String>();
-	private HashMap<String, String> PlayerCmd = new HashMap<String, String>();
-	private HashMap<String, Boolean> PvPState = new HashMap<String, Boolean>();
-	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
-	private HashMap<String, HashMap<Integer, Location>> deathLocs = new HashMap<String, HashMap<Integer, Location>>();
-	private HashMap<String,Integer> dmgp = new HashMap<String,Integer>();
-	private HashMap<String,Integer> trys = new HashMap<String,Integer>();
-	private HashMap<String,Integer> matchRate = new HashMap<String,Integer>();
+	static final RPContainer cont = new RPContainer();
+	private final HashMap<String, String> Ownerslist = new HashMap<>();
+	private final HashMap<String, String> PlayerCmd = new HashMap<>();
+	private final HashMap<String, Boolean> PvPState = new HashMap<>();
+	private final HashMap<String, String> PlayertaskID = new HashMap<>();
+	private final HashMap<String, HashMap<Integer, Location>> deathLocs = new HashMap<>();
+	private final HashMap<String,Integer> dmgp = new HashMap<>();
+	private final HashMap<String,Integer> trys = new HashMap<>();
+	private final HashMap<String,Integer> matchRate = new HashMap<>();
     
     public RPPlayerListener() {
     	RedProtect.logger.debug("Loaded RPPlayerListener...");
@@ -162,7 +162,7 @@ public class RPPlayerListener implements Listener{
         Block b = event.getClickedBlock();
         ItemStack itemInHand = event.getItem();
         
-        Location l = null;
+        Location l;
         
         if (RedProtect.tpWait.contains(p.getName())){
     		RedProtect.tpWait.remove(p.getName());
@@ -175,13 +175,14 @@ public class RPPlayerListener implements Listener{
         } else {
         	l = p.getLocation();
         }
-        
+
         //check if is a gui item
+        /*
         if (RPUtil.RemoveGuiItem(itemInHand)){        	
         	p.setItemInHand(new ItemStack(Material.AIR));       	
         	event.setCancelled(true);
         	return;
-        }
+        }*/
         
         if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){        	
         	String claimmode = RPConfig.getWorldClaimType(p.getWorld().getName());
@@ -244,7 +245,6 @@ public class RPPlayerListener implements Listener{
             	if (out && !cont.canOpen(b, p)) {
             		RPLang.sendMessage(p, "playerlistener.region.cantopen");
                     event.setCancelled(true);
-                    return;                   
                 }
         	}
                     	
@@ -285,8 +285,7 @@ public class RPPlayerListener implements Listener{
                 	if (!r.canBuild(p)){
                 		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 		event.setCancelled(true);
-                        return;
-                	}
+                    }
                 } 
         		else if (b.getState() instanceof Sign && RPConfig.getBool("region-settings.enable-flag-sign")){
                 	Sign s = (Sign) b.getState();
@@ -316,15 +315,13 @@ public class RPPlayerListener implements Listener{
             				}
             			}
             			RPLang.sendMessage(p,"cmdmanager.region.flag.nopermregion");
-            			return;
-                	}
+                    }
                 }
         		else if (b.getType().equals(Material.ENDER_CHEST)){
         			if (!r.canEnderChest(p)) {
         				RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
-                        return;
-        			}        			
+                    }
         		}
                 else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
                 		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){   
@@ -332,8 +329,7 @@ public class RPPlayerListener implements Listener{
                 	if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
                 		RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
-                        return;
-                	} 
+                    }
                 }               
                 
                 else if (b.getType().name().contains("LEVER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
@@ -361,8 +357,7 @@ public class RPPlayerListener implements Listener{
                 		RPLang.sendMessage(p, "blocklistener.region.cantplace");
                 		event.setUseItemInHand(Event.Result.DENY);
                 		event.setCancelled(true);
-            			return;		
-                	}
+                    }
                 } 
                 else if ((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) && 
                 	      b.getType().name().contains("SIGN") && !r.canSign(p)){
@@ -402,8 +397,7 @@ public class RPPlayerListener implements Listener{
                 	      RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
                 	      event.setUseItemInHand(Event.Result.DENY);
                 	      event.setCancelled(true);
-                	      return;
-                } 
+                }
                 else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) && 
                 		(itemInHand.getType().equals(Material.FLINT_AND_STEEL) || 
                 		itemInHand.getType().equals(Material.WATER_BUCKET) || 
@@ -415,13 +409,11 @@ public class RPPlayerListener implements Listener{
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
-                    return;
-                }  
+                }
                 else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b)){
                 	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 	event.setCancelled(true);  
                 	event.setUseInteractedBlock(Event.Result.DENY);
-                	return;
                 }
         	}             
         }
@@ -450,10 +442,10 @@ public class RPPlayerListener implements Listener{
         		return;
         	}
     	}    	
-    	
+    	/*
     	if (RPUtil.RemoveGuiItem(e.getCurrentItem())){
     		e.setCurrentItem(new ItemStack(Material.AIR));
-    	}
+    	}*/
     }
     	
     @EventHandler(priority = EventPriority.LOWEST)
@@ -472,7 +464,6 @@ public class RPPlayerListener implements Listener{
             if (r != null && !r.canBuild(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantedit");
                 event.setCancelled(true);
-                return;
             }
         } 
         
@@ -481,14 +472,12 @@ public class RPPlayerListener implements Listener{
         	if (r != null && !r.canMinecart(p)){
         		RPLang.sendMessage(p, "blocklistener.region.cantenter");
                 event.setCancelled(true);
-                return;
-        	}
+            }
         } 
         
         else if (RedProtect.MyPet && e instanceof MyPetBukkitEntity){
         	if (((MyPetBukkitEntity)e).getOwner().getPlayer().equals(p)){
-        		return;
-        	}
+            }
         }
         
         else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))){
@@ -547,14 +536,11 @@ public class RPPlayerListener implements Listener{
     }
         
     private void startCheckRate(final String pname){
-    	int task = Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
-			@Override
-			public void run() {
-				trys.remove(pname);
-				matchRate.remove(pname);
-				dmgp.remove(pname);
-			}        		
-    	}, RPConfig.getInt("server-protection.check-killaura-freekill.time-between-trys")).getTaskId();
+    	int task = Bukkit.getScheduler().runTaskLater(RedProtect.plugin, () -> {
+            trys.remove(pname);
+            matchRate.remove(pname);
+            dmgp.remove(pname);
+        }, RPConfig.getInt("server-protection.check-killaura-freekill.time-between-trys")).getTaskId();
     	if (dmgp.containsKey(pname)){
     		Bukkit.getScheduler().cancelTask(dmgp.get(pname));        		
     	}        	
@@ -601,7 +587,7 @@ public class RPPlayerListener implements Listener{
     		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
     	}
         
-        if (e.getEntity() instanceof Player && !p.equals((Player)e.getEntity()) && r.flagExists("pvp") && !r.canPVP((Player)e.getEntity(), p)){
+        if (e.getEntity() instanceof Player && !p.equals(e.getEntity()) && r.flagExists("pvp") && !r.canPVP((Player)e.getEntity(), p)){
         	RPLang.sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
         }
@@ -707,22 +693,19 @@ public class RPPlayerListener implements Listener{
         	}
     	}   
     	
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable(){
-			@Override
-			public void run() {
-				if (rto != null && rfrom != null){
-		    		RegionFlags(rto, rfrom, p);    		
-		    	}
-		    	
-		    	if (rto == null && rfrom != null){
-		    		noRegionFlags(rfrom, p);
-		    	}
-		    	
-		    	if (rfrom == null && rto != null){
-		    		noRegionFlags(rto, p);
-		    	}				
-			}    		
-    	}, 40L);
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+            if (rto != null && rfrom != null){
+                RegionFlags(rto, rfrom, p);
+            }
+
+            if (rto == null && rfrom != null){
+                noRegionFlags(rfrom, p);
+            }
+
+            if (rfrom == null && rto != null){
+                noRegionFlags(rto, p);
+            }
+        }, 40L);
     }
     
     @EventHandler
@@ -860,12 +843,11 @@ public class RPPlayerListener implements Listener{
     private void deathListener(Player p, int index){
     	RedProtect.logger.debug("Added index "+index);
     	
-    	HashMap<Integer, Location> loc1 = new HashMap<Integer, Location>();
+    	HashMap<Integer, Location> loc1 = new HashMap<>();
     	if (!deathLocs.containsKey(p.getName())){
     		loc1.put(index, p.getLocation());
     		deathLocs.put(p.getName(), loc1);
-    		return;
-    	} else {
+        } else {
     		loc1 = deathLocs.get(p.getName());
     		    		
     		loc1.put(index, p.getLocation());
@@ -877,8 +859,7 @@ public class RPPlayerListener implements Listener{
     	    	deathLocs.remove(p.getName());
     	    	PlayerTeleportEvent televent = new PlayerTeleportEvent(p, from, to, TeleportCause.PLUGIN);
     	    	Bukkit.getPluginManager().callEvent(televent);
-    	    	return;
-        	}
+            }
     	}    	
     }
     
@@ -899,7 +880,7 @@ public class RPPlayerListener implements Listener{
                 	}
                 }
             }
-    	} catch(IllegalStateException ex){}    	
+    	} catch(IllegalStateException ignored){}
         return null;
     }
     
@@ -916,7 +897,7 @@ public class RPPlayerListener implements Listener{
     		Entity pent = getTarget(p);
     		int trysp = 0;
     		int mrate = 0;
-        	if (pent != null && pent instanceof Player && dmgp.containsKey(((Player)pent).getName())){
+        	if (pent != null && pent instanceof Player && dmgp.containsKey(pent.getName())){
         		if (trys.containsKey(p.getName())){
         			trysp = trys.get(p.getName());
         		}
@@ -1085,11 +1066,8 @@ public class RPPlayerListener implements Listener{
         		ttl++;
         	}
         }
-    	if (ttl >= r.maxPlayers()){
-    		return false;
-    	}
-		return true;
-	}	
+        return ttl < r.maxPlayers();
+    }
     
     @EventHandler
     public void onPlayerEnterPortal(PlayerPortalEvent e){
@@ -1310,7 +1288,7 @@ public class RPPlayerListener implements Listener{
     }
     
     private void stopTaskPlayer(Player p){
-    	List<String> toremove = new ArrayList<String>();
+    	List<String> toremove = new ArrayList<>();
     	for (String taskId:PlayertaskID.keySet()){
     		if (PlayertaskID.get(taskId).equals(p.getName())){
     			Bukkit.getScheduler().cancelTask(Integer.parseInt(taskId.split("_")[0]));  
@@ -1429,7 +1407,7 @@ public class RPPlayerListener implements Listener{
 						String amplifier = effect.split(" ")[1];
 						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RPConfig.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
 						p.removePotionEffect(fulleffect.getType());	
-						List<String> removeTasks = new ArrayList<String>();
+						List<String> removeTasks = new ArrayList<>();
 						for (String taskId:PlayertaskID.keySet()){
 							int id = Integer.parseInt(taskId.split("_")[0]);
 							String ideff = id+"_"+eff+er.getName();
@@ -1456,7 +1434,7 @@ public class RPPlayerListener implements Listener{
 	    				p.setAllowFlight(false);	
 	    				p.setFlying(false);
 	    			}	    			
-					List<String> removeTasks = new ArrayList<String>();
+					List<String> removeTasks = new ArrayList<>();
 					for (String taskId:PlayertaskID.keySet()){
 						int id = Integer.parseInt(taskId.split("_")[0]);
 						String ideff = id+"_"+"forcefly"+er.getName();
@@ -1597,7 +1575,7 @@ public class RPPlayerListener implements Listener{
 						for (PotionEffect pot:p.getActivePotionEffects()){
 						    p.removePotionEffect(pot.getType());
                         }
-						List<String> removeTasks = new ArrayList<String>();
+						List<String> removeTasks = new ArrayList<>();
 						for (String taskId:PlayertaskID.keySet()){
 							int id = Integer.parseInt(taskId.split("_")[0]);
 							String ideff = id+"_"+eff+er.getName();
@@ -1620,7 +1598,7 @@ public class RPPlayerListener implements Listener{
         		if (PlayertaskID.containsValue(p.getName())){
         			p.setAllowFlight(false);
         			p.setFlying(false);
-    				List<String> removeTasks = new ArrayList<String>();
+    				List<String> removeTasks = new ArrayList<>();
     				for (String taskId:PlayertaskID.keySet()){
     					int id = Integer.parseInt(taskId.split("_")[0]);
     					String ideff = id+"_"+"forcefly"+er.getName();
@@ -1722,8 +1700,7 @@ public class RPPlayerListener implements Listener{
 		
     	if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
     		e.setCancelled(true);
-			return;
-		}
+        }
     }
     
     @EventHandler
@@ -1737,8 +1714,7 @@ public class RPPlayerListener implements Listener{
 		
     	if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
     		e.setCancelled(true);
-			return;
-		}
+        }
     }
     
     @EventHandler

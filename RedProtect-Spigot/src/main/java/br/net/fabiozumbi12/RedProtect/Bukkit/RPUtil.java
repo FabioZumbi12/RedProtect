@@ -60,10 +60,10 @@ import com.earth2me.essentials.User;
 
 @SuppressWarnings("deprecation")
 public class RPUtil {
-    public static HashMap<String, HashMap<Location, Material>> pBorders = new HashMap<String, HashMap<Location, Material>>();
+    public static final HashMap<String, HashMap<Location, Material>> pBorders = new HashMap<>();
 	public static boolean stopRegen = false;
-	private static HashMap<String, Integer> borderIds = new HashMap<String, Integer>();
-	private static String pathData = RedProtect.plugin.getDataFolder() + File.separator + "data" + File.separator;
+	private static final HashMap<String, Integer> borderIds = new HashMap<>();
+	private static final String pathData = RedProtect.plugin.getDataFolder() + File.separator + "data" + File.separator;
     	
 	public static void saveResource(String name, File saveTo){
 		try {
@@ -74,15 +74,13 @@ public class RPUtil {
 		    }
 		    fos.close();
 		    isReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public static List<Location> get4Points(Location min, Location max, int y){
-		List <Location> locs = new ArrayList<Location>();
+		List <Location> locs = new ArrayList<>();
 		min.setY(y);
 		max.setY(y);
 		locs.add(min);		
@@ -102,10 +100,8 @@ public class RPUtil {
     		}
     		if (RedProtect.version < 190 && Potion.fromItemStack(result) != null && Potion.fromItemStack(result).getType() != null){
     			potname = Potion.fromItemStack(result).getType().name();
-    		} 
-    		if (Pots.contains(potname)){
-    			return true;
-    		}        	    		
+    		}
+			return Pots.contains(potname);
     	}
     	return false;
     }
@@ -261,10 +257,10 @@ public class RPUtil {
     	}    	
     }
     
-    static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb){
+    static void SaveToZipSB(File file, StringBuilder sb){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-            ZipEntry e = new ZipEntry(ZippedFile);
+            ZipEntry e = new ZipEntry("RedProtectLogs.txt");
             out.putNextEntry(e);
 
             byte[] data = sb.toString().getBytes();
@@ -282,7 +278,7 @@ public class RPUtil {
 		String date = DateNow().replace("/", "-");
     	File logfile = new File(Path+date+"-"+count+".zip");
     	File files[] = new File(Path).listFiles();
-		HashMap<Long, File> keyFiles = new HashMap<Long, File>();
+		HashMap<Long, File> keyFiles = new HashMap<>();
     	if (files.length >= RPConfig.getInt("flat-file.max-backups") && isBackup){
     		for (File key:files){
     			keyFiles.put(key.lastModified(), key);
@@ -590,7 +586,7 @@ public class RPUtil {
         		//import essentials last visit for player dates
             	if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.Ess){ 
                 	Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-                	List<Long> dates = new ArrayList<Long>(); 
+                	List<Long> dates = new ArrayList<>();
                 	
                 	for (String pname:adminsl){
                 		User essp;
@@ -790,7 +786,7 @@ public class RPUtil {
 	}
     
     public static boolean mysqlToYml(){
-    	HashMap<String,Region> regions = new HashMap<String, Region>();
+    	HashMap<String,Region> regions = new HashMap<>();
     	int saved = 1;
     	
         try {
@@ -802,10 +798,10 @@ public class RPUtil {
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();            
                 while (rs.next()){ 
-                	List<String> leaders = new ArrayList<String>();
-                	List<String> admins = new ArrayList<String>();
-                    List<String> members = new ArrayList<String>();
-                    HashMap<String, Object> flags = new HashMap<String, Object>();                      
+                	List<String> leaders = new ArrayList<>();
+                	List<String> admins = new ArrayList<>();
+                    List<String> members = new ArrayList<>();
+                    HashMap<String, Object> flags = new HashMap<>();
                     
                     int maxMbrX = rs.getInt("maxMbrX");
                     int minMbrX = rs.getInt("minMbrX");
@@ -1151,7 +1147,7 @@ public class RPUtil {
     		msg = false;
 		}
 		
-		final HashMap<Location, Material> borderBlocks = new HashMap<Location, Material>();				
+		final HashMap<Location, Material> borderBlocks = new HashMap<>();
 		
 		for (Location loc:locs){
 			loc.setY(p.getLocation().getBlockY());
@@ -1194,19 +1190,18 @@ public class RPUtil {
 				if (RedProtect.OnlineMode && claim.ownerID != null){
 					pname = claim.ownerID.toString();
 				}
-				List<String> leaders = new ArrayList<String>();
+				List<String> leaders = new ArrayList<>();
 				leaders.add(pname);
 				Location newmin = claim.getGreaterBoundaryCorner();
 				Location newmax = claim.getLesserBoundaryCorner();
 				newmin.setY(0);
 				newmax.setY(w.getMaxHeight());
 				
-				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), new ArrayList<String>(), new ArrayList<String>(), leaders, 
+				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), new ArrayList<>(), new ArrayList<>(), leaders,
 						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null, true);				
 				
 				Region other = RedProtect.rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
 				if (other != null && r.getWelcome().equals(other.getWelcome())){
-					continue;
 				} else {
 					RedProtect.rm.add(r, w);
 					RedProtect.logger.debug("Region: " + r.getName());
@@ -1234,7 +1229,7 @@ public class RPUtil {
 		}
 		return name;
 	}
-	
+	/*
 	public static boolean RemoveGuiItem(ItemStack item) {
     	if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()){
     		try{
@@ -1242,12 +1237,12 @@ public class RPUtil {
     			if (RPConfig.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RPConfig.getGuiString("separator"))){
     				return true;
     			}
-    		} catch (IndexOutOfBoundsException ex){    			
+    		} catch (IndexOutOfBoundsException ignored){
     		}    		
     	}
     	return false;
 	}
-
+*/
 	private static void saveYaml(YamlConfiguration fileDB, File file){
     	try {         			   
     		fileDB.save(file);         			

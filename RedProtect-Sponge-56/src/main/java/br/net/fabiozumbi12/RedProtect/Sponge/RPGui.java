@@ -1,10 +1,10 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
@@ -12,7 +12,6 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.item.Enchantments;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -33,8 +32,8 @@ public class RPGui {
 	private ItemStack[] guiItens;
 	private Player player;
 	private Region region;
-	private Inventory inv;
-	private String name;
+	private final Inventory inv;
+	private final String name;
 	
 	public RPGui(String name, Player player, Region region, int MaxSlot){
 		this.name = name;
@@ -89,7 +88,7 @@ public class RPGui {
 				if (!this.region.getFlagBool(flag)){
 					this.guiItens[i].remove(Keys.ITEM_ENCHANTMENTS);
 				} else {
-					this.guiItens[i].offer(Keys.ITEM_ENCHANTMENTS, Arrays.asList(new ItemEnchantment(Enchantments.UNBREAKING, 1)));
+					this.guiItens[i] = RedProtect.getPVHelper().offerEnchantment(this.guiItens[i]);
 				}
 				this.guiItens[i].offer(Keys.HIDE_ENCHANTMENTS, true);
 				this.guiItens[i].offer(Keys.HIDE_ATTRIBUTES, true);				
@@ -179,7 +178,6 @@ public class RPGui {
 						}
 					}		
 					event.setCancelled(true);
-					return;
 				}
 			}
 			
@@ -193,7 +191,7 @@ public class RPGui {
 		if (!this.region.getFlagBool(flag)){
 			item.remove(Keys.ITEM_ENCHANTMENTS);			
 		} else {
-			item.offer(Keys.ITEM_ENCHANTMENTS, Arrays.asList(new ItemEnchantment(Enchantments.UNBREAKING, 1)));			
+			item = RedProtect.getPVHelper().offerEnchantment(item);
 		}
 		item.offer(Keys.HIDE_ENCHANTMENTS, true);
 		item.offer(Keys.HIDE_ATTRIBUTES, true);								
@@ -221,7 +219,7 @@ public class RPGui {
 		this.guiItens = null;
 		RedProtect.getPVHelper().closeInventory(this.player);
 		this.player = null;
-		this.region = null;			
+		this.region = null;
 		try {
 			this.finalize();
 		} catch (Throwable e) {

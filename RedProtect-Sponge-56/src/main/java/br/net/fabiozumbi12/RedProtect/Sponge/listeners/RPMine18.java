@@ -28,7 +28,7 @@ public class RPMine18 {
 		RedProtect.logger.debug("default","Loaded RPMine18...");
 	}
 	
-	static RPContainer cont = new RPContainer();    
+	static final RPContainer cont = new RPContainer();
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onAttemptInteractAS(InteractEntityEvent e, @First Player p) {
@@ -69,8 +69,7 @@ public class RPMine18 {
                 if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                 	RPLang.sendMessage(p, "playerlistener.region.cantedit");
                     e.setCancelled(true);
-                    return;
-                }                
+                }
             }
         }
     } 
@@ -110,8 +109,7 @@ public class RPMine18 {
         	if (r1 != null && !r1.canBuild(damager)){
             	e.setCancelled(true);
             	RPLang.sendMessage(damager, "blocklistener.region.cantbreak");
-            	return;
-            }                                  
+            }
         }        
 	} 
     

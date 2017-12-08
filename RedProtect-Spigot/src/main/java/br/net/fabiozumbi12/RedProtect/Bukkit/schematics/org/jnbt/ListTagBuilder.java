@@ -42,7 +42,7 @@ public class ListTagBuilder {
     ListTagBuilder(Class<? extends Tag> type) {
         checkNotNull(type);
         this.type = type;
-        this.entries = new ArrayList<Tag>();
+        this.entries = new ArrayList<>();
     }
 
     /**
@@ -51,13 +51,12 @@ public class ListTagBuilder {
      * @param value the tag
      * @return this object
      */
-    public ListTagBuilder add(Tag value) {
+    public void add(Tag value) {
         checkNotNull(value);
         if (!type.isInstance(value)) {
             throw new IllegalArgumentException(value.getClass().getCanonicalName() + " is not of expected type " + type.getCanonicalName());
         }
         entries.add(value);
-        return this;
     }
 
     /**
@@ -66,12 +65,11 @@ public class ListTagBuilder {
      * @param value a list of tags
      * @return this object
      */
-    public ListTagBuilder addAll(Collection<? extends Tag> value) {
+    public void addAll(Collection<? extends Tag> value) {
         checkNotNull(value);
         for (Tag v : value) {
             add(v);
         }
-        return this;
     }
 
     /**
@@ -80,7 +78,7 @@ public class ListTagBuilder {
      * @return the new list tag
      */
     public ListTag build() {
-        return new ListTag(type, new ArrayList<Tag>(entries));
+        return new ListTag(type, new ArrayList<>(entries));
     }
 
     /**

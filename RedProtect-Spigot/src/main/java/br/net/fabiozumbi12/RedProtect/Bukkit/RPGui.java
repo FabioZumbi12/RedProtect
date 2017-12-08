@@ -33,8 +33,8 @@ public class RPGui implements Listener{
 	private ItemStack[] guiItens;
 	private Player player;
 	private Region region;
-	private boolean allowEnchant;
-	private boolean edit;
+	private final boolean allowEnchant;
+	private final boolean edit;
 	private Inventory inv;
 
 	public RPGui(String name, Player player, Region region,Plugin plugin, boolean edit, int MaxSlot){
@@ -67,11 +67,8 @@ public class RPGui implements Listener{
 			this.size = 54;
 			this.guiItens = new ItemStack[this.size];
 		}
-				
-		allowEnchant = false;
-		if (RedProtect.version >= 181){
-			allowEnchant = true;
-		}	
+
+        allowEnchant = RedProtect.version >= 181;
 		
 		for (String flag:region.flags.keySet()){
 			if (!(region.flags.get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")){
@@ -93,7 +90,7 @@ public class RPGui implements Listener{
 				
 				int i = RPConfig.getGuiSlot(flag);
 				
-				String fvalue = "";
+				String fvalue;
 				if (flag.equalsIgnoreCase("clan")){
 					if (region.flags.get(flag).toString().equals("")){
 						fvalue = RPConfig.getGuiString("false");
@@ -122,7 +119,6 @@ public class RPGui implements Listener{
 				}				
 				this.guiItens[i].setType(Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")));
 				this.guiItens[i].setItemMeta(guiMeta);
-				i++;
 			}
 		}
 		
@@ -248,11 +244,14 @@ public class RPGui implements Listener{
 	}
 	
 	public void close(){
+        //check for itens
+        this.player.updateInventory();
+        Bukkit.getScheduler().runTaskLater(RedProtect.plugin, ()-> this.player.updateInventory(), 1);
+
 		this.guiItens = null;
 		this.name = null;
-		this.player = null;
 		RedProtect.openGuis.remove(this.region.getID());
-		this.region = null;		
+		this.region = null;
 		try {
 			this.finalize();
 		} catch (Throwable e) {

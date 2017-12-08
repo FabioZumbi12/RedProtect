@@ -58,7 +58,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
             return;
         }
         
-        List<String> othersName = new ArrayList<String>();
+        List<String> othersName = new ArrayList<>();
         Region otherrg = null;
 
         //check if same area
@@ -158,6 +158,5 @@ public class RedefineRegionBuilder extends RegionBuilder{
         
         this.r = region;
         RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" REDEFINED region "+region.getName());
-        return;
     }
 }

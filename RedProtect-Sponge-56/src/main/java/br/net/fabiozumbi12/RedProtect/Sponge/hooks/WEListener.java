@@ -41,7 +41,7 @@ import com.sk89q.worldedit.world.registry.WorldData;
 
 public class WEListener {
 
-    private static HashMap<String, EditSession> eSessions = new HashMap<String, EditSession>();
+    private static final HashMap<String, EditSession> eSessions = new HashMap<>();
 	
 	public static boolean undo(String rid){
 		if (eSessions.containsKey(rid)){
@@ -60,8 +60,8 @@ public class WEListener {
 		Closer closer = Closer.create();
 		try {
 			ClipboardFormat format = ClipboardFormat.findByAlias("schematic");
-			FileInputStream fis = (FileInputStream)closer.register(new FileInputStream(f));
-		    BufferedInputStream bis = (BufferedInputStream)closer.register(new BufferedInputStream(fis));
+			FileInputStream fis = closer.register(new FileInputStream(f));
+		    BufferedInputStream bis = closer.register(new BufferedInputStream(fis));
 		    ClipboardReader reader = format.getReader(bis);
 		    		    
 		    WorldData worldData = ws.getWorldData();
@@ -78,37 +78,35 @@ public class WEListener {
 	}
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Sponge.Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
-    	Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(new Runnable() { 
-			public void run() {
-				if (RPUtil.stopRegen){
-					return;
-				}		
-				Region wreg = new CuboidRegion(new Vector(p1.getX(),p1.getY(),p1.getZ()), new Vector(p2.getX(),p2.getY(),p2.getZ())).getFaces();
-				SpongeWorld ws = SpongeWorldEdit.inst().getWorld(w);
-		    	EditSession esession = new EditSessionFactory().getEditSession(ws, -1);
-		    	
-		    	eSessions.put(r.getID(), esession);
-		    	int delayCount = 1+delay/10;
-		    	
-		    	if (sender != null){
-	    			if (ws.regenerate(wreg, esession)){
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
-	    			} else {
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
-	    			}
-	    		} else {
-	    			if (ws.regenerate(wreg, esession)){
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
-	    			} else {
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
-	    			}
-	    		}
-		    	
-		    	if (remove){
-		    		RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()).get());
-		    	}		    	
-		    	
-				} 
-			},delay, TimeUnit.MILLISECONDS); 
+    	Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+            if (RPUtil.stopRegen){
+                return;
+            }
+            Region wreg = new CuboidRegion(new Vector(p1.getX(),p1.getY(),p1.getZ()), new Vector(p2.getX(),p2.getY(),p2.getZ())).getFaces();
+            SpongeWorld ws = SpongeWorldEdit.inst().getWorld(w);
+            EditSession esession = new EditSessionFactory().getEditSession(ws, -1);
+
+            eSessions.put(r.getID(), esession);
+            int delayCount = 1+delay/10;
+
+            if (sender != null){
+                if (ws.regenerate(wreg, esession)){
+                    RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                } else {
+                    RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                }
+            } else {
+                if (ws.regenerate(wreg, esession)){
+                    RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                } else {
+                    RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                }
+            }
+
+            if (remove){
+                RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()).get());
+            }
+
+            },delay, TimeUnit.MILLISECONDS);
 	}
 }

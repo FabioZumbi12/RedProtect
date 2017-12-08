@@ -223,65 +223,47 @@ public class RPContainer {
 	private boolean validatePrivateSign(Block b){
 		Sign s = (Sign) b.getState();
 		String priv = RPLang.get("blocklistener.container.signline");
-		
-		if (s.getLine(0).equalsIgnoreCase("[private]") || 
-				s.getLine(0).equalsIgnoreCase("private") || 
-				s.getLine(0).equalsIgnoreCase(priv) || 
-				s.getLine(0).equalsIgnoreCase("["+priv+"]")){
-		    return true;
-		}
-		return false;
-	}
+
+        return s.getLine(0).equalsIgnoreCase("[private]") ||
+                s.getLine(0).equalsIgnoreCase("private") ||
+                s.getLine(0).equalsIgnoreCase(priv) ||
+                s.getLine(0).equalsIgnoreCase("[" + priv + "]");
+    }
 	
 	public boolean validateMoreSign(Block b){
 		Sign s = (Sign) b.getState();
 		String more = RPLang.get("blocklistener.container.signline.more");
-		
-		if (s.getLine(0).equalsIgnoreCase("[more]") || 
-				s.getLine(0).equalsIgnoreCase("more") || 
-				s.getLine(0).equalsIgnoreCase(more) || 
-				s.getLine(0).equalsIgnoreCase("["+more+"]")){
-		    return true;
-		}
-		return false;
-	}
+
+        return s.getLine(0).equalsIgnoreCase("[more]") ||
+                s.getLine(0).equalsIgnoreCase("more") ||
+                s.getLine(0).equalsIgnoreCase(more) ||
+                s.getLine(0).equalsIgnoreCase("[" + more + "]");
+    }
 	
-	private boolean validateBreakSign(Block b, Player p){
-		Sign s = (Sign) b.getState();
-		if (validatePrivateSign(b) && s.getLine(1).equals(p.getName())){
-		    return true;
-		}
-		if (validateMoreSign(b) && validateMore(b, p.getName())){
-			return true;
-		}
-		return false;
-	}
+	private boolean validateBreakSign(Block b, Player p) {
+        Sign s = (Sign) b.getState();
+        return validatePrivateSign(b) && s.getLine(1).equals(p.getName()) || validateMoreSign(b) && validateMore(b, p.getName());
+    }
 	
 	private boolean testPrivate(Block b, Player p){
 		Sign s = (Sign) b.getState();
 		String priv = RPLang.get("blocklistener.container.signline");
-		if ((s.getLine(0).equalsIgnoreCase("[private]") || 
-				s.getLine(0).equalsIgnoreCase("private") || 
-				s.getLine(0).equalsIgnoreCase(priv) || 
-				s.getLine(0).equalsIgnoreCase("["+priv+"]")) &&
-				(s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()))){
-			return true;
-		}
-		return false;
-	}
+        return (s.getLine(0).equalsIgnoreCase("[private]") ||
+                s.getLine(0).equalsIgnoreCase("private") ||
+                s.getLine(0).equalsIgnoreCase(priv) ||
+                s.getLine(0).equalsIgnoreCase("[" + priv + "]")) &&
+                (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
+    }
 	
 	private boolean testMore(Block b, Player p){
 		Sign s = (Sign) b.getState();
 		String more = RPLang.get("blocklistener.container.signline.more");
-		if ((s.getLine(0).equalsIgnoreCase("[more]") || 
-				s.getLine(0).equalsIgnoreCase("more") || 
-				s.getLine(0).equalsIgnoreCase(more) || 
-				s.getLine(0).equalsIgnoreCase("["+more+"]")) &&
-				(s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()))){
-			return true;
-		}
-		return false;
-	}
+        return (s.getLine(0).equalsIgnoreCase("[more]") ||
+                s.getLine(0).equalsIgnoreCase("more") ||
+                s.getLine(0).equalsIgnoreCase(more) ||
+                s.getLine(0).equalsIgnoreCase("[" + more + "]")) &&
+                (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
+    }
 	
 	private boolean validateOpenBlock(Block b, Player p){
 		return testPrivate(b,p) || testMore(b,p);
@@ -293,19 +275,16 @@ public class RPContainer {
 		for (BlockFace bf:aside){
 			if (b.getRelative(bf).getType().equals(Material.WALL_SIGN)){				
 				if (getBlockRelative(b.getRelative(bf)).getType().equals(relative.getType()) && validatePrivateSign(b.getRelative(bf))){
-					if (!valid.isEmpty() && !((Sign)b.getRelative(bf).getState()).getLine(1).equals(valid)){
-						return false;
-					}
-					return true;
-				}
+                    return valid.isEmpty() || ((Sign) b.getRelative(bf).getState()).getLine(1).equals(valid);
+                }
 			}
 		}
 		return false;
 	}
 	
     @SuppressWarnings("deprecation")
-	public boolean isContainer(Block b, boolean more){    	
-    	Block container = getBlockRelative(b);    	
+	public boolean isContainer(Block b, boolean more) {
+        Block container = getBlockRelative(b);
     	/*
     	int face = b.getData() & 0x7;
 	    if (face == 3) {
@@ -321,21 +300,15 @@ public class RPContainer {
 	    	container = b.getRelative(BlockFace.WEST);
 	    }   	  
 	    */
-    	
-	    String signbtype;
-        if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-        	signbtype = Integer.toString(container.getTypeId());
+
+        String signbtype;
+        if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+            signbtype = Integer.toString(container.getTypeId());
         } else {
-        	signbtype = container.getType().name();
-        } 
-        
-	    if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
-	    	if (more && !validateMore(b, "")){	    			   
-	    		return false;
-	    	} 	
-	    	return true;
-	    }
-	    return false;
-    }  
+            signbtype = container.getType().name();
+        }
+
+        return RPConfig.getStringList("private.allowed-blocks").contains(signbtype) && (!more || validateMore(b, ""));
+    }
     
 }

@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 
 public class RPLogger{
-	private SortedMap<Integer,String> MainLog = new TreeMap<Integer,String>();
+	private final SortedMap<Integer,String> MainLog = new TreeMap<>();
 	   
 	public void clear(String s) {
     	Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', s));
@@ -65,7 +65,7 @@ public class RPLogger{
 			  sb.append('\n');    			  
     	}
     	if (RPUtil.genFileName(RedProtect.plugin.getDataFolder()+File.separator+"logs"+File.separator, false) != null){
-    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.plugin.getDataFolder()+File.separator+"logs"+File.separator, false), "RedProtectLogs.txt", sb);
+    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.plugin.getDataFolder()+File.separator+"logs"+File.separator, false), sb);
     	}    	
     }
 }

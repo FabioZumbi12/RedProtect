@@ -41,11 +41,11 @@ public class EncompassRegionBuilder extends RegionBuilder{
         BlockSnapshot next = null;
         BlockSnapshot first = null;
         String regionName = e.getText().asList().get(1).toPlain();
-        LinkedList<Integer> px = new LinkedList<Integer>();
-        LinkedList<Integer> pz = new LinkedList<Integer>();
+        LinkedList<Integer> px = new LinkedList<>();
+        LinkedList<Integer> pz = new LinkedList<>();
         BlockSnapshot bFirst1 = null;
         BlockSnapshot bFirst2 = null;
-        List<BlockSnapshot> blocks = new LinkedList<BlockSnapshot>();
+        List<BlockSnapshot> blocks = new LinkedList<>();
         int oldFacing = 0;
         int curFacing = 0;
         
@@ -125,7 +125,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                     }                    
                     
                     if (current.equals(first)) {
-                    	LinkedList<String> leaders = new LinkedList<String>();
+                    	LinkedList<String> leaders = new LinkedList<>();
                     	leaders.add(pName);
                             if (owner1 == null) {
                             	sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(2, RPUtil.toText("--"))));
@@ -176,9 +176,9 @@ public class EncompassRegionBuilder extends RegionBuilder{
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new LinkedList<String>(), new LinkedList<String>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.cfgs.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new LinkedList<>(), new LinkedList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.cfgs.getDefFlagsValues(), "", 0, null, true);
                         
-                        List<String> othersName = new ArrayList<String>();
+                        List<String> othersName = new ArrayList<>();
                         Region otherrg = null;
                         List<Location<World>> limitlocs = region.getLimitLocs(minby, maxby, false);
                                    
@@ -381,7 +381,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
     }
     
     private void give(BlockSnapshot sign, Player p, List<BlockSnapshot> blocks){
-    	Collection<ItemStackSnapshot> rejected = new ArrayList<ItemStackSnapshot>();
+    	Collection<ItemStackSnapshot> rejected = new ArrayList<>();
     	for (BlockSnapshot bb:blocks){
     		rejected.addAll(p.getInventory().offer(ItemStack.builder().fromBlockSnapshot(bb).build()).getRejectedItems());    		
     	}

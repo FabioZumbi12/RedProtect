@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import org.spongepowered.api.Sponge;
 
 public class RPLogger{
-	private SortedMap<Integer,String> MainLog = new TreeMap<Integer,String>();
+	private final SortedMap<Integer,String> MainLog = new TreeMap<>();
 	   
 	public void sucess(String s) {
     	Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&a&l"+s+"&r]"));

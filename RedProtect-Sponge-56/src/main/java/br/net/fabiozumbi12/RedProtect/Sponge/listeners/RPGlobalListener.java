@@ -125,9 +125,8 @@ public class RPGlobalListener{
           	 return;
     	}	    	
     	if (!allowdamage && !source.getState().getType().equals(bfrom.getState().getType()) && !bfrom.getState().getType().equals(BlockTypes.AIR)){
-    		e.setCancelled(true);       
-         	return;
-   	    }   	
+    		e.setCancelled(true);
+        }
     }
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)
@@ -136,9 +135,8 @@ public class RPGlobalListener{
 		boolean allowDecay = RedProtect.cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","leaves-decay");
 		
 		if (!allowDecay){
-          	 e.setCancelled(true);  
-          	 return;
-    	}
+          	 e.setCancelled(true);
+        }
 	}
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
@@ -162,8 +160,7 @@ public class RPGlobalListener{
 			if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(), "use-minecart") && !p.hasPermission("redprotect.bypass")){
 	            e.setCancelled(true);
 	            RedProtect.logger.debug("default","RPGlobalListener - Can't place minecart/boat!");
-	            return;
-	        }
+            }
 		} else {
 			if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(),"build") && !p.hasPermission("redprotect.bypass")){
 				if (RedProtect.cfgs.getGlobalFlagList(p.getWorld().getName(), "if-build-false","place-blocks").contains(b.getType().getName())){
@@ -171,8 +168,7 @@ public class RPGlobalListener{
 				}
 				e.setCancelled(true);
 				RedProtect.logger.debug("default","RPGlobalListener - Can't Build!");
-				return;
-			}
+            }
 		}		
 	}
 	
@@ -191,10 +187,10 @@ public class RPGlobalListener{
 		}
 		BlockSnapshot b = p.getWorld().createSnapshot(e.getInteractionPoint().get().toInt());
 		String bname = b.getState().getName().toLowerCase();
-		Location<World> loc = new Location<World>(p.getWorld(), e.getInteractionPoint().get());
+		Location<World> loc = new Location<>(p.getWorld(), e.getInteractionPoint().get());
 		
 		//Temporary fix until this event return wrong location
-		if (new Location<World>(p.getWorld(), e.getInteractionPoint().get()).getBlockY() <= 2){
+		if (new Location<>(p.getWorld(), e.getInteractionPoint().get()).getBlockY() <= 2){
 			loc = p.getLocation();
 		}
 		
@@ -211,8 +207,7 @@ public class RPGlobalListener{
 		if (bname.contains("rail") || bname.contains("water")){
             if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(),"use-minecart") && !p.hasPermission("redprotect.bypass")){
         		e.setCancelled(true);
-    			return;		
-        	}
+            }
         } else {
         	if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(),"interact") && !p.hasPermission("redprotect.bypass")){
     			e.setCancelled(true);
@@ -221,8 +216,7 @@ public class RPGlobalListener{
         	if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(),"build") && !p.hasPermission("redprotect.bypass") 
         			&& bname.contains("leaves")){
     			e.setCancelled(true);
-    			return;
-    		}
+            }
         }	
 	}
 	
@@ -239,8 +233,7 @@ public class RPGlobalListener{
 				return;
 			}
 			e.setCancelled(true);
-			return;
-		}
+        }
 	}
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
@@ -259,8 +252,7 @@ public class RPGlobalListener{
     	
 		if (b.getFinal().getState().getType().equals(BlockTypes.FIRE) && !RedProtect.cfgs.getGlobalFlag(b.getOriginal().getLocation().get().getExtent().getName(),"fire-block-damage")){
 			e.setCancelled(true);
-    		return;
-		}   	   	
+        }
     }
 	
 	/*@Listener(order = Order.FIRST, beforeModifications = true)	
@@ -297,12 +289,10 @@ public class RPGlobalListener{
         if (ent.getType().getName().contains("minecart") || ent.getType().getName().contains("boat")){
         	if (!RedProtect.cfgs.getGlobalFlag(ent.getWorld().getName(),"use-minecart") && !p.hasPermission("redprotect.bypass")) {
                 e.setCancelled(true);
-                return;
             }
         } else {
         	if (!RedProtect.cfgs.getGlobalFlag(ent.getWorld().getName(),"interact") && !p.hasPermission("redprotect.bypass") && (!(ent instanceof Player))) {
                 e.setCancelled(true);
-                return;
             }
         }      
 	}
@@ -441,7 +431,6 @@ public class RPGlobalListener{
             	if (e1 instanceof Hanging || e1 instanceof ArmorStand) {
                 	if (!RedProtect.cfgs.getGlobalFlag(e1.getWorld().getName(),"build") && !p.hasPermission("redprotect.bypass")){
                         e.setCancelled(true);
-                        return;
                     }
                 }
         	}        	
@@ -453,8 +442,7 @@ public class RPGlobalListener{
     	    	
     	World w = e.getTargetWorld();
         for (Location<World> b:e.getAffectedLocations()) {
-        	Location<World> l = b;
-        	Region r = RedProtect.rm.getTopRegion(l);
+            Region r = RedProtect.rm.getTopRegion(b);
         	if (r == null && !RedProtect.cfgs.getGlobalFlag(w.getName(),"entity-block-damage")){
         		e.setCancelled(true);
         		return;

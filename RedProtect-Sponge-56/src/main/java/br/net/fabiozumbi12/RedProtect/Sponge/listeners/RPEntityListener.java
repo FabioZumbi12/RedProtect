@@ -53,7 +53,7 @@ public class RPEntityListener {
 		RedProtect.logger.debug("entity","Loaded RPEntityListener...");
 	}
 	
-    static RPContainer cont = new RPContainer();     
+    static final RPContainer cont = new RPContainer();
         
     @Listener(order = Order.FIRST, beforeModifications = true)
     @IsCancelled(Tristate.FALSE)
@@ -68,7 +68,7 @@ public class RPEntityListener {
             }
             
             Optional<SpawnTypes> cause = event.getCause().first(SpawnTypes.class);            
-            RedProtect.logger.debug("entity","SpawnCause: "+(cause.isPresent() ? cause.get().toString():" null"));
+            RedProtect.logger.debug("entity","SpawnCause: "+(cause.map(Object::toString).orElse(" null")));
             if (e instanceof Wither && cause.isPresent() && cause.get().equals(SpawnTypes.PLACEMENT)){            	
                 Region r = RedProtect.rm.getTopRegion(e.getLocation());
                 if (r != null && !r.canSpawnWhiter()){
@@ -182,19 +182,16 @@ public class RPEntityListener {
                         if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
                             e.setCancelled(true);
                             RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                            return;
                         }
                     }
                     else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                        return;
                     }
                 }
                 else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                    return;
                 }
             }                
         }
@@ -204,7 +201,6 @@ public class RPEntityListener {
                 if (!r1.canInteractPassives(p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
-                    return;
                 }
             }                
         } 
@@ -218,21 +214,18 @@ public class RPEntityListener {
             if (r2 != null && !r2.canBuild(p2)){
             	e.setCancelled(true);
             	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
-                return;
-            }                
+            }
         } 
         else if ((e1 instanceof Hanging) && e2 instanceof Monster){
         	if (r1 != null || r2 != null){
         		RedProtect.logger.debug("entity","Cancelled ItemFrame drop Item");
         		e.setCancelled(true);
-                return;
-        	}
+            }
         }
         else if ((e1 instanceof Explosive)){
         	if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())){
         		e.setCancelled(true);
-                return;
-        	}
+            }
         }
     }
         
@@ -275,12 +268,10 @@ public class RPEntityListener {
             if (e2 instanceof Player){
             	if (r != null && r.flagExists("pvp") && !r.canPVP(shooter)) {
                     event.setCancelled(true);
-                    return;
                 }
             } else {
             	if (r != null && !r.canInteractPassives(shooter)) {
                     event.setCancelled(true);
-                    return;
                 }
             }
     	} 

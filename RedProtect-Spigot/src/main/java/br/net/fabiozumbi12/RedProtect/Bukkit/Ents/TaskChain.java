@@ -31,7 +31,7 @@ public class TaskChain {
     /**
      * =============================================================================================
      */
-	ConcurrentLinkedQueue<BaseTask> chainQueue = new ConcurrentLinkedQueue<BaseTask>();
+    final ConcurrentLinkedQueue<BaseTask> chainQueue = new ConcurrentLinkedQueue<>();
 
     boolean executed = false;
     Object previous = null;
@@ -69,12 +69,7 @@ public class TaskChain {
             public void run() {
                 final GenericTask task = this;
                 task.chain.async = false;
-                Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        task.next();
-                    }
-                }, ticks);
+                Bukkit.getScheduler().runTaskLater(plugin, task::next, ticks);
                 async();
             }
         });
@@ -125,22 +120,16 @@ public class TaskChain {
             if (async) {
                 task.run(this);
             } else {
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        chain.async = true;
-                        task.run(chain);
-                    }
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    chain.async = true;
+                    task.run(chain);
                 });
             }
         } else {
             if (async) {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        chain.async = false;
-                        task.run(chain);
-                    }
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    chain.async = false;
+                    task.run(chain);
                 });
             } else {
                 task.run(this);
@@ -199,9 +188,8 @@ public class TaskChain {
         /**
          * Tells the TaskChain you will manually invoke the next task manually using task.next(response);
          */
-        public R async() {
+        public void async() {
             chain.previous = ASYNC;
-            return null;
         }
 
         /**

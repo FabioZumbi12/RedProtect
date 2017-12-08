@@ -10,8 +10,8 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 
 public class DeleteRegionEvent extends AbstractEvent implements Cancellable, Event {
-	private Region region;
-	private Player player;
+	private final Region region;
+	private final Player player;
 	private boolean isCancelled = false;
 	
 	public DeleteRegionEvent(Region region, Player p){

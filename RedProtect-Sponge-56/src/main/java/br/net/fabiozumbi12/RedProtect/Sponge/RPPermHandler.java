@@ -31,12 +31,8 @@ public class RPPermHandler{
     }
     
     public boolean hasRegionPermAdmin(CommandSource sender, String s, Region poly) {
-    	if (sender instanceof Player){
-    		return regionPermAdmin((Player)sender, s, poly);
-    	} else {
-    		return true;
-    	}        
-    }
+		return !(sender instanceof Player) || regionPermAdmin((Player) sender, s, poly);
+	}
     
     public boolean hasRegionPermLeader(Player p, String s, Region poly) {
         return regionPermLeader(p, s, poly);
@@ -56,7 +52,7 @@ public class RPPermHandler{
     
     private int LimitHandler(User p){
     	int limit = RedProtect.cfgs.getInt("region-settings.limit-amount");
-    	List<Integer> limits = new ArrayList<Integer>();    	
+    	List<Integer> limits = new ArrayList<>();
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.blocks.unlimited")){
     			for (String perm:RedProtect.cfgs.getStringList("permissions-limits.permissions.blocks")){
@@ -78,7 +74,7 @@ public class RPPermHandler{
     
     private int ClaimLimitHandler(User p){
     	int limit = RedProtect.cfgs.getInt("region-settings.claim-amount");  
-    	List<Integer> limits = new ArrayList<Integer>();
+    	List<Integer> limits = new ArrayList<>();
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.claim.unlimited")){
     			for (String perm:RedProtect.cfgs.getStringList("permissions-limits.permissions.claims")){

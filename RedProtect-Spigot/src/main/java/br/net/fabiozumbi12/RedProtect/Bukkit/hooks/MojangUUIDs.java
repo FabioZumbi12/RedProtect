@@ -43,7 +43,7 @@ public class MojangUUIDs {
 			   return null;
 		   }
 		   JSONArray array = (JSONArray) new JSONParser().parse(line);
-		   HashMap<Long, String> names = new HashMap<Long, String>();
+		   HashMap<Long, String> names = new HashMap<>();
 		   String name = "";
 		   for (Object profile : array) {
 			   JSONObject jsonProfile = (JSONObject) profile;

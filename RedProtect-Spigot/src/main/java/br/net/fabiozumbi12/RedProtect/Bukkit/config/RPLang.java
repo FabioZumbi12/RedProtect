@@ -23,15 +23,15 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 
 public class RPLang {
 	
-	private static final HashMap<Player, String> DelayedMessage = new HashMap<Player, String>();
-	static Properties BaseLang = new Properties();
-	public static Properties Lang = new Properties();
+	private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
+	static final Properties BaseLang = new Properties();
+	public static final Properties Lang = new Properties();
 	//static List<String> langString = new ArrayList<String>();
     private static String pathLang; 
     private static String resLang; 
 	
 	public static SortedSet<String> helpStrings(){
-		SortedSet<String> values = new TreeSet<String>();
+		SortedSet<String> values = new TreeSet<>();
 		for (Object help:Lang.keySet()){
 			if (help.toString().startsWith("cmdmanager.help.")){
 				values.add(help.toString().replace("cmdmanager.help.", ""));
@@ -115,7 +115,7 @@ public class RPLang {
 	  }
 	
 	public static String get(String key){		
-		String FMsg = "";
+		String FMsg;
 
 		if (Lang.get(key) == null){
 			FMsg = "&c&oMissing language string for "+ ChatColor.GOLD + key;
@@ -142,17 +142,15 @@ public class RPLang {
 		}		
 		
 		DelayedMessage.put(p, key);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-			public void run() {
-				if (DelayedMessage.containsKey(p)){
-					DelayedMessage.remove(p);
-				}
-				} 
-			}, 20);		
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+            if (DelayedMessage.containsKey(p)){
+                DelayedMessage.remove(p);
+            }
+            }, 20);
 	}
 	
 	public static void sendMessage(CommandSender sender, String key){		
-		if (sender instanceof Player && DelayedMessage.containsKey((Player)sender) && DelayedMessage.get((Player)sender).equals(key)){
+		if (sender instanceof Player && DelayedMessage.containsKey(sender) && DelayedMessage.get(sender).equals(key)){
 			return;
 		}
 		
@@ -167,13 +165,11 @@ public class RPLang {
 		if (sender instanceof Player){
 			final Player p = (Player)sender;
 			DelayedMessage.put(p, key);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-				public void run() {
-					if (DelayedMessage.containsKey(p)){
-						DelayedMessage.remove(p);
-					}
-					} 
-				}, 20);	
+			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+                if (DelayedMessage.containsKey(p)){
+                    DelayedMessage.remove(p);
+                }
+                }, 20);
 		}
 		
 	}

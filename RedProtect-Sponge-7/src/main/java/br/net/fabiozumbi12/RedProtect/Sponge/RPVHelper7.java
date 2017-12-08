@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Keys;
@@ -10,12 +11,19 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKey;
 import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.item.enchantment.Enchantment;
+import org.spongepowered.api.item.enchantment.EnchantmentType;
+import org.spongepowered.api.item.enchantment.EnchantmentTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RPVHelper7 implements RPVHelper{
 	
@@ -58,24 +66,28 @@ public class RPVHelper7 implements RPVHelper{
 	}
 
 	@Override
-	public boolean checkCause(Cause cause, String toCompare) {	
-		if (RedProtect.game.getRegistry().getType(EventContextKey.class, toCompare).isPresent()){
-			return cause.contains(RedProtect.game.getRegistry().getType(EventContextKey.class, toCompare).get());
-		}
-		return false;
-	}
+	public boolean checkCause(Cause cause, String toCompare) {
+        return RedProtect.game.getRegistry().getType(EventContextKey.class, toCompare).isPresent() && cause.contains(RedProtect.game.getRegistry().getType(EventContextKey.class, toCompare).get());
+    }
 
 	@Override
 	public boolean checkHorseOwner(Entity ent, Player p) {
 		if (ent instanceof RideableHorse && ((RideableHorse)ent).getHorseData().get(Keys.TAMED_OWNER).isPresent()){
 			RideableHorse tam = (RideableHorse) ent;
 			Player owner = RedProtect.serv.getPlayer(tam.getHorseData().get(Keys.TAMED_OWNER).get().get()).get();
-			if (owner != null && owner.getName().equals(p.getName())){
-				return true;
-			}
+			return owner.getName().equals(p.getName());
 		}
 		return false;
-	}	
-	
-	
+	}
+
+	@Override
+	public List<String> getAllEnchants() {
+		return Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList());
+	}
+
+    @Override
+    public ItemStack offerEnchantment(ItemStack item) {
+        item.offer(Keys.ITEM_ENCHANTMENTS, Collections.singletonList(Enchantment.builder().type(EnchantmentTypes.UNBREAKING).level(1).build()));
+        return item;
+    }
 }

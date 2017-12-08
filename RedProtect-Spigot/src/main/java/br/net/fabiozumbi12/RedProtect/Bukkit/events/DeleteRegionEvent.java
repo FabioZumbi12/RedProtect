@@ -9,8 +9,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 
 public class DeleteRegionEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
-	private Region region;
-	private Player player;
+	private final Region region;
+	private final Player player;
 	private boolean isCancelled = false;
 	
 	public DeleteRegionEvent(Region region, Player p){

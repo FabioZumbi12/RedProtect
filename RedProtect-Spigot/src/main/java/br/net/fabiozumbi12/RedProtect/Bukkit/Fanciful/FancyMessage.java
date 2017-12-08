@@ -44,7 +44,7 @@ import com.google.gson.stream.JsonWriter;
  * <p>
  * This class follows the builder pattern, allowing for method chaining.
  * It is set up such that invocations of property-setting methods will affect the current editing component,
- * and a call to {@link #then()} or {@link #then(Object)} will append a new editing component to the end of the message,
+ * and a call to {@link #then()} will append a new editing component to the end of the message,
  * optionally initializing it with text. Further property-setting method calls will affect that editing component.
  * </p>
  */
@@ -63,7 +63,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         @Override
 	public FancyMessage clone() throws CloneNotSupportedException{
 		FancyMessage instance = (FancyMessage)super.clone();
-		instance.messageParts = new ArrayList<MessagePart>(messageParts.size());
+		instance.messageParts = new ArrayList<>(messageParts.size());
 		for(int i = 0; i < messageParts.size(); i++){
 			instance.messageParts.add(i, messageParts.get(i).clone());
 		}
@@ -81,7 +81,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	}
 
 	public FancyMessage(final TextualComponent firstPartText) {
-		messageParts = new ArrayList<MessagePart>();
+		messageParts = new ArrayList<>();
 		messageParts.add(new MessagePart(firstPartText));
 		jsonString = null;
 		dirty = false;
@@ -371,7 +371,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param lines The lines of text which will be displayed to the client upon hovering.
 	 * @return This builder instance.
 	 */
-	public FancyMessage tooltip(final String... lines) {
+	public void tooltip(final String... lines) {
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < lines.length; i++){
 			builder.append(lines[i]);
@@ -380,7 +380,6 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			}
 		}
 		tooltip(builder.toString());
-		return this;
 	}
 
 	/**
@@ -509,8 +508,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The text which will populate the new message component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage then(final String text) {
-		return then(rawText(text));
+	public void then(final String text) {
+		then(rawText(text));
 	}
 
 	/**
@@ -519,13 +518,12 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param text The text which will populate the new message component.
 	 * @return This builder instance.
 	 */
-	public FancyMessage then(final TextualComponent text) {
+	public void then(final TextualComponent text) {
 		if (!latest().hasText()) {
 			throw new IllegalStateException("previous message part has no text");
 		}
 		messageParts.add(new MessagePart(text));
 		dirty = true;
-		return this;
 	}
 
 	/**
@@ -628,7 +626,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 			int lesserVersion = 0;
 			try {
 				lesserVersion = Integer.parseInt(version[2]);
-			} catch (NumberFormatException ex){				
+			} catch (NumberFormatException ignored){
 			}
 
 			if (majorVersion < 18 || (majorVersion == 18 && lesserVersion == 1)) {
@@ -730,7 +728,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
 	// Doc copied from interface
 	public Map<String, Object> serialize() {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("messageParts", messageParts);
 //		map.put("JSON", toJSONString());
 		return map;
@@ -758,7 +756,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		return messageParts.iterator();
 	}
 	
-	private static JsonParser _stringParser = new JsonParser();
+	private static final JsonParser _stringParser = new JsonParser();
 	
 	/**
 	 * Deserializes a fancy message from its JSON representation. This JSON representation is of the format of
@@ -778,7 +776,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 				// Deserialize text
 				if(TextualComponent.isTextKey(entry.getKey())){
 					// The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
-					Map<String, Object> serializedMapForm = new HashMap<String, Object>(); // Must be object due to Bukkit serializer API compliance
+					Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
 					serializedMapForm.put("key", entry.getKey());
 					if(entry.getValue().isJsonPrimitive()){
 						// Assume string

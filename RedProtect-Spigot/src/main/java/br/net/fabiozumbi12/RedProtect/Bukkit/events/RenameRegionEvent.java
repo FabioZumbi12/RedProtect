@@ -9,10 +9,10 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 
 public class RenameRegionEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
-	private Region region;
+	private final Region region;
 	private String newName;
-	private String oldName;
-	private Player player;
+	private final String oldName;
+	private final Player player;
 	private boolean isCancelled = false;
 	
 	public RenameRegionEvent(Region region, String newName, String oldName, Player p){

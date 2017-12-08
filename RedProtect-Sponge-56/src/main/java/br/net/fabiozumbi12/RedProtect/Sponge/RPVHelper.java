@@ -12,22 +12,28 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import java.util.List;
+
 public interface RPVHelper {
-	public Cause getCause(Player p);
+	Cause getCause(Player p);
 	
-	public void closeInventory(Player p);
+	void closeInventory(Player p);
 	
-	public void openInventory(Inventory inv, Player p);
+	void openInventory(Inventory inv, Player p);
 	
-	public void setBlock(World w, Location<World> loc, BlockType type);
+	void setBlock(World w, Location<World> loc, BlockType type);
 	
-	public void setBlock(Location<World> loc, BlockState block);
+	void setBlock(Location<World> loc, BlockState block);
 	
-	public void digBlock(Player p, ItemStack item, Vector3i loc);
+	void digBlock(Player p, ItemStack item, Vector3i loc);
 	
-	public void removeBlock(Location<World> loc);
+	void removeBlock(Location<World> loc);
 	
-	public boolean checkCause(Cause cause, String toCompare);
+	boolean checkCause(Cause cause, String toCompare);
 	
-	public boolean checkHorseOwner(Entity ent, Player owner);
+	boolean checkHorseOwner(Entity ent, Player owner);
+
+	List<String> getAllEnchants();
+
+	ItemStack offerEnchantment(ItemStack item);
 }

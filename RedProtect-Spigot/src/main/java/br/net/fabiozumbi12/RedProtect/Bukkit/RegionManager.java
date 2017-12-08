@@ -23,11 +23,11 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
  */
 public class RegionManager{
 	
-	private HashMap<World, WorldRegionManager> regionManagers;
-	private HashMap<Location, Region> bLoc = new HashMap<Location, Region>();
+	private final HashMap<World, WorldRegionManager> regionManagers;
+	private final HashMap<Location, Region> bLoc = new HashMap<>();
     
     protected RegionManager() {
-        this.regionManagers = new HashMap<World, WorldRegionManager>();
+        this.regionManagers = new HashMap<>();
     }
     
     public void loadAll() throws Exception {
@@ -73,9 +73,8 @@ public class RegionManager{
     
     public int saveAll() {
     	int saved = 0;
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-        	saved = rms.next().save()+saved;
+        for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+            saved = worldRegionManager.save() + saved;
         }
         return saved;
     }
@@ -122,10 +121,9 @@ public class RegionManager{
      * @return {@code set<region>}
      */
     public Set<Region> getRegions(String uuid) {
-        Set<Region> ret = new HashSet<Region>();
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            ret.addAll(rms.next().getRegions(uuid));
+        Set<Region> ret = new HashSet<>();
+        for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+            ret.addAll(worldRegionManager.getRegions(uuid));
         }
         return ret;
     }
@@ -137,16 +135,15 @@ public class RegionManager{
      * @return {@code set<region>}
      */
     public Set<Region> getMemberRegions(String uuid) {
-        Set<Region> ret = new HashSet<Region>();
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            ret.addAll(rms.next().getMemberRegions(uuid));
+        Set<Region> ret = new HashSet<>();
+        for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+            ret.addAll(worldRegionManager.getMemberRegions(uuid));
         }
         return ret;
     }
         
     public Set<Region> getRegionsForChunk(Chunk chunk) {
-        Set<Region> regions = new HashSet<Region>();
+        Set<Region> regions = new HashSet<>();
         for (Region region : RedProtect.rm.getRegionsByWorld(chunk.getWorld())) {
             int minChunkX = (int)Math.floor(region.getMinMbrX() / 16f);
             int maxChunkX = (int)Math.floor(region.getMaxMbrX() / 16f);
@@ -228,7 +225,7 @@ public class RegionManager{
     
     private void removeCache(Region r){
     	Set<Location> itloc = bLoc.keySet();
-    	List<Location> toRemove = new ArrayList<Location>();
+    	List<Location> toRemove = new ArrayList<>();
     	for (Location loc:itloc){
     		if (bLoc.containsKey(loc) && bLoc.get(loc).getID().equals(r.getID())){
     			toRemove.add(loc);
@@ -242,31 +239,27 @@ public class RegionManager{
     public int removeAll(String player){
     	int qtd = 0;
     	for (WorldRegionManager wrm:this.regionManagers.values()){
-    		Iterator<Region> it = wrm.getRegions(player).iterator();
-    		while (it.hasNext()){
-    			Region r = it.next();
-    			wrm.remove(r);
-    			removeCache(r);
-    			qtd++;
-    		}
+            for (Region r : wrm.getRegions(player)) {
+                wrm.remove(r);
+                removeCache(r);
+                qtd++;
+            }
     	}
     	return qtd;
     }
     
     public int regenAll(String player){
     	int delay = 0;
-    	Iterator<Region> it = getRegions(player).iterator();
-    	while (it.hasNext()){
-    		Region r = it.next();
-    		if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")){
-				if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")){
-        			AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
-        		} else {
-        			WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
-        		}                		
-        		delay=delay+10;
-			}
-    	}
+        for (Region r : getRegions(player)) {
+            if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")) {
+                if (RedProtect.AWE && RPConfig.getBool("hooks.asyncworldedit.use-for-regen")) {
+                    AWEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+                } else {
+                    WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+                }
+                delay = delay + 10;
+            }
+        }
     	return delay/10;
     }
     
@@ -374,7 +367,7 @@ public class RegionManager{
     }
         
     public Set<Region> getAllRegions(){
-    	Set<Region> regions = new HashSet<Region>();
+    	Set<Region> regions = new HashSet<>();
     	for (World w:RedProtect.serv.getWorlds()){
     		WorldRegionManager rm = this.regionManagers.get(w);
     		regions.addAll(rm.getAllRegions());

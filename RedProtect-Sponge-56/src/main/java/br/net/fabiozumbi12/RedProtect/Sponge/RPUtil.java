@@ -60,8 +60,8 @@ import com.google.common.reflect.TypeToken;
 @SuppressWarnings("deprecation")
 public class RPUtil {
     static int backup = 0; 
-    public static HashMap<Player, HashMap<Location<World>, BlockState>> pBorders = new HashMap<Player, HashMap<Location<World>, BlockState>>();
-    private static HashMap<String, UUID> borderIds = new HashMap<String, UUID>();
+    public static final HashMap<Player, HashMap<Location<World>, BlockState>> pBorders = new HashMap<>();
+    private static final HashMap<String, UUID> borderIds = new HashMap<>();
 	public static boolean stopRegen;
         
     public static Text toText(String str){
@@ -132,7 +132,7 @@ public class RPUtil {
     			if (RedProtect.cfgs.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.cfgs.getGuiString("separator").toPlain())){
     				return true;
     			}
-    		} catch (IndexOutOfBoundsException ex){    			
+    		} catch (IndexOutOfBoundsException ignored){
     		}    		
     	}
     	return false;
@@ -144,9 +144,7 @@ public class RPUtil {
 		}
 		if (pitem.get(Keys.ITEM_LORE).isPresent()){
 			List<Text> lore = pitem.get(Keys.ITEM_LORE).get();
-			if (RedProtect.cfgs.getGuiSeparator().get(Keys.ITEM_LORE).get().equals(lore)){
-				return true;
-			}
+            return RedProtect.cfgs.getGuiSeparator().get(Keys.ITEM_LORE).get().equals(lore);
 		}
 		return false;
     }
@@ -175,7 +173,7 @@ public class RPUtil {
 		String date = DateNow().replace("/", "-");
     	File logfile = new File(f,date+"-"+count+".zip");
     	File files[] = f.listFiles();
-		HashMap<Long, File> keyFiles = new HashMap<Long, File>();
+		HashMap<Long, File> keyFiles = new HashMap<>();
     	if (files.length >= RedProtect.cfgs.getInt("flat-file.max-backups") && isBackup){
     		for (File key:files){
     			keyFiles.put(key.lastModified(), key);
@@ -654,8 +652,8 @@ public class RPUtil {
     	return obj;
     }
     
-    public static boolean mysqlToFile(){    	
-    	HashMap<String,Region> regions = new HashMap<String, Region>();
+    public static boolean mysqlToFile(){
+    	HashMap<String,Region> regions = new HashMap<>();
     	int saved = 1;
     	
         try {
@@ -667,10 +665,10 @@ public class RPUtil {
 				st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();            
                 while (rs.next()){ 
-                	List<String> leaders = new ArrayList<String>();
-                	List<String> admins = new ArrayList<String>();
-                    List<String> members = new ArrayList<String>();
-                    HashMap<String, Object> flags = new HashMap<String, Object>();                      
+                	List<String> leaders = new ArrayList<>();
+                	List<String> admins = new ArrayList<>();
+                    List<String> members = new ArrayList<>();
+                    HashMap<String, Object> flags = new HashMap<>();
                     
                     int maxMbrX = rs.getInt("maxMbrX");
                     int minMbrX = rs.getInt("minMbrX");
@@ -688,7 +686,7 @@ public class RPUtil {
                     Location<World> tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")){
                     	String tpstring[] = rs.getString("tppoint").split(",");
-                        tppoint = new Location<World>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]))/*, 
+                        tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]))/*,
                         		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]))*/;
                     }                    
                                         
@@ -774,7 +772,7 @@ public class RPUtil {
     	} catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
     	return true;
     }
     
@@ -964,16 +962,14 @@ public class RPUtil {
 	
 	public static void startFlagChanger(final String r, final String flag, final Player p){
 		RedProtect.changeWait.add(r+flag);
-		Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(new Runnable() { 
-			public void run() {
-				if (RedProtect.changeWait.contains(r+flag)){
-					/*if (p != null && p.isOnline()){
-						RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
-					}*/
-					RedProtect.changeWait.remove(r+flag);				
-				} 
-			}
-			}, RedProtect.cfgs.getInt("flags-configuration.change-flag-delay.seconds"), TimeUnit.SECONDS);
+		Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+            if (RedProtect.changeWait.contains(r+flag)){
+                /*if (p != null && p.isOnline()){
+                    RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
+                }*/
+                RedProtect.changeWait.remove(r+flag);
+            }
+        }, RedProtect.cfgs.getInt("flags-configuration.change-flag-delay.seconds"), TimeUnit.SECONDS);
 	}
 	
 	public static int getUpdatedPrior(Region region) {
@@ -1019,10 +1015,10 @@ public class RPUtil {
 			msg = false;
 		}
 		
-		final HashMap<Location<World>, BlockState> borderBlocks = new HashMap<Location<World>, BlockState>();				
+		final HashMap<Location<World>, BlockState> borderBlocks = new HashMap<>();
 		
 		for (Location<World> loc:locs){
-			loc = new Location<World>(w, loc.getBlockX(), p.getLocation().getBlockY(), loc.getBlockZ());
+			loc = new Location<>(w, loc.getBlockX(), p.getLocation().getBlockY(), loc.getBlockZ());
 			BlockState b = w.getBlock(loc.getBlockPosition());
         	if (b.getType().equals(BlockTypes.AIR) || b.getType().equals(BlockTypes.WATER)){
         		borderBlocks.put(loc, b);
@@ -1144,13 +1140,13 @@ public class RPUtil {
     	int maxY = region.getNode(rname,"maxY").getInt(255);
     	int minY = region.getNode(rname,"minY").getInt(0);
     	
-    	LinkedList<String> leaders = new LinkedList<String>();
+    	LinkedList<String> leaders = new LinkedList<>();
     	leaders.addAll(region.getNode(rname,"leaders").getList(TypeToken.of(String.class)));
     	
-    	LinkedList<String> admins = new LinkedList<String>();
+    	LinkedList<String> admins = new LinkedList<>();
     	admins.addAll(region.getNode(rname,"admins").getList(TypeToken.of(String.class)));
     	
-    	LinkedList<String> members = new LinkedList<String>();
+    	LinkedList<String> members = new LinkedList<>();
     	members.addAll(region.getNode(rname,"members").getList(TypeToken.of(String.class)));
     	    	  
     	//compatibility ------>        
@@ -1177,7 +1173,7 @@ public class RPUtil {
     	Location<World> tppoint = null;
         if (!region.getNode(rname,"tppoint").getString().equalsIgnoreCase("")){
         	String tpstring[] = region.getNode(rname,"tppoint").getString().split(",");
-            tppoint = new Location<World>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
+            tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
         }
             	    	
   	    Region newr = new Region(rname, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world, date, RedProtect.cfgs.getDefFlagsValues(), welcome, value, tppoint, candel);
@@ -1279,7 +1275,7 @@ public class RPUtil {
 		for (int ix = x-radius; ix <= x+radius; ++ix) {
 			for (int iy = y-radius; iy <= y+radius; ++iy) {
 				for (int iz = z-radius; iz <= z+radius; ++iz) {
-					Region reg = RedProtect.rm.getTopRegion(new Location<World>(p.getWorld(),ix, iy, iz));
+					Region reg = RedProtect.rm.getTopRegion(new Location<>(p.getWorld(), ix, iy, iz));
 					if (reg != null && !reg.canBuild(p)){
 						RPLang.sendMessage(p, RPLang.get("blocklistener.cantbuild.nearrp").replace("{distance}", ""+radius));
 						return false;

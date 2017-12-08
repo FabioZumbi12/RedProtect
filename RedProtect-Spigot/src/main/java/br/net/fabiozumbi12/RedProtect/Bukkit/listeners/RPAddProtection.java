@@ -20,10 +20,10 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 
 public class RPAddProtection implements Listener{
 	
-	private HashMap<Player,String> chatSpam = new HashMap<Player,String>();
-	private HashMap<String,Integer> msgSpam = new HashMap<String,Integer>();
-	private HashMap<Player,Integer> UrlSpam = new HashMap<Player,Integer>();
-	private List<String> muted = new ArrayList<String>();
+	private final HashMap<Player,String> chatSpam = new HashMap<>();
+	private final HashMap<String,Integer> msgSpam = new HashMap<>();
+	private final HashMap<Player,Integer> UrlSpam = new HashMap<>();
+	private final List<String> muted = new ArrayList<>();
 
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onPlayerChat(AsyncPlayerChatEvent e){
@@ -43,13 +43,11 @@ public class RPAddProtection implements Listener{
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
-				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-					public void run() {
-						if (chatSpam.containsKey(p)){
-							chatSpam.remove(p);
-						}						
-					}						
-				},RPConfig.getProtInt("chat-protection.antispam.time-beteween-messages")*20);
+				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+                    if (chatSpam.containsKey(p)){
+                        chatSpam.remove(p);
+                    }
+                },RPConfig.getProtInt("chat-protection.antispam.time-beteween-messages")*20);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){				
 				p.sendMessage(RPConfig.getProtMsg("chat-protection.antispam.colldown-msg"));
 				e.setCancelled(true);
@@ -59,13 +57,11 @@ public class RPAddProtection implements Listener{
 			//check same message frequency
 			if (!msgSpam.containsKey(msg)){
 				msgSpam.put(msg, 1);
-				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-					public void run() {
-						if (msgSpam.containsKey(msg)){
-							msgSpam.remove(msg);
-						}						
-					}						
-					},RPConfig.getProtInt("chat-protection.antispam.time-beteween-same-messages")*20);
+				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+                    if (msgSpam.containsKey(msg)){
+                        msgSpam.remove(msg);
+                    }
+                },RPConfig.getProtInt("chat-protection.antispam.time-beteween-same-messages")*20);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);
 				e.setCancelled(true);				
@@ -201,14 +197,12 @@ public class RPAddProtection implements Listener{
 					if (RPConfig.getProtString("chat-protection.anti-ip.punish.mute-or-cmd").equalsIgnoreCase("mute")){
 						muted.add(p.getName());
 						p.sendMessage(RPConfig.getProtMsg("chat-protection.anti-ip.punish.mute-msg"));
-						Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-							public void run() {
-								if (muted.contains(p.getName())){						
-									muted.remove(p.getName());
-									p.sendMessage(RPConfig.getProtMsg("chat-protection.anti-ip.punish.unmute-msg"));
-								}
-							}						
-						},(RPConfig.getProtInt("chat-protection.anti-ip.punish.mute-duration")*60)*20);
+						Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+                            if (muted.contains(p.getName())){
+                                muted.remove(p.getName());
+                                p.sendMessage(RPConfig.getProtMsg("chat-protection.anti-ip.punish.unmute-msg"));
+                            }
+                        },(RPConfig.getProtInt("chat-protection.anti-ip.punish.mute-duration")*60)*20);
 					} else {
 						RPUtil.performCommand(RedProtect.serv.getConsoleSender(),RPConfig.getProtString("chat-protection.anti-ip.punish.cmd-punish"));
 					}	

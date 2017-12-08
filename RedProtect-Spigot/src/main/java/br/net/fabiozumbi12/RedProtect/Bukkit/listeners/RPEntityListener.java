@@ -45,7 +45,7 @@ public class RPEntityListener implements Listener{
 		RedProtect.logger.debug("Loaded RPEntityListener...");
 	}
 	
-    static RPContainer cont = new RPContainer();     
+    static final RPContainer cont = new RPContainer();
         
     @EventHandler
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {  
@@ -65,7 +65,7 @@ public class RPEntityListener implements Listener{
             return;
         }
     	
-        Entity e = (Entity)event.getEntity();
+        Entity e = event.getEntity();
         if (e == null) {
             return;
         }
@@ -139,19 +139,16 @@ public class RPEntityListener implements Listener{
                         if ((r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player)e1, p2))) {
                             e.setCancelled(true);
                             RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                            return;
                         }
                     }
                     else if (r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                        return;
                     }
                 }
                 else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player)e1, p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                    return;
                 }
             }                
         } 
@@ -161,7 +158,6 @@ public class RPEntityListener implements Listener{
                 if (!r1.canInteractPassives(p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
-                    return;
                 }
             }                
         } 
@@ -175,21 +171,18 @@ public class RPEntityListener implements Listener{
             if (r2 != null && !r2.canBuild(p2) && !r2.canBreak(e1.getType())){
             	e.setCancelled(true);
             	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
-                return;
-            }                
+            }
         } 
         else if (e1 instanceof Hanging && e2 instanceof Monster){
         	if (r1 != null || r2 != null){
         		RedProtect.logger.debug("Cancelled ItemFrame drop Item");
         		e.setCancelled(true);
-                return;
-        	}
+            }
         }
         else if (e2 instanceof Explosive){
         	if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())){
         		e.setCancelled(true);
-                return;
-        	}
+            }
         }
     }
     
@@ -277,19 +270,16 @@ public class RPEntityListener implements Listener{
                             if ((r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player)e1, p2))) {
                                 e.setCancelled(true);
                                 RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                                return;
                             }
                         }
                         else if (r1.flagExists("pvp") && !r1.canPVP((Player)e1, p2)) {
                             e.setCancelled(true);
                             RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                            return;
                         }
                     }
                     else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player)e1, p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
-                        return;
                     }
                 }                
             }
@@ -299,7 +289,6 @@ public class RPEntityListener implements Listener{
                     if (!r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
-                        return;
                     }
                 }                
             } 
@@ -313,21 +302,18 @@ public class RPEntityListener implements Listener{
                 if (r2 != null && !r2.canBuild(p2) && !r2.canBreak(e1.getType())){
                 	e.setCancelled(true);
                 	RPLang.sendMessage(p2, "playerlistener.region.cantuse");
-                    return;
-                }                
+                }
             } 
             else if (e1 instanceof Hanging && e2 instanceof Monster){
             	if (r1 != null || r2 != null){
             		RedProtect.logger.debug("Cancelled ItemFrame drop Item");
             		e.setCancelled(true);
-                    return;
-            	}
+                }
             }
             else if (e2 instanceof Explosive){
             	if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())){
             		e.setCancelled(true);
-                    return;
-            	}
+                }
             }
         }
     }
@@ -341,7 +327,7 @@ public class RPEntityListener implements Listener{
         ProjectileSource thrower = event.getPotion().getShooter();
         for (PotionEffect e : event.getPotion().getEffects()) {
             PotionEffectType t = e.getType();
-            if (!t.equals((Object)PotionEffectType.BLINDNESS) && !t.equals((Object)PotionEffectType.CONFUSION) && !t.equals((Object)PotionEffectType.HARM) && !t.equals((Object)PotionEffectType.HUNGER) && !t.equals((Object)PotionEffectType.POISON) && !t.equals((Object)PotionEffectType.SLOW) && !t.equals((Object)PotionEffectType.SLOW_DIGGING) && !t.equals((Object)PotionEffectType.WEAKNESS) && !t.equals((Object)PotionEffectType.WITHER)) {
+            if (!t.equals(PotionEffectType.BLINDNESS) && !t.equals(PotionEffectType.CONFUSION) && !t.equals(PotionEffectType.HARM) && !t.equals(PotionEffectType.HUNGER) && !t.equals(PotionEffectType.POISON) && !t.equals(PotionEffectType.SLOW) && !t.equals(PotionEffectType.SLOW_DIGGING) && !t.equals(PotionEffectType.WEAKNESS) && !t.equals(PotionEffectType.WITHER)) {
                 return;
             }
         }

@@ -1,11 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import net.milkbowl.vault.economy.Economy;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
@@ -52,14 +48,14 @@ public class RedProtect extends JavaPlugin {
 	public static String UptVersion;
 	public static String UptLink;    
     public static RegionManager rm;
-    public static List<String> changeWait = new ArrayList<String>();
-    public static List<String> tpWait = new ArrayList<String>();
-    public static HashMap<Player,String> alWait = new HashMap<Player,String>();
+    public static final List<String> changeWait = new ArrayList<>();
+    public static final List<String> tpWait = new ArrayList<>();
+    public static final HashMap<Player,String> alWait = new HashMap<>();
     public static RPPermissionHandler ph;
-    public static RPLogger logger = new RPLogger();
+    public static final RPLogger logger = new RPLogger();
     public static Server serv;    
-    public static HashMap<Player, Location> firstLocationSelections = new HashMap<Player, Location>();
-    public static HashMap<Player, Location> secondLocationSelections = new HashMap<Player, Location>();
+    public static final HashMap<Player, Location> firstLocationSelections = new HashMap<>();
+    public static final HashMap<Player, Location> secondLocationSelections = new HashMap<>();
     public static boolean BossBar;
     public static boolean MyChunk;
     public static boolean MyPet;
@@ -82,9 +78,9 @@ public class RedProtect extends JavaPlugin {
 	public static Economy econ;
 	public static int version;
 	public static boolean paper = false;
-	public static List<String> openGuis = new ArrayList<String>();
-	public static List<String> confiemStart = new ArrayList<String>();
-	public static HashMap<String, List<String>> denyEnter = new HashMap<String, List<String>>();
+	public static final List<String> openGuis = new ArrayList<>();
+	public static final List<String> confiemStart = new ArrayList<>();
+	public static final HashMap<String, List<String>> denyEnter = new HashMap<>();
     
     public void onDisable() {
         RedProtect.rm.saveAll();
@@ -249,23 +245,20 @@ public class RedProtect extends JavaPlugin {
     		regs.add(rid);
     		denyEnter.put(player, regs);
     	} else {
-    		denyEnter.put(player, new LinkedList<String>(Arrays.asList(rid)));
+    		denyEnter.put(player, new LinkedList<>(Collections.singletonList(rid)));
     	}    	
     	
-    	Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
-			@Override
-			public void run() {
-				if (denyEnter.containsKey(player)){
-					List<String> regs = denyEnter.get(player);
-					regs.remove(rid);
-					if (regs.isEmpty()){
-						denyEnter.remove(player);
-					} else {
-						denyEnter.put(player, regs);
-					}
-				}
-			}    		
-    	}, RPConfig.getInt("region-settings.delay-after-kick-region")*20);
+    	Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (denyEnter.containsKey(player)){
+                List<String> regs = denyEnter.get(player);
+                regs.remove(rid);
+                if (regs.isEmpty()){
+                    denyEnter.remove(player);
+                } else {
+                    denyEnter.put(player, regs);
+                }
+            }
+        }, RPConfig.getInt("region-settings.delay-after-kick-region")*20);
     	return true;
     }
     
@@ -277,7 +270,7 @@ public class RedProtect extends JavaPlugin {
 		int lesserVersion = 0;
 		try {
 			lesserVersion = Integer.parseInt(version[2]);
-		} catch (NumberFormatException ex){				
+		} catch (NumberFormatException ignored){
 		}
 		return Integer.parseInt((version[0]+version[1]).substring(1)+lesserVersion);
     }
@@ -300,12 +293,10 @@ public class RedProtect extends JavaPlugin {
 		if (RPConfig.getInt("flat-file.auto-save-interval-seconds") != 0){
 			RedProtect.logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");  
 			
-			taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() { 
-				public void run() {
-					RedProtect.logger.debug("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
-					rm.saveAll();
-					} 
-				},RPConfig.getInt("flat-file.auto-save-interval-seconds")*20, RPConfig.getInt("flat-file.auto-save-interval-seconds")*20);	
+			taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                RedProtect.logger.debug("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
+                rm.saveAll();
+                },RPConfig.getInt("flat-file.auto-save-interval-seconds")*20, RPConfig.getInt("flat-file.auto-save-interval-seconds")*20);
 			
 		} else {
         	RedProtect.logger.info("Auto-save Scheduler: Disabled");
@@ -327,145 +318,94 @@ public class RedProtect extends JavaPlugin {
   //check if plugin GriefPrevention is installed
     private boolean checkGP() {
     	Plugin pGP = Bukkit.getPluginManager().getPlugin("GriefPrevention");
-    	if (pGP != null && pGP.isEnabled()){
-    		return true;
-    	}
-		return false;
-	}
+        return pGP != null && pGP.isEnabled();
+    }
     
     //check if plugin BossbarAPI is installed
     private boolean checkBM(){
     	Plugin pBM = Bukkit.getPluginManager().getPlugin("BossBarAPI");
-    	if (pBM != null && pBM.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pBM != null && pBM.isEnabled();
     }
     
   //check if plugin MyChunk is installed
     private boolean checkMyChunk(){
     	Plugin pMC = Bukkit.getPluginManager().getPlugin("MyChunk");
-    	if (pMC != null && pMC.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pMC != null && pMC.isEnabled();
     }
     
   //check if plugin MyPet is installed
     private boolean checkMyPet(){
     	Plugin pMP = Bukkit.getPluginManager().getPlugin("MyPet");
-    	if (pMP != null && pMP.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pMP != null && pMP.isEnabled();
     }
     
   //check if plugin McMMo is installed
     private boolean checkMcMMo(){
     	Plugin pMMO = Bukkit.getPluginManager().getPlugin("mcMMO");
-    	if (pMMO != null && pMMO.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pMMO != null && pMMO.isEnabled();
     }
     
   //check if plugin MagicCarpet is installed
     private boolean checkMc(){
     	Plugin pMC = Bukkit.getPluginManager().getPlugin("MagicCarpet");
-    	if (pMC != null && pMC.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pMC != null && pMC.isEnabled();
     }
     
     //check if plugin SkillAPI is installed
     private boolean checkSkillAPI(){
     	Plugin pSK = Bukkit.getPluginManager().getPlugin("SkillAPI");
-    	if (pSK != null && pSK.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pSK != null && pSK.isEnabled();
     }
     
     //check if plugin Vault is installed
     private boolean checkVault(){
     	Plugin pVT = Bukkit.getPluginManager().getPlugin("Vault");
-    	if (pVT != null && pVT.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pVT != null && pVT.isEnabled();
     }
     
     //check if plugin PvPManager is installed
     private boolean checkPvPm(){
     	Plugin pPvp = Bukkit.getPluginManager().getPlugin("PvPManager");
-    	if (pPvp != null && pPvp.isEnabled()){
-    		return true;
-    	}
-    	return false;
+        return pPvp != null && pPvp.isEnabled();
     }
             
 	private boolean checkEss() {
 		Plugin pEss = Bukkit.getPluginManager().getPlugin("Essentials");
-    	if (pEss != null && pEss.isEnabled()){
-    		return true;
-    	}
-    	return false;
-	}
+        return pEss != null && pEss.isEnabled();
+    }
 	
 	private boolean checkDyn() {
 		Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
-    	if (pDyn != null && pDyn.isEnabled()){
-    		return true;
-    	}
-    	return false;
-	}
+        return pDyn != null && pDyn.isEnabled();
+    }
 	
 	private boolean checkWe() {
 		Plugin pWe = Bukkit.getPluginManager().getPlugin("WorldEdit");
-    	if (pWe != null && pWe.isEnabled()){
-    		return true;
-    	}
-    	return false;
-	}
+        return pWe != null && pWe.isEnabled();
+    }
 	
 	private boolean checkAWe() {
 		Plugin pAWe = Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");
-    	if (pAWe != null && pAWe.isEnabled()){
-    		return true;
-    	}
-    	return false;
-	}
+        return pAWe != null && pAWe.isEnabled();
+    }
 	
 	private boolean checkSP() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-    	return false;
-	}
+        return p != null && p.isEnabled();
+    }
 	
 	private boolean checkPHAPI() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
-	}
+        return p != null && p.isEnabled();
+    }
 	
 	private boolean checkFac() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
-	}
+        return p != null && p.isEnabled();
+    }
 	
 	private boolean checkPLib() {
 		Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-    	if (p != null && p.isEnabled()){
-    		return true;
-    	}
-		return false;
-	}
+        return p != null && p.isEnabled();
+    }
 }

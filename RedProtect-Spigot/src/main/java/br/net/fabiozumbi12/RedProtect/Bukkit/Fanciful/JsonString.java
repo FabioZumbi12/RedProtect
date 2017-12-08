@@ -14,7 +14,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
  */
 final class JsonString implements JsonRepresentedObject, ConfigurationSerializable {
 
-	private String _value;
+	private final String _value;
 	
 	public JsonString(CharSequence value){
 		_value = value == null ? null : value.toString();
@@ -30,7 +30,7 @@ final class JsonString implements JsonRepresentedObject, ConfigurationSerializab
 	}
 
 	public Map<String, Object> serialize() {
-		HashMap<String, Object> theSingleValue = new HashMap<String, Object>();
+		HashMap<String, Object> theSingleValue = new HashMap<>();
 		theSingleValue.put("stringValue", _value);
 		return theSingleValue;
 	}

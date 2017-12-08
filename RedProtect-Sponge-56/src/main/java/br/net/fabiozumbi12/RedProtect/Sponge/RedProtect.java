@@ -52,18 +52,18 @@ public class RedProtect {
 	private static UUID taskid;
 	private CommandManager cmdService;
 	public static RegionManager rm;
-	public static List<String> changeWait = new ArrayList<String>();
-	public static List<String> tpWait = new ArrayList<String>();
+	public static final List<String> changeWait = new ArrayList<>();
+	public static final List<String> tpWait = new ArrayList<>();
 	public static RPPermHandler ph;
-	public static RPLogger logger = new RPLogger();
+	public static final RPLogger logger = new RPLogger();
 	public static Server serv;    
-	public static HashMap<Player, Location<World>> firstLocationSelections = new HashMap<Player, Location<World>>();
-	public static HashMap<Player, Location<World>> secondLocationSelections = new HashMap<Player, Location<World>>();
+	public static final HashMap<Player, Location<World>> firstLocationSelections = new HashMap<>();
+	public static final HashMap<Player, Location<World>> secondLocationSelections = new HashMap<>();
 	public static String configDir;
 	public static boolean OnlineMode;
 	public static RPConfig cfgs;
 	public static EconomyService econ;
-	public static HashMap<Player,String> alWait = new HashMap<Player,String>();
+	public static final HashMap<Player,String> alWait = new HashMap<>();
 	
 	private static RPVHelper pvhelp;
 	public static RPVHelper getPVHelper(){
@@ -86,18 +86,18 @@ public class RedProtect {
     
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        try {  
+        try {
+			String v = Sponge.getGame().getPlatform().getContainer(Component.API).getVersion().get();
+			if (v.startsWith("5") || v.startsWith("6")){
+				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
+			}
+			if (v.startsWith("7")){
+				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
+			}
+
             initVars();               
             OnlineMode = serv.getOnlineMode();           
-            
-            String v = game.getPlatform().getContainer(Component.API).getVersion().get();
-            if (v.startsWith("5") || v.startsWith("6")){
-            	pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
-            }
-            if (v.startsWith("7")){
-            	pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
-            }
-            
+
             cmdService.register(plugin, new RPCommands(), Arrays.asList("redprotect","rp","regionp","regp"));
             
             game.getEventManager().registerListeners(plugin, new RPGlobalListener());
@@ -136,7 +136,7 @@ public class RedProtect {
     	rm.saveAll();
     	rm.unloadAll();
     	logger.SaveLogs();
-    	Sponge.getScheduler().getScheduledTasks(plugin).stream().forEach(task->task.cancel());
+    	Sponge.getScheduler().getScheduledTasks(plugin).forEach(Task::cancel);
     	RedProtect.logger.severe(plugin.getName() + " turn off...");
     }
     
@@ -178,20 +178,18 @@ public class RedProtect {
 		if (cfgs.getInt("flat-file.auto-save-interval-seconds") != 0){
 			RedProtect.logger.info("Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database every " + cfgs.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");  
 			
-			taskid = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(new Runnable() { 
-				public void run() {
-					RedProtect.logger.debug("default","Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database!");
-					rm.saveAll();
-					} 
-				},cfgs.getInt("flat-file.auto-save-interval-seconds"), cfgs.getInt("flat-file.auto-save-interval-seconds"), TimeUnit.SECONDS).getTask().getUniqueId();	
+			taskid = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(() -> {
+                RedProtect.logger.debug("default","Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database!");
+                rm.saveAll();
+                },cfgs.getInt("flat-file.auto-save-interval-seconds"), cfgs.getInt("flat-file.auto-save-interval-seconds"), TimeUnit.SECONDS).getTask().getUniqueId();
 			
 		} else {
         	RedProtect.logger.info("Auto-save Scheduler: Disabled");
         }
 	}
 	
-    private void initVars() throws Exception {     	
-    	game = Sponge.getGame();     	
+    private void initVars() throws Exception {
+    	game = Sponge.getGame();
     	plugin = Sponge.getPluginManager().getPlugin("redprotect").get();
     	configDir = game.getConfigManager().getSharedConfig(RedProtect.plugin).getDirectory()+File.separator+"RedProtect"+File.separator;
         serv = Sponge.getServer();        

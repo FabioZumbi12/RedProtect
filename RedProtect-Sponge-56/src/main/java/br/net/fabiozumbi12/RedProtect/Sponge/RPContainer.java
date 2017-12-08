@@ -166,10 +166,7 @@ public class RPContainer {
 			return true;
 		}
 		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
-		if (line.equalsIgnoreCase("[private]") || line.equalsIgnoreCase("private") || line.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line.equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")){
-		    return true;
-		}
-		return false;
+		return line.equalsIgnoreCase("[private]") || line.equalsIgnoreCase("private") || line.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line.equalsIgnoreCase("[" + RPLang.get("blocklistener.container.signline") + "]");
 	}
 	
 	private boolean validateBreakSign(BlockSnapshot b, Player p){
@@ -178,11 +175,8 @@ public class RPContainer {
 		}
 		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
 		String line1 = b.get(Keys.SIGN_LINES).get().get(1).toPlain();
-		if ((line.equalsIgnoreCase("[private]") || line.equalsIgnoreCase("private") || line.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line.equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
-			!line1.equals(p.getName())){
-		    return false;
-		}
-		return true;
+		return (!line.equalsIgnoreCase("[private]") && !line.equalsIgnoreCase("private") && !line.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) && !line.equalsIgnoreCase("[" + RPLang.get("blocklistener.container.signline") + "]")) ||
+				line1.equals(p.getName());
 	}
 	
 	private boolean validateOpenBlock(BlockSnapshot b, Player p){
@@ -190,28 +184,22 @@ public class RPContainer {
 			return true;
 		}
 		List<Text> lines = b.get(Keys.SIGN_LINES).get();
-		if ((lines.get(0).toPlain().equalsIgnoreCase("[private]") || lines.get(0).toPlain().equalsIgnoreCase("private") || lines.get(0).toPlain().equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || lines.get(0).toPlain().equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]")) && 
-			(!lines.get(1).toPlain().equals(p.getName()) &&
-			!lines.get(2).toPlain().equals(p.getName()) &&
-			!lines.get(3).toPlain().equals(p.getName()))){
-		    return false;
-		}
-		return true;
+		return (!lines.get(0).toPlain().equalsIgnoreCase("[private]") && !lines.get(0).toPlain().equalsIgnoreCase("private") && !lines.get(0).toPlain().equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) && !lines.get(0).toPlain().equalsIgnoreCase("[" + RPLang.get("blocklistener.container.signline") + "]")) ||
+				(lines.get(1).toPlain().equals(p.getName()) ||
+						lines.get(2).toPlain().equals(p.getName()) ||
+						lines.get(3).toPlain().equals(p.getName()));
 	}
 	    
 	public boolean isContainer(BlockSnapshot block){
 		Location<World> loc = block.getLocation().get();
 		List<String> blocks = RedProtect.cfgs.getStringList("private.allowed-blocks");
-	    if (blocks.contains(getRelative(loc,Direction.DOWN).getBlockType().getName()) ||
-	    		blocks.contains(getRelative(loc,Direction.UP).getBlockType().getName()) ||
-	    		blocks.contains(getRelative(loc,Direction.EAST).getBlockType().getName()) ||
-	    		blocks.contains(getRelative(loc,Direction.NORTH).getBlockType().getName()) ||
-	    		blocks.contains(getRelative(loc,Direction.SOUTH).getBlockType().getName()) ||
-	    		blocks.contains(getRelative(loc,Direction.WEST).getBlockType().getName())){
-	    	return true;
-	    }	    
-	    return false;
-    }  
+		return blocks.contains(getRelative(loc, Direction.DOWN).getBlockType().getName()) ||
+				blocks.contains(getRelative(loc, Direction.UP).getBlockType().getName()) ||
+				blocks.contains(getRelative(loc, Direction.EAST).getBlockType().getName()) ||
+				blocks.contains(getRelative(loc, Direction.NORTH).getBlockType().getName()) ||
+				blocks.contains(getRelative(loc, Direction.SOUTH).getBlockType().getName()) ||
+				blocks.contains(getRelative(loc, Direction.WEST).getBlockType().getName());
+	}
 	    
 	private Location<World> getRelative(Location<World> loc,Direction dir){
 		return loc.getRelative(dir);

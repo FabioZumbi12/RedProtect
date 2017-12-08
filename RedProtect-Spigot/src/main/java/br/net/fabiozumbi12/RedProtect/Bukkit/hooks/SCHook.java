@@ -15,21 +15,18 @@ public class SCHook {
 	}
 		
 	@SuppressWarnings("deprecation")
-	public static boolean inWar(Region r, Player attack, Player defend){
-		if (!RPConfig.getBool("hooks.simpleclans.use-war")){
-			return false;
-		}
-		if (!RPConfig.getBool("hooks.simpleclans.war-on-server-regions") && r.getLeaders().contains(RPConfig.getString("region-settings.default-leader"))){
-			return false;
-		}
-		ClanPlayer atClan = RedProtect.clanManager.getClanPlayer(attack);
-		if (atClan == null){
-			return false;
-		}
-		ClanPlayer defCclan = RedProtect.clanManager.getClanPlayer(defend);
-		if (defCclan == null){
-			return false;
-		}		
-		return atClan.getClan().isWarring(defCclan.getClan());
-	}
+	public static boolean inWar(Region r, Player attack, Player defend) {
+        if (!RPConfig.getBool("hooks.simpleclans.use-war")) {
+            return false;
+        }
+        if (!RPConfig.getBool("hooks.simpleclans.war-on-server-regions") && r.getLeaders().contains(RPConfig.getString("region-settings.default-leader"))) {
+            return false;
+        }
+        ClanPlayer atClan = RedProtect.clanManager.getClanPlayer(attack);
+        if (atClan == null) {
+            return false;
+        }
+        ClanPlayer defCclan = RedProtect.clanManager.getClanPlayer(defend);
+        return defCclan != null && atClan.getClan().isWarring(defCclan.getClan());
+    }
 }

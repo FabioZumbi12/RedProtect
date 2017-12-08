@@ -1,10 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.spongepowered.api.Sponge;
@@ -74,10 +70,10 @@ import br.net.fabiozumbi12.RedProtect.Sponge.events.EnterExitRegionEvent;
 @SuppressWarnings("deprecation")
 public class RPPlayerListener{
 	
-	static RPContainer cont = new RPContainer();
-	private HashMap<Player,String> Ownerslist = new HashMap<Player,String>();
-	private HashMap<Player, String> PlayerCmd = new HashMap<Player, String>();
-	private HashMap<String, String> PlayertaskID = new HashMap<String, String>();
+	static final RPContainer cont = new RPContainer();
+	private final HashMap<Player,String> Ownerslist = new HashMap<>();
+	private final HashMap<Player, String> PlayerCmd = new HashMap<>();
+	private final HashMap<String, String> PlayertaskID = new HashMap<>();
     
     public RPPlayerListener() {
     	RedProtect.logger.debug("player","Loaded RPPlayerListener...");
@@ -149,8 +145,7 @@ public class RPPlayerListener{
             //show preview border
             if (RedProtect.firstLocationSelections.containsKey(p) && RedProtect.secondLocationSelections.containsKey(p)){       
             	RPUtil.addBorder(p, get4Points(RedProtect.firstLocationSelections.get(p),RedProtect.secondLocationSelections.get(p),p.getLocation().getBlockY()));                	
-            }   
-            return;
+            }
         }
     }
     
@@ -195,19 +190,16 @@ public class RPPlayerListener{
             if ((itemInHand.equals(ItemTypes.ENDER_PEARL) || itemInHand.getName().equals("minecraft:chorus_fruit")) && !r.canTeleport(p)){
             	RPLang.sendMessage(p, "playerlistener.region.cantuse");
             	event.setUseItemResult(Tristate.FALSE);
-            	event.setCancelled(true); 
-    			return;
-    		} else if ((itemInHand.equals(ItemTypes.BOW) || itemInHand.equals(ItemTypes.SNOWBALL) || itemInHand.equals(ItemTypes.EGG)) && !r.canProtectiles(p)){
+            	event.setCancelled(true);
+            } else if ((itemInHand.equals(ItemTypes.BOW) || itemInHand.equals(ItemTypes.SNOWBALL) || itemInHand.equals(ItemTypes.EGG)) && !r.canProtectiles(p)){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
     			event.setUseItemResult(Tristate.FALSE);
-                event.setCancelled(true); 
-                return;
-    		} else if (itemInHand.equals(ItemTypes.POTION) && !r.usePotions(p)){
+                event.setCancelled(true);
+            } else if (itemInHand.equals(ItemTypes.POTION) && !r.usePotions(p)){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
     			event.setUseItemResult(Tristate.FALSE);
-                event.setCancelled(true); 
-                return;
-    		} else if (itemInHand.equals(ItemTypes.MONSTER_EGG) && !r.canInteractPassives(p)){
+                event.setCancelled(true);
+            } else if (itemInHand.equals(ItemTypes.MONSTER_EGG) && !r.canInteractPassives(p)){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
     			event.setUseItemResult(Tristate.FALSE);
                 event.setCancelled(true); 
@@ -216,11 +208,11 @@ public class RPPlayerListener{
     }
     
     private List<Location<World>> get4Points(Location<World> min, Location<World> max, int y){
-		List <Location<World>> locs = new ArrayList<Location<World>>();
-		locs.add(new Location<World>(min.getExtent(),min.getX(),y,min.getZ()));		
-		locs.add(new Location<World>(min.getExtent(),min.getX(),y,min.getZ()+(max.getZ()-min.getZ())));
-		locs.add(new Location<World>(max.getExtent(),max.getX(),y,max.getZ()));
-		locs.add(new Location<World>(min.getExtent(),min.getX()+(max.getX()-min.getX()),y,min.getZ()));
+		List <Location<World>> locs = new ArrayList<>();
+		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ()));
+		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ() + (max.getZ() - min.getZ())));
+		locs.add(new Location<>(max.getExtent(), max.getX(), y, max.getZ()));
+		locs.add(new Location<>(min.getExtent(), min.getX() + (max.getX() - min.getX()), y, min.getZ()));
 		return locs;		
 	}
     
@@ -286,7 +278,6 @@ public class RPPlayerListener{
         			if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
-                        return;
                     } else {
                     	int x = b.getLocation().get().getBlockX();
                     	int y = b.getLocation().get().getBlockY();
@@ -309,8 +300,7 @@ public class RPPlayerListener{
                 	if (!r.canBuild(p)){
                 		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 		event.setCancelled(true);
-                        return;
-                	}
+                    }
                 } 
                 else if ((b.getState() instanceof Carrier) ||
                 		RedProtect.cfgs.getStringList("private.allowed-blocks").contains(bstate.getType().getName())){   
@@ -319,7 +309,6 @@ public class RPPlayerListener{
                             if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
                                 RPLang.sendMessage(p, "playerlistener.region.cantopen");
                                 event.setCancelled(true);
-                                return;
                             }
                             else {
                                 RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
@@ -366,8 +355,7 @@ public class RPPlayerListener{
                     if (!r.canMinecart(p)){
                 		RPLang.sendMessage(p, "blocklistener.region.cantplace");
                 		event.setCancelled(true);
-            			return;		
-                	}
+                    }
                 } 
                 else if (bstate.getType().getName().contains("sign") && !r.canSign(p)){
                 	      List<Text> sign = b.get(Keys.SIGN_LINES).get();
@@ -405,8 +393,7 @@ public class RPPlayerListener{
                 	      }        	              	      
                 	      RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
                 	      event.setCancelled(true);
-                	      return;
-                } 
+                }
                 else if ((itemInHand.equals(ItemTypes.FLINT_AND_STEEL) || 
                 		itemInHand.equals(ItemTypes.WATER_BUCKET) || 
                 		itemInHand.equals(ItemTypes.BUCKET) || 
@@ -415,12 +402,10 @@ public class RPPlayerListener{
                 		itemInHand.equals(ItemTypes.PAINTING)) && !r.canBuild(p)) {
                     RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantuse"));
                     event.setCancelled(true);
-                    return;
-                }                    
+                }
                 else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(bstate)){
                 	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-                	event.setCancelled(true);    
-                	return;
+                	event.setCancelled(true);
                 }
         	}             
         }               
@@ -470,15 +455,13 @@ public class RPPlayerListener{
             if (!r.canBuild(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantedit");
                 e.setCancelled(true);
-                return;
             }
         } 
         
         else if ((ent.getType().getName().contains("minecart") || ent.getType().getName().contains("boat")) && !r.canMinecart(p)) {
         	RPLang.sendMessage(p, "blocklistener.region.cantenter");
             e.setCancelled(true);
-            return;
-        } 
+        }
                 
         else if (!r.allowMod(p) && !RPUtil.isBukkitEntity(ent) && (!(ent instanceof Player))){
         	RedProtect.logger.debug("player","PlayerInteractEntityEvent - Block is " + ent.getType().getName());
@@ -583,8 +566,7 @@ public class RPPlayerListener{
         if (e1 instanceof Player && r.flagExists("pvp") && !r.canPVP(p)){
         	RPLang.sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
-            return;
-        }        
+        }
 	}
     
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -668,7 +650,7 @@ public class RPPlayerListener{
             if (!r.allowEffects(p) && p.get(Keys.POTION_EFFECTS).isPresent()){
             	for (PotionEffect pot:p.get(Keys.POTION_EFFECTS).get()){
             		if (pot.getDuration() < 36000){
-            			p.offer(Keys.POTION_EFFECTS, new ArrayList<PotionEffect>());
+            			p.offer(Keys.POTION_EFFECTS, new ArrayList<>());
             		}           		
             	}            	
             }
@@ -763,22 +745,19 @@ public class RPPlayerListener{
     	final Region rfrom = RedProtect.rm.getTopRegion(lfrom);
     	final Region rto = RedProtect.rm.getTopRegion(lto);
     	   	
-    	Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(new Runnable(){
-			@Override
-			public void run() {
-				if (rto != null && rfrom != null){
-		    		RegionFlags(rto, rfrom, p);    		
-		    	}
-		    	
-		    	if (rto == null && rfrom != null){
-		    		noRegionFlags(rfrom, p);
-		    	}
-		    	
-		    	if (rfrom == null && rto != null){
-		    		noRegionFlags(rto, p);
-		    	}				
-			}    		
-    	}, 2, 2, TimeUnit.SECONDS);
+    	Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(() -> {
+            if (rto != null && rfrom != null){
+                RegionFlags(rto, rfrom, p);
+            }
+
+            if (rto == null && rfrom != null){
+                noRegionFlags(rfrom, p);
+            }
+
+            if (rfrom == null && rto != null){
+                noRegionFlags(rto, p);
+            }
+        }, 2, 2, TimeUnit.SECONDS);
     	
     	if (rto != null){    		    	
         	
@@ -867,11 +846,8 @@ public class RPPlayerListener{
         		ttl++;
         	}
         }
-    	if (ttl >= r.maxPlayers()){
-    		return false;
-    	}
-		return true;
-	}
+        return ttl < r.maxPlayers();
+    }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerCommand(SendCommandEvent e, @First Player p){
@@ -931,8 +907,7 @@ public class RPPlayerListener{
         	if (cmd.startsWith("sethome") && !r.AllowHome(p)){
         		RPLang.sendMessage(p, "playerlistener.region.canthome");
         		e.setCancelled(true);
-        		return;
-        	} 
+            }
         	        	
        	}    	
     }     
@@ -1005,7 +980,7 @@ public class RPPlayerListener{
     			break;
     		} 
 		}
-    	return new Transform<World>(setTo).setRotation(to.getRotation());
+    	return new Transform<>(setTo).setRotation(to.getRotation());
 	}
     
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -1115,7 +1090,7 @@ public class RPPlayerListener{
     }
     
     private void stopTaskPlayer(Player p){
-    	List<String> toremove = new ArrayList<String>();
+    	List<String> toremove = new ArrayList<>();
     	for (String taskId:PlayertaskID.keySet()){
     		if (PlayertaskID.get(taskId).equals(p.getName())){
     			Sponge.getScheduler().getTaskById(UUID.fromString(taskId.split("_")[0])).get().cancel();  
@@ -1166,7 +1141,7 @@ public class RPPlayerListener{
     private void RegionFlags(final Region r, Region er, final Player p){  
     	
     	//enter Gamemode flag
-    	if (r.canEnter(p) && r.flagExists("gamemode") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){    		
+    	if (r.canEnter(p) && r.flagExists("gamemode") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
     		p.offer(Keys.GAME_MODE, (GameMode)RPUtil.getRegistryFor(GameMode.class, r.getFlagString("gamemode")));
     	}
     	
@@ -1217,7 +1192,7 @@ public class RPPlayerListener{
 								.amplifier(Integer.parseInt(amplifier))
 								.build();*/
 						p.remove(Keys.POTION_EFFECTS);
-						List<String> removeTasks = new ArrayList<String>();
+						List<String> removeTasks = new ArrayList<>();
 						for (String taskId:PlayertaskID.keySet()){
 							String id = taskId.split("_")[0];
 							String ideff = id+"_"+eff+er.getName();
@@ -1244,7 +1219,7 @@ public class RPPlayerListener{
 	    				p.offer(Keys.CAN_FLY, false);
 	    				p.offer(Keys.IS_FLYING, false);
 	    			}	    			
-					List<String> removeTasks = new ArrayList<String>();
+					List<String> removeTasks = new ArrayList<>();
 					for (String taskId:PlayertaskID.keySet()){
 						String id = taskId.split("_")[0];
 						String ideff = id+"_"+"forcefly"+er.getName();
@@ -1300,7 +1275,7 @@ public class RPPlayerListener{
   				String TaskId = Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(new Runnable() { 
   					public void run() {
   						if (p.isOnline() && r.flagExists("effects")){
-  							p.offer(Keys.POTION_EFFECTS, Arrays.asList(fulleffect)); 
+  							p.offer(Keys.POTION_EFFECTS, Collections.singletonList(fulleffect));
   						} else {
 							p.offer(Keys.CAN_FLY, false); 
 							try {
@@ -1356,7 +1331,7 @@ public class RPPlayerListener{
 					if (PlayertaskID.containsValue(p.getName())){						
 						String eff = effect.split(" ")[0];
 						p.remove(Keys.POTION_EFFECTS);
-						List<String> removeTasks = new ArrayList<String>();
+						List<String> removeTasks = new ArrayList<>();
 						for (String taskId:PlayertaskID.keySet()){
 							String id = taskId.split("_")[0];
 							String ideff = id+"_"+eff+er.getName();
@@ -1379,7 +1354,7 @@ public class RPPlayerListener{
         		if (PlayertaskID.containsValue(p.getName())){
                     p.offer(Keys.CAN_FLY, false);
         			p.offer(Keys.IS_FLYING, false);
-    				List<String> removeTasks = new ArrayList<String>();
+    				List<String> removeTasks = new ArrayList<>();
     				for (String taskId:PlayertaskID.keySet()){
     					String id = taskId.split("_")[0];
     					String ideff = id+"_"+"forcefly"+er.getName();

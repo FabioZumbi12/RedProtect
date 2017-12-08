@@ -27,7 +27,7 @@ import com.sk89q.worldedit.world.DataException;
 @SuppressWarnings("deprecation")
 public class WEListener {
 
-    private static HashMap<String, EditSession> eSessions = new HashMap<String, EditSession>();
+    private static final HashMap<String, EditSession> eSessions = new HashMap<>();
 	
 	public static boolean undo(String rid){
 		if (eSessions.containsKey(rid)){
@@ -52,42 +52,40 @@ public class WEListener {
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
     	    	
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-			public void run() {
-				if (RPUtil.stopRegen){
-					return;
-				}
-				CuboidSelection csel = new CuboidSelection(w , p1, p2);
-		    	Region wreg = null;
-		    	try {
-					wreg = csel.getRegionSelector().getRegion();
-				} catch (IncompleteRegionException e1) {
-					e1.printStackTrace();
-				}
-		    	
-		    	EditSession esession = new EditSession(LocalWorldAdapter.adapt(wreg.getWorld()), -1);
-		    	eSessions.put(r.getID(), esession);
-		    	int delayCount = 1+delay/10;
-		    	
-		    	if (sender != null){
-	    			if (wreg.getWorld().regenerate(wreg, esession)){
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
-	    			} else {
-	    				RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
-	    			}
-	    		} else {
-	    			if (wreg.getWorld().regenerate(wreg, esession)){
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
-	    			} else {
-	    				RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
-	    			}
-	    		}
-		    	
-		    	if (remove){
-		    		RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()));
-		    	}		    	
-		    	
-				} 
-			},delay); 
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+            if (RPUtil.stopRegen){
+                return;
+            }
+            CuboidSelection csel = new CuboidSelection(w , p1, p2);
+            Region wreg = null;
+            try {
+                wreg = csel.getRegionSelector().getRegion();
+            } catch (IncompleteRegionException e1) {
+                e1.printStackTrace();
+            }
+
+            EditSession esession = new EditSession(LocalWorldAdapter.adapt(wreg.getWorld()), -1);
+            eSessions.put(r.getID(), esession);
+            int delayCount = 1+delay/10;
+
+            if (sender != null){
+                if (wreg.getWorld().regenerate(wreg, esession)){
+                    RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                } else {
+                    RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                }
+            } else {
+                if (wreg.getWorld().regenerate(wreg, esession)){
+                    RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                } else {
+                    RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                }
+            }
+
+            if (remove){
+                RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()));
+            }
+
+            },delay);
 	}
 }

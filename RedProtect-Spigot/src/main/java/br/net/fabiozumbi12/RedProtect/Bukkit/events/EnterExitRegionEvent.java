@@ -14,7 +14,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
  * player enter/exit a region and nothing will happen, but
  * code can be added here and will work normally, and the flags
  * can be used too. Only default actions is cancelled.
- * @returns <b>null</b> if the ExitedRegion or EnteredRegion is wilderness.
  * 
  * @author FabioZumbi12
  *
@@ -22,9 +21,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 public class EnterExitRegionEvent extends Event implements Cancellable{
 
 	private static final HandlerList handlers = new HandlerList();
-	private Player player;
-	private Region ExitedRegion;
-	private Region EnteredRegion;
+	private final Player player;
+	private final Region ExitedRegion;
+	private final Region EnteredRegion;
 	private boolean cancelled = false;
 	
 	

@@ -23,19 +23,19 @@ import org.spongepowered.api.world.World;
 @SuppressWarnings("deprecation")
 class WorldMySQLRegionManager implements WorldRegionManager{
 
-	private String url = "jdbc:mysql://"+RedProtect.cfgs.getString("mysql.host")+"/";
-	private String reconnect = "?autoReconnect=true";
-	private String dbname = RedProtect.cfgs.getString("mysql.db-name");
-	private boolean tblexists = false;
-	private String tableName;
+	private final String url = "jdbc:mysql://"+RedProtect.cfgs.getString("mysql.host")+"/";
+	private final String reconnect = "?autoReconnect=true";
+	private final String dbname = RedProtect.cfgs.getString("mysql.db-name");
+	private final boolean tblexists = false;
+	private final String tableName;
     private Connection dbcon;
 
-    private HashMap<String, Region> regions;
-    private World world;
+    private final HashMap<String, Region> regions;
+    private final World world;
     
     public WorldMySQLRegionManager(World world) throws SQLException{
         super();
-        this.regions = new HashMap<String, Region>();
+        this.regions = new HashMap<>();
         this.world = world;
         this.tableName = RedProtect.cfgs.getString("mysql.table-prefix")+world.getName();
         
@@ -277,10 +277,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             ResultSet rs = st.executeQuery();            
             while (rs.next()){ 
             	RedProtect.logger.debug("default", "Load Region: "+rs.getString("name")+", World: "+this.world.getName());
-            	List<String> leaders = new ArrayList<String>();
-            	List<String> admins = new ArrayList<String>();
-                List<String> members = new ArrayList<String>();
-                HashMap<String, Object> flags = new HashMap<String, Object>();                      
+            	List<String> leaders = new ArrayList<>();
+            	List<String> admins = new ArrayList<>();
+                List<String> members = new ArrayList<>();
+                HashMap<String, Object> flags = new HashMap<>();
                 
                 int maxMbrX = rs.getInt("maxMbrX");
                 int minMbrX = rs.getInt("minMbrX");
@@ -300,7 +300,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 Location<World> tppoint = null;
                 if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")){
                 	String tpstring[] = rs.getString("tppoint").split(",");
-                    tppoint = new Location<World>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*, 
+                    tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*,
                     		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
                 }                    
                 
@@ -335,7 +335,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     		leaders.add(creator);
                     	}
                     }                    
-                } catch (Exception ex){}
+                } catch (Exception ignored){}
                 //<------------ compatibility
                 
                 for (String flag:rs.getString("flags").split(",")){                	
@@ -363,7 +363,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     
     @Override
     public Set<Region> getRegions(String uuid) {
-    	Set<Region> regionsp = new HashSet<Region>();
+    	Set<Region> regionsp = new HashSet<>();
     	try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE leaders LIKE ?");
             st.setString(1, "%"+uuid+"%");
@@ -382,7 +382,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     
     @Override
     public Set<Region> getMemberRegions(String uuid) {
-    	Set<Region> regionsp = new HashSet<Region>();
+    	Set<Region> regionsp = new HashSet<>();
     	try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE leaders LIKE ? OR admins LIKE ?");
             st.setString(1, "%"+uuid+"%");
@@ -415,10 +415,10 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();            
                 if (rs.next()){ 
-                	List<String> leaders = new ArrayList<String>();
-                	List<String> admins = new ArrayList<String>();
-                    List<String> members = new ArrayList<String>();
-                    HashMap<String, Object> flags = new HashMap<String, Object>();                      
+                	List<String> leaders = new ArrayList<>();
+                	List<String> admins = new ArrayList<>();
+                    List<String> members = new ArrayList<>();
+                    HashMap<String, Object> flags = new HashMap<>();
                     
                     int maxMbrX = rs.getInt("maxMbrX");
                     int minMbrX = rs.getInt("minMbrX");
@@ -436,7 +436,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                     Location<World> tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")){
                     	String tpstring[] = rs.getString("tppoint").split(",");
-                        tppoint = new Location<World>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*, 
+                        tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*,
                         		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
                     }                    
                                         
@@ -471,15 +471,12 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 st.close(); 
                 rs.close();
                 RedProtect.logger.debug("default", "Adding region to cache: "+rname);
-                Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(new Runnable(){
-                		@Override
-                		public void run(){
-                		if (regions.containsKey(rname)){
-                			regions.remove(rname);
-                			RedProtect.logger.debug("default", "Removed cached region: "+rname);
-                		}
-                		}                	
-                }, RedProtect.cfgs.getInt("mysql.region-cache-minutes"), TimeUnit.MINUTES);                
+                Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+                if (regions.containsKey(rname)){
+                    regions.remove(rname);
+                    RedProtect.logger.debug("default", "Removed cached region: "+rname);
+                }
+                }, RedProtect.cfgs.getInt("mysql.region-cache-minutes"), TimeUnit.MINUTES);
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -506,7 +503,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     public Set<Region> getRegionsNear(Player player, int radius) {
     	int px = player.getLocation().getBlockX();
         int pz = player.getLocation().getBlockZ();
-        Set<Region> ret = new HashSet<Region>();
+        Set<Region> ret = new HashSet<>();
         
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE ABS(centerX-?)<=? AND ABS(centerZ-?)<=?");
@@ -551,7 +548,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         
 	@Override
 	public Set<Region> getRegions(int x, int y, int z) {
-		Set<Region> regionl = new HashSet<Region>();		
+		Set<Region> regionl = new HashSet<>();
 		try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE ?<=maxMbrX AND ?>=minMbrX AND ?<=maxMbrZ AND ?>=minMbrZ AND ?<=maxY AND ?>=minY");
             st.setInt(1, x);
@@ -575,7 +572,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 
 	@Override
 	public Region getTopRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
+		Map<Integer,Region> regionlist = new HashMap<>();
 		int max = 0;
 		
 		for (Region r:this.getRegions(x, y, z)){
@@ -601,7 +598,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	
 	@Override
 	public Region getLowRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
+		Map<Integer,Region> regionlist = new HashMap<>();
 		int min = 0;
 
 		for (Region r:this.getRegions(x, y, z)){
@@ -626,7 +623,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	}
 	
 	public Map<Integer,Region> getGroupRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
+		Map<Integer,Region> regionlist = new HashMap<>();
 		
 		for (Region r:this.getRegions(x, y, z)){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
@@ -647,7 +644,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	
 	@Override
 	public Set<Region> getAllRegions() {		
-		Set<Region> allregions = new HashSet<Region>();		
+		Set<Region> allregions = new HashSet<>();
 		try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"`");
             ResultSet rs = st.executeQuery();
@@ -691,16 +688,14 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		}
 	}
 	
-    private boolean ConnectDB() {
+    private void ConnectDB() {
     	try {
 			this.dbcon = DriverManager.getConnection(this.url + this.dbname+ this.reconnect, RedProtect.cfgs.getString("mysql.user-name"), RedProtect.cfgs.getString("mysql.user-pass"));
 			RedProtect.logger.info("Conected to "+this.tableName+" via Mysql!");
-			return true;
-		} catch (SQLException e) {			
+        } catch (SQLException e) {
 			e.printStackTrace();
 			RedProtect.logger.severe("["+dbname+"] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
-			return false;
-		}		
+        }
 	}
 	
 	@Override

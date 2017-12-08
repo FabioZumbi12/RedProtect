@@ -2,10 +2,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 
@@ -16,10 +13,10 @@ import com.google.common.io.Files;
 
 public class RPCommentedConfig {
 	
-	private HashMap<String, String> comments;
+	private final HashMap<String, String> comments;
 
 	RPCommentedConfig(){
-		this.comments = new HashMap<String, String>();		
+		this.comments = new HashMap<>();
 	}
 	
 	public void addDef(){
@@ -93,10 +90,10 @@ public class RPCommentedConfig {
 		setDefault("region-settings.claimlimit-per-world", true, "Use claim limit per worlds?");
 		setDefault("region-settings.blocklimit-per-world", true, "Use block limit per worlds?");
 		
-		setDefault("allowed-claim-worlds", Arrays.asList("example_world"), "World where players can claim regions.");
+		setDefault("allowed-claim-worlds", Collections.singletonList("example_world"), "World where players can claim regions.");
 		
 		setDefault("needed-claim-to-build", null, "Worlds where players can't build without claim.");
-		setDefault("needed-claim-to-build.worlds", Arrays.asList("example_world"), null);
+		setDefault("needed-claim-to-build.worlds", Collections.singletonList("example_world"), null);
 		setDefault("needed-claim-to-build.allow-only-protections-blocks", true, "Allow player to place only protection blocks, like fences and sign.");
 		
 		setDefault("wands", null, "Wands configurations");
@@ -131,12 +128,12 @@ public class RPCommentedConfig {
 		
 		setDefault("netherProtection", null, "Deny players to go to nether roof.");		
 		setDefault("netherProtection.maxYsize", 128, "Max size of your world nether.");
-		setDefault("netherProtection.execute-cmd", Arrays.asList("spawn {player}"), "Execute this if player go up to maxYsize of nether.");
+		setDefault("netherProtection.execute-cmd", Collections.singletonList("spawn {player}"), "Execute this if player go up to maxYsize of nether.");
 		
 		setDefault("server-protection", null, "General server protections options.");		
-		setDefault("server-protection.deny-potions", Arrays.asList("INVISIBILITY"), "List of potions the player cant use on server. Here the PotioTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html");
-		setDefault("server-protection.deny-playerdeath-by", Arrays.asList("SUFFOCATION"), " List of causes the player cant die/take damage for. here the list of DamageCauses: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html");
-		setDefault("server-protection.deny-commands-on-worlds.world", Arrays.asList("command"), "Deny certain commands on specific worlds.");
+		setDefault("server-protection.deny-potions", Collections.singletonList("INVISIBILITY"), "List of potions the player cant use on server. Here the PotioTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html");
+		setDefault("server-protection.deny-playerdeath-by", Collections.singletonList("SUFFOCATION"), " List of causes the player cant die/take damage for. here the list of DamageCauses: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html");
+		setDefault("server-protection.deny-commands-on-worlds.world", Collections.singletonList("command"), "Deny certain commands on specific worlds.");
 		setDefault("server-protection.nickname-cap-filter.enable", false, "Deny players with same nick but cap char diferences to join on server (most used on offline severs).");
 		setDefault("server-protection.sign-spy.enable", false, "Show all lines of a sign when player place signs in any world.");
 		setDefault("server-protection.sign-spy.only-console", true, "Show only on console or in-game too?");
@@ -220,7 +217,7 @@ public class RPCommentedConfig {
 		setDefault("flags-configuration.pvparena-nopvp-kick-cmd", "spawn {player}", "Command to use if players with pvp off enter in a region with 'pvparena' enabled.");
 		setDefault("flags-configuration.change-flag-delay.enable", true, "Enable delay to change flags.");
 		setDefault("flags-configuration.change-flag-delay.seconds", 10, "Delay the player can change a flag after last change.");
-		setDefault("flags-configuration.change-flag-delay.flags", Arrays.asList("pvp"), "List of flags the player will need to wait to change.");
+		setDefault("flags-configuration.change-flag-delay.flags", Collections.singletonList("pvp"), "List of flags the player will need to wait to change.");
 		
 		setDefault("purge", null, null);
 		setDefault("purge.enabled", false, null);

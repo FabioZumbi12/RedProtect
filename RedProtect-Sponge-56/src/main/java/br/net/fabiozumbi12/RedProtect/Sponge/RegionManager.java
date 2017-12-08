@@ -23,11 +23,11 @@ import com.flowpowered.math.vector.Vector3i;
  */
 public class RegionManager{
 	
-	private HashMap<World, WorldRegionManager> regionManagers;
-	private HashMap<Vector3i, Region> bLoc = new HashMap<Vector3i, Region>();
+	private final HashMap<World, WorldRegionManager> regionManagers;
+	private final HashMap<Vector3i, Region> bLoc = new HashMap<>();
     
     protected RegionManager() {
-        this.regionManagers = new HashMap<World, WorldRegionManager>();
+        this.regionManagers = new HashMap<>();
     }
     
     public void loadAll() throws Exception {
@@ -68,14 +68,12 @@ public class RegionManager{
         this.regionManagers.remove(w);
     }
     
-    public int saveAll() {
+    public void saveAll() {
     	int saved = 0;
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            saved = rms.next().save()+saved;
-        }
-        return saved;
-    }
+		for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+			saved = worldRegionManager.save() + saved;
+		}
+	}
     
     public Region getRegionById(String rid) {
     	World w = Sponge.getServer().getWorld(rid.split("@")[1]).get();
@@ -116,11 +114,10 @@ public class RegionManager{
      * @return set<region>
      */
     public Set<Region> getRegions(String uuid) {
-        Set<Region> ret = new HashSet<Region>();
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            ret.addAll(rms.next().getRegions(uuid));
-        }
+        Set<Region> ret = new HashSet<>();
+		for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+			ret.addAll(worldRegionManager.getRegions(uuid));
+		}
         return ret;
     }
     
@@ -131,11 +128,10 @@ public class RegionManager{
      * @return set<region>
      */
     public Set<Region> getMemberRegions(String uuid) {
-        Set<Region> ret = new HashSet<Region>();
-        Iterator<WorldRegionManager> rms = this.regionManagers.values().iterator();
-        while (rms.hasNext()) {
-            ret.addAll(rms.next().getMemberRegions(uuid));
-        }
+        Set<Region> ret = new HashSet<>();
+		for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+			ret.addAll(worldRegionManager.getMemberRegions(uuid));
+		}
         return ret;
     }
         
@@ -181,7 +177,7 @@ public class RegionManager{
     	
     private void removeCache(Region r){
     	Set<Vector3i> itloc = bLoc.keySet();
-    	List<Vector3i> toRemove = new ArrayList<Vector3i>();
+    	List<Vector3i> toRemove = new ArrayList<>();
     	for (Vector3i loc:itloc){
     		if (bLoc.containsKey(loc) && bLoc.get(loc).getID().equals(r.getID())){
     			toRemove.add(loc);
@@ -234,7 +230,7 @@ public class RegionManager{
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getTopRegion(World w, int x, int y, int z){
-    	return getTopRegion(new Location<World>(w,x,y,z));
+    	return getTopRegion(new Location<>(w, x, y, z));
     }
     
     /**
@@ -252,27 +248,23 @@ public class RegionManager{
     public int removeAll(String player){
     	int qtd = 0;
     	for (WorldRegionManager wrm:this.regionManagers.values()){
-    		Iterator<Region> it = wrm.getRegions(player).iterator();
-    		while (it.hasNext()){
-    			Region r = it.next();
-    			wrm.remove(r);
-    			removeCache(r);
-    			qtd++;
-    		}
+			for (Region r : wrm.getRegions(player)) {
+				wrm.remove(r);
+				removeCache(r);
+				qtd++;
+			}
     	}
     	return qtd;
     }
     
     public int regenAll(String player){
     	int delay = 0;
-    	Iterator<Region> it = getRegions(player).iterator();
-    	while (it.hasNext()){
-    		Region r = it.next();
-    		if (r.getArea() <= RedProtect.cfgs.getInt("purge.regen.max-area-regen")){
-    			WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);               		
-        		delay=delay+10;
+		for (Region r : getRegions(player)) {
+			if (r.getArea() <= RedProtect.cfgs.getInt("purge.regen.max-area-regen")) {
+				WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+				delay = delay + 10;
 			}
-    	}
+		}
     	return delay/10;
     }
     
@@ -311,7 +303,7 @@ public class RegionManager{
     }
         
     public Set<Region> getAllRegions(){
-    	Set<Region> regions = new HashSet<Region>();
+    	Set<Region> regions = new HashSet<>();
     	for (World w:RedProtect.serv.getWorlds()){
     		WorldRegionManager rm = this.regionManagers.get(w);
     		regions.addAll(rm.getAllRegions());    		
@@ -320,9 +312,8 @@ public class RegionManager{
     }
     
     public Set<Region> getRegionsByWorld(World w){
-    	Set<Region> regions = new HashSet<Region>();
-    	WorldRegionManager rm = this.regionManagers.get(w);
-    	regions.addAll(rm.getAllRegions());
+		WorldRegionManager rm = this.regionManagers.get(w);
+		Set<Region> regions = new HashSet<>(rm.getAllRegions());
     	return regions;
     }
     

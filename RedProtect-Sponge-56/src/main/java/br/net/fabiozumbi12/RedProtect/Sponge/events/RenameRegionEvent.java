@@ -10,10 +10,10 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 
 public class RenameRegionEvent extends AbstractEvent implements Cancellable, Event {
-	private Region region;
+	private final Region region;
 	private String newName;
-	private String oldName;
-	private Player player;
+	private final String oldName;
+	private final Player player;
 	private boolean isCancelled = false;
 	
 	public RenameRegionEvent(Region region, String newName, String oldName, Player p){

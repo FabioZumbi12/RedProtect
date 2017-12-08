@@ -84,14 +84,8 @@ public class RPGlobalListener implements Listener{
 	 * @param fat - 1 = Place Block | 2 = Break Block
 	 * @return Boolean - Can build or not.
 	 */
-	private boolean bypassBuild(Player p, Block b, int fat){
-		if (fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())){
-			return true;
-		}
-		if (fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
-			return true;
-		}		
-		return p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName()+".build"));
+	private boolean bypassBuild(Player p, Block b, int fat) {
+		return fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name()) || fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name()) || p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".build"));
 	}
 	
 	@EventHandler
@@ -134,9 +128,8 @@ public class RPGlobalListener implements Listener{
     	}
     	
     	if (!b.isEmpty() && !RPConfig.getGlobalFlagBool(b.getWorld().getName()+".allow-changes-of.flow-damage")){
-        	 e.setCancelled(true);      
-        	return;
-  	    }
+        	 e.setCancelled(true);
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -274,13 +267,11 @@ public class RPGlobalListener implements Listener{
 			if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")){
 	            e.setCancelled(true);
 	            RedProtect.logger.debug("RPGlobalListener - Can't place minecart/boat!");
-	            return;
-	        }
+			}
 		} else {
 			if (!bypassBuild(p, b, 1)){
 				e.setCancelled(true);
 				RedProtect.logger.debug("RPGlobalListener - Can't Build!");
-				return;
 			}
 		}		
 	}
@@ -306,7 +297,6 @@ public class RPGlobalListener implements Listener{
 		
 		if (!bypassBuild(p, b, 2)){			
 			e.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -385,7 +375,7 @@ public class RPGlobalListener implements Listener{
 			
         	if ((!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())
         			|| !RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())) && 
-        			!bypassBuild(p, (Block)null, 0)){
+        			!bypassBuild(p, null, 0)){
         		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         		e.setCancelled(true);
                 return;
@@ -401,7 +391,7 @@ public class RPGlobalListener implements Listener{
 	        	}
 			}
 			if (itemInHand.getType().equals(Material.PAINTING)|| itemInHand.getType().equals(Material.ITEM_FRAME) || itemInHand.getType().equals(Material.ARMOR_STAND)){				
-				if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(itemInHand.getType().name()) && !bypassBuild(p, (Block)null, 0)){
+				if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(itemInHand.getType().name()) && !bypassBuild(p, null, 0)){
 	        		e.setUseItemInHand(Event.Result.DENY);
 	        		e.setCancelled(true);
 	    			return;		
@@ -415,7 +405,6 @@ public class RPGlobalListener implements Listener{
     		} 
     		e.setUseItemInHand(Event.Result.DENY);
 			e.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -434,7 +423,7 @@ public class RPGlobalListener implements Listener{
 		}
         
         if (ent instanceof ItemFrame || ent instanceof Painting) {
-            if (!bypassBuild(p, (Block)null, 0)) {
+            if (!bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
                 return;
             }
@@ -452,8 +441,7 @@ public class RPGlobalListener implements Listener{
     			return;
     		} 
             e.setCancelled(true);
-            return;
-        }
+		}
 	}
 	
 	@EventHandler
@@ -471,7 +459,7 @@ public class RPGlobalListener implements Listener{
         
         if (ent instanceof Player) { 
         	Player p = (Player)ent;
-            if (!bypassBuild(p, (Block)null, 0)) {
+            if (!bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
             }
         }
@@ -494,10 +482,9 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-    	if (!bypassBuild(e.getPlayer(), (Block)null, 0)) {
+    	if (!bypassBuild(e.getPlayer(), null, 0)) {
     		e.setCancelled(true);
-			return;
-    	}
+		}
     }
 	
 	@EventHandler
@@ -517,10 +504,9 @@ public class RPGlobalListener implements Listener{
         	return;    	
         }
 		
-    	if (!bypassBuild(e.getPlayer(), (Block)null, 0)) {
+    	if (!bypassBuild(e.getPlayer(), null, 0)) {
     		e.setCancelled(true);
-			return;
-    	}
+		}
     }
 	
 	@EventHandler
@@ -591,7 +577,7 @@ public class RPGlobalListener implements Listener{
                 }
             }
         	if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {        		
-            	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, (Block)null, 0)){
+            	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, null, 0)){
                     e.setCancelled(true);
                     return;
                 }
@@ -622,10 +608,9 @@ public class RPGlobalListener implements Listener{
                     }
                 }
             	if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {        		
-                	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, (Block)null, 0)){
+                	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, null, 0)){
                         e.setCancelled(true);
-                        return;
-                    }
+					}
                 }
         	}        	
         }        		
@@ -646,8 +631,7 @@ public class RPGlobalListener implements Listener{
     	if (e.getCause().toString().equals("EXPLOSION") || e.getCause().toString().equals("ENTITY")) {
     		if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".entity-block-damage")){
     			e.setCancelled(true);
-        		return;
-    		}
+			}
         }   
     }
 	
@@ -656,14 +640,13 @@ public class RPGlobalListener implements Listener{
     	if (e.isCancelled()){
     		return;
     	}
-    	List<Block> toRemove = new ArrayList<Block>();
+    	List<Block> toRemove = new ArrayList<>();
         for (Block b:e.blockList()) {
         	Location l = b.getLocation();
         	Region r = RedProtect.rm.getTopRegion(l);
         	if (r == null && !RPConfig.getGlobalFlagBool(l.getWorld().getName()+".entity-block-damage")){
         		toRemove.add(b);
-        		continue;
-        	} 
+            }
         }
         if (!toRemove.isEmpty()){
         	e.blockList().removeAll(toRemove);
@@ -683,8 +666,7 @@ public class RPGlobalListener implements Listener{
     	
 		if (!RPConfig.getGlobalFlagBool(b.getWorld().getName()+".fire-block-damage")){
 			e.setCancelled(true);
-    		return;
-		}    	
+		}
     }
 	
 	@EventHandler
@@ -700,7 +682,6 @@ public class RPGlobalListener implements Listener{
 		
 		if ((b.getType().equals(Material.FIRE) || b.getType().name().contains("LAVA")) && !RPConfig.getGlobalFlagBool(b.getWorld().getName()+".fire-spread")){
 			e.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -710,7 +691,7 @@ public class RPGlobalListener implements Listener{
     	if (event.isCancelled()) {
             return;
         }
-        Entity e = (Entity)event.getEntity();
+        Entity e = event.getEntity();
         if (e == null) {
             return;
         }
@@ -740,8 +721,7 @@ public class RPGlobalListener implements Listener{
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
                     		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
             	event.setCancelled(true);
-                return;
-            }
+			}
         }
     }
 	
@@ -763,7 +743,6 @@ public class RPGlobalListener implements Listener{
 		
 		if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".use-minecart") && !p.hasPermission("redprotect.bypass.world")){
 			e.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -785,10 +764,8 @@ public class RPGlobalListener implements Listener{
     	}
     	if ((bignit.getType().equals(Material.FIRE) || bignit.getType().name().contains("LAVA")) && !RPConfig.getGlobalFlagBool(b.getWorld().getName()+".fire-spread")){
 			e.setCancelled(true);
-    		return;
-		}
-    	return;
-    }
+        }
+	}
     
     @EventHandler
     public void MonsterBlockBreak(EntityChangeBlockEvent event) {
@@ -812,8 +789,7 @@ public class RPGlobalListener implements Listener{
     		Player p = (Player) e;
     		if (!bypassBuild(p, b, 2)){
     			event.setCancelled(true);
-    			return;
-			}			
+			}
     	}
     }
     
@@ -840,8 +816,7 @@ public class RPGlobalListener implements Listener{
     		if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-wilderness") && !RedProtect.ph.hasPerm(p, "redprotect.bypass.world")){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
     			e.setCancelled(true);
-    			return;
-    		}
+			}
         }
     }
 }

@@ -34,8 +34,8 @@ public class RPMine18 implements Listener{
 		RedProtect.logger.debug("Loaded RPMine18...");
 	}
 	
-	static RPContainer cont = new RPContainer();
-	static HashMap<Player, String> Ownerslist = new HashMap<Player, String>();
+	static final RPContainer cont = new RPContainer();
+	static HashMap<Player, String> Ownerslist = new HashMap<>();
     
 	@EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
@@ -77,8 +77,7 @@ public class RPMine18 implements Listener{
             if (r != null && !r.canBuild(p)) {
             	RPLang.sendMessage(p, "playerlistener.region.cantedit");
                 e.setCancelled(true);
-                return;               
-            }
+			}
         }
     } 
     
@@ -110,16 +109,14 @@ public class RPMine18 implements Listener{
 			if (e1 instanceof ArmorStand && e2 instanceof Player){
 				if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build")){
                 	e.setCancelled(true);
-                	return;
-                }                
+				}
             }
 		} else {
 			if (e1 instanceof ArmorStand && e2 instanceof Player){
 	        	if (!r1.canBuild(((Player)e2)) && !r1.canBreak(e1.getType())){
 	            	e.setCancelled(true);
 	            	RPLang.sendMessage(e2, "blocklistener.region.cantbreak");
-	            	return;
-	            }                                  
+				}
 	        }
 		}
     }
@@ -152,16 +149,14 @@ public class RPMine18 implements Listener{
 			if (e1 instanceof ArmorStand && e2 instanceof Player){
 				if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName()+".build")){
                 	e.setCancelled(true);
-                	return;
-                }                
+				}
             }
 		} else {
 			if (e1 instanceof ArmorStand && e2 instanceof Player){
 	        	if (!r1.canBuild(((Player)e2)) && !r1.canBreak(e1.getType())){
 	            	e.setCancelled(true);
 	            	RPLang.sendMessage(e2, "blocklistener.region.cantbreak");
-	            	return;
-	            }                                  
+				}
 	        }
 		}
 	}
@@ -188,15 +183,14 @@ public class RPMine18 implements Listener{
         	if (r != null && !r.canBuild(p) && !r.canPlace(m)){
         		e.setCancelled(true);
         		RPLang.sendMessage(p, "blocklistener.region.cantbuild");
-            	return;
-        	}    	
+			}
     	}
     }
     
 	@EventHandler
 	public void onBlockExplode(BlockExplodeEvent e){
 		RedProtect.logger.debug("Is BlockListener - BlockExplodeEvent event");
-		List<Block> toRemove = new ArrayList<Block>();
+		List<Block> toRemove = new ArrayList<>();
 		for (Block b:e.blockList()){
 			Region r = RedProtect.rm.getTopRegion(b.getLocation());
 			if (!cont.canWorldBreak(b)){
@@ -204,9 +198,8 @@ public class RPMine18 implements Listener{
 				continue;
 	    	}
 			if (r != null && !r.canFire()){
-				toRemove.add(b);	
-				continue;
-			}
+				toRemove.add(b);
+            }
 		}		
 		if (!toRemove.isEmpty()){
 			e.blockList().removeAll(toRemove);

@@ -45,7 +45,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 
 public class RPBlockListener{
 	
-	private static RPContainer cont = new RPContainer();
+	private static final RPContainer cont = new RPContainer();
 	
 	public RPBlockListener(){
 		RedProtect.logger.debug("blocks","Loaded RPBlockListener...");
@@ -138,10 +138,8 @@ public class RPBlockListener{
                 e.getText().setElements(lines);
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
                 RedProtect.rm.add(r, RedProtect.serv.getWorld(r.getWorld()).get());
-                return;
             }
         }
-        return;
     }
     
     void setErrorSign(ChangeSignEvent e, Player p, String error) {
@@ -198,8 +196,7 @@ public class RPBlockListener{
                 		if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)){
                 			RPLang.sendMessage(p, "blocklistener.container.chestinside");
                 			e.setCancelled(true);
-                			return;
-                		} 
+                        }
                 	}
                 }
             } catch (Throwable t) {
@@ -248,8 +245,7 @@ public class RPBlockListener{
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b)){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
-        	return;
-        }       
+        }
     }
     
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -348,8 +344,7 @@ public class RPBlockListener{
     		if (!r.canMinecart(p)){
     			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
     			e.setCancelled(true);
-    			return;
-    		}
+            }
     	}
     }
     /*
@@ -402,10 +397,8 @@ public class RPBlockListener{
 			} 
 			if (ignit.first(Lightning.class).isPresent() || ignit.first(Explosion.class).isPresent() || ignit.first(Fireball.class).isPresent()){
 				e.setCancelled(true);
-	    		return;
-			}			
+            }
 		}
-    	return;
     }
     
     /*
@@ -478,9 +471,8 @@ public class RPBlockListener{
 		RedProtect.logger.debug("blocks","Is BlockFromToEvent.Decay event is to " + source.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
 		Region r = RedProtect.rm.getTopRegion(bfrom.getLocation().get());
     	if (r != null && !r.leavesDecay() && source.getState().getType().getName().contains("leaves")){
-          	 e.setCancelled(true);  
-          	 return;
-    	}    	
+          	 e.setCancelled(true);
+        }
     }
 	    
 	@Listener(order = Order.FIRST, beforeModifications = true)
@@ -490,8 +482,7 @@ public class RPBlockListener{
 		Region r = RedProtect.rm.getTopRegion(l);
 		if (r != null && !r.canFire()){
 			e.setCancelled(true);
-			return;
-		}
+        }
 	}
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)
@@ -533,8 +524,7 @@ public class RPBlockListener{
     		if (b.getState().getType().getName().contains("sign") && !cont.canBreak(p, b)){
     			RPLang.sendMessage(p, "blocklistener.container.breakinside");
     			event.setCancelled(true);
-    			return;
-    		}
+            }
         }
     }
     
@@ -620,8 +610,7 @@ public class RPBlockListener{
         		BlockSnapshot ib = block.add(0, 1, 0).createSnapshot();
         		if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(block.createSnapshot())){
         			e.setCancelled(true);
-        			return;
-        		} 
+                }
         	}
 		}
 	}		

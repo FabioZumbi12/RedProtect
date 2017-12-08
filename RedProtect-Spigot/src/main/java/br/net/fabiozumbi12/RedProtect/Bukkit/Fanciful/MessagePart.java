@@ -21,13 +21,13 @@ import org.bukkit.Bukkit;
 final class MessagePart implements JsonRepresentedObject, ConfigurationSerializable, Cloneable {
 
 	ChatColor color = ChatColor.WHITE;
-	ArrayList<ChatColor> styles = new ArrayList<ChatColor>();
+	ArrayList<ChatColor> styles = new ArrayList<>();
 	String clickActionName = null, clickActionData = null,
 			hoverActionName = null;
 	JsonRepresentedObject hoverActionData = null;
 	TextualComponent text = null;
 	String insertionData = null;
-	ArrayList<JsonRepresentedObject> translationReplacements = new ArrayList<JsonRepresentedObject>();
+	ArrayList<JsonRepresentedObject> translationReplacements = new ArrayList<>();
 
 	MessagePart(final TextualComponent text){
 		this.text = text;
@@ -120,7 +120,7 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
 	}
 
 	public Map<String, Object> serialize() {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("text", text);
 		map.put("styles", styles);
 		map.put("color", color.getChar());

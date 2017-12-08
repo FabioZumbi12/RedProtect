@@ -78,7 +78,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         	maxy = p.getWorld().getMaxHeight();
         }
         
-        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
+        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
         
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	
@@ -103,7 +103,7 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
         
-        List<String> othersName = new ArrayList<String>();
+        List<String> othersName = new ArrayList<>();
         Region otherrg = null;
         
         //check if same area
@@ -188,6 +188,5 @@ public class DefineRegionBuilder extends RegionBuilder{
                 
         this.r = region;
         RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" DEFINED region "+region.getName());
-        return;
     }
 }

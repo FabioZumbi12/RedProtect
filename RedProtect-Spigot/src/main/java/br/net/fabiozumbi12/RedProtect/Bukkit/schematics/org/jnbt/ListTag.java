@@ -295,7 +295,7 @@ public final class ListTag extends Tag {
         if (tag instanceof ListTag) {
             return (ListTag) tag;
         } else {
-            return new ListTag(StringTag.class, Collections.<Tag>emptyList());
+            return new ListTag(StringTag.class, Collections.emptyList());
         }
     }
 

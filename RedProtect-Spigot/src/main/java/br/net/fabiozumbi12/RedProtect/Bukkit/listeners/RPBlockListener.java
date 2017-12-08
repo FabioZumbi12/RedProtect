@@ -1,7 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -56,9 +55,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 
 public class RPBlockListener implements Listener{
 	
-	private static RPContainer cont = new RPContainer();
-	private List<String> pistonExtendDelay = new ArrayList<String>();
-	private List<String> pistonRetractDelay = new ArrayList<String>();
+	private static final RPContainer cont = new RPContainer();
+	private final List<String> pistonExtendDelay = new ArrayList<>();
+	private final List<String> pistonRetractDelay = new ArrayList<>();
 	
 	public RPBlockListener(){
 		RedProtect.logger.debug("Loaded RPBlockListener...");
@@ -186,8 +185,7 @@ public class RPBlockListener implements Listener{
                 e.setLine(1, r.getName());
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
                 RedProtect.rm.add(r, RedProtect.serv.getWorld(r.getWorld()));
-                return;
-            }
+			}
         } 
         else if (RPConfig.getBool("region-settings.enable-flag-sign") && line1.equalsIgnoreCase("[flag]") && signr != null){
         	if (signr.flags.containsKey(lines[1])){
@@ -330,8 +328,7 @@ public class RPBlockListener implements Listener{
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())){
         	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
-        	return;
-        }         
+		}
                 
     }
     
@@ -362,7 +359,7 @@ public class RPBlockListener implements Listener{
 		}
 		
 		try {
-			for (Block block:p.getLineOfSight((HashSet<Material>)null, 8)){
+			for (Block block:p.getLineOfSight(null, 8)){
 				if (block == null){
 					continue;
 				}
@@ -372,7 +369,7 @@ public class RPBlockListener implements Listener{
 					return;
 				}
 			}
-		} catch (Exception ex){			
+		} catch (Exception ignored){
 		}
 		
 	}
@@ -380,7 +377,7 @@ public class RPBlockListener implements Listener{
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityExplode(EntityExplodeEvent e) {
     	RedProtect.logger.debug("Is BlockListener - EntityExplodeEvent event");
-    	List<Block> toRemove = new ArrayList<Block>();
+    	List<Block> toRemove = new ArrayList<>();
     	if (e.getEntity() == null){
     		return;
     	}
@@ -410,8 +407,7 @@ public class RPBlockListener implements Listener{
         	
         	if (e.getEntity() instanceof LivingEntity && !r.canMobLoot()){
         		toRemove.add(b);
-        		continue;
-        	}
+            }
         }
         if (!toRemove.isEmpty()){
         	e.blockList().removeAll(toRemove);
@@ -434,8 +430,7 @@ public class RPBlockListener implements Listener{
     		Region r = RedProtect.rm.getTopRegion(l);
     		if (r != null && !r.canMobLoot()){
     			e.setCancelled(true);
-        		return;
-    		}
+			}
         }    
     }
     
@@ -453,8 +448,7 @@ public class RPBlockListener implements Listener{
     		Region r = RedProtect.rm.getTopRegion(l);
     		if (r != null && !r.canFire()){
     			e.setCancelled(true);
-        		return;
-    		}
+			}
         }    
     }
         
@@ -495,11 +489,9 @@ public class RPBlockListener implements Listener{
 			} 
 			if (e.getCause().equals(IgniteCause.LIGHTNING) || e.getCause().equals(IgniteCause.EXPLOSION) || e.getCause().equals(IgniteCause.FIREBALL)){
 				e.setCancelled(true);
-	    		return;
-			}			
+            }
 		}
-    	return;
-    }
+	}
     
     @EventHandler
     public void onBlockBurn(BlockBurnEvent e){
@@ -518,8 +510,7 @@ public class RPBlockListener implements Listener{
     	
     	if (!cont.canWorldBreak(b)){
     		e.setCancelled(true);
-    		return;
-    	}
+		}
     }
     
 	@EventHandler
@@ -550,8 +541,7 @@ public class RPBlockListener implements Listener{
 		}
 		if (rfrom == null && rto != null){
 			e.setCancelled(true);
-			return;
-		}		
+		}
     }
 	    
 	@EventHandler
@@ -561,7 +551,6 @@ public class RPBlockListener implements Listener{
 		Region r = RedProtect.rm.getTopRegion(l);
 		if (r != null && !r.canFire()){
 			e.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -593,8 +582,7 @@ public class RPBlockListener implements Listener{
 		}
 		if (rfrom != null && rto == null){
 			e.setCancelled(true);
-			return;
-		}		
+		}
 	}
 	
 	@EventHandler
@@ -637,7 +625,6 @@ public class RPBlockListener implements Listener{
 		if (r != null && !r.canMinecart(p)){
 			RPLang.sendMessage(p, "blocklistener.region.cantbreak");
 			e.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -686,20 +673,12 @@ public class RPBlockListener implements Listener{
 		
     private void delayExtendPiston(final String location){
     	pistonExtendDelay.add(location);
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-			public void run() {
-				pistonExtendDelay.remove(location);
-				} 
-			},RPConfig.getInt("performance.piston.restrict-piston-event"));
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> pistonExtendDelay.remove(location),RPConfig.getInt("performance.piston.restrict-piston-event"));
     }
     
     private void delayRetractPiston(final String location){
     	pistonRetractDelay.add(location);
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, new Runnable() { 
-			public void run() {
-				pistonRetractDelay.remove(location);
-				} 
-			},RPConfig.getInt("performance.piston.restrict-piston-event"));
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> pistonRetractDelay.remove(location),RPConfig.getInt("performance.piston.restrict-piston-event"));
     }
     
 	@SuppressWarnings("deprecation")
@@ -740,8 +719,7 @@ public class RPBlockListener implements Listener{
         		Block ib = w.getBlockAt(x, y+1, z);
         		if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)){
         			e.setCancelled(true);
-        			return;
-        		} 
+				}
         	}
 		} else {
 			List<Block> blocks = e.getBlocks();

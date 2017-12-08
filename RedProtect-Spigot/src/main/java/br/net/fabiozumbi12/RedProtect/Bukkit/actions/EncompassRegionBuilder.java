@@ -36,11 +36,11 @@ public class EncompassRegionBuilder extends RegionBuilder{
         Block next = null;
         Block first = null;
         String regionName = e.getLine(1);
-        List<Integer> px = new LinkedList<Integer>();
-        List<Integer> pz = new LinkedList<Integer>();
+        List<Integer> px = new LinkedList<>();
+        List<Integer> pz = new LinkedList<>();
         Block bFirst1 = null;
         Block bFirst2 = null;
-        List<Block> blocks = new LinkedList<Block>();
+        List<Block> blocks = new LinkedList<>();
         int oldFacing = 0;
         int curFacing = 0;
         
@@ -99,7 +99,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
             	boolean validBlock = false;            	
                 
                 validBlock = (block[bi].getType().name().contains(RPConfig.getString("region-settings.block-id"))); 
-                if (validBlock && !block[bi].getLocation().equals((Object)last.getLocation())) {                
+                if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {
                 	++nearbyCount;
                     next = block[bi];
                     curFacing = bi % 4;
@@ -126,7 +126,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                     }
                     
                     if (current.equals(first)) {
-                        List<String> leaders = new LinkedList<String>();
+                        List<String> leaders = new LinkedList<>();
                         leaders.add(pName);
                             if (owner1 == null) {
                                 e.setLine(2, "--");
@@ -177,9 +177,9 @@ public class EncompassRegionBuilder extends RegionBuilder{
                             miny = 0;
                         }
                         
-                        Region region = new Region(regionName, new ArrayList<String>(), new ArrayList<String>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
                         
-                        List<String> othersName = new ArrayList<String>();
+                        List<String> othersName = new ArrayList<>();
                         Region otherrg = null;
                         List<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
                                      

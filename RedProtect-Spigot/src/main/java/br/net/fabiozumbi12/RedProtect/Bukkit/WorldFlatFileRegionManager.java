@@ -20,13 +20,13 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 
 class WorldFlatFileRegionManager implements WorldRegionManager{
 
-    private HashMap<String, Region> regions;
-    private World world;
-    private String pathData = RedProtect.plugin.getDataFolder() + File.separator + "data" + File.separator;
+    private final HashMap<String, Region> regions;
+    private final World world;
+    private final String pathData = RedProtect.plugin.getDataFolder() + File.separator + "data" + File.separator;
     
     public WorldFlatFileRegionManager(World world) {
         super();
-        this.regions = new HashMap<String, Region>();
+        this.regions = new HashMap<>();
         this.world = world;
     }
     
@@ -44,7 +44,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         
     @Override
     public Set<Region> getRegions(String pname) {
-    	SortedSet<Region> regionsp = new TreeSet<Region>(Comparator.comparing(Region::getName));
+    	SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
 		for (Region r:regions.values()){
 			if (r.isLeader(pname)){
 				regionsp.add(r);
@@ -55,7 +55,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
     @Override
     public Set<Region> getMemberRegions(String uuid) {
-    	SortedSet<Region> regionsp = new TreeSet<Region>(Comparator.comparing(Region::getName));
+    	SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
 		for (Region r:regions.values()){
 			if (r.isLeader(uuid) || r.isAdmin(uuid)){
 				regionsp.add(r);
@@ -75,7 +75,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         try {
             RedProtect.logger.debug("RegionManager.Save(): File type is " + RPConfig.getString("file-type"));
             String world = this.getWorld().getName();            
-            File datf = null;  
+            File datf;
                         
             if (RPConfig.getString("file-type").equals("yml"))  {               	
             	datf = new File(pathData, "data_" + world + ".yml");
@@ -137,7 +137,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
     @Override
     public int getTotalRegionSize(String uuid) {
-		Set<Region> regionslist = new HashSet<Region>();
+		Set<Region> regionslist = new HashSet<>();
 		for (Region r:regions.values()){
 			if (r.isLeader(uuid)){
 				regionslist.add(r);
@@ -217,7 +217,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public Set<Region> getRegionsNear(Player player, int radius) {
     	int px = player.getLocation().getBlockX();
         int pz = player.getLocation().getBlockZ();
-        SortedSet<Region> ret = new TreeSet<Region>(Comparator.comparing(Region::getName));
+        SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
         
 		for (Region r:regions.values()){
 			RedProtect.logger.debug("Radius: " + radius);
@@ -245,7 +245,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
     @Override
 	public Set<Region> getInnerRegions(Region region) {
-		Set<Region> regionl = new HashSet<Region>();
+		Set<Region> regionl = new HashSet<>();
 		for (Region r:regions.values()){
 			if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
 				regionl.add(r);
@@ -256,7 +256,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     
 	@Override
 	public Set<Region> getRegions(int x, int y, int z) {
-		Set<Region> regionl = new HashSet<Region>();
+		Set<Region> regionl = new HashSet<>();
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
 				regionl.add(r);
@@ -267,7 +267,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
 	@Override
 	public Region getTopRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
+		Map<Integer,Region> regionlist = new HashMap<>();
 		int max = 0;
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
@@ -291,7 +291,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	
 	@Override
 	public Region getLowRegion(int x, int y ,int z) {
-		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
+		Map<Integer,Region> regionlist = new HashMap<>();
 		int min = 0;
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
@@ -315,7 +315,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	
 	@Override
 	public Map<Integer,Region> getGroupRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<Integer,Region>();
+		Map<Integer,Region> regionlist = new HashMap<>();
 		for (Region r:regions.values()){
 			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
 				if (regionlist.containsKey(r.getPrior())){
@@ -335,7 +335,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
 	@Override
 	public Set<Region> getAllRegions() {
-		SortedSet<Region> allregions = new TreeSet<Region>(Comparator.comparing(Region::getName));
+		SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
 		allregions.addAll(regions.values());
 		return allregions;
 	}

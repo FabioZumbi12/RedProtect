@@ -21,7 +21,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 
 public class RPWorldListener implements Listener {
     
-	private HashMap<World, Integer> rainCounter = new HashMap<World, Integer>();
+	private final HashMap<World, Integer> rainCounter = new HashMap<>();
 	
     public RPWorldListener() {
         RedProtect.logger.debug("Loaded RPEntityListener...");
@@ -38,12 +38,7 @@ public class RPWorldListener implements Listener {
     		} else {
     			int acTry = rainCounter.get(w);
     			if (acTry-1 <= 0){    
-    				Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
-						@Override
-						public void run() {
-							w.setWeatherDuration(RPConfig.getGlobalFlagInt(w.getName()+".rain.duration")*20);
-						}    					
-    				}, 40);    				
+    				Bukkit.getScheduler().runTaskLater(RedProtect.plugin, () -> w.setWeatherDuration(RPConfig.getGlobalFlagInt(w.getName()+".rain.duration")*20), 40);
     				rainCounter.put(w, trys);
     			} else {
     				rainCounter.put(w, acTry-1);

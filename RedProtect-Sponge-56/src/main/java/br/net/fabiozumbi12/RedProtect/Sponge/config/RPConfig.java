@@ -23,7 +23,6 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.Enchantment;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -37,7 +36,7 @@ import com.google.common.reflect.TypeToken;
 
 public class RPConfig{
 	
-	public List<String> AdminFlags = Arrays.asList(
+	public final List<String> AdminFlags = Arrays.asList(
 			"spawn-wither",
 			"cropsfarm",
 			"keep-inventory",
@@ -82,23 +81,23 @@ public class RPConfig{
 			"set-portal");	
 	
 	
-	private File defConfig = new File(RedProtect.configDir,"config.conf");
+	private final File defConfig = new File(RedProtect.configDir,"config.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 	private CommentedConfigurationNode tempConfig;
 	
-	private File guiConfig = new File(RedProtect.configDir,"guiconfig.conf");
+	private final File guiConfig = new File(RedProtect.configDir,"guiconfig.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> guiManager;
 	private CommentedConfigurationNode gui;
 	
-	private File gFlagsConfig = new File(RedProtect.configDir,"globalflags.conf");	
+	private final File gFlagsConfig = new File(RedProtect.configDir,"globalflags.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> gFlagsManager;	
 	private CommentedConfigurationNode gflags;
 	
-	private File protFile = new File(RedProtect.configDir,"protections.conf");
+	private final File protFile = new File(RedProtect.configDir,"protections.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> protManager;
 	private CommentedConfigurationNode protCfgs;
 	
-	private File ecoFile = new File(RedProtect.configDir,"economy.conf");
+	private final File ecoFile = new File(RedProtect.configDir,"economy.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
 	private CommentedConfigurationNode ecoCfgs;
 	
@@ -115,12 +114,10 @@ public class RPConfig{
         		for (Object key2:temp.getNode(key).getChildrenMap().keySet()){          			
         			if (temp.getNode(key,key2).hasMapChildren()){		        				
 		        		for (Object key3:temp.getNode(key,key2).getChildrenMap().keySet()){  
-		        			out.getNode(key,key2,key3).setValue(temp.getNode(key,key2,key3).getValue());  
-		        			continue;
+		        			out.getNode(key,key2,key3).setValue(temp.getNode(key,key2,key3).getValue());
 		        		}				        		
 		        	}	        			
-        			out.getNode(key,key2).setValue(temp.getNode(key,key2).getValue());  
-        			continue;
+        			out.getNode(key,key2).setValue(temp.getNode(key,key2).getValue());
         		}
         	}
         	out.getNode(key).setValue(temp.getNode(key).getValue());    	            	   	            	
@@ -134,12 +131,10 @@ public class RPConfig{
         		for (Object key2:out.getNode(key).getChildrenMap().keySet()){          			
         			if (out.getNode(key,key2).hasMapChildren()){		        				
 		        		for (Object key3:out.getNode(key,key2).getChildrenMap().keySet()){  
-		        			out.getNode(key,key2,key3).setValue(temp.getNode(key,key2,key3).getValue(out.getNode(key,key2,key3).getValue()));  
-		        			continue;
+		        			out.getNode(key,key2,key3).setValue(temp.getNode(key,key2,key3).getValue(out.getNode(key,key2,key3).getValue()));
 		        		}				        		
 		        	}	        			
-        			out.getNode(key,key2).setValue(temp.getNode(key,key2).getValue(out.getNode(key,key2).getValue()));  
-        			continue;
+        			out.getNode(key,key2).setValue(temp.getNode(key,key2).getValue(out.getNode(key,key2).getValue()));
         		}
         	}
         	out.getNode(key).setValue(temp.getNode(key).getValue(out.getNode(key).getValue()));    	            	   	            	
@@ -216,7 +211,7 @@ public class RPConfig{
 					
 					protCfgs.getNode("chat-protection","anti-flood","enable").setValue(protCfgs.getNode("chat-protection","anti-flood","enable").getBoolean(true));
 					protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs")
-					.setValue(protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs").getList(TypeToken.of(String.class), Arrays.asList("k")));
+					.setValue(protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs").getList(TypeToken.of(String.class), Collections.singletonList("k")));
 					
 					protCfgs.getNode("chat-protection","caps-filter","enable").setValue(protCfgs.getNode("chat-protection","caps-filter","enable").getBoolean(true));
 					protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").setValue(protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").getInt(3));
@@ -237,13 +232,13 @@ public class RPConfig{
 					protCfgs.getNode("chat-protection","censor","action","cmd").setValue(protCfgs.getNode("chat-protection","censor","action","cmd").getString(""));
 					protCfgs.getNode("chat-protection","censor","action","partial-words").setValue(protCfgs.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
 					protCfgs.getNode("chat-protection","censor","replace-words")
-					.setValue(protCfgs.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Arrays.asList("word")));
+					.setValue(protCfgs.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Collections.singletonList("word")));
 					
 					protCfgs.getNode("chat-protection","anti-ip","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","enable").getBoolean(true));
 					protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
 					protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
 					protCfgs.getNode("chat-protection","anti-ip","check-for-words")
-					.setValue(protCfgs.getNode("chat-protection","anti-ip","check-for-words").getList(TypeToken.of(String.class), Arrays.asList("www.google.com")));
+					.setValue(protCfgs.getNode("chat-protection","anti-ip","check-for-words").getList(TypeToken.of(String.class), Collections.singletonList("www.google.com")));
 					protCfgs.getNode("chat-protection","anti-ip","whitelist-words")
 					.setValue(protCfgs.getNode("chat-protection","anti-ip","whitelist-words").getList(TypeToken.of(String.class), Arrays.asList("www.myserver.com","prntscr.com","gyazo.com","www.youtube.com")));
 					protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").getString("cancel"));
@@ -287,7 +282,7 @@ public class RPConfig{
     	            //add allowed claim worlds to config
     	            try {
 						if (getNodes("allowed-claim-worlds").getList(TypeToken.of(String.class)).isEmpty()) {
-							List<String> worlds = new ArrayList<String>();
+							List<String> worlds = new ArrayList<>();
 							for (World w:RedProtect.serv.getWorlds()){
 								worlds.add(w.getName());
 								RedProtect.logger.warning("Added world to claim list " + w.getName());
@@ -302,7 +297,7 @@ public class RPConfig{
                     /*------------- ---- Add default config for not updateable configs ------------------*/
                     
                     //update new player flags according version
-    	            List<String> flags = new LinkedList<String>(Arrays.asList());    	            
+    	            List<String> flags = new LinkedList<>(Collections.emptyList());
     	            try {
 						flags = getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class));
 					} catch (ObjectMappingException e) {
@@ -422,10 +417,8 @@ public class RPConfig{
                     	gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").getString("")));
                     }
                     
-                    List<String> names = new ArrayList<String>();
-                    Sponge.getRegistry().getAllOf(BlockType.class).forEach((type)->{
-                    	names.add(type.getName());
-                    });
+                    List<String> names = new ArrayList<>();
+                    Sponge.getRegistry().getAllOf(BlockType.class).forEach((type)-> names.add(type.getName()));
                     
                     Sponge.getRegistry().getAllOf(ItemType.class).forEach((type)->{
                     	if (!names.contains(type.getName()))
@@ -439,11 +432,11 @@ public class RPConfig{
                         	}
                         }
                     }                    
-                      
-                    if (Sponge.getRegistry().getAllOf(Enchantment.class).size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
-                    	for (Enchantment ench:Sponge.getRegistry().getAllOf(Enchantment.class)){
-                        	if (ecoCfgs.getNode("enchantments","values",ench.getId()).getValue() == null){
-                        		ecoCfgs.getNode("enchantments","values",ench.getId()).setValue(0.0);                		
+
+                    if (RedProtect.getPVHelper().getAllEnchants().size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
+                    	for (String ench:RedProtect.getPVHelper().getAllEnchants()){
+                        	if (ecoCfgs.getNode("enchantments","values",ench).getValue() == null){
+                        		ecoCfgs.getNode("enchantments","values",ench).setValue(0.0);
                         	}
                         } 
                     }                                       
@@ -586,7 +579,7 @@ public class RPConfig{
 	}
     
     public int getGuiMaxSlot() {
-    	SortedSet<Integer> slots = new TreeSet<Integer>(new ArrayList<Integer>());
+    	SortedSet<Integer> slots = new TreeSet<>(new ArrayList<>());
     	for (CommentedConfigurationNode key:gui.getNode("gui-flags").getChildrenMap().values()){
     		for (Object key1:key.getChildrenMap().keySet()){    			
         		if (key1.toString().contains("slot")){
@@ -607,7 +600,7 @@ public class RPConfig{
     }
     
     public HashMap<String, Object> getDefFlagsValues(){
-    	HashMap<String,Object> flags = new HashMap<String,Object>();
+    	HashMap<String,Object> flags = new HashMap<>();
     	for (Object oflag:getNodes("flags").getChildrenMap().keySet()/*getList(TypeToken.of(String.class)*/){
     		if (oflag instanceof String && isFlagEnabled(((String)oflag).replace("flags.", ""))){
     			String flag = (String)oflag;
@@ -642,8 +635,7 @@ public class RPConfig{
     }
     
     public SortedSet<String> getDefFlags(){
-    	SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());
-		return values;    	
+        return new TreeSet<>(getDefFlagsValues().keySet());
     }
     
     public String getString(String key){
@@ -708,8 +700,8 @@ public class RPConfig{
 	}
 
 	public SortedSet<String> getAllFlags() {
-		SortedSet<String> values = new TreeSet<String>(getDefFlagsValues().keySet());
-		values.addAll(new TreeSet<String>(AdminFlags));
+		SortedSet<String> values = new TreeSet<>(getDefFlagsValues().keySet());
+		values.addAll(new TreeSet<>(AdminFlags));
 		return values;
 	}
 	
@@ -753,7 +745,7 @@ public class RPConfig{
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
 		}
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
     
 	public String getEcoString(String key){
@@ -799,11 +791,11 @@ public class RPConfig{
 	
 	public List<String> getProtStringList(Object... key){
 		try {
-			return protCfgs.getNode(key).getList(TypeToken.of(String.class), new ArrayList<String>());
+			return protCfgs.getNode(key).getList(TypeToken.of(String.class), new ArrayList<>());
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
 		}
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 	        
 	public String getProtString(Object... key){

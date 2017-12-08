@@ -45,14 +45,14 @@ public class Region implements Serializable{
     private String wMessage;
     private String world;
     private String date;
-    public Map<String, Object> flags = new HashMap<String,Object>();
+    public Map<String, Object> flags = new HashMap<>();
     protected boolean[] f = new boolean[10];
 	private long value;
 	private Location tppoint;
 	private boolean tosave = true;
-	public Map<String, Integer> rent = new HashMap<String, Integer>();
-	public Map<String, Long> rentDate = new HashMap<String, Long>();
-	private boolean waiting = false;
+	public final Map<String, Integer> rent = new HashMap<>();
+	public final Map<String, Long> rentDate = new HashMap<>();
+	private final boolean waiting = false;
 	private int rentTask = 0;
 	private boolean canDelete = true;
 	
@@ -85,49 +85,46 @@ public class Region implements Serializable{
 	}
 	
 	private void startRentScheduler(){
-		rentTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, new Runnable(){
-			@Override
-			public void run() {
-				RedProtect.logger.debug("Region Rent - Run scheduler...");
-				
-				List<String> toRemove = new ArrayList<String>();
-				long now = RPUtil.getNowMillis();
-				
-				for (String key:rentDate.keySet()){
-					long rentdt = rentDate.get(key);
-															
-					//compare to remove
-					if (now > rentdt){						
-						if (isLeader(key) && leaders.size() == 1){
-							addLeader(RPConfig.getString("region-settings.default-leader"));
-						}
-						//remove from all
-						removeMember(key);						
-						toRemove.add(key);
-						
-						if (RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)) != null && RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isOnline()){
-							RPLang.sendMessage(RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)), RPLang.get("region.rentend").replace("{region}", name));
-						}
-					}
-					
-					if (RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)) != null && RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isOnline()){
-						RedProtect.logger.debug("Rent found player...");
-						if (now == rentdt){
-							RPLang.sendMessage(RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)), RPLang.get("region.rentalert").replace("{cost}", RPEconomy.getFormatted(getRentValue(key))));
-						}						
-					}
-				}
-				
-				for (String key:toRemove){
-					rent.remove(key);
-					rentDate.remove(key);
-				}
-				
-				if (rent.isEmpty()){					
-					stopRentTask();
-				}
-			}			
-		},0 , 60*20);
+		rentTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, () -> {
+            RedProtect.logger.debug("Region Rent - Run scheduler...");
+
+            List<String> toRemove = new ArrayList<>();
+            long now = RPUtil.getNowMillis();
+
+            for (String key:rentDate.keySet()){
+                long rentdt = rentDate.get(key);
+
+                //compare to remove
+                if (now > rentdt){
+                    if (isLeader(key) && leaders.size() == 1){
+                        addLeader(RPConfig.getString("region-settings.default-leader"));
+                    }
+                    //remove from all
+                    removeMember(key);
+                    toRemove.add(key);
+
+                    if (RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)) != null && RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isOnline()){
+                        RPLang.sendMessage(RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)), RPLang.get("region.rentend").replace("{region}", name));
+                    }
+                }
+
+                if (RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)) != null && RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isOnline()){
+                    RedProtect.logger.debug("Rent found player...");
+                    if (now == rentdt){
+                        RPLang.sendMessage(RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)), RPLang.get("region.rentalert").replace("{cost}", RPEconomy.getFormatted(getRentValue(key))));
+                    }
+                }
+            }
+
+            for (String key:toRemove){
+                rent.remove(key);
+                rentDate.remove(key);
+            }
+
+            if (rent.isEmpty()){
+                stopRentTask();
+            }
+        },0 , 60*20);
 	}
 	
 	private void stopRentTask(){
@@ -175,7 +172,7 @@ public class Region implements Serializable{
 		restartRentScheduler();
 	}
 	
-	public boolean removeRent(String player){
+	public void removeRent(String player){
 		if (!this.rent.isEmpty()){
 			setToSave(true);
 			this.rent.remove(player);
@@ -188,9 +185,7 @@ public class Region implements Serializable{
 			if (this.rent.isEmpty()){
 				stopRentTask();
 			}
-			return true;
-		}		
-		return false;
+		}
 	}
 	
 	public String getRentDateFormated(String player){
@@ -557,7 +552,7 @@ public class Region implements Serializable{
             	try {
             		UUID.fromString(RPUtil.PlayerToUUID(pname));
             		play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
-            	} catch (Exception e){            		
+            	} catch (Exception ignored){
             	}            	
         	}            
         	if (pname != null && play != null && play.isOnline()){
@@ -570,7 +565,7 @@ public class Region implements Serializable{
         	try {
         		UUID.fromString(RPUtil.PlayerToUUID(pname));
         		play = RedProtect.serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
-        	} catch (Exception e){            		
+        	} catch (Exception ignored){
         	}             
         	if (pname != null && play != null && play.isOnline()){
         		today = ChatColor.GREEN + "Online!";
@@ -1045,10 +1040,7 @@ public class Region implements Serializable{
 	//---------------------- Admin Flags --------------------------// 
     
 	public boolean canSpawnWhiter() {
-		if (!flagExists("spawn-wither")){
-    		return true;
-    	}
-		return getFlagBool("spawn-wither");
+		return !flagExists("spawn-wither") || getFlagBool("spawn-wither");
 	}
 	
     public int maxPlayers() {
@@ -1059,10 +1051,7 @@ public class Region implements Serializable{
 	}
     
 	public boolean canDeath() {
-		if (!flagExists("can-death")){
-    		return true;
-    	}
-		return getFlagBool("can-death");
+		return !flagExists("can-death") || getFlagBool("can-death");
 	}
 	
     public boolean cmdOnHealth(Player p){
@@ -1094,17 +1083,11 @@ public class Region implements Serializable{
     }
     
 	public boolean keepInventory() {
-		if (!flagExists("keep-inventory")){
-    		return false;
-    	}
-		return getFlagBool("keep-inventory");
-	}	
+		return flagExists("keep-inventory") && getFlagBool("keep-inventory");
+	}
 	
 	public boolean keepLevels() {
-		if (!flagExists("keep-levels")){
-    		return false;
-    	}
-		return getFlagBool("keep-levels");
+		return flagExists("keep-levels") && getFlagBool("keep-levels");
 	}
 	
     public String getClan(){
@@ -1122,24 +1105,15 @@ public class Region implements Serializable{
     }
     
     public boolean canPlayerDamage() {
-    	if (!flagExists("player-damage")){
-    		return true;
-    	}
-		return getFlagBool("player-damage");
+		return !flagExists("player-damage") || getFlagBool("player-damage");
 	}
     
     public boolean forcePVP() {
-    	if (!flagExists("forcepvp")){
-    		return false;
-    	}
-		return getFlagBool("forcepvp");
+		return flagExists("forcepvp") && getFlagBool("forcepvp");
 	}
     
     public boolean canHunger() {
-    	if (!flagExists("can-hunger")){
-    		return true;
-    	}
-		return getFlagBool("can-hunger");
+		return !flagExists("can-hunger") || getFlagBool("can-hunger");
 	}
     
     public boolean canSign(Player p) {
@@ -1150,14 +1124,11 @@ public class Region implements Serializable{
 	}
     
 	public boolean canEnter(Player p) {
-		if (RedProtect.denyEnter.containsKey(p.getName()) && RedProtect.denyEnter.get(p.getName()).contains(this.getID())){
+		if (RedProtect.denyEnter.containsKey(p.getName()) && RedProtect.denyEnter.get(p.getName()).contains(this.getID())) {
 			return checkAllowedPlayer(p);
 		}
-		
-		if (!flagExists("enter")){
-    		return true;
-    	}
-        return getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter."+this.name) || checkAllowedPlayer(p);
+
+		return !flagExists("enter") || getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnterWithItens(Player p) {
@@ -1170,8 +1141,8 @@ public class Region implements Serializable{
 		}
 		
 		String[] items = getFlagString("allow-enter-items").replace(" ", "").split(",");
-		List<String> inv = new ArrayList<String>();
-		List<String> mats = new ArrayList<String>();
+		List<String> inv = new ArrayList<>();
+		List<String> mats = new ArrayList<>();
 		for (ItemStack slot:p.getInventory()){
 			if (slot == null || slot.getType().equals(Material.AIR)){
 				continue;
@@ -1186,12 +1157,9 @@ public class Region implements Serializable{
 				mats.add(item.toUpperCase());
 			}
 			
-		}				
-		if (!(mats.containsAll(inv) && inv.containsAll(mats))){
-			return false;
 		}
-        return true;
-	}
+        return mats.containsAll(inv) && inv.containsAll(mats);
+    }
 	
 	public boolean denyEnterWithItens(Player p) {
 		if (!flagExists("deny-enter-items")){
@@ -1230,17 +1198,8 @@ public class Region implements Serializable{
 	
     
 	public boolean canMining(Block b) {
-    	if (!flagExists("minefarm")){
-    		return false;
-    	}
-		if (b.getType().toString().contains("_ORE") ||
-				b.getType().equals(Material.STONE) || 
-				b.getType().equals(Material.GRASS)||
-				b.getType().equals(Material.DIRT)){
-			return getFlagBool("minefarm");
-		}
-		return false;
-	}
+        return flagExists("minefarm") && (b.getType().toString().contains("_ORE") || b.getType().equals(Material.STONE) || b.getType().equals(Material.GRASS) || b.getType().equals(Material.DIRT)) && getFlagBool("minefarm");
+    }
 	
 	public boolean canPlace(Material b) {
     	if (!flagExists("allow-place")){
@@ -1282,58 +1241,27 @@ public class Region implements Serializable{
 	}
 
 	public boolean canTree(Block b) {
-		if (!flagExists("treefarm")){
-    		return false;
-    	}
-		if (b.getType().toString().contains("LOG") || b.getType().toString().contains("LEAVES")){
-			return getFlagBool("treefarm");
-		}
-		return false;
-	}
+        return flagExists("treefarm") && (b.getType().toString().contains("LOG") || b.getType().toString().contains("LEAVES")) && getFlagBool("treefarm");
+    }
 	
 	public boolean canCrops(Block b) {
-		if (!flagExists("cropsfarm")){
-    		return false;
-    	}
-		if (b instanceof Crops
-				|| b.getType().equals(Material.PUMPKIN_STEM)
-				 || b.getType().equals(Material.MELON_STEM)
-				 || b.getType().toString().contains("CROPS")
-				 || b.getType().toString().contains("SOIL")
-				 || b.getType().toString().contains("CHORUS_")
-				 || b.getType().toString().contains("BEETROOT_")
-				 || b.getType().toString().contains("SUGAR_CANE")){
-			return getFlagBool("cropsfarm");			
-		}
-		return false;
-	}
+        return flagExists("cropsfarm") && (b instanceof Crops || b.getType().equals(Material.PUMPKIN_STEM) || b.getType().equals(Material.MELON_STEM) || b.getType().toString().contains("CROPS") || b.getType().toString().contains("SOIL") || b.getType().toString().contains("CHORUS_") || b.getType().toString().contains("BEETROOT_") || b.getType().toString().contains("SUGAR_CANE")) && getFlagBool("cropsfarm");
+    }
 	
 	public boolean canSkill(Player p) {
-		if (!flagExists("up-skills")){
-    		return true;
-    	}
-        return getFlagBool("up-skills") || checkAllowedPlayer(p);
+		return !flagExists("up-skills") || getFlagBool("up-skills") || checkAllowedPlayer(p);
 	}
 
 	public boolean canBack(Player p) {
-		if (!flagExists("can-back")){
-    		return true;
-    	}
-        return getFlagBool("can-back") || checkAllowedPlayer(p);
+		return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p);
 	}
 	
 	public boolean isForSale() {
-		if (!flagExists("for-sale")){
-			return false;
-		}
-		return getFlagBool("for-sale");
+		return flagExists("for-sale") && getFlagBool("for-sale");
 	}
 	
 	public boolean isPvPArena() {
-		if (!flagExists("pvparena")){
-			return false;
-		}
-		return getFlagBool("pvparena");
+		return flagExists("pvparena") && getFlagBool("pvparena");
 	}
 	
 	public boolean allowMod(Player p) {
@@ -1344,52 +1272,31 @@ public class Region implements Serializable{
 	}
 		
 	public boolean canEnterPortal(Player p) {
-		if (!flagExists("portal-enter")){
-			return true;
-		}
-		return getFlagBool("portal-enter") || checkAllowedPlayer(p);
+		return !flagExists("portal-enter") || getFlagBool("portal-enter") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canExitPortal(Player p) {
-		if (!flagExists("portal-exit")){
-			return true;
-		}
-		return getFlagBool("portal-exit") || checkAllowedPlayer(p);
+		return !flagExists("portal-exit") || getFlagBool("portal-exit") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canPet(Player p) {
-		if (!flagExists("can-pet")){
-			return true;
-		}
-		return getFlagBool("can-pet") || checkAllowedPlayer(p);
+		return !flagExists("can-pet") || getFlagBool("can-pet") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canProtectiles(Player p) {
-		if (!flagExists("can-projectiles")){
-			return true;
-		}
-		return getFlagBool("can-projectiles") || checkAllowedPlayer(p);
+		return !flagExists("can-projectiles") || getFlagBool("can-projectiles") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canDrop(Player p) {
-		if (!flagExists("can-drop")){
-			return true;
-		}
-		return getFlagBool("can-drop") || checkAllowedPlayer(p);
+		return !flagExists("can-drop") || getFlagBool("can-drop") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canPickup(Player p) {
-		if (!flagExists("can-pickup")){
-			return true;
-		}
-		return getFlagBool("can-pickup") || checkAllowedPlayer(p);
+		return !flagExists("can-pickup") || getFlagBool("can-pickup") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canCreatePortal() {
-		if (!flagExists("allow-create-portal")){
-			return true;
-		}
-		return getFlagBool("allow-create-portal");
+		return !flagExists("allow-create-portal") || getFlagBool("allow-create-portal");
 	}
 	
 	public boolean AllowCommands(Player p, String fullcmd) {
@@ -1675,7 +1582,7 @@ public class Region implements Serializable{
 	}
 	
 	public List<Location> getLimitLocs(int locy){
-		final List<Location> locBlocks = new ArrayList<Location>();
+		final List<Location> locBlocks = new ArrayList<>();
 		Location loc1 = this.getMinLocation();
 		Location loc2 = this.getMaxLocation();
 		World w = Bukkit.getWorld(this.getWorld());
@@ -1694,14 +1601,14 @@ public class Region implements Serializable{
 	}
 	
 	public List<Location> getLimitLocs(int miny, int maxy, boolean define){
-		final List<Location> locBlocks = new ArrayList<Location>();
+		final List<Location> locBlocks = new ArrayList<>();
 		Location loc1 = this.getMinLocation();
 		Location loc2 = this.getMaxLocation();
 		World w = Bukkit.getWorld(this.getWorld());
 		
 		for (int x = (int) loc1.getX(); x <= (int) loc2.getX(); ++x) {
             for (int z = (int) loc1.getZ(); z <= (int) loc2.getZ(); ++z) {
-                for (int y = (int) miny; y <= (int) maxy; ++y) {
+                for (int y = miny; y <= maxy; ++y) {
                     if ((z == loc1.getZ() || z == loc2.getZ() ||
                         x == loc1.getX() || x == loc2.getX())
                         && (define || new Location(w,x,y,z).getBlock().getType().name().contains(RPConfig.getString("region-settings.block-id")))) {
@@ -1714,7 +1621,7 @@ public class Region implements Serializable{
 	}
 	
 	public List<Location> get4Points(int y){
-		List <Location> locs = new ArrayList<Location>();
+		List <Location> locs = new ArrayList<>();
 		locs.add(this.getMinLocation());		
 		locs.add(new Location(this.getMinLocation().getWorld(),this.minMbrX,y,this.minMbrZ+(this.maxMbrZ-this.minMbrZ)));
 		locs.add(this.getMaxLocation());
