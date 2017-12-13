@@ -665,7 +665,7 @@ public class RPConfig{
 	}
     
     public BlockType getMaterial(String key){
-    	return BlockTypes.GLOWSTONE;//Material.getMaterial(RedProtect.plugin.getConfig().getString(key));
+    	return BlockTypes.GLOWSTONE;
     }
     
     public void save(){
@@ -704,8 +704,31 @@ public class RPConfig{
 		values.addAll(new TreeSet<>(AdminFlags));
 		return values;
 	}
-	
-	
+
+	public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
+		if (isAdmin){
+			if (!AdminFlags.contains(flag)){
+				AdminFlags.add(flag);
+				return true;
+			}
+		} else {
+			if (config.getNode("flags",flag).getValue() == null){
+				config.getNode("flags",flag).setValue(defaultValue);
+                try {
+                    List<String> flags = config.getNode("flags-configuration","enabled-flags").getList(TypeToken.of(String.class));
+                    flags.add(flag);
+                    config.getNode("flags-configuration","enabled-flags").setValue(flags);
+                    configManager.save(config);
+                } catch (ObjectMappingException | IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+                return true;
+			}
+		}
+		return false;
+	}
+
 	public int getBlockCost(String itemName) {
 		return ecoCfgs.getNode("items","values",itemName).getInt();
 	}

@@ -689,6 +689,25 @@ public class RPConfig{
 		return values;
 	}
 
+	public static boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
+	    if (isAdmin){
+	        if (!AdminFlags.contains(flag)){
+                AdminFlags.add(flag);
+                return true;
+            }
+        } else {
+	        if (RedProtect.plugin.getConfig().get("flags."+flag) == null){
+                RedProtect.plugin.getConfig().set("flags."+flag, defaultValue);
+                List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+                flags.add(flag);
+                RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", flags);
+                RedProtect.plugin.saveConfig();
+                return true;
+            }
+        }
+        return false;
+    }
+
 	public static int getProtInt(String key){
 		return Prots.getInt(key);
 	}

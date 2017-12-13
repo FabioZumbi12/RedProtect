@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 import java.util.Map;
 import java.util.Set;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -170,4 +171,15 @@ public class RedProtectAPI {
 	public static void renameRegion(Region region, String newName){
 		RedProtect.rm.renameRegion(newName, region);
 	}
+
+    /**
+     * Add custom flags.
+     * @param flag The name of flag.
+     * @param defaultValue Default value if not admin flag.
+     * @param isAdmin Is flag admin? If admin, will require admin permission (redprotect.admin.flag.FlagName)
+     * @return true if added or false if the flag already exists.
+     */
+	public static boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
+	    return RPConfig.addFlag(flag, defaultValue, isAdmin);
+    }
 }
