@@ -59,7 +59,10 @@ public class RPPermHandler{
     				RedProtect.logger.debug("default","Perm: "+perm);
     				if (p.hasPermission(perm)){
     					RedProtect.logger.debug("default","Has block perm: "+perm);
-    					limits.add(Integer.parseInt(perm.replaceAll("[^-?0-9]+", ""))); 
+						String pStr = perm.replaceAll("[^-?0-9]+", "");
+						if (!pStr.isEmpty()){
+							limits.add(Integer.parseInt(pStr));
+						}
     				}
     			}
     		} else {
@@ -81,7 +84,10 @@ public class RPPermHandler{
     				RedProtect.logger.debug("default","Perm: "+perm);
     				if (p.hasPermission(perm)){
     					RedProtect.logger.debug("default","Has claim perm: "+perm);
-    					limits.add(Integer.parseInt(perm.replaceAll("[^-?0-9]+", ""))); 
+						String pStr = perm.replaceAll("[^-?0-9]+", "");
+						if (!pStr.isEmpty()){
+							limits.add(Integer.parseInt(pStr));
+						}
     				}
     			}
     		} else {

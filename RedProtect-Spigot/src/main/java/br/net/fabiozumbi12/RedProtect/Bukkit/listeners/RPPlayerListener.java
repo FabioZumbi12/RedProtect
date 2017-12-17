@@ -1,8 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
@@ -694,16 +692,38 @@ public class RPPlayerListener implements Listener{
     	}   
     	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+            if (rto != null && rfrom == null){
+                RegionFlags(rto, null, p);
+            }
             if (rto != null && rfrom != null){
                 RegionFlags(rto, rfrom, p);
             }
-
             if (rto == null && rfrom != null){
                 noRegionFlags(rfrom, p);
             }
-
             if (rfrom == null && rto != null){
                 noRegionFlags(rto, p);
+            }
+            if (rfrom == null && rto == null){
+                //remove all if no regions
+                List<String> toRemove = new ArrayList<>();
+                for (String taskId:PlayertaskID.keySet()){
+                    if (PlayertaskID.get(taskId).equals(p.getName())){
+                        if (taskId.contains("forcefly")){
+                            p.setFlying(false);
+                            p.setAllowFlight(false);
+                        } else {
+                            for (PotionEffect pot:p.getActivePotionEffects()){
+                                p.removePotionEffect(pot.getType());
+                            }
+                        }
+                        toRemove.add(taskId);
+                        stopTaskPlayer(taskId);
+                    }
+                }
+                for (String key:toRemove){
+                    PlayertaskID.remove(key);
+                }
             }
         }, 40L);
     }
@@ -998,7 +1018,7 @@ public class RPPlayerListener implements Listener{
             //update region admin or leander visit
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")){
         		if (r.isLeader(p) || r.isAdmin(p)){
-                	if (r.getDate() == null || (r.getDate() != RPUtil.DateNow())){
+                	if (r.getDate() == null || (!r.getDate().equals(RPUtil.DateNow()))){
                 		r.setDate(RPUtil.DateNow());
                 	}        	
         		}
@@ -1026,7 +1046,9 @@ public class RPPlayerListener implements Listener{
     			if (!r.getWelcome().equalsIgnoreCase("hide ")){
     				EnterExitNotify(r, p);
     			}        		
-        	}
+        	} else {
+                RegionFlags(r, null, p);
+            }
     	} else {
     		//if (r == null) >>
     		if (Ownerslist.get(p.getName()) != null) {
@@ -1036,20 +1058,42 @@ public class RPPlayerListener implements Listener{
             	}
     			
     			//Execute listener:
-    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
+    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, null, p);
     			Bukkit.getPluginManager().callEvent(event);    			
     			if (event.isCancelled()){
     				return;
     			}
     			//---
-    			noRegionFlags(er, p);    	
-    			if (er != null && !er.getWelcome().equalsIgnoreCase("hide ") && RPConfig.getBool("notify.region-exit")){
-    				if (RedProtect.version >= 1110){
-    					SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), "RED");
-    				} else {
-    					SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), null);
-    				}    				
-    			}    			
+    			if (er == null){
+                    //remove all if no regions
+                    List<String> toRemove = new ArrayList<>();
+                    for (String taskId:PlayertaskID.keySet()){
+                        if (PlayertaskID.get(taskId).equals(p.getName())){
+                            if (taskId.contains("forcefly")){
+                                p.setFlying(false);
+                                p.setAllowFlight(false);
+                            } else {
+                                for (PotionEffect pot:p.getActivePotionEffects()){
+                                    p.removePotionEffect(pot.getType());
+                                }
+                            }
+                            toRemove.add(taskId);
+                            stopTaskPlayer(taskId);
+                        }
+                    }
+                    for (String key:toRemove){
+                        PlayertaskID.remove(key);
+                    }
+                } else {
+                    noRegionFlags(er, p);
+                    if (!er.getWelcome().equalsIgnoreCase("hide ") && RPConfig.getBool("notify.region-exit")){
+                        if (RedProtect.version >= 1110){
+                            SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), "RED");
+                        } else {
+                            SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), null);
+                        }
+                    }
+                }
         	}   			
     	}  	
     }
@@ -1285,6 +1329,10 @@ public class RPPlayerListener implements Listener{
 		if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("CHAT")){
 			p.sendMessage(wel);
 		}
+    }
+
+    private void stopTaskPlayer(String taskId){
+        Bukkit.getScheduler().cancelTask(Integer.parseInt(taskId.split("_")[0]));
     }
     
     private void stopTaskPlayer(Player p){
@@ -1638,15 +1686,7 @@ public class RPPlayerListener implements Listener{
                 	RedProtect.serv.dispatchCommand(RedProtect.serv.getConsoleSender(), cmd.replace("{player}", p.getName()));
             	}                	
             }
-		} else {
-    	    if (PlayertaskID.containsKey(p.getName())){
-                p.setAllowFlight(false);
-                p.setFlying(false);
-                for (PotionEffect pot:p.getActivePotionEffects()){
-                    p.removePotionEffect(pot.getType());
-                }
-            }
-        }
+		}
     }
     
     @EventHandler

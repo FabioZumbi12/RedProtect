@@ -57,7 +57,10 @@ public class RPPermissionHandler{
     		if (!p.hasPermission("redprotect.limit.blocks.unlimited")){
     			for (PermissionAttachmentInfo perm:perms){    			
         			if (perm.getPermission().startsWith("redprotect.limit.blocks.")){
-        				limits.add(Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", "")));    				
+                        String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
+                        if (!pStr.isEmpty()){
+                            limits.add(Integer.parseInt(pStr));
+                        }
         			}  
         		}
     		} else {
@@ -78,7 +81,11 @@ public class RPPermissionHandler{
     		if (!p.hasPermission("redprotect.limit.claim.unlimited")){
     			for (PermissionAttachmentInfo perm:perms){
         			if (perm.getPermission().startsWith("redprotect.limit.claim.")){
-        				limits.add(Integer.parseInt(perm.getPermission().replaceAll("[^-?0-9]+", "")));    				
+        			    String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
+        			    if (!pStr.isEmpty()){
+                            limits.add(Integer.parseInt(pStr));
+                        }
+
         			}  
         		}
     		} else {

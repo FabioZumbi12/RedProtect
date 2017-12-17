@@ -683,13 +683,13 @@ public class RPPlayerListener{
             //update region admin or leander visit
             if (RedProtect.cfgs.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")){
         		if (r.isLeader(p) || r.isAdmin(p)){
-                	if (r.getDate() == null || (r.getDate() != RPUtil.DateNow())){
+                	if (r.getDate() == null || (!r.getDate().equals(RPUtil.DateNow()))){
                 		r.setDate(RPUtil.DateNow());
                 	}        	
         		}
         	}
             
-            if (Ownerslist.get(p) != r.getName()){ 
+            if (Ownerslist.get(p) != r.getName()){
     			Region er = RedProtect.rm.getRegion(Ownerslist.get(p), p.getWorld());			
     			Ownerslist.put(p, r.getName());
     			
@@ -699,11 +699,13 @@ public class RPPlayerListener{
     				return;
     			}
     			//--
-    			RegionFlags(r, er, p);	
+    			RegionFlags(r, er, p);
     			if (!r.getWelcome().equalsIgnoreCase("hide ")){
     				EnterExitNotify(r, p);
-    			}        		
-        	}
+    			}
+        	} else {
+                RegionFlags(r, null, p);
+            }
     	} else {
     		//if (r == null) >>
     		if (Ownerslist.get(p) != null) { 
@@ -713,15 +715,35 @@ public class RPPlayerListener{
             	}
     			
     			//Execute listener:
-    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
+    			EnterExitRegionEvent event = new EnterExitRegionEvent(er, null, p);
     			if (Sponge.getEventManager().post(event)){
     				return;
     			}
     			//---
-    			noRegionFlags(er, p);    	
-    			if (er != null && !er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.cfgs.getBool("notify.region-exit")){
-    				SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"));
-    			}    			
+                if (er == null){
+                    //remove all if no regions
+                    List<String> toRemove = new ArrayList<>();
+                    for (String taskId:PlayertaskID.keySet()){
+                        if (PlayertaskID.get(taskId).equals(p.getName())){
+                            if (taskId.contains("forcefly")){
+                                p.offer(Keys.CAN_FLY, false);
+                                p.offer(Keys.IS_FLYING, false);
+                            } else {
+                                p.remove(Keys.POTION_EFFECTS);
+                            }
+                            toRemove.add(taskId);
+                            stopTaskPlayer(taskId);
+                        }
+                    }
+                    for (String key:toRemove){
+                        PlayertaskID.remove(key);
+                    }
+                } else {
+                    noRegionFlags(er, p);
+                    if (!er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.cfgs.getBool("notify.region-exit")){
+                        SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"));
+                    }
+                }
         	}   			
     	}  	
     }
@@ -746,16 +768,36 @@ public class RPPlayerListener{
     	final Region rto = RedProtect.rm.getTopRegion(lto);
     	   	
     	Sponge.getScheduler().createAsyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(() -> {
+            if (rto != null && rfrom == null){
+                RegionFlags(rto, null, p);
+            }
             if (rto != null && rfrom != null){
                 RegionFlags(rto, rfrom, p);
             }
-
             if (rto == null && rfrom != null){
                 noRegionFlags(rfrom, p);
             }
-
             if (rfrom == null && rto != null){
                 noRegionFlags(rto, p);
+            }
+            if (rfrom == null && rto == null){
+                //remove all if no regions
+                List<String> toRemove = new ArrayList<>();
+                for (String taskId:PlayertaskID.keySet()){
+                    if (PlayertaskID.get(taskId).equals(p.getName())){
+                        if (taskId.contains("forcefly")){
+                            p.offer(Keys.CAN_FLY, false);
+                            p.offer(Keys.IS_FLYING, false);
+                        } else {
+                            p.remove(Keys.POTION_EFFECTS);
+                        }
+                        toRemove.add(taskId);
+                        stopTaskPlayer(taskId);
+                    }
+                }
+                for (String key:toRemove){
+                    PlayertaskID.remove(key);
+                }
             }
         }, 2, 2, TimeUnit.SECONDS);
     	
@@ -1088,7 +1130,11 @@ public class RPPlayerListener{
 			p.sendMessage(RPUtil.toText(wel));
 		}
     }
-    
+
+    private void stopTaskPlayer(String taskId){
+        Sponge.getScheduler().getTaskById(UUID.fromString(taskId.split("_")[0])).get().cancel();
+    }
+
     private void stopTaskPlayer(Player p){
     	List<String> toremove = new ArrayList<>();
     	for (String taskId:PlayertaskID.keySet()){
@@ -1291,7 +1337,7 @@ public class RPPlayerListener{
   			}
   		}
         
-      //enter fly flag
+        //enter fly flag
     	if (r.canEnter(p) && r.flagExists("forcefly") && !RedProtect.ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.gameMode().get().equals(GameModes.SURVIVAL) || p.gameMode().get().equals(GameModes.ADVENTURE))){
             p.offer(Keys.CAN_FLY, r.getFlagBool("forcefly"));
     	    p.offer(Keys.IS_FLYING, r.getFlagBool("forcefly"));
@@ -1394,14 +1440,7 @@ public class RPPlayerListener{
             		RedProtect.game.getCommandManager().process(RedProtect.serv.getConsole(), cmd.replace("{player}", p.getName()));
             	}                	
             }
-		} else {
-    	    //remove all if no regions
-            if (PlayertaskID.containsValue(p.getName())){
-                p.offer(Keys.CAN_FLY, false);
-                p.offer(Keys.IS_FLYING, false);
-                p.remove(Keys.POTION_EFFECTS);
-            }
-        }
+		}
     }
         
     @Listener(order = Order.FIRST, beforeModifications = true)
