@@ -90,4 +90,22 @@ public class RPVHelper7 implements RPVHelper{
         item.offer(Keys.ITEM_ENCHANTMENTS, Collections.singletonList(Enchantment.builder().type(EnchantmentTypes.UNBREAKING).level(1).build()));
         return item;
     }
+
+	@Override
+	public long getInvValue(Iterable<Inventory> inv){
+		long value = 0;
+		for (Inventory item:inv){
+			if (!item.peek().isPresent()){
+				continue;
+			}
+			ItemStack stack = item.peek().get();
+			value += ((RedProtect.cfgs.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
+			if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
+				for (Enchantment enchant:stack.get(Keys.ITEM_ENCHANTMENTS).get()){
+					value += ((RedProtect.cfgs.getEnchantCost(enchant.getType().getId()) * enchant.getLevel()));
+				}
+			}
+		}
+		return value;
+	}
 }

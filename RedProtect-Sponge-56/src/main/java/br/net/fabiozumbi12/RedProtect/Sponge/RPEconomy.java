@@ -58,20 +58,7 @@ public class RPEconomy {
 	}
 
 	private static long getInvValue(Iterable<Inventory> inv){
-		long value = 0;
-		for (Inventory item:inv){
-			if (!item.peek().isPresent()){
-	  			  continue;
-	  		}
-			ItemStack stack = item.peek().get();
-			value += ((RedProtect.cfgs.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
-			if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
-				for (ItemEnchantment enchant:stack.get(Keys.ITEM_ENCHANTMENTS).get()){
-					value += ((RedProtect.cfgs.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
-		    	} 
-	  		}	
-		}
-		return value;
+		return RedProtect.getPVHelper().getInvValue(inv);
 	}
 	
 	public static String getCostMessage(Region r){
