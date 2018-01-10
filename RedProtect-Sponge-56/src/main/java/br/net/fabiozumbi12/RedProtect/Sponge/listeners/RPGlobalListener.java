@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import java.util.Map;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
@@ -59,7 +60,17 @@ public class RPGlobalListener{
 	public RPGlobalListener(){
 		RedProtect.logger.debug("default","Loaded RPGlobalListener...");
 	}
-	
+
+	/**
+	 * @param p - Player
+	 * @param b - Block
+	 * @param fat - 1 = Place Block | 2 = Break Block
+	 * @return Boolean - Can build or not.
+	 */
+	private boolean bypassBuild(Player p, BlockSnapshot b, int fat) {
+		return fat == 1 && RedProtect.cfgs.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getState().getName()) || fat == 2 && RedProtect.cfgs.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getState().getName()) || p.hasPermission("redprotect.bypass.world") || (!RedProtect.cfgs.needClaimToBuild(p, b) && RedProtect.cfgs.getGlobalFlagBool(p.getWorld().getName() + ".build"));
+	}
+
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerDropItem(DropItemEvent.Dispense e, @Root Player cause){    	
     	for (Entity ent:e.getEntities()){
@@ -98,7 +109,7 @@ public class RPGlobalListener{
 		if (r != null){
 			return;
 		}
-		
+
 		RedProtect.logger.debug("blocks","Is BlockFromToEvent.Place event is to " + source.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
 		
 		if (!flow && (source.getState().getType().equals(BlockTypes.WATER) ||
@@ -143,7 +154,7 @@ public class RPGlobalListener{
 	public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
 		RedProtect.logger.debug("default","RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + e.isCancelled());
 		
-		BlockState b = e.getTransactions().get(0).getFinal().getState();
+		BlockSnapshot b = e.getTransactions().get(0).getFinal();
 		ItemType item = ItemTypes.NONE;
 		if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
 			item = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
@@ -155,19 +166,21 @@ public class RPGlobalListener{
 		if (r != null){
 			return;
 		}
-		
+
+        if (!RPUtil.canBuildNear(p, b.getLocation().get())){
+            e.setCancelled(true);
+            return;
+        }
+
 		if (item.getName().contains("minecart") || item.getName().contains("boat")){
 			if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(), "use-minecart") && !p.hasPermission("redprotect.bypass")){
 	            e.setCancelled(true);
 	            RedProtect.logger.debug("default","RPGlobalListener - Can't place minecart/boat!");
             }
 		} else {
-			if (!RedProtect.cfgs.getGlobalFlag(p.getWorld().getName(),"build") && !p.hasPermission("redprotect.bypass")){
-				if (RedProtect.cfgs.getGlobalFlagList(p.getWorld().getName(), "if-build-false","place-blocks").contains(b.getType().getName())){
-					return;
-				}
-				e.setCancelled(true);
-				RedProtect.logger.debug("default","RPGlobalListener - Can't Build!");
+            if (!bypassBuild(p, b, 1)){
+                e.setCancelled(true);
+                RedProtect.logger.debug("default", "RPGlobalListener - Can't Build!");
             }
 		}		
 	}
@@ -223,17 +236,23 @@ public class RPGlobalListener{
 	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onBlockBreakGlobal(ChangeBlockEvent.Break e, @First Player p) {
 		RedProtect.logger.debug("default","RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
-		
-		BlockState b = e.getTransactions().get(0).getOriginal().getState();
-		World w = e.getTransactions().get(0).getOriginal().getLocation().get().getExtent();
-		Region r = RedProtect.rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get());
-		
-		if (r == null && !RedProtect.cfgs.getGlobalFlag(w.getName(),"build") && !p.hasPermission("redprotect.bypass")){
-			if (RedProtect.cfgs.getGlobalFlagList(p.getWorld().getName(), "if-build-false","break-blocks").contains(b.getType().getName())){
-				return;
-			}
+
+		BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
+		BlockState b = bt.getState();
+		World w = bt.getLocation().get().getExtent();
+		Region r = RedProtect.rm.getTopRegion(bt.getLocation().get());
+		if (r != null){
+			return;
+		}
+
+		if (!RPUtil.canBuildNear(p, bt.getLocation().get())){
 			e.setCancelled(true);
-        }
+			return;
+		}
+
+		if (!bypassBuild(p, bt, 2)){
+			e.setCancelled(true);
+		}
 	}
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
@@ -254,23 +273,7 @@ public class RPGlobalListener{
 			e.setCancelled(true);
         }
     }
-	
-	/*@Listener(order = Order.FIRST, beforeModifications = true)	
-    public void onPlayerInteractBlock(InteractBlockEvent e, @First Player p) {
-		Region r = RedProtect.rm.getTopRegion(new Location<World>(p.getWorld(), e.getInteractionPoint().get()));
-		
-		RedProtect.logger.severe("Event: InteractBlockEvent");
-        if (r != null){
-        	RedProtect.logger.severe("Region: "+r.getName());
-        } else {
-        	RedProtect.logger.severe("Region: null");
-        }
-        
-		if (!canInteract(p, r)){
-        	e.setCancelled(true);
-        }
-	}*/
-	
+
 	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onPlayerInteract(InteractEntityEvent e, @First Player p) {
 		
@@ -287,11 +290,11 @@ public class RPGlobalListener{
 		}
         
         if (ent.getType().getName().contains("minecart") || ent.getType().getName().contains("boat")){
-        	if (!RedProtect.cfgs.getGlobalFlag(ent.getWorld().getName(),"use-minecart") && !p.hasPermission("redprotect.bypass")) {
+        	if (!RedProtect.cfgs.getGlobalFlag(ent.getWorld().getName(),"use-minecart") && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
             }
         } else {
-        	if (!RedProtect.cfgs.getGlobalFlag(ent.getWorld().getName(),"interact") && !p.hasPermission("redprotect.bypass") && (!(ent instanceof Player))) {
+        	if (!RedProtect.cfgs.getGlobalFlag(ent.getWorld().getName(),"interact") && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
                 e.setCancelled(true);
             }
         }      

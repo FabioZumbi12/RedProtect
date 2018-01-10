@@ -790,8 +790,11 @@ public class RPConfig{
 	public boolean needClaimToBuild(Player p, BlockSnapshot b) {     	
     	boolean bool = getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
-    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") && (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK"))){   
-    			boolean blocks = b.getState().getName().contains(getString("region-settings.block-id")) || b.getState().getName().contains("SIGN");
+    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") &&
+					(getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
+							getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))){
+    			boolean blocks = b.getState().getName().contains(getString("region-settings.block-id")) || b.getState().getName().contains("SIGN") ||
+                        getStringList("needed-claim-to-build.allow-break-blocks").stream().anyMatch(str -> str.equalsIgnoreCase(b.getState().getName()));
     			if (!blocks){
     				RPLang.sendMessage(p, "need.claim.blockids");
     			} else {

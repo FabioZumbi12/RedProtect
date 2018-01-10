@@ -664,14 +664,17 @@ public class RPConfig{
 	}
 	
     public static boolean isAllowedWorld(Player p) {
-		return RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
+		return getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
 	}
     
     public static boolean needClaimToBuild(Player p, Block b) {     	
     	boolean bool = RedProtect.plugin.getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
-    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") && (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK"))){   
-    			boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN");
+    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") &&
+                    (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
+                            getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))){
+    			boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN") ||
+                        getStringList("needed-claim-to-build.allow-break-blocks").stream().anyMatch(str -> str.equalsIgnoreCase(b.getType().name()));
     			if (!blocks){
     				RPLang.sendMessage(p, "need.claim.blockids");
     			} else {

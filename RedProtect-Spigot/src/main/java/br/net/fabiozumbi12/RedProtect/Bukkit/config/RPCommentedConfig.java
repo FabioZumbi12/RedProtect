@@ -94,6 +94,7 @@ public class RPCommentedConfig {
 		
 		setDefault("needed-claim-to-build", null, "Worlds where players can't build without claim.");
 		setDefault("needed-claim-to-build.worlds", Collections.singletonList("example_world"), null);
+		setDefault("needed-claim-to-build.allow-break-blocks", Arrays.asList("GRASS", "TALL_GRASS"), "Allow more blocks to be break/placed by players.");
 		setDefault("needed-claim-to-build.allow-only-protections-blocks", true, "Allow player to place only protection blocks, like fences and sign.");
 		
 		setDefault("wands", null, "Wands configurations");

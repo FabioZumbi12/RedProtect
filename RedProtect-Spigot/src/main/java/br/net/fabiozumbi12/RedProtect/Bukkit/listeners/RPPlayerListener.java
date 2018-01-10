@@ -174,14 +174,6 @@ public class RPPlayerListener implements Listener{
         	l = p.getLocation();
         }
 
-        //check if is a gui item
-        /*
-        if (RPUtil.RemoveGuiItem(itemInHand)){        	
-        	p.setItemInHand(new ItemStack(Material.AIR));       	
-        	event.setCancelled(true);
-        	return;
-        }*/
-        
         if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){        	
         	String claimmode = RPConfig.getWorldClaimType(p.getWorld().getName());
             if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
