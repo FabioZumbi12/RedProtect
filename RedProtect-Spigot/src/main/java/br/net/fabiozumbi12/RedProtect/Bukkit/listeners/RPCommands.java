@@ -3386,7 +3386,7 @@ RPLang.sendMessage(p, RPLang.get("cmdmanager.region.leader.requestexpired").repl
                     p.teleport(loc);
                     RPLang.sendMessage(p,RPLang.get("cmdmanager.region.teleport") + " " + rname);
                 }
-            }, 60L);
+            }, RPConfig.getInt("region-settings.teleport-time") * 20);
     	} else {
     		RPLang.sendMessage(p, "cmdmanager.region.tpneedwait");
     	}

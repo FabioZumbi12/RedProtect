@@ -2897,7 +2897,7 @@ RPLang.sendMessage(p, RPLang.get("cmdmanager.region.leader.requestexpired").repl
                     p.setLocation(loc);
                     RPLang.sendMessage(p,RPLang.get("cmdmanager.region.teleport") + " " + rname);
                 }
-            }, 3, TimeUnit.SECONDS);
+            }, RedProtect.cfgs.getInt("region-settings.teleport-time"), TimeUnit.SECONDS);
     	} else {
     		RPLang.sendMessage(p, "cmdmanager.region.tpneedwait");
     	}

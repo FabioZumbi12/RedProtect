@@ -89,6 +89,7 @@ public class RPCommentedConfig {
 		setDefault("region-settings.delay-after-kick-region", 60, "Delay before a kicked player can back to a region (in seconds).");
 		setDefault("region-settings.claimlimit-per-world", true, "Use claim limit per worlds?");
 		setDefault("region-settings.blocklimit-per-world", true, "Use block limit per worlds?");
+		setDefault("region-settings.teleport-time", 3, "Time to wait before teleport to region (in seconds).");
 		
 		setDefault("allowed-claim-worlds", Collections.singletonList("example_world"), "World where players can claim regions.");
 		
