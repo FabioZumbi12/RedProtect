@@ -38,6 +38,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.effect.Viewer;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
@@ -59,9 +60,7 @@ import com.google.common.reflect.TypeToken;
 
 @SuppressWarnings("deprecation")
 public class RPUtil {
-    static int backup = 0; 
-    public static final HashMap<Player, HashMap<Location<World>, BlockState>> pBorders = new HashMap<>();
-    private static final HashMap<String, UUID> borderIds = new HashMap<>();
+    static int backup = 0;
 	public static boolean stopRegen;
         
     public static Text toText(String str){
@@ -996,57 +995,19 @@ public class RPUtil {
 	
 	
 	/** Show the border of region for defined seconds.
-	 * @param p
-	 * @param locs
+	 * @param p player
+	 * @param locs {@code List<Location>}.
 	 */
-	public static void addBorder(final Player p, List<Location<World>> locs) {		
-		final World w = p.getWorld();
-		boolean msg = true;
-		
-		if (pBorders.containsKey(p)){
-			for (Location<World> loc:pBorders.get(p).keySet()){     
-				RedProtect.getPVHelper().setBlock(loc, pBorders.get(p).get(loc)); 
-    		}
-			if (borderIds.containsKey(p.getName())){
-				Sponge.getScheduler().getTaskById(borderIds.get(p.getName())).get().cancel();
-				borderIds.remove(p.getName());
-			}
-			pBorders.remove(p);
-			msg = false;
-		}
-		
-		final HashMap<Location<World>, BlockState> borderBlocks = new HashMap<>();
-		
-		for (Location<World> loc:locs){
-			loc = new Location<>(w, loc.getBlockX(), p.getLocation().getBlockY(), loc.getBlockZ());
-			BlockState b = w.getBlock(loc.getBlockPosition());
-        	if (b.getType().equals(BlockTypes.AIR) || b.getType().equals(BlockTypes.WATER)){
-        		borderBlocks.put(loc, b);
-        		RedProtect.getPVHelper().setBlock(w, loc, RedProtect.cfgs.getMaterial("region-settings.border.material"));
-        	} 
-		}
-		
-		if (borderBlocks.isEmpty()){
-			RPLang.sendMessage(p, "cmdmanager.bordernospace");
-		} else {
-			if (msg){
-				RPLang.sendMessage(p, "cmdmanager.addingborder");
-			}			
-			pBorders.put(p, borderBlocks);
-			UUID taskid = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
-                if (pBorders.containsKey(p)){
-                    for (Location<World> loc:pBorders.get(p).keySet()){
-                        RedProtect.getPVHelper().setBlock(loc, pBorders.get(p).get(loc));
-                    }
-                    if (borderIds.containsKey(p.getName())){
-                        borderIds.remove(p.getName());
-                    }
-                    pBorders.remove(p);
-                    RPLang.sendMessage(p, "cmdmanager.removingborder");
-                }
-            }, RedProtect.cfgs.getInt("region-settings.border.time-showing"), TimeUnit.SECONDS).getTask().getUniqueId();
-			borderIds.put(p.getName(), taskid);
-		}		
+	public static void addBorder(final Player p, List<Location<World>> locs) {
+        for (Location<World> loc:locs){
+            p.sendBlockChange(loc.getBlockPosition(), RedProtect.cfgs.getMaterial("region-settings.border.material").getDefaultState());
+        }
+
+        Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+            for (Location<World> loc:locs){
+                p.resetBlockChange(loc.getBlockPosition());
+            }
+        }, RedProtect.cfgs.getInt("region-settings.border.time-showing"), TimeUnit.SECONDS);
     }		
 	
 	public static String StripName(String pRName) {

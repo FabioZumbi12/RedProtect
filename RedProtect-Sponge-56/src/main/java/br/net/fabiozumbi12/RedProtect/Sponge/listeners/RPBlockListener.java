@@ -212,13 +212,7 @@ public class RPBlockListener{
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
     	World w = bloc.getExtent();
-        
-    	if (RPUtil.pBorders.containsKey(p) && b.getState().getType().equals(RedProtect.cfgs.getMaterial("region-settings.border.material"))){
-    		RPLang.sendMessage(p, "blocklistener.cantbreak.borderblock");
-    		e.setCancelled(true);
-    		return;
-    	}                
-    	
+
         Boolean antih = RedProtect.cfgs.getBool("region-settings.anti-hopper");
         Region r = RedProtect.rm.getTopRegion(bloc);
         

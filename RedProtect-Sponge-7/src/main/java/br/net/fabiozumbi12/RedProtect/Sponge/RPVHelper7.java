@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.animal.RideableHorse;
@@ -45,13 +46,8 @@ public class RPVHelper7 implements RPVHelper{
 	}
 
 	@Override
-	public void setBlock(World w, Location<World> loc, BlockType type) {
-		w.setBlockType(loc.getBlockPosition(), type);
-	}
-
-	@Override
 	public void setBlock(Location<World> loc, BlockState block) {
-		loc.setBlock(block);
+        loc.setBlock(block);
 	}
 
 	@Override
@@ -62,7 +58,6 @@ public class RPVHelper7 implements RPVHelper{
 	@Override
 	public void removeBlock(Location<World> loc) {
 		loc.removeBlock();
-		
 	}
 
 	@Override

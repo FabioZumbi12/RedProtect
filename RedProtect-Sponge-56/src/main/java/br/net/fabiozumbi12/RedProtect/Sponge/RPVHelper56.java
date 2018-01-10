@@ -43,13 +43,8 @@ public class RPVHelper56 implements RPVHelper {
 	}
 
 	@Override
-	public void setBlock(World w, Location<World> loc, BlockType type) {
-		w.setBlockType(loc.getBlockPosition(), type, Cause.of(NamedCause.owner(RedProtect.plugin)));
-	}
-
-	@Override
 	public void setBlock(Location<World> loc, BlockState block) {
-		loc.setBlock(block, Cause.of(NamedCause.owner(RedProtect.plugin)));  
+		loc.setBlockType(block.getType(), Cause.of(NamedCause.owner(RedProtect.plugin)));
 	}
 
 	@Override

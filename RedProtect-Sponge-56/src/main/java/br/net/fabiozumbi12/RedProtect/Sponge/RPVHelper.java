@@ -20,11 +20,9 @@ public interface RPVHelper {
 	void closeInventory(Player p);
 	
 	void openInventory(Inventory inv, Player p);
-	
-	void setBlock(World w, Location<World> loc, BlockType type);
-	
+
 	void setBlock(Location<World> loc, BlockState block);
-	
+
 	void digBlock(Player p, ItemStack item, Vector3i loc);
 	
 	void removeBlock(Location<World> loc);

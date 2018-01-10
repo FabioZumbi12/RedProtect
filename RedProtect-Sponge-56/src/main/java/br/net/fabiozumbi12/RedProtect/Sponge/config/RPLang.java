@@ -40,10 +40,10 @@ public class RPLang {
 	}
 	
 	public static void init() {
-		resLang = "lang_" + RedProtect.cfgs.getString("language") + ".properties";
+		resLang = "lang" + RedProtect.cfgs.getString("language") + ".properties";
 		pathLang = RedProtect.configDir + resLang;
 		
-		File lang = new File(pathLang);				
+		File lang = new File(pathLang);
 		if (!lang.exists()) {
 			if (!RedProtect.plugin.getAsset(resLang).isPresent()){	
 				resLang = "langEN-US.properties";

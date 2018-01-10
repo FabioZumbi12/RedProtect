@@ -111,7 +111,7 @@ public class RPPlayerListener{
     }
     
     //listen left click
-    @Listener(order = Order.FIRST, beforeModifications = true)
+    @Listener(order = Order.FIRST)
     public void onInteractLeft(InteractBlockEvent.Primary event, @First Player p) {
         BlockSnapshot b = event.getTargetBlock();
         Location<World> l = null;
@@ -138,6 +138,11 @@ public class RPPlayerListener{
     			event.setCancelled(true);
     			return;
     		}
+			//remove before add new selection
+			if (RedProtect.firstLocationSelections.containsKey(p) && RedProtect.secondLocationSelections.containsKey(p)){
+				RedProtect.firstLocationSelections.remove(p);
+                RedProtect.secondLocationSelections.remove(p);
+			}
     		RedProtect.firstLocationSelections.put(p, l);
             p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (&e" + l.getBlockX() + RPLang.get("general.color") + ", &e" + l.getBlockY() + RPLang.get("general.color") + ", &e" + l.getBlockZ() + RPLang.get("general.color") + ")."));
             event.setCancelled(true);
@@ -150,7 +155,7 @@ public class RPPlayerListener{
     }
     
     //listen right click
-    @Listener(order = Order.FIRST, beforeModifications = true)
+    @Listener(order = Order.FIRST)
     public void onInteractRight(InteractBlockEvent.Secondary event, @First Player p) {
     	
         BlockSnapshot b = event.getTargetBlock();
@@ -174,7 +179,12 @@ public class RPPlayerListener{
     			event.setCancelled(true);
     			return;
     		}
-    		RedProtect.secondLocationSelections.put(p, l);
+            //remove before add new selection
+            if (RedProtect.firstLocationSelections.containsKey(p) && RedProtect.secondLocationSelections.containsKey(p)){
+                RedProtect.firstLocationSelections.remove(p);
+                RedProtect.secondLocationSelections.remove(p);
+            }
+			RedProtect.secondLocationSelections.put(p, l);
             p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (&e" + l.getBlockX() + RPLang.get("general.color") + ", &e" + l.getBlockY() + RPLang.get("general.color") + ", &e" + l.getBlockZ() + RPLang.get("general.color") + ")."));
             event.setCancelled(true);
             
