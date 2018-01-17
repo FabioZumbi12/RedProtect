@@ -692,7 +692,7 @@ public class RPPlayerListener{
             if (Ownerslist.get(p) != r.getName()){
     			Region er = RedProtect.get().rm.getRegion(Ownerslist.get(p), p.getWorld());			
     			Ownerslist.put(p, r.getName());
-    			
+
     			//Execute listener:
     			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
     			if (Sponge.getEventManager().post(event)){
@@ -1151,7 +1151,7 @@ public class RPPlayerListener{
     }
     
     private void EnterExitNotify(Region r, Player p){
-    	if (!RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")){
+    	if (RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")){
     		return;
     	}
     	

@@ -20,6 +20,10 @@ public class RPPermissionHandler{
     public boolean hasPerm(Player p, String perm) {
         return p != null && (p.hasPermission(perm) || p.isOp());
     }
+
+    public boolean hasPerm(CommandSender p, String perm) {
+        return p != null && (p.hasPermission(perm) || p.isOp());
+    }
     
     public boolean hasRegionPermMember(Player p, String s, Region poly) {
         return regionPermMember(p, s, poly);

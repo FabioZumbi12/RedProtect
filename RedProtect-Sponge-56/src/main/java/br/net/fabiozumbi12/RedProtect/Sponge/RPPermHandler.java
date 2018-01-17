@@ -14,9 +14,13 @@ public class RPPermHandler{
 		return p.hasPermission(perm) || p.hasPermission(perm+".bypass");
 	}
 	
-	public boolean hasPerm(Player p, String perm) {
+	public boolean hasPerm(CommandSource p, String perm) {
         return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.admin"));
     }
+
+	public boolean hasPerm(Player p, String perm) {
+		return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.admin"));
+	}
     
 	public boolean hasPerm(User p, String perm) {
         return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.admin"));

@@ -3480,6 +3480,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			sender.sendMessage(ChatColor.GOLD + "rp reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
 		}
 		sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
+		if (RedProtect.get().ph.hasPerm(sender, "admin")){
+			String jarversion = new java.io.File(RedProtect.class.getProtectionDomain()
+					.getCodeSource()
+					.getLocation()
+					.getPath())
+					.getName();
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&8&o- UChat full version: "+jarversion));
+		}
 	}
     
 }
