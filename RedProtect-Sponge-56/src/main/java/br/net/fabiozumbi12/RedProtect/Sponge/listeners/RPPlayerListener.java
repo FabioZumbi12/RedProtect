@@ -2,11 +2,16 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.boss.BossBarColors;
+import org.spongepowered.api.boss.BossBarOverlay;
+import org.spongepowered.api.boss.BossBarOverlays;
+import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.potion.PotionEffect;
@@ -53,6 +58,7 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.DimensionTypes;
@@ -1102,13 +1108,19 @@ public class RPPlayerListener{
             return;
         }
     	if (!notify.equals("")){
-    		/*if (RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
-    			if (RedProtect.get().BossBar){
-    				BossbarAPI.setMessage(p,notify);
-    			} else {
-    				p.sendMessage(RPUtil.toText(notify));
-    			}
-    		} */
+    		if (RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
+                ServerBossBar boss = ServerBossBar.builder()
+                        .name(RPUtil.toText(notify))
+                        .overlay(BossBarOverlays.NOTCHED_12)
+                        .color(BossBarColors.YELLOW)
+                        .percent(1).build();
+                boss.addPlayer(p);
+                //start timer
+                Task.builder()
+                        .interval(1, TimeUnit.SECONDS)
+                        .execute(new BossBarTimer(boss))
+                        .submit(RedProtect.get().container);
+    		}
     		if (RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
     			p.sendMessage(RPUtil.toText(notify));
     		}
@@ -1119,16 +1131,40 @@ public class RPPlayerListener{
         if (RedProtect.get().cfgs.getString("notify.welcome-mode").equalsIgnoreCase("OFF")){
             return;
         }
-		/*if (RedProtect.get().cfgs.getString("notify.welcome-mode").equalsIgnoreCase("BOSSBAR")){
-			if (RedProtect.get().BossBar){
-				BossbarAPI.setMessage(p,wel);
-			} else {
-				p.sendMessage(wel);
-			}
-		} */
+		if (RedProtect.get().cfgs.getString("notify.welcome-mode").equalsIgnoreCase("BOSSBAR")){
+            ServerBossBar boss = ServerBossBar.builder()
+                    .name(RPUtil.toText(wel))
+                    .overlay(BossBarOverlays.NOTCHED_12)
+                    .color(BossBarColors.GREEN)
+                    .percent(1).build();
+            boss.addPlayer(p);
+            //start timer
+            Task.builder()
+                    .interval(1, TimeUnit.SECONDS)
+                    .execute(new BossBarTimer(boss))
+                    .submit(RedProtect.get().container);
+		}
 		if (RedProtect.get().cfgs.getString("notify.welcome-mode").equalsIgnoreCase("CHAT")){
 			p.sendMessage(RPUtil.toText(wel));
 		}
+    }
+
+    public class BossBarTimer implements Consumer<Task> {
+        ServerBossBar boss;
+        public BossBarTimer(ServerBossBar boss){
+            this.boss = boss;
+        }
+
+        @Override
+        public void accept(Task task) {
+            float diff = boss.getPercent() - 0.2f;
+            if (diff > 0){
+                boss.setPercent(diff);
+            } else {
+                boss.setVisible(false);
+                task.cancel();
+            }
+        }
     }
 
     private void stopTaskPlayer(String taskId){
@@ -1163,7 +1199,8 @@ public class RPPlayerListener{
     	String m = "";
     	//Enter-Exit notifications    
         if (r.getWelcome().equals("")){
-			if (RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")){
+			if (RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT") ||
+                    RedProtect.get().cfgs.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")){
 				for (int i = 0; i < r.getLeaders().size(); ++i) {
                     leaderstring = leaderstring + ", " + RPUtil.UUIDtoPlayer(r.getLeaders().get(i));
     	        }
