@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,8 +20,8 @@ public class RedProtectAPI {
 	 * <p> 
 	 * @return {@code Set<Region>} with all regions. Empty list if no regions.
 	 */
-	public static Set<Region> getAllRegions(){
-		return RedProtect.rm.getAllRegions();
+	public Set<Region> getAllRegions(){
+		return RedProtect.get().rm.getAllRegions();
 	}
 	
 	/**
@@ -30,8 +31,8 @@ public class RedProtectAPI {
 	 * @param world World where this Region is.
 	 * @return {@code Region} matching the name or {@code null} if region not found.
 	 */
-	public static Region getRegion(String regionName, World world){
-		return RedProtect.rm.getRegion(regionName, world);
+	public Region getRegion(String regionName, World world){
+		return RedProtect.get().rm.getRegion(regionName, world);
 	}
 	
 	/**
@@ -44,7 +45,7 @@ public class RedProtectAPI {
 	 * @param location Player location.
 	 * @return {@code Region} of location or {@code null} if no regions on player location.
 	 */
-	public static Region getRegion(Location location){				
+	public Region getRegion(Location location){
 		return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 	}
 	
@@ -55,8 +56,8 @@ public class RedProtectAPI {
 	 * Make a way to give player name for servers using 'offline mode'.
 	 * @return {@code set<Region>} with all regions created by given player.
 	 */
-	public static Set<Region> getPlayerRegions(String uuid){
-		return RedProtect.rm.getRegions(uuid);
+	public Set<Region> getPlayerRegions(String uuid){
+		return RedProtect.get().rm.getRegions(uuid);
 	}
 	
 	/**
@@ -67,10 +68,20 @@ public class RedProtectAPI {
 	 * @param world to search for given region.
 	 * @return {@code set<Region>} with all regions created by given player.
 	 */
-	public static Set<Region> getPlayerRegions(String uuid, World world){
-		return RedProtect.rm.getRegions(uuid, world);
+	public Set<Region> getPlayerRegions(String uuid, World world){
+		return RedProtect.get().rm.getRegions(uuid, world);
 	}
-	
+
+	/**
+	 * A set of regions created by this player.
+	 * <p>
+	 * @param player The player.
+	 * @return {@code set<Region>} with all regions created by given player.
+	 */
+	public Set<Region> getPlayerRegions(Player player){
+		return RedProtect.get().rm.getRegions(Bukkit.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
+	}
+
 	/**
 	 * A set of regions created by this player based on x and z.
 	 * <p>
@@ -80,8 +91,8 @@ public class RedProtectAPI {
 	 * @param z Coord z of a location.
 	 * @return {@code set<Region>} with all regions created by given player.
 	 */
-	public static Set<Region> getPlayerRegions(Player player, int x, int y, int z){
-		return RedProtect.rm.getRegions(player, x, y, z);
+	public Set<Region> getPlayerRegions(Player player, int x, int y, int z){
+		return RedProtect.get().rm.getRegions(player, x, y, z);
 	}
 	
 	/**
@@ -93,8 +104,8 @@ public class RedProtectAPI {
 	 * @param z Coord z of a location.
 	 * @return The high priority {@code Region} in a group of regions.
 	 */
-	public static Region getHighPriorityRegion(World world, int x, int y, int z){
-		return RedProtect.rm.getTopRegion(world, x, y, z);
+	public Region getHighPriorityRegion(World world, int x, int y, int z){
+		return RedProtect.get().rm.getTopRegion(world, x, y, z);
 	}
 	
 	/**
@@ -106,8 +117,8 @@ public class RedProtectAPI {
 	 * @param z Coord z of a location.
 	 * @return The lower priority {@code Region} in a group of regions.
 	 */
-	public static Region getLowPriorytyRegion(World world, int x, int y, int z){
-		return RedProtect.rm.getLowRegion(world, x, y, z);
+	public Region getLowPriorytyRegion(World world, int x, int y, int z){
+		return RedProtect.get().rm.getLowRegion(world, x, y, z);
 	}
 	
 	/**
@@ -119,8 +130,8 @@ public class RedProtectAPI {
 	 * @param z Coord z of a location.
 	 * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
 	 */
-	public static Map<Integer, Region> getGroupRegions(World world, int x, int y, int z){
-		return RedProtect.rm.getGroupRegion(world, x, y, z);
+	public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z){
+		return RedProtect.get().rm.getGroupRegion(world, x, y, z);
 	}
 	
 	/**
@@ -129,8 +140,8 @@ public class RedProtectAPI {
 	 * @param loc {@code Location} to check the regions
 	 * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
 	 */
-	public static Map<Integer, Region> getGroupRegions(Location loc){
-		return RedProtect.rm.getGroupRegion(loc);
+	public Map<Integer, Region> getGroupRegions(Location loc){
+		return RedProtect.get().rm.getGroupRegion(loc);
 	}
 	
 	/**
@@ -139,8 +150,8 @@ public class RedProtectAPI {
 	 * @param chunk Chunk to get Regions.
 	 * @return {@code Set<Region>} with all regions on provided chunk.
 	 */
-	public static Set<Region> getChunkRegions(Chunk chunk){
-		return RedProtect.rm.getRegionsForChunk(chunk);
+	public Set<Region> getChunkRegions(Chunk chunk){
+		return RedProtect.get().rm.getRegionsForChunk(chunk);
 	}
 	
 	/**
@@ -149,8 +160,8 @@ public class RedProtectAPI {
 	 * @param region {@code Region} to add.
 	 * @param world {@code World} of {@code Region} to add.
 	 */
-	public static void addRegion(Region region, World world){
-		RedProtect.rm.add(region, world);
+	public void addRegion(Region region, World world){
+		RedProtect.get().rm.add(region, world);
 	}
 	
 	/**
@@ -158,8 +169,8 @@ public class RedProtectAPI {
 	 * <p>
 	 * @param region {@code Region} to remove.
 	 */
-	public static void removeRegion(Region region){
-		RedProtect.rm.remove(region, RedProtect.serv.getWorld(region.getWorld()));
+	public void removeRegion(Region region){
+		RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()));
 	}
 	
 	/**
@@ -168,8 +179,8 @@ public class RedProtectAPI {
 	 * @param region Region to rename.
 	 * @param newName New name of region;
 	 */
-	public static void renameRegion(Region region, String newName){
-		RedProtect.rm.renameRegion(newName, region);
+	public void renameRegion(Region region, String newName){
+		RedProtect.get().rm.renameRegion(newName, region);
 	}
 
     /**
@@ -179,7 +190,7 @@ public class RedProtectAPI {
      * @param isAdmin Is flag admin? If admin, will require admin permission (redprotect.admin.flag.FlagName)
      * @return true if added or false if the flag already exists.
      */
-	public static boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
+	public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
 	    return RPConfig.addFlag(flag, defaultValue, isAdmin);
     }
 }

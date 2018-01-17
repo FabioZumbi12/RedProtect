@@ -76,7 +76,7 @@ public class RPContainer {
     	if (!RPConfig.getBool("private.use") || p.hasPermission("redprotect.bypass")){
     		return true;
     	}
-    	Region reg = RedProtect.rm.getTopRegion(b.getLocation());
+    	Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
     	if (reg == null && !RPConfig.getBool("private.allow-outside")){
     		return true;
     	}
@@ -151,7 +151,7 @@ public class RPContainer {
     	if (!RPConfig.getBool("private.use")){
     		return true;
     	}
-    	Region reg = RedProtect.rm.getTopRegion(b.getLocation());
+    	Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
     	if (reg == null && !RPConfig.getBool("private.allow-outside")){
     		return true;
     	}
@@ -161,7 +161,7 @@ public class RPContainer {
         World w = b.getWorld();
 
         if (b.getState() instanceof Sign && validWorldBreak(b)){
-        	RedProtect.logger.debug("Valid Sign on canWorldBreak!");
+        	RedProtect.get().logger.debug("Valid Sign on canWorldBreak!");
 			return false;
     	}   		
            		

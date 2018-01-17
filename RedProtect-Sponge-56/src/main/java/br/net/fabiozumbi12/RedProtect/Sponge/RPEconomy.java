@@ -3,10 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.TileEntity;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.type.TileEntityInventory;
 import org.spongepowered.api.world.World;
 
@@ -17,7 +14,7 @@ public class RPEconomy {
 	
 	public static long getRegionValue(Region r){
 		long regionCost = 0;
-		World w = RedProtect.serv.getWorld(r.getWorld()).get();
+		World w = RedProtect.get().serv.getWorld(r.getWorld()).get();
 		int maxX = r.getMaxMbrX();
 		int minX = r.getMinMbrX();
 		int maxZ = r.getMaxMbrZ();
@@ -48,7 +45,7 @@ public class RPEconomy {
 		    		  regionCost += getInvValue(inv.slots());
 		    	  }		    	  
 		      }	else {
-		    	  regionCost += RedProtect.cfgs.getBlockCost(b.getState().getType().getName());
+		    	  regionCost += RedProtect.get().cfgs.getBlockCost(b.getState().getType().getName());
 		      }		      
 		    }
 		  }
@@ -58,15 +55,15 @@ public class RPEconomy {
 	}
 
 	private static long getInvValue(Iterable<Inventory> inv){
-		return RedProtect.getPVHelper().getInvValue(inv);
+		return RedProtect.get().getPVHelper().getInvValue(inv);
 	}
 	
 	public static String getCostMessage(Region r){
-		return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) +" &2"+ RedProtect.cfgs.getEcoString("economy-name");
+		return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) +" &2"+ RedProtect.get().cfgs.getEcoString("economy-name");
 	}
 	
 	public static String getFormatted(long value){
-		return RedProtect.cfgs.getEcoString("economy-symbol") + value;
+		return RedProtect.get().cfgs.getEcoString("economy-symbol") + value;
 	}
 	
 	public static boolean putToSell(Region r, String uuid, long value) {
@@ -76,8 +73,8 @@ public class RPEconomy {
 			r.setValue(value);
 			r.setWelcome(getCostMessage(r));			
 			r.setFlag("for-sale", true);
-			if (RedProtect.cfgs.getEcoBool("rename-region")){
-				RedProtect.rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
+			if (RedProtect.get().cfgs.getEcoBool("rename-region")){
+				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}			
 			return true;
 		} catch (Exception e){
@@ -93,9 +90,9 @@ public class RPEconomy {
 			r.addLeader(uuid);
 			r.setDate(RPUtil.DateNow());
 			r.setWelcome("");
-			r.flags = RedProtect.cfgs.getDefFlagsValues();
-			if (RedProtect.cfgs.getEcoBool("rename-region")){
-				RedProtect.rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
+			r.flags = RedProtect.get().cfgs.getDefFlagsValues();
+			if (RedProtect.get().cfgs.getEcoBool("rename-region")){
+				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}	
 			r.removeFlag("for-sale");
 			return true;

@@ -37,7 +37,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         if (regionName.equals("")) {
             int i = 0;            
             regionName = RPUtil.StripName(pRName)+"_"+0;            
-            while (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
+            while (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
             	++i;
             	regionName = RPUtil.StripName(pRName)+"_"+i;   
             }            
@@ -57,7 +57,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         
         //region name conform
         regionName = regionName.replace("/", "|");        
-        if (RedProtect.rm.getRegion(regionName, p.getWorld()) != null) {
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
         	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
         }
@@ -82,17 +82,17 @@ public class DefineRegionBuilder extends RegionBuilder{
         
         region.setPrior(RPUtil.getUpdatedPrior(region));            
             	
-        int claimLimit = RedProtect.ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.rm.getPlayerRegions(p.getName(),p.getWorld());    
-        boolean claimUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.claim.unlimited");
+        int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
+        int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(),p.getWorld());    
+        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.claim.unlimited");
         if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
         	this.setError(p, RPLang.get("regionbuilder.claim.limit"));
             return;
         }
         
-        int pLimit = RedProtect.ph.getPlayerBlockLimit(p);
-        int totalArea = RedProtect.rm.getTotalRegionSize(pName, p.getWorld().getName());
-        boolean areaUnlimited = RedProtect.ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
+        int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
+        int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
+        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
         int actualArea = 0;
         if (regionarea > 0){
@@ -107,14 +107,14 @@ public class DefineRegionBuilder extends RegionBuilder{
         Region otherrg = null;
         
         //check if same area
-        otherrg = RedProtect.rm.getTopRegion(region.getCenterLoc());
+        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
         if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
         	this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
         	return;
         }
         
         //check regions inside region
-        for (Region r:RedProtect.rm.getRegionsByWorld(p.getWorld())){
+        for (Region r:RedProtect.get().rm.getRegionsByWorld(p.getWorld())){
         	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
         		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
         			this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
@@ -136,8 +136,8 @@ public class DefineRegionBuilder extends RegionBuilder{
             	return;    	
             }*/
         	
-        	otherrg = RedProtect.rm.getTopRegion(loc);        	
-        	RedProtect.logger.debug("protection Block is: " + loc.getBlock().getType().name());
+        	otherrg = RedProtect.get().rm.getTopRegion(loc);        	
+        	RedProtect.get().logger.debug("protection Block is: " + loc.getBlock().getType().name());
         	
     		if (otherrg != null){                    			
             	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
@@ -150,8 +150,8 @@ public class DefineRegionBuilder extends RegionBuilder{
             }
         }
         
-        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.Vault && !p.hasPermission("redprotect.eco.bypass")){
-        	Double peco = RedProtect.econ.getBalance(p);
+        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")){
+        	Double peco = RedProtect.get().econ.getBalance(p);
         	long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
         	
         	if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")){
@@ -159,7 +159,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         	}
         	
         	if (peco >= reco){
-        		RedProtect.econ.withdrawPlayer(p, reco);
+        		RedProtect.get().econ.withdrawPlayer(p, reco);
         		p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco+" "+RPConfig.getEcoString("economy-name")));
         	} else {
         		RPLang.sendMessage(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco));
@@ -181,12 +181,12 @@ public class DefineRegionBuilder extends RegionBuilder{
         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         }
         
-        if (RedProtect.rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
+        if (RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
         	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         }                        
                 
         this.r = region;
-        RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" DEFINED region "+region.getName());
+        RedProtect.get().logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" DEFINED region "+region.getName());
     }
 }

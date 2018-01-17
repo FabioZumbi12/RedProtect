@@ -42,27 +42,27 @@ public class RPLang {
 	
 	public static void init() {			
 		resLang = "lang" + RPConfig.getString("language") + ".properties";	
-		pathLang = RedProtect.plugin.getDataFolder() + File.separator + resLang;	
+		pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 		
 		File lang = new File(pathLang);			
 		if (!lang.exists()) {			
-			if (RedProtect.plugin.getResource("assets/redprotect/"+resLang) == null){
+			if (RedProtect.get().getResource("assets/redprotect/"+resLang) == null){
 				resLang = "langEN-US.properties";	
-				pathLang = RedProtect.plugin.getDataFolder() + File.separator + resLang;
+				pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 			}			
-			RPUtil.saveResource("/assets/redprotect/"+resLang, new File(RedProtect.plugin.getDataFolder(),resLang));
-            RedProtect.logger.info("Created language file: " + pathLang);
+			RPUtil.saveResource("/assets/redprotect/"+resLang, new File(RedProtect.get().getDataFolder(),resLang));
+            RedProtect.get().logger.info("Created language file: " + pathLang);
         }
 		
 		loadLang();
 		loadBaseLang();
-		RedProtect.logger.info("Language file loaded - Using: "+ RPConfig.getString("language"));	
+		RedProtect.get().logger.info("Language file loaded - Using: "+ RPConfig.getString("language"));	
 	}
 	
 	static void loadBaseLang(){
 	    BaseLang.clear();
 	    try {
-	    	InputStream fileInput = RedProtect.plugin.getResource("assets/redprotect/langEN-US.properties");	      
+	    	InputStream fileInput = RedProtect.get().getResource("assets/redprotect/langEN-US.properties");
 	        Reader reader = new InputStreamReader(fileInput, "UTF-8");
 	        BaseLang.load(reader);
 	    }
@@ -84,14 +84,14 @@ public class RPLang {
 		
 		if (Lang.get("_lang.version") != null){
 			int langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", ""));
-			int rpv = Integer.parseInt(RedProtect.pdf.getVersion().replace(".", ""));
-			if (RedProtect.pdf.getVersion().length() > Lang.get("_lang.version").toString().length()){
+			int rpv = Integer.parseInt(RedProtect.get().pdf.getVersion().replace(".", ""));
+			if (RedProtect.get().pdf.getVersion().length() > Lang.get("_lang.version").toString().length()){
 				langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", "")+0);
 			}
 			if (langv < rpv || langv == 0){
-				RedProtect.logger.warning("Your lang file is outdated. Probally need strings updates!");
-				RedProtect.logger.warning("Lang file version: "+Lang.get("_lang.version"));
-				Lang.put("_lang.version", RedProtect.pdf.getVersion());
+				RedProtect.get().logger.warning("Your lang file is outdated. Probally need strings updates!");
+				RedProtect.get().logger.warning("Lang file version: "+Lang.get("_lang.version"));
+				Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
 			}
 		}		
 	}
@@ -103,7 +103,7 @@ public class RPLang {
 	      }
 	    }
 		if (!Lang.containsKey("_lang.version")){
-			Lang.put("_lang.version", RedProtect.pdf.getVersion());
+			Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
     	}
 	    try {	      
 	    	Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
@@ -142,7 +142,7 @@ public class RPLang {
 		}		
 		
 		DelayedMessage.put(p, key);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (DelayedMessage.containsKey(p)){
                 DelayedMessage.remove(p);
             }
@@ -165,7 +165,7 @@ public class RPLang {
 		if (sender instanceof Player){
 			final Player p = (Player)sender;
 			DelayedMessage.put(p, key);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                 if (DelayedMessage.containsKey(p)){
                     DelayedMessage.remove(p);
                 }

@@ -34,13 +34,13 @@ public class RPLogger{
 	}
     
     public void debug(String level, String s) {
-        if (RedProtect.cfgs.getBool("debug-messages."+level)) {        	
+        if (RedProtect.get().cfgs.getBool("debug-messages."+level)) {        	
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&b"+s+"&r]"));
         }  
     }
     
     public void addLog(String logLine){
-    	if(!RedProtect.cfgs.getBool("log-actions")){
+    	if(!RedProtect.get().cfgs.getBool("log-actions")){
     		return;
     	}
     	int key = MainLog.keySet().size()+1;
@@ -52,7 +52,7 @@ public class RPLogger{
     }
     
     public void SaveLogs(){
-    	if(!RedProtect.cfgs.getBool("log-actions")){
+    	if(!RedProtect.get().cfgs.getBool("log-actions")){
     		return;
     	}
     	    	
@@ -61,8 +61,8 @@ public class RPLogger{
 			  sb.append(MainLog.get(key));
 			  sb.append('\n');    			  
     	}
-    	if (RPUtil.genFileName(RedProtect.configDir+"logs"+File.separator, false) != null){
-    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.configDir+"logs"+File.separator, false), "RedProtectLogs.txt", sb);
+    	if (RPUtil.genFileName(RedProtect.get().configDir+ File.separator +"logs"+File.separator, false) != null){
+    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.get().configDir+File.separator+"logs"+File.separator, false), "RedProtectLogs.txt", sb);
     	}    	
     }
 }

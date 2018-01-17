@@ -22,26 +22,26 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
     private final HashMap<String, Region> regions;
     private final World world;
-    private final String pathData = RedProtect.plugin.getDataFolder() + File.separator + "data" + File.separator;
-    
+    private final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
+
     public WorldFlatFileRegionManager(World world) {
         super();
         this.regions = new HashMap<>();
         this.world = world;
     }
-    
+
     @Override
     public void add(Region r) {
         this.regions.put(r.getName(), r);
     }
-    
+
     @Override
     public void remove(Region r) {
         if (this.regions.containsValue(r)){
         	this.regions.remove(r.getName());
         }
     }
-        
+
     @Override
     public Set<Region> getRegions(String pname) {
     	SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
@@ -52,7 +52,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		}
 		return regionsp;
     }
-    
+
     @Override
     public Set<Region> getMemberRegions(String uuid) {
     	SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
@@ -63,46 +63,46 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		}
 		return regionsp;
     }
-    
+
     @Override
     public Region getRegion(String rname) {
     	return regions.get(rname);
     }
-    
+
     @Override
     public int save() {
     	int saved = 0;
         try {
-            RedProtect.logger.debug("RegionManager.Save(): File type is " + RPConfig.getString("file-type"));
-            String world = this.getWorld().getName();            
+            RedProtect.get().logger.debug("RegionManager.Save(): File type is " + RPConfig.getString("file-type"));
+            String world = this.getWorld().getName();
             File datf;
-                        
-            if (RPConfig.getString("file-type").equals("yml"))  {               	
+
+            if (RPConfig.getString("file-type").equals("yml"))  {
             	datf = new File(pathData, "data_" + world + ".yml");
             	YamlConfiguration fileDB = new YamlConfiguration();
-        		            	            	
+
         		for (Region r:regions.values()){
         			if (r.getName() == null){
         				continue;
-        			}        			
-        			
+        			}
+
         			if (RPConfig.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
             				continue;
             			}
         				fileDB = new YamlConfiguration();
-                    	datf = new File(pathData, world+File.separator+r.getName()+".yml");        	
+                    	datf = new File(pathData, world+File.separator+r.getName()+".yml");
                     }
-        			
-        			fileDB = RPUtil.addProps(fileDB, r);   
+
+        			fileDB = RPUtil.addProps(fileDB, r);
         			saved++;
-        			
+
         			if (RPConfig.getBool("flat-file.region-per-file")) {
         				saveYaml(fileDB, datf);
         				r.setToSave(false);
         			}
-        		}	 
-        		
+        		}
+
         		if (!RPConfig.getBool("flat-file.region-per-file")) {
         			RPUtil.backupRegions(fileDB, world);
         			saveYaml(fileDB, datf);
@@ -110,13 +110,13 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     				//remove deleted regions
     				File wfolder = new File(pathData + world);
     				if (wfolder.exists()){
-    					File[] listOfFiles = new File(pathData + world).listFiles();    				
+    					File[] listOfFiles = new File(pathData + world).listFiles();
                 		for (File region:listOfFiles){
                 			if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))){
                 				region.delete();
                 			}
                 		}
-    				}    				
+    				}
     			}
             }
         }
@@ -125,16 +125,16 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         }
         return saved;
     }
-    
+
     private void saveYaml(YamlConfiguration fileDB, File file){
-    	try {         			   
-    		fileDB.save(file);         			
+    	try {
+    		fileDB.save(file);
 		} catch (IOException e) {
-			RedProtect.logger.severe("Error during save database file for world " + world + ": ");
+			RedProtect.get().logger.severe("Error during save database file for world " + world + ": ");
 			e.printStackTrace();
 		}
     }
-    
+
     @Override
     public int getTotalRegionSize(String uuid) {
 		Set<Region> regionslist = new HashSet<>();
@@ -144,18 +144,18 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 			}
 		}
 		int total = 0;
-		for (Region r2 : regionslist) {			
+		for (Region r2 : regionslist) {
 			total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
 		return total;
     }
-    
+
     @Override
-    public void load() {   
+    public void load() {
     	try {
             String world = this.getWorld().getName();
-            
-            if (RPConfig.getString("file-type").equals("yml")) {    
+
+            if (RPConfig.getString("file-type").equals("yml")) {
             	if (RPConfig.getBool("flat-file.region-per-file")) {
             		File f = new File(pathData + world);
             		if (!f.exists()){
@@ -164,7 +164,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             		File[] listOfFiles = f.listFiles();
             		for (File region:listOfFiles){
             			if (region.getName().endsWith(".yml")){
-            				this.load(region.getPath()); 
+            				this.load(region.getPath());
             			}
             		}
     			} else {
@@ -172,16 +172,16 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                 	File newf = new File(pathData + "data_" + world + ".yml");
                     if (oldf.exists()){
                     	oldf.renameTo(newf);
-                    }            
-                    this.load(pathData + "data_" + world + ".yml"); 
+                    }
+                    this.load(pathData + "data_" + world + ".yml");
     			}
-            	       	
+
             }
 		} catch (FileNotFoundException | ClassNotFoundException e) {
 				e.printStackTrace();
-		} 
+		}
     }
-    
+
 	private void load(String path) throws FileNotFoundException, ClassNotFoundException {
         File f = new File(path);
         if (!f.exists()) {
@@ -194,34 +194,34 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
         if (RPConfig.getString("file-type").equals("yml")) {
         	YamlConfiguration fileDB = new YamlConfiguration();
-        	RedProtect.logger.debug("Load world " + this.world.getName() + ". File type: yml");
+        	RedProtect.get().logger.debug("Load world " + this.world.getName() + ". File type: yml");
         	try {
     			fileDB.load(f);
     		} catch (FileNotFoundException e) {
-    			RedProtect.logger.severe("DB file not found!");
-    			RedProtect.logger.severe("File:" + f.getName());
+    			RedProtect.get().logger.severe("DB file not found!");
+    			RedProtect.get().logger.severe("File:" + f.getName());
     			e.printStackTrace();
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
-        	
+
         	for (String rname:fileDB.getKeys(false)){
         		Region newr = RPUtil.loadProps(fileDB, rname, this.world);
     	    	newr.setToSave(false);
         	    regions.put(rname,newr);
-        	}        	
+        	}
         }
     }
-        
+
     @Override
     public Set<Region> getRegionsNear(Player player, int radius) {
     	int px = player.getLocation().getBlockX();
         int pz = player.getLocation().getBlockZ();
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
-        
+
 		for (Region r:regions.values()){
-			RedProtect.logger.debug("Radius: " + radius);
-			RedProtect.logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
+			RedProtect.get().logger.debug("Radius: " + radius);
+			RedProtect.get().logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
 			if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius){
 				ret.add(r);
 			}

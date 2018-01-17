@@ -78,7 +78,7 @@ public class WEListener {
 	}
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Sponge.Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
-    	Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+    	Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             if (RPUtil.stopRegen){
                 return;
             }
@@ -97,14 +97,14 @@ public class WEListener {
                 }
             } else {
                 if (ws.regenerate(wreg, esession)){
-                    RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                    RedProtect.get().logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
                 } else {
-                    RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                    RedProtect.get().logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
                 }
             }
 
             if (remove){
-                RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()).get());
+                RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()).get());
             }
 
             },delay, TimeUnit.MILLISECONDS);

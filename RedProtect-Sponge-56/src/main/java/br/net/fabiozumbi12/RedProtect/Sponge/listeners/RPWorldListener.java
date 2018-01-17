@@ -17,20 +17,20 @@ import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 public class RPWorldListener {
     
     public RPWorldListener() {
-        RedProtect.logger.debug("world","Loaded RPEntityListener...");
+        RedProtect.get().logger.debug("world","Loaded RPEntityListener...");
     }
     
     @Listener
     public void onWorldLoad(LoadWorldEvent e) {
         World w = e.getTargetWorld();
         try {
-            RedProtect.rm.load(w);
-            RedProtect.cfgs.loadPerWorlds(w);  
-            RedProtect.logger.warning("World loaded: " + w.getName());
+            RedProtect.get().rm.load(w);
+            RedProtect.get().cfgs.loadPerWorlds(w);  
+            RedProtect.get().logger.warning("World loaded: " + w.getName());
             
         }
         catch (Exception ex) {
-        	RedProtect.logger.severe("RedProtect problem on load world:");
+        	RedProtect.get().logger.severe("redprotect problem on load world:");
             ex.printStackTrace();
         }
     }
@@ -39,11 +39,11 @@ public class RPWorldListener {
     public void onWorldUnload(UnloadWorldEvent e) {
         World w = e.getTargetWorld();
         try {
-            RedProtect.rm.unload(w);
-            RedProtect.logger.warning("World unloaded: " + w.getName());
+            RedProtect.get().rm.unload(w);
+            RedProtect.get().logger.warning("World unloaded: " + w.getName());
         }
         catch (Exception ex) {
-        	RedProtect.logger.severe("RedProtect problem on unload world:");
+        	RedProtect.get().logger.severe("redprotect problem on unload world:");
             ex.printStackTrace();
         }
     }   
@@ -51,24 +51,24 @@ public class RPWorldListener {
     @Listener
     public void onChunkUnload(ChunkLoad e) {
     	Optional<Entity> wOpt = e.getEntities().stream().findFirst();
-    	if (!wOpt.isPresent() || !RedProtect.cfgs.getGlobalFlag(wOpt.get().getWorld().getName(), "remove-entities-not-allowed-to-spawn")){
+    	if (!wOpt.isPresent() || !RedProtect.get().cfgs.getGlobalFlag(wOpt.get().getWorld().getName(), "remove-entities-not-allowed-to-spawn")){
     		return;
     	}
     	World w = wOpt.get().getWorld();
     	List<Entity> ents = e.getEntities();
     	for (Entity ent:ents){
-    		Region entr = RedProtect.rm.getTopRegion(ent.getLocation());
+    		Region entr = RedProtect.get().rm.getTopRegion(ent.getLocation());
     		if (entr != null){
     			if (!entr.canSpawnMonsters() && ent instanceof Monster){
         			ent.remove();
         		}
     		} else {
     			if (ent instanceof Monster){
-    				if (!RedProtect.cfgs.getGlobalFlag(w.getName(), "spawn-monsters")){
+    				if (!RedProtect.get().cfgs.getGlobalFlag(w.getName(), "spawn-monsters")){
     					ent.remove();
     				}    			   				
     			}
-    			else if (!RedProtect.cfgs.getGlobalFlag(w.getName(), "spawn-passives")){
+    			else if (!RedProtect.get().cfgs.getGlobalFlag(w.getName(), "spawn-passives")){
     				if (ent.getCreator().isPresent()){
     					return;
     				}

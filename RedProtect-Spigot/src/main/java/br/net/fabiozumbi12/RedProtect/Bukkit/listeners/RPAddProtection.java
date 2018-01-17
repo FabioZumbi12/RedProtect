@@ -38,12 +38,12 @@ public class RPAddProtection implements Listener{
 		}
 		
 		//antispam
-		if (RPConfig.getProtBool("chat-protection.antispam.enabled") && !p.hasPermission("redprotect.chat.bypass-spam")){	
+		if (RPConfig.getProtBool("chat-protection.antispam.enabled") && !p.hasPermission("redprotect.chat.bypass-spam")){
 			
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
-				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                     if (chatSpam.containsKey(p)){
                         chatSpam.remove(p);
                     }
@@ -57,7 +57,7 @@ public class RPAddProtection implements Listener{
 			//check same message frequency
 			if (!msgSpam.containsKey(msg)){
 				msgSpam.put(msg, 1);
-				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                     if (msgSpam.containsKey(msg)){
                         msgSpam.remove(msg);
                     }
@@ -66,7 +66,7 @@ public class RPAddProtection implements Listener{
 				msgSpam.put(msg, msgSpam.get(msg)+1);
 				e.setCancelled(true);				
 				if (msgSpam.get(msg) >= RPConfig.getProtInt("chat-protection.antispam.count-of-same-message")){
-					RPUtil.performCommand(RedProtect.serv.getConsoleSender(),RPConfig.getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
+					RPUtil.performCommand(RedProtect.get().serv.getConsoleSender(),RPConfig.getProtString("chat-protection.antispam.cmd-action").replace("{player}", p.getName()));
 					msgSpam.remove(msg);
 				} else {
 					p.sendMessage(RPConfig.getProtMsg("chat-protection.antispam.wait-message"));
@@ -100,7 +100,7 @@ public class RPAddProtection implements Listener{
 			if (act > 0){
 				String action = RPConfig.getProtString("chat-protection.censor.cmd-action");
 				if (!action.isEmpty()){
-					RPUtil.performCommand(RedProtect.serv.getConsoleSender(), action);
+					RPUtil.performCommand(RedProtect.get().serv.getConsoleSender(), action);
 				}
 			}
 		}
@@ -197,14 +197,14 @@ public class RPAddProtection implements Listener{
 					if (RPConfig.getProtString("chat-protection.anti-ip.punish.mute-or-cmd").equalsIgnoreCase("mute")){
 						muted.add(p.getName());
 						p.sendMessage(RPConfig.getProtMsg("chat-protection.anti-ip.punish.mute-msg"));
-						Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+						Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                             if (muted.contains(p.getName())){
                                 muted.remove(p.getName());
                                 p.sendMessage(RPConfig.getProtMsg("chat-protection.anti-ip.punish.unmute-msg"));
                             }
                         },(RPConfig.getProtInt("chat-protection.anti-ip.punish.mute-duration")*60)*20);
 					} else {
-						RPUtil.performCommand(RedProtect.serv.getConsoleSender(),RPConfig.getProtString("chat-protection.anti-ip.punish.cmd-punish"));
+						RPUtil.performCommand(RedProtect.get().serv.getConsoleSender(),RPConfig.getProtString("chat-protection.anti-ip.punish.cmd-punish"));
 					}	
 					UrlSpam.remove(p);
 				}

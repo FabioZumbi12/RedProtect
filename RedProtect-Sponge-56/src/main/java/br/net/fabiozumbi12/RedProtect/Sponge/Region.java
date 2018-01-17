@@ -46,8 +46,7 @@ public class Region implements Serializable{
     private String wMessage;
     private String world;
     private String date;
-    public Map<String, Object> flags = new HashMap<>();
-    protected boolean[] f = new boolean[10];
+    public Map<String, Object> flags;
 	private long value;
 	private Location<World> tppoint;
 	private final boolean waiting = false;
@@ -81,8 +80,8 @@ public class Region implements Serializable{
 	}
 	
 	private void startRentScheduler(){
-		rentTask = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).scheduleAtFixedRate(() -> {
-            RedProtect.logger.debug("player", "Region Rent - Run scheduler...");
+		rentTask = Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).scheduleAtFixedRate(() -> {
+            RedProtect.get().logger.debug("player", "Region Rent - Run scheduler...");
 
             List<String> toRemove = new ArrayList<>();
             long now = RPUtil.getNowMillis();
@@ -93,21 +92,21 @@ public class Region implements Serializable{
                 //compare to remove
                 if (now > rentdt){
                     if (isLeader(key) && leaders.size() == 1){
-                        addLeader(RedProtect.cfgs.getString("region-settings.default-owner"));
+                        addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
                     }
                     //remove from all
                     removeMember(key);
                     toRemove.add(key);
 
-                    if (RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isPresent()){
-                        RPLang.sendMessage(RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).get(), RPLang.get("region.rentend").replace("{region}", name));
+                    if (RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isPresent()){
+                        RPLang.sendMessage(RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).get(), RPLang.get("region.rentend").replace("{region}", name));
                     }
                 }
 
-                if (RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isPresent()){
-                    RedProtect.logger.debug("player", "Rent found player...");
+                if (RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isPresent()){
+                    RedProtect.get().logger.debug("player", "Rent found player...");
                     if (now == rentdt){
-                        RPLang.sendMessage(RedProtect.serv.getPlayer(RPUtil.UUIDtoPlayer(key)).get(), RPLang.get("region.rentalert").replace("{cost}", RPEconomy.getFormatted(getRentValue(key))));
+                        RPLang.sendMessage(RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).get(), RPLang.get("region.rentalert").replace("{cost}", RPEconomy.getFormatted(getRentValue(key))));
                     }
                 }
             }
@@ -140,7 +139,7 @@ public class Region implements Serializable{
 		} else if (value instanceof Integer){
 			rent.put(player, (Integer)value);
 		}
-		RedProtect.rm.updateLiveRegion(this, "rent", getRentString());
+		RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
 	}
 	
 	public void addrent(String player, Integer value, Long renewal, String rank){
@@ -150,7 +149,7 @@ public class Region implements Serializable{
 				
 		/*if (rank.equalsIgnoreCase("admin")){
 			if (isLeader(player)){
-				addLeader(RedProtect.cfgs.getString("region-settings.default-owner"));
+				addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
 			}
 			addAdmin(player);
 			
@@ -159,11 +158,11 @@ public class Region implements Serializable{
 			addLeader(player);			
 		} else {
 			if (isLeader(player)){
-				addLeader(RedProtect.cfgs.getString("region-settings.default-owner"));
+				addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
 			}
 			addMember(player);
 		}		
-		RedProtect.rm.updateLiveRegion(this, "rent", getRentString());
+		RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
 		
 		//restart scheduler	
 		restartRentScheduler();
@@ -175,10 +174,10 @@ public class Region implements Serializable{
 			this.rent.remove(player);
 			this.rentDate.remove(player);
 			if (isLeader(player) && leaders.size() == 1){
-				addLeader(RedProtect.cfgs.getString("region-settings.default-owner"));
+				addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
 			}	
 			removeMember(player);
-			RedProtect.rm.updateLiveRegion(this, "rent", getRentString());
+			RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
 			if (this.rent.isEmpty()){
 				stopRentTask();
 			}
@@ -186,7 +185,7 @@ public class Region implements Serializable{
 	}
 	
 	public String getRentDateFormated(String player){
-		SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.cfgs.getString("region-settings.date-format"));
+		SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.get().cfgs.getString("region-settings.date-format"));
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(getRentDateMillis(player));
 		return sdf.format(cal.getTime());
@@ -222,7 +221,7 @@ public class Region implements Serializable{
 			this.rent.put(s[0], Integer.valueOf(s[1]));
 			this.rentDate.put(s[0], Long.valueOf(s[2]));
 		}
-		//RedProtect.rm.updateLiveRegion(this, "rent", getRentString());
+		//RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
 		
 		//restart scheduler	
 		restartRentScheduler();
@@ -240,21 +239,21 @@ public class Region implements Serializable{
     public void setFlag(String Name, Object value) {
     	setToSave(true);
     	this.flags.put(Name, value);
-    	RedProtect.rm.updateLiveFlags(this, Name, value.toString());
+    	RedProtect.get().rm.updateLiveFlags(this, Name, value.toString());
     }
     
     public void removeFlag(String Name) {
     	setToSave(true);
     	if (this.flags.containsKey(Name)){
     		this.flags.remove(Name); 
-    		RedProtect.rm.removeLiveFlags(this, Name);
+    		RedProtect.get().rm.removeLiveFlags(this, Name);
     	}    	               
     }
     
     public void setDate(String value) {
     	setToSave(true);
         this.date = value;
-        RedProtect.rm.updateLiveRegion(this, "date", value);
+        RedProtect.get().rm.updateLiveRegion(this, "date", value);
     }    
     
     public void setTPPoint(Location<World> loc){   
@@ -265,9 +264,9 @@ public class Region implements Serializable{
         	double y = loc.getY();
         	double z = loc.getZ();
         	String pos = loc.getPosition().toString();
-        	RedProtect.rm.updateLiveRegion(this, "tppoint", x+","+y+","+z+","+pos);
+        	RedProtect.get().rm.updateLiveRegion(this, "tppoint", x+","+y+","+z+","+pos);
     	} else {
-    		RedProtect.rm.updateLiveRegion(this, "tppoint", "");
+    		RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
     	}
     	
     }
@@ -287,7 +286,7 @@ public class Region implements Serializable{
     public void setMaxY(int y) {
     	setToSave(true);
         this.maxY = y;
-        RedProtect.rm.updateLiveRegion(this, "maxy", y);
+        RedProtect.get().rm.updateLiveRegion(this, "maxy", y);
     }
     
     public int getMinY() {
@@ -297,13 +296,13 @@ public class Region implements Serializable{
     public void setMinY(int y) {
     	setToSave(true);
         this.minY = y;
-        RedProtect.rm.updateLiveRegion(this, "miny", y);
+        RedProtect.get().rm.updateLiveRegion(this, "miny", y);
     }
     
     public void setWorld(String w) {
     	setToSave(true);
         this.world = w;
-        RedProtect.rm.updateLiveRegion(this, "world", w);
+        RedProtect.get().rm.updateLiveRegion(this, "world", w);
     }   
     
     public Location<World> getMaxLocation(){
@@ -321,7 +320,7 @@ public class Region implements Serializable{
     public void setPrior(int prior) {
     	setToSave(true);
         this.prior = prior;
-        RedProtect.rm.updateLiveRegion(this, "prior", prior);
+        RedProtect.get().rm.updateLiveRegion(this, "prior", prior);
     }
     
     public int getPrior() {
@@ -331,7 +330,7 @@ public class Region implements Serializable{
     public void setWelcome(String s){
     	setToSave(true);
     	this.wMessage = s;
-    	RedProtect.rm.updateLiveRegion(this, "wel", s);
+    	RedProtect.get().rm.updateLiveRegion(this, "wel", s);
     }
     
     public String getWelcome(){
@@ -354,19 +353,19 @@ public class Region implements Serializable{
     public void setLeaders(List<String> leaders) {
     	setToSave(true);
         this.leaders = leaders;
-        RedProtect.rm.updateLiveRegion(this, "leaders", leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", leaders.toString().replace("[", "").replace("]", ""));
     }
     
     public void setAdmins(List<String> admins) {
     	setToSave(true);
         this.admins = admins;
-        RedProtect.rm.updateLiveRegion(this, "admins", admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", admins.toString().replace("[", "").replace("]", ""));
     }
     
     public void setMembers(List<String> members) {
     	setToSave(true);
         this.members = members;
-        RedProtect.rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
     }
     
     public int[] getX() {
@@ -467,8 +466,8 @@ public class Region implements Serializable{
         String wName = this.world;
         String colorChar = "";
         
-        if (RedProtect.cfgs.getString("region-settings.world-colors." + this.world) != null){
-        	colorChar = RedProtect.cfgs.getString("region-settings.world-colors." + this.world);
+        if (RedProtect.get().cfgs.getString("region-settings.world-colors." + this.world) != null){
+        	colorChar = RedProtect.get().cfgs.getString("region-settings.world-colors." + this.world);
         }
         
         for (int i = 0; i < this.leaders.size(); ++i) {
@@ -519,31 +518,31 @@ public class Region implements Serializable{
         	today = this.date;
         }
         for (String pname:this.leaders){        	
-        	if (RedProtect.OnlineMode){
+        	if (RedProtect.get().OnlineMode){
         		User play = null;
-        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.cfgs.getString("region-settings.default-leader"))){
+        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.getString("region-settings.default-leader"))){
                 	play = RPUtil.getUser(pname);
             	}            
             	if (pname != null && play != null && play.isOnline()){
             		today = "&aOnline!";
             		break;
             	} 
-        	} else if (RedProtect.serv.getPlayer(pname).isPresent()){
+        	} else if (RedProtect.get().serv.getPlayer(pname).isPresent()){
         		today = "&aOnline!";
         		break; 
         	}                   	
         } 
         for (String pname:this.admins){        	
-        	if (RedProtect.OnlineMode){
+        	if (RedProtect.get().OnlineMode){
         		User play = null;
-        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.cfgs.getString("region-settings.default-leader"))){
+        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.getString("region-settings.default-leader"))){
                 	play = RPUtil.getUser(pname);
             	}            
             	if (pname != null && play != null && play.isOnline()){
             		today = "&aOnline!";
             		break;
             	} 
-        	} else if (RedProtect.serv.getPlayer(pname).isPresent()){
+        	} else if (RedProtect.get().serv.getPlayer(pname).isPresent()){
         		today = "&aOnline!";
         		break; 
         	}  
@@ -588,7 +587,7 @@ public class Region implements Serializable{
      * @param date Date of latest visit of an admin or leader.
      * @param value Last value of this region.
      */
-    public Region(String name, List<String> admins, List<String> members, List<String> leaders, Location<World> minLoc, Location<World> maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
+    /*public Region(String name, List<String> admins, List<String> members, List<String> leaders, Location<World> minLoc, Location<World> maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
     	super();        
         this.maxMbrX = maxLoc.getBlockX();
         this.minMbrX = minLoc.getBlockX();
@@ -606,6 +605,7 @@ public class Region implements Serializable{
         this.value = value;
         this.tppoint = tppoint;
         this.canDelete = candel;
+        this.prior = prior;
         
         if (worldName != null){
             this.world = worldName;
@@ -624,7 +624,7 @@ public class Region implements Serializable{
         } else {
         	this.date = RPUtil.DateNow();
         }
-    }
+    }*/
     
     /**
 	 * Represents the region created by player.
@@ -750,23 +750,23 @@ public class Region implements Serializable{
     public void clearLeaders(){
     	setToSave(true);
     	this.leaders.clear();
-    	RedProtect.rm.updateLiveRegion(this, "leaders", "");
+    	RedProtect.get().rm.updateLiveRegion(this, "leaders", "");
     }
     
     public void clearAdmins(){
     	setToSave(true);
     	this.admins.clear();
-    	RedProtect.rm.updateLiveRegion(this, "admins", "");
+    	RedProtect.get().rm.updateLiveRegion(this, "admins", "");
     }
     
     public void clearMembers(){
     	setToSave(true);
     	this.members.clear();
-    	RedProtect.rm.updateLiveRegion(this, "members", "");
+    	RedProtect.get().rm.updateLiveRegion(this, "members", "");
     }
     /*
     public void delete() {
-        RedProtect.rm.remove(this);
+        RedProtect.get().rm.remove(this);
     }
     */
     public int getArea() {
@@ -811,7 +811,7 @@ public class Region implements Serializable{
     public void addLeader(String uuid) {
     	setToSave(true);
     	String pinfo = uuid;
-    	if (!RedProtect.OnlineMode){
+    	if (!RedProtect.get().OnlineMode){
     		pinfo = uuid.toLowerCase();
     	}
         if (this.members.contains(pinfo)) {
@@ -823,9 +823,9 @@ public class Region implements Serializable{
         if (!this.leaders.contains(pinfo)) {
             this.leaders.add(pinfo);            
         }
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
 	/** Add a member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -834,7 +834,7 @@ public class Region implements Serializable{
     public void addMember(String uuid) {
     	setToSave(true);
     	String pinfo = uuid;
-    	if (!RedProtect.OnlineMode){
+    	if (!RedProtect.get().OnlineMode){
     		pinfo = uuid.toLowerCase();
     	}
     	if (this.admins.contains(pinfo)) {
@@ -846,9 +846,9 @@ public class Region implements Serializable{
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);            
         }
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
     /** Add an admin to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -857,7 +857,7 @@ public class Region implements Serializable{
     public void addAdmin(String uuid) {
     	setToSave(true);
     	String pinfo = uuid;
-    	if (!RedProtect.OnlineMode){
+    	if (!RedProtect.get().OnlineMode){
     		pinfo = uuid.toLowerCase();
     	}
         if (this.members.contains(pinfo)) {
@@ -869,9 +869,9 @@ public class Region implements Serializable{
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);            
         }
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
     }
     
     /** Remove an member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -880,7 +880,7 @@ public class Region implements Serializable{
     public void removeMember(String uuid) {
     	setToSave(true);
     	String pinfo = uuid;
-    	if (!RedProtect.OnlineMode){
+    	if (!RedProtect.get().OnlineMode){
     		pinfo = uuid.toLowerCase();
     	}
         if (this.members.contains(pinfo)) {
@@ -892,9 +892,9 @@ public class Region implements Serializable{
         if (this.leaders.contains(pinfo)) {
             this.leaders.remove(pinfo);
         }
-        RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
     }
     
     /** Remove an admin to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -903,7 +903,7 @@ public class Region implements Serializable{
     public void removeAdmin(String uuid) {
     	setToSave(true);
     	String pinfo = uuid;
-    	if (!RedProtect.OnlineMode){
+    	if (!RedProtect.get().OnlineMode){
     		pinfo = uuid.toLowerCase();
     	}
     	if (this.leaders.contains(pinfo)) {
@@ -915,9 +915,9 @@ public class Region implements Serializable{
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);
         }
-        RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
     }
     
     /** Remove an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
@@ -926,7 +926,7 @@ public class Region implements Serializable{
     public void removeLeader(String uuid) {
     	setToSave(true);
     	String pinfo = uuid;
-    	if (!RedProtect.OnlineMode){
+    	if (!RedProtect.get().OnlineMode){
     		pinfo = uuid.toLowerCase();
     	}
     	if (this.members.contains(pinfo)) {
@@ -938,28 +938,28 @@ public class Region implements Serializable{
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);
         }
-        RedProtect.rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
     }
     
     public boolean getFlagBool(String key) {
-    	if (!flagExists(key) || !RedProtect.cfgs.isFlagEnabled(key)){
-    		if (RedProtect.cfgs.getDefFlagsValues().get(key) != null){
-    			return (Boolean) RedProtect.cfgs.getDefFlagsValues().get(key);
+    	if (!flagExists(key) || !RedProtect.get().cfgs.isFlagEnabled(key)){
+    		if (RedProtect.get().cfgs.getDefFlagsValues().get(key) != null){
+    			return (Boolean) RedProtect.get().cfgs.getDefFlagsValues().get(key);
     		} else {
-    			return RedProtect.cfgs.getBool("flags."+key);
+    			return RedProtect.get().cfgs.getBool("flags."+key);
     		}  		
     	}
         return this.flags.get(key) instanceof Boolean && (Boolean)this.flags.get(key);
     }
     
     public String getFlagString(String key) {
-    	if (!flagExists(key) || !RedProtect.cfgs.isFlagEnabled(key)){
-    		if (RedProtect.cfgs.getDefFlagsValues().get(key) != null){
-    			return (String) RedProtect.cfgs.getDefFlagsValues().get(key);
+    	if (!flagExists(key) || !RedProtect.get().cfgs.isFlagEnabled(key)){
+    		if (RedProtect.get().cfgs.getDefFlagsValues().get(key) != null){
+    			return (String) RedProtect.get().cfgs.getDefFlagsValues().get(key);
     		} else {
-    			return RedProtect.cfgs.getString("flags."+key);
+    			return RedProtect.get().cfgs.getString("flags."+key);
     		}
     	}
         return this.flags.get(key).toString();
@@ -976,7 +976,7 @@ public class Region implements Serializable{
     public Text getFlagInfo() {
     	String flaginfo = "";
     	for (String flag:this.flags.keySet()){
-    		if (RedProtect.cfgs.getDefFlags().contains(flag)){
+    		if (RedProtect.get().cfgs.getDefFlags().contains(flag)){
     			String flagValue = this.flags.get(flag).toString();
     			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
     				flaginfo = flaginfo + ", &b" + flag + ": " + RPLang.translBool(flagValue);
@@ -989,7 +989,7 @@ public class Region implements Serializable{
 				continue;
 			}
     		
-    		if (RedProtect.cfgs.AdminFlags.contains(flag)){    			
+    		if (RedProtect.get().cfgs.AdminFlags.contains(flag)){    			
     			String flagValue = this.flags.get(flag).toString();
     			if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
     				flaginfo = flaginfo + ", &b" + flag + ": " + RPLang.translBool(flagValue);
@@ -1008,7 +1008,7 @@ public class Region implements Serializable{
     }
         
     public boolean isOnTop(){
-    	Region newr = RedProtect.rm.getTopRegion(RedProtect.serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ());
+    	Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ());
 		return newr == null || newr.equals(this);    	
     }
     
@@ -1063,9 +1063,9 @@ public class Region implements Serializable{
         		cmd = cmd.substring(1);
         	}
     		if (p.get(Keys.HEALTH).get() <= health && !waiting){
-    			RedProtect.game.getCommandManager().process(RedProtect.serv.getConsole(), cmd.replace("{player}", p.getName()));
+    			RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
     			/*waiting = true;
-    			Bukkit.getScheduler().runTaskLater(RedProtect.plugin, new Runnable(){
+    			Bukkit.getScheduler().runTaskLater(RedProtect.get().plugin, new Runnable(){
 					@Override
 					public void run() {
 						waiting = false;
@@ -1093,7 +1093,7 @@ public class Region implements Serializable{
 	}
     
 	public boolean canEnter(Player p) {
-		return !flagExists("enter") || getFlagBool("enter") || RedProtect.ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
+		return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
 	}
 	
 	public boolean canEnterWithItens(Player p) {
@@ -1308,18 +1308,18 @@ public class Region implements Serializable{
 	
 	//---------------------- Player Flags --------------------------//	
 	public boolean canBuild(Player p) {
-    	if (flagExists("for-sale") && !RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+    	if (flagExists("for-sale") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
     		return false;
     	}
-    	if (!RedProtect.cfgs.isFlagEnabled("build")){
-    		return RedProtect.cfgs.getBool("flags.build") || checkAllowedPlayer(p);
+    	if (!RedProtect.get().cfgs.isFlagEnabled("build")){
+    		return RedProtect.get().cfgs.getBool("flags.build") || checkAllowedPlayer(p);
     	}
         return getFlagBool("build") || checkAllowedPlayer(p);
     }
 	
 	public boolean leavesDecay() {
-		if (!RedProtect.cfgs.isFlagEnabled("leaves-decay")){
-    		return RedProtect.cfgs.getBool("flags.leaves-decay");
+		if (!RedProtect.get().cfgs.isFlagEnabled("leaves-decay")){
+    		return RedProtect.get().cfgs.getBool("flags.leaves-decay");
     	}
 		return getFlagBool("leaves-decay");
 	}
@@ -1329,15 +1329,15 @@ public class Region implements Serializable{
 	 * @return boolean
 	 */
 	public boolean allowSpawner(Player p) {
-		if (!RedProtect.cfgs.isFlagEnabled("allow-spawner")){
-    		return RedProtect.cfgs.getBool("flags.allow-spawner");
+		if (!RedProtect.get().cfgs.isFlagEnabled("allow-spawner")){
+    		return RedProtect.get().cfgs.getBool("flags.allow-spawner");
     	}
 		return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canTeleport(Player p) {
-		if (!RedProtect.cfgs.isFlagEnabled("teleport")){
-    		return checkAllowedPlayer(p) || RedProtect.cfgs.getBool("flags.teleport");
+		if (!RedProtect.get().cfgs.isFlagEnabled("teleport")){
+    		return checkAllowedPlayer(p) || RedProtect.get().cfgs.getBool("flags.teleport");
     	}
         return checkAllowedPlayer(p) || getFlagBool("teleport");
 	}
@@ -1347,127 +1347,127 @@ public class Region implements Serializable{
 	 * @return boolean
 	 */
 	public boolean canFly(Player p) {
-		if (!RedProtect.cfgs.isFlagEnabled("allow-fly")){
-    		return RedProtect.cfgs.getBool("flags.allow-fly");
+		if (!RedProtect.get().cfgs.isFlagEnabled("allow-fly")){
+    		return RedProtect.get().cfgs.getBool("flags.allow-fly");
     	}
 		return getFlagBool("allow-fly") || checkAllowedPlayer(p);
 	}
 	
 	public boolean FlowDamage() {
-		if (!RedProtect.cfgs.isFlagEnabled("flow-damage")){
-    		return RedProtect.cfgs.getBool("flags.flow-damage");
+		if (!RedProtect.get().cfgs.isFlagEnabled("flow-damage")){
+    		return RedProtect.get().cfgs.getBool("flags.flow-damage");
     	}
 		return getFlagBool("flow-damage");
 	}
 	
 	public boolean canMobLoot() {
-    	if (!RedProtect.cfgs.isFlagEnabled("mob-loot")){
-    		return RedProtect.cfgs.getBool("flags.mob-loot");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("mob-loot")){
+    		return RedProtect.get().cfgs.getBool("flags.mob-loot");
     	}
         return getFlagBool("mob-loot");
     }
 	
 	public boolean allowEffects(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("allow-effects")){
-    		return RedProtect.cfgs.getBool("flags.allow-effects");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("allow-effects")){
+    		return RedProtect.get().cfgs.getBool("flags.allow-effects");
     	}    	
         return getFlagBool("allow-effects") || checkAllowedPlayer(p);
     }
 	
 	public boolean usePotions(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("use-potions")){
-    		return RedProtect.cfgs.getBool("flags.use-potions");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("use-potions")){
+    		return RedProtect.get().cfgs.getBool("flags.use-potions");
     	}    	
         return getFlagBool("use-potions") || checkAllowedPlayer(p);
     }
     
     public boolean canPVP(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("pvp")){
-    		return RedProtect.cfgs.getBool("flags.pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("pvp")){
+    		return RedProtect.get().cfgs.getBool("flags.pvp") || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
     	}
-        return getFlagBool("pvp") || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+        return getFlagBool("pvp") || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canChest(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("chest")){
-    		return RedProtect.cfgs.getBool("flags.chest") || checkAllowedPlayer(p);
+    	if (!RedProtect.get().cfgs.isFlagEnabled("chest")){
+    		return RedProtect.get().cfgs.getBool("flags.chest") || checkAllowedPlayer(p);
     	}
         return getFlagBool("chest") || checkAllowedPlayer(p);
     }
     
     public boolean canLever(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("lever")){
-    		return RedProtect.cfgs.getBool("flags.lever") || checkAllowedPlayer(p);
+    	if (!RedProtect.get().cfgs.isFlagEnabled("lever")){
+    		return RedProtect.get().cfgs.getBool("flags.lever") || checkAllowedPlayer(p);
     	}
         return getFlagBool("lever") || checkAllowedPlayer(p);
     }
     
     public boolean canButton(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("button")){
-    		return RedProtect.cfgs.getBool("flags.button") || checkAllowedPlayer(p);
+    	if (!RedProtect.get().cfgs.isFlagEnabled("button")){
+    		return RedProtect.get().cfgs.getBool("flags.button") || checkAllowedPlayer(p);
     	}
         return getFlagBool("button") || checkAllowedPlayer(p);
     }
     
     public boolean canDoor(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("door")){
-    		return RedProtect.cfgs.getBool("flags.door") || checkAllowedPlayer(p);
+    	if (!RedProtect.get().cfgs.isFlagEnabled("door")){
+    		return RedProtect.get().cfgs.getBool("flags.door") || checkAllowedPlayer(p);
     	}
         return getFlagBool("door") || checkAllowedPlayer(p);
     }
     
     public boolean canSpawnMonsters() {
-    	if (!RedProtect.cfgs.isFlagEnabled("spawn-monsters")){
-    		return RedProtect.cfgs.getBool("flags.spawn-monsters");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("spawn-monsters")){
+    		return RedProtect.get().cfgs.getBool("flags.spawn-monsters");
     	}
         return getFlagBool("spawn-monsters");
     }
         
     public boolean canSpawnPassives() {
-    	if (!RedProtect.cfgs.isFlagEnabled("spawn-animals")){
-    		return RedProtect.cfgs.getBool("flags.spawn-animals");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("spawn-animals")){
+    		return RedProtect.get().cfgs.getBool("flags.spawn-animals");
     	}
         return getFlagBool("spawn-animals");
     }
     
 	public boolean canMinecart(Player p) {
-		if (!RedProtect.cfgs.isFlagEnabled("minecart")){
-    		return RedProtect.cfgs.getBool("flags.minecart") || checkAllowedPlayer(p);
+		if (!RedProtect.get().cfgs.isFlagEnabled("minecart")){
+    		return RedProtect.get().cfgs.getBool("flags.minecart") || checkAllowedPlayer(p);
     	}
         return getFlagBool("minecart") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canInteractPassives(Player p) {
-    	if (!RedProtect.cfgs.isFlagEnabled("passives")){
-    		return RedProtect.cfgs.getBool("flags.passives") || checkAllowedPlayer(p);
+    	if (!RedProtect.get().cfgs.isFlagEnabled("passives")){
+    		return RedProtect.get().cfgs.getBool("flags.passives") || checkAllowedPlayer(p);
     	}
         return getFlagBool("passives") || checkAllowedPlayer(p);
     }
     
     public boolean canFlow() {
-    	if (!RedProtect.cfgs.isFlagEnabled("flow")){
-    		return RedProtect.cfgs.getBool("flags.flow");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("flow")){
+    		return RedProtect.get().cfgs.getBool("flags.flow");
     	}
         return getFlagBool("flow");
     }
     
     public boolean canFire() {
-    	if (!RedProtect.cfgs.isFlagEnabled("fire")){
-    		return RedProtect.cfgs.getBool("flags.fire");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("fire")){
+    		return RedProtect.get().cfgs.getBool("flags.fire");
     	}
         return getFlagBool("fire");
     }
     
     public boolean AllowHome(Player p) {
-		if (!RedProtect.cfgs.isFlagEnabled("allow-home")){
-    		return RedProtect.cfgs.getBool("flags.allow-home") || checkAllowedPlayer(p);
+		if (!RedProtect.get().cfgs.isFlagEnabled("allow-home")){
+    		return RedProtect.get().cfgs.getBool("flags.allow-home") || checkAllowedPlayer(p);
     	}
 		return getFlagBool("allow-home") || checkAllowedPlayer(p);
 	}
     
     public boolean canGrow() {
-    	if (!RedProtect.cfgs.isFlagEnabled("can-grow")){
-    		return RedProtect.cfgs.getBool("flags.can-grow");
+    	if (!RedProtect.get().cfgs.isFlagEnabled("can-grow")){
+    		return RedProtect.get().cfgs.getBool("flags.can-grow");
     	}
 		return getFlagBool("can-grow");
 	}
@@ -1479,12 +1479,12 @@ public class Region implements Serializable{
 	
 	public void setValue(long value) {	
 		setToSave(true);
-		RedProtect.rm.updateLiveRegion(this, "value", value);
+		RedProtect.get().rm.updateLiveRegion(this, "value", value);
 		this.value = value;
 	}
 	    
 	private boolean checkAllowedPlayer(Player p){
-		return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || RedProtect.ph.hasPerm(p, "redprotect.bypass");
+		return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
 	}
 	
 	public List<Location<World>> getLimitLocs(int locy){
@@ -1517,7 +1517,7 @@ public class Region implements Serializable{
                 for (int y = miny; y <= maxy; ++y) {
                     if ((z == loc1.getBlockZ() || z == loc2.getBlockZ() ||
                         x == loc1.getBlockX() || x == loc2.getBlockX())
-                        && (define || new Location<>(w, x, y, z).getBlock().getType().getName().contains(RedProtect.cfgs.getString("region-settings.block-id")))) {
+                        && (define || new Location<>(w, x, y, z).getBlock().getType().getName().contains(RedProtect.get().cfgs.getString("region-settings.block-id")))) {
                     	locBlocks.add(new Location<>(w, x, y, z));
                     }
                 }
@@ -1552,7 +1552,7 @@ public class Region implements Serializable{
 	
 	public String getLeadersDesc() {
 		if (this.leaders.size() == 0){
-			addLeader(RedProtect.cfgs.getString("region-settings.default-leader"));
+			addLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"));
 			return this.leaders.get(0);
 		}
 		StringBuilder leaderList = new StringBuilder();

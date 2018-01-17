@@ -61,6 +61,6 @@ public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, 
 
 	@Override
 	public Cause getCause() {
-		return RedProtect.getPVHelper().getCause(player);
+		return RedProtect.get().getPVHelper().getCause(player);
 	}   
 }

@@ -25,7 +25,7 @@ public class RPAddProtection {
 	private static final List<String> muted = new ArrayList<>();
 	
 	public RPAddProtection(){
-		RedProtect.logger.debug("default","Loaded RPAddProtection...");
+		RedProtect.get().logger.debug("default","Loaded RPAddProtection...");
 	}
 	
 	@Listener(order=Order.EARLY)
@@ -38,24 +38,24 @@ public class RPAddProtection {
 		
 		//mute check
 		if (muted.contains(p.getName())){
-			p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","anti-ip","mute-msg"));
+			p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","anti-ip","mute-msg"));
 			e.setCancelled(true);
 			return;
 		}
 		
 		//antispam
-		if (RedProtect.cfgs.getProtBool("chat-protection","antispam","enable") && !p.hasPermission("redprotect.chat.bypass-spam")){	
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","antispam","enable") && !p.hasPermission("redprotect.chat.bypass-spam")){	
 			
 			//check spam messages
 			if (!chatSpam.containsKey(p)){
 				chatSpam.put(p, msg);				
-				Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+				Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
                     if (chatSpam.containsKey(p)){
                         chatSpam.remove(p);
                     }
-                },RedProtect.cfgs.getProtInt("chat-protection","antispam","time-beteween-messages"), TimeUnit.SECONDS);
+                },RedProtect.get().cfgs.getProtInt("chat-protection","antispam","time-beteween-messages"), TimeUnit.SECONDS);
 			} else if (!chatSpam.get(p).equalsIgnoreCase(msg)){				
-				p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","antispam","colldown-msg"));
+				p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","antispam","colldown-msg"));
 				e.setCancelled(true);
 				return;
 			}
@@ -64,18 +64,18 @@ public class RPAddProtection {
 			if (!msgSpam.containsKey(msg)){
 				msgSpam.put(msg, 1);
 				final String nmsg = msg;
-				Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+				Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
                     if (msgSpam.containsKey(nmsg)){
                         msgSpam.remove(nmsg);
                     }
-                },RedProtect.cfgs.getProtInt("chat-protection","antispam","time-beteween-same-messages"), TimeUnit.SECONDS);
+                },RedProtect.get().cfgs.getProtInt("chat-protection","antispam","time-beteween-same-messages"), TimeUnit.SECONDS);
 			} else {
 				msgSpam.put(msg, msgSpam.get(msg)+1);				
-				if (msgSpam.get(msg) >= RedProtect.cfgs.getProtInt("chat-protection","antispam","count-of-same-message")){
-					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),RedProtect.cfgs.getProtString("chat-protection","antispam","cmd-action").replace("{player}", p.getName()));
+				if (msgSpam.get(msg) >= RedProtect.get().cfgs.getProtInt("chat-protection","antispam","count-of-same-message")){
+					Sponge.getCommandManager().process(Sponge.getServer().getConsole(),RedProtect.get().cfgs.getProtString("chat-protection","antispam","cmd-action").replace("{player}", p.getName()));
 					msgSpam.remove(msg);
 				} else {
-					p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","antispam","wait-message"));					
+					p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","antispam","wait-message"));					
 				}
 				e.setCancelled(true);
 				return;
@@ -83,20 +83,20 @@ public class RPAddProtection {
 		}
 		
 		//censor
-		if (RedProtect.cfgs.getProtBool("chat-protection","censor","enable") && !p.hasPermission("redprotect.chat.bypass-censor")){
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","censor","enable") && !p.hasPermission("redprotect.chat.bypass-censor")){
 			int act = 0;
-			for (String word:RedProtect.cfgs.getProtStringList("chat-protection","censor","replace-words")){
+			for (String word:RedProtect.get().cfgs.getProtStringList("chat-protection","censor","replace-words")){
 				if (!StringUtils.containsIgnoreCase(msg, word)){
 					continue;
 				} 				
-				String replaceby = RedProtect.cfgs.getProtString("chat-protection","censor","by-word");
-				if (RedProtect.cfgs.getProtBool("chat-protection","censor","replace-by-symbol")){
-					replaceby = word.replaceAll("(?s).", RedProtect.cfgs.getProtString("chat-protection","censor","by-symbol"));
+				String replaceby = RedProtect.get().cfgs.getProtString("chat-protection","censor","by-word");
+				if (RedProtect.get().cfgs.getProtBool("chat-protection","censor","replace-by-symbol")){
+					replaceby = word.replaceAll("(?s).", RedProtect.get().cfgs.getProtString("chat-protection","censor","by-symbol"));
 				}
 				
-				if (!RedProtect.cfgs.getProtBool("chat-protection","censor","replace-partial-word")){
+				if (!RedProtect.get().cfgs.getProtBool("chat-protection","censor","replace-partial-word")){
 					msg = msg.replaceAll("(?i)"+"\\b"+Pattern.quote(word)+"\\b", replaceby);
-					if (RedProtect.cfgs.getProtBool("chat-protection","censor","action","partial-words")){
+					if (RedProtect.get().cfgs.getProtBool("chat-protection","censor","action","partial-words")){
 						act++;
 					}
 				} else {
@@ -105,22 +105,22 @@ public class RPAddProtection {
 				}				
 			}
 			if (act > 0){
-				String action = RedProtect.cfgs.getProtString("chat-protection","censor","action","cmd");
+				String action = RedProtect.get().cfgs.getProtString("chat-protection","censor","action","cmd");
 				if (action.length() > 1){
 					Sponge.getCommandManager().process(Sponge.getServer().getConsole(), action.replace("{player}", p.getName()));				
 				}
 			}
 		}
 		
-		String regexIP = RedProtect.cfgs.getProtString("chat-protection","anti-ip","custom-ip-regex");
-		String regexUrl = RedProtect.cfgs.getProtString("chat-protection","anti-ip","custom-url-regex");
+		String regexIP = RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","custom-ip-regex");
+		String regexUrl = RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","custom-url-regex");
 		
 		//check ip and website
-		if (RedProtect.cfgs.getProtBool("chat-protection","anti-ip","enable") && !p.hasPermission("redprotect.chat.bypass-anti-ip")){
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","anti-ip","enable") && !p.hasPermission("redprotect.chat.bypass-anti-ip")){
 			
 			//check whitelist
 			boolean cont = true;
-			for (String check:RedProtect.cfgs.getProtStringList("chat-protection","anti-ip","whitelist-words")){
+			for (String check:RedProtect.get().cfgs.getProtStringList("chat-protection","anti-ip","whitelist-words")){
 				if (Pattern.compile(check).matcher(msg).find()){
                     cont = false;
                     break;
@@ -131,34 +131,34 @@ public class RPAddProtection {
                 //continue
                 if (Pattern.compile(regexIP).matcher(msg).find()){
                     addURLspam(p);
-                    if (RedProtect.cfgs.getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
-                        p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","anti-ip","cancel-msg"));
+                    if (RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
+                        p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","anti-ip","cancel-msg"));
                         e.setCancelled(true);
                         return;
                     } else {
-                        msg = msg.replaceAll(regexIP, RedProtect.cfgs.getProtString("chat-protection","anti-ip","replace-by-word"));
+                        msg = msg.replaceAll(regexIP, RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","replace-by-word"));
                     }
                 }
                 if (Pattern.compile(regexUrl).matcher(msg).find()){
                     addURLspam(p);
-                    if (RedProtect.cfgs.getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
-                        p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","anti-ip","cancel-msg"));
+                    if (RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
+                        p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","anti-ip","cancel-msg"));
                         e.setCancelled(true);
                         return;
                     } else {
-                        msg = msg.replaceAll(regexUrl, RedProtect.cfgs.getProtString("chat-protection","anti-ip","replace-by-word"));
+                        msg = msg.replaceAll(regexUrl, RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","replace-by-word"));
                     }
                 }
 
-                for (String word:RedProtect.cfgs.getProtStringList("chat-protection","anti-ip","check-for-words")){
+                for (String word:RedProtect.get().cfgs.getProtStringList("chat-protection","anti-ip","check-for-words")){
                     if (Pattern.compile("(?i)"+"\\b"+word+"\\b").matcher(msg).find()){
                         addURLspam(p);
-                        if (RedProtect.cfgs.getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
-                            p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","anti-ip","cancel-msg"));
+                        if (RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","cancel-or-replace").equalsIgnoreCase("cancel")){
+                            p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","anti-ip","cancel-msg"));
                             e.setCancelled(true);
                             return;
                         } else {
-                            msg = msg.replaceAll("(?i)"+word, RedProtect.cfgs.getProtString("chat-protection","anti-ip","replace-by-word"));
+                            msg = msg.replaceAll("(?i)"+word, RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","replace-by-word"));
                         }
                     }
                 }
@@ -166,19 +166,19 @@ public class RPAddProtection {
 		}	
 		
 		//capitalization verify
-		if (RedProtect.cfgs.getProtBool("chat-protection","chat-enhancement","enable") && !p.hasPermission("redprotect.chat.bypass-enhancement")){
-			int lenght = RedProtect.cfgs.getProtInt("chat-protection","chat-enhancement","minimum-lenght");
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","chat-enhancement","enable") && !p.hasPermission("redprotect.chat.bypass-enhancement")){
+			int lenght = RedProtect.get().cfgs.getProtInt("chat-protection","chat-enhancement","minimum-lenght");
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msg.length() > lenght){
 				msg = msg.replaceAll("([.!?])\\1+", "$1").replaceAll(" +", " ").substring(0, 1).toUpperCase()+msg.substring(1);
-				if (RedProtect.cfgs.getProtBool("chat-protection","chat-enhancement","end-with-dot") && !msg.endsWith("?") && !msg.endsWith("!") && !msg.endsWith(".") && msg.split(" ").length > 2){
+				if (RedProtect.get().cfgs.getProtBool("chat-protection","chat-enhancement","end-with-dot") && !msg.endsWith("?") && !msg.endsWith("!") && !msg.endsWith(".") && msg.split(" ").length > 2){
 					msg = msg+".";
 				}
 			}				
 		}
 		
 		//anti-caps
-		if (RedProtect.cfgs.getProtBool("chat-protection","caps-filter","enable") && !p.hasPermission("redprotect.chat.bypass-enhancement")){
-			int lenght = RedProtect.cfgs.getProtInt("chat-protection","caps-filter","minimum-lenght");
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","caps-filter","enable") && !p.hasPermission("redprotect.chat.bypass-enhancement")){
+			int lenght = RedProtect.get().cfgs.getProtInt("chat-protection","caps-filter","minimum-lenght");
 			int msgUppers = msg.replaceAll("\\p{P}", "").replaceAll("[a-z ]+", "").length();
 			if (!Pattern.compile(regexIP).matcher(msg).find() && !Pattern.compile(regexUrl).matcher(msg).find() && msgUppers >= lenght){
 				msg = msg.substring(0, 1).toUpperCase()+msg.substring(1).toLowerCase();
@@ -186,8 +186,8 @@ public class RPAddProtection {
 		}
 		
 		//antiflood
-		if (RedProtect.cfgs.getProtBool("chat-protection","anti-flood","enable")){						
-			for (String flood:RedProtect.cfgs.getProtStringList("chat-protection","anti-flood","whitelist-flood-characs")){
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","anti-flood","enable")){						
+			for (String flood:RedProtect.get().cfgs.getProtStringList("chat-protection","anti-flood","whitelist-flood-characs")){
 				if (Pattern.compile("(["+flood+"])\\1+").matcher(msg).find()){
 					e.getFormatter().setBody(Text.of(msg));
 					return;
@@ -199,24 +199,24 @@ public class RPAddProtection {
 	}
 	
 	private static void addURLspam(final Player p){
-		if (RedProtect.cfgs.getProtBool("chat-protection","anti-ip","punish","enable")){
+		if (RedProtect.get().cfgs.getProtBool("chat-protection","anti-ip","punish","enable")){
 			if (!UrlSpam.containsKey(p)){
 				UrlSpam.put(p, 1);
 			} else {
 				UrlSpam.put(p, UrlSpam.get(p)+1);
 				//p.sendMessage(RPUtil.toText("UrlSpam: "+UrlSpam.get(p)));
-				if (UrlSpam.get(p) >= RedProtect.cfgs.getProtInt("chat-protection","anti-ip","punish","max-attempts")){
-					if (RedProtect.cfgs.getProtString("chat-protection","anti-ip","punish","mute-or-cmd").equalsIgnoreCase("mute")){
+				if (UrlSpam.get(p) >= RedProtect.get().cfgs.getProtInt("chat-protection","anti-ip","punish","max-attempts")){
+					if (RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","punish","mute-or-cmd").equalsIgnoreCase("mute")){
 						muted.add(p.getName());
-						p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","anti-ip","punish","mute-msg"));
-						Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+						p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","anti-ip","punish","mute-msg"));
+						Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
                             if (muted.contains(p.getName())){
                                 muted.remove(p.getName());
-                                p.sendMessage(RedProtect.cfgs.getProtMsg("chat-protection","anti-ip","punish","unmute-msg"));
+                                p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection","anti-ip","punish","unmute-msg"));
                             }
-                        },RedProtect.cfgs.getProtInt("chat-protection","anti-ip","punish","mute-duration"),TimeUnit.MINUTES);
+                        },RedProtect.get().cfgs.getProtInt("chat-protection","anti-ip","punish","mute-duration"),TimeUnit.MINUTES);
 					} else {
-						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),RedProtect.cfgs.getProtString("chat-protection","anti-ip","punish","cmd-punish"));
+						Sponge.getCommandManager().process(Sponge.getServer().getConsole(),RedProtect.get().cfgs.getProtString("chat-protection","anti-ip","punish","cmd-punish"));
 					}	
 					UrlSpam.remove(p);
 				}

@@ -3,7 +3,6 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,7 +40,7 @@ public class RegionManager{
             return;
         }
         WorldRegionManager mgr;
-        if (RedProtect.cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
+        if (RedProtect.get().cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
             mgr = new WorldMySQLRegionManager(w);
         } else {
             mgr = new WorldFlatFileRegionManager(w);
@@ -91,7 +90,7 @@ public class RegionManager{
     public int getTotalRegionSize(String uuid, String world) {
     	Optional<World> w = Sponge.getServer().getWorld(world);
     	int size = 0;
-    	if (RedProtect.cfgs.getBool("region-settings.blocklimit-per-world") && w.isPresent()){
+    	if (RedProtect.get().cfgs.getBool("region-settings.blocklimit-per-world") && w.isPresent()){
     		WorldRegionManager rms = this.regionManagers.get(w.get());   
     		size = rms.getTotalRegionSize(uuid);
     	} else {
@@ -153,7 +152,7 @@ public class RegionManager{
     public int getPlayerRegions(String player, World w){
     	player = RPUtil.PlayerToUUID(player);
     	int size = 0;
-    	if (RedProtect.cfgs.getBool("region-settings.claimlimit-per-world")){
+    	if (RedProtect.get().cfgs.getBool("region-settings.claimlimit-per-world")){
     		size = getRegions(player, w).size();
     	} else {
     		size = getRegions(player).size();
@@ -198,7 +197,7 @@ public class RegionManager{
      */
     public Region getTopRegion(Location<World> loc){ 
     	if (bLoc.containsKey(loc.getBlockPosition())){
-    		RedProtect.logger.debug("blocks", "Get from cache: "+loc.getBlockPosition().toString());
+    		RedProtect.get().logger.debug("blocks", "Get from cache: "+loc.getBlockPosition().toString());
     		return bLoc.get(loc.getBlockPosition());
     	} else {
         	if (!this.regionManagers.containsKey(loc.getExtent())){
@@ -219,7 +218,7 @@ public class RegionManager{
         	
         	if (r != null){
         		bLoc.put(loc.getBlockPosition(), r);
-        		RedProtect.logger.debug("blocks", "Get from DB: "+loc.getBlockPosition().toString());
+        		RedProtect.get().logger.debug("blocks", "Get from DB: "+loc.getBlockPosition().toString());
         	}        	
         	return r;
     	}
@@ -260,7 +259,7 @@ public class RegionManager{
     public int regenAll(String player){
     	int delay = 0;
 		for (Region r : getRegions(player)) {
-			if (r.getArea() <= RedProtect.cfgs.getInt("purge.regen.max-area-regen")) {
+			if (r.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
 				WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
 				delay = delay + 10;
 			}
@@ -304,7 +303,7 @@ public class RegionManager{
         
     public Set<Region> getAllRegions(){
     	Set<Region> regions = new HashSet<>();
-    	for (World w:RedProtect.serv.getWorlds()){
+    	for (World w:RedProtect.get().serv.getWorlds()){
     		WorldRegionManager rm = this.regionManagers.get(w);
     		regions.addAll(rm.getAllRegions());    		
     	}    	
@@ -318,7 +317,7 @@ public class RegionManager{
     }
     
     public void clearDB(){
-    	for (World w:RedProtect.serv.getWorlds()){
+    	for (World w:RedProtect.get().serv.getWorlds()){
     		WorldRegionManager rm = this.regionManagers.get(w);
     		rm.clearRegions();
     	}
@@ -342,7 +341,7 @@ public class RegionManager{
 
 	public int getTotalRegionsNum() {
 		int total = 0;
-		for (World w:RedProtect.serv.getWorlds()){
+		for (World w:RedProtect.get().serv.getWorlds()){
 			WorldRegionManager rm = this.regionManagers.get(w);
 			total = total+rm.getTotalRegionNum();
 		}
@@ -356,8 +355,8 @@ public class RegionManager{
 		if (old.getRentString().split(":").length >= 3){
 			newr.setRentString(old.getRentString());
 		}
-		this.add(newr, RedProtect.serv.getWorld(newr.getWorld()).get());		
-		this.remove(old, RedProtect.serv.getWorld(old.getWorld()).get());		
+		this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()).get());		
+		this.remove(old, RedProtect.get().serv.getWorld(old.getWorld()).get());		
 	}
     
 }

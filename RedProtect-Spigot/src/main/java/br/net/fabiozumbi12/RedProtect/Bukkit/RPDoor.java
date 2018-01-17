@@ -16,7 +16,7 @@ public class RPDoor {
 			return;
 		}
 		
-		//RedProtect.logger.severe("Porta: "+isOpenable(b));
+		//RedProtect.get().logger.severe("Porta: "+isOpenable(b));
 		if (b.getType().name().contains("IRON")){
 			b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
 			toggleDoor(b);

@@ -39,7 +39,7 @@ public class DeleteRegionEvent extends AbstractEvent implements Cancellable, Eve
 
 	@Override
 	public Cause getCause() {
-		return RedProtect.getPVHelper().getCause(player);
+		return RedProtect.get().getPVHelper().getCause(player);
 	}
 
 }

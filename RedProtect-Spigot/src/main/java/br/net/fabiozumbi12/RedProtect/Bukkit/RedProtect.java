@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 import java.io.File;
 import java.util.*;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import net.milkbowl.vault.economy.Economy;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
@@ -38,56 +39,64 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPPlayerListener;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPWorldListener;
 
 public class RedProtect extends JavaPlugin {
-	public static File JarFile = null;
-	public static PluginDescriptionFile pdf;
-    public static RedProtect plugin;
+	public File JarFile = null;
+	public PluginDescriptionFile pdf;
 	private int taskid;
 	private boolean PlaceHolderAPI;
 	private boolean Fac;	
-	public static boolean Update;
-	public static String UptVersion;
-	public static String UptLink;    
-    public static RegionManager rm;
-    public static final List<String> changeWait = new ArrayList<>();
-    public static final List<String> tpWait = new ArrayList<>();
-    public static final HashMap<Player,String> alWait = new HashMap<>();
-    public static RPPermissionHandler ph;
-    public static final RPLogger logger = new RPLogger();
-    public static Server serv;    
-    public static final HashMap<Player, Location> firstLocationSelections = new HashMap<>();
-    public static final HashMap<Player, Location> secondLocationSelections = new HashMap<>();
-    public static boolean BossBar;
-    public static boolean MyChunk;
-    public static boolean MyPet;
+	public boolean Update;
+	public String UptVersion;
+	public String UptLink;
+    public RegionManager rm;
+    public List<String> changeWait = new ArrayList<>();
+    public List<String> tpWait = new ArrayList<>();
+    public HashMap<Player,String> alWait = new HashMap<>();
+    public RPPermissionHandler ph;
+    public final RPLogger logger = new RPLogger();
+    public Server serv;
+    public HashMap<Player, Location> firstLocationSelections = new HashMap<>();
+    public HashMap<Player, Location> secondLocationSelections = new HashMap<>();
+    public boolean BossBar;
+    public boolean MyChunk;
+    public boolean MyPet;
     static boolean McMMo;
-    public static boolean OnlineMode;
-	public static boolean Mc;
+    public boolean OnlineMode;
+	public boolean Mc;
 	static boolean SkillAPI;
-	public static boolean Vault;
-	public static boolean PvPm;
-	public static boolean Ess;
-	public static boolean GP;
-	public static boolean WE;
-	public static boolean AWE;
-	public static boolean SC;
-	public static boolean PLib;
-	public static ClanManager clanManager;
-	public static Essentials pless;	
+	public boolean Vault;
+	public boolean PvPm;
+	public boolean Ess;
+	public boolean GP;
+	public boolean WE;
+	public boolean AWE;
+	public boolean SC;
+	public boolean PLib;
+	public ClanManager clanManager;
+	public Essentials pless;
 	static boolean Dyn;
-	public static RPDynmap dynmap;
-	public static Economy econ;
-	public static int version;
-	public static boolean paper = false;
-	public static final List<String> openGuis = new ArrayList<>();
-	public static final List<String> confiemStart = new ArrayList<>();
-	public static final HashMap<String, List<String>> denyEnter = new HashMap<>();
-    
+	public RPDynmap dynmap;
+	public Economy econ;
+	public int version;
+	public final List<String> openGuis = new ArrayList<>();
+	public final List<String> confiemStart = new ArrayList<>();
+	public final HashMap<String, List<String>> denyEnter = new HashMap<>();
+
+	private RedProtectAPI rpAPI;
+	public RedProtectAPI getAPI(){
+	    return rpAPI;
+    }
+
+    private static RedProtect plugin;
+    public static RedProtect get(){
+        return plugin;
+    }
+
     public void onDisable() {
-        RedProtect.rm.saveAll();
-        RedProtect.rm.unloadAll();
+        rm.saveAll();
+        rm.unloadAll();
         logger.SaveLogs();
         Bukkit.getScheduler().cancelTasks(this);
-        RedProtect.logger.severe(RedProtect.pdf.getFullName() + " disabled.");
+        logger.severe(pdf.getFullName() + " disabled.");
     }
     
     public void onEnable() {
@@ -139,61 +148,61 @@ public class RedProtect extends JavaPlugin {
             if (Vault){
             	RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
                 if (rsp == null) {
-                	RedProtect.logger.warning("Vault found, but for some reason cant be used with RedProtect.");
+                	logger.warning("Vault found, but for some reason cant be used with RedProtect.");
                 	Vault = false;
                 } else {
                 	econ = rsp.getProvider();
-                	RedProtect.logger.info("Vault found. Hooked.");                	
+                	logger.info("Vault found. Hooked.");
                 }
             }
             
             if (PLib){
-            	RedProtect.logger.info("ProtocolLib found. Hidding Gui Flag item stats.");   
+            	logger.info("ProtocolLib found. Hidding Gui Flag item stats.");
             }            
             if (PvPm){
-            	RedProtect.logger.info("PvPManager found. Hooked.");   
+            	logger.info("PvPManager found. Hooked.");
             }
             if (Ess){
             	pless = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-            	RedProtect.logger.info("Essentials found. Hooked.");
+            	logger.info("Essentials found. Hooked.");
             }
             if (WE){
-            	RedProtect.logger.info("WorldEdit found. Hooked.");
+            	logger.info("WorldEdit found. Hooked.");
             }
             if (AWE){
-            	RedProtect.logger.info("AsyncWorldEdit found. Hooked.");
+            	logger.info("AsyncWorldEdit found. Hooked.");
             }
             if (BossBar){
-            	RedProtect.logger.info("BossbarAPI found. Hooked.");
+            	logger.info("BossbarAPI found. Hooked.");
             }
             if (MyPet){
             	serv.getPluginManager().registerEvents(new MPListener(), this);
-            	RedProtect.logger.info("MyPet found. Hooked.");
+            	logger.info("MyPet found. Hooked.");
             }
             if (McMMo){
             	serv.getPluginManager().registerEvents(new McMMoListener(), this);
-            	RedProtect.logger.info("McMMo found. Hooked.");
+            	logger.info("McMMo found. Hooked.");
             }
             if (SkillAPI){
             	serv.getPluginManager().registerEvents(new SkillAPIListener(), this);
-            	RedProtect.logger.info("SkillAPI found. Hooked.");
+            	logger.info("SkillAPI found. Hooked.");
             }
             if (MyChunk){
-            	RedProtect.logger.sucess("MyChunk found. Ready to convert!");
-            	RedProtect.logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
+            	logger.sucess("MyChunk found. Ready to convert!");
+            	logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
             } 
             if (Mc){
-            	RedProtect.logger.info("MagicCarpet found. Hooked.");
+            	logger.info("MagicCarpet found. Hooked.");
             }
             if (SC){
             	clanManager = SimpleClans.getInstance().getClanManager();
             	logger.info("SimpleClans found. Hooked.");
             }
             if (Dyn && RPConfig.getBool("hooks.dynmap.enable")){
-            	RedProtect.logger.info("Dynmap found. Hooked.");
-            	RedProtect.logger.info("Loading dynmap markers...");
+            	logger.info("Dynmap found. Hooked.");
+            	logger.info("Loading dynmap markers...");
             	dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
-            	RedProtect.logger.info("Dynmap markers loaded!");
+            	logger.info("Dynmap markers loaded!");
             }
             if (PlaceHolderAPI){
             	new RPPlaceHoldersAPI(this).hook();
@@ -201,26 +210,30 @@ public class RedProtect extends JavaPlugin {
             }
             if (Fac){
             	serv.getPluginManager().registerEvents(new RPFactions(), this);
-            	RedProtect.logger.info("Factions found. Hooked.");
+            	logger.info("Factions found. Hooked.");
             }
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
             	RPUtil.ReadAllDB(rm.getAllRegions());
         	} else {
-        		RedProtect.logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");        		
-        	}   
+        		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
+        	}
+
+            logger.info("Loading API...");
+            this.rpAPI = new RedProtectAPI();
+            logger.info("API Loaded!");
                         
-            RedProtect.logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
-            RedProtect.logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    /");
-            RedProtect.logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
-            RedProtect.logger.clear("&a¯ "+RedProtect.pdf.getFullName() + " enabled");
-            RedProtect.logger.clear("");
+            logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
+            logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    /");
+            logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
+            logger.clear("&a¯ "+pdf.getFullName() + " enabled");
+            logger.clear("");
             
             if (RPConfig.getBool("update-check.enable")){
-            	RedProtect.logger.info("Checking for update..."); 
+            	logger.info("Checking for update...");
             	if (CheckUpdate()){
-            		RedProtect.logger.sucess("Update available! Use /rp update to download."); 
+            		logger.sucess("Update available! Use /rp update to download.");
             	} else {
-            		RedProtect.logger.info("No update available.");
+            		logger.info("No update available.");
             	}
             }
             if (RPConfig.getString("file-type").equals("yml")){
@@ -230,7 +243,7 @@ public class RedProtect extends JavaPlugin {
         catch (Exception e) {
     		e.printStackTrace();
         	if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
-                RedProtect.logger.severe("Error enabling RedProtect, plugin will shut down.");
+                logger.severe("Error enabling RedProtect, plugin will shut down.");
                 this.disable();
         	}
         }
@@ -291,15 +304,15 @@ public class RedProtect extends JavaPlugin {
 	private void AutoSaveHandler() {
 		Bukkit.getScheduler().cancelTask(taskid);
 		if (RPConfig.getInt("flat-file.auto-save-interval-seconds") != 0){
-			RedProtect.logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");  
+			logger.info("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");
 			
 			taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-                RedProtect.logger.debug("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
+                logger.debug("Auto-save Scheduler: Saving "+RPConfig.getString("file-type")+" database!");
                 rm.saveAll();
                 },RPConfig.getInt("flat-file.auto-save-interval-seconds")*20, RPConfig.getInt("flat-file.auto-save-interval-seconds")*20);
 			
 		} else {
-        	RedProtect.logger.info("Auto-save Scheduler: Disabled");
+        	logger.info("Auto-save Scheduler: Disabled");
         }
 	}
 	

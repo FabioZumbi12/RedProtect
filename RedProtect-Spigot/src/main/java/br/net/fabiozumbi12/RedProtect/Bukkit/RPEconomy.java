@@ -14,7 +14,7 @@ public class RPEconomy {
 
 	public static long getRegionValue(Region r){
 		long regionCost = 0;
-		World w = RedProtect.serv.getWorld(r.getWorld());
+		World w = RedProtect.get().serv.getWorld(r.getWorld());
 		int maxX = r.getMaxMbrX();
 		int minX = r.getMinMbrX();
 		int maxZ = r.getMaxMbrZ();
@@ -74,7 +74,7 @@ public class RPEconomy {
 			r.setWelcome(getCostMessage(r));			
 			r.setFlag("for-sale", true);
 			if (RPConfig.getEcoBool("rename-region")){
-				RedProtect.rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
+				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}			
 			return true;
 		} catch (Exception e){
@@ -92,7 +92,7 @@ public class RPEconomy {
 			r.setWelcome("");
 			r.flags = RPConfig.getDefFlagsValues();
 			if (RPConfig.getEcoBool("rename-region")){
-				RedProtect.rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
+				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}	
 			r.removeFlag("for-sale");
 			return true;

@@ -48,12 +48,12 @@ public class RPBlockListener{
 	private static final RPContainer cont = new RPContainer();
 	
 	public RPBlockListener(){
-		RedProtect.logger.debug("blocks","Loaded RPBlockListener...");
+		RedProtect.get().logger.debug("blocks","Loaded RPBlockListener...");
 	}    
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onSignPlace(ChangeSignEvent e, @First Player p) {   
-    	RedProtect.logger.debug("blocks","BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
+    	RedProtect.get().logger.debug("blocks","BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
     	
     	Sign s = e.getTargetTile();
     	List<Text> lines = e.getText().asList();
@@ -66,7 +66,7 @@ public class RPBlockListener{
             return;
         }
         
-        Region signr = RedProtect.rm.getTopRegion(loc);
+        Region signr = RedProtect.get().rm.getTopRegion(loc);
                 
         if (signr != null && !signr.canSign(p)){
         	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
@@ -81,14 +81,14 @@ public class RPBlockListener{
             return;
         }
         
-        if (RedProtect.cfgs.getBool("server-protection.sign-spy.enabled")){
+        if (RedProtect.get().cfgs.getBool("server-protection.sign-spy.enabled")){
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+loc.getX()).replace("{y}", ""+loc.getY()).replace("{z}", ""+loc.getZ()).replace("{world}", w.getName())));
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
-        	if (!RedProtect.cfgs.getBool("server-protection.sign-spy.only-console")){
+        	if (!RedProtect.get().cfgs.getBool("server-protection.sign-spy.only-console")){
         		for (Player play:Sponge.getServer().getOnlinePlayers()){
-        			if (RedProtect.ph.hasGenPerm(play, "redprotect.signspy")/* && !play.equals(p)*/){
+        			if (RedProtect.get().ph.hasGenPerm(play, "redprotect.signspy")/* && !play.equals(p)*/){
         				play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+loc.getX()).replace("{y}", ""+loc.getY()).replace("{z}", ""+loc.getZ()).replace("{world}", w.getName())));
         	        	play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
         	        	play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
@@ -98,9 +98,9 @@ public class RPBlockListener{
         	}
         }
         
-        if ((RedProtect.cfgs.getBool("private.use") && s.getType().equals(TileEntityTypes.SIGN)) && (line1.toPlain().equalsIgnoreCase("private") || line1.toPlain().equalsIgnoreCase("[private]") || line1.toPlain().equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.toPlain().equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
-        	Region r = RedProtect.rm.getTopRegion(loc);        
-        	Boolean out = RedProtect.cfgs.getBool("private.allow-outside");
+        if ((RedProtect.get().cfgs.getBool("private.use") && s.getType().equals(TileEntityTypes.SIGN)) && (line1.toPlain().equalsIgnoreCase("private") || line1.toPlain().equalsIgnoreCase("[private]") || line1.toPlain().equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.toPlain().equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
+        	Region r = RedProtect.get().rm.getTopRegion(loc);        
+        	Boolean out = RedProtect.get().cfgs.getBool("private.allow-outside");
         	if (out || r != null){
         		if (cont.isContainer(b)){
             		int length = p.getName().length();
@@ -124,8 +124,8 @@ public class RPBlockListener{
         }
                 
         if (line1.toPlain().equalsIgnoreCase("[rp]")){
-        	String claimmode = RedProtect.cfgs.getWorldClaimType(p.getWorld().getName());
-            if ((!claimmode.equalsIgnoreCase("BLOCK") && !claimmode.equalsIgnoreCase("BOTH")) && !RedProtect.ph.hasPerm(p, "redprotect.admin.create")) {
+        	String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
+            if ((!claimmode.equalsIgnoreCase("BLOCK") && !claimmode.equalsIgnoreCase("BOTH")) && !RedProtect.get().ph.hasPerm(p, "redprotect.admin.create")) {
                 this.setErrorSign(e, p, RPLang.get("blocklistener.region.claimmode"));
                 return;
             }
@@ -137,7 +137,7 @@ public class RPBlockListener{
                 lines.set(1, RPUtil.toText(r.getName()));
                 e.getText().setElements(lines);
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
-                RedProtect.rm.add(r, RedProtect.serv.getWorld(r.getWorld()).get());
+                RedProtect.get().rm.add(r, RedProtect.get().serv.getWorld(r.getWorld()).get());
             }
         }
     }
@@ -151,7 +151,7 @@ public class RPBlockListener{
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
-    	RedProtect.logger.debug("blocks","BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
+    	RedProtect.get().logger.debug("blocks","BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
     	    	
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
@@ -163,10 +163,10 @@ public class RPBlockListener{
         } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
         	m = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
         }
-        Boolean antih = RedProtect.cfgs.getBool("region-settings.anti-hopper");
-        Region r = RedProtect.rm.getTopRegion(b.getLocation().get());
+        Boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
+        Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get());
         
-        if (r == null && RedProtect.cfgs.getGlobalFlagList(w.getName(),"if-build-false","place-blocks").contains(b.getState().getType().getName())){
+        if (r == null && RedProtect.get().cfgs.getGlobalFlagList(w.getName(),"if-build-false","place-blocks").contains(b.getState().getType().getName())){
         	return;
         }
         
@@ -187,7 +187,7 @@ public class RPBlockListener{
                 	RPLang.sendMessage(p, "blocklistener.region.cantbuild");
                     e.setCancelled(true);
                 } else {
-                	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass") && antih && 
+                	if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass") && antih && 
                 			(m.equals(ItemTypes.HOPPER) || m.getName().contains("rail"))){
                 		int x = bloc.getBlockX();
                 		int y = bloc.getBlockY();
@@ -207,16 +207,16 @@ public class RPBlockListener{
     
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockBreak(ChangeBlockEvent.Break e, @First Player p) {
-    	RedProtect.logger.debug("blocks","BlockListener - Is ChangeBlockEvent.Break event!");
+    	RedProtect.get().logger.debug("blocks","BlockListener - Is ChangeBlockEvent.Break event!");
     	
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
     	World w = bloc.getExtent();
 
-        Boolean antih = RedProtect.cfgs.getBool("region-settings.anti-hopper");
-        Region r = RedProtect.rm.getTopRegion(bloc);
+        Boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
+        Region r = RedProtect.get().rm.getTopRegion(bloc);
         
-        if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")){
+        if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
         	int x = bloc.getBlockX();
     		int y = bloc.getBlockY();
     		int z = bloc.getBlockZ();
@@ -228,7 +228,7 @@ public class RPBlockListener{
     		}
         }
         
-        if (r == null && RedProtect.cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","break-blocks").contains(b.getState().getType().getName())){
+        if (r == null && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","break-blocks").contains(b.getState().getType().getName())){
         	return;
         }
         
@@ -245,23 +245,23 @@ public class RPBlockListener{
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlaceGeneric(ChangeBlockEvent.Place e) {
     	if (e.getCause().root().toString().contains("minecraft:fire")){
-    		Region r = RedProtect.rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get());
+    		Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get());
     		if (r != null && !r.canFire()){    	
     			e.setCancelled(true);
-    			RedProtect.logger.debug("blocks", "Tryed to PLACE FIRE!");
+    			RedProtect.get().logger.debug("blocks", "Tryed to PLACE FIRE!");
     		}
     	}    	
     }
     
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockGrow(ChangeBlockEvent.Grow e) {
-    	RedProtect.logger.debug("blocks","RPBlockListener - Is ChangeBlockEvent.Grow event");	
+    	RedProtect.get().logger.debug("blocks","RPBlockListener - Is ChangeBlockEvent.Grow event");	
 		
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
-		Region r = RedProtect.rm.getTopRegion(b.getLocation().get());
+		Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get());
 		if (r != null && !r.canGrow()){
 			e.setCancelled(true);
-			RedProtect.logger.debug("blocks", "Cancel grow "+b.getState().getName());
+			RedProtect.get().logger.debug("blocks", "Cancel grow "+b.getState().getName());
 		}
     }
     
@@ -269,10 +269,10 @@ public class RPBlockListener{
     public void onBlockBreakGeneric(ChangeBlockEvent.Break e) {
     	if (e.getCause().root().toString().contains("minecraft:fire")){
     		BlockSnapshot b = e.getTransactions().get(0).getOriginal();
-    		Region r = RedProtect.rm.getTopRegion(b.getLocation().get());    		
+    		Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get());    		
     		if (r != null && !r.canFire() && !b.getState().getType().equals(BlockTypes.FIRE)){    	
     			e.setCancelled(true);
-    			RedProtect.logger.debug("blocks", "Tryed to break from FIRE!");
+    			RedProtect.get().logger.debug("blocks", "Tryed to break from FIRE!");
     		}
     	}   	
     }
@@ -280,16 +280,16 @@ public class RPBlockListener{
         /*
     @Listener
     public void onEntityExplode(ExplosionEvent.Detonate e) {
-    	RedProtect.logger.debug("Is BlockListener - ExplosionEvent.Detonate event");
+    	RedProtect.get().logger.debug("Is BlockListener - ExplosionEvent.Detonate event");
     	
         for (Transaction<BlockSnapshot> bl:e.getTransactions()) {
         	BlockSnapshot b = bl.getOriginal();
-        	RedProtect.logger.debug("Blocks: "+b.getState().getType().getName());
+        	RedProtect.get().logger.debug("Blocks: "+b.getState().getType().getName());
         	
         	Location<World> l = b.getLocation().get();
-        	Region r = RedProtect.rm.getTopRegion(l);
+        	Region r = RedProtect.get().rm.getTopRegion(l);
         	if (!cont.canWorldBreak(b)){
-        		RedProtect.logger.debug("canWorldBreak Called!");
+        		RedProtect.get().logger.debug("canWorldBreak Called!");
         		bl.setValid(false);
         		//toRemove.add(bl);
         		continue;
@@ -320,11 +320,11 @@ public class RPBlockListener{
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onFrameAndBoatBrake(DamageEntityEvent e) {
     	
-    	RedProtect.logger.debug("blocks","Is BlockListener - DamageEntityEvent event");
+    	RedProtect.get().logger.debug("blocks","Is BlockListener - DamageEntityEvent event");
     	Entity ent = e.getTargetEntity();
     	Location<World> l = e.getTargetEntity().getLocation();
     	    
-    	Region r = RedProtect.rm.getTopRegion(l);
+    	Region r = RedProtect.get().rm.getTopRegion(l);
     	
     	if (ent instanceof Hanging && e.getCause().first(Monster.class).isPresent()) {    		
     		if (r != null && !r.canFire()){
@@ -347,12 +347,12 @@ public class RPBlockListener{
     	if (e.isCancelled()){
     		return;
     	}
-    	RedProtect.logger.debug("Is BlockListener - HangingBreakEvent event");
+    	RedProtect.get().logger.debug("Is BlockListener - HangingBreakEvent event");
     	Entity ent = e.getEntity();
     	Location l = e.getEntity().getLocation();		
     	
     	if ((ent instanceof ItemFrame || ent instanceof Painting) && (e.getCause().toPlain().equals("EXPLOSION"))) {
-    		Region r = RedProtect.rm.getTopRegion(l);
+    		Region r = RedProtect.get().rm.getTopRegion(l);
     		if (r != null && !r.canFire()){
     			e.setCancelled(true);
         		return;
@@ -369,9 +369,9 @@ public class RPBlockListener{
     		return;
     	}
     	
-    	RedProtect.logger.debug("blocks","Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
+    	RedProtect.get().logger.debug("blocks","Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
     	
-    	Region r = RedProtect.rm.getTopRegion(b.getLocation());
+    	Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 		if (r != null && !r.canFire()){
 			if (ignit.first(Player.class).isPresent()){
 				Player p = ignit.first(Player.class).get();
@@ -399,13 +399,13 @@ public class RPBlockListener{
     @Listener
     public void onBlockBurn(NotifyNeighborBlockEvent e, @First BlockSnapshot source){
     	
-    	RedProtect.logger.debug("Is ChangeBlockEvent.Modify event");
+    	RedProtect.get().logger.debug("Is ChangeBlockEvent.Modify event");
     	Map<Direction, BlockState> dirs = e.getNeighbors();
     	    	
     	for (Direction dir:dirs.keySet()){
     		BlockSnapshot b = source.getLocation().get().getRelative(dir).createSnapshot();
     		BlockState bstate = source.getState();
-        	Region r = RedProtect.rm.getTopRegion(b.getLocation().get());        	
+        	Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get());        	
         	
         	if ((bstate.getType().equals(BlockTypes.FIRE) || bstate.getType().getName().contains("LAVA")) && r != null && !r.canFire()){
     			e.setCancelled(true);
@@ -424,8 +424,8 @@ public class RPBlockListener{
     public void onFlow(ChangeBlockEvent.Place e, @First BlockSnapshot source){		
 		BlockSnapshot bto = e.getTransactions().get(0).getOriginal();
 		
-		RedProtect.logger.debug("blocks","Is BlockFromToEvent.Place event is to " + source.getState().getType().getName() + " from " + bto.getState().getType().getName());
-		Region rto = RedProtect.rm.getTopRegion(bto.getLocation().get());
+		RedProtect.get().logger.debug("blocks","Is BlockFromToEvent.Place event is to " + source.getState().getType().getName() + " from " + bto.getState().getType().getName());
+		Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation().get());
     	if (rto != null && (
     			source.getState().getType().equals(BlockTypes.WATER) ||
     			source.getState().getType().equals(BlockTypes.LAVA) ||
@@ -447,7 +447,7 @@ public class RPBlockListener{
     	
     	for (Direction dir:Arrays.asList(Direction.EAST,Direction.NORTH,Direction.SOUTH,Direction.WEST)){
       		Location<World> locFrom = bto.getLocation().get().getBlockRelative(dir);
-      		Region rfrom = RedProtect.rm.getTopRegion(locFrom);
+      		Region rfrom = RedProtect.get().rm.getTopRegion(locFrom);
       		if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)){
     			e.setCancelled(true);
     			return;
@@ -462,8 +462,8 @@ public class RPBlockListener{
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onDecay(ChangeBlockEvent.Decay e, @First BlockSnapshot source){		
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
-		RedProtect.logger.debug("blocks","Is BlockFromToEvent.Decay event is to " + source.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
-		Region r = RedProtect.rm.getTopRegion(bfrom.getLocation().get());
+		RedProtect.get().logger.debug("blocks","Is BlockFromToEvent.Decay event is to " + source.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
+		Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get());
     	if (r != null && !r.leavesDecay() && source.getState().getType().getName().contains("leaves")){
           	 e.setCancelled(true);
         }
@@ -471,9 +471,9 @@ public class RPBlockListener{
 	    
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onLightning(LightningEvent.Pre e, @First Lightning light){
-		RedProtect.logger.debug("blocks","Is LightningStrikeEvent event");
+		RedProtect.get().logger.debug("blocks","Is LightningStrikeEvent event");
 		Location<World> l = light.getLocation();
-		Region r = RedProtect.rm.getTopRegion(l);
+		Region r = RedProtect.get().rm.getTopRegion(l);
 		if (r != null && !r.canFire()){
 			e.setCancelled(true);
         }
@@ -484,16 +484,16 @@ public class RPBlockListener{
     	BlockSnapshot b = event.getTargetBlock();
         Location<World> l = null;
         
-        RedProtect.logger.debug("player","RPBlockListener - Is InteractBlockEvent event");
+        RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent event");
         
         if (!b.getState().getType().equals(BlockTypes.AIR)){
         	l = b.getLocation().get();
-        	RedProtect.logger.debug("player","RPBlockListener - Is InteractBlockEvent event. The block is " + b.getState().getType().getName());
+        	RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent event. The block is " + b.getState().getType().getName());
         } else {
         	l = p.getLocation();
         }
         
-        Region r = RedProtect.rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l);
         if (r != null){
         	ItemType itemInHand = ItemTypes.NONE;                
             if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
@@ -512,9 +512,9 @@ public class RPBlockListener{
     public void onInteractPrimBlock(InteractBlockEvent.Primary event, @First Player p) {
     	BlockSnapshot b = event.getTargetBlock();
         
-        RedProtect.logger.debug("player","RPBlockListener - Is InteractBlockEvent.Primary event");
+        RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent.Primary event");
         
-    	if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")){        	
+    	if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){        	
     		if (b.getState().getType().getName().contains("sign") && !cont.canBreak(p, b)){
     			RPLang.sendMessage(p, "blocklistener.container.breakinside");
     			event.setCancelled(true);
@@ -526,7 +526,7 @@ public class RPBlockListener{
     /*
     @Listener
     public void onListenEvent(TargetLivingEvent event) {    	
-    	RedProtect.logger.severe("Event: "+ event.toString());
+    	RedProtect.get().logger.severe("Event: "+ event.toString());
     }
     
     */
@@ -542,7 +542,7 @@ public class RPBlockListener{
 		}
 		Vehicle cart = e.getVehicle();
 		Player p = (Player) e.getAttacker();
-		Region r = RedProtect.rm.getTopRegion(cart.getLocation());
+		Region r = RedProtect.get().rm.getTopRegion(cart.getLocation());
 		if (r == null){
 			return;
 		}
@@ -559,10 +559,10 @@ public class RPBlockListener{
 	public void onPistonEvent(ChangeBlockEvent.Pre e){
 		Location<World> piston = null;
 		Location<World> block = null;
-		boolean antih = RedProtect.cfgs.getBool("region-settings.anti-hopper");
+		boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
 		
-		if (RedProtect.getPVHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
-			if (RedProtect.cfgs.getBool("performance.disable-PistonEvent-handler")){
+		if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
+			if (RedProtect.get().cfgs.getBool("performance.disable-PistonEvent-handler")){
 				return;
 			}
 			
@@ -576,8 +576,8 @@ public class RPBlockListener{
 			}			
 		}
 		
-		if (RedProtect.getPVHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
-			if (RedProtect.cfgs.getBool("performance.disable-PistonEvent-handler")){
+		if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
+			if (RedProtect.get().cfgs.getBool("performance.disable-PistonEvent-handler")){
 				return;
 			}
 			
@@ -593,8 +593,8 @@ public class RPBlockListener{
 		
 		//process
 		if (piston != null && block != null){
-			Region rPi = RedProtect.rm.getTopRegion(piston);
-			Region rB = RedProtect.rm.getTopRegion(block);
+			Region rPi = RedProtect.get().rm.getTopRegion(piston);
+			Region rB = RedProtect.get().rm.getTopRegion(block);
 			if (rPi == null && rB != null || (rPi != null && rB != null && rPi != rB && !rPi.sameLeaders(rB))){
 				e.setCancelled(true);	
 				return;

@@ -93,7 +93,7 @@ public class RPConfig{
 		EconomyConfig = new YamlConfiguration();		
 		comConfig = new RPCommentedConfig();
 
-        File main = RedProtect.plugin.getDataFolder();
+        File main = RedProtect.get().getDataFolder();
         File data = new File(main, "data");
         File gui = new File(main, "guiconfig.yml");
         File bvalues = new File(main, "economy.yml");
@@ -105,12 +105,12 @@ public class RPConfig{
 
         if (!main.exists()) {
             main.mkdir();
-            RedProtect.logger.info("Created folder: " + main);
+            RedProtect.get().logger.info("Created folder: " + main);
         }
 
         if (!data.exists()) {
             data.mkdir();
-            RedProtect.logger.info("Created folder: " + main);
+            RedProtect.get().logger.info("Created folder: " + main);
         }
 
         //init config
@@ -119,7 +119,7 @@ public class RPConfig{
         if (!globalflags.exists()) {
             try {
                 globalflags.createNewFile();//create globalflags file
-                RedProtect.logger.info("Created globalflags file: " + globalflags);
+                RedProtect.get().logger.info("Created globalflags file: " + globalflags);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -128,7 +128,7 @@ public class RPConfig{
         if (!signsf.exists()) {
             try {
                 signsf.createNewFile();//create PathSigns file
-                RedProtect.logger.info("Created signs file: " + signsf);
+                RedProtect.get().logger.info("Created signs file: " + signsf);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -136,87 +136,87 @@ public class RPConfig{
 
         if (!gui.exists()) {
             RPUtil.saveResource("/assets/redprotect/guiconfig.yml", gui);//create guiconfig file
-            RedProtect.logger.info("Created guiconfig file: " + gui);
+            RedProtect.get().logger.info("Created guiconfig file: " + gui);
         }
 
         if (!bvalues.exists()) {
             RPUtil.saveResource("/assets/redprotect/economy.yml", bvalues);//create blockvalues file
-            RedProtect.logger.info("Created economy file: " + bvalues);
+            RedProtect.get().logger.info("Created economy file: " + bvalues);
         }
 
         if (!protections.exists()) {
             RPUtil.saveResource("/assets/redprotect/protections.yml", protections);//create protections file
-            RedProtect.logger.info("Created protections file: " + protections);
+            RedProtect.get().logger.info("Created protections file: " + protections);
         }
 
         if (!schema.exists()) {
             new File(main, "schematics").mkdir();
             RPUtil.saveResource("/assets/redprotect/schematics/house1.schematic", schema);//save schematic file
-            RedProtect.logger.info("Saved schematic file: house1.schematic");
+            RedProtect.get().logger.info("Saved schematic file: house1.schematic");
         }
 
-        RedProtect.logger.info("Server version: " + RedProtect.serv.getBukkitVersion());
+        RedProtect.get().logger.info("Server version: " + RedProtect.get().serv.getBukkitVersion());
 
         // check if can enable json support
         if (getBool("region-settings.region-list.hover-and-click-teleport")){
             try {
                 Class.forName("com.google.gson.JsonParser");
-                if (RedProtect.serv.getBukkitVersion().contains("1.7")){
-                    RedProtect.plugin.getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
-                    RedProtect.logger.warning("Your server version do not support Hover and Clicking region features, only 1.8.+");
+                if (RedProtect.get().serv.getBukkitVersion().contains("1.7")){
+                    RedProtect.get().getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
+                    RedProtect.get().logger.warning("Your server version do not support Hover and Clicking region features, only 1.8.+");
                 }
             } catch(ClassNotFoundException e ) {
-                RedProtect.plugin.getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
-                RedProtect.logger.warning("Your server version do not support JSON events, disabling Hover and Clicking region features.");
+                RedProtect.get().getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
+                RedProtect.get().logger.warning("Your server version do not support JSON events, disabling Hover and Clicking region features.");
             }
         }
 
         //add op to ignore list fro purge
-        if (RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0){
-            List<String> ops = RedProtect.plugin.getConfig().getStringList("purge.ignore-regions-from-players");
-            for (OfflinePlayer play:RedProtect.serv.getOperators()){
+        if (RedProtect.get().getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0){
+            List<String> ops = RedProtect.get().getConfig().getStringList("purge.ignore-regions-from-players");
+            for (OfflinePlayer play:RedProtect.get().serv.getOperators()){
                 ops.add(play.getName());
             }
-            RedProtect.plugin.getConfig().set("purge.ignore-regions-from-players", ops);
+            RedProtect.get().getConfig().set("purge.ignore-regions-from-players", ops);
         }
 
         //add op to ignore list fro sell
-        if (RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players").size() <= 0){
-            List<String> ops = RedProtect.plugin.getConfig().getStringList("sell.ignore-regions-from-players");
-            for (OfflinePlayer play:RedProtect.serv.getOperators()){
+        if (RedProtect.get().getConfig().getStringList("sell.ignore-regions-from-players").size() <= 0){
+            List<String> ops = RedProtect.get().getConfig().getStringList("sell.ignore-regions-from-players");
+            for (OfflinePlayer play:RedProtect.get().serv.getOperators()){
                 ops.add(play.getName());
             }
-            RedProtect.plugin.getConfig().set("sell.ignore-regions-from-players", ops);
+            RedProtect.get().getConfig().set("sell.ignore-regions-from-players", ops);
         }
 
         //add allowed claim worlds to config
-        if (RedProtect.plugin.getConfig().getStringList("allowed-claim-worlds").get(0).equals("example_world")) {
+        if (RedProtect.get().getConfig().getStringList("allowed-claim-worlds").get(0).equals("example_world")) {
             List<String> worlds = new ArrayList<>();
-            for (World w:RedProtect.serv.getWorlds()){
+            for (World w:RedProtect.get().serv.getWorlds()){
                 worlds.add(w.getName());
-                RedProtect.logger.warning("Added world to claim list " + w.getName());
+                RedProtect.get().logger.warning("Added world to claim list " + w.getName());
             }
             worlds.remove("example_world");
-            RedProtect.plugin.getConfig().set("allowed-claim-worlds", worlds);
+            RedProtect.get().getConfig().set("allowed-claim-worlds", worlds);
         }
 
         //add worlds to color list
-        for (World w:RedProtect.serv.getWorlds()){
-            if (RedProtect.plugin.getConfig().getString("region-settings.claim-type.worlds."+w.getName()) == null) {
-                RedProtect.plugin.getConfig().set("region-settings.claim-type.worlds."+w.getName(), "BLOCK");
+        for (World w:RedProtect.get().serv.getWorlds()){
+            if (RedProtect.get().getConfig().getString("region-settings.claim-type.worlds."+w.getName()) == null) {
+                RedProtect.get().getConfig().set("region-settings.claim-type.worlds."+w.getName(), "BLOCK");
             }
 
-            if (RedProtect.plugin.getConfig().getString("region-settings.world-colors."+w.getName()) == null) {
+            if (RedProtect.get().getConfig().getString("region-settings.world-colors."+w.getName()) == null) {
                 if (w.getEnvironment().equals(Environment.NORMAL)){
-                    RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&a&l");
+                    RedProtect.get().getConfig().set("region-settings.world-colors."+w.getName(), "&a&l");
                 } else
                 if (w.getEnvironment().equals(Environment.NETHER)){
-                    RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&c&l");
+                    RedProtect.get().getConfig().set("region-settings.world-colors."+w.getName(), "&c&l");
                 } else
                 if (w.getEnvironment().equals(Environment.THE_END)){
-                    RedProtect.plugin.getConfig().set("region-settings.world-colors."+w.getName(), "&5&l");
+                    RedProtect.get().getConfig().set("region-settings.world-colors."+w.getName(), "&5&l");
                 }
-                RedProtect.logger.warning("Added world to color list " + w.getName());
+                RedProtect.get().logger.warning("Added world to color list " + w.getName());
             }
         }
 
@@ -224,10 +224,10 @@ public class RPConfig{
 
         //update new player flags according version
 
-        List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+        List<String> flags = RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags");
         int configUp = 0;
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 6.8D){
-            RedProtect.plugin.getConfig().set("config-version", 6.8D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 6.8D){
+            RedProtect.get().getConfig().set("config-version", 6.8D);
 
             if (!flags.contains("smart-door")){
                 flags.add("smart-door");
@@ -243,8 +243,8 @@ public class RPConfig{
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 6.9D){
-            RedProtect.plugin.getConfig().set("config-version", 6.9D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 6.9D){
+            RedProtect.get().getConfig().set("config-version", 6.9D);
 
             if (!flags.contains("iceform-player")){
                 flags.add("iceform-player");
@@ -254,40 +254,40 @@ public class RPConfig{
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.0D){
-            RedProtect.plugin.getConfig().set("config-version", 7.0D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.0D){
+            RedProtect.get().getConfig().set("config-version", 7.0D);
 
             if (!flags.contains("allow-fly")){
                 flags.add("allow-fly");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.1D){
-            RedProtect.plugin.getConfig().set("config-version", 7.1D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.1D){
+            RedProtect.get().getConfig().set("config-version", 7.1D);
 
             if (!flags.contains("teleport")){
                 flags.add("teleport");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.2D){
-            RedProtect.plugin.getConfig().set("config-version", 7.2D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.2D){
+            RedProtect.get().getConfig().set("config-version", 7.2D);
 
             if (!flags.contains("clan")){
                 flags.add("clan");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.3D){
-            RedProtect.plugin.getConfig().set("config-version", 7.3D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.3D){
+            RedProtect.get().getConfig().set("config-version", 7.3D);
 
             if (!flags.contains("ender-chest")){
                 flags.add("ender-chest");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.5D){
-            RedProtect.plugin.getConfig().set("config-version", 7.5D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.5D){
+            RedProtect.get().getConfig().set("config-version", 7.5D);
 
             if (flags.contains("iceform-entity")){
                 flags.add("iceform-world");
@@ -298,8 +298,8 @@ public class RPConfig{
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.6D){
-            RedProtect.plugin.getConfig().set("config-version", 7.6D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.6D){
+            RedProtect.get().getConfig().set("config-version", 7.6D);
 
             if (flags.contains("allow-potions")){
                 flags.remove("allow-potions");
@@ -312,39 +312,39 @@ public class RPConfig{
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.7D){
-            RedProtect.plugin.getConfig().set("config-version", 7.7D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.7D){
+            RedProtect.get().getConfig().set("config-version", 7.7D);
 
             if (!flags.contains("allow-spawner")){
                 flags.add("allow-spawner");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.8D){
-            RedProtect.plugin.getConfig().set("config-version", 7.8D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.8D){
+            RedProtect.get().getConfig().set("config-version", 7.8D);
 
             if (!flags.contains("leaves-decay")){
                 flags.add("leaves-decay");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.9D){
-            RedProtect.plugin.getConfig().set("config-version", 7.9D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.9D){
+            RedProtect.get().getConfig().set("config-version", 7.9D);
 
             if (!flags.contains("build")){
                 flags.add("build");
             }
             configUp++;
         }
-        if (RedProtect.plugin.getConfig().getDouble("config-version") < 7.10D){
-            RedProtect.plugin.getConfig().set("config-version", 7.10D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.10D){
+            RedProtect.get().getConfig().set("config-version", 7.10D);
 
-            RedProtect.plugin.getConfig().set("language", RedProtect.plugin.getConfig().getString("language").toUpperCase());
+            RedProtect.get().getConfig().set("language", RedProtect.get().getConfig().getString("language").toUpperCase());
             configUp++;
         }
         if (configUp > 0){
-            RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", flags);
-            RedProtect.logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
+            RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
+            RedProtect.get().logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
         }
 
         			/*------------------------------------------------------------------------------------*/
@@ -357,7 +357,7 @@ public class RPConfig{
         //load and write globalflags to global file
         gflags = YamlConfiguration.loadConfiguration(globalflags);
 
-        for (World w:RedProtect.serv.getWorlds()){
+        for (World w:RedProtect.get().serv.getWorlds()){
             gflags.set(w.getName()+".build", gflags.getBoolean(w.getName()+".build", true));
             gflags.set(w.getName()+".liquid-flow", gflags.getBoolean(w.getName()+".liquid-flow", true));
             gflags.set(w.getName()+".allow-changes-of.water-flow", gflags.getBoolean(w.getName()+".allow-changes-of.water-flow", true));
@@ -405,7 +405,7 @@ public class RPConfig{
             }
 
             w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
-            RedProtect.logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
+            RedProtect.get().logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
         }
 
 
@@ -418,7 +418,7 @@ public class RPConfig{
             e.printStackTrace();
         }
 
-        YamlConfiguration GuiBase = inputLoader(RedProtect.plugin.getResource("assets/redprotect/guiconfig.yml"));
+        YamlConfiguration GuiBase = inputLoader(RedProtect.get().getResource("assets/redprotect/guiconfig.yml"));
 
         GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));
         GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue"));
@@ -446,7 +446,7 @@ public class RPConfig{
             e.printStackTrace();
         }
 
-        YamlConfiguration tempEco = inputLoader(RedProtect.plugin.getResource("assets/redprotect/economy.yml"));
+        YamlConfiguration tempEco = inputLoader(RedProtect.get().getResource("assets/redprotect/economy.yml"));
         for (String key:tempEco.getKeys(false)){
             if (EconomyConfig.get(key) == null){
                 EconomyConfig.set(key, tempEco.get(key));
@@ -472,16 +472,16 @@ public class RPConfig{
         //////////////////////
                     /*------------------------------------------------------------------------------------*/
 
-        String v = RedProtect.serv.getBukkitVersion();
-        if (RedProtect.plugin.getConfig().getString("notify.region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
-            RedProtect.plugin.getConfig().set("notify.region-enter-mode", "CHAT");
-            RedProtect.logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");
+        String v = RedProtect.get().serv.getBukkitVersion();
+        if (RedProtect.get().getConfig().getString("notify.region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
+            RedProtect.get().getConfig().set("notify.region-enter-mode", "CHAT");
+            RedProtect.get().logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");
         }
 
         //create logs folder
         if(getBool("log-actions") && !logs.exists()){
             logs.mkdir();
-            RedProtect.logger.info("Created folder: " + logs);
+            RedProtect.get().logger.info("Created folder: " + logs);
         }
 
         //Load signs file
@@ -492,11 +492,11 @@ public class RPConfig{
         }
 
         save();
-        RedProtect.logger.info("All configurations loaded!");
+        RedProtect.get().logger.info("All configurations loaded!");
 	}
     
 	public static String getWorldClaimType(String w){
-		return RedProtect.plugin.getConfig().getString("region-settings.claim-type.worlds."+w);
+		return RedProtect.get().getConfig().getString("region-settings.claim-type.worlds."+w);
 	}
 	
 	public static boolean hasGlobalKey(String path){
@@ -528,8 +528,8 @@ public class RPConfig{
 	}
     
     public static ItemStack getGuiItemStack(String key){
-    	RedProtect.logger.debug("Gui Material to get: " + key);
-    	RedProtect.logger.debug("Result: " + GuiItems.getString("gui-flags."+key+".material"));
+    	RedProtect.get().logger.debug("Gui Material to get: " + key);
+    	RedProtect.get().logger.debug("Result: " + GuiItems.getString("gui-flags."+key+".material"));
     	return new ItemStack(Material.getMaterial(GuiItems.getString("gui-flags."+key+".material")));
     }
     
@@ -574,28 +574,28 @@ public class RPConfig{
 	}
     
     public static Boolean getBool(String key){		
-		return RedProtect.plugin.getConfig().getBoolean(key, false);
+		return RedProtect.get().getConfig().getBoolean(key, false);
 	}
     
     public static void setConfig(String key, Object value){
-    	RedProtect.plugin.getConfig().set(key, value);
+    	RedProtect.get().getConfig().set(key, value);
     }
     
     public static HashMap<String, Object> getDefFlagsValues(){	
     	HashMap<String,Object> flags = new HashMap<>();
-    	for (String flag:RedProtect.plugin.getConfig().getValues(true).keySet()){
+    	for (String flag:RedProtect.get().getConfig().getValues(true).keySet()){
     		if (flag.contains("flags.") && isFlagEnabled(flag.replace("flags.", ""))){
-    			if (flag.replace("flags.", "").equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
+    			if (flag.replace("flags.", "").equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
     				continue;
     			}    			
-    			flags.put(flag.replace("flags.", ""), RedProtect.plugin.getConfig().get(flag));
+    			flags.put(flag.replace("flags.", ""), RedProtect.get().getConfig().get(flag));
     		}
     	}
     	return flags;
 	}
     
     public static boolean isFlagEnabled(String flag){    	
-    	return RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains(flag) || AdminFlags.contains(flag);
+    	return RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains(flag) || AdminFlags.contains(flag);
     }
     
     public static SortedSet<String> getDefFlags(){
@@ -603,27 +603,27 @@ public class RPConfig{
     }
     
     public static String getString(String key, String def){		
-		return RedProtect.plugin.getConfig().getString(key, def);
+		return RedProtect.get().getConfig().getString(key, def);
 	}
     
     public static String getString(String key){		
-		return RedProtect.plugin.getConfig().getString(key,"");
+		return RedProtect.get().getConfig().getString(key,"");
 	}
     
     public static Integer getInt(String key){		
-		return RedProtect.plugin.getConfig().getInt(key);
+		return RedProtect.get().getConfig().getInt(key);
 	}
     
     public static List<String> getStringList(String key){		
-		return RedProtect.plugin.getConfig().getStringList(key);
+		return RedProtect.get().getConfig().getStringList(key);
 	}
     
     public static Material getMaterial(String key){
-    	return Material.getMaterial(RedProtect.plugin.getConfig().getString(key));
+    	return Material.getMaterial(RedProtect.get().getConfig().getString(key));
     }
     
     public static void save(){
-    	File main = RedProtect.plugin.getDataFolder();
+    	File main = RedProtect.get().getDataFolder();
         File gui = new File(main, "guiconfig.yml");
         File bvalues = new File(main, "economy.yml");
         File globalflags = new File(main, "globalflags.yml");
@@ -637,17 +637,17 @@ public class RPConfig{
 			signs.save(signsf);
 			comConfig.saveConfig();
 		} catch (IOException e) {
-			RedProtect.logger.severe("Problems during save file:");
+			RedProtect.get().logger.severe("Problems during save file:");
 			e.printStackTrace();
 		}
     }
     
     public static void saveGui(){ 
-    	File guiconfig = new File(RedProtect.plugin.getDataFolder(),"guiconfig.yml");
+    	File guiconfig = new File(RedProtect.get().getDataFolder(),"guiconfig.yml");
     	try {
 			GuiItems.save(guiconfig);
 		} catch (IOException e) {
-			RedProtect.logger.severe("Problems during save gui file:");
+			RedProtect.get().logger.severe("Problems during save gui file:");
 			e.printStackTrace();
 		}
     }    
@@ -668,7 +668,7 @@ public class RPConfig{
 	}
     
     public static boolean needClaimToBuild(Player p, Block b) {     	
-    	boolean bool = RedProtect.plugin.getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
+    	boolean bool = RedProtect.get().getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
     	if (bool){
     		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") &&
                     (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
@@ -699,12 +699,12 @@ public class RPConfig{
                 return true;
             }
         } else {
-	        if (RedProtect.plugin.getConfig().get("flags."+flag) == null){
-                RedProtect.plugin.getConfig().set("flags."+flag, defaultValue);
-                List<String> flags = RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags");
+	        if (RedProtect.get().getConfig().get("flags."+flag) == null){
+                RedProtect.get().getConfig().set("flags."+flag, defaultValue);
+                List<String> flags = RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags");
                 flags.add(flag);
-                RedProtect.plugin.getConfig().set("flags-configuration.enabled-flags", flags);
-                RedProtect.plugin.saveConfig();
+                RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
+                RedProtect.get().saveConfig();
                 return true;
             }
         }
@@ -763,7 +763,7 @@ public class RPConfig{
 			e.printStackTrace();
 		} 
                 			
-        YamlConfiguration tempProts = inputLoader(RedProtect.plugin.getResource("assets/redprotect/protections.yml"));
+        YamlConfiguration tempProts = inputLoader(RedProtect.get().getResource("assets/redprotect/protections.yml"));
         for (String key:tempProts.getKeys(true)){    
         	Object obj = tempProts.get(key);
         	if (finalyml.get(key) != null){
@@ -811,9 +811,9 @@ public class RPConfig{
 			signs.set(rid, locs);
 		}		
 		try {
-			signs.save(new File(RedProtect.plugin.getDataFolder(),"signs.yml"));
+			signs.save(new File(RedProtect.get().getDataFolder(),"signs.yml"));
 		} catch (IOException e) {
-			RedProtect.logger.severe("Problems during save file:");
+			RedProtect.get().logger.severe("Problems during save file:");
 			e.printStackTrace();
 		}
 	}

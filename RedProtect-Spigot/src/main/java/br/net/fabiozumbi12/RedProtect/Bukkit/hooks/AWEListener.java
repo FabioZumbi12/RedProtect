@@ -40,7 +40,7 @@ public class AWEListener {
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
     	    	
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (RPUtil.stopRegen){
                 return;
             }
@@ -61,7 +61,7 @@ final IJobEntryListener stateListener = new IJobEntryListener() {
 public void jobStateChanged(IJobEntry job) {
                     if (job.getPlayer().getName().equals("redprotect")){
                         String name = job.getName();
-                        RedProtect.logger.info("State: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+                        RedProtect.get().logger.info("State: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
                     }
 }
 };*/
@@ -72,7 +72,7 @@ public void jobAdded(IJobEntry job) {
                     /*if (job.getPlayer().getName().equals("redprotect")){
                         String name = job.getName();
                         //job.addStateChangedListener(stateListener);
-                        RedProtect.logger.warning("JobAdded: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
+                        RedProtect.get().logger.warning("JobAdded: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
                     }*/
 }
 
@@ -82,7 +82,7 @@ public void jobRemoved(IJobEntry job) {
                         String name = job.getName();
                         //job.addStateChangedListener(stateListener);
                         if (RPConfig.getBool("purge.regen.awe-logs") && job.isTaskDone()){
-                            RedProtect.logger.sucess("JobDone: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.getStatusString());
+                            RedProtect.get().logger.sucess("JobDone: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.getStatusString());
                         }
                     }
 
@@ -103,14 +103,14 @@ if (sender != null){
                 }
             } else {
                 if (AsyncWorld.wrap(wreg.getWorld(), new PlayerManager(aweMain).createFakePlayer("redprotect", UUID.randomUUID())).regenerate(wreg, ess)){
-                    RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                    RedProtect.get().logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
                 } else {
-                    RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                    RedProtect.get().logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
                 }
             }
 
 if (remove){
-                RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()));
+                RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
             }
 
             },delay);

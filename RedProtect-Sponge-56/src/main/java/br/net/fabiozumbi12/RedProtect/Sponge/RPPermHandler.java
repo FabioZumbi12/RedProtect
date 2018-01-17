@@ -51,14 +51,14 @@ public class RPPermHandler{
     }
     
     private int LimitHandler(User p){
-    	int limit = RedProtect.cfgs.getInt("region-settings.limit-amount");
+    	int limit = RedProtect.get().cfgs.getInt("region-settings.limit-amount");
     	List<Integer> limits = new ArrayList<>();
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.blocks.unlimited")){
-    			for (String perm:RedProtect.cfgs.getStringList("permissions-limits.permissions.blocks")){
-    				RedProtect.logger.debug("default","Perm: "+perm);
+    			for (String perm:RedProtect.get().cfgs.getStringList("permissions-limits.permissions.blocks")){
+    				RedProtect.get().logger.debug("default","Perm: "+perm);
     				if (p.hasPermission(perm)){
-    					RedProtect.logger.debug("default","Has block perm: "+perm);
+    					RedProtect.get().logger.debug("default","Has block perm: "+perm);
 						String pStr = perm.replaceAll("[^-?0-9]+", "");
 						if (!pStr.isEmpty()){
 							limits.add(Integer.parseInt(pStr));
@@ -76,14 +76,14 @@ public class RPPermHandler{
     }
     
     private int ClaimLimitHandler(User p){
-    	int limit = RedProtect.cfgs.getInt("region-settings.claim-amount");  
+    	int limit = RedProtect.get().cfgs.getInt("region-settings.claim-amount");  
     	List<Integer> limits = new ArrayList<>();
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.claim.unlimited")){
-    			for (String perm:RedProtect.cfgs.getStringList("permissions-limits.permissions.claims")){
-    				RedProtect.logger.debug("default","Perm: "+perm);
+    			for (String perm:RedProtect.get().cfgs.getStringList("permissions-limits.permissions.claims")){
+    				RedProtect.get().logger.debug("default","Perm: "+perm);
     				if (p.hasPermission(perm)){
-    					RedProtect.logger.debug("default","Has claim perm: "+perm);
+    					RedProtect.get().logger.debug("default","Has claim perm: "+perm);
 						String pStr = perm.replaceAll("[^-?0-9]+", "");
 						if (!pStr.isEmpty()){
 							limits.add(Integer.parseInt(pStr));

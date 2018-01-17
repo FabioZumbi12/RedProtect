@@ -68,23 +68,23 @@ public class RPGui implements Listener{
 			this.guiItens = new ItemStack[this.size];
 		}
 
-        allowEnchant = RedProtect.version >= 181;
+        allowEnchant = RedProtect.get().version >= 181;
 		
 		for (String flag:region.flags.keySet()){
 			if (!(region.flags.get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")){
 				continue;
 			}
 			if (flag.equalsIgnoreCase("clan")){
-				if (!RedProtect.SC){
+				if (!RedProtect.get().SC){
 					continue;
 				}
-				ClanPlayer cp = RedProtect.clanManager.getClanPlayer(player);
+				ClanPlayer cp = RedProtect.get().clanManager.getClanPlayer(player);
 				if (cp == null || !cp.isLeader()){
 					continue;
 				} 
 			}
-			if (RedProtect.ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null && RPConfig.isFlagEnabled(flag)){
-				if (flag.equals("pvp") && !RedProtect.plugin.getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
+			if (RedProtect.get().ph.hasPerm(player, "redprotect.flag."+flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag,"material")) != null && RPConfig.isFlagEnabled(flag)){
+				if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")){
     				continue;
     			}	
 				
@@ -101,7 +101,7 @@ public class RPGui implements Listener{
 					fvalue = RPConfig.getGuiString(region.flags.get(flag).toString());
 				}
 				
-				if (RedProtect.PLib && allowEnchant){
+				if (RedProtect.get().PLib && allowEnchant){
 					this.guiItens[i] = RPProtocolLib.removeAttributes(RPConfig.getGuiItemStack(flag));
 				} else {
 					this.guiItens[i] = RPConfig.getGuiItemStack(flag);					
@@ -170,7 +170,7 @@ public class RPGui implements Listener{
 	
 	@EventHandler
 	void onPluginDisable(PluginDisableEvent event){
-		RedProtect.logger.debug("Is PluginDisableEvent event.");
+		RedProtect.get().logger.debug("Is PluginDisableEvent event.");
 		for (Player play:event.getPlugin().getServer().getOnlinePlayers()){
 			play.closeInventory();
 		}
@@ -194,7 +194,7 @@ public class RPGui implements Listener{
 				String flag = itemMeta.getLore().get(1).replace("§0", "");
 				if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")){
 					if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)){
-							if (!RedProtect.changeWait.contains(this.region.getName()+flag)){								
+							if (!RedProtect.get().changeWait.contains(this.region.getName()+flag)){								
 								applyFlag(flag, itemMeta, event);	
 								RPUtil.startFlagChanger(this.region.getName(), flag, player);								
 							} else {
@@ -214,7 +214,7 @@ public class RPGui implements Listener{
 		boolean flagv = false;
 		if (flag.equalsIgnoreCase("clan")){
 			Player p = (Player) event.getInventory().getHolder();
-			ClanPlayer cp = RedProtect.clanManager.getClanPlayer(p);			
+			ClanPlayer cp = RedProtect.get().clanManager.getClanPlayer(p);			
 			if (this.region.getFlagString(flag).equals("")){	
 				this.region.setFlag(flag, cp.getTag());
 				flagv = true;
@@ -240,17 +240,17 @@ public class RPGui implements Listener{
 		}								
 		itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+RPConfig.getGuiString(String.valueOf(flagv)),"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));
 		event.getCurrentItem().setItemMeta(itemMeta);
-		RedProtect.logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+String.valueOf(flagv));
+		RedProtect.get().logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+String.valueOf(flagv));
 	}
 	
 	public void close(){
         //check for itens
         this.player.updateInventory();
-        Bukkit.getScheduler().runTaskLater(RedProtect.plugin, ()-> this.player.updateInventory(), 1);
+        Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> this.player.updateInventory(), 1);
 
 		this.guiItens = null;
 		this.name = null;
-		RedProtect.openGuis.remove(this.region.getID());
+		RedProtect.get().openGuis.remove(this.region.getID());
 		this.region = null;
 		try {
 			this.finalize();
@@ -260,7 +260,7 @@ public class RPGui implements Listener{
 	}
 	
 	public void open(){	
-		if (RedProtect.openGuis.contains(this.region.getID())){
+		if (RedProtect.get().openGuis.contains(this.region.getID())){
 			RPLang.sendMessage(player, "cmdmanager.region.rpgui-open");
 			try {
 				this.finalize();
@@ -273,6 +273,6 @@ public class RPGui implements Listener{
 	    inv.setContents(this.guiItens);
 	    player.openInventory(inv);
 	    this.inv = inv;
-	    RedProtect.openGuis.add(this.region.getID());
+	    RedProtect.get().openGuis.add(this.region.getID());
 	}
 }

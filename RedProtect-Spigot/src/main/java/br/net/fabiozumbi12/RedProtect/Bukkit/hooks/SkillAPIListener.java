@@ -20,10 +20,10 @@ public class SkillAPIListener implements Listener{
 			return;
 		}
 		
-		RedProtect.logger.debug("SkillAPI PlayerExperienceGainEvent event.");
+		RedProtect.get().logger.debug("SkillAPI PlayerExperienceGainEvent event.");
 		
 		Player p = e.getPlayerData().getPlayer();
-		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
 		if (r != null && !r.canSkill(p)){
 			e.setCancelled(true);
 		}
@@ -35,10 +35,10 @@ public class SkillAPIListener implements Listener{
 			return;
 		}
 		
-		RedProtect.logger.debug("SkillAPI PlayerGainSkillPointsEvent event.");
+		RedProtect.get().logger.debug("SkillAPI PlayerGainSkillPointsEvent event.");
 		
 		Player p = e.getPlayerData().getPlayer();
-		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
 		
 		if (r != null && !r.canSkill(p)){
 			e.setCancelled(true);
@@ -51,10 +51,10 @@ public class SkillAPIListener implements Listener{
 			return;
 		}
 		
-		RedProtect.logger.debug("SkillAPI PlayerManaGainEvent event.");
+		RedProtect.get().logger.debug("SkillAPI PlayerManaGainEvent event.");
 		
 		Player p = e.getPlayerData().getPlayer();
-		Region r = RedProtect.rm.getTopRegion(p.getLocation());
+		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
 		
 		if (r != null && !r.canSkill(p)){
 			e.setCancelled(true);

@@ -38,7 +38,7 @@
   </dependencies>
   
   <properties>
-  	<spongeVersion>7.0.0-SNAPSHOT</spongeVersion>
+  	<spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
   </properties>  
   
   <build>

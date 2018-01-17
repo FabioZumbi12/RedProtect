@@ -25,7 +25,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 public class RPMine18 {
 	
 	public RPMine18(){
-		RedProtect.logger.debug("default","Loaded RPMine18...");
+		RedProtect.get().logger.debug("default","Loaded RPMine18...");
 	}
 	
 	static final RPContainer cont = new RPContainer();
@@ -35,12 +35,12 @@ public class RPMine18 {
                 
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
-        Region r = RedProtect.rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l);
         
         if (r == null){
         	//global flags
         	if (ent.getType().equals(EntityTypes.ARMOR_STAND)) {
-                if (!RedProtect.cfgs.getGlobalFlag(l.getExtent().getName(),"build")) {
+                if (!RedProtect.get().cfgs.getGlobalFlag(l.getExtent().getName(),"build")) {
                 	e.setCancelled(true);
                     return;
                 }
@@ -66,7 +66,7 @@ public class RPMine18 {
         //TODO Not working!
         if (ent.getType().equals(EntityTypes.ARMOR_STAND)) {
             if (r != null && !r.canBuild(p)) {
-                if (!RedProtect.ph.hasPerm(p, "redprotect.bypass")) {
+                if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
                 	RPLang.sendMessage(p, "playerlistener.region.cantedit");
                     e.setCancelled(true);
                 }
@@ -90,13 +90,13 @@ public class RPMine18 {
     		damager = (Player) e2;
     	}       
     	
-		Region r1 = RedProtect.rm.getTopRegion(loc);
+		Region r1 = RedProtect.get().rm.getTopRegion(loc);
 		
 		if (r1 == null){
 			//global flags
 			if (e1 instanceof ArmorStand){
             	if (e2 instanceof Player) {
-                    if (!RedProtect.cfgs.getGlobalFlag(loc.getExtent().getName(),"build")){
+                    if (!RedProtect.get().cfgs.getGlobalFlag(loc.getExtent().getName(),"build")){
                     	e.setCancelled(true);
                     	return;
                     }
@@ -115,10 +115,10 @@ public class RPMine18 {
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onBlockExplode(ExplosionEvent.Detonate e){
-		RedProtect.logger.debug("default","Is BlockListener - BlockExplodeEvent event");
+		RedProtect.get().logger.debug("default","Is BlockListener - BlockExplodeEvent event");
 		
 		for (Location<World> bex:e.getAffectedLocations()){
-			Region r = RedProtect.rm.getTopRegion(bex);
+			Region r = RedProtect.get().rm.getTopRegion(bex);
 			if (!cont.canWorldBreak(bex.createSnapshot())){
 				e.setCancelled(true);
 				return;

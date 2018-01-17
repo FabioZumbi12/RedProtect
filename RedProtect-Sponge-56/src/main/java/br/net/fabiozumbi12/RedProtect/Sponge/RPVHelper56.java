@@ -2,7 +2,6 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.entity.Entity;
@@ -44,17 +43,17 @@ public class RPVHelper56 implements RPVHelper {
 
 	@Override
 	public void setBlock(Location<World> loc, BlockState block) {
-		loc.setBlockType(block.getType(), Cause.of(NamedCause.owner(RedProtect.plugin)));
+		loc.setBlockType(block.getType(), Cause.of(NamedCause.owner(RedProtect.get().container)));
 	}
 
 	@Override
 	public void digBlock(Player p, ItemStack item, Vector3i loc) {
-		p.getWorld().digBlockWith(loc, item, Cause.of(NamedCause.owner(RedProtect.plugin)));
+		p.getWorld().digBlockWith(loc, item, Cause.of(NamedCause.owner(RedProtect.get().container)));
 	}
 
 	@Override
 	public void removeBlock(Location<World> loc) {
-		loc.removeBlock(Cause.of(NamedCause.owner(RedProtect.plugin)));
+		loc.removeBlock(Cause.of(NamedCause.owner(RedProtect.get().container)));
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public class RPVHelper56 implements RPVHelper {
 	public boolean checkHorseOwner(Entity ent, Player p) {
 		if (ent instanceof Horse && ((Horse)ent).getHorseData().get(Keys.TAMED_OWNER).isPresent()){
 			Horse tam = (Horse) ent;
-			Player owner = RedProtect.serv.getPlayer(tam.getHorseData().get(Keys.TAMED_OWNER).get().get()).get();
+			Player owner = RedProtect.get().serv.getPlayer(tam.getHorseData().get(Keys.TAMED_OWNER).get().get()).get();
 			return owner.getName().equals(p.getName());
 		}
 		return false;
@@ -92,10 +91,10 @@ public class RPVHelper56 implements RPVHelper {
 				continue;
 			}
 			ItemStack stack = item.peek().get();
-			value += ((RedProtect.cfgs.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
+			value += ((RedProtect.get().cfgs.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
 			if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
 				for (ItemEnchantment enchant:stack.get(Keys.ITEM_ENCHANTMENTS).get()){
-					value += ((RedProtect.cfgs.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
+					value += ((RedProtect.get().cfgs.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
 				}
 			}
 		}

@@ -9,7 +9,7 @@ import org.spongepowered.api.world.World;
 public class RPDoor {
 	
 	public static void ChangeDoor(BlockSnapshot b, Region r){		
-		if ((!RedProtect.cfgs.isFlagEnabled("smart-door") && !RedProtect.cfgs.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")){
+		if ((!RedProtect.get().cfgs.isFlagEnabled("smart-door") && !RedProtect.get().cfgs.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")){
 			return;
 		}
 		

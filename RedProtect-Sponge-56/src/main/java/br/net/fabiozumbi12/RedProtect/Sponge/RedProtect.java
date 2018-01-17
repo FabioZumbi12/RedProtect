@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,11 +9,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
+import com.google.inject.Inject;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.command.CommandManager;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
@@ -46,48 +50,67 @@ authors="FabioZumbi12",
 description="Complete antigrief plugin",
 dependencies=@Dependency(id = "worldedit", optional = true))
 public class RedProtect {
-	public static boolean WE;
-	public static Game game;
-	public static PluginContainer plugin;
-	private static UUID taskid;
+	public boolean WE;
+	private UUID taskid;
 	private CommandManager cmdService;
-	public static RegionManager rm;
-	public static final List<String> changeWait = new ArrayList<>();
-	public static final List<String> tpWait = new ArrayList<>();
-	public static RPPermHandler ph;
-	public static final RPLogger logger = new RPLogger();
-	public static Server serv;    
-	public static final HashMap<Player, Location<World>> firstLocationSelections = new HashMap<>();
-	public static final HashMap<Player, Location<World>> secondLocationSelections = new HashMap<>();
-	public static String configDir;
-	public static boolean OnlineMode;
-	public static RPConfig cfgs;
-	public static EconomyService econ;
-	public static final HashMap<Player,String> alWait = new HashMap<>();
+	public RegionManager rm;
+	public final List<String> changeWait = new ArrayList<>();
+	public final List<String> tpWait = new ArrayList<>();
+	public RPPermHandler ph;
+	public final RPLogger logger = new RPLogger();
+	public Server serv;
+	public final HashMap<Player, Location<World>> firstLocationSelections = new HashMap<>();
+	public final HashMap<Player, Location<World>> secondLocationSelections = new HashMap<>();
+	public boolean OnlineMode;
+	public RPConfig cfgs;
+	public EconomyService econ;
+	public final HashMap<Player,String> alWait = new HashMap<>();
 	
-	private static RPVHelper pvhelp;
-	public static RPVHelper getPVHelper(){
+	private RPVHelper pvhelp;
+	public RPVHelper getPVHelper(){
 		return pvhelp;
 	}
-     	
+
+    private RedProtectAPI rpAPI;
+    public RedProtectAPI getAPI(){
+        return rpAPI;
+    }
+
+    private static RedProtect instance;
+    public static RedProtect get(){
+        return instance;
+    }
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    public File configDir;
+
+    @Inject
+    public Game game;
+
+    @Inject
+    public PluginContainer container;
+
     @Listener
 	public void onStopServer(GameStoppingServerEvent e) {
     	for (Player p:game.getServer().getOnlinePlayers()){
     		pvhelp.closeInventory(p);
     	}
-    	RedProtect.rm.saveAll();
-        RedProtect.rm.unloadAll();
+    	rm.saveAll();
+        rm.unloadAll();
         logger.SaveLogs();
         for (Task task:Sponge.getScheduler().getScheduledTasks(this)){
         	task.cancel();
         }
-        RedProtect.logger.severe(RedProtect.plugin.getName() + " disabled.");
+        logger.severe(container.getName() + " disabled.");
     }
     
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         try {
 			String v = Sponge.getGame().getPlatform().getContainer(Component.API).getVersion().get();
+            instance = this;
+
 			if (v.startsWith("5") || v.startsWith("6")){
 				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
 			}
@@ -98,54 +121,58 @@ public class RedProtect {
             initVars();               
             OnlineMode = serv.getOnlineMode();           
 
-            cmdService.register(plugin, new RPCommands(), Arrays.asList("redprotect","rp","regionp","regp"));
+            cmdService.register(container, new RPCommands(), Arrays.asList("redprotect","rp","regionp","regp"));
             
-            game.getEventManager().registerListeners(plugin, new RPGlobalListener());
-            game.getEventManager().registerListeners(plugin, new RPBlockListener());
-            game.getEventManager().registerListeners(plugin, new RPPlayerListener());
-            game.getEventManager().registerListeners(plugin, new RPEntityListener());
-            game.getEventManager().registerListeners(plugin, new RPWorldListener());              
-            game.getEventManager().registerListeners(plugin, new RPMine18());
-            game.getEventManager().registerListeners(plugin, new RPAddProtection());
+            game.getEventManager().registerListeners(container, new RPGlobalListener());
+            game.getEventManager().registerListeners(container, new RPBlockListener());
+            game.getEventManager().registerListeners(container, new RPPlayerListener());
+            game.getEventManager().registerListeners(container, new RPEntityListener());
+            game.getEventManager().registerListeners(container, new RPWorldListener());
+            game.getEventManager().registerListeners(container, new RPMine18());
+            game.getEventManager().registerListeners(container, new RPAddProtection());
             
             loadRegions();
+
+			logger.info("Loading API...");
+			this.rpAPI = new RedProtectAPI();
+			logger.info("API Loaded!");
             
-            RedProtect.logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
-            RedProtect.logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    / ");
-            RedProtect.logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
-            RedProtect.logger.clear("&a¯ Redprotect "+plugin.getVersion().get()+" enabled");
-            RedProtect.logger.clear("");
+            logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
+            logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    / ");
+            logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
+            logger.clear("&a¯ Redprotect "+container.getVersion().get()+" enabled");
+            logger.clear("");
             
         } catch (Exception e) {
     		e.printStackTrace();
-    		RedProtect.logger.severe("Error enabling RedProtect, plugin will shut down.");
+    		logger.severe("Error enabling RedProtect, plugin will shut down.");
         }
     }
     
-    private static void loadRegions() throws Exception {
+    private void loadRegions() throws Exception {
     	rm.loadAll();
     	if (cfgs.getString("file-type").equalsIgnoreCase("file")){
         	RPUtil.ReadAllDB(rm.getAllRegions());
         	AutoSaveHandler(); 
     	} else {
-    		RedProtect.logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.getString("file-type") + ") database!");        		
+    		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.getString("file-type") + ") database!");
     	}
     }
     
-    private static void shutDown(){
+    private void shutDown(){
     	rm.saveAll();
     	rm.unloadAll();
     	logger.SaveLogs();
-    	Sponge.getScheduler().getScheduledTasks(plugin).forEach(Task::cancel);
-    	RedProtect.logger.severe(plugin.getName() + " turn off...");
+    	Sponge.getScheduler().getScheduledTasks(container).forEach(Task::cancel);
+    	logger.severe(container.getName() + " turn off...");
     }
     
-    public static void reload(){
+    public void reload(){
     	try {
     		//shutdown
         	shutDown();
         	
-    		RedProtect.cfgs = new RPConfig();
+    		cfgs = new RPConfig();
     		RPLang.init();
     		
     		//start
@@ -161,7 +188,7 @@ public class RedProtect {
     		pvhelp.closeInventory(p);
     	}
     	reload();    
-    	RedProtect.logger.sucess("RedProtect reloaded with success!");
+    	logger.sucess("RedProtect reloaded with success!");
     }
     
     @Listener
@@ -171,27 +198,25 @@ public class RedProtect {
 		}
 	}
     
-	private static void AutoSaveHandler() {
+	private void AutoSaveHandler() {
 		if (taskid != null && Sponge.getScheduler().getTaskById(taskid).isPresent()){
 			Sponge.getScheduler().getTaskById(taskid).get().cancel();
 		}
 		if (cfgs.getInt("flat-file.auto-save-interval-seconds") != 0){
-			RedProtect.logger.info("Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database every " + cfgs.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");  
+			logger.info("Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database every " + cfgs.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");
 			
-			taskid = Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).scheduleWithFixedDelay(() -> {
-                RedProtect.logger.debug("default","Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database!");
+			taskid = Sponge.getScheduler().createSyncExecutor(container).scheduleWithFixedDelay(() -> {
+                logger.debug("default","Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database!");
                 rm.saveAll();
                 },cfgs.getInt("flat-file.auto-save-interval-seconds"), cfgs.getInt("flat-file.auto-save-interval-seconds"), TimeUnit.SECONDS).getTask().getUniqueId();
 			
 		} else {
-        	RedProtect.logger.info("Auto-save Scheduler: Disabled");
+        	logger.info("Auto-save Scheduler: Disabled");
         }
 	}
-	
+
     private void initVars() throws Exception {
-    	game = Sponge.getGame();
-    	plugin = Sponge.getPluginManager().getPlugin("redprotect").get();
-    	configDir = game.getConfigManager().getSharedConfig(RedProtect.plugin).getDirectory()+File.separator+"RedProtect"+File.separator;
+        container = Sponge.getPluginManager().getPlugin("redprotect").get();
         serv = Sponge.getServer();        
         cmdService = game.getCommandManager();
         cfgs = new RPConfig();

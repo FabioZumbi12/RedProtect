@@ -17,13 +17,13 @@ public class RPMine111{
 	}
 
     private static void removeBar(final BossBar bar, final Player p){
-    	final int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.plugin, () -> {
+    	final int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () -> {
             double d = bar.getProgress();
             if (d >= 0.2){
                 bar.setProgress(d - 0.2);
             }
         }, 20, 20);
-    	Bukkit.getScheduler().runTaskLater(RedProtect.plugin, () -> {
+    	Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
             bar.removePlayer(p);
             Bukkit.getScheduler().cancelTask(task);
         }, 120);

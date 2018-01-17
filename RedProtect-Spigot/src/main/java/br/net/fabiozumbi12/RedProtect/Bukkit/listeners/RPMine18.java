@@ -31,7 +31,7 @@ import java.util.List;
 public class RPMine18 implements Listener{
 	
 	public RPMine18(){
-		RedProtect.logger.debug("Loaded RPMine18...");
+		RedProtect.get().logger.debug("Loaded RPMine18...");
 	}
 	
 	static final RPContainer cont = new RPContainer();
@@ -60,7 +60,7 @@ public class RPMine18 implements Listener{
         
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
-        Region r = RedProtect.rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l);
         Player p = e.getPlayer();
         if (r == null){
         	//global flags
@@ -102,7 +102,7 @@ public class RPMine18 implements Listener{
             }
         }
         
-		Region r1 = RedProtect.rm.getTopRegion(loc);
+		Region r1 = RedProtect.get().rm.getTopRegion(loc);
 		
 		if (r1 == null){
 			//global flags
@@ -142,7 +142,7 @@ public class RPMine18 implements Listener{
             }
         }
         
-		Region r1 = RedProtect.rm.getTopRegion(loc);
+		Region r1 = RedProtect.get().rm.getTopRegion(loc);
 		
 		if (r1 == null){
 			//global flags
@@ -167,15 +167,15 @@ public class RPMine18 implements Listener{
             return;
         }
     	
-    	if (RedProtect.version <= 180) {
+    	if (RedProtect.get().version <= 180) {
             return;
         }
     	Player p = e.getPlayer();
     	Location l = e.getClickedBlock().getLocation();
-		Region r = RedProtect.rm.getTopRegion(l);		
+		Region r = RedProtect.get().rm.getTopRegion(l);		
 		Material m = p.getItemInHand().getType();
 		
-		if (RedProtect.version >= 190 && e.getItem() != null){
+		if (RedProtect.get().version >= 190 && e.getItem() != null){
 			m = e.getItem().getType();
 		}
 		
@@ -189,10 +189,10 @@ public class RPMine18 implements Listener{
     
 	@EventHandler
 	public void onBlockExplode(BlockExplodeEvent e){
-		RedProtect.logger.debug("Is BlockListener - BlockExplodeEvent event");
+		RedProtect.get().logger.debug("Is BlockListener - BlockExplodeEvent event");
 		List<Block> toRemove = new ArrayList<>();
 		for (Block b:e.blockList()){
-			Region r = RedProtect.rm.getTopRegion(b.getLocation());
+			Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 			if (!cont.canWorldBreak(b)){
 				toRemove.add(b);
 				continue;
@@ -209,13 +209,13 @@ public class RPMine18 implements Listener{
 
     @EventHandler
 	public void onPistonRetract(BlockPistonRetractEvent e){
-    	if (RedProtect.Mc && RPConfig.getBool("hooks.magiccarpet.fix-piston-getblocks")){	
+    	if (RedProtect.get().Mc && RPConfig.getBool("hooks.magiccarpet.fix-piston-getblocks")){	
     		List<Block> blocks = e.getBlocks();
     		for (Block block:blocks){
     			for (Carpet carpet:MagicCarpet.getCarpets().all()){
     				if (carpet != null && carpet.isVisible() && carpet.touches(e.getBlock())){
     					block.setType(Material.AIR);
-    					RedProtect.logger.debug("Carpet touch block "+block.getType().name());
+    					RedProtect.get().logger.debug("Carpet touch block "+block.getType().name());
     					e.setCancelled(true);
     				}
     			}

@@ -24,7 +24,7 @@ public class RPWorldListener implements Listener {
 	private final HashMap<World, Integer> rainCounter = new HashMap<>();
 	
     public RPWorldListener() {
-        RedProtect.logger.debug("Loaded RPEntityListener...");
+        RedProtect.get().logger.debug("Loaded RPEntityListener...");
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
@@ -38,7 +38,7 @@ public class RPWorldListener implements Listener {
     		} else {
     			int acTry = rainCounter.get(w);
     			if (acTry-1 <= 0){    
-    				Bukkit.getScheduler().runTaskLater(RedProtect.plugin, () -> w.setWeatherDuration(RPConfig.getGlobalFlagInt(w.getName()+".rain.duration")*20), 40);
+    				Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RPConfig.getGlobalFlagInt(w.getName()+".rain.duration")*20), 40);
     				rainCounter.put(w, trys);
     			} else {
     				rainCounter.put(w, acTry-1);
@@ -52,12 +52,12 @@ public class RPWorldListener implements Listener {
     public void onWorldLoad(WorldLoadEvent e) {
         World w = e.getWorld();
         try {
-            RedProtect.rm.load(w);
+            RedProtect.get().rm.load(w);
             RPConfig.init();    
-            RedProtect.logger.warning("World loaded: " + w.getName());            
+            RedProtect.get().logger.warning("World loaded: " + w.getName());            
         }
         catch (Exception ex) {
-        	RedProtect.logger.severe("RedProtect problem on load world:");
+        	RedProtect.get().logger.severe("RedProtect problem on load world:");
             ex.printStackTrace();
         }
     }
@@ -66,11 +66,11 @@ public class RPWorldListener implements Listener {
     public void onWorldUnload(WorldUnloadEvent e) {
         World w = e.getWorld();
         try {
-            RedProtect.rm.unload(w);
-            RedProtect.logger.warning("World unloaded: " + w.getName());
+            RedProtect.get().rm.unload(w);
+            RedProtect.get().logger.warning("World unloaded: " + w.getName());
         }
         catch (Exception ex) {
-        	RedProtect.logger.severe("RedProtect problem on unload world:");
+        	RedProtect.get().logger.severe("RedProtect problem on unload world:");
             ex.printStackTrace();
         }
     }
@@ -82,7 +82,7 @@ public class RPWorldListener implements Listener {
     	}
     	Entity[] ents = e.getChunk().getEntities();
     	for (Entity ent:ents){
-    		Region entr = RedProtect.rm.getTopRegion(ent.getLocation());
+    		Region entr = RedProtect.get().rm.getTopRegion(ent.getLocation());
     		if (entr != null){
     			if (!entr.canSpawnMonsters() && ent instanceof Monster){
         			ent.remove();

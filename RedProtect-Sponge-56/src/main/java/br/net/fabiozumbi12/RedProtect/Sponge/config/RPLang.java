@@ -40,34 +40,34 @@ public class RPLang {
 	}
 	
 	public static void init() {
-		resLang = "lang" + RedProtect.cfgs.getString("language") + ".properties";
-		pathLang = RedProtect.configDir + resLang;
+		resLang = "lang" + RedProtect.get().cfgs.getString("language") + ".properties";
+		pathLang = RedProtect.get().configDir + File.separator + resLang;
 		
 		File lang = new File(pathLang);
 		if (!lang.exists()) {
-			if (!RedProtect.plugin.getAsset(resLang).isPresent()){	
+			if (!RedProtect.get().container.getAsset(resLang).isPresent()){
 				resLang = "langEN-US.properties";
-				pathLang = RedProtect.configDir + resLang;
+				pathLang = RedProtect.get().configDir + File.separator + resLang;
 			}
 								
 			//create lang file
 			try {
-				RedProtect.plugin.getAsset(resLang).get().copyToDirectory(new File(RedProtect.configDir).toPath());
+				RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}			
-            RedProtect.logger.info("Created config file: " + pathLang);
+            RedProtect.get().logger.info("Created config file: " + pathLang);
         }
 		
 		loadLang();
 		loadBaseLang();
-		RedProtect.logger.info("Language file loaded - Using: "+ RedProtect.cfgs.getString("language"));	
+		RedProtect.get().logger.info("Language file loaded - Using: "+ RedProtect.get().cfgs.getString("language"));	
 	}
 	
 	static void loadBaseLang(){
 	    BaseLang.clear();
 	    try {
-	    	BaseLang.load(RedProtect.plugin.getAsset("langEN-US.properties").get().getUrl().openStream());
+	    	BaseLang.load(RedProtect.get().container.getAsset("langEN-US.properties").get().getUrl().openStream());
 	    } catch (Exception e){
 	      e.printStackTrace();
 	    }
@@ -86,11 +86,11 @@ public class RPLang {
 		
 		if (Lang.get("_lang.version") != null){
 			int langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", ""));
-			int rpv = Integer.parseInt(RedProtect.plugin.getVersion().get().replace(".", ""));
+			int rpv = Integer.parseInt(RedProtect.get().container.getVersion().get().replace(".", ""));
 			if (langv < rpv || langv == 0){
-				RedProtect.logger.warning("Your lang file is outdated. Probally need strings updates!");
-				RedProtect.logger.warning("Lang file version: "+Lang.get("_lang.version"));
-				Lang.put("_lang.version", RedProtect.plugin.getVersion().get());
+				RedProtect.get().logger.warning("Your lang file is outdated. Probally need strings updates!");
+				RedProtect.get().logger.warning("Lang file version: "+Lang.get("_lang.version"));
+				Lang.put("_lang.version", RedProtect.get().container.getVersion().get());
 			}
 		}		
 	}
@@ -102,7 +102,7 @@ public class RPLang {
 	      }
 	    }
 		if (!Lang.containsKey("_lang.version")){
-			Lang.put("_lang.version", RedProtect.plugin.getVersion().get());
+			Lang.put("_lang.version", RedProtect.get().container.getVersion().get());
     	}
 	    try {
 	       Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
@@ -139,7 +139,7 @@ public class RPLang {
 		
 		if (p instanceof Player){
 			DelayedMessage.put((Player)p, key);
-			Sponge.getScheduler().createSyncExecutor(RedProtect.plugin).schedule(() -> {
+			Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
                 if (DelayedMessage.containsKey(p)){
                     DelayedMessage.remove(p);
                 }

@@ -74,12 +74,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public int save() {
     	int saved = 0;
         try {
-            RedProtect.logger.debug("default","RegionManager.Save(): File type is " + RedProtect.cfgs.getString("file-type"));
+            RedProtect.get().logger.debug("default","RegionManager.Save(): File type is " + RedProtect.get().cfgs.getString("file-type"));
             String world = this.getWorld().getName();
                   
-            if (RedProtect.cfgs.getString("file-type").equals("file")) {            	
+            if (RedProtect.get().cfgs.getString("file-type").equals("file")) {            	
             	
-            	File datf  = new File(RedProtect.configDir+"data", "data_" + world + ".conf");
+            	File datf  = new File(RedProtect.get().configDir+File.separator+"data", "data_" + world + ".conf");
             	ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
             	CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
         		
@@ -88,11 +88,11 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         				continue;
         			}
         			
-        			if (RedProtect.cfgs.getBool("flat-file.region-per-file")) {
+        			if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
         					continue;
         				}
-        				datf  = new File(RedProtect.configDir+"data", world+File.separator+ r.getName() + ".conf"); 
+        				datf  = new File(RedProtect.get().configDir+File.separator+"data", world+File.separator+ r.getName() + ".conf");
         				regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
         				fileDB = regionManager.createEmptyNode();
             		}
@@ -100,18 +100,18 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         			fileDB = RPUtil.addProps(fileDB, r); 
         			saved++;
         			
-        			if (RedProtect.cfgs.getBool("flat-file.region-per-file")) { 
+        			if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) { 
         				saveConf(fileDB, regionManager);
         				r.setToSave(false);        				 				
         			}
         		}
             	
-            	if (!RedProtect.cfgs.getBool("flat-file.region-per-file")) {
+            	if (!RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
             		RPUtil.backupRegions(fileDB, world);
     				saveConf(fileDB, regionManager);    				
     			} else {
     				//remove deleted regions
-    				File wfolder = new File(RedProtect.configDir+"data", world);
+    				File wfolder = new File(RedProtect.get().configDir+File.separator+"data", world);
     				if (wfolder.exists()){
     					File[] listOfFiles = wfolder.listFiles();    				
                 		for (File region:listOfFiles){
@@ -133,7 +133,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     	try {			
 			regionManager.save(fileDB);			
 		} catch (IOException e) {
-			RedProtect.logger.severe("Error during save database file for world " + world + ": ");
+			RedProtect.get().logger.severe("Error during save database file for world " + world + ": ");
 			e.printStackTrace();
 		} 
     }
@@ -159,9 +159,9 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     	try {
             String world = this.getWorld().getName();
             
-            if (RedProtect.cfgs.getString("file-type").equals("file")) {    
-            	if (RedProtect.cfgs.getBool("flat-file.region-per-file")) {
-            		File f = new File(RedProtect.configDir+"data"+File.separator + world);
+            if (RedProtect.get().cfgs.getString("file-type").equals("file")) {    
+            	if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
+            		File f = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + world);
             		if (!f.exists()){
             			f.mkdir();
             		}
@@ -172,12 +172,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
             			}
             		}
     			} else {
-    				File oldf = new File(RedProtect.configDir+"data"+File.separator + world + ".conf");
-                	File newf = new File(RedProtect.configDir+"data"+File.separator + "data_" + world + ".conf");
+    				File oldf = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + world + ".conf");
+                	File newf = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + "data_" + world + ".conf");
                     if (oldf.exists()){
                     	oldf.renameTo(newf);
                     }            
-                    this.load(RedProtect.configDir+"data"+File.separator + "data_" + world + ".conf"); 
+                    this.load(RedProtect.get().configDir+File.separator+"data"+File.separator + "data_" + world + ".conf");
     			}            	       	
             }
 		} catch (FileNotFoundException | ClassNotFoundException e) {
@@ -188,8 +188,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	private void load(String path) throws FileNotFoundException, ClassNotFoundException {
         String world = this.getWorld().getName();        
 
-        if (RedProtect.cfgs.getString("file-type").equals("file")) {        	
-        	RedProtect.logger.debug("default","Load world " + this.world.getName() + ". File type: conf");
+        if (RedProtect.get().cfgs.getString("file-type").equals("file")) {        	
+        	RedProtect.get().logger.debug("default","Load world " + this.world.getName() + ". File type: conf");
         	
         	try {
         		File tempRegionFile = new File(path);    
@@ -222,8 +222,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
         
 		for (Region r:regions.values()){
-			RedProtect.logger.debug("default","Radius: " + radius);
-			RedProtect.logger.debug("default","X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
+			RedProtect.get().logger.debug("default","Radius: " + radius);
+			RedProtect.get().logger.debug("default","X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
 			if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius){
 				ret.add(r);
 			}

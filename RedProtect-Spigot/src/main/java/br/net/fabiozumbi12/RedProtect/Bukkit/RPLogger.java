@@ -64,8 +64,8 @@ public class RPLogger{
 			  sb.append(MainLog.get(key));
 			  sb.append('\n');    			  
     	}
-    	if (RPUtil.genFileName(RedProtect.plugin.getDataFolder()+File.separator+"logs"+File.separator, false) != null){
-    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.plugin.getDataFolder()+File.separator+"logs"+File.separator, false), sb);
+    	if (RPUtil.genFileName(RedProtect.get().getDataFolder()+File.separator+"logs"+File.separator, false) != null){
+    		RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.get().getDataFolder()+File.separator+"logs"+File.separator, false), sb);
     	}    	
     }
 }

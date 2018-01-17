@@ -52,7 +52,7 @@ public class WEListener {
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
     	    	
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.plugin, () -> {
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (RPUtil.stopRegen){
                 return;
             }
@@ -76,14 +76,14 @@ public class WEListener {
                 }
             } else {
                 if (wreg.getWorld().regenerate(wreg, esession)){
-                    RedProtect.logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
+                    RedProtect.get().logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
                 } else {
-                    RedProtect.logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
+                    RedProtect.get().logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
                 }
             }
 
             if (remove){
-                RedProtect.rm.remove(r, RedProtect.serv.getWorld(r.getWorld()));
+                RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
             }
 
             },delay);

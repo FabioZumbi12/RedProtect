@@ -40,15 +40,15 @@ public class RPDynmap {
 	    }
 	    
 	    //start set markers
-		for (World w:RedProtect.serv.getWorlds()){
-			for (Region r:RedProtect.rm.getRegionsByWorld(w)){
+		for (World w:RedProtect.get().serv.getWorlds()){
+			for (Region r:RedProtect.get().rm.getRegionsByWorld(w)){
     			addMark(r);
     		}
 		}
 	}
 	
 	public void removeAll(World w){
-		for (Region r:RedProtect.rm.getRegionsByWorld(w)){
+		for (Region r:RedProtect.get().rm.getRegionsByWorld(w)){
 			removeMark(r);
 		}
 	}

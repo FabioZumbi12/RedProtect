@@ -31,7 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.Tag;
 public class RPSchematics {
 	
     public static void pasteSchematic(Player p) throws IOException {
-    	File file = new File(RedProtect.plugin.getDataFolder(),"schematics"+File.separator+RPConfig.getString("schematics.first-house-file"));
+    	File file = new File(RedProtect.get().getDataFolder(),"schematics"+File.separator+RPConfig.getString("schematics.first-house-file"));
         FileInputStream stream = new FileInputStream(file);     
         
         World world = p.getWorld();
@@ -144,8 +144,8 @@ public class RPSchematics {
         String pName = RPUtil.PlayerToUUID(p.getName());
         
         //check if player already have claims
-        int claimused = RedProtect.rm.getPlayerRegions(p.getName(), p.getWorld()); 
-        if (claimused > 0 && !p.hasPermission("redprotect.bypass")){
+        int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()); 
+        if (claimused > 0 && !p.hasPermission("RedProtect.get().bypass")){
         	RPLang.sendMessage(p, "playerlistener.region.claimlimit.start");
         	return;
         }
@@ -156,16 +156,16 @@ public class RPSchematics {
         Region otherrg = null;
         
         //check if same area
-        otherrg = RedProtect.rm.getTopRegion(region.getCenterLoc());
+        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
         if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
         	p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
         	return;
         }
         
         //check regions inside region
-        for (Region r:RedProtect.rm.getRegionsByWorld(p.getWorld())){
+        for (Region r:RedProtect.get().rm.getRegionsByWorld(p.getWorld())){
         	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
-        		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
+        		if (!r.isLeader(p) && !p.hasPermission("RedProtect.get().bypass")){
         			p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                 	return;
             	}
@@ -185,11 +185,11 @@ public class RPSchematics {
             	return;    	
             }*/
         	
-        	otherrg = RedProtect.rm.getTopRegion(locr);        	
-        	RedProtect.logger.debug("protection Block is: " + locr.getBlock().getType().name());
+        	otherrg = RedProtect.get().rm.getTopRegion(locr);        	
+        	RedProtect.get().logger.debug("protection Block is: " + locr.getBlock().getType().name());
         	
     		if (otherrg != null){                    			
-            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
+            	if (!otherrg.isLeader(p) && !p.hasPermission("RedProtect.get().bypass")){
             		p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                 	return;
             	}
@@ -200,8 +200,8 @@ public class RPSchematics {
         }
                 
         //check cost per block
-        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.Vault && !p.hasPermission("redprotect.eco.bypass")){
-        	Double peco = RedProtect.econ.getBalance(p);
+        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("RedProtect.get().eco.bypass")){
+        	Double peco = RedProtect.get().econ.getBalance(p);
         	long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
         	
         	if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")){
@@ -209,7 +209,7 @@ public class RPSchematics {
         	}
         	
         	if (peco >= reco){
-        		RedProtect.econ.withdrawPlayer(p, reco);
+        		RedProtect.get().econ.withdrawPlayer(p, reco);
         		p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco+" "+RPConfig.getEcoString("economy-name")));
         	} else {
         		RPLang.sendMessage(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco));
@@ -217,7 +217,7 @@ public class RPSchematics {
         	}
         }    
         
-        if (RPConfig.getBool("hooks.worldedit.use-for-schematics") && RedProtect.WE){
+        if (RPConfig.getBool("hooks.worldedit.use-for-schematics") && RedProtect.get().WE){
         	WEListener.pasteWithWE(p, file);
         } else {
         	for (Integer key:blist.keySet()){
@@ -234,8 +234,8 @@ public class RPSchematics {
     	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         
         
-        RedProtect.logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED(SCHEMATIC) region "+region.getName());
-        RedProtect.rm.add(region, p.getWorld());
+        RedProtect.get().logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED(SCHEMATIC) region "+region.getName());
+        RedProtect.get().rm.add(region, p.getWorld());
     }
     
     /**

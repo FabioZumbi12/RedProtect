@@ -15,35 +15,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
 public class MPListener implements Listener {
-    // this requires the next version of MyPet (2.0.3)
-    /*
-    @EventHandler
-    public void onMyPetActiveSkill(MyPetActiveTargetSkillEvent event) {
-        Location loc = event.getMyPet().getLocation().get();
-        Region r1 = RedProtect.rm.getTopRegion(loc);
-        if (r1 == null) {
-            return;
-        }
-
-        LivingEntity target = event.getTarget();
-
-        if (target instanceof Animals || target instanceof Villager || target instanceof Golem) {
-
-            Player p2 = event.getOwner().getPlayer();
-            if (!r1.canBuild(p2) || !r1.canInteractPassives(p2)) {
-                event.setCancelled(true);
-                p2.sendMessage(RPLang.get("mplistener.cantattack.passives"));
-            }
-        } else if (target instanceof Player) {
-            Player p2 = event.getOwner().getPlayer();
-            if (!r1.canPVP(p2)) {
-                event.setCancelled(true);
-                p2.sendMessage(RPLang.get("mplistener.cantattack.players"));
-            }
-        }
-    }
-    */
-
+   
     @EventHandler
     public void onEntityDamageByPet(EntityDamageEvent e) {
         if (e.isCancelled()) {
@@ -52,7 +24,7 @@ public class MPListener implements Listener {
 
         Entity ent = e.getEntity();
         if (ent instanceof MyPetBukkitEntity) {
-            Region r = RedProtect.rm.getTopRegion(ent.getLocation());
+            Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
             if (r != null && r.flagExists("invincible")) {
                 if (r.getFlagBool("invincible")) {
                     e.setCancelled(true);
@@ -67,7 +39,7 @@ public class MPListener implements Listener {
             Entity e2 = de.getDamager();
 
             Location loc = e1.getLocation();
-            Region r1 = RedProtect.rm.getTopRegion(loc);
+            Region r1 = RedProtect.get().rm.getTopRegion(loc);
             if (r1 == null) {
                 return;
             }

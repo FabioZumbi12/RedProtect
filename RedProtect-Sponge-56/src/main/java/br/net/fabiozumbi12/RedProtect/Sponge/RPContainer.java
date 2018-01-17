@@ -19,7 +19,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 public class RPContainer {
 
 	public boolean canOpen(BlockSnapshot b, Player p) {
-    	if (!RedProtect.cfgs.getBool("private.use")){
+    	if (!RedProtect.get().cfgs.getBool("private.use")){
     		return true;
     	}
     	
@@ -27,7 +27,7 @@ public class RPContainer {
     	String blocktype = b.getState().getType().getName();
     	Location<World> loc = b.getLocation().get();
     	World w = loc.getExtent();
-    	List<String> blocks = RedProtect.cfgs.getStringList("private.allowed-blocks");
+    	List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
     	
         if (blocks.contains(blocktype)){        	
         	for (Direction dir:dirs){        		
@@ -56,13 +56,13 @@ public class RPContainer {
     }
 	
 	public boolean canBreak(Player p, BlockSnapshot b){
-    	if (!RedProtect.cfgs.getBool("private.use")){
+    	if (!RedProtect.get().cfgs.getBool("private.use")){
     		return true;
     	}
     	
     	
-    	Region reg = RedProtect.rm.getTopRegion(b.getLocation().get());
-    	if (reg == null && !RedProtect.cfgs.getBool("private.allow-outside")){
+    	Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get());
+    	if (reg == null && !RedProtect.get().cfgs.getBool("private.allow-outside")){
     		return true;
     	}
     	
@@ -70,7 +70,7 @@ public class RPContainer {
     	String blocktype = b.getState().getType().getName();
     	Location<World> loc = b.getLocation().get();
     	World w = loc.getExtent();
-    	List<String> blocks = RedProtect.cfgs.getStringList("private.allowed-blocks");
+    	List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
     	
     	if (loc.getBlockType().getName().contains("sign")){        		
 			BlockSnapshot sign1 = w.createSnapshot(loc.getBlockPosition());
@@ -106,12 +106,12 @@ public class RPContainer {
     }
     
 	public boolean canWorldBreak(BlockSnapshot b){	
-		if (!RedProtect.cfgs.getBool("private.use")){
+		if (!RedProtect.get().cfgs.getBool("private.use")){
     		return true;
     	}    	
     	
-    	Region reg = RedProtect.rm.getTopRegion(b.getLocation().get());
-    	if (reg == null && !RedProtect.cfgs.getBool("private.allow-outside")){
+    	Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get());
+    	if (reg == null && !RedProtect.get().cfgs.getBool("private.allow-outside")){
     		return true;
     	}
     	
@@ -119,7 +119,7 @@ public class RPContainer {
     	String blocktype = b.getState().getType().getName();
     	Location<World> loc = b.getLocation().get();
     	World w = loc.getExtent();
-    	List<String> blocks = RedProtect.cfgs.getStringList("private.allowed-blocks");
+    	List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
     	
     	if (loc.getBlockType().getName().contains("sign")){        		
 			BlockSnapshot sign1 = w.createSnapshot(loc.getBlockPosition());
@@ -192,7 +192,7 @@ public class RPContainer {
 	    
 	public boolean isContainer(BlockSnapshot block){
 		Location<World> loc = block.getLocation().get();
-		List<String> blocks = RedProtect.cfgs.getStringList("private.allowed-blocks");
+		List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
 		return blocks.contains(getRelative(loc, Direction.DOWN).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.UP).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.EAST).getBlockType().getName()) ||

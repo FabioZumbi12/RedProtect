@@ -81,23 +81,23 @@ public class RPConfig{
 			"set-portal");	
 	
 	
-	private final File defConfig = new File(RedProtect.configDir,"config.conf");
+	private final File defConfig = new File(RedProtect.get().configDir,"config.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 	private CommentedConfigurationNode tempConfig;
 	
-	private final File guiConfig = new File(RedProtect.configDir,"guiconfig.conf");
+	private final File guiConfig = new File(RedProtect.get().configDir,"guiconfig.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> guiManager;
 	private CommentedConfigurationNode gui;
 	
-	private final File gFlagsConfig = new File(RedProtect.configDir,"globalflags.conf");
+	private final File gFlagsConfig = new File(RedProtect.get().configDir,"globalflags.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> gFlagsManager;	
 	private CommentedConfigurationNode gflags;
 	
-	private final File protFile = new File(RedProtect.configDir,"protections.conf");
+	private final File protFile = new File(RedProtect.get().configDir,"protections.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> protManager;
 	private CommentedConfigurationNode protCfgs;
 	
-	private final File ecoFile = new File(RedProtect.configDir,"economy.conf");
+	private final File ecoFile = new File(RedProtect.get().configDir,"economy.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
 	private CommentedConfigurationNode ecoCfgs;
 	
@@ -145,16 +145,16 @@ public class RPConfig{
 	//init
 	public RPConfig() {		
 		try {			
-			if (!new File(RedProtect.configDir).exists()){
-				new File(RedProtect.configDir).mkdir();
+			if (!RedProtect.get().configDir.exists()){
+				RedProtect.get().configDir.mkdir();
 			}
-			if (!new File(RedProtect.configDir+"data").exists()){
-            	new File(RedProtect.configDir+"data").mkdir();
+			if (!new File(RedProtect.get().configDir+File.separator+"data").exists()){
+            	new File(RedProtect.get().configDir+File.separator+"data").mkdir();
             } 
 			
 			if (!defConfig.exists()) {
 		         defConfig.createNewFile();
-		         configManager = HoconConfigurationLoader.builder().setURL(RedProtect.plugin.getAsset("config.conf").get().getUrl()).build();
+		         configManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("config.conf").get().getUrl()).build();
 		         config = configManager.load();
 		         configManager = HoconConfigurationLoader.builder().setFile(defConfig).build();
 		         configManager.save(config);
@@ -162,7 +162,7 @@ public class RPConfig{
 			
 		 	 if (!guiConfig.exists()) {
 			 	 guiConfig.createNewFile();
-				 guiManager = HoconConfigurationLoader.builder().setURL(RedProtect.plugin.getAsset("guiconfig.conf").get().getUrl()).build();
+				 guiManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("guiconfig.conf").get().getUrl()).build();
 				 gui = guiManager.load();
 				 guiManager = HoconConfigurationLoader.builder().setFile(guiConfig).build();
 				 guiManager.save(gui);
@@ -173,12 +173,12 @@ public class RPConfig{
 		     }	
 		 	 
 		 	 if (!ecoFile.exists()) {
-		 		 Asset ecoAsset = RedProtect.plugin.getAsset("economy.conf").get();
-		 		 ecoAsset.copyToDirectory(new File(RedProtect.configDir).toPath());
+		 		 Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
+		 		 ecoAsset.copyToDirectory(RedProtect.get().configDir.toPath());
 		     }
 		 	 
 		} catch (IOException e1) {			
-			RedProtect.logger.severe("The default configuration could not be loaded or created!");
+			RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
 			e1.printStackTrace();
 		}
 		
@@ -186,7 +186,7 @@ public class RPConfig{
 		        //load configs
 		        try {
 		        	//tempconfig
-		        	configManager = HoconConfigurationLoader.builder().setURL(RedProtect.plugin.getAsset("config.conf").get().getUrl()).build();
+		        	configManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("config.conf").get().getUrl()).build();
 		        	tempConfig = configManager.load();
 		        	
 		        	configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
@@ -254,7 +254,7 @@ public class RPConfig{
 					
 					
 				} catch (IOException | ObjectMappingException e1) {
-					RedProtect.logger.severe("The default configuration could not be loaded or created!");
+					RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
 					e1.printStackTrace();
 				}
     	            
@@ -277,15 +277,15 @@ public class RPConfig{
                     //--------------------------------------------------------------------------//
                     
 				
-                    RedProtect.logger.info("Server version: " + RedProtect.game.getPlatform().getMinecraftVersion().getName());
+                    RedProtect.get().logger.info("Server version: " + RedProtect.get().game.getPlatform().getMinecraftVersion().getName());
                     
     	            //add allowed claim worlds to config
     	            try {
 						if (getNodes("allowed-claim-worlds").getList(TypeToken.of(String.class)).isEmpty()) {
 							List<String> worlds = new ArrayList<>();
-							for (World w:RedProtect.serv.getWorlds()){
+							for (World w:RedProtect.get().serv.getWorlds()){
 								worlds.add(w.getName());
-								RedProtect.logger.warning("Added world to claim list " + w.getName());
+								RedProtect.get().logger.warning("Added world to claim list " + w.getName());
 							}
 							worlds.remove("example_world");
 							getNodes("allowed-claim-worlds").setValue(worlds);
@@ -390,7 +390,7 @@ public class RPConfig{
         			
         			if (update > 0){
         				getNodes("flags-configuration.enabled-flags").setValue(flags);
-        				RedProtect.logger.warning("Configuration UPDATED!");
+        				RedProtect.get().logger.warning("Configuration UPDATED!");
         			}
         			/*---------------------------------------- Global Flags for worlds loaded --------------------------------------------*/
         			
@@ -433,8 +433,8 @@ public class RPConfig{
                         }
                     }                    
 
-                    if (RedProtect.getPVHelper().getAllEnchants().size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
-                    	for (String ench:RedProtect.getPVHelper().getAllEnchants()){
+                    if (RedProtect.get().getPVHelper().getAllEnchants().size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
+                    	for (String ench:RedProtect.get().getPVHelper().getAllEnchants()){
                         	if (ecoCfgs.getNode("enchantments","values",ench).getValue() == null){
                         		ecoCfgs.getNode("enchantments","values",ench).setValue(0.0);
                         	}
@@ -444,14 +444,14 @@ public class RPConfig{
                     //////////////////////
                     
         			//create logs folder
-        			File logs = new File(RedProtect.configDir+"logs");
+        			File logs = new File(RedProtect.get().configDir+File.separator+"logs");
         			if(getBool("log-actions") && !logs.exists()){
         				logs.mkdir();
-    	                RedProtect.logger.info("Created folder: " + RedProtect.configDir+"logs");        	    		
+    	                RedProtect.get().logger.info("Created folder: " + RedProtect.get().configDir+File.separator+"logs");
         	    	}
         			
         			save();        			
-    	            RedProtect.logger.info("All configurations loaded!");
+    	            RedProtect.get().logger.info("All configurations loaded!");
     	            
 	}
     
@@ -470,11 +470,11 @@ public class RPConfig{
 			if (w.getDimension().getType().equals(DimensionTypes.THE_END)){
 				getNodes("region-settings.world-colors."+w.getName()).setValue("&5&l");			            		
 			}
-			RedProtect.logger.warning("Added world to color list " + w.getName());
+			RedProtect.get().logger.warning("Added world to color list " + w.getName());
 		}
 		
 		try {
-			//RedProtect.logger.debug("default","Writing global flags for world "+ w.getName() + "...");
+			//RedProtect.get().logger.debug("default","Writing global flags for world "+ w.getName() + "...");
 			gflags.getNode(w.getName(),"build").setValue(gflags.getNode(w.getName(),"build").getBoolean(true));
         	gflags.getNode(w.getName(),"if-build-false","break-blocks").setValue(gflags.getNode(w.getName(),"if-build-false","break-blocks").getList(TypeToken.of(String.class)));
         	gflags.getNode(w.getName(),"if-build-false","place-blocks").setValue(gflags.getNode(w.getName(),"if-build-false","place-blocks").getList(TypeToken.of(String.class)));
@@ -543,13 +543,13 @@ public class RPConfig{
 	}
     
     public ItemStack getGuiItemStack(String key){
-    	RedProtect.logger.debug("default","Gui Material to get: " + key);
-    	RedProtect.logger.debug("default","Result: " + gui.getNode("gui-flags",key,"material").getString());
+    	RedProtect.get().logger.debug("default","Gui Material to get: " + key);
+    	RedProtect.get().logger.debug("default","Result: " + gui.getNode("gui-flags",key,"material").getString());
     	return ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, gui.getNode("gui-flags",key,"material").getString()), 1);
     }
     
     public Text getGuiFlagString(String flag, String option){    	
-    	//RedProtect.logger.severe("Flag: "+flag+" - FlagString: "+this.gui.getNode("gui-flags",flag,option).getString());
+    	//RedProtect.get().logger.severe("Flag: "+flag+" - FlagString: "+this.gui.getNode("gui-flags",flag,option).getString());
     	if (this.gui.getNode("gui-flags",flag,option).getString() == null){
     		return Text.of();
     	}    	
@@ -584,7 +584,7 @@ public class RPConfig{
     		for (Object key1:key.getChildrenMap().keySet()){    			
         		if (key1.toString().contains("slot")){
         			slots.add(key.getChildrenMap().get(key1).getInt());
-        			//RedProtect.logger.severe("Key: "+key.getChildrenMap().get(key1).getInt());
+        			//RedProtect.get().logger.severe("Key: "+key.getChildrenMap().get(key1).getInt());
         		}    		
         	}    		
     	}
@@ -611,15 +611,7 @@ public class RPConfig{
 				} catch (ObjectMappingException e) {
 					e.printStackTrace();
 				}
-    			
     			flags.put(flag, getNodes("flags."+flag).getValue());
-    			
-    			/*
-    			if (RedProtect.plugin.getConfig().get(flag) == null){
-    				flags.put(flag.replace("flags.", ""), " ");
-    			} else {
-    				flags.put(flag.replace("flags.", ""), RedProtect.plugin.getConfig().get(flag));
-    			}*/		
     		}
     	}    	
 		return flags;
@@ -676,7 +668,7 @@ public class RPConfig{
 			protManager.save(protCfgs);
 			saveGui();
 		} catch (IOException e) {
-			RedProtect.logger.severe("Problems during save file:");
+			RedProtect.get().logger.severe("Problems during save file:");
 			e.printStackTrace();
 		}
     }
@@ -685,7 +677,7 @@ public class RPConfig{
     	try {
     		guiManager.save(gui);
 		} catch (IOException e) {
-			RedProtect.logger.severe("Problems during save gui file:");
+			RedProtect.get().logger.severe("Problems during save gui file:");
 			e.printStackTrace();
 		}
     }    

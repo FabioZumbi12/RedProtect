@@ -20,10 +20,10 @@ public class RPCommentedConfig {
 	}
 	
 	public void addDef(){
-		File config = new File(RedProtect.plugin.getDataFolder(), "config.yml");
+		File config = new File(RedProtect.get().getDataFolder(), "config.yml");
 		if (config.exists()){
 			try {
-				RedProtect.plugin.getConfig().load(config);
+				RedProtect.get().getConfig().load(config);
 			} catch (IOException | InvalidConfigurationException e) {
 				e.printStackTrace();
 			}
@@ -270,7 +270,7 @@ public class RPCommentedConfig {
 	
 	private void setDefault(String key, Object def, String comment){
 		if (def != null){
-			RedProtect.plugin.getConfig().set(key, RedProtect.plugin.getConfig().get(key, def));
+			RedProtect.get().getConfig().set(key, RedProtect.get().getConfig().get(key, def));
 		}		
  		if (comment != null){
  			setComment(key, comment);
@@ -283,7 +283,7 @@ public class RPCommentedConfig {
  	
  	public void saveConfig(){
  		StringBuilder b = new StringBuilder();
- 		RedProtect.plugin.getConfig().options().header(null);
+ 		RedProtect.get().getConfig().options().header(null);
  		
  		b.append(""
 					+ "# +--------------------------------------------------------------------+ #\n"
@@ -298,8 +298,8 @@ public class RPCommentedConfig {
 	                + "# Lists are [object1, object2, ...]\n"
 	                + "# Strings containing the char & always need to be quoted").append('\n');
  		
- 		for (String line:RedProtect.plugin.getConfig().getKeys(true)){ 			
- 			String[] key = line.split("\\"+RedProtect.plugin.getConfig().options().pathSeparator());
+ 		for (String line:RedProtect.get().getConfig().getKeys(true)){
+ 			String[] key = line.split("\\"+RedProtect.get().getConfig().options().pathSeparator());
  			String spaces = new String(); 			
  			for (int i = 0; i < key.length; i++){
  				if (i == 0) continue;
@@ -312,8 +312,8 @@ public class RPCommentedConfig {
  					b.append(spaces+"# "+comments.get(line).replace("\n", "\n"+spaces+"# ")).append('\n');
  				}
  			} 			
- 			Object value = RedProtect.plugin.getConfig().get(line); 			
- 			if (!RedProtect.plugin.getConfig().isConfigurationSection(line)){
+ 			Object value = RedProtect.get().getConfig().get(line);
+ 			if (!RedProtect.get().getConfig().isConfigurationSection(line)){
  				if (value instanceof String){
  					b.append(spaces+key[key.length-1]+": '"+value+"'\n");
  				} else if (value instanceof List<?>) {
@@ -339,7 +339,7 @@ public class RPCommentedConfig {
  		}
  		
  		try {
- 			Files.write(b, new File(RedProtect.plugin.getDataFolder(), "config.yml"), Charsets.UTF_8);
+ 			Files.write(b, new File(RedProtect.get().getDataFolder(), "config.yml"), Charsets.UTF_8);
  		} catch (IOException e) {
  			e.printStackTrace();
  		}
