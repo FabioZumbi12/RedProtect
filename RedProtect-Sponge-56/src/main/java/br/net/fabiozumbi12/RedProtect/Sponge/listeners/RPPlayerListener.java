@@ -1162,6 +1162,7 @@ public class RPPlayerListener{
                 boss.setPercent(diff);
             } else {
                 boss.setVisible(false);
+                boss.removePlayer(boss.getPlayers().stream().findFirst().get());
                 task.cancel();
             }
         }
