@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.ess3:Essentials:2.14-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/ess3/Essentials/2.14-SNAPSHOT/Essentials-2.14-20140906.162642-94.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/ess3/Essentials/2.14-SNAPSHOT/Essentials-2.14-20140906.162642-94-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/ess3/Essentials/2.14-SNAPSHOT/Essentials-2.14-20140906.162642-94-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

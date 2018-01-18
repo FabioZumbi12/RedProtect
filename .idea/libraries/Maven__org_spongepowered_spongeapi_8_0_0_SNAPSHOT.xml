@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.spongepowered:spongeapi:8.0.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/spongepowered/spongeapi/8.0.0-SNAPSHOT/spongeapi-8.0.0-20180116.063447-3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/spongepowered/spongeapi/8.0.0-SNAPSHOT/spongeapi-8.0.0-20180116.063447-3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/spongepowered/spongeapi/8.0.0-SNAPSHOT/spongeapi-8.0.0-20180116.063447-3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
