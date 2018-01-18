@@ -32,7 +32,7 @@ public class RPCommentedConfig {
 		setDefault("config-version", 7.10, "Dont touch <3");
 		setDefault("debug-messages", false, "Enable debug messages");
 		setDefault("log-actions", true, "Log all commands used by players");
-		setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU");
+		setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR");
 		setDefault("file-type", "yml", "Available: yml and mysql");
 		
 		setDefault("flat-file", null, "If file-type: yml, configuration:");
