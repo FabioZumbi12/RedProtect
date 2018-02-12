@@ -56,6 +56,13 @@ public class DefineRegionBuilder extends RegionBuilder{
         	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
         }
+
+        //check if distance allowed
+        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+            Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+            return;
+        }
         
         //region name conform
         regionName = regionName.replace(File.pathSeparator, "|");  

@@ -658,25 +658,41 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 	Location pl = player.getLocation();
                 	RedProtect.get().firstLocationSelections.put(player, pl);
             		player.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
+
             		//show preview border
-                    if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){       
-                    	RPUtil.addBorder(player, RPUtil.get4Points(RedProtect.get().firstLocationSelections.get(player),RedProtect.get().secondLocationSelections.get(player),player.getLocation().getBlockY()));                	
+                    if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
+                        Location loc1 = RedProtect.get().firstLocationSelections.get(player);
+                        Location loc2 = RedProtect.get().secondLocationSelections.get(player);
+                        if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance")){
+                            Double dist = loc1.distanceSquared(loc2);
+                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+                        } else {
+                            RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
+                        }
                     }
                     return true;
-        		}
+        		} else
             	
             	//rp pos2
             	if (checkCmd(args[0], "pos2")){
                 	Location pl = player.getLocation();
                 	RedProtect.get().secondLocationSelections.put(player, pl);
             		player.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
+
             		//show preview border
-                    if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){       
-                    	RPUtil.addBorder(player, RPUtil.get4Points(RedProtect.get().firstLocationSelections.get(player),RedProtect.get().secondLocationSelections.get(player),player.getLocation().getBlockY()));                	
+                    if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
+                        Location loc1 = RedProtect.get().firstLocationSelections.get(player);
+                        Location loc2 = RedProtect.get().secondLocationSelections.get(player);
+                        if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")){
+                            Double dist = loc1.distanceSquared(loc2);
+                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+                        } else {
+                            RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
+                        }
                     }
                     return true;
-            	}
-        	}
+        		}
+			}
         	        	
         	//rp list-areas
         	if (checkCmd(args[0], "list-areas") && player.hasPermission("redprotect.list-areas")) {
@@ -1942,7 +1958,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         if (checkCmd(args[0], "teleport")) {
         	if (args.length == 1) {
-        		RPLang.sendMessage(player, "cmdmanager.help.teleport");
+				RPLang.sendMessage(player, RPLang.get("cmdmanager.help.teleport").replace("{cmd}", getCmd("teleport")).replace("{alias}", getCmdAlias("teleport")));
         		return true;
         	}
         	
@@ -1964,7 +1980,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             		return true;
             	} else {
             		RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
-            		RPLang.sendMessage(player, "cmdmanager.help.teleport");
+            		RPLang.sendMessage(player, RPLang.get("cmdmanager.help.teleport").replace("{cmd}", getCmd("teleport")).replace("{alias}", getCmdAlias("teleport")));
             		return true;
             	}
             }

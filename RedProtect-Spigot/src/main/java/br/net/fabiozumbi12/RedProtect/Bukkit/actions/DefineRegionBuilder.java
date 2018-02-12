@@ -21,7 +21,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         	this.setError(p, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
         }
-        
+
         //region leader
         String pName = RPUtil.PlayerToUUID(p.getName());
         //for region name
@@ -54,7 +54,14 @@ public class DefineRegionBuilder extends RegionBuilder{
         	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
         }
-        
+
+        //check if distance allowed
+        if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+            Double dist = loc1.distanceSquared(loc2);
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+            return;
+        }
+
         //region name conform
         regionName = regionName.replace("/", "|");        
         if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
@@ -104,7 +111,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
         
         List<String> othersName = new ArrayList<>();
-        Region otherrg = null;
+        Region otherrg;
         
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());

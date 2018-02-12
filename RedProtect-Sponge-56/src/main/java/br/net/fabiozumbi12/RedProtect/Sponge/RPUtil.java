@@ -74,7 +74,16 @@ public class RPUtil {
     	RedProtect.get().logger.debug("default","EntityType: "+e.getType().getName());
     	return Sponge.getGame().getRegistry().getType(EntityType.class, e.getType().getName()).isPresent();
     }
-    
+
+    public static List<Location<World>> get4Points(Location<World> min, Location<World> max, int y){
+		List <Location<World>> locs = new ArrayList<>();
+		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ()));
+		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ() + (max.getZ() - min.getZ())));
+		locs.add(new Location<>(max.getExtent(), max.getX(), y, max.getZ()));
+		locs.add(new Location<>(min.getExtent(), min.getX() + (max.getX() - min.getX()), y, min.getZ()));
+		return locs;
+	}
+
     public static ItemType getItemHand(Player p){
     	ItemType itemInHand = ItemTypes.NONE;
         if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){

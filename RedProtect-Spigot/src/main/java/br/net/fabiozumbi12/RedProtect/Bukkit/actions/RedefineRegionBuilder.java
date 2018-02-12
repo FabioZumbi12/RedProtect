@@ -27,6 +27,14 @@ public class RedefineRegionBuilder extends RegionBuilder{
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
         }
+
+        //check if distance allowed
+        if (l1.getWorld().equals(l2.getWorld()) && l1.distanceSquared(l2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+            Double dist = l1.distanceSquared(l2);
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+            return;
+        }
+
         World w = p.getWorld();
         
         int miny = l1.getBlockY();
@@ -59,7 +67,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         }
         
         List<String> othersName = new ArrayList<>();
-        Region otherrg = null;
+        Region otherrg;
         
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());

@@ -178,6 +178,7 @@ permissions:
       redprotect.bypass.nether-roof: true
       redprotect.bypass.addleader: true
       redprotect.bypass.velocity: true
+      redprotect.bypass.define-max-distance: true
       redprotect.update: true
       redprotect.regen: true
       redprotect.signspy: true

@@ -9,7 +9,6 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.boss.BossBarColors;
-import org.spongepowered.api.boss.BossBarOverlay;
 import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.data.key.Keys;
@@ -147,10 +146,17 @@ public class RPPlayerListener{
     		RedProtect.get().firstLocationSelections.put(p, l);
             p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (&e" + l.getBlockX() + RPLang.get("general.color") + ", &e" + l.getBlockY() + RPLang.get("general.color") + ", &e" + l.getBlockZ() + RPLang.get("general.color") + ")."));
             event.setCancelled(true);
-            
+
             //show preview border
-            if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){       
-            	RPUtil.addBorder(p, get4Points(RedProtect.get().firstLocationSelections.get(p),RedProtect.get().secondLocationSelections.get(p),p.getLocation().getBlockY()));                	
+            if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){
+                Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
+                Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
+                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !p.hasPermission("redprotect.bypass.define-max-distance")){
+                    Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
+                    RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                } else {
+                    RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
+                }
             }
         }
     }
@@ -183,10 +189,17 @@ public class RPPlayerListener{
 			RedProtect.get().secondLocationSelections.put(p, l);
             p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (&e" + l.getBlockX() + RPLang.get("general.color") + ", &e" + l.getBlockY() + RPLang.get("general.color") + ", &e" + l.getBlockZ() + RPLang.get("general.color") + ")."));
             event.setCancelled(true);
-            
+
             //show preview border
-            if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){       
-            	RPUtil.addBorder(p, get4Points(RedProtect.get().firstLocationSelections.get(p),RedProtect.get().secondLocationSelections.get(p),p.getLocation().getBlockY()));                	
+            if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){
+                Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
+                Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
+                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+                    Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
+                    RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                } else {
+                    RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
+                }
             }
             return;  
         }
@@ -212,16 +225,7 @@ public class RPPlayerListener{
     		}
         }
     }
-    
-    private List<Location<World>> get4Points(Location<World> min, Location<World> max, int y){
-		List <Location<World>> locs = new ArrayList<>();
-		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ()));
-		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ() + (max.getZ() - min.getZ())));
-		locs.add(new Location<>(max.getExtent(), max.getX(), y, max.getZ()));
-		locs.add(new Location<>(min.getExtent(), min.getX() + (max.getX() - min.getX()), y, min.getZ()));
-		return locs;		
-	}
-    
+
     //listen all
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractBlock(InteractBlockEvent event, @First Player p) {

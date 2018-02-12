@@ -16,6 +16,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -43,12 +44,6 @@ import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPEconomy;
-import br.net.fabiozumbi12.RedProtect.Sponge.RPGui;
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.RedefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
@@ -486,15 +481,38 @@ public class RPCommands implements CommandCallable {
                 	Location<World> pl = player.getLocation();
                 	RedProtect.get().firstLocationSelections.put(player, pl);
             		player.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (&6" + pl.getBlockX() + RPLang.get("general.color") + ", &6" + pl.getBlockY() + RPLang.get("general.color") + ", &6" + pl.getBlockZ() + RPLang.get("general.color") + ")."));
-            		return cmdr;
-            	}
+                    //show preview border
+                    if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
+                        Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
+                        Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
+                        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !player.hasPermission("redprotect.bypass.define-max-distance")){
+                            Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
+                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                        } else {
+                            RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
+                        }
+                    }
+                    return cmdr;
+            	} else
 
             	//rp pos2
             	if (checkCmd(args[0], "pos2")){
                 	Location<World> pl = player.getLocation();
                 	RedProtect.get().secondLocationSelections.put(player, pl);
             		player.sendMessage(RPUtil.toText(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (&6" + pl.getBlockX() + RPLang.get("general.color") + ", &6" + pl.getBlockY() + RPLang.get("general.color") + ", &6" + pl.getBlockZ() + RPLang.get("general.color") + ")."));
-            		return cmdr;
+
+                    //show preview border
+                    if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
+                        Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
+                        Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
+                        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player,"redprotect.bypass.define-max-distance")){
+                            Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
+                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                        } else {
+                            RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
+                        }
+                    }
+                    return cmdr;
             	}
         	}
 

@@ -198,8 +198,15 @@ public class RPPlayerListener implements Listener{
                 }
                 
                 //show preview border
-                if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){       
-                	RPUtil.addBorder(p, RPUtil.get4Points(RedProtect.get().firstLocationSelections.get(p),RedProtect.get().secondLocationSelections.get(p),p.getLocation().getBlockY()));                	
+                if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){
+                	Location loc1 = RedProtect.get().firstLocationSelections.get(p);
+                	Location loc2 = RedProtect.get().secondLocationSelections.get(p);
+					if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")){
+                        Double dist = loc1.distanceSquared(loc2);
+                        RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+					} else {
+						RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
+					}
                 }                
                 return;                
             }

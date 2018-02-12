@@ -75,6 +75,7 @@ public class RPCommentedConfig {
 		setDefault("region-settings.claim-amount", 20, "Limit of claims a player can have until have other permission for claims.");
 		setDefault("region-settings.block-id", "FENCE", "Block used to protect regions.");
 		setDefault("region-settings.max-scan", 600, "Ammount of blocks to scan on place sign to claim a region. Consider this the max area.");
+		setDefault("region-settings.define-max-distance", 1200, "When using the command define with wand tool, set the max distance allow to claim from point 1 to point 2 (in blocks)");
 		setDefault("region-settings.date-format", "dd/MM/yyyy", "Time format to use with data and time infos.");
 		setDefault("region-settings.record-player-visit-method", "ON-LOGIN", "Register player visits on... Available: ON-LOGIN, ON-REGION-ENTER.");
 		setDefault("region-settings.allow-sign-interact-tags", Arrays.asList("Admin Shop", "{membername}"), "Allow players without permissions to interact with signs starting with this tags.");

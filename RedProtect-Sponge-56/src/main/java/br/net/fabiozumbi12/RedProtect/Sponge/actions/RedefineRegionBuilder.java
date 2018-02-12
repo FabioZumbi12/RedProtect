@@ -27,6 +27,14 @@ public class RedefineRegionBuilder extends RegionBuilder{
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
         }
+
+		//check if distance allowed
+		if (l1.getPosition().distanceSquared(l2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+			Double dist = l1.getPosition().distanceSquared(l2.getPosition());
+			RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+			return;
+		}
+
         World w = p.getWorld();
         
         int miny = l1.getBlockY();
