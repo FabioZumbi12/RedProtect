@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -86,6 +87,13 @@ public class WEListener {
                 RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
             }
 
-            },delay);
+            if (RPConfig.getInt("purge.regen.stop-server-every") > 0 && delayCount > RPConfig.getInt("purge.regen.stop-server-every")){
+
+                Bukkit.getScheduler().cancelTasks(RedProtect.get());
+                RedProtect.get().rm.saveAll();
+
+                Bukkit.getServer().shutdown();
+            }
+        },delay);
 	}
 }

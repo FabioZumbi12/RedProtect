@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
+import de.Keyle.MyPet.MyPetPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;

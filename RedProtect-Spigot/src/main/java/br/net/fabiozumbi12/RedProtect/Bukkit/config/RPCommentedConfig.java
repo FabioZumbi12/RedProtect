@@ -228,6 +228,7 @@ public class RPCommentedConfig {
 		setDefault("purge.regen.enable", false, "Hook with WorldEdit, will regen only the region areas to bedrock to sky. Theres no undo for this action!");
 		setDefault("purge.regen.max-area-regen", 500, "Max area size to automatic regen the region.");
 		setDefault("purge.regen.awe-logs", false, "Show regen logs if using AsyncWorldEdit.");
+		setDefault("purge.regen.stop-server-every", -1, "Stop server on every x regions regenerated (if you is using a script to reboot your server)");
 		setDefault("purge.ignore-regions-from-players", new ArrayList<String>(), null);
 		
 		setDefault("sell", null, null);

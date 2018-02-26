@@ -71,8 +71,8 @@ public class RPDynmap {
 		double[] z = new double[4];
 		int i = 0;
 		for (Location l:r.get4Points(90)){
-			x[i] = l.getX();
-			z[i] = l.getZ();
+			x[i] = l.getBlockX()+0.500;
+			z[i] = l.getBlockZ()+0.500;
 			i++;
 		}
 			
@@ -94,7 +94,7 @@ public class RPDynmap {
 		
 		int center = -1;
 		if (RPConfig.getBool("hooks.dynmap.cuboid-region.enabled")){
-			am.setRangeY(r.getMinLocation().getY(), r.getMaxLocation().getY());
+			am.setRangeY(r.getMinLocation().getBlockY()+0.500, r.getMaxLocation().getBlockY()+0.500);
 		} else {
 			center = RPConfig.getInt("hooks.dynmap.cuboid-region.if-disable-set-center");
 			am.setRangeY(center, center);			
@@ -107,7 +107,7 @@ public class RPDynmap {
 				center = r.getCenterY();
 			}
 			if (m == null){		    				
-				m = MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")), true);
+				MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")), true);
 			} else {
 				m.setLocation(r.getWorld(), r.getCenterX(), center, r.getCenterZ());
 			}

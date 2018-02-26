@@ -180,40 +180,7 @@ public class RPUtil {
 		}
 		return cal.getTimeInMillis();
     }
-    /*
-    public static BlockFace getPlayerDirection(Player player){
 
-    	float direction = player.getLocation().getYaw();   
-        direction = direction % 360;
-
-        if(direction < 0)
-            direction += 360;
-
-        direction = Math.round(direction / 45);
-
-        switch((int)direction){
-
-            case 0:
-                return BlockFace.WEST;
-            case 1:
-                return BlockFace.NORTH_WEST;
-            case 2:
-                return BlockFace.NORTH;
-            case 3:
-                return BlockFace.NORTH_EAST;
-            case 4:
-                return BlockFace.EAST;
-            case 5:
-                return BlockFace.SOUTH_EAST;
-            case 6:
-                return BlockFace.SOUTH;
-            case 7:
-                return BlockFace.SOUTH_WEST;
-            default:
-                return BlockFace.WEST;
-        }
-    }
-    */
 	public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
 	    TaskChain.newChain().add(new TaskChain.GenericTask() {
 	        public void run() {
@@ -319,24 +286,7 @@ public class RPUtil {
             }           
         return rname.replace(".", "-");
     }
-    /*
-    static String formatName(String name) {
-        String s = name.substring(1).toLowerCase();
-        String fs = name.substring(0, 1).toUpperCase();
-        String ret = String.valueOf(fs) + s;
-        ret = ret.replace("_", " ");
-        return ret;
-    }
-    
-    static int[] toIntArray(List<Integer> list) {
-        int[] ret = new int[list.size()];
-        int i = 0;
-        for (Integer e : list) {
-            ret[i++] = e;
-        }
-        return ret;
-    }
-    */
+
     public static String DateNow(){
     	DateFormat df = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
         Date today = Calendar.getInstance().getTime();

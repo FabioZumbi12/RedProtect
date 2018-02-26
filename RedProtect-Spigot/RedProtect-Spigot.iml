@@ -75,9 +75,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: dynmap-2.3:dynmap-2.3:v1">
+      <library name="Maven: dynmap-2.5:dynmap-2.5:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/dynmap-2.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/dynmap-2.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -147,10 +147,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-bukkit:6.1.5" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:VaultAPI:1.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.9-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.avaje:ebean:2.8.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.natrolite:vault-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:Essentials:2.14-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.0.8" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.2.1" level="project" />

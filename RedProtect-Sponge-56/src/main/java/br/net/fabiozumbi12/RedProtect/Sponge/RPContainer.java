@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.block.tileentity.TileEntityTypes;
 import org.spongepowered.api.data.key.Keys;
@@ -32,7 +35,7 @@ public class RPContainer {
         if (blocks.contains(blocktype)){        	
         	for (Direction dir:dirs){        		
         		Location<World> loc1 = getRelative(loc, dir);        		
-        		if (loc1.getBlockType().getName().contains("sign")){        		
+        		if (isSign(loc1.getBlockType())){
         			BlockSnapshot sign1 = w.createSnapshot(loc1.getBlockPosition());
             		if (!validateOpenBlock(sign1, p)){
             			return false;
@@ -42,7 +45,7 @@ public class RPContainer {
         		if (blocks.contains(loc1.getBlockType().getName()) && loc1.getBlockType().equals(b.getState().getType())){        			
         			for (Direction dir2:dirs){
         				Location<World> loc3 = getRelative(loc1, dir2);              			
-            			if (loc3.getBlockType().getName().contains("sign")){        		
+            			if (isSign(loc3.getBlockType())){
             				BlockSnapshot sign2 = w.createSnapshot(loc3.getBlockPosition());
             				if (!validateOpenBlock(sign2, p)){
                     			return false;
@@ -72,7 +75,7 @@ public class RPContainer {
     	World w = loc.getExtent();
     	List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
     	
-    	if (loc.getBlockType().getName().contains("sign")){        		
+    	if (isSign(loc.getBlockType())){
 			BlockSnapshot sign1 = w.createSnapshot(loc.getBlockPosition());
     		if (!validateBreakSign(sign1, p)){
     			return false;
@@ -82,7 +85,7 @@ public class RPContainer {
         if (blocks.contains(blocktype)){        	
         	for (Direction dir:dirs){        		
         		Location<World> loc1 = getRelative(loc, dir);        		
-        		if (loc1.getBlockType().getName().contains("sign")){        		
+        		if (isSign(loc1.getBlockType())){
         			BlockSnapshot sign1 = w.createSnapshot(loc1.getBlockPosition());
             		if (!validateBreakSign(sign1, p)){
             			return false;
@@ -92,7 +95,7 @@ public class RPContainer {
         		if (blocks.contains(loc1.getBlockType().getName()) && loc1.getBlockType().equals(b.getState().getType())){        			
         			for (Direction dir2:dirs){
         				Location<World> loc3 = getRelative(loc1, dir2);              			
-            			if (loc3.getBlockType().getName().contains("sign")){        		
+            			if (isSign(loc3.getBlockType())){
             				BlockSnapshot sign2 = w.createSnapshot(loc3.getBlockPosition());
             				if (!validateBreakSign(sign2, p)){
                     			return false;
@@ -121,7 +124,7 @@ public class RPContainer {
     	World w = loc.getExtent();
     	List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
     	
-    	if (loc.getBlockType().getName().contains("sign")){        		
+    	if (isSign(loc.getBlockType())){
 			BlockSnapshot sign1 = w.createSnapshot(loc.getBlockPosition());
     		if (!validatePrivateSign(sign1)){
     			return false;
@@ -131,7 +134,7 @@ public class RPContainer {
         if (blocks.contains(blocktype)){        	
         	for (Direction dir:dirs){        		
         		Location<World> loc1 = getRelative(loc, dir);        		
-        		if (loc1.getBlockType().getName().contains("sign")){        		
+        		if (isSign(loc1.getBlockType())){
         			BlockSnapshot sign1 = w.createSnapshot(loc1.getBlockPosition());
             		if (!validatePrivateSign(sign1)){
             			return false;
@@ -141,7 +144,7 @@ public class RPContainer {
         		if (blocks.contains(loc1.getBlockType().getName()) && loc1.getBlockType().equals(b.getState().getType())){        			
         			for (Direction dir2:dirs){
         				Location<World> loc3 = getRelative(loc1, dir2);              			
-            			if (loc3.getBlockType().getName().contains("sign")){        		
+            			if (isSign(loc3.getBlockType())){
             				BlockSnapshot sign2 = w.createSnapshot(loc3.getBlockPosition());
             				if (!validatePrivateSign(sign2)){
                     			return false;
@@ -162,7 +165,7 @@ public class RPContainer {
     }
 	
 	private boolean validatePrivateSign(BlockSnapshot b){
-		if (!b.getState().getType().getName().contains("sign")){
+		if (!isSign(b.getState().getType())){
 			return true;
 		}
 		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
@@ -170,7 +173,7 @@ public class RPContainer {
 	}
 	
 	private boolean validateBreakSign(BlockSnapshot b, Player p){
-		if (!b.getState().getType().getName().contains("sign")){
+		if (!isSign(b.getState().getType())){
 			return true;
 		}
 		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
@@ -180,7 +183,7 @@ public class RPContainer {
 	}
 	
 	private boolean validateOpenBlock(BlockSnapshot b, Player p){
-		if (!b.getState().getType().getName().contains("sign")){
+		if (!isSign(b.getState().getType())){
 			return true;
 		}
 		List<Text> lines = b.get(Keys.SIGN_LINES).get();
@@ -200,7 +203,11 @@ public class RPContainer {
 				blocks.contains(getRelative(loc, Direction.SOUTH).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.WEST).getBlockType().getName());
 	}
-	    
+
+	private boolean isSign(BlockType type){
+		return type.equals(BlockTypes.STANDING_SIGN) || type.equals(BlockTypes.WALL_SIGN);
+	}
+
 	private Location<World> getRelative(Location<World> loc,Direction dir){
 		return loc.getRelative(dir);
 	}

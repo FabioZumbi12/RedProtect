@@ -151,7 +151,8 @@ permissions:
       redprotect.admin.priority: true
       redprotect.admin.rename: true
       redprotect.admin.welcome: true
-      redprotect.admin.define: true      
+      redprotect.admin.define: true
+      redprotect.admin.createportal: true
       redprotect.admin.reload: true
       redprotect.admin.save-all: true
       redprotect.admin.load-all: true

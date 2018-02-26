@@ -39,13 +39,13 @@ public class AWEListener {
 	}
 	
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
-    	    	
-    	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
+
+	    Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (RPUtil.stopRegen){
                 return;
             }
             CuboidSelection csel = new CuboidSelection(w , p1, p2);
-            Region wreg = null;
+            Region wreg;
             try {
                 wreg = csel.getRegionSelector().getRegion();
             } catch (IncompleteRegionException e1) {
@@ -55,29 +55,19 @@ public class AWEListener {
 
             AsyncWorldEditBukkit aweMain = (AsyncWorldEditBukkit)Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");
             IBlockPlacer bPlacer = aweMain.getBlockPlacer();
-            /*
-final IJobEntryListener stateListener = new IJobEntryListener() {
-@Override
-public void jobStateChanged(IJobEntry job) {
-                    if (job.getPlayer().getName().equals("redprotect")){
-                        String name = job.getName();
-                        RedProtect.get().logger.info("State: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
-                    }
-}
-};*/
 
-final IBlockPlacerListener listener = new IBlockPlacerListener() {
-@Override
-public void jobAdded(IJobEntry job) {
+            final IBlockPlacerListener listener = new IBlockPlacerListener() {
+                @Override
+                public void jobAdded(IJobEntry job) {
                     /*if (job.getPlayer().getName().equals("redprotect")){
                         String name = job.getName();
                         //job.addStateChangedListener(stateListener);
                         RedProtect.get().logger.warning("JobAdded: " + name + " of region " + r.getName() + " - " + job.getStatus() + ": " + job.isTaskDone());
                     }*/
-}
+                }
 
-@Override
-public void jobRemoved(IJobEntry job) {
+                @Override
+                public void jobRemoved(IJobEntry job) {
                     if (job.getPlayer().getName().equals("redprotect")){
                         String name = job.getName();
                         //job.addStateChangedListener(stateListener);
@@ -86,16 +76,16 @@ public void jobRemoved(IJobEntry job) {
                         }
                     }
 
-}
-};
+                }
+            };
 
-bPlacer.addListener(listener);
+            bPlacer.addListener(listener);
             AsyncEditSessionFactory factory = (AsyncEditSessionFactory) WorldEdit.getInstance().getEditSessionFactory();
             EditSession ess = factory.getEditSession(wreg.getWorld(), -1);
             eSessions.put(r.getID(),ess);
             int delayCount = 1+delay/10;
 
-if (sender != null){
+            if (sender != null){
                 if (AsyncWorld.wrap(wreg.getWorld(), new PlayerManager(aweMain).createFakePlayer("redprotect", UUID.randomUUID())).regenerate(wreg, ess)){
                     RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
                 } else {
@@ -109,10 +99,17 @@ if (sender != null){
                 }
             }
 
-if (remove){
+            if (remove){
                 RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
             }
 
-            },delay);
-	}
+            if (RPConfig.getInt("purge.regen.stop-server-every") > 0 && delayCount > RPConfig.getInt("purge.regen.stop-server-every")){
+
+                Bukkit.getScheduler().cancelTasks(RedProtect.get());
+                RedProtect.get().rm.saveAll();
+
+                Bukkit.getServer().shutdown();
+            }
+        },delay);
+    }
 }

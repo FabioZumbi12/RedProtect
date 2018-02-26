@@ -73,11 +73,11 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>dynmap-2.3</groupId>
-			<artifactId>dynmap-2.3</artifactId>
+			<groupId>dynmap-2.5</groupId>
+			<artifactId>dynmap-2.5</artifactId>
 			<version>v1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/dynmap-2.3.jar</systemPath>
+			<systemPath>${project.basedir}/libs/dynmap-2.5.jar</systemPath>
 		</dependency>
 		
 		<dependency>
@@ -144,8 +144,8 @@
            <scope>provided</scope>
         </dependency>
 		<dependency>
-           <groupId>net.milkbowl.vault</groupId>
-           <artifactId>VaultAPI</artifactId>            
+           <groupId>org.natrolite</groupId>
+           <artifactId>vault-api</artifactId>
            <version>LATEST</version>
            <scope>provided</scope>
         </dependency>

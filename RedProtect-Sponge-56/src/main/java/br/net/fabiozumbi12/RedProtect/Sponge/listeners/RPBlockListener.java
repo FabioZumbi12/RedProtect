@@ -448,6 +448,11 @@ public class RPBlockListener{
     	for (Direction dir:Arrays.asList(Direction.EAST,Direction.NORTH,Direction.SOUTH,Direction.WEST)){
       		Location<World> locFrom = bto.getLocation().get().getBlockRelative(dir);
       		Region rfrom = RedProtect.get().rm.getTopRegion(locFrom);
+			if (rfrom != null && !rfrom.canFlow()){
+				e.setCancelled(true);
+				return;
+			}
+
       		if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)){
     			e.setCancelled(true);
     			return;

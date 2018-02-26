@@ -43,11 +43,16 @@ class WorldMySQLRegionManager implements WorldRegionManager{
         try {
             Class.forName("com.mysql.jdbc.Driver");
         }
-        catch (ClassNotFoundException e2) {
-            RedProtect.get().logger.severe("Couldn't find the driver for MySQL! com.mysql.jdbc.Driver.");
-            //RedProtect.get().plugin.disable();
-            return;
+        catch (ClassNotFoundException e1) {
+            try {
+                Class.forName("org.mariadb.jdbc.Driver");
+            }
+            catch (ClassNotFoundException e2) {
+                RedProtect.get().logger.severe("Couldn't find the driver for MySQL! com.mysql.jdbc.Driver or org.mariadb.jdbc.Driver.");
+                return;
+            }
         }
+
         PreparedStatement st = null;
         try {
             if (!this.checkTableExists()) {    

@@ -523,10 +523,15 @@ public class RPBlockListener implements Listener{
     	Block bfrom = e.getBlock();
 		RedProtect.get().logger.debug("RPBlockListener - Is BlockFromToEvent event is to " + bto.getType().name() + " from " + bfrom.getType().name());
     	Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
+		Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
     	if (rto != null && bfrom.isLiquid() && !rto.canFlow()){
           	 e.setCancelled(true);   
           	 return;
     	}
+		if (rfrom != null && bfrom.isLiquid() && !rfrom.canFlow()){
+			e.setCancelled(true);
+			return;
+		}
     	
     	if (rto != null && !bto.isEmpty() && !rto.FlowDamage()){
          	 e.setCancelled(true);      
@@ -534,7 +539,6 @@ public class RPBlockListener implements Listener{
    	    }
     	
     	//deny blocks spread in/out regions
-    	Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
     	if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)){
 			e.setCancelled(true);
 			return;
