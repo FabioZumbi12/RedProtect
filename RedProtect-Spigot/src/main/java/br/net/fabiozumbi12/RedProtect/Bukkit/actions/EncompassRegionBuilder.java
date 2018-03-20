@@ -347,7 +347,12 @@ public class EncompassRegionBuilder extends RegionBuilder{
             else if (i != 0) {
                 this.setErrorSign(e, RPLang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getX() + ", y: " + current.getY() + ", z: " + current.getZ() + ")"));
                 Block newb = current.getRelative(0, 1, 0);
-                newb.setType(Material.SIGN_POST);              
+                if (Material.getMaterial("SIGN") != null){
+                    newb.setType(Material.getMaterial("SIGN"));
+                } else {
+                    newb.setType(Material.getMaterial("SIGN_POST"));
+                }
+
                 Sign s = (Sign) newb.getState();
                 s.setLine(0, "§4xxxxxxxxxxxxxx");
                 s.setLine(1, RPLang.get("_redprotect.prefix"));

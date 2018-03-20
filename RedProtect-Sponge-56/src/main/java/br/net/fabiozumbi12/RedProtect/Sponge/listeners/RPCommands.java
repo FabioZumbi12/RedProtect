@@ -831,7 +831,7 @@ public class RPCommands implements CommandCallable {
             	if (RedProtect.get().ph.hasUserPerm(player, "flaggui")) {
         			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				if (r.isLeader(player) || RedProtect.get().ph.hasAdminFlagPerm(player, "flaggui")){
+        				if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasAdminFlagPerm(player, "redprotect.admin.flaggui")){
         					RPGui gui = new RPGui(r.getName(), player, r, RedProtect.get().cfgs.getGuiMaxSlot());
     						gui.open();
                 			return cmdr;

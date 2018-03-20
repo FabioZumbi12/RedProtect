@@ -26,6 +26,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
 
+/**
+ * Represents a 3D region created by players.
+ */
 public class Region implements Serializable{
 
 	private static final long serialVersionUID = 2861198224185302015L;
@@ -45,29 +48,25 @@ public class Region implements Serializable{
     private String wMessage;
     private String world;
     private String date;
-    public Map<String, Object> flags = new HashMap<>();
+    public Map<String, Object> flags;
     protected boolean[] f = new boolean[10];
 	private long value;
 	private Location tppoint;
 	private boolean tosave = true;
-	public final Map<String, Integer> rent = new HashMap<>();
-	public final Map<String, Long> rentDate = new HashMap<>();
 	private final boolean waiting = false;
-	private int rentTask = 0;
-	private boolean canDelete = true;
+	private boolean canDelete;
 	
 	public boolean canDelete(){
 		return this.canDelete;
 	}
-	
-	public void setCanDelete(boolean canDelete){
-		this.canDelete = canDelete;
-	}
-	
-	@Override
-	public String toString(){
-		return this.getID();		
-	}
+
+    /**Get unique ID of region based on name of "region + @ + world".
+     * @return {@code id string}
+     */
+    @Override
+    public String toString(){
+        return this.name+"@"+this.world;
+    }
 	
 	/**Get unique ID of region based on name of "region + @ + world".
 	 * @return {@code id string}
@@ -83,154 +82,7 @@ public class Region implements Serializable{
 	public void setToSave(boolean save){
 		this.tosave = save;
 	}
-	
-	private void startRentScheduler(){
-		rentTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () -> {
-            RedProtect.get().logger.debug("Region Rent - Run scheduler...");
 
-            List<String> toRemove = new ArrayList<>();
-            long now = RPUtil.getNowMillis();
-
-            for (String key:rentDate.keySet()){
-                long rentdt = rentDate.get(key);
-
-                //compare to remove
-                if (now > rentdt){
-                    if (isLeader(key) && leaders.size() == 1){
-                        addLeader(RPConfig.getString("region-settings.default-leader"));
-                    }
-                    //remove from all
-                    removeMember(key);
-                    toRemove.add(key);
-
-                    if (RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)) != null && RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isOnline()){
-                        RPLang.sendMessage(RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)), RPLang.get("region.rentend").replace("{region}", name));
-                    }
-                }
-
-                if (RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)) != null && RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isOnline()){
-                    RedProtect.get().logger.debug("Rent found player...");
-                    if (now == rentdt){
-                        RPLang.sendMessage(RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)), RPLang.get("region.rentalert").replace("{cost}", RPEconomy.getFormatted(getRentValue(key))));
-                    }
-                }
-            }
-
-            for (String key:toRemove){
-                rent.remove(key);
-                rentDate.remove(key);
-            }
-
-            if (rent.isEmpty()){
-                stopRentTask();
-            }
-        },0 , 60*20);
-	}
-	
-	private void stopRentTask(){
-		Bukkit.getScheduler().cancelTask(rentTask);
-	}
-	
-	private void restartRentScheduler(){
-		stopRentTask();
-		startRentScheduler();
-	}
-		
-	public void setRent(String player, Object value){
-		if (value instanceof Long){			
-			rentDate.put(player, (Long)value);
-		} else if (value instanceof Integer){
-			rent.put(player, (Integer)value);
-		}
-		RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-	}
-	
-	public void addrent(String player, Integer value, Long renewal, String rank){
-		setToSave(true);
-		this.rent.put(player, value);
-		this.rentDate.put(player, renewal);
-				
-		if (rank.equalsIgnoreCase("admin")){
-			if (isLeader(player)){
-				addLeader(RPConfig.getString("region-settings.default-leader"));
-			}
-			addAdmin(player);
-			
-		} else			
-		if (rank.equalsIgnoreCase("leader")){			
-			addLeader(player);
-			
-		} else {
-			if (isLeader(player)){
-				addLeader(RPConfig.getString("region-settings.default-leader"));
-			}
-			addMember(player);
-		}
-		RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-		
-		//restart scheduler	
-		restartRentScheduler();
-	}
-	
-	public void removeRent(String player){
-		if (!this.rent.isEmpty()){
-			setToSave(true);
-			this.rent.remove(player);
-			this.rentDate.remove(player);
-			if (isLeader(player) && leaders.size() == 1){
-				addLeader(RPConfig.getString("region-settings.default-leader"));
-			}	
-			removeMember(player);
-			RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-			if (this.rent.isEmpty()){
-				stopRentTask();
-			}
-		}
-	}
-	
-	public String getRentDateFormated(String player){
-		SimpleDateFormat sdf = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(getRentDateMillis(player));
-		return sdf.format(cal.getTime());
-	}
-	
-	public boolean isRentFor(String player){
-		return this.rent.containsKey(player);
-	}
-	
-	public int getRentValue(String player){
-		return this.rent.get(player);
-	}
-	
-	public Long getRentDateMillis(String player){
-		return this.rentDate.get(player);
-	}
-	
-	public String getRentString(){
-		String rent = "";
-        for (String key:this.rent.keySet()){
-        	rent = rent+","+key+":"+getRentValue(key)+":"+getRentDateMillis(key);
-        }
-        if (rent.equals("")){
-        	return "";
-        }
-        return rent.substring(1);
-	}
-	
-	public void setRentString(String string){
-		setToSave(true);
-		for (String key:string.split(",")){
-			String[] s = key.split(":");
-			this.rent.put(s[0], Integer.valueOf(s[1]));
-			this.rentDate.put(s[0], Long.valueOf(s[2]));
-		}
-		//RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-		
-		//restart scheduler	
-		restartRentScheduler();
-	}
-	
     public void setFlag(String fname, Object value) {
     	setToSave(true);
     	this.flags.put(fname, value);
@@ -572,25 +424,15 @@ public class Region implements Serializable{
         		break;
         	}        	
         }
-        
-        String rents = "";
-        if (!rent.isEmpty()){
-        	for (String play:rent.keySet()){
-        		rents = rents+"\n"+RPLang.get("general.color")+"- "+RPLang.get("region.rent").replace("{player}", RPUtil.UUIDtoPlayer(play)).replace("{value}", RPEconomy.getFormatted(getRentValue(play))).replace("{renew}", getRentDateFormated(play));
-        	}
-        	rents.substring(2);
-        }
-        
+
         return RPLang.get("region.name") + " " + colorChar+this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +      
-         RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPEconomy.getFormatted(this.value) + "\n" +
+         RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + "\n" +
         RPLang.get("region.world") + " " + colorChar+wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
         RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | "+ RPLang.get("region.area") + " " + this.getArea() + "\n" +
         RPLang.get("region.leaders") + " " + leadersstring + "\n" +
         RPLang.get("region.admins") + " " + adminstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
         RPLang.get("region.date") + " " + today + "\n" +
-        RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ")? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp)) +
-        (rent.isEmpty() ? "":"\n"+RPLang.get("region.rentlist")+"\n"+rents);
-        
+        RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ")? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
     }
     
 	private String conformName(String name){
@@ -769,6 +611,35 @@ public class Region implements Serializable{
                 this.minMbrZ = z[i];
             }
         }
+        this.name = conformName(name);
+    }
+
+    /**
+     * Represents the region created by player.
+     * @param name Region name.
+     * @param min Min Location.
+     * @param max Max Location.
+     * @param world World name.
+     */
+    public Region(String name, Location min, Location max, String world){
+        super();
+        this.x = new int[] {min.getBlockX(),min.getBlockX(),max.getBlockX(),max.getBlockX()};
+        this.z = new int[] {min.getBlockZ(),min.getBlockZ(),max.getBlockZ(),max.getBlockZ()};
+        this.maxMbrX = max.getBlockX();
+        this.minMbrX = min.getBlockX();
+        this.maxMbrZ = max.getBlockZ();
+        this.minMbrZ = min.getBlockZ();
+        this.maxY = max.getBlockY();
+        this.minY = min.getBlockY();
+        this.admins = new ArrayList<>();
+        this.members = new ArrayList<>();
+        this.leaders = Arrays.asList(RPConfig.getString("region-settings.default-leader"));
+        this.flags = RPConfig.getDefFlagsValues();
+        this.tppoint = new Location(Bukkit.getWorld(world), this.getCenterX(),this.getCenterY(),this.getCenterZ());
+        this.canDelete = true;
+        this.world = world;
+        this.wMessage = "";
+        this.date = RPUtil.DateNow();
         this.name = conformName(name);
     }
 

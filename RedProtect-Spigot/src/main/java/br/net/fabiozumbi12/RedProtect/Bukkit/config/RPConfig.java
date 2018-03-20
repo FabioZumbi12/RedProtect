@@ -220,7 +220,7 @@ public class RPConfig{
             }
         }
 
-                    /*----------------- Add default config for not updateable configs ------------------*/
+        /*----------------- Add default config for not updateable configs ------------------*/
 
         //update new player flags according version
 
@@ -342,9 +342,16 @@ public class RPConfig{
             RedProtect.get().getConfig().set("language", RedProtect.get().getConfig().getString("language").toUpperCase());
             configUp++;
         }
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.11D) {
+            RedProtect.get().getConfig().set("config-version", 7.11D);
+
+            RedProtect.get().getConfig().set("wands.adminWandID", "GLASS_BOTTLE");
+            RedProtect.get().getConfig().set("wands.infoWandID", "PAPER");
+            configUp++;
+        }
         if (configUp > 0){
             RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
-            RedProtect.get().logger.warning("Configuration UPDATE! We added new flags to &lflags-configuration > enabled-flags&r!");
+            RedProtect.get().logger.warning("Configuration UPDATE! We added new flags or new options, or just updated some other config. See change log for details.");
         }
 
         			/*------------------------------------------------------------------------------------*/

@@ -763,7 +763,6 @@ public class RPUtil {
                     String rname = rs.getString("name");
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
-					String rent = rs.getString("rent");
                     long value = rs.getLong("value");
                     
                     Location tppoint = null;
@@ -796,9 +795,6 @@ public class RPUtil {
                     	} 
                     }                    
                     Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
-                    if (rent.split(":").length >= 3){
-              	    	newr.setRentString(rent);
-              		}
                     regions.put(rname, newr);
                 } 
                 st.close(); 
@@ -900,7 +896,7 @@ public class RPUtil {
 			for (Region r:RedProtect.get().rm.getRegionsByWorld(world)){
 				if (!regionExists(dbcon, r.getName(), tableName)) {
 					try {                
-		                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `"+tableName+"` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,rent,candelete,flags) "
+		                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `"+tableName+"` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
 		                		+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");    
 		                st.setString(1, r.getName());
 		                st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
@@ -920,7 +916,6 @@ public class RPUtil {
 		                st.setString(16, r.getWorld());
 		                st.setLong(17, r.getValue());
 		                st.setString(18, r.getTPPointString());
-		                st.setString(19, r.getRentString());
 		                st.setInt(20, r.canDelete() ? 1 : 0);
 		                st.setString(21, r.getFlagStrings());
 						
@@ -960,7 +955,7 @@ public class RPUtil {
 	        	if (!checkTableExists(tableName)) {
 	        		//create db
 	                Connection con = DriverManager.getConnection(url+RPConfig.getString("mysql.db-name")+reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));  
-	                st = con.prepareStatement("CREATE TABLE `"+tableName+"` (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
+	                st = con.prepareStatement("CREATE TABLE `"+tableName+"` (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
 	                st.executeUpdate();
 	                st.close();
 	                st = null;
@@ -992,12 +987,6 @@ public class RPUtil {
 			ResultSet rs = md.getColumns(null, null, tableName, "candelete");
 			if (!rs.next()) {				
 				PreparedStatement st = con.prepareStatement("ALTER TABLE `"+tableName+"` ADD `candelete` tinyint(1) NOT NULL default '1'");
-				st.executeUpdate();
-			}
-			rs.close();
-			rs = md.getColumns(null, null, tableName, "rent");
-			if (!rs.next()) {				
-				PreparedStatement st = con.prepareStatement("ALTER TABLE `"+tableName+"` ADD `rent` longtext");
 				st.executeUpdate();
 			}
 			rs.close();
@@ -1222,7 +1211,6 @@ public class RPUtil {
     	int prior = fileDB.getInt(rname+".priority", 0);
     	String date = fileDB.getString(rname+".lastvisit", "");
     	long value = fileDB.getLong(rname+".value", 0);
-    	String rent = fileDB.getString(rname+".rent", "");
     	boolean candel = fileDB.getBoolean(rname+".candelete", true);
     	
     	Location tppoint = null;
@@ -1259,9 +1247,6 @@ public class RPUtil {
     			newr.flags.put(flag,fileDB.get(rname+".flags."+flag));
     		}
     	}
-    	if (rent.split(":").length >= 3){
-    		newr.setRentString(rent);
-    	}
     	return newr;
 	}
 	
@@ -1284,7 +1269,6 @@ public class RPUtil {
 		fileDB.set(rname+".minZ",r.getMinMbrZ());	
 		fileDB.set(rname+".maxY",r.getMaxY());
 		fileDB.set(rname+".minY",r.getMinY());
-		fileDB.set(rname+".rent",r.getRentString());
 		fileDB.set(rname+".value",r.getValue());	
 		fileDB.set(rname+".flags",r.flags);	
 		fileDB.set(rname+".candelete",r.canDelete());	

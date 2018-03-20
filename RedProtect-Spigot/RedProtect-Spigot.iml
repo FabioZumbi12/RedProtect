@@ -146,7 +146,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-bukkit:6.1.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-bukkit:6.1.7.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.natrolite:vault-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:Essentials:2.14-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.0.8" level="project" />

@@ -24,11 +24,11 @@ import org.spongepowered.api.world.World;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 
+/**
+ * Represents a 3D region created by players.
+ */
 public class Region implements Serializable{
-	
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2861198224185302015L;
     private int[] x;
     private int[] z;
@@ -50,7 +50,7 @@ public class Region implements Serializable{
 	private long value;
 	private Location<World> tppoint;
 	private final boolean waiting = false;
-	private boolean canDelete = true;
+	private boolean canDelete;
 	private final Map<String, Integer> rent = new HashMap<>();
 	private final Map<String, Long> rentDate = new HashMap<>();
 	private UUID rentTask = null;

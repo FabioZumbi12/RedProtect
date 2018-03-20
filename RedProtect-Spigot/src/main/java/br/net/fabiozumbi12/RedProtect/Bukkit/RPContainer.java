@@ -20,7 +20,7 @@ public class RPContainer {
     	    	
         String blocktype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-        	blocktype = Integer.toString(b.getTypeId());
+        	blocktype = Integer.toString(b.getType().getId());
         } else {
         	blocktype = b.getType().name();
         }  
@@ -48,7 +48,7 @@ public class RPContainer {
     	            
     	            String blocktype2;
     	            if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-    	            	blocktype2 = Integer.toString(b.getTypeId());
+    	            	blocktype2 = Integer.toString(b.getType().getId());
     	            } else {
     	            	blocktype2 = b.getType().name();
     	            }
@@ -96,7 +96,7 @@ public class RPContainer {
            		
         String signbtype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-        	signbtype = Integer.toString(b.getTypeId());
+        	signbtype = Integer.toString(b.getType().getId());
         } else {
         	signbtype = b.getType().name();
         }         
@@ -115,7 +115,7 @@ public class RPContainer {
         				
         				String blocktype2;
         	            if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-        	            	blocktype2 = Integer.toString(b.getTypeId());
+        	            	blocktype2 = Integer.toString(b.getType().getId());
         	            } else {
         	            	blocktype2 = b.getType().name();
         	            }
@@ -167,7 +167,7 @@ public class RPContainer {
            		
         String signbtype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-        	signbtype = Integer.toString(b.getTypeId());
+        	signbtype = Integer.toString(b.getType().getId());
         } else {
         	signbtype = b.getType().name();
         } 
@@ -182,7 +182,7 @@ public class RPContainer {
     				
     				String blocktype2;
     	            if (RPConfig.getBool("private.allowed-blocks-use-ids")){
-    	            	blocktype2 = Integer.toString(b.getTypeId());
+    	            	blocktype2 = Integer.toString(b.getType().getId());
     	            } else {
     	            	blocktype2 = b.getType().name();
     	            }
@@ -303,7 +303,7 @@ public class RPContainer {
 
         String signbtype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
-            signbtype = Integer.toString(container.getTypeId());
+            signbtype = Integer.toString(container.getType().getId());
         } else {
             signbtype = container.getType().name();
         }

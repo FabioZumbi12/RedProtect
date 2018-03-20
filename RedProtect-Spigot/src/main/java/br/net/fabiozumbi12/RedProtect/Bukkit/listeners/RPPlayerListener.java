@@ -176,7 +176,7 @@ public class RPPlayerListener implements Listener{
 
         if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)){        	
         	String claimmode = RPConfig.getWorldClaimType(p.getWorld().getName());
-            if (itemInHand.getTypeId() == RPConfig.getInt("wands.adminWandID") && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
+            if (itemInHand.getType().name().equalsIgnoreCase(RPConfig.getString("wands.adminWandID")) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
             	
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 	if (!RPUtil.canBuildNear(p, l)){        	
@@ -210,7 +210,7 @@ public class RPPlayerListener implements Listener{
                 }                
                 return;                
             }
-            if (itemInHand.getTypeId() == RPConfig.getInt("wands.infoWandID")) {
+            if (itemInHand.getType().name().equalsIgnoreCase(RPConfig.getString("wands.infoWandID"))) {
             	Region r = RedProtect.get().rm.getTopRegion(l);
                 if (p.hasPermission("redprotect.infowand")) {
                     if (r == null) {
@@ -254,7 +254,7 @@ public class RPPlayerListener implements Listener{
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);
         			return;
-        		} else if ((hand.equals(Material.BOW) || hand.equals(Material.SNOW_BALL) || hand.equals(Material.FIREWORK) || hand.equals(Material.EGG)) && !r.canProtectiles(p)){
+        		} else if ((hand.equals(Material.BOW) || (hand.name().contains("SNOW") && hand.name().contains("BALL")) || hand.name().contains("FIREWORK")|| hand.equals(Material.EGG)) && !r.canProtectiles(p)){
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);
@@ -264,7 +264,7 @@ public class RPPlayerListener implements Listener{
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);
                     return;
-        		} else if (hand.equals(Material.MONSTER_EGG) && !r.canInteractPassives(p)){
+        		} else if (hand.name().contains("_EGG") && !r.canInteractPassives(p)){
         			RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true); 
                     event.setUseItemInHand(Event.Result.DENY);

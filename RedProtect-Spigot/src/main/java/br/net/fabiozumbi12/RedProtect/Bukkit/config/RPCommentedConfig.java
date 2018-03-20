@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
@@ -100,8 +101,8 @@ public class RPCommentedConfig {
 		setDefault("needed-claim-to-build.allow-only-protections-blocks", true, "Allow player to place only protection blocks, like fences and sign.");
 		
 		setDefault("wands", null, "Wands configurations");
-		setDefault("wands.adminWandID", 374, "Item used to define and redefine regions.");
-		setDefault("wands.infoWandID", 339, "Item used to check regions.");
+		setDefault("wands.adminWandID", "GLASS_BOTTLE", "Item used to define and redefine regions.");
+		setDefault("wands.infoWandID", "PAPER", "Item used to check regions.");
 		
 		setDefault("private", null, "Private options");
 		setDefault("private.use", true, "Enable private signs?");
@@ -302,40 +303,40 @@ public class RPCommentedConfig {
  		
  		for (String line:RedProtect.get().getConfig().getKeys(true)){
  			String[] key = line.split("\\"+RedProtect.get().getConfig().options().pathSeparator());
- 			String spaces = new String(); 			
+ 			String spaces = "";
  			for (int i = 0; i < key.length; i++){
  				if (i == 0) continue;
  				spaces = spaces+" "; 				
  			} 			
  			if (comments.containsKey(line)){
  				if (spaces.isEmpty()){
- 					b.append("\n# "+comments.get(line).replace("\n", "\n# ")).append('\n');
+ 					b.append("\n# ").append(comments.get(line).replace("\n", "\n# ")).append('\n');
  				} else {
- 					b.append(spaces+"# "+comments.get(line).replace("\n", "\n"+spaces+"# ")).append('\n');
+ 					b.append(spaces).append("# ").append(comments.get(line).replace("\n", "\n"+spaces+"# ")).append('\n');
  				}
  			} 			
  			Object value = RedProtect.get().getConfig().get(line);
  			if (!RedProtect.get().getConfig().isConfigurationSection(line)){
  				if (value instanceof String){
- 					b.append(spaces+key[key.length-1]+": '"+value+"'\n");
+ 					b.append(spaces).append(key[key.length-1]).append(": '").append(value).append("'\n");
  				} else if (value instanceof List<?>) {
 					if (((List<?>)value).isEmpty()){
-						b.append(spaces+key[key.length-1]+": []\n");
+						b.append(spaces).append(key[key.length-1]).append(": []\n");
 					} else {
-						b.append(spaces+key[key.length-1]+":\n");
+						b.append(spaces).append(key[key.length-1]).append(":\n");
 						for (Object lineCfg:(List<?>)value){
 							if (lineCfg instanceof String){
-								b.append(spaces+"- '"+lineCfg+"'\n");
+								b.append(spaces).append("- '").append(lineCfg).append("'\n");
 							} else {
-								b.append(spaces+"- "+lineCfg+"\n");
+								b.append(spaces).append("- ").append(lineCfg).append("\n");
 							}
 						}
 					}
  				} else {
- 					b.append(spaces+key[key.length-1]+": "+value+"\n");
+ 					b.append(spaces).append(key[key.length-1]).append(": ").append(value).append("\n");
  				}
  			} else {
- 				b.append(spaces+key[key.length-1]+":\n");
+ 				b.append(spaces).append(key[key.length-1]).append(":\n");
  			}
  					
  		}

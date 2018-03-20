@@ -223,7 +223,7 @@ public class RPSchematics {
         	for (Integer key:blist.keySet()){
         		Block b = blist.get(key).getBlock();
         		//paste schematic
-        		b.setTypeIdAndData(blocks[key], blockData[key], true);        		      		
+        		b.setTypeIdAndData(blocks[key], blockData[key], true);
         	}
         }
         

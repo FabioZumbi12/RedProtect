@@ -115,13 +115,13 @@ public class RPGlobalListener implements Listener{
          	 return;
     	}
     	
-    	if ((bfrom.getType().equals(Material.WATER) || bfrom.getType().equals(Material.STATIONARY_WATER)) 
+    	if ((bfrom.getType().equals(Material.WATER) || (bfrom.getType().name().contains("WATER") && (bfrom.getType().name().contains("STATIONARY") || bfrom.getType().name().contains("FLOWING"))))
     			&& !RPConfig.getGlobalFlagBool(b.getWorld().getName()+".allow-changes-of.water-flow")){
         	 e.setCancelled(true);   
         	 return;
     	}
     	
-    	if ((bfrom.getType().equals(Material.LAVA) || bfrom.getType().equals(Material.STATIONARY_LAVA)) 
+    	if ((bfrom.getType().equals(Material.LAVA) || (bfrom.getType().name().contains("LAVA") && (bfrom.getType().name().contains("STATIONARY") || bfrom.getType().name().contains("FLOWING"))))
     			&& !RPConfig.getGlobalFlagBool(b.getWorld().getName()+".allow-changes-of.lava-flow")){
         	 e.setCancelled(true);   
         	 return;
