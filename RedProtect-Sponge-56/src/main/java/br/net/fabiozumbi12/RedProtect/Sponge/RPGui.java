@@ -118,9 +118,9 @@ public class RPGui {
 	}
 	
 	@Listener
-	public void onDeath(InteractInventoryEvent.Close event){
+	public void onCloseInventory(InteractInventoryEvent.Close event){
 		if (event.getTargetInventory().getName().get().equals(this.inv.getName().get())){
-			close();
+			close(false);
 		}
 	}
 	
@@ -129,7 +129,7 @@ public class RPGui {
 		if (event.getTargetEntity() instanceof Player){
 			Player p = (Player) event.getTargetEntity();
 			if (p.getName().equals(this.player.getName())){
-				close();
+				close(true);
 			}
 		}		
 	}
@@ -138,13 +138,13 @@ public class RPGui {
 	public void onPlayerLogout(ClientConnectionEvent.Disconnect event){
 		Player p = event.getTargetEntity();
 		if (p.getName().equals(this.player.getName())){
-			close();
+			close(true);
 		}
 	}
 	
 	@Listener
 	public void onPluginDisable(GameStoppingServerEvent event){
-		close();
+		close(true);
 	}
 		
 	@Listener
@@ -214,11 +214,11 @@ public class RPGui {
 		RedProtect.get().logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+this.region.getFlagString(flag));
 	}
 	
-	public void close(){
+	public void close(boolean close){
 		RPUtil.removeGuiItem(this.player);
 		RedProtect.get().game.getEventManager().unregisterListeners(this);
 		this.guiItens = null;
-		RedProtect.get().getPVHelper().closeInventory(this.player);
+		if (close) RedProtect.get().getPVHelper().closeInventory(this.player);
 		this.player = null;
 		this.region = null;
 		try {

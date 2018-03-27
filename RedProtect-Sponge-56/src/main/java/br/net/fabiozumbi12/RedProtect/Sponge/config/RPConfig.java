@@ -503,8 +503,9 @@ public class RPConfig{
         	gflags.getNode(w.getName(),"spawn-wither").setValue(gflags.getNode(w.getName(),"spawn-wither").getBoolean(true)); 
         	gflags.getNode(w.getName(),"invincible").setValue(gflags.getNode(w.getName(),"invincible").getBoolean(false)); 
         	gflags.getNode(w.getName(),"player-candrop").setValue(gflags.getNode(w.getName(),"player-candrop").getBoolean(true)); 
-        	gflags.getNode(w.getName(),"player-canpickup").setValue(gflags.getNode(w.getName(),"player-canpickup").getBoolean(true));  
-        	if (!gflags.getNode(w.getName(),"command-ranges").hasMapChildren()){
+        	gflags.getNode(w.getName(),"player-canpickup").setValue(gflags.getNode(w.getName(),"player-canpickup").getBoolean(true));
+			gflags.getNode(w.getName(),"blocks-spawn-items").setValue(gflags.getNode(w.getName(),"blocks-spawn-items").getBoolean(true));
+			if (!gflags.getNode(w.getName(),"command-ranges").hasMapChildren()){
         		gflags.getNode(w.getName(),"command-ranges","home","min-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","min-range").getDouble(0));  
         		gflags.getNode(w.getName(),"command-ranges","home","max-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","max-range").getDouble(w.getBlockMax().getY()));  
         		gflags.getNode(w.getName(),"command-ranges","home","message").setValue(gflags.getNode(w.getName(),"command-ranges","home","message").getString("&cYou cant use /home when mining or in caves!"));        		
@@ -520,28 +521,10 @@ public class RPConfig{
 		return this.gflags.getNode(world,action).getBoolean();
 	}
     
-    public Boolean getGlobalFlag(String world, String action1, String action2){		
-		return this.gflags.getNode(world,action1,action2).getBoolean();
+    public Boolean getGlobalFlag(Object... key){
+		return this.gflags.getNode(key).getBoolean();
 	}
-    
-    public List<String> getGlobalFlagList(String world, String action){		
-		try {
-			return this.gflags.getNode(world, action).getList(TypeToken.of(String.class));
-		} catch (ObjectMappingException e) {			
-			e.printStackTrace();
-			return null;
-		}
-	}
-    
-    public List<String> getGlobalFlagList(String world, String action1, String action2){		
-		try {
-			return this.gflags.getNode(world, action1, action2).getList(TypeToken.of(String.class));
-		} catch (ObjectMappingException e) {			
-			e.printStackTrace();
-			return null;
-		}
-	}
-    
+
     public ItemStack getGuiItemStack(String key){
     	RedProtect.get().logger.debug("default","Gui Material to get: " + key);
     	RedProtect.get().logger.debug("default","Result: " + gui.getNode("gui-flags",key,"material").getString());
@@ -754,7 +737,7 @@ public class RPConfig{
 		return gflags.getNode(key).getBoolean();
 	}
     
-    public List<String> getGlobalFlagList(String key){		
+    public List<String> getGlobalFlagList(Object... key){
 		try {
 			return gflags.getNode(key).getList(TypeToken.of(String.class));
 		} catch (ObjectMappingException e) {
