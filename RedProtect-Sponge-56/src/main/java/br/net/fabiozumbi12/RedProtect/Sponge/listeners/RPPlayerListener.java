@@ -368,41 +368,43 @@ public class RPPlayerListener{
                     }
                 } 
                 else if (bstate.getType().getName().contains("sign") && !r.canSign(p)){
-                	      List<Text> sign = b.get(Keys.SIGN_LINES).get();
-                	      for (String tag:RedProtect.get().cfgs.getStringList("region-settings.allow-sign-interact-tags")){
-                	    	  //check first rule
-                	    	  if (tag.equalsIgnoreCase(sign.get(0).toPlain())){
-                    	    	  return;
-                    	      }
-                	    	  
-                	    	  //check if tag is leaders or members names
-                	    	  if (tag.equalsIgnoreCase("{membername}")){
-                	    		  for (String leader:r.getLeaders()){
-                    	    		  if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))){
-                    	    			  return;
-                    	    		  }
-                    	    	  }
-                	    		  for (String member:r.getMembers()){
-                    	    		  if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(member))){
-                    	    			  return;
-                    	    		  }
-                    	    	  }
-                	    		  for (String admin:r.getAdmins()){
-                    	    		  if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))){
-                    	    			  return;
-                    	    		  }
-                    	    	  }
-                	    	  }  
-                	    	  
-                	    	  //check if tag is player name
-                	    	  if (tag.equalsIgnoreCase("{playername}")){
-                	    		  if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(p.getName()))){
-                	    			  return;
-                	    		  }
-                	    	  }
-                	      }        	              	      
-                	      RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
-                	      event.setCancelled(true);
+        		    if (b.get(Keys.SIGN_LINES).isPresent()){
+                        List<Text> sign = b.get(Keys.SIGN_LINES).get();
+                        for (String tag:RedProtect.get().cfgs.getStringList("region-settings.allow-sign-interact-tags")){
+                            //check first rule
+                            if (tag.equalsIgnoreCase(sign.get(0).toPlain())){
+                                return;
+                            }
+
+                            //check if tag is leaders or members names
+                            if (tag.equalsIgnoreCase("{membername}")){
+                                for (String leader:r.getLeaders()){
+                                    if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))){
+                                        return;
+                                    }
+                                }
+                                for (String member:r.getMembers()){
+                                    if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(member))){
+                                        return;
+                                    }
+                                }
+                                for (String admin:r.getAdmins()){
+                                    if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))){
+                                        return;
+                                    }
+                                }
+                            }
+
+                            //check if tag is player name
+                            if (tag.equalsIgnoreCase("{playername}")){
+                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(p.getName()))){
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
+                    event.setCancelled(true);
                 }
                 else if ((itemInHand.equals(ItemTypes.FLINT_AND_STEEL) || 
                 		itemInHand.equals(ItemTypes.WATER_BUCKET) || 
