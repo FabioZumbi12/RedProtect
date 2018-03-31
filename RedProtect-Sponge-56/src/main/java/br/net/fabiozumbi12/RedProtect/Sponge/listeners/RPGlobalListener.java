@@ -77,12 +77,12 @@ public class RPGlobalListener{
 	}
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
-    public void PlayerDropItem(DropItemEvent.Dispense e, @Root Player cause){
+    public void PlayerDropItem(DropItemEvent.Dispense e, @Root Player p){
     	for (Entity ent:e.getEntities()){
     		Location<World> l = ent.getLocation();
     		Region r = RedProtect.get().rm.getTopRegion(l);
 	    	
-	    	if (r == null && !RedProtect.get().cfgs.getGlobalFlag(l.getExtent().getName(),"player-candrop")){
+	    	if (r == null && !RedProtect.get().cfgs.getGlobalFlag(l.getExtent().getName(),"player-candrop") && !p.hasPermission("redprotect.world.bypass")){
 	    		e.setCancelled(true);
 	    	}
     	}    	
@@ -95,14 +95,14 @@ public class RPGlobalListener{
     			continue;
     		}    		
     		Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
-    		if (r == null && !RedProtect.get().cfgs.getGlobalFlag(ent.getLocation().getExtent().getName(),"player-canpickup")){
+    		if (r == null && !RedProtect.get().cfgs.getGlobalFlag(ent.getLocation().getExtent().getName(),"player-canpickup") && !p.hasPermission("redprotect.world.bypass")){
     			event.setCancelled(true);
     		}
     	}
     }
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)
-    public void onFlow(ChangeBlockEvent.Place e, @First BlockSnapshot source){		
+    public void onFlow(ChangeBlockEvent.Place e, @Root BlockSnapshot source){
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
 		
 		boolean flow = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"liquid-flow");
@@ -146,7 +146,7 @@ public class RPGlobalListener{
     }
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)
-    public void onDecay(ChangeBlockEvent.Decay e, @First BlockSnapshot source){
+    public void onDecay(ChangeBlockEvent.Decay e, @Root BlockSnapshot source){
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
 		boolean allowDecay = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","leaves-decay");
 		
@@ -156,7 +156,7 @@ public class RPGlobalListener{
 	}
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
-	public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
+	public void onBlockPlace(ChangeBlockEvent.Place e, @Root Player p) {
 		RedProtect.get().logger.debug("default","RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + e.isCancelled());
 		
 		BlockSnapshot b = e.getTransactions().get(0).getFinal();
@@ -198,7 +198,7 @@ public class RPGlobalListener{
 	}
 		
 	@Listener(order = Order.FIRST, beforeModifications = true)	
-	public void onPlayerInteract(InteractEvent e, @First Player p){
+	public void onPlayerInteract(InteractEvent e, @Root Player p){
 		RedProtect.get().logger.debug("default","RPGlobalListener - Is InteractEvent event! Cancelled? " + e.isCancelled());
 		if (!e.getInteractionPoint().isPresent()){
 			return;
@@ -239,7 +239,7 @@ public class RPGlobalListener{
 	}
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
-	public void onBlockBreakGlobal(ChangeBlockEvent.Break e, @First Player p) {
+	public void onBlockBreakGlobal(ChangeBlockEvent.Break e, @Root Player p) {
 		RedProtect.get().logger.debug("default","RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 
 		BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
@@ -280,7 +280,7 @@ public class RPGlobalListener{
     }
 
 	@Listener(order = Order.FIRST, beforeModifications = true)	
-    public void onPlayerInteract(InteractEntityEvent e, @First Player p) {
+    public void onPlayerInteract(InteractEntityEvent e, @Root Player p) {
 		
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
@@ -312,7 +312,7 @@ public class RPGlobalListener{
 	}
 			
 	@Listener(order = Order.FIRST, beforeModifications = true)	
-	public void onBucketUse(UseItemStackEvent.Start e, @First Player p){    	
+	public void onBucketUse(UseItemStackEvent.Start e, @Root Player p){
     	Location<World> l = p.getLocation();
 		Region r = RedProtect.get().rm.getTopRegion(l);	
 		
@@ -334,7 +334,7 @@ public class RPGlobalListener{
 				Player p = (Player)proj.getShooter();
 
 				if (ent instanceof Player) {
-					if (!RedProtect.get().cfgs.getGlobalFlag(ent.getWorld().getName(),"pvp") && !p.hasPermission("redprotect.world.bypass")) {
+					if (!p.equals(ent) && !RedProtect.get().cfgs.getGlobalFlag(ent.getWorld().getName(),"pvp") && !p.hasPermission("redprotect.world.bypass")) {
 						event.setCancelled(true);
 						return;
 					}
@@ -443,7 +443,7 @@ public class RPGlobalListener{
         	Player p = (Player)e2;
 
         	if (e1 instanceof Player) {
-                if (!RedProtect.get().cfgs.getGlobalFlag(e1.getWorld().getName(),"pvp") && !p.hasPermission("redprotect.world.bypass")) {
+                if (!e1.equals(e2) && !RedProtect.get().cfgs.getGlobalFlag(e1.getWorld().getName(),"pvp") && !p.hasPermission("redprotect.world.bypass")) {
                     e.setCancelled(true);
                     return;
                 }
@@ -490,7 +490,7 @@ public class RPGlobalListener{
     }
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
-    public void onFireSpread(NotifyNeighborBlockEvent  e, @First BlockSnapshot source){
+    public void onFireSpread(NotifyNeighborBlockEvent  e, @Root BlockSnapshot source){
 		
 		Map<Direction, BlockState> dirs = e.getNeighbors();
     	
@@ -517,9 +517,15 @@ public class RPGlobalListener{
 				continue;
 			}
 
-			if (!RedProtect.get().cfgs.getGlobalFlag(e.getWorld().getName(),"build") && !p.hasPermission("redprotect.world.bypass")){
-				event.setCancelled(true);
-				return;
+			if (event instanceof DropItemEvent){
+				continue;
+			}
+
+			if (e instanceof Hanging){
+				if (!RedProtect.get().cfgs.getGlobalFlag(e.getWorld().getName(),"build") && !p.hasPermission("redprotect.world.bypass")){
+					event.setCancelled(true);
+					return;
+				}
 			}
 		}
 	}
@@ -532,7 +538,7 @@ public class RPGlobalListener{
         	if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation()) != null){
         		continue;
         	}
-        	
+
         	if (e instanceof Wither && !RedProtect.get().cfgs.getGlobalFlag(e.getWorld().getName(),"spawn-wither")){
 				RedProtect.get().logger.debug("spawn","RPGlobalListener - Cancelled spawn of Wither " + e.getType().getName());
                 event.setCancelled(true);
