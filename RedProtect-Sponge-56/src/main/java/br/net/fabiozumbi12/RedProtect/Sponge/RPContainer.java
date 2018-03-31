@@ -165,7 +165,7 @@ public class RPContainer {
     }
 	
 	private boolean validatePrivateSign(BlockSnapshot b){
-		if (!isSign(b.getState().getType())){
+		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
 			return true;
 		}
 		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
@@ -173,7 +173,7 @@ public class RPContainer {
 	}
 	
 	private boolean validateBreakSign(BlockSnapshot b, Player p){
-		if (!isSign(b.getState().getType())){
+		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
 			return true;
 		}
 		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
@@ -183,7 +183,7 @@ public class RPContainer {
 	}
 	
 	private boolean validateOpenBlock(BlockSnapshot b, Player p){
-		if (!isSign(b.getState().getType())){
+		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
 			return true;
 		}
 		List<Text> lines = b.get(Keys.SIGN_LINES).get();

@@ -137,10 +137,6 @@ public class RPEntityListener {
             if (a.getShooter() instanceof Entity){
             	e2 = (Entity)a.getShooter(); 
             }
-            a = null;
-            if (e2 == null) {
-                return;
-            }
         }            
         
         Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());

@@ -10,6 +10,7 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -17,6 +18,7 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -94,10 +96,8 @@ public class EncompassRegionBuilder extends RegionBuilder{
             block[5] = w.createSnapshot(x, y - 1, z); 
             
             for (int bi = 0; bi < block.length; ++bi) {
-            	
-            	boolean validBlock = false;            	
-                
-                validBlock = (block[bi].getState().getType().getName().contains(RedProtect.get().cfgs.getString("region-settings.block-id").toLowerCase())); 
+
+                boolean validBlock = (block[bi].getState().getType().getName().contains(RedProtect.get().cfgs.getString("region-settings.block-id").toLowerCase()));
                 if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {                
                 	++nearbyCount;
                     next = block[bi];
@@ -339,14 +339,15 @@ public class EncompassRegionBuilder extends RegionBuilder{
             }
             else if (i != 0) {
                 this.setErrorSign(e, RPLang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getLocation().get().getBlockX() + ", y: " + current.getLocation().get().getBlockY() + ", z: " + current.getLocation().get().getBlockZ() + ")"));
-                Location<World> newbl = current.getLocation().get();  
-                newbl.add(0, 1, 0);
+                Location<World> newbl = current.getLocation().get().getBlockRelative(Direction.UP);
                 RedProtect.get().getPVHelper().setBlock(newbl, BlockTypes.STANDING_SIGN.getDefaultState());
-                BlockSnapshot newb = newbl.createSnapshot();
-                newb.get(Keys.SIGN_LINES).get().set(0, Text.of(TextColors.RED,"xxxxxxxxxxxxxx"));
-                newb.get(Keys.SIGN_LINES).get().set(1, Text.of(RPLang.get("_redprotect.prefix")));
-                newb.get(Keys.SIGN_LINES).get().set(2, Text.of(RPLang.get("blocklistener.postsign.error")));
-                newb.get(Keys.SIGN_LINES).get().set(3, Text.of(TextColors.RED,"xxxxxxxxxxxxxx"));
+                Sign errSign = (Sign) newbl.getTileEntity().get();
+                SignData data = errSign.getSignData();
+                data.get(Keys.SIGN_LINES).get().set(0, Text.of(TextColors.RED,"xxxxxxxxxxxxxx"));
+                data.get(Keys.SIGN_LINES).get().set(1, RPUtil.toText(RPLang.get("_redprotect.prefix")));
+                data.get(Keys.SIGN_LINES).get().set(2, RPUtil.toText(RPLang.get("blocklistener.postsign.error")));
+                data.get(Keys.SIGN_LINES).get().set(3, Text.of(TextColors.RED,"xxxxxxxxxxxxxx"));
+                errSign.offer(data);
                 return;
             }
             if (oldFacing != curFacing && i > 1) {
