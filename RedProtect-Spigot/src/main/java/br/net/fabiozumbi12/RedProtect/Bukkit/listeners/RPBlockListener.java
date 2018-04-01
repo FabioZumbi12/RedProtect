@@ -369,7 +369,7 @@ public class RPBlockListener implements Listener{
 					return;
 				}
 			}
-		} catch (Exception ignored){
+		} catch (Throwable ignored){
 		}
 		
 	}
