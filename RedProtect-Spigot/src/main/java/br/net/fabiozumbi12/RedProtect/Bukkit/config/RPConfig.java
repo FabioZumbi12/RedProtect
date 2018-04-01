@@ -82,7 +82,8 @@ public class RPConfig{
 			"up-skills", 
 			"can-back", 
 			"for-sale",
-			"set-portal");	
+			"set-portal",
+            "dynmap");
 			
 	public static void init() {
 

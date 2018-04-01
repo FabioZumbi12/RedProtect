@@ -2845,7 +2845,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     }
     
 	private static void SendFlagUsageMessage(Player p, String flag) {
-		String message = "";
+		String message;
 		if (flag.equalsIgnoreCase("effects") ||
 				flag.equalsIgnoreCase("allow-enter-items") ||
 				flag.equalsIgnoreCase("deny-enter-items") ||

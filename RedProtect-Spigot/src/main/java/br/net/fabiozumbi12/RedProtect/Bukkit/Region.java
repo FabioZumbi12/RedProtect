@@ -88,6 +88,13 @@ public class Region implements Serializable{
     	this.flags.put(fname, value);
     	RedProtect.get().rm.updateLiveFlags(this, fname, value.toString());
     	updateSigns(fname);
+    	if (fname.equalsIgnoreCase("dynmap") && RedProtect.get().dynmap != null){
+    	    if (Boolean.getBoolean(value.toString())){
+                RedProtect.get().dynmap.addMark(this);
+            } else {
+                RedProtect.get().dynmap.removeMark(this);
+            }
+        }
     }
     
     public void updateSigns(){
@@ -918,7 +925,7 @@ public class Region implements Serializable{
 		if (!flagExists("max-players")){
     		return -1;
     	}
-		return new Integer(getFlagString("max-players"));
+		return Integer.valueOf(getFlagString("max-players"));
 	}
     
 	public boolean canDeath() {
@@ -952,7 +959,11 @@ public class Region implements Serializable{
     	}
     	return run;
     }
-    
+
+    public boolean allowDynmap() {
+        return !flagExists("dynmap") || getFlagBool("dynmap");
+    }
+
 	public boolean keepInventory() {
 		return flagExists("keep-inventory") && getFlagBool("keep-inventory");
 	}

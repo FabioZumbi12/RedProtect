@@ -42,6 +42,7 @@ public class RPDynmap {
 	    //start set markers
 		for (World w:RedProtect.get().serv.getWorlds()){
 			for (Region r:RedProtect.get().rm.getRegionsByWorld(w)){
+				if (!r.allowDynmap()) continue;
     			addMark(r);
     		}
 		}
