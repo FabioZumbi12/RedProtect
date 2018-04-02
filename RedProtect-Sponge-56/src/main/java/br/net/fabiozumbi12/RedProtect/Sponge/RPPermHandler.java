@@ -41,6 +41,10 @@ public class RPPermHandler{
     public boolean hasRegionPermLeader(Player p, String s, Region poly) {
         return regionPermLeader(p, s, poly);
     }
+
+	public boolean hasRegionPermLeader(CommandSource sender, String s, Region poly) {
+		return !(sender instanceof Player) || regionPermLeader((Player) sender, s, poly);
+	}
     
     public boolean hasGenPerm(Player p, String s) {
         return GeneralPermHandler(p, s);

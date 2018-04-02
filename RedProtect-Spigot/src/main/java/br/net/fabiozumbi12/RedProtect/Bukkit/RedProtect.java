@@ -249,7 +249,7 @@ public class RedProtect extends JavaPlugin {
         	}
         }
     }
-    
+
     public boolean denyEnterRegion(String rid, String player){
     	if (denyEnter.containsKey(player)){
     		if (denyEnter.get(player).contains(rid)){

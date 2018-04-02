@@ -78,7 +78,8 @@ public class RPConfig{
 			"up-skills", 
 			"can-back", 
 			"for-sale",
-			"set-portal");	
+			"set-portal",
+			"exit");
 	
 	
 	private final File defConfig = new File(RedProtect.get().configDir,"config.conf");

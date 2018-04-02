@@ -618,10 +618,17 @@ public class RPPlayerListener implements Listener{
     	final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
     	final Region rto = RedProtect.get().rm.getTopRegion(lto);
     	   	
-    	RedProtect.get().logger.debug("RPPlayerListener - PlayerTeleportEvent from "+lfrom.toString()+" to "+lto.toString());	
-    	
+    	RedProtect.get().logger.debug("RPPlayerListener - PlayerTeleportEvent from "+lfrom.toString()+" to "+lto.toString());
+
+		//Exit flag
+		if (!rfrom.canExit(p)){
+			e.setTo(RPUtil.DenyExitPlayer(lfrom.getWorld(), lfrom, e.getTo(), rfrom));
+			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+			return;
+		}
+
     	if (rto != null){
-    		
+
     		//Allow teleport to with items
             if (!rto.canEnterWithItens(p)){
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.flags.get("allow-enter-items").toString()));	
@@ -946,7 +953,15 @@ public class RPPlayerListener implements Listener{
     	
     	Location lfrom = e.getFrom();
     	Location lto = e.getTo();
-    	
+
+    	Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
+		//Exit flag
+		if (rfrom != null && !rfrom.canExit(p)){
+			e.setTo(RPUtil.DenyExitPlayer(lfrom.getWorld(), lfrom, e.getTo(), rfrom));
+			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+			return;
+		}
+
     	//RedProtect.get().logger.debug("RPPlayerListener - PlayerMoveEvent from "+lfrom.toString()+" to "+lto.toString());	    	
     	if (lto.getWorld().equals(lfrom.getWorld()) && lto.distance(lfrom) > 0.1 && RedProtect.get().tpWait.contains(p.getName())){
     		RedProtect.get().tpWait.remove(p.getName());
@@ -970,14 +985,14 @@ public class RPPlayerListener implements Listener{
             
     		//Enter flag
             if (!r.canEnter(p)){
-        		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), p, r, false));
+        		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
         		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");	
         	}
-            
+
             //enter max players flag
             if (r.maxPlayers() != -1){
             	if (!checkMaxPlayer(p, r)){
-            		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), p, r, false));
+            		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
             		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
             	}
             }      
@@ -1004,13 +1019,13 @@ public class RPPlayerListener implements Listener{
             
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
-        		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), p, r, false));
+        		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
         	}
             
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
-        		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), p, r, false));
+        		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
         	}
             

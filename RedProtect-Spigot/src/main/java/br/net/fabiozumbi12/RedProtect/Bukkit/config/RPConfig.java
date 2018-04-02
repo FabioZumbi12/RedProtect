@@ -83,6 +83,7 @@ public class RPConfig{
 			"can-back", 
 			"for-sale",
 			"set-portal",
+            "exit",
             "dynmap");
 			
 	public static void init() {

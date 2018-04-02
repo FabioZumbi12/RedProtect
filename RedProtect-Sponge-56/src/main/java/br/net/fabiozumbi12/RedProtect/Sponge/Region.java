@@ -1091,7 +1091,11 @@ public class Region implements Serializable{
     	}		
         return getFlagBool("sign") || checkAllowedPlayer(p);
 	}
-    
+
+	public boolean canExit(Player p) {
+		return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
+	}
+
 	public boolean canEnter(Player p) {
 		return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
 	}
