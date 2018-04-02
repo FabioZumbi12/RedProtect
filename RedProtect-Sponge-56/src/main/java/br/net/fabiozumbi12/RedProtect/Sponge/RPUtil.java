@@ -62,7 +62,6 @@ import com.google.common.reflect.TypeToken;
 
 @SuppressWarnings("deprecation")
 public class RPUtil {
-    static int backup = 0;
 	public static boolean stopRegen;
         
     public static Text toText(String str){
@@ -80,18 +79,16 @@ public class RPUtil {
     }
 
 	public static Transform<World> DenyExitPlayer(Player p, Transform<World> from, Transform<World> to, Region r) {
-		Location<World> setTo = to.getLocation();
-		Region rto = RedProtect.get().rm.getTopRegion(setTo);
+		Region rto = RedProtect.get().rm.getTopRegion(to.getLocation());
 		if (rto != r){
-			setTo = from.getLocation();
+			to = new Transform<>(from.getLocation()).setRotation(from.getRotation());
 			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
 		}
-		return new Transform<>(setTo);
+		return to;
 	}
 
 	public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r, boolean checkSec) {
 		Location<World> setFrom = from.getLocation();
-		Location<World> setTo = to.getLocation();
 		for (int i = 0; i < r.getArea()+10; i++){
 			Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ());
 			Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ());
@@ -100,34 +97,34 @@ public class RPUtil {
 			Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ()+i);
 			Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ()-i);
 			if (r1 != r){
-				setTo = setFrom.add(+i, 0, 0);
+				to = new Transform<>(setFrom.add(+i, 0, 0)).setRotation(from.getRotation());
 				break;
 			}
 			if (r2 != r){
-				setTo = setFrom.add(-i, 0, 0);
+				to = new Transform<>(setFrom.add(-i, 0, 0)).setRotation(from.getRotation());
 				break;
 			}
 			if (r3 != r){
-				setTo = setFrom.add(0, 0, +i);
+				to = new Transform<>(setFrom.add(0, 0, +i)).setRotation(from.getRotation());
 				break;
 			}
 			if (r4 != r){
-				setTo = setFrom.add(0, 0, -i);
+				to = new Transform<>(setFrom.add(0, 0, -i)).setRotation(from.getRotation());
 				break;
 			}
 			if (r5 != r){
-				setTo = setFrom.add(+i, 0, +i);
+				to = new Transform<>(setFrom.add(+i, 0, +i)).setRotation(from.getRotation());
 				break;
 			}
 			if (r6 != r){
-				setTo = setFrom.add(-i, 0, -i);
+				to = new Transform<>(setFrom.add(-i, 0, -i)).setRotation(from.getRotation());
 				break;
 			}
 		}
-		if (checkSec && !isSecure(setTo)){
-			RedProtect.get().getPVHelper().setBlock(setTo.getBlockRelative(Direction.DOWN), BlockTypes.GRASS.getDefaultState());
+		if (checkSec && !isSecure(to.getLocation())){
+			RedProtect.get().getPVHelper().setBlock(to.getLocation().getBlockRelative(Direction.DOWN), BlockTypes.GRASS.getDefaultState());
 		}
-		return new Transform<>(setTo).setRotation(to.getRotation());
+		return to;
 	}
 
 	private static boolean isSecure(Location loc){

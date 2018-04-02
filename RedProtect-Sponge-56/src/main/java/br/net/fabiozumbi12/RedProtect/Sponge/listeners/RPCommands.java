@@ -335,9 +335,13 @@ public class RPCommands implements CommandCallable {
         	if (args.length == 4) {
 				//rp addmember <player> <region> <world>
 				if (checkCmd(args[0], "addmember")) {
+					if (!RedProtect.get().serv.getWorld(args[3]).isPresent()){
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
+						return cmdr;
+					}
 					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
 					if (r == null){
-						sender.sendMessage(RPUtil.toText("No regions by name "+args[2]+" or by world "+args[3]));
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
 						return cmdr;
 					}
 					handleAddMember(sender, args[1], r);
@@ -346,9 +350,13 @@ public class RPCommands implements CommandCallable {
 
 				//rp addadmin <player> <region> <world>
 				if (checkCmd(args[0], "addadmin")) {
+					if (!RedProtect.get().serv.getWorld(args[3]).isPresent()){
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
+						return cmdr;
+					}
 					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
 					if (r == null){
-						sender.sendMessage(RPUtil.toText("No regions by name "+args[2]+" or by world "+args[3]));
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
 						return cmdr;
 					}
 					handleAddAdmin(sender, args[1], r);
@@ -357,9 +365,13 @@ public class RPCommands implements CommandCallable {
 
 				//rp addleader <player> <region> <world>
 				if (checkCmd(args[0], "addleader")) {
+					if (!RedProtect.get().serv.getWorld(args[3]).isPresent()){
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
+						return cmdr;
+					}
 					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
 					if (r == null){
-						sender.sendMessage(RPUtil.toText("No regions by name "+args[2]+" or by world "+args[3]));
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
 						return cmdr;
 					}
 					handleAddLeader(sender, args[1], r);
@@ -368,9 +380,13 @@ public class RPCommands implements CommandCallable {
 
 				//rp removemember <player> <region> <world>
 				if (checkCmd(args[0], "removemember")) {
+					if (!RedProtect.get().serv.getWorld(args[3]).isPresent()){
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
+						return cmdr;
+					}
 					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
 					if (r == null){
-						sender.sendMessage(RPUtil.toText("No regions by name "+args[2]+" or by world "+args[3]));
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
 						return cmdr;
 					}
 					handleRemoveMember(sender, args[1], r);
@@ -379,9 +395,13 @@ public class RPCommands implements CommandCallable {
 
 				//rp removeadmin <player> <region> <world>
 				if (checkCmd(args[0], "removeadmin")) {
+					if (!RedProtect.get().serv.getWorld(args[3]).isPresent()){
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
+						return cmdr;
+					}
 					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
 					if (r == null){
-						sender.sendMessage(RPUtil.toText("No regions by name "+args[2]+" or by world "+args[3]));
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
 						return cmdr;
 					}
 					handleRemoveAdmin(sender, args[1], r);
@@ -390,9 +410,13 @@ public class RPCommands implements CommandCallable {
 
 				//rp removeleader <player> <region> <world>
 				if (checkCmd(args[0], "removeleader")) {
+					if (!RedProtect.get().serv.getWorld(args[3]).isPresent()){
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
+						return cmdr;
+					}
 					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
 					if (r == null){
-						sender.sendMessage(RPUtil.toText("No regions by name "+args[2]+" or by world "+args[3]));
+						sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
 						return cmdr;
 					}
 					handleRemoveLeader(sender, args[1], r);
@@ -2020,7 +2044,7 @@ public class RPCommands implements CommandCallable {
 	}
 
 
-    private static void handlePrioritySingle(Player p, int prior, String region) {
+    private void handlePrioritySingle(Player p, int prior, String region) {
     	Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
     	if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
     		if (r != null){
@@ -2033,7 +2057,7 @@ public class RPCommands implements CommandCallable {
     	}
 	}
 
-    private static void handlePriority(Player p, int prior) {
+    private void handlePriority(Player p, int prior) {
     	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
     	if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
     		if (r != null){
@@ -2046,7 +2070,7 @@ public class RPCommands implements CommandCallable {
     	}
 	}
 
-    private static void handleDelete(Player p) {
+    private void handleDelete(Player p) {
 		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "delete", r)) {
             if (r == null) {
@@ -2086,7 +2110,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-    private static void handleDeleteName(Player p, String rname, String world) {
+    private void handleDeleteName(Player p, String rname, String world) {
 		Region r = RedProtect.get().rm.getRegion(rname, p.getWorld());
 		if (!world.equals("")){
 			if (Sponge.getServer().getWorld(world).isPresent()){
@@ -2133,7 +2157,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-	private static void handleInfoTop(Player p) {
+	private void handleInfoTop(Player p) {
     	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
     	if (r == null) {
             sendNotInRegionMessage(p);
@@ -2159,7 +2183,7 @@ public class RPCommands implements CommandCallable {
 
     }
 
-	private static void handleInfo(Player p, String region, String world) {
+	private void handleInfo(Player p, String region, String world) {
 		Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
 		if (!world.equals("")){
 			if (Sponge.getServer().getWorld(world).isPresent()){
@@ -2183,7 +2207,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-	private static void handleAddMember(CommandSource src, String sVictim, Region r) {
+	private void handleAddMember(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
 			r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -2304,7 +2328,7 @@ public class RPCommands implements CommandCallable {
 	}
 
 
-	private static void handleAddAdmin(CommandSource src, String sVictim, Region r) {
+	private void handleAddAdmin(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
 			r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -2352,7 +2376,7 @@ public class RPCommands implements CommandCallable {
             sendNoPermissionMessage((Player)src);
         }
     }
-	private static void handleRemoveMember(CommandSource src, String sVictim, Region r) {
+	private void handleRemoveMember(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
 			r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -2397,7 +2421,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-	private static void handleRemoveLeader(CommandSource src, String sVictim, Region r) {
+	private void handleRemoveLeader(CommandSource src, String sVictim, Region r) {
 		Region rLow = null;
 		Map<Integer,Region> regions = new HashMap<>();
 		if (src instanceof Player){
@@ -2454,7 +2478,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-	private static void handleRemoveAdmin(CommandSource src, String sVictim, Region r) {
+	private void handleRemoveAdmin(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
 			r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -2499,7 +2523,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-	private static void handleRename(Player p, String newName) {
+	private void handleRename(Player p, String newName) {
     	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "rename", r)) {
             if (r == null) {
@@ -2545,7 +2569,7 @@ public class RPCommands implements CommandCallable {
 
 
     // TODO Flag Handler
-	private static void handleFlag(Player p, String flag, String value, Region r) {
+	private void handleFlag(Player p, String flag, String value, Region r) {
     	if (flag.equalsIgnoreCase("?")){
     		sendFlagHelp(p);
     		return;
@@ -2695,7 +2719,7 @@ public class RPCommands implements CommandCallable {
         }
     }
 
-	private static void SendFlagUsageMessage(Player p, String flag) {
+	private void SendFlagUsageMessage(Player p, String flag) {
 		String message = "";
 		if (flag.equalsIgnoreCase("effects") ||
 				flag.equalsIgnoreCase("view-distance") ||
@@ -2715,7 +2739,7 @@ public class RPCommands implements CommandCallable {
 		p.sendMessage(RPUtil.toText(message.replace("{cmd}", getCmd("flag"))));
 	}
 
-	private static void sendFlagHelp(Player p) {
+	private void sendFlagHelp(Player p) {
 		p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------[redprotect Flags]------------"));
     	p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.list") + " " + RedProtect.get().cfgs.getDefFlags()));
     	p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
@@ -2725,7 +2749,7 @@ public class RPCommands implements CommandCallable {
     	}
 	}
 
-	private static boolean validate(String flag, Object value) {
+	private boolean validate(String flag, Object value) {
 		if ((flag.equalsIgnoreCase("forcefly") ||
 				flag.equalsIgnoreCase("can-death") ||
 				flag.equalsIgnoreCase("can-pickup") ||
@@ -2898,7 +2922,7 @@ public class RPCommands implements CommandCallable {
 		return true;
 	}
 
-	private static void handleList(Player p, String uuid, int Page) {
+	private void handleList(Player p, String uuid, int Page) {
 		String pname = RPUtil.PlayerToUUID(p.getName());
         if (RedProtect.get().ph.hasGenPerm(p, "list")) {
         	getRegionforList(p, uuid, Page);
@@ -2910,7 +2934,7 @@ public class RPCommands implements CommandCallable {
         RPLang.sendMessage(p, "no.permission");
     }
 
-	private static void getRegionforList(CommandSource p, String uuid, int Page){
+	private void getRegionforList(CommandSource p, String uuid, int Page){
     	Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
     	String pname = RPUtil.UUIDtoPlayer(uuid);
         int length = regions.size();
@@ -3127,6 +3151,12 @@ public class RPCommands implements CommandCallable {
 			sender.sendMessage(RPUtil.toText("&6rp info <region> <world> &3- Info about a region"));
 			sender.sendMessage(RPUtil.toText("&6rp flag <regionName> <Flag> <Value> <World> &3- Set a flag on region"));
 			sender.sendMessage(RPUtil.toText("&6rp flag info <region> <world> &3- Flag info for region"));
+			sender.sendMessage(RPUtil.toText("&6rp addmember <player> <region> <world> &3- Add player as member on region"));
+			sender.sendMessage(RPUtil.toText("&6rp addadmin <player> <region> <world> &3- Add player as admin on region"));
+			sender.sendMessage(RPUtil.toText("&6rp addleader <player> <region> <world> &3- Add player as leader on region"));
+			sender.sendMessage(RPUtil.toText("&6rp removemember <player> <region> <world> &3- Remove a player as member on region"));
+			sender.sendMessage(RPUtil.toText("&6rp removeadmin <player> <region> <world> &3- Remove a player as admin on region"));
+			sender.sendMessage(RPUtil.toText("&6rp removeleader <player> <region> <world> &3- Remove a player as leader on region"));
 			sender.sendMessage(RPUtil.toText("&6rp tp <player> <regionName> <World> &3- Teleport player to a region"));
 			sender.sendMessage(RPUtil.toText("&6rp limit <player> &3- Area limit for player"));
 			sender.sendMessage(RPUtil.toText("&6rp claimlimit <player> [world] &3- Claim limit for player"));

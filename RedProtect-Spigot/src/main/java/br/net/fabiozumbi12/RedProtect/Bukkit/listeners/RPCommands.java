@@ -522,9 +522,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         	if (args.length == 4) {
         		//rp addmember <player> <region> <world>
 				if (checkCmd(args[0], "addmember")) {
-					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
 					if (r == null){
-						sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
 						return true;
 					}
 					handleAddMember(sender, args[1], r);
@@ -533,9 +538,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
 				//rp addadmin <player> <region> <world>
 				if (checkCmd(args[0], "addadmin")) {
-					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
 					if (r == null){
-						sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
 						return true;
 					}
 					handleAddAdmin(sender, args[1], r);
@@ -544,9 +554,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
 				//rp addleader <player> <region> <world>
 				if (checkCmd(args[0], "addleader")) {
-					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
 					if (r == null){
-						sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
 						return true;
 					}
 					handleAddLeader(sender, args[1], r);
@@ -555,9 +570,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
 				//rp removemember <player> <region> <world>
 				if (checkCmd(args[0], "removemember")) {
-					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
 					if (r == null){
-						sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
 						return true;
 					}
 					handleRemoveMember(sender, args[1], r);
@@ -566,9 +586,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
 				//rp removeadmin <player> <region> <world>
 				if (checkCmd(args[0], "removeadmin")) {
-					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
 					if (r == null){
-						sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
 						return true;
 					}
 					handleRemoveAdmin(sender, args[1], r);
@@ -577,9 +602,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
 				//rp removeleader <player> <region> <world>
 				if (checkCmd(args[0], "removeleader")) {
-					Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
 					if (r == null){
-						sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
 						return true;
 					}
 					handleRemoveLeader(sender, args[1], r);
@@ -588,10 +618,14 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 
         		//rp kick <player> [region] [world]
                 if (checkCmd(args[0], "kick")){
-                	Region r = RedProtect.get().rm.getRegion(args[2], args[3]); 
-    				
+					World w = RedProtect.get().serv.getWorld(args[3]);
+					if (w == null) {
+						sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+						return true;
+					}
+					Region r = RedProtect.get().rm.getRegion(args[2], w);
     				if (r == null){
-    	    			sender.sendMessage("No regions by name "+args[2]+" or by world "+args[3]);
+						sender.sendMessage(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
     					return true;
     	    		}
         			
@@ -3419,7 +3453,13 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			sender.sendMessage(ChatColor.GOLD + "rp info <region> <world> " + ChatColor.DARK_AQUA + "- Info about a region");
 			sender.sendMessage(ChatColor.GOLD + "rp flag <regionName> <Flag> <Value> <World> " + ChatColor.DARK_AQUA + "- Set a flag on region");
 			sender.sendMessage(ChatColor.GOLD + "rp flag info <region> <world> " + ChatColor.DARK_AQUA + "- Flag info for region");
-			sender.sendMessage(ChatColor.GOLD + "rp teleport <playerName> <regionName> <World> " + ChatColor.DARK_AQUA + "- Teleport player to a region");			
+			sender.sendMessage(ChatColor.GOLD + "rp addmember <player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as member on region");
+			sender.sendMessage(ChatColor.GOLD + "rp addadmin <player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as admin on region");
+			sender.sendMessage(ChatColor.GOLD + "rp addleader <player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as leader on region");
+			sender.sendMessage(ChatColor.GOLD + "rp removemember <player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as member on region");
+			sender.sendMessage(ChatColor.GOLD + "rp removeadmin <player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as admin on region");
+			sender.sendMessage(ChatColor.GOLD + "rp removeleader <player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as leader on region");
+			sender.sendMessage(ChatColor.GOLD + "rp teleport <playerName> <regionName> <World> " + ChatColor.DARK_AQUA + "- Teleport player to a region");
 			sender.sendMessage(ChatColor.GOLD + "rp limit <playerName> " + ChatColor.DARK_AQUA + "- Area limit for player");
 			sender.sendMessage(ChatColor.GOLD + "rp claimlimit <playerName> [world] " + ChatColor.DARK_AQUA + "- Claim limit for player");
 			sender.sendMessage(ChatColor.GOLD + "rp list-all " + ChatColor.DARK_AQUA + "- List All regions");		
