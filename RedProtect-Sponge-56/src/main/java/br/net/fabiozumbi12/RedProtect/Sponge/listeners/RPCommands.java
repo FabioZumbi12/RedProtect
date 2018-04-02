@@ -1247,19 +1247,30 @@ public class RPCommands implements CommandCallable {
 				String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
 				String name = args[1].replace("/", "|");
 
-				RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
-				if (rb2.ready()) {
-					Region r2 = rb2.build();
+				Region r2;
+
+				if (RedProtect.get().rm.getRegion(name, w.get()) != null) {
+					r2 = RedProtect.get().rm.getRegion(name, w.get());
 					RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));
 					RPLang.sendMessage(player, "cmdmanager.region.portalhint");
-
 					r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.get().getName());
-					RedProtect.get().rm.add(r2, player.getWorld());
-
-					RedProtect.get().firstLocationSelections.remove(player);
-					RedProtect.get().secondLocationSelections.remove(player);
 
 					RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.get().getName());
+				} else {
+					RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
+					if (rb2.ready()) {
+						r2 = rb2.build();
+						RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));
+						RPLang.sendMessage(player, "cmdmanager.region.portalhint");
+
+						r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.get().getName());
+						RedProtect.get().rm.add(r2, player.getWorld());
+
+						RedProtect.get().firstLocationSelections.remove(player);
+						RedProtect.get().secondLocationSelections.remove(player);
+
+						RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.get().getName());
+					}
 				}
 				return cmdr;
 			}

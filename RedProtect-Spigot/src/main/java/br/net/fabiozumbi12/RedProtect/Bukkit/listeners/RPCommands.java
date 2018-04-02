@@ -1592,20 +1592,31 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 String serverName = RPConfig.getString("region-settings.default-leader");
                 String name = args[1].replace("/", "|");
 
-                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
-                if (rb2.ready()) {
-                    Region r2 = rb2.build();
-                    RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
-                    RPLang.sendMessage(player, "cmdmanager.region.portalhint");
+				Region r2;
 
-                    r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.getName());
-                    RedProtect.get().rm.add(r2, player.getWorld());
+				if (RedProtect.get().rm.getRegion(name, w) != null) {
+					r2 = RedProtect.get().rm.getRegion(name, w);
+					RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
+					RPLang.sendMessage(player, "cmdmanager.region.portalhint");
+					r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.getName());
 
-                    RedProtect.get().firstLocationSelections.remove(player);
-                    RedProtect.get().secondLocationSelections.remove(player);
+					RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.getName());
+				} else {
+					RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
+					if (rb2.ready()) {
+						r2 = rb2.build();
+						RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
+						RPLang.sendMessage(player, "cmdmanager.region.portalhint");
 
-                    RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.getName());
-                }
+						r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.getName());
+						RedProtect.get().rm.add(r2, player.getWorld());
+
+						RedProtect.get().firstLocationSelections.remove(player);
+						RedProtect.get().secondLocationSelections.remove(player);
+
+						RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.getName());
+					}
+				}
                 return true;
             }
         }
@@ -3021,24 +3032,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 		}
-		
-		if (flag.equalsIgnoreCase("set-portal")){
-			if (!(value instanceof String)){
-				return false;
-			}
-			String[] valida = ((String)value).split(" ");
-			if (valida.length != 2){
-				return false;
-			}
-			if (Bukkit.getWorld(valida[1]) == null){
-				return false;
-			}
-			Region r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
-			if (r == null){
-				return false;
-			}
-		}
-		
+
 		if (flag.equalsIgnoreCase("max-players")){
 			try {
 				Integer.parseInt(value.toString());
