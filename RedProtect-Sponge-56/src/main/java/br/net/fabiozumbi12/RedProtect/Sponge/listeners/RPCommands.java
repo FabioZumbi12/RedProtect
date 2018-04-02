@@ -17,6 +17,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
@@ -1323,13 +1324,65 @@ public class RPCommands implements CommandCallable {
         	}
         }
 
-        //rp expand-vert [region] [world]
+
+		//rp kick <player> [region] [world]
+		if (checkCmd(args[0], "kick")){
+			if (args.length == 2 || args.length == 4){
+				Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+
+				if (r == null){
+					RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+					return cmdr;
+				}
+
+				if (args.length == 4){
+					r = RedProtect.get().rm.getRegion(args[2], args[3]);
+					if (r == null){
+						RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+						return cmdr;
+					}
+				}
+
+				if (!RedProtect.get().ph.hasRegionPermMember(player, "kick", r)) {
+					RPLang.sendMessage(player, "no.permission");
+					return cmdr;
+				}
+
+				Optional<Player> visit = Sponge.getServer().getPlayer(args[1]);
+				if (!visit.isPresent()){
+					RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+					return cmdr;
+				}
+
+				if (r.canBuild(visit.get())){
+					RPLang.sendMessage(player, "cmdmanager.cantkick.member");
+					return cmdr;
+				}
+
+				Region rv = RedProtect.get().rm.getTopRegion(visit.get().getLocation());
+				if (rv == null || !rv.getID().equals(r.getID())){
+					RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
+					return cmdr;
+				}
+
+				String sec = String.valueOf(RedProtect.get().cfgs.getInt("region-settings.delay-after-kick-region"));
+				if (RedProtect.get().denyEnterRegion(r.getID(), visit.get().getName())){
+					RPUtil.DenyEnterPlayer(visit.get().getWorld(), new Transform<>(visit.get().getLocation()), new Transform<>(visit.get().getLocation()), r, true);
+					RPLang.sendMessage(player, RPLang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
+				} else {
+					RPLang.sendMessage(player, RPLang.get("cmdmanager.already.cantenter").replace("{time}", sec));
+				}
+				return cmdr;
+			}
+		}
+
+		//rp expand-vert [region] [world]
         if (checkCmd(args[0], "expand-vert")){
         	if (!RedProtect.get().ph.hasGenPerm(player, "expandvert")) {
                 RPLang.sendMessage(player, "no.permission");
                 return cmdr;
             }
-    		Region r = null;
+    		Region r;
     		//rp expand-vert
     		if (args.length == 1){
     			r = RedProtect.get().rm.getTopRegion(player.getLocation());

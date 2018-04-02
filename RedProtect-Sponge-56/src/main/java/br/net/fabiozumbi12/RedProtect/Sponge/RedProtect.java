@@ -2,11 +2,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.sql.Time;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
@@ -65,6 +62,7 @@ public class RedProtect {
 	public RPConfig cfgs;
 	public EconomyService econ;
 	public final HashMap<Player,String> alWait = new HashMap<>();
+	public final HashMap<String, List<String>> denyEnter = new HashMap<>();
 	
 	private RPVHelper pvhelp;
 	public RPVHelper getPVHelper(){
@@ -158,7 +156,33 @@ public class RedProtect {
     		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.getString("file-type") + ") database!");
     	}
     }
-    
+
+	public boolean denyEnterRegion(String rid, String player){
+		if (denyEnter.containsKey(player)){
+			if (denyEnter.get(player).contains(rid)){
+				return false;
+			}
+			List<String> regs = denyEnter.get(player);
+			regs.add(rid);
+			denyEnter.put(player, regs);
+		} else {
+			denyEnter.put(player, new LinkedList<>(Collections.singletonList(rid)));
+		}
+
+		Sponge.getScheduler().createAsyncExecutor(this.container).schedule(() -> {
+			if (denyEnter.containsKey(player)){
+				List<String> regs = denyEnter.get(player);
+				regs.remove(rid);
+				if (regs.isEmpty()){
+					denyEnter.remove(player);
+				} else {
+					denyEnter.put(player, regs);
+				}
+			}
+		}, cfgs.getInt("region-settings.delay-after-kick-region"), TimeUnit.SECONDS);
+		return true;
+	}
+
     private void shutDown(){
     	rm.saveAll();
     	rm.unloadAll();

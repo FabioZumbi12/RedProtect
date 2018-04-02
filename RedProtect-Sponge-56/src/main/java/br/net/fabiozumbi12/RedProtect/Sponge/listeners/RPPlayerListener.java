@@ -628,7 +628,7 @@ public class RPPlayerListener{
         //Exit flag
         Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
         if (rfrom != null && !rfrom.canExit(p)){
-            e.setToTransform(DenyExitPlayer(lfrom.getExtent(), lfromForm, ltoForm, rfrom));
+            e.setToTransform(RPUtil.DenyExitPlayer(lfrom.getExtent(), lfromForm, ltoForm, rfrom));
             RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
             return;
         }
@@ -655,11 +655,17 @@ public class RPPlayerListener{
     	World w = lfrom.getExtent();
     	
     	if (r != null){
-    		
+
+            //Enter flag
+            if (!r.canEnter(p)){
+                e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
+                RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
+            }
+
     		//enter max players flag
             if (r.maxPlayers() != -1){
             	if (!checkMaxPlayer(p, r)){
-            		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, r));
+            		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
             		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
             	}
             } 
@@ -672,22 +678,16 @@ public class RPPlayerListener{
             		}           		
             	}            	
             }
-            
-            //Enter flag
-            if (!r.canEnter(p)){          	
-        		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, r));
-        		RPLang.sendMessage(p, "playerlistener.region.cantregionenter");			
-        	}
-            
+
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
-        		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, r));
+        		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
         	}
             
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
-        		e.setToTransform(DenyEnterPlayer(w, lfromForm, ltoForm, r));
+        		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
         	}
             
@@ -786,7 +786,7 @@ public class RPPlayerListener{
     	final Region rto = RedProtect.get().rm.getTopRegion(lto);
 
         if (rfrom != null && !rfrom.canExit(p)){
-            e.setToTransform(DenyExitPlayer(lfrom.getExtent(), e.getFromTransform(), e.getToTransform(), rfrom));
+            e.setToTransform(RPUtil.DenyExitPlayer(lfrom.getExtent(), e.getFromTransform(), e.getToTransform(), rfrom));
             RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
             return;
         }
@@ -1011,82 +1011,6 @@ public class RPPlayerListener{
     	}    	
     }
 
-    private Transform<World> DenyExitPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r) {
-        Location<World> setFrom = from.getLocation();
-        Location<World> setTo = to.getLocation();
-        for (int i = 0; i < r.getArea()+10; i++){
-            Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ());
-            Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ());
-            Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()+i);
-            Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()-i);
-            Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ()+i);
-            Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ()-i);
-            if (r1 == r){
-                setTo = setFrom.add(+i, 0, 0);
-                break;
-            }
-            if (r2 == r){
-                setTo = setFrom.add(-i, 0, 0);
-                break;
-            }
-            if (r3 == r){
-                setTo = setFrom.add(0, 0, +i);
-                break;
-            }
-            if (r4 == r){
-                setTo = setFrom.add(0, 0, -i);
-                break;
-            }
-            if (r5 == r){
-                setTo = setFrom.add(+i, 0, +i);
-                break;
-            }
-            if (r6 == r){
-                setTo = setFrom.add(-i, 0, -i);
-                break;
-            }
-        }
-        return new Transform<>(setTo).setRotation(to.getRotation());
-    }
-
-    private Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r) {
-    	Location<World> setFrom = from.getLocation();
-    	Location<World> setTo = to.getLocation();
-    	for (int i = 0; i < r.getArea()+10; i++){
-    		Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ());
-    		Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ());
-    		Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()+i);
-    		Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()-i);
-    		Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ()+i);
-    		Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ()-i);
-    		if (r1 != r){
-    			setTo = setFrom.add(+i, 0, 0);
-    			break;
-    		} 
-    		if (r2 != r){
-    			setTo = setFrom.add(-i, 0, 0);
-    			break;
-    		} 
-    		if (r3 != r){
-    			setTo = setFrom.add(0, 0, +i);
-    			break;
-    		} 
-    		if (r4 != r){
-    			setTo = setFrom.add(0, 0, -i);
-    			break;
-    		} 
-    		if (r5 != r){
-    			setTo = setFrom.add(+i, 0, +i);
-    			break;
-    		} 
-    		if (r6 != r){
-    			setTo = setFrom.add(-i, 0, -i);
-    			break;
-    		} 
-		}
-    	return new Transform<>(setTo).setRotation(to.getRotation());
-	}
-    
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPortalCreate(ConstructPortalEvent e){
     	Region r = RedProtect.get().rm.getTopRegion(e.getPortalLocation());

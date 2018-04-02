@@ -1097,6 +1097,10 @@ public class Region implements Serializable{
 	}
 
 	public boolean canEnter(Player p) {
+		if (RedProtect.get().denyEnter.containsKey(p.getName()) && RedProtect.get().denyEnter.get(p.getName()).contains(this.getID())) {
+			return checkAllowedPlayer(p);
+		}
+
 		return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
 	}
 	

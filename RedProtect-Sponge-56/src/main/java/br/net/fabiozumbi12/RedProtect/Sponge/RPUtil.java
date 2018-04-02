@@ -35,12 +35,15 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -48,6 +51,7 @@ import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -75,7 +79,91 @@ public class RPUtil {
     	return Sponge.getGame().getRegistry().getType(EntityType.class, e.getType().getName()).isPresent();
     }
 
-    public static List<Location<World>> get4Points(Location<World> min, Location<World> max, int y){
+	public static Transform<World> DenyExitPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r) {
+		Location<World> setFrom = from.getLocation();
+		Location<World> setTo = to.getLocation();
+		for (int i = 0; i < r.getArea()+10; i++){
+			Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ());
+			Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ());
+			Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()+i);
+			Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()-i);
+			Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ()+i);
+			Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ()-i);
+			if (r1 == r){
+				setTo = setFrom.add(+i, 0, 0);
+				break;
+			}
+			if (r2 == r){
+				setTo = setFrom.add(-i, 0, 0);
+				break;
+			}
+			if (r3 == r){
+				setTo = setFrom.add(0, 0, +i);
+				break;
+			}
+			if (r4 == r){
+				setTo = setFrom.add(0, 0, -i);
+				break;
+			}
+			if (r5 == r){
+				setTo = setFrom.add(+i, 0, +i);
+				break;
+			}
+			if (r6 == r){
+				setTo = setFrom.add(-i, 0, -i);
+				break;
+			}
+		}
+		return new Transform<>(setTo).setRotation(to.getRotation());
+	}
+
+	public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r, boolean checkSec) {
+		Location<World> setFrom = from.getLocation();
+		Location<World> setTo = to.getLocation();
+		for (int i = 0; i < r.getArea()+10; i++){
+			Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ());
+			Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ());
+			Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()+i);
+			Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()-i);
+			Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ()+i);
+			Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ()-i);
+			if (r1 != r){
+				setTo = setFrom.add(+i, 0, 0);
+				break;
+			}
+			if (r2 != r){
+				setTo = setFrom.add(-i, 0, 0);
+				break;
+			}
+			if (r3 != r){
+				setTo = setFrom.add(0, 0, +i);
+				break;
+			}
+			if (r4 != r){
+				setTo = setFrom.add(0, 0, -i);
+				break;
+			}
+			if (r5 != r){
+				setTo = setFrom.add(+i, 0, +i);
+				break;
+			}
+			if (r6 != r){
+				setTo = setFrom.add(-i, 0, -i);
+				break;
+			}
+		}
+		if (checkSec && !isSecure(setTo)){
+			RedProtect.get().getPVHelper().setBlock(setTo.getBlockRelative(Direction.DOWN), BlockTypes.GRASS.getDefaultState());
+		}
+		return new Transform<>(setTo).setRotation(to.getRotation());
+	}
+
+	private static boolean isSecure(Location loc){
+		BlockState b = loc.add(0, -1, 0).getBlock();
+		return (!b.getType().equals(BlockTypes.AIR) && !b.getType().equals(BlockTypes.WATER)) || b.getType().getName().contains("LAVA");
+	}
+
+	public static List<Location<World>> get4Points(Location<World> min, Location<World> max, int y){
 		List <Location<World>> locs = new ArrayList<>();
 		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ()));
 		locs.add(new Location<>(min.getExtent(), min.getX(), y, min.getZ() + (max.getZ() - min.getZ())));
