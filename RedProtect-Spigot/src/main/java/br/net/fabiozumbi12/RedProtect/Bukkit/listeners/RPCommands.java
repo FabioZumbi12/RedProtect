@@ -1586,8 +1586,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], w);
                 if (r == null){
-                    RPLang.sendMessage(player,RPLang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
-                    return true;
+					RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", args[2]));
                 }
 
                 String serverName = RPConfig.getString("region-settings.default-leader");
@@ -1596,16 +1595,16 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
-                    RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, r.getName(), w.getName()));
+                    RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
                     RPLang.sendMessage(player, "cmdmanager.region.portalhint");
 
-                    r2.setFlag("server-enter-command", "rp tp {player} "+r.getName()+" "+w.getName());
+                    r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.getName());
                     RedProtect.get().rm.add(r2, player.getWorld());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
 
-                    RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+r.getName()+" world "+w.getName());
+                    RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.getName());
                 }
                 return true;
             }

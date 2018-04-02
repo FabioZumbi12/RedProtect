@@ -42,6 +42,8 @@ import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 
+import javax.swing.text.html.Option;
+
 
 public class RPCommands implements CommandCallable {
     
@@ -1224,6 +1226,43 @@ public class RPCommands implements CommandCallable {
         }
 
         if (args.length == 4 || args.length == 5){
+
+			//rp createportal <newRegionName> <regionTo> <world>
+			if (checkCmd(args[0], "createportal")){
+				if (!RedProtect.get().ph.hasGenPerm(player, "createportal")) {
+					RPLang.sendMessage(player, "no.permission");
+					return cmdr;
+				}
+
+				Optional<World> w = RedProtect.get().serv.getWorld(args[3]);
+				if (!w.isPresent()){
+					RPLang.sendMessage(sender, "cmdmanager.region.invalidworld");
+					return cmdr;
+				}
+				Region r = RedProtect.get().rm.getRegion(args[2], w.get());
+				if (r == null){
+					RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", args[2]));
+				}
+
+				String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
+				String name = args[1].replace("/", "|");
+
+				RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
+				if (rb2.ready()) {
+					Region r2 = rb2.build();
+					RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));
+					RPLang.sendMessage(player, "cmdmanager.region.portalhint");
+
+					r2.setFlag("server-enter-command", "rp tp {player} "+args[2]+" "+w.get().getName());
+					RedProtect.get().rm.add(r2, player.getWorld());
+
+					RedProtect.get().firstLocationSelections.remove(player);
+					RedProtect.get().secondLocationSelections.remove(player);
+
+					RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.get().getName());
+				}
+				return cmdr;
+			}
 
         	//rp add-rent <player> <valor> <date>
         	if (checkCmd(args[0], "add-rent") && player.hasPermission("redprotect.add-rent")){
