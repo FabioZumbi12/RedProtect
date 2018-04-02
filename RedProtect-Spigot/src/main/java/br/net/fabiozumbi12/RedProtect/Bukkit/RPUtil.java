@@ -130,40 +130,13 @@ public class RPUtil {
     	return (!b.isLiquid() && !b.isEmpty()) || b.getType().name().contains("LAVA");
     }
 
-	public static Location DenyExitPlayer(World wFrom, Location from, Location to, Region r) {
+	public static Location DenyExitPlayer(Player p, Location from, Location to, Region r) {
 		Location setTo = to;
-		for (int i = 0; i < r.getArea()+10; i++){
-			Region r1 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ());
-			Region r2 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockY(), from.getBlockZ());
-			Region r3 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ()+i);
-			Region r4 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ()-i);
-			Region r5 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX()+i, from.getBlockY(), from.getBlockZ()+i);
-			Region r6 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX()-i, from.getBlockY(), from.getBlockZ()-i);
-            if (r1 == r){
-                setTo = from.add(+i, 0, 0);
-                break;
-            }
-            if (r2 == r){
-                setTo = from.add(-i, 0, 0);
-                break;
-            }
-            if (r3 == r){
-                setTo = from.add(0, 0, +i);
-                break;
-            }
-            if (r4 == r){
-                setTo = from.add(0, 0, -i);
-                break;
-            }
-            if (r5 == r){
-                setTo = from.add(+i, 0, +i);
-                break;
-            }
-            if (r6 == r){
-                setTo = from.add(-i, 0, -i);
-                break;
-            }
-        }
+		Region rto = RedProtect.get().rm.getTopRegion(to);
+		if (rto != r){
+			setTo = from;
+			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+		}
 		return setTo;
 	}
 

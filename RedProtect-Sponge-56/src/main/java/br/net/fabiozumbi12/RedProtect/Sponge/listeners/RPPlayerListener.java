@@ -628,8 +628,7 @@ public class RPPlayerListener{
         //Exit flag
         Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
         if (rfrom != null && !rfrom.canExit(p)){
-            e.setToTransform(RPUtil.DenyExitPlayer(lfrom.getExtent(), lfromForm, ltoForm, rfrom));
-            RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+            e.setToTransform(RPUtil.DenyExitPlayer(p, lfromForm, ltoForm, rfrom));
             return;
         }
     	
@@ -786,8 +785,7 @@ public class RPPlayerListener{
     	final Region rto = RedProtect.get().rm.getTopRegion(lto);
 
         if (rfrom != null && !rfrom.canExit(p)){
-            e.setToTransform(RPUtil.DenyExitPlayer(lfrom.getExtent(), e.getFromTransform(), e.getToTransform(), rfrom));
-            RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+            e.setToTransform(RPUtil.DenyExitPlayer(p, e.getFromTransform(), e.getToTransform(), rfrom));
             return;
         }
     	   	

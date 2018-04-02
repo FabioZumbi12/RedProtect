@@ -75,6 +75,9 @@ public class RPCommentedConfig {
 		setDefault("region-settings.limit-amount", 8000, "Limit of blocks until the player have other block permission.");
 		setDefault("region-settings.claim-amount", 20, "Limit of claims a player can have until have other permission for claims.");
 		setDefault("region-settings.block-id", "FENCE", "Block used to protect regions.");
+		if (Material.getMaterial(RedProtect.get().getConfig().getString("region-settings.block-id")) == null){
+			RedProtect.get().getConfig().set("region-settings.block-id", "FENCE");
+		}
 		setDefault("region-settings.max-scan", 600, "Ammount of blocks to scan on place sign to claim a region. Consider this the max area.");
 		setDefault("region-settings.define-max-distance", 1200, "When using the command define with wand tool, set the max distance allow to claim from point 1 to point 2 (in blocks)");
 		setDefault("region-settings.date-format", "dd/MM/yyyy", "Time format to use with data and time infos.");
@@ -102,8 +105,13 @@ public class RPCommentedConfig {
 		
 		setDefault("wands", null, "Wands configurations");
 		setDefault("wands.adminWandID", "GLASS_BOTTLE", "Item used to define and redefine regions.");
+		if (Material.getMaterial(RedProtect.get().getConfig().getString("wands.adminWandID")) == null){
+			RedProtect.get().getConfig().set("wands.adminWandID", "GLASS_BOTTLE");
+		}
 		setDefault("wands.infoWandID", "PAPER", "Item used to check regions.");
-		
+		if (Material.getMaterial(RedProtect.get().getConfig().getString("wands.infoWandID")) == null){
+			RedProtect.get().getConfig().set("wands.infoWandID", "PAPER");
+		}
 		setDefault("private", null, "Private options");
 		setDefault("private.use", true, "Enable private signs?");
 		setDefault("private.allow-outside", false, "Allow private signs outside regions");

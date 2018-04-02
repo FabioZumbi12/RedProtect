@@ -79,42 +79,14 @@ public class RPUtil {
     	return Sponge.getGame().getRegistry().getType(EntityType.class, e.getType().getName()).isPresent();
     }
 
-	public static Transform<World> DenyExitPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r) {
-		Location<World> setFrom = from.getLocation();
+	public static Transform<World> DenyExitPlayer(Player p, Transform<World> from, Transform<World> to, Region r) {
 		Location<World> setTo = to.getLocation();
-		for (int i = 0; i < r.getArea()+10; i++){
-			Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ());
-			Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ());
-			Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()+i);
-			Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ()-i);
-			Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()+i, setFrom.getBlockY(), setFrom.getBlockZ()+i);
-			Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX()-i, setFrom.getBlockY(), setFrom.getBlockZ()-i);
-			if (r1 == r){
-				setTo = setFrom.add(+i, 0, 0);
-				break;
-			}
-			if (r2 == r){
-				setTo = setFrom.add(-i, 0, 0);
-				break;
-			}
-			if (r3 == r){
-				setTo = setFrom.add(0, 0, +i);
-				break;
-			}
-			if (r4 == r){
-				setTo = setFrom.add(0, 0, -i);
-				break;
-			}
-			if (r5 == r){
-				setTo = setFrom.add(+i, 0, +i);
-				break;
-			}
-			if (r6 == r){
-				setTo = setFrom.add(-i, 0, -i);
-				break;
-			}
+		Region rto = RedProtect.get().rm.getTopRegion(setTo);
+		if (rto != r){
+			setTo = from.getLocation();
+			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
 		}
-		return new Transform<>(setTo).setRotation(to.getRotation());
+		return new Transform<>(setTo);
 	}
 
 	public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r, boolean checkSec) {

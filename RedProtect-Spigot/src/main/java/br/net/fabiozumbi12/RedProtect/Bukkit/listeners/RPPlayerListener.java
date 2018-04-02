@@ -621,9 +621,8 @@ public class RPPlayerListener implements Listener{
     	RedProtect.get().logger.debug("RPPlayerListener - PlayerTeleportEvent from "+lfrom.toString()+" to "+lto.toString());
 
 		//Exit flag
-		if (!rfrom.canExit(p)){
-			e.setTo(RPUtil.DenyExitPlayer(lfrom.getWorld(), lfrom, e.getTo(), rfrom));
-			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+		if (rfrom != null && !rfrom.canExit(p)){
+			e.setTo(RPUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
 			return;
 		}
 
@@ -957,8 +956,7 @@ public class RPPlayerListener implements Listener{
     	Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
 		//Exit flag
 		if (rfrom != null && !rfrom.canExit(p)){
-			e.setTo(RPUtil.DenyExitPlayer(lfrom.getWorld(), lfrom, e.getTo(), rfrom));
-			RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+			e.setTo(RPUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
 			return;
 		}
 
