@@ -533,7 +533,9 @@ public class RPGlobalListener{
 	@Listener(order = Order.FIRST, beforeModifications = true)	
 	@IsCancelled(Tristate.FALSE)
     public void onCreatureSpawn(SpawnEntityEvent event) {
-    	
+
+		if (event.getCause().first(Player.class).isPresent()) return;
+
         for (Entity e: event.getEntities()){
         	if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation()) != null){
         		continue;
