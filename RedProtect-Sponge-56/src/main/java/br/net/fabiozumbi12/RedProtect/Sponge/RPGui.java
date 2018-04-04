@@ -1,7 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
@@ -20,7 +19,6 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
-import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
@@ -110,8 +108,8 @@ public class RPGui {
 			if (slotc > 8){
                 line = slotc/9;
 				slot = slotc-(line*9);
-			}			
-			this.inv.query(SlotPos.of(slot,line)).set(this.guiItens[slotc]);
+			}
+			RedProtect.get().getPVHelper().query(inv, slot, line).set(this.guiItens[slotc]);
 		}
 
 		RedProtect.get().game.getEventManager().registerListeners(RedProtect.get().container, this);

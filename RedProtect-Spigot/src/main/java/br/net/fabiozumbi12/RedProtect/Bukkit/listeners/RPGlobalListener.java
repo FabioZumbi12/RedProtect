@@ -85,7 +85,7 @@ public class RPGlobalListener implements Listener{
 	 * @return Boolean - Can build or not.
 	 */
 	private boolean bypassBuild(Player p, Block b, int fat) {
-		return fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name()) || fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name()) || p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".build"));
+		return fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").stream().anyMatch(b.getType().name()::matches) || fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().anyMatch(b.getType().name()::matches) || p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".build"));
 	}
 	
 	@EventHandler
@@ -333,7 +333,7 @@ public class RPGlobalListener implements Listener{
 				
 		//deny item usage
 		List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName()+".deny-item-usage.items");
-    	if (e.getItem() != null && items.contains(e.getItem().getType().name())){
+    	if (e.getItem() != null && items.stream().anyMatch(e.getItem().getType().name()::matches)){
     		if (r != null && ((!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
     				(RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
@@ -373,8 +373,8 @@ public class RPGlobalListener implements Listener{
         		b.getType().name().contains("NOTE_BLOCK") ||
         		b.getType().name().contains("CAKE")){
 			
-        	if ((!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())
-        			|| !RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())) && 
+        	if ((RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().noneMatch(b.getType().name()::matches)
+        			|| RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").stream().noneMatch(b.getType().name()::matches)) &&
         			!bypassBuild(p, null, 0)){
         		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
         		e.setCancelled(true);
@@ -391,7 +391,7 @@ public class RPGlobalListener implements Listener{
 	        	}
 			}
 			if (itemInHand.getType().equals(Material.PAINTING)|| itemInHand.getType().equals(Material.ITEM_FRAME) || itemInHand.getType().equals(Material.ARMOR_STAND)){				
-				if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(itemInHand.getType().name()) && !bypassBuild(p, null, 0)){
+				if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").stream().noneMatch(itemInHand.getType().name()::matches) && !bypassBuild(p, null, 0)){
 	        		e.setUseItemInHand(Event.Result.DENY);
 	        		e.setCancelled(true);
 	    			return;		
@@ -400,7 +400,7 @@ public class RPGlobalListener implements Listener{
         } 
 		
 		if (!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world")){
-    		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").contains(b.getType().name())){
+    		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").stream().anyMatch(b.getType().name()::matches)){
     			return;
     		} 
     		e.setUseItemInHand(Event.Result.DENY);
@@ -437,7 +437,7 @@ public class RPGlobalListener implements Listener{
         } 
         
         if (!RPConfig.getGlobalFlagBool(l.getWorld().getName()+".interact") && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
-    		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-entities").contains(ent.getType().name())){
+    		if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-entities").stream().anyMatch(ent.getType().name()::matches)){
     			return;
     		} 
             e.setCancelled(true);
@@ -577,7 +577,7 @@ public class RPGlobalListener implements Listener{
                 }
             }
         	if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {        		
-            	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, null, 0)){
+            	if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().noneMatch(e1.getType().name()::matches) && !bypassBuild(p, null, 0)){
                     e.setCancelled(true);
                     return;
                 }
@@ -608,7 +608,7 @@ public class RPGlobalListener implements Listener{
                     }
                 }
             	if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {        		
-                	if (!RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(e1.getType().name()) && !bypassBuild(p, null, 0)){
+                	if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().noneMatch(e1.getType().name()::matches) && !bypassBuild(p, null, 0)){
                         e.setCancelled(true);
 					}
                 }
@@ -806,7 +806,7 @@ public class RPGlobalListener implements Listener{
 		
 		//deny item usage
 		List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName()+".deny-item-usage.items");
-    	if (e.getItem() != null && items.contains(e.getItem().getType().name())){
+    	if (e.getItem() != null && items.stream().anyMatch(e.getItem().getType().name()::matches)){
     		if (r != null && ((!RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && r.canBuild(p)) || 
     				(RPConfig.getGlobalFlagBool(p.getWorld().getName()+".deny-item-usage.allow-on-claimed-rps") && !r.canBuild(p)))){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");

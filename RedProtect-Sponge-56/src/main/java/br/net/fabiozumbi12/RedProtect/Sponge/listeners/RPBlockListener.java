@@ -487,7 +487,7 @@ public class RPBlockListener{
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractBlock(InteractBlockEvent event, @First Player p) {
     	BlockSnapshot b = event.getTargetBlock();
-        Location<World> l = null;
+        Location<World> l;
         
         RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent event");
         

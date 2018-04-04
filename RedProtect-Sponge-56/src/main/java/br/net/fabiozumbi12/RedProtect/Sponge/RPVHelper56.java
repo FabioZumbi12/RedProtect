@@ -13,6 +13,7 @@ import org.spongepowered.api.item.Enchantment;
 import org.spongepowered.api.item.Enchantments;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -99,5 +100,10 @@ public class RPVHelper56 implements RPVHelper {
 			}
 		}
 		return value;
+	}
+
+	@Override
+	public Inventory query(Inventory inventory, int x, int y){
+		return inventory.query(SlotPos.of(x, y));
 	}
 }

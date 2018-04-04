@@ -30,7 +30,7 @@ public class RPCommentedConfig {
 			}
 		}
 				
-		setDefault("config-version", 7.10, "Dont touch <3");
+		setDefault("config-version", 7.12, "Dont touch <3");
 		setDefault("debug-messages", false, "Enable debug messages");
 		setDefault("log-actions", true, "Log all commands used by players");
 		setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR");
@@ -131,7 +131,8 @@ public class RPCommentedConfig {
 						"BEACON",
 						"TRAPPED_CHEST",
 						"HOPPER",
-						"DROPPER"), "Blocks allowed to be locked with private signs.");
+						"DROPPER",
+						"[A-Z_]+_SHULKER_BOX"), "Blocks allowed to be locked with private signs.");
 		
 		setDefault("notify", null, "Notifications configs");
 		setDefault("notify.region-exit", true, "Show region info(or wilderness message) when exit a region.");

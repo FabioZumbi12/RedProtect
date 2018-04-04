@@ -8,6 +8,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.boss.ServerBossBar;
@@ -233,7 +234,7 @@ public class RPPlayerListener{
     	
         BlockSnapshot b = event.getTargetBlock();
         BlockState bstate = b.getState();
-        Location<World> l = null;
+        Location<World> l;
         
         if (!b.getState().getType().equals(BlockTypes.AIR)){
         	l = b.getLocation().get();
@@ -244,7 +245,7 @@ public class RPPlayerListener{
         
         Region r = RedProtect.get().rm.getTopRegion(l);
         ItemType itemInHand = ItemTypes.NONE;
-        ItemStack stack = ItemStack.of(ItemTypes.NONE,1);
+        ItemStack stack;
         if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
         	stack = p.getItemInHand(HandTypes.MAIN_HAND).get();
         	itemInHand = stack.getItem();
@@ -281,11 +282,11 @@ public class RPPlayerListener{
         
         //start player checks
         if (r == null){
-        	if (b != null && (bstate instanceof Container ||
-        			RedProtect.get().cfgs.getStringList("private.allowed-blocks").contains(bstate.getType().getName()))){ 
+        	if (bstate instanceof Container ||
+        			RedProtect.get().cfgs.getStringList("private.allowed-blocks").stream().anyMatch(bstate.getType().getName()::matches)){
         		Boolean out = RedProtect.get().cfgs.getBool("private.allow-outside");
             	if (out && !cont.canOpen(b, p)) {
-        			if (!RedProtect.get().ph.hasPerm(p, "RedProtect.get().bypass")) {
+        			if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     } else {
@@ -300,126 +301,124 @@ public class RPPlayerListener{
         } else { //if r != null >>       	
         	
         	//if (r != null) && (b != null) >>
-        	if (b != null) {
-        		if (bstate.getType().equals(BlockTypes.DRAGON_EGG) ||
-        				bstate.getType().equals(BlockTypes.BED) ||
-        				bstate.getType().equals(BlockTypes.NOTEBLOCK) ||
-        				bstate.getType().getName().contains("repeater") ||
-        				bstate.getType().getName().contains("comparator")){        	
-                	
-                	if (!r.canBuild(p)){
-                		RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-                		event.setCancelled(true);
+            if (bstate.getType().equals(BlockTypes.DRAGON_EGG) ||
+                    bstate.getType().equals(BlockTypes.BED) ||
+                    bstate.getType().equals(BlockTypes.NOTEBLOCK) ||
+                    bstate.getType().getName().contains("repeater") ||
+                    bstate.getType().getName().contains("comparator")){
+
+                if (!r.canBuild(p)){
+                    RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                    event.setCancelled(true);
+                }
+            }
+            else if (b.getState() instanceof Container ||
+                    RedProtect.get().cfgs.getStringList("private.allowed-blocks").stream().anyMatch(bstate.getType().getName()::matches)){
+
+                if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
+                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantopen");
+                        event.setCancelled(true);
                     }
-                } 
-                else if ((b.getState() instanceof Carrier) ||
-                		RedProtect.get().cfgs.getStringList("private.allowed-blocks").contains(bstate.getType().getName())){   
-                	
-                	if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
-                            if (!RedProtect.get().ph.hasPerm(p, "RedProtect.get().bypass")) {
-                                RPLang.sendMessage(p, "playerlistener.region.cantopen");
-                                event.setCancelled(true);
-                            }
-                            else {
-                                RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
-                            }
-                	} 
-                }               
-                
-                else if (bstate.getType().getName().contains("lever")) {
-                    if (!r.canLever(p)) {
-                        if (!RedProtect.get().ph.hasPerm(p, "RedProtect.get().bypass")) {
-                            RPLang.sendMessage(p, "playerlistener.region.cantlever");
-                            event.setCancelled(true);
-                        }
-                        else {
-                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.levertoggled").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
-                        }
+                    else {
+                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                     }
                 }
-                else if (bstate.getType().getName().contains("button")) {
-                    if (!r.canButton(p)) {
-                        if (!RedProtect.get().ph.hasPerm(p, "RedProtect.get().bypass")) {
-                            RPLang.sendMessage(p, "playerlistener.region.cantbutton");
-                            event.setCancelled(true);
-                        }
-                        else {
-                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.buttonactivated").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
-                        }
+            }
+
+            else if (bstate.getType().getName().contains("lever")) {
+                if (!r.canLever(p)) {
+                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantlever");
+                        event.setCancelled(true);
+                    }
+                    else {
+                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.levertoggled").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                     }
                 }
-                else if (RPDoor.isOpenable(b)) {
-                	if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
-                        if (!RedProtect.get().ph.hasPerm(p, "RedProtect.get().bypass")) {
-                            RPLang.sendMessage(p, "playerlistener.region.cantdoor");                    
-                            event.setCancelled(true);
-                        } else {
-                            RPLang.sendMessage(p, "playerlistener.region.opendoor");
-                            RPDoor.ChangeDoor(b, r);
-                        }
+            }
+            else if (bstate.getType().getName().contains("button")) {
+                if (!r.canButton(p)) {
+                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantbutton");
+                        event.setCancelled(true);
+                    }
+                    else {
+                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.buttonactivated").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                    }
+                }
+            }
+            else if (RPDoor.isOpenable(b)) {
+                if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
+                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantdoor");
+                        event.setCancelled(true);
                     } else {
-                    	RPDoor.ChangeDoor(b, r);
-                    }            	                
-                } 
-                else if (bstate.getType().getName().contains("rail")){
-                    if (!r.canMinecart(p)){
-                		RPLang.sendMessage(p, "blocklistener.region.cantplace");
-                		event.setCancelled(true);
+                        RPLang.sendMessage(p, "playerlistener.region.opendoor");
+                        RPDoor.ChangeDoor(b, r);
                     }
-                } 
-                else if (bstate.getType().getName().contains("sign") && !r.canSign(p)){
-        		    if (b.get(Keys.SIGN_LINES).isPresent()){
-                        List<Text> sign = b.get(Keys.SIGN_LINES).get();
-                        for (String tag:RedProtect.get().cfgs.getStringList("region-settings.allow-sign-interact-tags")){
-                            //check first rule
-                            if (tag.equalsIgnoreCase(sign.get(0).toPlain())){
-                                return;
-                            }
+                } else {
+                    RPDoor.ChangeDoor(b, r);
+                }
+            }
+            else if (bstate.getType().getName().contains("rail")){
+                if (!r.canMinecart(p)){
+                    RPLang.sendMessage(p, "blocklistener.region.cantplace");
+                    event.setCancelled(true);
+                }
+            }
+            else if (bstate.getType().getName().contains("sign") && !r.canSign(p)){
+                if (b.get(Keys.SIGN_LINES).isPresent()){
+                    List<Text> sign = b.get(Keys.SIGN_LINES).get();
+                    for (String tag:RedProtect.get().cfgs.getStringList("region-settings.allow-sign-interact-tags")){
+                        //check first rule
+                        if (tag.equalsIgnoreCase(sign.get(0).toPlain())){
+                            return;
+                        }
 
-                            //check if tag is leaders or members names
-                            if (tag.equalsIgnoreCase("{membername}")){
-                                for (String leader:r.getLeaders()){
-                                    if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))){
-                                        return;
-                                    }
-                                }
-                                for (String member:r.getMembers()){
-                                    if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(member))){
-                                        return;
-                                    }
-                                }
-                                for (String admin:r.getAdmins()){
-                                    if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))){
-                                        return;
-                                    }
+                        //check if tag is leaders or members names
+                        if (tag.equalsIgnoreCase("{membername}")){
+                            for (String leader:r.getLeaders()){
+                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))){
+                                    return;
                                 }
                             }
-
-                            //check if tag is player name
-                            if (tag.equalsIgnoreCase("{playername}")){
-                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(p.getName()))){
+                            for (String member:r.getMembers()){
+                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(member))){
+                                    return;
+                                }
+                            }
+                            for (String admin:r.getAdmins()){
+                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))){
                                     return;
                                 }
                             }
                         }
+
+                        //check if tag is player name
+                        if (tag.equalsIgnoreCase("{playername}")){
+                            if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(p.getName()))){
+                                return;
+                            }
+                        }
                     }
-                    RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
-                    event.setCancelled(true);
                 }
-                else if ((itemInHand.equals(ItemTypes.FLINT_AND_STEEL) || 
-                		itemInHand.equals(ItemTypes.WATER_BUCKET) || 
-                		itemInHand.equals(ItemTypes.BUCKET) || 
-                		itemInHand.equals(ItemTypes.LAVA_BUCKET) || 
-                		itemInHand.equals(ItemTypes.ITEM_FRAME) || 
-                		itemInHand.equals(ItemTypes.PAINTING)) && !r.canBuild(p)) {
-                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantuse"));
-                    event.setCancelled(true);
-                }
-                else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(bstate)){
-                	RPLang.sendMessage(p, "playerlistener.region.cantinteract");
-                	event.setCancelled(true);
-                }
-        	}             
+                RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
+                event.setCancelled(true);
+            }
+            else if ((itemInHand.equals(ItemTypes.FLINT_AND_STEEL) ||
+                    itemInHand.equals(ItemTypes.WATER_BUCKET) ||
+                    itemInHand.equals(ItemTypes.BUCKET) ||
+                    itemInHand.equals(ItemTypes.LAVA_BUCKET) ||
+                    itemInHand.equals(ItemTypes.ITEM_FRAME) ||
+                    itemInHand.equals(ItemTypes.PAINTING)) && !r.canBuild(p)) {
+                RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantuse"));
+                event.setCancelled(true);
+            }
+            else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(bstate)){
+                RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                event.setCancelled(true);
+            }
         }               
     }
     
@@ -539,7 +538,7 @@ public class RPPlayerListener{
     		RPLang.sendMessage(play, RPLang.get("cmdmanager.region.tpcancelled"));
     	}
 		
-    	if (r != null && !r.canPlayerDamage()){
+    	if (!r.canPlayerDamage()){
     		e.setCancelled(true);
     	}
     	
@@ -563,7 +562,7 @@ public class RPPlayerListener{
         	}                    
         }        
     }
-    
+
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onEntityDamageByEntityEvent(InteractEntityEvent.Primary e, @First Player p) {
         Entity e1 = e.getTargetEntity();        
@@ -634,7 +633,7 @@ public class RPPlayerListener{
     	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RedProtect.get().cfgs.getInt("netherProtection.maxYsize");
-    	if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("RedProtect.get().bypass.nether-roof")){
+    	if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")){
     		for (String cmd:RedProtect.get().cfgs.getStringList("netherProtection.execute-cmd")){
         		RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
     		}
@@ -869,7 +868,7 @@ public class RPPlayerListener{
     	
     	//teleport player to coord/world if playerup 128 y
     	int NetherY = RedProtect.get().cfgs.getInt("netherProtection.maxYsize");
-    	if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("RedProtect.get().bypass.nether-roof")){
+    	if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")){
     		RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     		e.setCancelled(true); 
     	}
@@ -923,7 +922,7 @@ public class RPPlayerListener{
     	
     	String cmd = e.getCommand();
     	    	
-    	if (RedProtect.get().cfgs.getStringList("server-protection.deny-commands-on-worlds." + p.getWorld().getName()).contains(cmd) && !p.hasPermission("RedProtect.get().bypass")){
+    	if (RedProtect.get().cfgs.getStringList("server-protection.deny-commands-on-worlds." + p.getWorld().getName()).contains(cmd) && !p.hasPermission("redprotect.bypass")){
     		RPLang.sendMessage(p, "playerlistener.command-notallowed");
     		e.setCancelled(true);
     		return;

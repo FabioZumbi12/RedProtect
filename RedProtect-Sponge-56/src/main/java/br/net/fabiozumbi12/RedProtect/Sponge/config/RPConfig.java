@@ -182,278 +182,291 @@ public class RPConfig{
 			RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
 			e1.printStackTrace();
 		}
-		
-		
-		        //load configs
-		        try {
-		        	//tempconfig
-		        	configManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("config.conf").get().getUrl()).build();
-		        	tempConfig = configManager.load();
-		        	
-		        	configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
-		        	config = configManager.load();
-					
-					guiManager = HoconConfigurationLoader.builder().setPath(guiConfig.toPath()).build();
-					gui = guiManager.load();
-					
-					gFlagsManager = HoconConfigurationLoader.builder().setPath(gFlagsConfig.toPath()).build();
-					gflags = gFlagsManager.load();
-					
-					ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
-					ecoCfgs = ecoManager.load();
-					
-					/*--------------------- protections.conf ---------------------------*/
-					protManager = HoconConfigurationLoader.builder().setFile(protFile).build();	
-					protCfgs = protManager.load();
-					
-					protCfgs.getNode("chat-protection","chat-enhancement","enable").setValue(protCfgs.getNode("chat-protection","chat-enhancement","enable").getBoolean(true));
-					protCfgs.getNode("chat-protection","chat-enhancement","end-with-dot").setValue(protCfgs.getNode("chat-protection","chat-enhancement","end-with-dot").getBoolean(true));
-					protCfgs.getNode("chat-protection","chat-enhancement","minimum-lenght").setValue(protCfgs.getNode("chat-protection","chat-enhancement","minimum-lenght").getInt(3));
-					
-					protCfgs.getNode("chat-protection","anti-flood","enable").setValue(protCfgs.getNode("chat-protection","anti-flood","enable").getBoolean(true));
-					protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs")
+
+
+		//load configs
+		try {
+			//tempconfig
+			configManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("config.conf").get().getUrl()).build();
+			tempConfig = configManager.load();
+
+			configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
+			config = configManager.load();
+
+			guiManager = HoconConfigurationLoader.builder().setPath(guiConfig.toPath()).build();
+			gui = guiManager.load();
+
+			gFlagsManager = HoconConfigurationLoader.builder().setPath(gFlagsConfig.toPath()).build();
+			gflags = gFlagsManager.load();
+
+			ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
+			ecoCfgs = ecoManager.load();
+
+			/*--------------------- protections.conf ---------------------------*/
+			protManager = HoconConfigurationLoader.builder().setFile(protFile).build();
+			protCfgs = protManager.load();
+
+			protCfgs.getNode("chat-protection","chat-enhancement","enable").setValue(protCfgs.getNode("chat-protection","chat-enhancement","enable").getBoolean(true));
+			protCfgs.getNode("chat-protection","chat-enhancement","end-with-dot").setValue(protCfgs.getNode("chat-protection","chat-enhancement","end-with-dot").getBoolean(true));
+			protCfgs.getNode("chat-protection","chat-enhancement","minimum-lenght").setValue(protCfgs.getNode("chat-protection","chat-enhancement","minimum-lenght").getInt(3));
+
+			protCfgs.getNode("chat-protection","anti-flood","enable").setValue(protCfgs.getNode("chat-protection","anti-flood","enable").getBoolean(true));
+			protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs")
 					.setValue(protCfgs.getNode("chat-protection","anti-flood","whitelist-flood-characs").getList(TypeToken.of(String.class), Collections.singletonList("k")));
-					
-					protCfgs.getNode("chat-protection","caps-filter","enable").setValue(protCfgs.getNode("chat-protection","caps-filter","enable").getBoolean(true));
-					protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").setValue(protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").getInt(3));
-					
-					protCfgs.getNode("chat-protection","antispam","enable").setValue(protCfgs.getNode("chat-protection","antispam","enable").getBoolean(false));
-					protCfgs.getNode("chat-protection","antispam","time-beteween-messages").setValue(protCfgs.getNode("chat-protection","antispam","time-beteween-messages").getInt(1));
-					protCfgs.getNode("chat-protection","antispam","count-of-same-message").setValue(protCfgs.getNode("chat-protection","antispam","count-of-same-message").getInt(5));
-					protCfgs.getNode("chat-protection","antispam","time-beteween-same-messages").setValue(protCfgs.getNode("chat-protection","antispam","time-beteween-same-messages").getInt(10));
-					protCfgs.getNode("chat-protection","antispam","colldown-msg").setValue(protCfgs.getNode("chat-protection","antispam","colldown-msg").getString("&6Slow down your messages!"));
-					protCfgs.getNode("chat-protection","antispam","wait-message").setValue(protCfgs.getNode("chat-protection","antispam","wait-message").getString("&cWait to send the same message again!"));
-					protCfgs.getNode("chat-protection","antispam","cmd-action").setValue(protCfgs.getNode("chat-protection","antispam","cmd-action").getString("kick {player} Relax, slow down your messages frequency ;)"));
-					
-					protCfgs.getNode("chat-protection","censor","enable").setValue(protCfgs.getNode("chat-protection","censor","enable").getBoolean(true));
-					protCfgs.getNode("chat-protection","censor","replace-by-symbol").setValue(protCfgs.getNode("chat-protection","censor","replace-by-symbol").getBoolean(true));
-					protCfgs.getNode("chat-protection","censor","by-symbol").setValue(protCfgs.getNode("chat-protection","censor","by-symbol").getString("*"));
-					protCfgs.getNode("chat-protection","censor","by-word").setValue(protCfgs.getNode("chat-protection","censor","by-word").getString("censored"));
-					protCfgs.getNode("chat-protection","censor","replace-partial-word").setValue(protCfgs.getNode("chat-protection","censor","replace-partial-word").getBoolean(false));
-					protCfgs.getNode("chat-protection","censor","action","cmd").setValue(protCfgs.getNode("chat-protection","censor","action","cmd").getString(""));
-					protCfgs.getNode("chat-protection","censor","action","partial-words").setValue(protCfgs.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
-					protCfgs.getNode("chat-protection","censor","replace-words")
+
+			protCfgs.getNode("chat-protection","caps-filter","enable").setValue(protCfgs.getNode("chat-protection","caps-filter","enable").getBoolean(true));
+			protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").setValue(protCfgs.getNode("chat-protection","caps-filter","minimum-lenght").getInt(3));
+
+			protCfgs.getNode("chat-protection","antispam","enable").setValue(protCfgs.getNode("chat-protection","antispam","enable").getBoolean(false));
+			protCfgs.getNode("chat-protection","antispam","time-beteween-messages").setValue(protCfgs.getNode("chat-protection","antispam","time-beteween-messages").getInt(1));
+			protCfgs.getNode("chat-protection","antispam","count-of-same-message").setValue(protCfgs.getNode("chat-protection","antispam","count-of-same-message").getInt(5));
+			protCfgs.getNode("chat-protection","antispam","time-beteween-same-messages").setValue(protCfgs.getNode("chat-protection","antispam","time-beteween-same-messages").getInt(10));
+			protCfgs.getNode("chat-protection","antispam","colldown-msg").setValue(protCfgs.getNode("chat-protection","antispam","colldown-msg").getString("&6Slow down your messages!"));
+			protCfgs.getNode("chat-protection","antispam","wait-message").setValue(protCfgs.getNode("chat-protection","antispam","wait-message").getString("&cWait to send the same message again!"));
+			protCfgs.getNode("chat-protection","antispam","cmd-action").setValue(protCfgs.getNode("chat-protection","antispam","cmd-action").getString("kick {player} Relax, slow down your messages frequency ;)"));
+
+			protCfgs.getNode("chat-protection","censor","enable").setValue(protCfgs.getNode("chat-protection","censor","enable").getBoolean(true));
+			protCfgs.getNode("chat-protection","censor","replace-by-symbol").setValue(protCfgs.getNode("chat-protection","censor","replace-by-symbol").getBoolean(true));
+			protCfgs.getNode("chat-protection","censor","by-symbol").setValue(protCfgs.getNode("chat-protection","censor","by-symbol").getString("*"));
+			protCfgs.getNode("chat-protection","censor","by-word").setValue(protCfgs.getNode("chat-protection","censor","by-word").getString("censored"));
+			protCfgs.getNode("chat-protection","censor","replace-partial-word").setValue(protCfgs.getNode("chat-protection","censor","replace-partial-word").getBoolean(false));
+			protCfgs.getNode("chat-protection","censor","action","cmd").setValue(protCfgs.getNode("chat-protection","censor","action","cmd").getString(""));
+			protCfgs.getNode("chat-protection","censor","action","partial-words").setValue(protCfgs.getNode("chat-protection","censor","action","partial-words").getBoolean(false));
+			protCfgs.getNode("chat-protection","censor","replace-words")
 					.setValue(protCfgs.getNode("chat-protection","censor","replace-words").getList(TypeToken.of(String.class), Collections.singletonList("word")));
-					
-					protCfgs.getNode("chat-protection","anti-ip","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","enable").getBoolean(true));
-					protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
-					protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
-					protCfgs.getNode("chat-protection","anti-ip","check-for-words")
+
+			protCfgs.getNode("chat-protection","anti-ip","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","enable").getBoolean(true));
+			protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
+			protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").setValue(protCfgs.getNode("chat-protection","anti-ip","custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
+			protCfgs.getNode("chat-protection","anti-ip","check-for-words")
 					.setValue(protCfgs.getNode("chat-protection","anti-ip","check-for-words").getList(TypeToken.of(String.class), Collections.singletonList("www.google.com")));
-					protCfgs.getNode("chat-protection","anti-ip","whitelist-words")
+			protCfgs.getNode("chat-protection","anti-ip","whitelist-words")
 					.setValue(protCfgs.getNode("chat-protection","anti-ip","whitelist-words").getList(TypeToken.of(String.class), Arrays.asList("www.myserver.com","prntscr.com","gyazo.com","www.youtube.com")));
-					protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").getString("cancel"));
-					protCfgs.getNode("chat-protection","anti-ip","cancel-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-msg").getString("&cYou cant send websites or ips on chat"));
-					protCfgs.getNode("chat-protection","anti-ip","replace-by-word").setValue(protCfgs.getNode("chat-protection","anti-ip","replace-by-word").getString("-removed-"));
-					protCfgs.getNode("chat-protection","anti-ip","punish","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","enable").getBoolean(false));
-					protCfgs.getNode("chat-protection","anti-ip","punish","max-attempts").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","max-attempts").getInt(3));
-					protCfgs.getNode("chat-protection","anti-ip","punish","mute-or-cmd").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-or-cmd").getString("mute"));
-					protCfgs.getNode("chat-protection","anti-ip","punish","mute-duration").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-duration").getInt(1));
-					protCfgs.getNode("chat-protection","anti-ip","punish","mute-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-msg").getString("&cYou have been muted for send IPs or URLs on chat!"));
-					protCfgs.getNode("chat-protection","anti-ip","punish","unmute-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","unmute-msg").getString("&aYou can chat again!"));
-					protCfgs.getNode("chat-protection","anti-ip","punish","cmd-punish").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","cmd-punish").getString("tempban {player} 10m &cYou have been warned about send links or IPs on chat!"));
-					
-					
-				} catch (IOException | ObjectMappingException e1) {
-					RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
-					e1.printStackTrace();
-				}
-    	            
-				
-    	            //------------------------------ Add default Values ----------------------------//
-		        
-		        config = updateFromIn(tempConfig, config); 
-		        		        
-		        try {
-		        	configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
-					tempConfig = configManager.load();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+			protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-or-replace").getString("cancel"));
+			protCfgs.getNode("chat-protection","anti-ip","cancel-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","cancel-msg").getString("&cYou cant send websites or ips on chat"));
+			protCfgs.getNode("chat-protection","anti-ip","replace-by-word").setValue(protCfgs.getNode("chat-protection","anti-ip","replace-by-word").getString("-removed-"));
+			protCfgs.getNode("chat-protection","anti-ip","punish","enable").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","enable").getBoolean(false));
+			protCfgs.getNode("chat-protection","anti-ip","punish","max-attempts").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","max-attempts").getInt(3));
+			protCfgs.getNode("chat-protection","anti-ip","punish","mute-or-cmd").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-or-cmd").getString("mute"));
+			protCfgs.getNode("chat-protection","anti-ip","punish","mute-duration").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-duration").getInt(1));
+			protCfgs.getNode("chat-protection","anti-ip","punish","mute-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","mute-msg").getString("&cYou have been muted for send IPs or URLs on chat!"));
+			protCfgs.getNode("chat-protection","anti-ip","punish","unmute-msg").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","unmute-msg").getString("&aYou can chat again!"));
+			protCfgs.getNode("chat-protection","anti-ip","punish","cmd-punish").setValue(protCfgs.getNode("chat-protection","anti-ip","punish","cmd-punish").getString("tempban {player} 10m &cYou have been warned about send links or IPs on chat!"));
 
-		        config = updateFromOut(tempConfig, config); 
-		                        
-		        
-    	            
-                    //--------------------------------------------------------------------------//
-                    
-				
-                    RedProtect.get().logger.info("Server version: " + RedProtect.get().game.getPlatform().getMinecraftVersion().getName());
-                    
-    	            //add allowed claim worlds to config
-    	            try {
-						if (getNodes("allowed-claim-worlds").getList(TypeToken.of(String.class)).isEmpty()) {
-							List<String> worlds = new ArrayList<>();
-							for (World w:RedProtect.get().serv.getWorlds()){
-								worlds.add(w.getName());
-								RedProtect.get().logger.warning("Added world to claim list " + w.getName());
-							}
-							worlds.remove("example_world");
-							getNodes("allowed-claim-worlds").setValue(worlds);
-						}
-					} catch (ObjectMappingException e) {
-						e.printStackTrace();
-					}    
-    	                	            
-                    /*------------- ---- Add default config for not updateable configs ------------------*/
-                    
-                    //update new player flags according version
-    	            List<String> flags = new LinkedList<>(Collections.emptyList());
-    	            try {
-						flags = getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class));
-					} catch (ObjectMappingException e) {
-						e.printStackTrace();
-					}
-    	            int update = 0;
-        			if (getNodes("config-version").getDouble() < 6.8D){
-        				getNodes("config-version").setValue(6.8D);
-        				
-						if (!flags.contains("smart-door")){
-							flags.add("smart-door");
-							getNodes("flags.smart-door").setValue(true);
-						}
-						if (!flags.contains("allow-potions")){
-							flags.add("allow-potions");    
-							getNodes("flags.allow-potions").setValue(true);
-						}
-						if (!flags.contains("mob-loot")){
-							flags.add("mob-loot");     
-							getNodes("flags.mob-loot").setValue(false);
-						}
-						if (!flags.contains("flow-damage")){
-							flags.add("flow-damage");     
-							getNodes("flags.flow-damage").setValue(false);
-						}	        				
-						update++;        				
-        			}
-        			
-        			if (getNodes("config-version").getDouble() < 6.9D){
-        				getNodes("config-version").setValue(6.9D);
-        				if (!flags.contains("allow-fly")){
-							flags.add("allow-fly");
-							getNodes("flags.allow-fly").setValue(true);
-						}
-						if (!flags.contains("can-grow")){
-							flags.add("can-grow");
-							getNodes("flags.can-grow").setValue(true);
-						}
-						if (!flags.contains("teleport")){
-							flags.add("teleport");
-							getNodes("flags.teleport").setValue(false);
-						}	
-						update++;  
-        			}
-        			
-        			if (getNodes("config-version").getDouble() < 7.0D){
-        				getNodes("config-version").setValue(7.0D);
-        				if (!flags.contains("allow-effects")){
-							flags.add("allow-effects");
-							getNodes("flags.allow-effects").setValue(true);
-						}
-						if (!flags.contains("use-potions")){
-							flags.add("use-potions");
-							getNodes("flags.use-potions").setValue(true);
-						}
-						if (flags.contains("allow-potions")){
-							flags.remove("allow-potions");
-							getNodes("flags").removeChild("allow-potions");
-						}	
-						update++;  
-        			}
-        			
-        			if (getNodes("config-version").getDouble() < 7.1D){
-        				getNodes("config-version").setValue(7.1D);
-        				getNodes("language").setValue("en-EN");
-        				update++;
-        			}
-        			
-        			if (getNodes("config-version").getDouble() < 7.2D){
-        				getNodes("config-version").setValue(7.2D);
-        				if (!flags.contains("allow-spawner")){
-        					flags.add("allow-spawner");
-        					getNodes("flags.allow-spawner").setValue(false);
-        				}
-        				if (!flags.contains("leaves-decay")){
-        					flags.add("leaves-decay");
-        					getNodes("flags.leaves-decay").setValue(false);
-        				}
-        				update++;
-        			}        
-        			
-        			if (getNodes("config-version").getDouble() < 7.3D){
-        				getNodes("config-version").setValue(7.3D);
-        				if (!flags.contains("build")){
-        					flags.add("build");
-        					getNodes("flags.build").setValue(false);
-        				}
-        				update++;
-        			} 
-        			
-        			if (update > 0){
-        				getNodes("flags-configuration.enabled-flags").setValue(flags);
-        				RedProtect.get().logger.warning("Configuration UPDATED!");
-        			}
-        			/*---------------------------------------- Global Flags for worlds loaded --------------------------------------------*/
-        			
-        			for (World w:Sponge.getServer().getWorlds()){
-        				this.loadPerWorlds(w);
-        			}
-                    
-                    /*------------------------------------------ Gui Items ------------------------------------------*/
-                    
-                    gui.getNode("gui-strings","value").setValue(gui.getNode("gui-strings","value").getString("&bValue: "));   
-                    gui.getNode("gui-strings","true").setValue(gui.getNode("gui-strings","true").getString("&atrue")); 
-                    gui.getNode("gui-strings","false").setValue(gui.getNode("gui-strings","false").getString("&cfalse")); 
-                    gui.getNode("gui-strings","separator").setValue(gui.getNode("gui-strings","separator").getString("&7|")); 
-                    
-                    gui.getNode("gui-separator","material").setValue(gui.getNode("gui-separator","material").getString("stained_glass_pane")); 
-                    gui.getNode("gui-separator","data").setValue(gui.getNode("gui-separator","data").getInt(0)); 
-                    
-                    for (String key:getDefFlagsValues().keySet()){
-                    	gui.getNode("gui-flags",key,"slot").setValue(gui.getNode("gui-flags",key,"slot").setValue(gui.getNode("gui-flags",key,"slot").getInt(getDefFlagsValues().size())));
-                    	gui.getNode("gui-flags",key,"material").setValue(gui.getNode("gui-flags",key,"material").setValue(gui.getNode("gui-flags",key,"material").getString("golden_apple")));
-                    	gui.getNode("gui-flags",key,"name").setValue(gui.getNode("gui-flags",key,"name").setValue(gui.getNode("gui-flags",key,"name").getString("&e"+key)));                    	
-                    	gui.getNode("gui-flags",key,"description").setValue(gui.getNode("gui-flags",key,"description").setValue(gui.getNode("gui-flags",key,"description").getString("&bDescription: &2Add a flag description here.")));
-                    	gui.getNode("gui-flags",key,"description1").setValue(gui.getNode("gui-flags",key,"description1").setValue(gui.getNode("gui-flags",key,"description1").getString("")));
-                    	gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").getString("")));
-                    }
-                    
-                    List<String> names = new ArrayList<>();
-                    Sponge.getRegistry().getAllOf(BlockType.class).forEach((type)-> names.add(type.getName()));
-                    
-                    Sponge.getRegistry().getAllOf(ItemType.class).forEach((type)->{
-                    	if (!names.contains(type.getName()))
-                    		names.add(type.getName());                    	
-                    });
-                    
-                    if (names.size() != ecoCfgs.getNode("items","values").getChildrenList().size()){
-                    	for (String mat:names){
-                        	if (ecoCfgs.getNode("items","values",mat).getValue() == null){
-                        		ecoCfgs.getNode("items","values",mat).setValue(0.0);                		
-                        	}
-                        }
-                    }                    
 
-                    if (RedProtect.get().getPVHelper().getAllEnchants().size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
-                    	for (String ench:RedProtect.get().getPVHelper().getAllEnchants()){
-                        	if (ecoCfgs.getNode("enchantments","values",ench).getValue() == null){
-                        		ecoCfgs.getNode("enchantments","values",ench).setValue(0.0);
-                        	}
-                        } 
-                    }                                       
-                    
-                    //////////////////////
-                    
-        			//create logs folder
-        			File logs = new File(RedProtect.get().configDir+File.separator+"logs");
-        			if(getBool("log-actions") && !logs.exists()){
-        				logs.mkdir();
-    	                RedProtect.get().logger.info("Created folder: " + RedProtect.get().configDir+File.separator+"logs");
-        	    	}
-        			
-        			save();        			
-    	            RedProtect.get().logger.info("All configurations loaded!");
-    	            
+		} catch (IOException | ObjectMappingException e1) {
+			RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
+			e1.printStackTrace();
+		}
+
+
+		//------------------------------ Add default Values ----------------------------//
+
+		config = updateFromIn(tempConfig, config);
+
+		try {
+			configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
+			tempConfig = configManager.load();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		config = updateFromOut(tempConfig, config);
+
+
+
+		//--------------------------------------------------------------------------//
+
+
+		RedProtect.get().logger.info("Server version: " + RedProtect.get().game.getPlatform().getMinecraftVersion().getName());
+
+		//add allowed claim worlds to config
+		try {
+			if (getNodes("allowed-claim-worlds").getList(TypeToken.of(String.class)).isEmpty()) {
+				List<String> worlds = new ArrayList<>();
+				for (World w:RedProtect.get().serv.getWorlds()){
+					worlds.add(w.getName());
+					RedProtect.get().logger.warning("Added world to claim list " + w.getName());
+				}
+				worlds.remove("example_world");
+				getNodes("allowed-claim-worlds").setValue(worlds);
+			}
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+
+		/*------------- ---- Add default config for not updateable configs ------------------*/
+
+		//update new player flags according version
+		List<String> flags = new LinkedList<>(Collections.emptyList());
+		try {
+			flags = getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class));
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		int update = 0;
+		if (getNodes("config-version").getDouble() < 6.8D){
+			getNodes("config-version").setValue(6.8D);
+
+			if (!flags.contains("smart-door")){
+				flags.add("smart-door");
+				getNodes("flags.smart-door").setValue(true);
+			}
+			if (!flags.contains("allow-potions")){
+				flags.add("allow-potions");
+				getNodes("flags.allow-potions").setValue(true);
+			}
+			if (!flags.contains("mob-loot")){
+				flags.add("mob-loot");
+				getNodes("flags.mob-loot").setValue(false);
+			}
+			if (!flags.contains("flow-damage")){
+				flags.add("flow-damage");
+				getNodes("flags.flow-damage").setValue(false);
+			}
+			update++;
+		}
+
+		if (getNodes("config-version").getDouble() < 6.9D){
+			getNodes("config-version").setValue(6.9D);
+			if (!flags.contains("allow-fly")){
+				flags.add("allow-fly");
+				getNodes("flags.allow-fly").setValue(true);
+			}
+			if (!flags.contains("can-grow")){
+				flags.add("can-grow");
+				getNodes("flags.can-grow").setValue(true);
+			}
+			if (!flags.contains("teleport")){
+				flags.add("teleport");
+				getNodes("flags.teleport").setValue(false);
+			}
+			update++;
+		}
+
+		if (getNodes("config-version").getDouble() < 7.0D){
+			getNodes("config-version").setValue(7.0D);
+			if (!flags.contains("allow-effects")){
+				flags.add("allow-effects");
+				getNodes("flags.allow-effects").setValue(true);
+			}
+			if (!flags.contains("use-potions")){
+				flags.add("use-potions");
+				getNodes("flags.use-potions").setValue(true);
+			}
+			if (flags.contains("allow-potions")){
+				flags.remove("allow-potions");
+				getNodes("flags").removeChild("allow-potions");
+			}
+			update++;
+		}
+
+		if (getNodes("config-version").getDouble() < 7.1D){
+			getNodes("config-version").setValue(7.1D);
+			getNodes("language").setValue("en-EN");
+			update++;
+		}
+
+		if (getNodes("config-version").getDouble() < 7.2D){
+			getNodes("config-version").setValue(7.2D);
+			if (!flags.contains("allow-spawner")){
+				flags.add("allow-spawner");
+				getNodes("flags.allow-spawner").setValue(false);
+			}
+			if (!flags.contains("leaves-decay")){
+				flags.add("leaves-decay");
+				getNodes("flags.leaves-decay").setValue(false);
+			}
+			update++;
+		}
+
+		if (getNodes("config-version").getDouble() < 7.3D){
+			getNodes("config-version").setValue(7.3D);
+			if (!flags.contains("build")){
+				flags.add("build");
+				getNodes("flags.build").setValue(false);
+			}
+			update++;
+		}
+
+		if (getNodes("config-version").getDouble() < 7.4D){
+			getNodes("config-version").setValue(7.4D);
+			try {
+				List<String> blocks = getNodes("private.allowed-blocks").getList(TypeToken.of(String.class));
+				blocks.add("minecraft:[a-z_]+_shulker_box");
+				getNodes("private.allowed-blocks").setValue(blocks);
+			} catch (ObjectMappingException e) {
+				e.printStackTrace();
+			}
+
+			update++;
+		}
+
+		if (update > 0){
+			getNodes("flags-configuration.enabled-flags").setValue(flags);
+			RedProtect.get().logger.warning("Configuration UPDATED!");
+		}
+		/*---------------------------------------- Global Flags for worlds loaded --------------------------------------------*/
+
+		for (World w:Sponge.getServer().getWorlds()){
+			this.loadPerWorlds(w);
+		}
+
+		/*------------------------------------------ Gui Items ------------------------------------------*/
+
+		gui.getNode("gui-strings","value").setValue(gui.getNode("gui-strings","value").getString("&bValue: "));
+		gui.getNode("gui-strings","true").setValue(gui.getNode("gui-strings","true").getString("&atrue"));
+		gui.getNode("gui-strings","false").setValue(gui.getNode("gui-strings","false").getString("&cfalse"));
+		gui.getNode("gui-strings","separator").setValue(gui.getNode("gui-strings","separator").getString("&7|"));
+
+		gui.getNode("gui-separator","material").setValue(gui.getNode("gui-separator","material").getString("stained_glass_pane"));
+		gui.getNode("gui-separator","data").setValue(gui.getNode("gui-separator","data").getInt(0));
+
+		for (String key:getDefFlagsValues().keySet()){
+			gui.getNode("gui-flags",key,"slot").setValue(gui.getNode("gui-flags",key,"slot").setValue(gui.getNode("gui-flags",key,"slot").getInt(getDefFlagsValues().size())));
+			gui.getNode("gui-flags",key,"material").setValue(gui.getNode("gui-flags",key,"material").setValue(gui.getNode("gui-flags",key,"material").getString("golden_apple")));
+			gui.getNode("gui-flags",key,"name").setValue(gui.getNode("gui-flags",key,"name").setValue(gui.getNode("gui-flags",key,"name").getString("&e"+key)));
+			gui.getNode("gui-flags",key,"description").setValue(gui.getNode("gui-flags",key,"description").setValue(gui.getNode("gui-flags",key,"description").getString("&bDescription: &2Add a flag description here.")));
+			gui.getNode("gui-flags",key,"description1").setValue(gui.getNode("gui-flags",key,"description1").setValue(gui.getNode("gui-flags",key,"description1").getString("")));
+			gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").getString("")));
+		}
+
+		List<String> names = new ArrayList<>();
+		Sponge.getRegistry().getAllOf(BlockType.class).forEach((type)-> names.add(type.getName()));
+
+		Sponge.getRegistry().getAllOf(ItemType.class).forEach((type)->{
+			if (!names.contains(type.getName()))
+				names.add(type.getName());
+		});
+
+		if (names.size() != ecoCfgs.getNode("items","values").getChildrenList().size()){
+			for (String mat:names){
+				if (ecoCfgs.getNode("items","values",mat).getValue() == null){
+					ecoCfgs.getNode("items","values",mat).setValue(0.0);
+				}
+			}
+		}
+
+		if (RedProtect.get().getPVHelper().getAllEnchants().size() != ecoCfgs.getNode("enchantments","values").getChildrenList().size()){
+			for (String ench:RedProtect.get().getPVHelper().getAllEnchants()){
+				if (ecoCfgs.getNode("enchantments","values",ench).getValue() == null){
+					ecoCfgs.getNode("enchantments","values",ench).setValue(0.0);
+				}
+			}
+		}
+
+		//////////////////////
+
+		//create logs folder
+		File logs = new File(RedProtect.get().configDir+File.separator+"logs");
+		if(getBool("log-actions") && !logs.exists()){
+			logs.mkdir();
+			RedProtect.get().logger.info("Created folder: " + RedProtect.get().configDir+File.separator+"logs");
+		}
+
+		save();
+		RedProtect.get().logger.info("All configurations loaded!");
+
 	}
     
 	public void loadPerWorlds(World w) {		

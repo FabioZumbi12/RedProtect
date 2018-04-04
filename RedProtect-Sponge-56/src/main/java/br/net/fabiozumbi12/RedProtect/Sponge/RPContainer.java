@@ -12,6 +12,7 @@ import org.spongepowered.api.block.tileentity.TileEntityTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.block.DirectionalData;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
@@ -32,7 +33,7 @@ public class RPContainer {
     	World w = loc.getExtent();
     	List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
     	
-        if (blocks.contains(blocktype)){        	
+        if (blocks.stream().anyMatch(blocktype::matches)){
         	for (Direction dir:dirs){        		
         		Location<World> loc1 = getRelative(loc, dir);        		
         		if (isSign(loc1.getBlockType())){
@@ -42,7 +43,7 @@ public class RPContainer {
             		}
             	} 
         		        		
-        		if (blocks.contains(loc1.getBlockType().getName()) && loc1.getBlockType().equals(b.getState().getType())){        			
+        		if (blocks.stream().anyMatch(loc1.getBlockType().getName()::matches) && loc1.getBlockType().equals(b.getState().getType())){
         			for (Direction dir2:dirs){
         				Location<World> loc3 = getRelative(loc1, dir2);              			
             			if (isSign(loc3.getBlockType())){
@@ -82,7 +83,7 @@ public class RPContainer {
     		}
     	}
     	
-        if (blocks.contains(blocktype)){        	
+        if (blocks.stream().anyMatch(blocktype::matches)){
         	for (Direction dir:dirs){        		
         		Location<World> loc1 = getRelative(loc, dir);        		
         		if (isSign(loc1.getBlockType())){
@@ -92,7 +93,7 @@ public class RPContainer {
             		}
             	} 
         		        		
-        		if (blocks.contains(loc1.getBlockType().getName()) && loc1.getBlockType().equals(b.getState().getType())){        			
+        		if (blocks.stream().anyMatch(loc1.getBlockType().getName()::matches) && loc1.getBlockType().equals(b.getState().getType())){
         			for (Direction dir2:dirs){
         				Location<World> loc3 = getRelative(loc1, dir2);              			
             			if (isSign(loc3.getBlockType())){
@@ -131,7 +132,7 @@ public class RPContainer {
     		}
     	}
     	
-        if (blocks.contains(blocktype)){        	
+        if (blocks.stream().anyMatch(blocktype::matches)){
         	for (Direction dir:dirs){        		
         		Location<World> loc1 = getRelative(loc, dir);        		
         		if (isSign(loc1.getBlockType())){
@@ -141,7 +142,7 @@ public class RPContainer {
             		}
             	} 
         		        		
-        		if (blocks.contains(loc1.getBlockType().getName()) && loc1.getBlockType().equals(b.getState().getType())){        			
+        		if (blocks.stream().anyMatch(loc1.getBlockType().getName()::matches) && loc1.getBlockType().equals(b.getState().getType())){
         			for (Direction dir2:dirs){
         				Location<World> loc3 = getRelative(loc1, dir2);              			
             			if (isSign(loc3.getBlockType())){
@@ -156,14 +157,7 @@ public class RPContainer {
         }
         return true;
     }
-	
-	public static BlockSnapshot getBlockRelative(TileEntity block) {
-        if (block.getType().equals(TileEntityTypes.SIGN)){
-        	return block.getLocation().getRelative(block.getLocation().get(DirectionalData.class).get().direction().get()).createSnapshot();
-        }            
-        return null;
-    }
-	
+
 	private boolean validatePrivateSign(BlockSnapshot b){
 		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
 			return true;
@@ -196,12 +190,19 @@ public class RPContainer {
 	public boolean isContainer(BlockSnapshot block){
 		Location<World> loc = block.getLocation().get();
 		List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
-		return blocks.contains(getRelative(loc, Direction.DOWN).getBlockType().getName()) ||
+
+		return blocks.stream().anyMatch(b -> getRelative(loc, Direction.UP).getBlockType().getName().matches(b)) ||
+		blocks.stream().anyMatch(b -> getRelative(loc, Direction.DOWN).getBlockType().getName().matches(b)) ||
+		blocks.stream().anyMatch(b -> getRelative(loc, Direction.EAST).getBlockType().getName().matches(b)) ||
+		blocks.stream().anyMatch(b -> getRelative(loc, Direction.NORTH).getBlockType().getName().matches(b)) ||
+		blocks.stream().anyMatch(b -> getRelative(loc, Direction.SOUTH).getBlockType().getName().matches(b)) ||
+		blocks.stream().anyMatch(b -> getRelative(loc, Direction.WEST).getBlockType().getName().matches(b));
+		/*return blocks.contains(getRelative(loc, Direction.DOWN).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.UP).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.EAST).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.NORTH).getBlockType().getName()) ||
 				blocks.contains(getRelative(loc, Direction.SOUTH).getBlockType().getName()) ||
-				blocks.contains(getRelative(loc, Direction.WEST).getBlockType().getName());
+				blocks.contains(getRelative(loc, Direction.WEST).getBlockType().getName());*/
 	}
 
 	private boolean isSign(BlockType type){

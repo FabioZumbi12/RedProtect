@@ -36,4 +36,6 @@ public interface RPVHelper {
 	ItemStack offerEnchantment(ItemStack item);
 
 	long getInvValue(Iterable<Inventory> inv);
+
+	Inventory query(Inventory inventory, int x, int y);
 }

@@ -237,7 +237,7 @@ public class RPPlayerListener implements Listener{
         //start player checks
         if (r == null){
         	if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
-            		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){ 
+            		RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches))){
         		Boolean out = RPConfig.getBool("private.allow-outside");
             	if (out && !cont.canOpen(b, p)) {
             		RPLang.sendMessage(p, "playerlistener.region.cantopen");
@@ -321,7 +321,7 @@ public class RPPlayerListener implements Listener{
                     }
         		}
                 else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
-                		RPConfig.getStringList("private.allowed-blocks").contains(b.getType().name()))){   
+						RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches))){
                 	
                 	if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
                 		RPLang.sendMessage(p, "playerlistener.region.cantopen");

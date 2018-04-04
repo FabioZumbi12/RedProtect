@@ -71,8 +71,8 @@ public class RPGlobalListener{
 	 * @return Boolean - Can build or not.
 	 */
 	private boolean bypassBuild(Player p, BlockSnapshot b, int fat) {
-		return fat == 1 && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","place-blocks").contains(b.getState().getType().getName()) ||
-				fat == 2 && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","break-blocks").contains(b.getState().getType().getName()) ||
+		return fat == 1 && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","place-blocks").stream().anyMatch(b.getState().getType().getName()::matches) ||
+				fat == 2 && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","break-blocks").stream().anyMatch(b.getState().getType().getName()::matches) ||
 				p.hasPermission("redprotect.bypass.world") || (!RedProtect.get().cfgs.needClaimToBuild(p, b) && RedProtect.get().cfgs.getGlobalFlagBool(p.getWorld().getName(),"build"));
 	}
 
@@ -213,11 +213,11 @@ public class RPGlobalListener{
 		}
 		
 		Region r = RedProtect.get().rm.getTopRegion(loc);
-		   
+
 		if (!canInteract(p, r)){
         	e.setCancelled(true);
         }
-		
+
 		if (r != null){
 			return;
 		}
@@ -243,8 +243,6 @@ public class RPGlobalListener{
 		RedProtect.get().logger.debug("default","RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 
 		BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
-		BlockState b = bt.getState();
-		World w = bt.getLocation().get().getExtent();
 		Region r = RedProtect.get().rm.getTopRegion(bt.getLocation().get());
 		if (r != null){
 			return;
@@ -573,7 +571,7 @@ public class RPGlobalListener{
         }
 		
 		//deny item usage		
-    	if (!RedProtect.get().ph.hasPerm(p, "redprotect.world.bypass") && !item.equals(ItemTypes.NONE) && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"deny-item-usage","items").contains(item.getType().getName())){
+    	if (!RedProtect.get().ph.hasPerm(p, "redprotect.world.bypass") && !item.equals(ItemTypes.NONE) && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"deny-item-usage","items").stream().anyMatch(item.getType().getName()::matches)){
     		if (r != null && ((!claimRps && r.canBuild(p)) || (claimRps && !r.canBuild(p)))){
     			RPLang.sendMessage(p, "playerlistener.region.cantuse");
     			return false;

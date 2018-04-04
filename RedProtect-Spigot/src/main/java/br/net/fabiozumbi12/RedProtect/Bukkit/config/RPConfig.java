@@ -83,6 +83,7 @@ public class RPConfig{
 			"can-back", 
 			"for-sale",
             "exit",
+            "set-portal",
             "dynmap");
 			
 	public static void init() {
@@ -348,6 +349,14 @@ public class RPConfig{
 
             RedProtect.get().getConfig().set("wands.adminWandID", "GLASS_BOTTLE");
             RedProtect.get().getConfig().set("wands.infoWandID", "PAPER");
+            configUp++;
+        }
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.12D) {
+            RedProtect.get().getConfig().set("config-version", 7.12D);
+
+            List<String> blocks = RedProtect.get().getConfig().getStringList("private.allowed-blocks");
+            blocks.add("[A-Z_]+_SHULKER_BOX");
+            RedProtect.get().getConfig().set("private.allowed-blocks", blocks);
             configUp++;
         }
         if (configUp > 0){

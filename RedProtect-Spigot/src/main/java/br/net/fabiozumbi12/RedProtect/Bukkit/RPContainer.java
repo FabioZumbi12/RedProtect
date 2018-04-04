@@ -26,7 +26,7 @@ public class RPContainer {
         }  
     	
         boolean deny = true;
-        if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype)){
+        if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype::matches)){
         	int x = b.getX();
             int y = b.getY();
             int z = b.getZ();
@@ -52,7 +52,7 @@ public class RPContainer {
     	            } else {
     	            	blocktype2 = b.getType().name();
     	            }
-    				if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype2)){    					
+    				if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype2::matches)){
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);    	        				
@@ -101,7 +101,7 @@ public class RPContainer {
         	signbtype = b.getType().name();
         }         
         
-        if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){
+        if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches)){
         	for (int sx = -1; sx <= 1; sx++){
         		for (int sy = -1; sy <= 1; sy++){
         			for (int sz = -1; sz <= 1; sz++){
@@ -124,7 +124,7 @@ public class RPContainer {
         	            int y2 = bs.getY();
         	            int z2 = bs.getZ();
         	            
-        				if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype2)){
+        				if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype2::matches)){
         					for (int ux = -1; ux <= 1; ux++){
             	        		for (int uy = -1; uy <= 1; uy++){
             	        			for (int uz = -1; uz <= 1; uz++){
@@ -172,7 +172,7 @@ public class RPContainer {
         	signbtype = b.getType().name();
         } 
         
-        if (RPConfig.getStringList("private.allowed-blocks").contains(signbtype)){        	
+        if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches)){
         	for (int sx = -1; sx <= 1; sx++){
         		for (int sz = -1; sz <= 1; sz++){
     				Block bs = w.getBlockAt(x+sx, y, z+sz);
@@ -191,7 +191,7 @@ public class RPContainer {
     	            int y2 = bs.getY();
     	            int z2 = bs.getZ();
     	            
-    				if (RPConfig.getStringList("private.allowed-blocks").contains(blocktype2)){
+    				if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype2::matches)){
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);
@@ -308,7 +308,7 @@ public class RPContainer {
             signbtype = container.getType().name();
         }
 
-        return RPConfig.getStringList("private.allowed-blocks").contains(signbtype) && (!more || validateMore(b, ""));
+        return RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches) && (!more || validateMore(b, ""));
     }
     
 }
