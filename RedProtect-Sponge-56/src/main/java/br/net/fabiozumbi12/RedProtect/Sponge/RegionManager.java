@@ -75,6 +75,7 @@ public class RegionManager{
 	}
     
     public Region getRegionById(String rid) {
+		if (rid == null) return null;
     	World w = Sponge.getServer().getWorld(rid.split("@")[1]).get();
         return this.regionManagers.get(w).getRegion(rid.split("@")[0]);
     }

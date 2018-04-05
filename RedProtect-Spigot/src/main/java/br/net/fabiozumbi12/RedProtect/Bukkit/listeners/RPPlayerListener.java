@@ -922,7 +922,7 @@ public class RPPlayerListener implements Listener{
     		Entity pent = getTarget(p);
     		int trysp = 0;
     		int mrate = 0;
-        	if (pent != null && pent instanceof Player && dmgp.containsKey(pent.getName())){
+        	if (pent instanceof Player && dmgp.containsKey(pent.getName())){
         		if (trys.containsKey(p.getName())){
         			trysp = trys.get(p.getName());
         		}
@@ -1043,9 +1043,9 @@ public class RPPlayerListener implements Listener{
         		RPLang.sendMessage(p, "playerlistener.region.cantfly");
         	} 
             
-            if (Ownerslist.get(p.getName()) != r.getName()){
-    			Region er = RedProtect.get().rm.getRegion(Ownerslist.get(p.getName()), p.getWorld());			
-    			Ownerslist.put(p.getName(), r.getName());
+            if (!Ownerslist.containsKey(p.getName()) || !Ownerslist.get(p.getName()).equals(r.getID())){
+    			Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p.getName()));
+    			Ownerslist.put(p.getName(), r.getID());
     			
     			//Execute listener:
     			EnterExitRegionEvent event = new EnterExitRegionEvent(er, r, p);
@@ -1053,6 +1053,7 @@ public class RPPlayerListener implements Listener{
     			if (event.isCancelled()){
     				return;
     			}
+
     			//--
     			RegionFlags(r, er, p);	
     			if (!r.getWelcome().equalsIgnoreCase("hide ")){
@@ -1064,10 +1065,8 @@ public class RPPlayerListener implements Listener{
     	} else {
     		//if (r == null) >>
     		if (Ownerslist.get(p.getName()) != null) {
-    			Region er = RedProtect.get().rm.getRegion(Ownerslist.get(p.getName()), p.getWorld());    
-    			if (Ownerslist.containsKey(p.getName())){
-            		Ownerslist.remove(p.getName());
-            	}
+    			Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p.getName()));
+				Ownerslist.remove(p.getName());
     			
     			//Execute listener:
     			EnterExitRegionEvent event = new EnterExitRegionEvent(er, null, p);
@@ -1402,71 +1401,79 @@ public class RPPlayerListener implements Listener{
     }
     
     private void RegionFlags(final Region r, Region er, final Player p){  
-    	
-    	//Pvp check to enter on region
-        if (RedProtect.get().PvPm){
-    		if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)){
-    			RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
-    			RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
-        	}
-    	}
 
-    	//enter Gamemode flag
-    	if (r.canEnter(p) && r.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
-    		p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
-    	}
-    	
-    	//Exit gamemode
-		if (er != null && er.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
-			p.setGameMode(Bukkit.getServer().getDefaultGameMode());
+    	if (r.canEnter(p)){
+
+			//prevent spam commands
+			if (RedProtect.get().rm.getTopRegion(p.getLocation()) != r){
+
+				//Enter command as player
+				if (r.flagExists("player-enter-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.player-enter-command")){
+					String[] cmds = r.getFlagString("player-enter-command").split(",");
+					for (String cmd:cmds){
+						if (cmd.startsWith("/")){
+							cmd = cmd.substring(1);
+						}
+						p.getServer().dispatchCommand(p.getPlayer(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+					}
+				}
+
+				//Enter command as console
+				if (r.flagExists("server-enter-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.server-enter-command")){
+					String[] cmds = r.getFlagString("server-enter-command").split(",");
+					for (String cmd:cmds){
+						if (cmd.startsWith("/")){
+							cmd = cmd.substring(1);
+						}
+						RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+					}
+				}
+			}
+
+			//Pvp check to enter on region
+			if (RedProtect.get().PvPm){
+				if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)){
+					RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
+					RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
+				}
+			}
+
+			//enter Gamemode flag
+			if (r.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
+				p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
+			}
+
+			//Check portal (/rp flag set-portal <rp> <world>
+			if (r.flagExists("set-portal")){
+				String[] cmds = r.getFlagString("set-portal").split(" ");
+				RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), "rp teleport "+p.getName()+" "+cmds[0]+" "+cmds[1]);
+			}
+
+			//Enter MagicCarpet
+			if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().Mc){
+				if (MagicCarpet.getCarpets().getCarpet(p) != null){
+					MagicCarpet.getCarpets().remove(p);
+					RPLang.sendMessage(p, "playerlistener.region.cantmc");
+				}
+			}
 		}
-		
-		//Enter command as player
-        if (r.canEnter(p) && r.flagExists("player-enter-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.player-enter-command")){
-        	String[] cmds = r.getFlagString("player-enter-command").split(",");
-        	for (String cmd:cmds){
-        		if (cmd.startsWith("/")){
-            		cmd = cmd.substring(1);
-            	}
-            	p.getServer().dispatchCommand(p.getPlayer(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
-        	}                	
-        }
-        
-        //Enter command as console
-        if (r.canEnter(p) && r.flagExists("server-enter-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.server-enter-command")){
-        	String[] cmds = r.getFlagString("server-enter-command").split(",");
-        	for (String cmd:cmds){
-        		if (cmd.startsWith("/")){
-            		cmd = cmd.substring(1);
-            	}
-            	RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
-        	}                	
-        }
-        
-        //Check portal (/rp flag set-portal <rp> <world>
-        if (r.canEnter(p) && r.flagExists("set-portal")){
-        	String[] cmds = r.getFlagString("set-portal").split(" ");        	     
-        	RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), "rp teleport "+p.getName()+" "+cmds[0]+" "+cmds[1]);        	               	
-        }
-        
-        //Enter MagicCarpet
-        if (r.canEnter(p) && r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().Mc){
-        	if (MagicCarpet.getCarpets().getCarpet(p) != null){
-        		MagicCarpet.getCarpets().remove(p);
-        		RPLang.sendMessage(p, "playerlistener.region.cantmc");
-        	}    
-        }        
                         
-        if (er != null){
-        	//Exit effect
+        if (er != null && er.canExit(p)){
+
+			//Exit gamemode
+			if (er.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
+				p.setGameMode(Bukkit.getServer().getDefaultGameMode());
+			}
+
+			//Exit effect
 			if (er.flagExists("effects") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.effects")){
 				String[] effects = er.getFlagString("effects").split(",");
 				for (String effect:effects){
-					if (PlayertaskID.containsValue(p.getName())){						
+					if (PlayertaskID.containsValue(p.getName())){
 						String eff = effect.split(" ")[0];
 						String amplifier = effect.split(" ")[1];
 						PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RPConfig.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
-						p.removePotionEffect(fulleffect.getType());	
+						p.removePotionEffect(fulleffect.getType());
 						List<String> removeTasks = new ArrayList<>();
 						for (String taskId:PlayertaskID.keySet()){
 							int id = Integer.parseInt(taskId.split("_")[0]);
@@ -1481,7 +1488,7 @@ public class RPPlayerListener implements Listener{
 							PlayertaskID.remove(key);
 						}
 						removeTasks.clear();
-					}					
+					}
 				}
 			} else
 			//exit fly flag
@@ -1491,9 +1498,9 @@ public class RPPlayerListener implements Listener{
 	    				p.setAllowFlight(r.getFlagBool("forcefly"));
 	    				p.setFlying(r.getFlagBool("forcefly"));
 	    			} else {
-	    				p.setAllowFlight(false);	
+	    				p.setAllowFlight(false);
 	    				p.setFlying(false);
-	    			}	    			
+	    			}
 					List<String> removeTasks = new ArrayList<>();
 					for (String taskId:PlayertaskID.keySet()){
 						int id = Integer.parseInt(taskId.split("_")[0]);
@@ -1508,108 +1515,113 @@ public class RPPlayerListener implements Listener{
 						PlayertaskID.remove(key);
 					}
 					removeTasks.clear();
-				}    		
+				}
 	    	} else {
 				stopTaskPlayer(p);
 			}
-			
-        	//Exit command as player
-            if (er.flagExists("player-exit-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.player-exit-command")){
-            	String[] cmds = er.getFlagString("player-exit-command").split(",");
-            	for (String cmd:cmds){
-            		if (cmd.startsWith("/")){
-                		cmd = cmd.substring(1);
-                	}
-                	p.getServer().dispatchCommand(p.getPlayer(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
-            	}                	
-            }
-            
+
+			//Exit command as player
+			if (er.flagExists("player-exit-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.player-exit-command")){
+				String[] cmds = er.getFlagString("player-exit-command").split(",");
+				for (String cmd:cmds){
+					if (cmd.startsWith("/")){
+						cmd = cmd.substring(1);
+					}
+					p.getServer().dispatchCommand(p.getPlayer(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
+				}
+			}
+
+			//Exit command as console
+			if (er.flagExists("server-exit-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.server-exit-command")){
+				String[] cmds = er.getFlagString("server-exit-command").split(",");
+				for (String cmd:cmds){
+					if (cmd.startsWith("/")){
+						cmd = cmd.substring(1);
+					}
+					RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
+				}
+			}
+
             //Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.get().PvPm){
         		if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")){
         			if (PvPState.get(p.getName()) != PvPlayer.get(p).hasPvPEnabled()){
         				PvPlayer.get(p).setPvP(PvPState.get(p.getName()));
         			}
-        			PvPState.remove(p.getName());  			
+        			PvPState.remove(p.getName());
         		}
         	}
-            
-            //Exit command as console
-            if (er.flagExists("server-exit-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.server-exit-command")){
-            	String[] cmds = er.getFlagString("server-exit-command").split(",");
-            	for (String cmd:cmds){
-            		if (cmd.startsWith("/")){
-                		cmd = cmd.substring(1);
-                	}
-                	RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
-            	}                	
-            }
         }
 
-        //Enter check forcepvp flag
-        if (RedProtect.get().PvPm){
-        	if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
-    			PvPlayer pvpp = PvPlayer.get(p);
-    			if (r.forcePVP() != pvpp.hasPvPEnabled()){
-					PvPState.put(p.getName(), pvpp.hasPvPEnabled());
-					pvpp.setPvP(r.forcePVP());
+        //2nd checks
+        if (r.canEnter(p)){
+
+			//Enter check forcepvp flag
+			if (RedProtect.get().PvPm){
+				if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")){
+					PvPlayer pvpp = PvPlayer.get(p);
+					if (r.forcePVP() != pvpp.hasPvPEnabled()){
+						PvPState.put(p.getName(), pvpp.hasPvPEnabled());
+						pvpp.setPvP(r.forcePVP());
+					}
 				}
-    		}
-        }        
-        
-        //Enter effect
-        if (r.canEnter(p) && r.flagExists("effects") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.effects")){
-  			String[] effects = r.getFlagString("effects").split(",");
-  			for (String effect:effects){
-  				String eff = effect.split(" ")[0];
-  				String amplifier = effect.split(" ")[1];
-  				final PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RPConfig.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
-  				int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), new Runnable() {
-  					public void run() {
-  						if (p.isOnline() && r.flagExists("effects")){
-  							p.addPotionEffect(fulleffect, true); 
-  						} else {
-							p.setAllowFlight(false); 
-							try {
-								this.finalize();
-							} catch (Throwable e) {
-								RedProtect.get().logger.debug("Effects not finalized...");
-							}							
-						}  						
-  						} 
-  					},0, 20);	
-  				PlayertaskID.put(TaskId+"_"+eff+r.getName(), p.getName());
-  				RedProtect.get().logger.debug("Added task ID: " + TaskId+"_"+eff + " for player " + p.getName());
-  			}
-  		}
-                
-        //enter fly flag
-    	if (r.canEnter(p) && r.flagExists("forcefly") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
-    		p.setAllowFlight(r.getFlagBool("forcefly"));
-    		p.setFlying(r.getFlagBool("forcefly"));
-    		int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), new Runnable() {
+			}
+
+			//Enter effect
+			if (r.flagExists("effects") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.effects")){
+				String[] effects = r.getFlagString("effects").split(",");
+				for (String effect:effects){
+					String eff = effect.split(" ")[0];
+					String amplifier = effect.split(" ")[1];
+					final PotionEffect fulleffect = new PotionEffect(PotionEffectType.getByName(eff), RPConfig.getInt("flags-configuration.effects-duration")*20, Integer.parseInt(amplifier));
+					int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), new Runnable() {
+						public void run() {
+							if (p.isOnline() && r.flagExists("effects")){
+								p.addPotionEffect(fulleffect, true);
+							} else {
+								p.setAllowFlight(false);
+								try {
+									this.finalize();
+								} catch (Throwable e) {
+									RedProtect.get().logger.debug("Effects not finalized...");
+								}
+							}
+						}
+					},0, 20);
+					PlayertaskID.put(TaskId+"_"+eff+r.getName(), p.getName());
+					RedProtect.get().logger.debug("Added task ID: " + TaskId+"_"+eff + " for player " + p.getName());
+				}
+			}
+
+			//enter fly flag
+			if (r.flagExists("forcefly") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))){
+				p.setAllowFlight(r.getFlagBool("forcefly"));
+				p.setFlying(r.getFlagBool("forcefly"));
+				int TaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), new Runnable() {
 					public void run() {
 						if (p.isOnline() && r.flagExists("forcefly")){
-							p.setAllowFlight(r.getFlagBool("forcefly")); 
+							p.setAllowFlight(r.getFlagBool("forcefly"));
 							p.setFlying(r.getFlagBool("forcefly"));
 						} else {
-							p.setAllowFlight(false); 
+							p.setAllowFlight(false);
 							p.setFlying(false);
 							try {
 								this.finalize();
 							} catch (Throwable e) {
 								RedProtect.get().logger.debug("forcefly not finalized...");
-							}							
+							}
 						}
-						} 
-					},0, 80);	
+					}
+				},0, 80);
 				PlayertaskID.put(TaskId+"_"+"forcefly"+r.getName(), p.getName());
 				RedProtect.get().logger.debug("(RegionFlags fly)Added task ID: " + TaskId+"_"+"forcefly"+ " for player " + p.getName());
-    	}
+			}
+		}
     }
         
     private void noRegionFlags(Region er, Player p){
-    	if (er != null){
+
+    	if (er != null && er.canExit(p)){
 
     		//Pvp check to exit region
             if (er.flagExists("forcepvp") && RedProtect.get().PvPm){

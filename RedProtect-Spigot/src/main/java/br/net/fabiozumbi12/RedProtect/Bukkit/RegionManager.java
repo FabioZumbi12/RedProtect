@@ -84,6 +84,7 @@ public class RegionManager{
     }
     
     public Region getRegionById(String rid) {
+    	if (rid == null) return null;
     	World w = Bukkit.getWorld(rid.split("@")[1]);
         return this.regionManagers.get(w).getRegion(rid.split("@")[0]);
     }
