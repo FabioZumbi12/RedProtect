@@ -698,10 +698,14 @@ public class RPPlayerListener implements Listener{
     	
     	Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (rto != null && rfrom == null){
-                RegionFlags(rto, null, p);
+                RegionFlags(rto, null, p, false);
             }
             if (rto != null && rfrom != null){
-                RegionFlags(rto, rfrom, p);
+				if (rto == rfrom){
+					RegionFlags(rto, null, p, false);
+				} else {
+					RegionFlags(rto, rfrom, p, false);
+				}
             }
             if (rto == null && rfrom != null){
                 noRegionFlags(rfrom, p);
@@ -730,7 +734,7 @@ public class RPPlayerListener implements Listener{
                     PlayertaskID.remove(key);
                 }
             }
-        }, 40L);
+        }, 20L);
     }
     
     @EventHandler
@@ -1055,12 +1059,12 @@ public class RPPlayerListener implements Listener{
     			}
 
     			//--
-    			RegionFlags(r, er, p);	
+    			RegionFlags(r, er, p, false);
     			if (!r.getWelcome().equalsIgnoreCase("hide ")){
     				EnterExitNotify(r, p);
     			}        		
         	} else {
-                RegionFlags(r, null, p);
+                RegionFlags(r, null, p, false);
             }
     	} else {
     		//if (r == null) >>
@@ -1204,18 +1208,11 @@ public class RPPlayerListener implements Listener{
     		String[] loc = RPConfig.getString("server-protection.teleport-player.on-join.location").split(",");
     		e.getPlayer().teleport(new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1])+0.500, Double.parseDouble(loc[2]), Double.parseDouble(loc[3])+0.500));
     	}
-    	
-    	//Pvp check on join
-    	if (RedProtect.get().PvPm){
-    		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-        	if (!p.hasPermission("redprotect.forcepvp.bypass") && r != null && r.flagExists("forcepvp")){
-        		PvPlayer pvpp = PvPlayer.get(p);
-    			if (r.forcePVP() != pvpp.hasPvPEnabled()){
-					PvPState.put(p.getName(), pvpp.hasPvPEnabled());
-					pvpp.setPvP(r.forcePVP());
-				}
-        	}
-    	}        
+
+		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+    	if (r != null){
+    		RegionFlags(r, null, p, true);
+		}
     }
     
     @EventHandler
@@ -1400,12 +1397,12 @@ public class RPPlayerListener implements Listener{
 		}
     }
     
-    private void RegionFlags(final Region r, Region er, final Player p){  
+    private void RegionFlags(final Region r, Region er, final Player p, boolean join){
 
     	if (r.canEnter(p)){
 
 			//prevent spam commands
-			if (RedProtect.get().rm.getTopRegion(p.getLocation()) != r){
+			if (join || RedProtect.get().rm.getTopRegion(p.getLocation()) != r){
 
 				//Enter command as player
 				if (r.flagExists("player-enter-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.player-enter-command")){

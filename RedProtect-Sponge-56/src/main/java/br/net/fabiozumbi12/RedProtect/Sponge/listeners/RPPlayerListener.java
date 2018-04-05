@@ -716,12 +716,12 @@ public class RPPlayerListener{
     			}
 
     			//--
-    			RegionFlags(r, er, p);
+    			RegionFlags(r, er, p, false);
     			if (!r.getWelcome().equalsIgnoreCase("hide ")){
     				EnterExitNotify(r, p);
     			}
         	} else {
-                RegionFlags(r, null, p);
+                RegionFlags(r, null, p, false);
             }
     	} else {
     		//if (r == null) >>
@@ -789,10 +789,14 @@ public class RPPlayerListener{
     	   	
     	Sponge.getScheduler().createAsyncExecutor(RedProtect.get().container).scheduleWithFixedDelay(() -> {
             if (rto != null && rfrom == null){
-                RegionFlags(rto, null, p);
+                RegionFlags(rto, null, p, false);
             }
             if (rto != null && rfrom != null){
-                RegionFlags(rto, rfrom, p);
+                if (rto == rfrom){
+                    RegionFlags(rto, null, p, false);
+                } else {
+                    RegionFlags(rto, rfrom, p, false);
+                }
             }
             if (rto == null && rfrom != null){
                 noRegionFlags(rfrom, p);
@@ -1041,7 +1045,14 @@ public class RPPlayerListener{
         			r.setDate(RPUtil.DateNow());
         		}
         	}
-    	}    	    	
+    	}
+
+    	if (p.getPlayer().isPresent()){
+            Region r = RedProtect.get().rm.getTopRegion(p.getPlayer().get().getLocation());
+            if (r != null){
+                RegionFlags(r, null, p.getPlayer().get(), true);
+            }
+        }
     }
     
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -1198,12 +1209,12 @@ public class RPPlayerListener{
 		}
     }
     
-    private void RegionFlags(final Region r, Region er, final Player p){  
+    private void RegionFlags(final Region r, Region er, final Player p, boolean join){
 
         if (r.canEnter(p)){
 
             //prevent spam commands
-            if (RedProtect.get().rm.getTopRegion(p.getLocation()) != r){
+            if (join || RedProtect.get().rm.getTopRegion(p.getLocation()) != r){
 
                 //Enter command as player
                 if (r.flagExists("player-enter-command") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.server-enter-command")){
