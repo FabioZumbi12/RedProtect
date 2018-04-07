@@ -295,7 +295,10 @@ public class Region implements Serializable{
 										double multi = Double.parseDouble(part[5]);
 										pf.velocity(new Vector3d((new Random().nextDouble()*2-1)*multi, (new Random().nextDouble()*2-1)*multi, (new Random().nextDouble()*2-1)*multi));
 									}
-									w.spawnParticles(pf.build(), loc.getPosition());
+
+									if (!w.getEntities(ent -> ent instanceof Player && loc.getPosition().distance(ent.getLocation().getPosition()) <= 30).isEmpty()){
+										w.spawnParticles(pf.build(), loc.getPosition());
+									}
 								}
 							}
 						}

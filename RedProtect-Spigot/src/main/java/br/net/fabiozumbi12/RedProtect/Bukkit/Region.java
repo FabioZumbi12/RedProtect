@@ -100,15 +100,17 @@ public class Region implements Serializable{
                                 World w = Bukkit.getServer().getWorld(world);
 
                                 Location loc = new Location(w, x+new Random().nextDouble(), y+new Random().nextDouble(), z+new Random().nextDouble());
-                                if (loc.getBlock().isEmpty()){
-                                    if (part.length == 2){
-                                        w.spawnParticle(p, loc, 1);
-                                    }
-                                    if (part.length == 5){
-                                        w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]));
-                                    }
-                                    if (part.length == 6){
-                                        w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]), Double.parseDouble(part[5]), null);
+                                if (w.getNearbyEntities(loc, 30, 30, 30).stream().anyMatch(ent -> ent instanceof Player)){
+                                    if (loc.getBlock().isEmpty()){
+                                        if (part.length == 2){
+                                            w.spawnParticle(p, loc, 1);
+                                        }
+                                        if (part.length == 5){
+                                            w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]));
+                                        }
+                                        if (part.length == 6){
+                                            w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]), Double.parseDouble(part[5]), null);
+                                        }
                                     }
                                 }
                             }
