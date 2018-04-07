@@ -3,7 +3,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -202,7 +201,8 @@ public class RegionManager{
     	this.regionManagers.get(w).save();
     }
     
-    public void remove(Region r, World w) {    	
+    public void remove(Region r, World w) {
+    	r.notifyRemove();
     	WorldRegionManager rms = this.regionManagers.get(w);
     	rms.remove(r);
     	removeCache(r);
@@ -213,7 +213,7 @@ public class RegionManager{
         		ex.printStackTrace();
         		RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
         	}
-    	}        
+    	}
     }
     
     public Set<Region> getRegions(Player p, int x, int y, int z){
@@ -241,6 +241,7 @@ public class RegionManager{
     	int qtd = 0;
     	for (WorldRegionManager wrm:this.regionManagers.values()){
             for (Region r : wrm.getRegions(player)) {
+				r.notifyRemove();
                 wrm.remove(r);
                 removeCache(r);
                 qtd++;

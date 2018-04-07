@@ -27,6 +27,7 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.DimensionTypes;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
@@ -79,7 +80,8 @@ public class RPConfig{
 			"can-back", 
 			"for-sale",
 			"set-portal",
-			"exit");
+			"exit",
+			"particles");
 	
 	
 	private final File defConfig = new File(RedProtect.get().configDir,"config.conf");
@@ -101,6 +103,10 @@ public class RPConfig{
 	private final File ecoFile = new File(RedProtect.get().configDir,"economy.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
 	private CommentedConfigurationNode ecoCfgs;
+
+	private final File signFile = new File(RedProtect.get().configDir,"signs.conf");
+	private ConfigurationLoader<CommentedConfigurationNode> signManager;
+	private CommentedConfigurationNode signCfgs;
 	
 	private CommentedConfigurationNode config;
 	
@@ -168,7 +174,7 @@ public class RPConfig{
 				 guiManager = HoconConfigurationLoader.builder().setFile(guiConfig).build();
 				 guiManager.save(gui);
 		     }
-		 	 
+
 		 	 if (!gFlagsConfig.exists()) {
 		 		gFlagsConfig.createNewFile();
 		     }	
@@ -177,7 +183,6 @@ public class RPConfig{
 		 		 Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
 		 		 ecoAsset.copyToDirectory(RedProtect.get().configDir.toPath());
 		     }
-		 	 
 		} catch (IOException e1) {			
 			RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
 			e1.printStackTrace();
@@ -201,6 +206,9 @@ public class RPConfig{
 
 			ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
 			ecoCfgs = ecoManager.load();
+
+			signManager = HoconConfigurationLoader.builder().setPath(signFile.toPath()).build();
+			signCfgs = signManager.load();
 
 			/*--------------------- protections.conf ---------------------------*/
 			protManager = HoconConfigurationLoader.builder().setFile(protFile).build();
@@ -663,6 +671,7 @@ public class RPConfig{
 			gFlagsManager.save(gflags);
 			ecoManager.save(ecoCfgs);
 			protManager.save(protCfgs);
+			signManager.save(signCfgs);
 			saveGui();
 		} catch (IOException e) {
 			RedProtect.get().logger.severe("Problems during save file:");
@@ -823,6 +832,63 @@ public class RPConfig{
 	
 	public Text getURLTemplate() {
 		return RPUtil.toText(protCfgs.getNode("general","URL-template").getString());
+	}
+
+
+	public List<Location> getSigns(String rid){
+		List<Location> locs = new ArrayList<>();
+		try {
+			for (String s:signCfgs.getNode(rid).getList(TypeToken.of(String.class))){
+				String[] val = s.split(",");
+				if (!Sponge.getServer().getWorld(val[0]).isPresent()){
+					continue;
+				}
+				locs.add(new Location<>(Sponge.getServer().getWorld(val[0]).get(),Double.valueOf(val[1]),Double.valueOf(val[2]),Double.valueOf(val[3])));
+			}
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		return locs;
+	}
+
+	public void putSign(String rid, Location<World> loc){
+		try {
+			List<String> lsigns = signCfgs.getNode(rid).getList(TypeToken.of(String.class));
+			String locs = loc.getExtent().getName()+","+loc.getX()+","+loc.getY()+","+loc.getZ();
+			if (!lsigns.contains(locs)){
+				lsigns.add(locs);
+				saveSigns(rid, lsigns);
+			}
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void removeSign(String rid, Location<World> loc){
+		try {
+			List<String> lsigns = signCfgs.getNode(rid).getList(TypeToken.of(String.class));
+			String locs = loc.getExtent().getName()+","+loc.getX()+","+loc.getY()+","+loc.getZ();
+			if (lsigns.contains(locs)){
+				lsigns.remove(locs);
+				saveSigns(rid, lsigns);
+			}
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void saveSigns(String rid, List<String> locs){
+		if (locs.isEmpty()){
+			signCfgs.getNode(rid).setValue(null);
+		} else {
+			signCfgs.getNode(rid).setValue(locs);
+		}
+		try {
+			signManager.save(signCfgs);
+		} catch (IOException e) {
+			RedProtect.get().logger.severe("Problems during save file:");
+			e.printStackTrace();
+		}
 	}
 }
    

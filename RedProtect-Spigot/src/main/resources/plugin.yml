@@ -132,6 +132,7 @@ permissions:
       redprotect.admin.flag.spawn-wither: true
       redprotect.admin.flag.set-portal: true
       redprotect.admin.flag.dynmap: true
+      redprotect.admin.flag.particles: true
   redprotect.admin:
     description: "Recommended Admin permsisions."
     default: op

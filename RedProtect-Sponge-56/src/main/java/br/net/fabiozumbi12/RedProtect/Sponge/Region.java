@@ -2,23 +2,28 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.effect.particle.ParticleEffect;
+import org.spongepowered.api.effect.particle.ParticleOptions;
+import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.item.inventory.Slot;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColor;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Color;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -236,10 +241,12 @@ public class Region implements Serializable{
 		this.canDelete = canDelete;
 	}
 	
-    public void setFlag(String Name, Object value) {
+    public void setFlag(String fname, Object value) {
     	setToSave(true);
-    	this.flags.put(Name, value);
-    	RedProtect.get().rm.updateLiveFlags(this, Name, value.toString());
+    	this.flags.put(fname, value);
+    	RedProtect.get().rm.updateLiveFlags(this, fname, value.toString());
+		updateSigns(fname);
+		checkParticle();
     }
     
     public void removeFlag(String Name) {
@@ -247,10 +254,100 @@ public class Region implements Serializable{
     	if (this.flags.containsKey(Name)){
     		this.flags.remove(Name); 
     		RedProtect.get().rm.removeLiveFlags(this, Name);
-    	}    	               
+    	}
+		checkParticle();
     }
-    
-    public void setDate(String value) {
+
+	private Task task;
+	private void checkParticle(){
+		Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
+			if (this.flags.containsKey("particles")){
+				if (task == null){
+
+					task = Sponge.getScheduler().createTaskBuilder().execute(() -> {
+						if (this.flags.containsKey("particles")){
+							String[] part = flags.get("particles").toString().split(" ");
+							for (int i = 0; i < Integer.valueOf(part[1]); i++){
+								Location locMin = getMinLocation();
+								Location locMax = getMaxLocation();
+
+								int dx = locMax.getBlockX() - locMin.getBlockX();
+								int dy = locMax.getBlockY() - locMin.getBlockY();
+								int dz = locMax.getBlockZ() - locMin.getBlockZ();
+								Random random = new Random();
+								int x = random.nextInt(Math.abs(dx)+1) + locMin.getBlockX();
+								int y = random.nextInt(Math.abs(dy)+1) + locMin.getBlockY();
+								int z = random.nextInt(Math.abs(dz)+1) + locMin.getBlockZ();
+
+								ParticleType p = Sponge.getRegistry().getType(ParticleType.class, part[0]).get();
+								World w = Sponge.getServer().getWorld(world).get();
+								//ParticleTypes.FIRE
+								Location<World> loc = new Location<>(w, x+new Random().nextDouble(), y+new Random().nextDouble(), z+new Random().nextDouble());
+								if (loc.getBlock().getType().equals(BlockTypes.AIR)){
+									ParticleEffect.Builder pf = ParticleEffect.builder().type(p).quantity(1);
+
+
+									if (part.length == 5){
+										pf.offset(new Vector3d(Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4])));
+									}
+									if (part.length == 6){
+										pf.offset(new Vector3d(Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4])));
+										double multi = Double.parseDouble(part[5]);
+										pf.velocity(new Vector3d((new Random().nextDouble()*2-1)*multi, (new Random().nextDouble()*2-1)*multi, (new Random().nextDouble()*2-1)*multi));
+									}
+									w.spawnParticles(pf.build(), loc.getPosition());
+								}
+							}
+						}
+					}).intervalTicks(1).submit(RedProtect.get().container);
+				}
+			} else if (task != null){
+				notifyRemove();
+			}
+		}, 1, TimeUnit.SECONDS);
+	}
+
+	public void notifyRemove(){
+		if (task != null){
+			task.cancel();
+			task = null;
+		}
+	}
+
+
+	public void updateSigns(){
+		for (String s:this.flags.keySet()){
+			updateSigns(s);
+		}
+	}
+
+	public void updateSigns(String fname){
+		if (!RedProtect.get().cfgs.getBool("region-settings.enable-flag-sign")){
+			return;
+		}
+		List<Location> locs = RedProtect.get().cfgs.getSigns(this.getID());
+		if (locs.size() > 0){
+			for (Location loc:locs){
+				if (loc.getTileEntity().isPresent() && loc.getTileEntity().get() instanceof Sign){
+					Sign s = (Sign) loc.getTileEntity().get();
+					ListValue<Text> lines = s.lines();
+					if (lines.get(0).toPlain().equalsIgnoreCase("[flag]")){
+						if (lines.get(1).toPlain().equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(lines.get(2).toPlain())){
+							lines.set(3, RPUtil.toText(RPLang.get("region.value")+" "+RPLang.translBool(getFlagString(fname))));
+							s.offer(lines);
+							RedProtect.get().cfgs.putSign(this.getID(), loc);
+						}
+					} else {
+						RedProtect.get().cfgs.removeSign(this.getID(), loc);
+					}
+				} else {
+					RedProtect.get().cfgs.removeSign(this.getID(), loc);
+				}
+			}
+		}
+	}
+
+	public void setDate(String value) {
     	setToSave(true);
         this.date = value;
         RedProtect.get().rm.updateLiveRegion(this, "date", value);
@@ -679,6 +776,7 @@ public class Region implements Serializable{
         } else {
         	this.date = RPUtil.DateNow();
         }
+		checkParticle();
     }
     
     /**
@@ -745,6 +843,7 @@ public class Region implements Serializable{
                 this.minMbrZ = z[i];
             }
         }
+		checkParticle();
     }
 
     public void clearLeaders(){

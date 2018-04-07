@@ -84,7 +84,8 @@ public class RPConfig{
 			"for-sale",
             "exit",
             "set-portal",
-            "dynmap");
+            "dynmap",
+            "particles");
 			
 	public static void init() {
 

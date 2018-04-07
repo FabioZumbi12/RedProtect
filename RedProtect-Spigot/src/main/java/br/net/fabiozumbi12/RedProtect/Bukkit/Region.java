@@ -2,19 +2,9 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
@@ -25,6 +15,7 @@ import org.bukkit.material.Crops;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
+import org.bukkit.util.Vector;
 
 /**
  * Represents a 3D region created by players.
@@ -83,20 +74,60 @@ public class Region implements Serializable{
 		this.tosave = save;
 	}
 
-    public void setFlag(String fname, Object value) {
-    	setToSave(true);
-    	this.flags.put(fname, value);
-    	RedProtect.get().rm.updateLiveFlags(this, fname, value.toString());
-    	updateSigns(fname);
-    	if (fname.equalsIgnoreCase("dynmap") && RedProtect.get().dynmap != null){
-    	    if (Boolean.getBoolean(value.toString())){
-                RedProtect.get().dynmap.addMark(this);
-            } else {
-                RedProtect.get().dynmap.removeMark(this);
+    private int particleID = 0;
+    private void checkParticle(){
+        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () ->{
+            if (this.flags.containsKey("particles")){
+                if (particleID <= 0){
+
+                    particleID = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () -> {
+                        if (this.flags.containsKey("particles")){
+                            String[] part = flags.get("particles").toString().split(" ");
+                            for (int i = 0; i < Integer.valueOf(part[1]); i++){
+                                Vector max = Vector.getMaximum(getMinLocation().toVector(), getMaxLocation().toVector());
+                                Vector min = Vector.getMinimum(getMinLocation().toVector(), getMaxLocation().toVector());
+
+                                int dx = max.getBlockX() - min.getBlockX();
+                                int dy = max.getBlockY() - min.getBlockY();
+                                int dz = max.getBlockZ() - min.getBlockZ();
+                                Random random = new Random();
+                                int x = random.nextInt(Math.abs(dx)+1) + min.getBlockX();
+                                int y = random.nextInt(Math.abs(dy)+1) + min.getBlockY();
+                                int z = random.nextInt(Math.abs(dz)+1) + min.getBlockZ();
+
+
+                                Particle p = Particle.valueOf(part[0].toUpperCase());
+                                World w = Bukkit.getServer().getWorld(world);
+
+                                Location loc = new Location(w, x+new Random().nextDouble(), y+new Random().nextDouble(), z+new Random().nextDouble());
+                                if (loc.getBlock().isEmpty()){
+                                    if (part.length == 2){
+                                        w.spawnParticle(p, loc, 1);
+                                    }
+                                    if (part.length == 5){
+                                        w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]));
+                                    }
+                                    if (part.length == 6){
+                                        w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]), Double.parseDouble(part[5]), null);
+                                    }
+                                }
+                            }
+                        }
+                    }, 1, 1);
+                }
+            } else if (particleID > 0){
+                notifyRemove();
             }
+        }, 20);
+    }
+
+    public void notifyRemove(){
+	    if (particleID > 0){
+	        Bukkit.getScheduler().cancelTask(particleID);
+            particleID = 0;
         }
     }
-    
+
     public void updateSigns(){
     	for (String s:this.flags.keySet()){
     		updateSigns(s);
@@ -128,13 +159,30 @@ public class Region implements Serializable{
     		}
     	}
     }
-    
+
+
+    public void setFlag(String fname, Object value) {
+        setToSave(true);
+        this.flags.put(fname, value);
+        RedProtect.get().rm.updateLiveFlags(this, fname, value.toString());
+        updateSigns(fname);
+        if (fname.equalsIgnoreCase("dynmap") && RedProtect.get().dynmap != null){
+            if (Boolean.getBoolean(value.toString())){
+                RedProtect.get().dynmap.addMark(this);
+            } else {
+                RedProtect.get().dynmap.removeMark(this);
+            }
+        }
+        checkParticle();
+    }
+
     public void removeFlag(String Name) {
     	setToSave(true);
     	if (this.flags.containsKey(Name)){
-    		this.flags.remove(Name); 
+    		this.flags.remove(Name);
     		RedProtect.get().rm.removeLiveFlags(this, Name);
-    	}    	               
+    	}
+        checkParticle();
     }
     
     public void setDate(String value) {
@@ -498,6 +546,7 @@ public class Region implements Serializable{
         	this.date = RPUtil.DateNow();
         }
         this.name = conformName(name);
+        checkParticle();
     }
     
     /**
@@ -553,6 +602,7 @@ public class Region implements Serializable{
         	this.date = RPUtil.DateNow();
         }
         this.name = conformName(name);
+        checkParticle();
     }
     
     /**
@@ -619,6 +669,7 @@ public class Region implements Serializable{
             }
         }
         this.name = conformName(name);
+        checkParticle();
     }
 
     /**
@@ -648,6 +699,7 @@ public class Region implements Serializable{
         this.wMessage = "";
         this.date = RPUtil.DateNow();
         this.name = conformName(name);
+        checkParticle();
     }
 
     public void clearLeaders(){

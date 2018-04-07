@@ -169,7 +169,8 @@ public class RegionManager{
     	this.regionManagers.get(w).save();
     }
     
-    public void remove(Region r, World w) {    	
+    public void remove(Region r, World w) {
+    	r.notifyRemove();
     	WorldRegionManager rms = this.regionManagers.get(w);
     	rms.remove(r);
         removeCache(r);
@@ -249,6 +250,7 @@ public class RegionManager{
     	int qtd = 0;
     	for (WorldRegionManager wrm:this.regionManagers.values()){
 			for (Region r : wrm.getRegions(player)) {
+				r.notifyRemove();
 				wrm.remove(r);
 				removeCache(r);
 				qtd++;

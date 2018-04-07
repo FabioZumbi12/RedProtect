@@ -11,14 +11,7 @@ import me.ellbristow.mychunk.MyChunkChunk;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -97,18 +90,37 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			SotTab.addAll(tab);
     			return SotTab;
     		}
-    		if (args.length == 2){
+    		if (args.length == 2 || args.length == 3){
+    			//rp flag <flag>
         		if (checkCmd(args[0], "flag")){
         			for (String flag:RPConfig.getDefFlags()){
-        				if (flag.startsWith(args[1]) && sender.hasPermission("redprotect.flag."+ flag) && !tab.contains(flag)){
-        					tab.add(flag);
-        				}
+        				if (sender.hasPermission("redprotect.flag."+ flag) && !tab.contains(flag)){
+							if (flag.equalsIgnoreCase(args[1])){
+								Region r = RedProtect.get().rm.getTopRegion(((Player)sender).getLocation());
+								if (r != null && r.canBuild(((Player)sender)) && r.flags.containsKey(flag)){
+									return Collections.singletonList(r.flags.get(flag).toString());
+								}
+								return SotTab;
+							}
+							if (flag.startsWith(args[1])){
+								tab.add(flag);
+							}
+						}
         			} 
         			for (String flag:RPConfig.AdminFlags){
-        				if (flag.startsWith(args[1]) && sender.hasPermission("redprotect.admin.flag."+ flag) && !tab.contains(flag)){
-        					tab.add(flag);
-        				}
-        			}
+						if (sender.hasPermission("redprotect.admin.flag."+ flag) && !tab.contains(flag)){
+							if (flag.equalsIgnoreCase(args[1])){
+								Region r = RedProtect.get().rm.getTopRegion(((Player)sender).getLocation());
+								if (r != null && r.canBuild(((Player)sender)) && r.flags.containsKey(flag)){
+									return Collections.singletonList(r.flags.get(flag).toString());
+								}
+								return SotTab;
+							}
+							if (flag.startsWith(args[1])){
+								tab.add(flag);
+							}
+						}
+					}
         			SotTab.addAll(tab);
         			return SotTab;
         		}
@@ -2987,6 +2999,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				flag.equalsIgnoreCase("allow-break") || 
 				flag.equalsIgnoreCase("allow-place") ||
 				flag.equalsIgnoreCase("set-portal") ||
+				flag.equalsIgnoreCase("particles") ||
 				flag.equalsIgnoreCase("cmd-onhealth")){                				
 			message = RPLang.get("cmdmanager.region.flag.usage"+flag);
 		} else {
@@ -3046,13 +3059,49 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
-		
+
+		if (flag.equalsIgnoreCase("particles")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			String[] val = value.toString().split(" ");
+			if (val.length != 2 && val.length != 5 && val.length != 6){
+				return false;
+			}
+			try {
+				Particle.valueOf(val[0].toUpperCase());
+			} catch (IllegalArgumentException e){
+				return false;
+			}
+			try {
+				Integer.valueOf(val[1]);
+			} catch (NumberFormatException e){
+				return false;
+			}
+			if (val.length >= 5){
+				try {
+					Double.parseDouble(val[2]);
+					Double.parseDouble(val[3]);
+					Double.parseDouble(val[4]);
+				} catch (NumberFormatException e){
+					return false;
+				}
+			}
+			if (val.length == 6){
+				try {
+					Double.parseDouble(val[5]);
+				} catch (NumberFormatException e){
+					return false;
+				}
+			}
+		}
+
 		if (flag.equalsIgnoreCase("gamemode")){
 			if (!(value instanceof String)){
 				return false;
 			}
 			try {
-				GameMode.valueOf(((String)value).toUpperCase());
+				GameMode.valueOf(value.toString().toUpperCase());
 			} catch (IllegalArgumentException e){
 				return false;
 			}			
@@ -3062,7 +3111,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			if (RedProtect.get().clanManager.getClan((String)value) == null){
+			if (RedProtect.get().clanManager.getClan(value.toString()) == null){
 				return false;
 			}
 		}
@@ -3071,7 +3120,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] valida = ((String)value).split(" ");
+			String[] valida = value.toString().split(" ");
 			if (valida.length != 2){
 				return false;
 			}
@@ -3095,7 +3144,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] valida = ((String)value).replace(" ", "").split(",");
+			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
 				if (Material.getMaterial(item.toUpperCase()) == null){
 					return false;
@@ -3106,7 +3155,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] valida = ((String)value).replace(" ", "").split(",");
+			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
 				if (Material.getMaterial(item.toUpperCase()) == null && EntityType.valueOf(item.toUpperCase()) == null){
 					return false;
@@ -3118,7 +3167,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 			try{
-				String[] args = ((String)value).split(",");
+				String[] args = value.toString().split(",");
 				for (String arg:args){
 					if (!arg.split(" ")[0].startsWith("health:") || !arg.split(" ")[1].startsWith("cmd:")){
 						return false;
@@ -3166,7 +3215,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] effects = ((String)value).split(",");
+			String[] effects = value.toString().split(",");
 			for (String eff:effects){
 				String[] effect = eff.split(" ");
 				if (effect.length < 2){

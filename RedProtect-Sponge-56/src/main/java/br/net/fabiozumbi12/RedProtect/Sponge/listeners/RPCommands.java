@@ -1,9 +1,11 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
@@ -15,6 +17,7 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Transform;
@@ -31,6 +34,7 @@ import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -2720,7 +2724,7 @@ public class RPCommands implements CommandCallable {
     }
 
 	private void SendFlagUsageMessage(Player p, String flag) {
-		String message = "";
+		String message;
 		if (flag.equalsIgnoreCase("effects") ||
 				flag.equalsIgnoreCase("view-distance") ||
 				flag.equalsIgnoreCase("allow-enter-items") ||
@@ -2731,6 +2735,7 @@ public class RPCommands implements CommandCallable {
 				flag.equalsIgnoreCase("deny-cmds") ||
 				flag.equalsIgnoreCase("allow-break") ||
 				flag.equalsIgnoreCase("allow-place") ||
+				flag.equalsIgnoreCase("particles") ||
 				flag.equalsIgnoreCase("cmd-onhealth")){
 			message = RPLang.get("cmdmanager.region.flag.usage"+flag);
 		} else {
@@ -2790,11 +2795,45 @@ public class RPCommands implements CommandCallable {
 			return false;
 		}
 
+		if (flag.equalsIgnoreCase("particles")){
+			if (!(value instanceof String)){
+				return false;
+			}
+			String[] val = value.toString().split(" ");
+			if (val.length != 2 && val.length != 5 && val.length != 6){
+				return false;
+			}
+			if (!Sponge.getRegistry().getType(ParticleType.class, val[0]).isPresent()){
+				return false;
+			}
+			try {
+				Integer.valueOf(val[1]);
+			} catch (NumberFormatException e){
+				return false;
+			}
+			if (val.length >= 5){
+				try {
+					Double.parseDouble(val[2]);
+					Double.parseDouble(val[3]);
+					Double.parseDouble(val[4]);
+				} catch (NumberFormatException e){
+					return false;
+				}
+			}
+			if (val.length >= 6){
+				try {
+					Double.parseDouble(val[5]);
+				} catch (NumberFormatException e){
+					return false;
+				}
+			}
+		}
+
 		if (flag.equalsIgnoreCase("set-portal")){
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] valida = ((String)value).split(" ");
+			String[] valida = value.toString().split(" ");
 			if (valida.length != 2){
 				return false;
 			}
@@ -2811,7 +2850,7 @@ public class RPCommands implements CommandCallable {
 			if (!(value instanceof String)){
 				return false;
 			}
-			if (!RPUtil.testRegistry(GameMode.class, ((String)value))){
+			if (!RPUtil.testRegistry(GameMode.class, value.toString())){
 				return false;
 			}
 		}
@@ -2828,7 +2867,7 @@ public class RPCommands implements CommandCallable {
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] valida = ((String)value).replace(" ", "").split(",");
+			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
 				if (!RPUtil.testRegistry(ItemType.class, item)){
 					return false;
@@ -2840,7 +2879,7 @@ public class RPCommands implements CommandCallable {
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] valida = ((String)value).replace(" ", "").split(",");
+			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
 				if (!RPUtil.testRegistry(EntityType.class, item) && !RPUtil.testRegistry(ItemType.class, item)){
 					return false;
@@ -2853,7 +2892,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}
 			try{
-				String[] args = ((String)value).split(",");
+				String[] args = value.toString().split(",");
 				for (String arg:args){
 					if (!arg.split(" ")[0].startsWith("health:") || !arg.split(" ")[1].startsWith("cmd:")){
 						return false;
@@ -2874,7 +2913,7 @@ public class RPCommands implements CommandCallable {
 				return false;
 			}
 			try{
-				String[] cmds = ((String)value).split(",");
+				String[] cmds = value.toString().split(",");
 				for (String cmd:cmds){
 					if (cmds.length > 0 && (cmd.contains("cmd:") || cmd.contains("arg:"))){
 						String[] cmdargs = cmd.split(" ");
@@ -2903,7 +2942,7 @@ public class RPCommands implements CommandCallable {
 			if (!(value instanceof String)){
 				return false;
 			}
-			String[] effects = ((String)value).split(",");
+			String[] effects = value.toString().split(",");
 			for (String eff:effects){
 				String[] effect = eff.split(" ");
 				if (effect.length < 2){
@@ -3196,7 +3235,7 @@ public class RPCommands implements CommandCallable {
         			}
         			for (String flag:RedProtect.get().cfgs.AdminFlags){
         				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
-        					tab.add(flag);
+							tab.add(flag);
         				}
         			}
         			SotTab.addAll(tab);
@@ -3215,17 +3254,35 @@ public class RPCommands implements CommandCallable {
     			SotTab.addAll(tab);
     			return SotTab;
     		}
-    		if (args.length == 2){
+    		if (args.length == 2 || args.length == 3){
         		if (checkCmd(args[0], "flag")){
         			for (String flag:RedProtect.get().cfgs.getDefFlags()){
-        				if (flag.startsWith(args[1]) && RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
-        					tab.add(flag);
+        				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
+							if (flag.equalsIgnoreCase(args[1])){
+								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation());
+								if (r != null && r.canBuild(((Player)source)) && r.flags.containsKey(flag)){
+									return Collections.singletonList(r.flags.get(flag).toString());
+								}
+								return SotTab;
+							}
+        					if (flag.startsWith(args[1])){
+								tab.add(flag);
+							}
         				}
-        			} 
+        			}
         			for (String flag:RedProtect.get().cfgs.AdminFlags){
-        				if (flag.startsWith(args[1]) && RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
-        					tab.add(flag);
-        				}
+        				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
+							if (flag.equalsIgnoreCase(args[1])){
+								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation());
+								if (r != null && r.canBuild(((Player)source)) && r.flags.containsKey(flag)){
+									return Collections.singletonList(r.flags.get(flag).toString());
+								}
+								return SotTab;
+							}
+							if (flag.startsWith(args[1])){
+								tab.add(flag);
+							}
+						}
         			}
         			SotTab.addAll(tab);
         			return SotTab;

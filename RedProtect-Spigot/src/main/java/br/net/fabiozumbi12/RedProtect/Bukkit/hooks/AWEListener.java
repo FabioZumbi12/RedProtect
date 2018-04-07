@@ -100,6 +100,7 @@ public class AWEListener {
             }
 
             if (remove){
+                r.notifyRemove();
                 RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
             }
 

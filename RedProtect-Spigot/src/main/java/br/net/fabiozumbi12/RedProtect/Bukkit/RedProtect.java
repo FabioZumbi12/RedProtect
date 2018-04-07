@@ -74,7 +74,7 @@ public class RedProtect extends JavaPlugin {
 	public boolean PLib;
 	public ClanManager clanManager;
 	public Essentials pless;
-	static boolean Dyn;
+	public boolean Dyn;
 	public RPDynmap dynmap;
 	public Economy econ;
 	public int version;
