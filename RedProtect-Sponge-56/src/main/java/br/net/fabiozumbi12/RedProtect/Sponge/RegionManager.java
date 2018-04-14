@@ -207,17 +207,7 @@ public class RegionManager{
         	}
         	WorldRegionManager rm = this.regionManagers.get(loc.getExtent());  
         	Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        	Vector3i remove = null;
-        	for (Vector3i locKey:bLoc.keySet()){
-        		if (r != null && bLoc.get(locKey).equals(r)){
-        			remove = locKey;
-        			break;
-        		}
-        	}
-        	if (remove != null){
-        		bLoc.remove(remove);
-        	}
-        	
+			bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
         	if (r != null){
         		bLoc.put(loc.getBlockPosition(), r);
         		RedProtect.get().logger.debug("blocks", "Get from DB: "+loc.getBlockPosition().toString());

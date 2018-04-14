@@ -280,17 +280,7 @@ public class RegionManager{
         	}
         	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());  
         	Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        	Location remove = null;
-        	for (Location locKey:bLoc.keySet()){
-        		if (r != null && bLoc.get(locKey).equals(r)){
-        			remove = locKey;
-        			break;
-        		}
-        	}
-        	if (remove != null){
-        		bLoc.remove(remove);
-        	}
-        	
+			bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
         	if (r != null){
         		bLoc.put(loc.getBlock().getLocation(), r);
         		RedProtect.get().logger.debug("Get from DB");

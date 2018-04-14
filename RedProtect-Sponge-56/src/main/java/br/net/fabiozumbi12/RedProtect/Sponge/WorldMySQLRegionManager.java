@@ -370,7 +370,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     public Set<Region> getRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<>();
     	try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE leaders LIKE ?");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE leaders = ?");
             st.setString(1, "%"+uuid+"%");
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -389,7 +389,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
     public Set<Region> getMemberRegions(String uuid) {
     	Set<Region> regionsp = new HashSet<>();
     	try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE leaders LIKE ? OR admins LIKE ?");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `"+tableName+"` WHERE leaders = ? OR admins = ?");
             st.setString(1, "%"+uuid+"%");
             st.setString(2, "%"+uuid+"%");
             ResultSet rs = st.executeQuery();
