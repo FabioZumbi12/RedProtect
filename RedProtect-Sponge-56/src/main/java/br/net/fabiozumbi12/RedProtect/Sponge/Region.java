@@ -1195,7 +1195,10 @@ public class Region implements Serializable{
 	}
 
 	public boolean canExit(Player p) {
-		return !canExitWithItens(p) || !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
+    	if (!canExitWithItens(p)){
+    		return false;
+		}
+		return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
 	}
 
 	public boolean canEnter(Player p) {
@@ -1215,16 +1218,13 @@ public class Region implements Serializable{
 			return true;
 		}
 
-		String[] items = flags.get("deny-exit-items").toString().replace(" ", "").split(",");
+		List<String> items = Arrays.asList(flags.get("deny-exit-items").toString().replace(" ", "").split(","));
 		Iterable<Slot> SlotItems =  p.getInventory().slots();
 
 		for (Slot slot:SlotItems) {
 			if (slot.peek().isPresent()) {
-				String SlotType = slot.peek().get().getItem().getName();
-				for (String comp:items){
-					if (SlotType.equalsIgnoreCase(comp)){
-						return false;
-					}
+				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+					return false;
 				}
 			}
 		}
@@ -1240,17 +1240,12 @@ public class Region implements Serializable{
 			return true;
 		}
 		
-		String[] items = flags.get("allow-enter-items").toString().replace(" ", "").split(",");		
+		List<String> items = Arrays.asList(flags.get("allow-enter-items").toString().replace(" ", "").split(","));
 		Iterable<Slot> SlotItems =  p.getInventory().slots();
-		
 		for (Slot slot:SlotItems) {
 		    if (slot.peek().isPresent()) {
-                String SlotType = slot.peek().get().getItem().getName();
-				
-				for (String comp:items){
-					if (SlotType.equalsIgnoreCase(comp)){
-						return true;
-					}
+				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+					return true;
 				}
 		    }
 		}
@@ -1266,16 +1261,12 @@ public class Region implements Serializable{
 		}
 		
 		Iterable<Slot> SlotItems =  p.getInventory().slots();
-		String[] items = flags.get("deny-enter-items").toString().replace(" ", "").split(",");
+		List<String> items = Arrays.asList(flags.get("deny-enter-items").toString().replace(" ", "").split(","));
 		
 		for (Slot slot:SlotItems){
 			if (slot.peek().isPresent()) {
-		    	String SlotType = slot.peek().get().getItem().getName();
-				
-				for (String comp:items){
-					if (SlotType.equalsIgnoreCase(comp)){
-						return false;
-					}
+				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+					return false;
 				}
 			}
 		}
