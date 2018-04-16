@@ -85,7 +85,8 @@ public class RPConfig{
             "exit",
             "set-portal",
             "dynmap",
-            "particles");
+            "particles",
+            "deny-exit-items");
 			
 	public static void init() {
 

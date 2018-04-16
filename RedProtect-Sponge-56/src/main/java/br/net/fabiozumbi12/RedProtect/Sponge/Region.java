@@ -1207,7 +1207,7 @@ public class Region implements Serializable{
 	}
 
 	public boolean canExitWithItens(Player p) {
-		if (!flagExists("allow-exit-items")){
+		if (!flagExists("deny-exit-items")){
 			return true;
 		}
 
@@ -1215,7 +1215,7 @@ public class Region implements Serializable{
 			return true;
 		}
 
-		String[] items = flags.get("allow-exit-items").toString().replace(" ", "").split(",");
+		String[] items = flags.get("deny-exit-items").toString().replace(" ", "").split(",");
 		Iterable<Slot> SlotItems =  p.getInventory().slots();
 
 		for (Slot slot:SlotItems) {

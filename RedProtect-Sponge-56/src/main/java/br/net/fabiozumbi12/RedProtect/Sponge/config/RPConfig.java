@@ -82,7 +82,7 @@ public class RPConfig{
 			"set-portal",
 			"exit",
 			"particles",
-			"allow-exit-items");
+			"deny-exit-items");
 	
 	
 	private final File defConfig = new File(RedProtect.get().configDir,"config.conf");

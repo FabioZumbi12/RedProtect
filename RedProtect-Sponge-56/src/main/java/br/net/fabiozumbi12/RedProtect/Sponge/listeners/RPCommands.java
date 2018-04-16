@@ -2727,6 +2727,7 @@ public class RPCommands implements CommandCallable {
 		String message;
 		if (flag.equalsIgnoreCase("effects") ||
 				flag.equalsIgnoreCase("view-distance") ||
+				flag.equalsIgnoreCase("deny-exit-items") ||
 				flag.equalsIgnoreCase("allow-enter-items") ||
 				flag.equalsIgnoreCase("deny-enter-items") ||
 				flag.equalsIgnoreCase("gamemode") ||
@@ -2863,7 +2864,7 @@ public class RPCommands implements CommandCallable {
 			}
 		}
 
-		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")){
+		if (flag.equalsIgnoreCase("deny-exit-items") || flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")){
 			if (!(value instanceof String)){
 				return false;
 			}

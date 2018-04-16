@@ -1060,7 +1060,7 @@ public class Region implements Serializable{
 	}
 
     public boolean canExit(Player p) {
-        return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
+        return !canExitWithItens(p) || !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
     }
 
 	public boolean canEnter(Player p) {
@@ -1070,7 +1070,36 @@ public class Region implements Serializable{
 
 		return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
 	}
-	
+
+    public boolean canExitWithItens(Player p) {
+        if (!flagExists("deny-exit-items")){
+            return true;
+        }
+
+        if (checkAllowedPlayer(p)){
+            return true;
+        }
+
+        String[] items = getFlagString("deny-exit-items").replace(" ", "").split(",");
+        List<String> inv = new ArrayList<>();
+        List<String> mats = new ArrayList<>();
+        for (ItemStack slot:p.getInventory()){
+            if (slot == null || slot.getType().equals(Material.AIR)){
+                continue;
+            }
+            if (!inv.contains(slot.getType().name())){
+                inv.add(slot.getType().name());
+            }
+
+        }
+        for (String item:items){
+            if (!mats.contains(item)){
+                mats.add(item.toUpperCase());
+            }
+        }
+        return !(mats.containsAll(inv) && inv.containsAll(mats));
+    }
+
 	public boolean canEnterWithItens(Player p) {
 		if (!flagExists("allow-enter-items")){
     		return true;
