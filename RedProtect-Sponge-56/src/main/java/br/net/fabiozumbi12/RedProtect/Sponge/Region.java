@@ -1195,7 +1195,7 @@ public class Region implements Serializable{
 	}
 
 	public boolean canExit(Player p) {
-		return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
+		return !canExitWithItens(p) || !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
 	}
 
 	public boolean canEnter(Player p) {
@@ -1205,7 +1205,32 @@ public class Region implements Serializable{
 
 		return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
 	}
-	
+
+	public boolean canExitWithItens(Player p) {
+		if (!flagExists("allow-exit-items")){
+			return true;
+		}
+
+		if (checkAllowedPlayer(p)){
+			return true;
+		}
+
+		String[] items = flags.get("allow-exit-items").toString().replace(" ", "").split(",");
+		Iterable<Slot> SlotItems =  p.getInventory().slots();
+
+		for (Slot slot:SlotItems) {
+			if (slot.peek().isPresent()) {
+				String SlotType = slot.peek().get().getItem().getName();
+				for (String comp:items){
+					if (SlotType.equalsIgnoreCase(comp)){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 	public boolean canEnterWithItens(Player p) {
 		if (!flagExists("allow-enter-items")){
     		return true;

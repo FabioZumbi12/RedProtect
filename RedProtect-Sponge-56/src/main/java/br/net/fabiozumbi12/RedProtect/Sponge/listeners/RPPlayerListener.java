@@ -856,11 +856,11 @@ public class RPPlayerListener{
         	}
             
         	if (PlayerCmd.containsKey(p)){
-        		if (!rto.canBack(p) && PlayerCmd.get(p).startsWith("/back")){
+        		if (!rto.canBack(p) && PlayerCmd.get(p).startsWith("back")){
             		RPLang.sendMessage(p, "playerlistener.region.cantback");
             		e.setCancelled(true);
             	}
-        		if (!rto.AllowHome(p) && PlayerCmd.get(p).startsWith("/home")){
+        		if (!rto.AllowHome(p) && PlayerCmd.get(p).startsWith("home")){
             		RPLang.sendMessage(p, "playerlistener.region.canthome");
             		e.setCancelled(true);
             	}
@@ -970,11 +970,10 @@ public class RPPlayerListener{
         		return;
            	}
            	
-        	if (cmd.startsWith("sethome") && !r.AllowHome(p)){
+        	if (cmd.startsWith("home") && !r.AllowHome(p)){
         		RPLang.sendMessage(p, "playerlistener.region.canthome");
         		e.setCancelled(true);
             }
-        	        	
        	}    	
     }     
         

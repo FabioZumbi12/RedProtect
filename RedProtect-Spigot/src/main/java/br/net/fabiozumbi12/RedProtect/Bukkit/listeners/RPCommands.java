@@ -761,7 +761,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         
         //commands as player
         final Player player = (Player)sender;
-        
+
         if (args.length == 1) {        	
         	
         	String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
@@ -2992,6 +2992,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 		String message;
 		if (flag.equalsIgnoreCase("effects") ||
 				flag.equalsIgnoreCase("allow-enter-items") ||
+				flag.equalsIgnoreCase("allow-exit-items") ||
 				flag.equalsIgnoreCase("deny-enter-items") ||
 				flag.equalsIgnoreCase("gamemode") ||
 				flag.equalsIgnoreCase("allow-cmds") || 
@@ -3140,7 +3141,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				return false;
 			}
 		}
-		if (flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")){
+		if (flag.equalsIgnoreCase("allow-exit-items") || flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")){
 			if (!(value instanceof String)){
 				return false;
 			}
