@@ -207,11 +207,13 @@ public class RegionManager{
         	}
         	WorldRegionManager rm = this.regionManagers.get(loc.getExtent());  
         	Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-			bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
-        	if (r != null){
-        		bLoc.put(loc.getBlockPosition(), r);
-        		RedProtect.get().logger.debug("blocks", "Get from DB: "+loc.getBlockPosition().toString());
-        	}        	
+			try{
+				bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
+				if (r != null){
+					bLoc.put(loc.getBlockPosition(), r);
+					RedProtect.get().logger.debug("blocks", "Get from DB");
+				}
+			} catch (Exception ignored){}
         	return r;
     	}
     }

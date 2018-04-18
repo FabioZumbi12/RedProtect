@@ -1504,7 +1504,7 @@ public class RPPlayerListener{
     			continue;
     		}    		
     		Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
-    		if (r != null && !r.canPickup(p)){
+    		if (r != null && ((!r.canEnter(p) && !r.canPickup(p) || !r.canPickup(p)))){
     			event.setCancelled(true);
     			RPLang.sendMessage(p, "playerlistener.region.cantpickup");
     			return;
@@ -1530,7 +1530,7 @@ public class RPPlayerListener{
     		Location<World> l = ent.getLocation();
     		Region r = RedProtect.get().rm.getTopRegion(l);
 	    	
-	    	if (r != null && !r.canDrop(p)){
+	    	if (r != null && ((!r.canExit(p) && !r.canDrop(p)) || !r.canDrop(p))){
 	    		e.setCancelled(true);
 	    		RPLang.sendMessage(p, "playerlistener.region.cantdrop");
 	    	}

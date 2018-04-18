@@ -1253,7 +1253,7 @@ public class RPPlayerListener implements Listener{
     	Player p = e.getPlayer();
     	Region r = RedProtect.get().rm.getTopRegion(l);
     	
-    	if (r != null && !r.canDrop(p)){
+    	if (r != null && ((!r.canExit(p) && !r.canDrop(p)) || !r.canDrop(p))){
     		e.setCancelled(true);
     		RPLang.sendMessage(p, "playerlistener.region.cantdrop");
     	}
@@ -1267,7 +1267,7 @@ public class RPPlayerListener implements Listener{
     	Player p = e.getPlayer();
     	Region r = RedProtect.get().rm.getTopRegion(l);
     	
-    	if (r != null && !r.canPickup(p)){
+    	if (r != null && ((!r.canEnter(p) && !r.canPickup(p) || !r.canPickup(p)))){
     		e.setCancelled(true);
     		RPLang.sendMessage(p, "playerlistener.region.cantpickup");
     	}

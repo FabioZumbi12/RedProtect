@@ -275,16 +275,20 @@ public class RegionManager{
     		RedProtect.get().logger.debug("Get from cache");
     		return bLoc.get(loc.getBlock().getLocation());
     	} else {
-        	if (!this.regionManagers.containsKey(loc.getWorld())){
-        		return null;
-        	}
-        	WorldRegionManager rm = this.regionManagers.get(loc.getWorld());  
-        	Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-			bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
-        	if (r != null){
-        		bLoc.put(loc.getBlock().getLocation(), r);
-        		RedProtect.get().logger.debug("Get from DB");
-        	}        	
+            if (!this.regionManagers.containsKey(loc.getWorld())){
+                return null;
+            }
+
+            WorldRegionManager rm = this.regionManagers.get(loc.getWorld());
+            Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    	    try{
+                bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
+
+                if (r != null){
+                    bLoc.put(loc.getBlock().getLocation(), r);
+                    RedProtect.get().logger.debug("Get from DB");
+                }
+            } catch (Exception ignored){}
         	return r;
     	}
     }
