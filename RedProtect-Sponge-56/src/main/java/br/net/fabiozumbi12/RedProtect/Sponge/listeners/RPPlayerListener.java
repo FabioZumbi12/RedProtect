@@ -55,7 +55,6 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.ConstructPortalEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.scheduler.Task;
@@ -120,7 +119,7 @@ public class RPPlayerListener{
     @Listener(order = Order.FIRST)
     public void onInteractLeft(InteractBlockEvent.Primary event, @First Player p) {
         BlockSnapshot b = event.getTargetBlock();
-        Location<World> l = null;
+        Location<World> l;
         
         RedProtect.get().logger.debug("player","RPPlayerListener - Is InteractBlockEvent.Primary event");
         
@@ -139,7 +138,7 @@ public class RPPlayerListener{
         }
         
         String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
-    	if (itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.getString("wands.adminWandID")) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
+    	if (event instanceof InteractBlockEvent.Primary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.getString("wands.adminWandID")) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
     		if (!RPUtil.canBuildNear(p, l)){
     			event.setCancelled(true);
     			return;
@@ -165,9 +164,8 @@ public class RPPlayerListener{
     //listen right click
     @Listener(order = Order.FIRST)
     public void onInteractRight(InteractBlockEvent.Secondary event, @First Player p) {
-    	
         BlockSnapshot b = event.getTargetBlock();
-        Location<World> l = null;
+        Location<World> l;
         
         RedProtect.get().logger.debug("player","RPPlayerListener - Is InteractBlockEvent.Secondary event");
         
@@ -182,7 +180,7 @@ public class RPPlayerListener{
         ItemType itemInHand = RPUtil.getItemHand(p);
         
         String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
-    	if (itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.getString("wands.adminWandID")) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
+    	if (event instanceof InteractBlockEvent.Secondary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.getString("wands.adminWandID")) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
     		if (!RPUtil.canBuildNear(p, l)){
     			event.setCancelled(true);
     			return;
@@ -585,6 +583,11 @@ public class RPPlayerListener{
     	if (RedProtect.get().cfgs.getBool("performance.disable-onPlayerMoveEvent-handler")) {
             return;
         }
+
+        if (e instanceof MoveEntityEvent.Teleport){
+    	    return;
+        }
+
     	Entity ent = e.getTargetEntity();
     	
     	Player p = null;
