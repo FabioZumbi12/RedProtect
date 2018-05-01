@@ -179,12 +179,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     			}
 
             }
-		} catch (FileNotFoundException | ClassNotFoundException e) {
+		} catch (Exception e) {
 				e.printStackTrace();
 		}
     }
 
-	private void load(String path) throws FileNotFoundException, ClassNotFoundException {
+	private void load(String path) {
         File f = new File(path);
         if (!f.exists()) {
             try {

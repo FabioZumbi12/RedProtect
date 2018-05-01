@@ -1202,7 +1202,7 @@ public class RPUtil {
     }
 	
 	public static Region loadProps(YamlConfiguration fileDB, String rname, World world){
-		rname = rname.replaceAll("[.+=;_\\-]", "");
+		//rname = rname.replaceAll("[.+=;_\\-]", "");
 		if (fileDB.getString(rname+".name") == null){
 			return null;
 		}
