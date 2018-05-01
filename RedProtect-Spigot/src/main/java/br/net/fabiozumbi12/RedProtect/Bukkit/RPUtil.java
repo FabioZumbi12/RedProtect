@@ -294,7 +294,7 @@ public class RPUtil {
                 }
                 ++i;
             }           
-        return rname.replace(".", "-");
+        return rname.replaceAll("[.+=;\\-]", "");
     }
 
     public static String DateNow(){
@@ -1202,7 +1202,7 @@ public class RPUtil {
     }
 	
 	public static Region loadProps(YamlConfiguration fileDB, String rname, World world){
-		rname = rname.replace(".", "-");
+		rname = rname.replaceAll("[.+=;_\\-]", "");
 		if (fileDB.getString(rname+".name") == null){
 			return null;
 		}
@@ -1263,7 +1263,7 @@ public class RPUtil {
 	public static YamlConfiguration addProps(YamlConfiguration fileDB, Region r){
 		RedProtect.get().logger.debug("Region ID: "+r.getID());
 		RedProtect.get().logger.debug("Region: "+r.getName());
-		String rname = r.getName().replace(".", "-");					
+		String rname = r.getName().replaceAll("[.+=;\\-]", "");
 		fileDB.createSection(rname);
 		fileDB.set(rname+".name",rname);
 		fileDB.set(rname+".lastvisit",r.getDate());

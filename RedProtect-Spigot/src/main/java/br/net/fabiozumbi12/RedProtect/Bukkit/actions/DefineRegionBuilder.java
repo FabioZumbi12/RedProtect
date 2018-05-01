@@ -22,6 +22,8 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
+        regionName = regionName.replaceAll("[.+=;\\-]", "");
+
         //region leader
         String pName = RPUtil.PlayerToUUID(p.getName());
         //for region name

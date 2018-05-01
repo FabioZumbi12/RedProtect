@@ -87,12 +87,14 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         			if (r.getName() == null){
         				continue;
         			}
-        			
+
+        			String rname = r.getName().replaceAll("[.+=;\\-]", "");
+
         			if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
         					continue;
         				}
-        				datf  = new File(RedProtect.get().configDir+File.separator+"data", world+File.separator+ r.getName() + ".conf");
+        				datf  = new File(RedProtect.get().configDir+File.separator+"data", world+File.separator+ rname + ".conf");
         				regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
         				fileDB = regionManager.createEmptyNode();
             		}
@@ -180,12 +182,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
                     this.load(RedProtect.get().configDir+File.separator+"data"+File.separator + "data_" + world + ".conf");
     			}            	       	
             }
-		} catch (FileNotFoundException | ClassNotFoundException e) {
+		} catch (Exception e) {
 				e.printStackTrace();
 		}
     }
     
-	private void load(String path) throws FileNotFoundException, ClassNotFoundException {
+	private void load(String path) {
         String world = this.getWorld().getName();        
 
         if (RedProtect.get().cfgs.getString("file-type").equals("file")) {        	

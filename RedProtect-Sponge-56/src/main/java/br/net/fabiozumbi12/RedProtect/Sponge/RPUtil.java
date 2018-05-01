@@ -274,8 +274,8 @@ public class RPUtil {
                     break;
                 }
                 ++i;
-            }           
-        return rname;
+            }
+		return rname.replaceAll("[.+=;\\-]", "");
     }
     /*
     static String formatName(String name) {
@@ -1121,7 +1121,7 @@ public class RPUtil {
 	}
 	
 	public static CommentedConfigurationNode addProps(CommentedConfigurationNode fileDB, Region r){
-		String rname = r.getName().replace(".", "-");
+		String rname = r.getName().replaceAll("[.+=;\\-]", "");
 		fileDB.getNode(rname,"name").setValue(rname);
 		fileDB.getNode(rname,"lastvisit").setValue(r.getDate());
 		fileDB.getNode(rname,"leaders").setValue(r.getLeaders());
