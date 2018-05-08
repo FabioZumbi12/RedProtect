@@ -88,13 +88,11 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         				continue;
         			}
 
-        			String rname = r.getName().replaceAll("[.+=;\\-]", "");
-
         			if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
         					continue;
         				}
-        				datf  = new File(RedProtect.get().configDir+File.separator+"data", world+File.separator+ rname + ".conf");
+        				datf  = new File(RedProtect.get().configDir+File.separator+"data", world+File.separator + r.getName() + ".conf");
         				regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
         				fileDB = regionManager.createEmptyNode();
             		}

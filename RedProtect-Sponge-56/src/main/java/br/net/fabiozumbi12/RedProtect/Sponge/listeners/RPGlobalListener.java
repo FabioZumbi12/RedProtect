@@ -1,12 +1,17 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.data.property.block.MatterProperty;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
@@ -50,6 +55,7 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.Tristate;
+import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.weather.Weathers;
@@ -102,55 +108,93 @@ public class RPGlobalListener{
     }
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)
-    public void onFlow(ChangeBlockEvent.Place e, @Root BlockSnapshot source){
-		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
-		
-		boolean flow = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"liquid-flow");
-		boolean allowWater = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","water-flow");
-		boolean allowLava = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","lava-flow");
-		boolean allowdamage = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","flow-damage");
-				
-		Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get());
-		if (r != null){
-			return;
-		}
+    public void onFlow(NotifyNeighborBlockEvent e){
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is NotifyNeighborBlockEvent event");
 
-		RedProtect.get().logger.debug("blocks","Is BlockFromToEvent.Place event is to " + source.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
-		
-		if (!flow && (source.getState().getType().equals(BlockTypes.WATER) ||
-    		source.getState().getType().equals(BlockTypes.LAVA) ||
-    		source.getState().getType().equals(BlockTypes.FLOWING_LAVA) ||
-    		source.getState().getType().equals(BlockTypes.FLOWING_WATER))
-    		){
-			e.setCancelled(true);  
-         	return;
+		LocatableBlock locatable = e.getCause().first(LocatableBlock.class).orElse(null);
+		if (locatable != null) {
+			BlockState sourceState = locatable.getBlockState();
+
+			boolean flow = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"liquid-flow");
+			boolean allowWater = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","water-flow");
+			boolean allowLava = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","lava-flow");
+
+			MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
+			if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID){
+				//set source as not flowing
+				Region r1 = RedProtect.get().rm.getTopRegion(locatable.getLocation());
+				if (r1 == null && sourceState.getType().getName().contains("flowing_")) {
+					if (!flow){
+						changeBlockLiquid(locatable.getLocation(), sourceState.getType());
+					} else
+					if (!allowWater && (sourceState.getType() == BlockTypes.WATER || sourceState.getType() == BlockTypes.FLOWING_WATER)){
+						changeBlockLiquid(locatable.getLocation(), sourceState.getType());
+					} else
+					if (!allowLava && (sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA)){
+						changeBlockLiquid(locatable.getLocation(), sourceState.getType());
+					}
+				}
+				//remove others
+				Iterator<Direction> it = e.getNeighbors().keySet().iterator();
+				while (it.hasNext()){
+					Direction dir = it.next();
+					Location<World> newLoc = locatable.getLocation().getBlockRelative(dir);
+					Region r = RedProtect.get().rm.getTopRegion(newLoc);
+					if (r != null) continue;
+
+					//flow check
+					if (!flow) {
+						it.remove();
+						continue;
+					}
+					if (!allowWater && (newLoc.getBlockType() == BlockTypes.WATER || newLoc.getBlockType() == BlockTypes.FLOWING_WATER)){
+						it.remove();
+						continue;
+					}
+					if (!allowLava && (newLoc.getBlockType() == BlockTypes.LAVA || newLoc.getBlockType() == BlockTypes.FLOWING_LAVA)){
+						it.remove();
+						continue;
+					}
+					//TODO temp fix for pixelmon infinite berry bug
+					if (newLoc.getBlockType().getName().contains("_berry")){
+						it.remove();
+						RedProtect.get().getPVHelper().setBlock(locatable.getLocation(), BlockTypes.AIR.getDefaultState());
+					}
+				}
+			}
 		}
-				
-    	if (!allowWater && (
-    			source.getState().getType().equals(BlockTypes.WATER) ||
-    			source.getState().getType().equals(BlockTypes.FLOWING_WATER) 
-    			)){
-          	 e.setCancelled(true);  
-          	 return;
-    	}
-    	if (!allowLava && (
-    			source.getState().getType().equals(BlockTypes.LAVA) ||
-    			source.getState().getType().equals(BlockTypes.FLOWING_LAVA)
-    			)){
-          	 e.setCancelled(true);  
-          	 return;
-    	}	    	
-    	if (!allowdamage && !source.getState().getType().equals(bfrom.getState().getType()) && !bfrom.getState().getType().equals(BlockTypes.AIR)){
-    		e.setCancelled(true);
-        }
     }
-	
+
+	private void changeBlockLiquid(Location<World> local, BlockType blockType){
+		Optional<BlockType> type = Sponge.getRegistry().getType(BlockType.class, blockType.getName().replace("flowing_", ""));
+		type.ifPresent(bt -> RedProtect.get().getPVHelper().setBlock(local, bt.getDefaultState()));
+	}
+
 	@Listener(order = Order.FIRST, beforeModifications = true)
-    public void onDecay(ChangeBlockEvent.Decay e, @Root BlockSnapshot source){
+	public void onBlockBreakGeneric(ChangeBlockEvent.Break e) {
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onBlockBreakGeneric event");
+
+		LocatableBlock locatable = e.getCause().first(LocatableBlock.class).orElse(null);
+		if (locatable != null) {
+			BlockState sourceState = locatable.getBlockState();
+			boolean allowdamage = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","flow-damage");
+			//liquid check
+			MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
+			if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID){
+				Region r = RedProtect.get().rm.getTopRegion(locatable.getLocation());
+				if (r == null && !allowdamage && locatable.getLocation().getBlockType() != BlockTypes.AIR){
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@Listener(order = Order.FIRST, beforeModifications = true)
+    public void onDecay(ChangeBlockEvent.Decay e){
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
 		boolean allowDecay = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","leaves-decay");
-		
-		if (!allowDecay){
+		Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get());
+		if (r == null && !allowDecay){
           	 e.setCancelled(true);
         }
 	}

@@ -86,14 +86,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         				continue;
         			}
 
-					String rname = r.getName().replaceAll("[.+=;\\-]", "");
-
         			if (RPConfig.getBool("flat-file.region-per-file")) {
         				if (!r.toSave()){
             				continue;
             			}
         				fileDB = new YamlConfiguration();
-                    	datf = new File(pathData, world+File.separator+rname+".yml");
+                    	datf = new File(pathData, world+File.separator + r.getName() + ".yml");
                     }
 
         			fileDB = RPUtil.addProps(fileDB, r);

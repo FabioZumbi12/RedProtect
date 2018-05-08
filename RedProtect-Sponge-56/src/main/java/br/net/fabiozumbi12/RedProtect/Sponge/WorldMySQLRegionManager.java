@@ -294,7 +294,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 int maxY = rs.getInt("maxY");
                 int minY = rs.getInt("minY");
                 int prior = rs.getInt("prior");
-                String rname = rs.getString("name").replaceAll("[.+=;_\\-]", "");
+                String rname = rs.getString("name");
                 String world = rs.getString("world");
                 String date = rs.getString("date");
                 String wel = rs.getString("wel");

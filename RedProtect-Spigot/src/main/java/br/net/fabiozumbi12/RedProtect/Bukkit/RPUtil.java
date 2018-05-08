@@ -294,7 +294,7 @@ public class RPUtil {
                 }
                 ++i;
             }           
-        return rname.replaceAll("[.+=;\\-]", "");
+        return rname.replaceAll("[^\\dA-Za-z ]", "").replaceAll("\\s+", "+");
     }
 
     public static String DateNow(){

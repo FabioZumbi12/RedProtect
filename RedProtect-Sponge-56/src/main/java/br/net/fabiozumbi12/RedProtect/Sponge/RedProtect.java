@@ -1,12 +1,11 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
+import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import com.google.inject.Inject;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -31,14 +30,6 @@ import org.spongepowered.api.world.World;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPAddProtection;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPCommands;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPEntityListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPGlobalListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPMine18;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPPlayerListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPWorldListener;
 
 @Plugin(id = "redprotect", 
 name = "RedProtect", 
@@ -107,22 +98,30 @@ public class RedProtect {
     public void onServerStart(GameStartedServerEvent event) {
         try {
 			String v = Sponge.getGame().getPlatform().getContainer(Component.API).getVersion().get();
+			boolean newApi = false;
+			if (v.startsWith("7") || v.startsWith("8")){
+				newApi = true;
+			}
             instance = this;
 
-			if (v.startsWith("5") || v.startsWith("6")){
-				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
-			}
-			if (v.startsWith("7")){
+			if (newApi){
 				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
+			} else {
+				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
 			}
 
             initVars();               
-            OnlineMode = serv.getOnlineMode();           
-
+            OnlineMode = serv.getOnlineMode();
             cmdService.register(container, new RPCommands(), Arrays.asList("redprotect","rp","regionp","regp"));
-            
+
+			if (newApi){
+				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener78").newInstance());
+			} else {
+				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
+			}
+
+			game.getEventManager().registerListeners(container, new RPBlockListener());
             game.getEventManager().registerListeners(container, new RPGlobalListener());
-            game.getEventManager().registerListeners(container, new RPBlockListener());
             game.getEventManager().registerListeners(container, new RPPlayerListener());
             game.getEventManager().registerListeners(container, new RPEntityListener());
             game.getEventManager().registerListeners(container, new RPWorldListener());
@@ -134,12 +133,14 @@ public class RedProtect {
 			logger.info("Loading API...");
 			this.rpAPI = new RedProtectAPI();
 			logger.info("API Loaded!");
-            
-            logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
-            logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    / ");
-            logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
-            logger.clear("&a¯ Redprotect "+container.getVersion().get()+" enabled");
-            logger.clear("");
+
+			logger.info("Sponge version: "+v);
+            logger.clear("\n" +
+					"&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __\n" +
+					"&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    / \n" +
+					"&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /\n" +
+					"&a¯ Redprotect "+container.getVersion().get()+" enabled\n" +
+					"");
             
         } catch (Exception e) {
     		e.printStackTrace();
