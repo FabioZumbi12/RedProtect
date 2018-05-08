@@ -528,6 +528,7 @@ public class RPConfig{
         	gflags.getNode(w.getName(),"player-candrop").setValue(gflags.getNode(w.getName(),"player-candrop").getBoolean(true)); 
         	gflags.getNode(w.getName(),"player-canpickup").setValue(gflags.getNode(w.getName(),"player-canpickup").getBoolean(true));
 			gflags.getNode(w.getName(),"blocks-spawn-items").setValue(gflags.getNode(w.getName(),"blocks-spawn-items").getBoolean(true));
+			gflags.getNode(w.getName(),"liquid-flow").setValue(gflags.getNode(w.getName(),"liquid-flow").getBoolean(true));
 			if (!gflags.getNode(w.getName(),"command-ranges").hasMapChildren()){
         		gflags.getNode(w.getName(),"command-ranges","home","min-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","min-range").getDouble(0));  
         		gflags.getNode(w.getName(),"command-ranges","home","max-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","max-range").getDouble(w.getBlockMax().getY()));  
