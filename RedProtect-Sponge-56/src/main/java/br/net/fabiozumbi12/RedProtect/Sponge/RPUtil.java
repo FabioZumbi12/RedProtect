@@ -270,12 +270,13 @@ public class RPUtil {
                 else {
                 	rname = p + "_" + i;
                 }
+                rname = rname.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
                 if (RedProtect.get().rm.getRegion(rname, w) == null) {
                     break;
                 }
                 ++i;
             }
-		return rname.replaceAll("[^\\dA-Za-z ]", "").replaceAll("\\s+", "+");
+		return rname;
     }
     /*
     static String formatName(String name) {
