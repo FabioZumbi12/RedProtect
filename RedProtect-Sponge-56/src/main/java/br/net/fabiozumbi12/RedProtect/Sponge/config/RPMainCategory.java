@@ -245,8 +245,9 @@ public class RPMainCategory {
     public static class purgeCat {
         @Setting
         public boolean enabled = false;
-        @Setting(value = "ignore-regions-from-players", comment = "Names or UUIDs if in online mode, to bypass purge and regen.")
-        public List<String> ignore_regions_from_players = new ArrayList<>();
+        @Setting(value = "ignore-regions-from-players", comment = "Names or UUIDs if in online mode, to bypass purge and regen." +
+                "\n*That default uuid its a random one and you can remove*")
+        public List<String> ignore_regions_from_players = Collections.singletonList(UUID.randomUUID().toString());
 
         @Setting
         public regenCat regen = new regenCat();
@@ -338,7 +339,7 @@ public class RPMainCategory {
             public boolean claimlimit_per_world = true;
         }
 
-        @Setting(value = "enable-flag-sign")
+        @Setting(value = "enable-flag-sign", comment = "Allow players to create signs to change your regions flags states?")
         public boolean enable_flag_sign = true;
         @Setting(value = "date-format", comment = "Time format to use with data and time infos.")
         public String date_format = "dd/MM/yyyy";
@@ -397,8 +398,9 @@ public class RPMainCategory {
     public static class sellCat {
         @Setting
         public boolean enabled = false;
-        @Setting(value = "ignore-regions-from-players", comment = "Names or UUIDs if in online mode.")
-        public List<String> ignore_regions_from_players = new ArrayList<>();
+        @Setting(value = "ignore-regions-from-players", comment = "Names or UUIDs if in online mode, to bypass purge and regen." +
+                "\n*That default uuid its a random one and you can remove*")
+        public List<String> ignore_regions_from_players = Collections.singletonList(UUID.randomUUID().toString());
         @Setting(value = "sell-oldest", comment = "Put to sell regions not visited by their leader after x days.")
         public int sell_oldest = 90;
     }
@@ -447,7 +449,8 @@ public class RPMainCategory {
     public hooksCat hooks = new hooksCat();
     @ConfigSerializable
     public static class hooksCat {
-        @Setting(value = "check-uuid-names-onstart")
+        @Setting(value = "check-uuid-names-onstart", comment = "This will try to convert your player UUIDs to Player Names" +
+                "\nif you recently changed your server from Online mode to Offline, and from the other way too.")
         public boolean check_uuid_names_onstart = false;
     }
 }
