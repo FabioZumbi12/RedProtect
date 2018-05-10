@@ -322,6 +322,12 @@ public class RPConfig{
 			update++;
 		}
 
+		if (root.config_version < 7.5D){
+			root.config_version = 7.5D;
+			root.debug_messages.put("spawn", false);
+			update++;
+		}
+
 		if (update > 0){
 			RedProtect.get().logger.warning("Configuration UPDATED!");
 		}

@@ -894,8 +894,9 @@ public class RPPlayerListener{
     	}
     	
     	String cmd = e.getCommand();
-    	    	
-    	if (RedProtect.get().cfgs.root().server_protection.deny_commands_on_worlds.get(p.getWorld().getName()).contains(cmd) && !p.hasPermission("redprotect.bypass")){
+
+    	Map<String, List<String>> cmds = RedProtect.get().cfgs.root().server_protection.deny_commands_on_worlds;
+    	if (cmds.containsKey(p.getWorld().getName()) && cmds.get(p.getWorld().getName()).contains(cmd) && !p.hasPermission("redprotect.bypass")){
     		RPLang.sendMessage(p, "playerlistener.command-notallowed");
     		e.setCancelled(true);
     		return;
