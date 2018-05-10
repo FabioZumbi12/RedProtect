@@ -1,9 +1,8 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -11,11 +10,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Crops;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
 import org.bukkit.util.Vector;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Represents a 3D region created by players.

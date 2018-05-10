@@ -1,11 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -15,7 +10,11 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.text.Text;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class RPAddProtection {
 	

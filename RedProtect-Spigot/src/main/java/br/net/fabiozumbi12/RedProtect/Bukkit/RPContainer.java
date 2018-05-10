@@ -1,14 +1,13 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 
 public class RPContainer {
 

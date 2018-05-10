@@ -1,14 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.io.File;
-import java.util.*;
-
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import de.Keyle.MyPet.MyPetPlugin;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.*;
+import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
+import com.earth2me.essentials.Essentials;
 import net.milkbowl.vault.economy.Economy;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -19,25 +19,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 
-import com.earth2me.essentials.Essentials;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MPListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.McMMoListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.RPDynmap;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.RPFactions;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.RPPlaceHoldersAPI;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SkillAPIListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPAddProtection;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPBlockListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPCommands;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPEntityListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPGlobalListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPMine18;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPMine19;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPPlayerListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.RPWorldListener;
+import java.io.File;
+import java.util.*;
 
 public class RedProtect extends JavaPlugin {
 	public File JarFile = null;

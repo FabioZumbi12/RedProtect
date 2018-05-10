@@ -1,7 +1,10 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import java.util.List;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,11 +23,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import java.util.List;
 
 public class RPMine19 implements Listener{
 

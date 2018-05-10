@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.util.Arrays;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.RPProtocolLib;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -22,9 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.RPProtocolLib;
+import java.util.Arrays;
 
 public class RPGui implements Listener{		
 

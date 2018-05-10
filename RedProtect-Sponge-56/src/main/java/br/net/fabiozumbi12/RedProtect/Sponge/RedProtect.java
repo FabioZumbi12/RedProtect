@@ -1,16 +1,16 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import com.google.inject.Inject;
+import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
@@ -27,9 +27,9 @@ import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "redprotect", 
 name = "RedProtect", 
@@ -79,6 +79,9 @@ public class RedProtect {
 
     @Inject
     public PluginContainer container;
+
+	@Inject
+	public GuiceObjectMapperFactory factory;
 
     @Listener
 	public void onStopServer(GameStoppingServerEvent e) {
@@ -150,11 +153,11 @@ public class RedProtect {
     
     private void loadRegions() throws Exception {
     	rm.loadAll();
-    	if (cfgs.getString("file-type").equalsIgnoreCase("file")){
+    	if (cfgs.root().file_type.equalsIgnoreCase("file")){
         	RPUtil.ReadAllDB(rm.getAllRegions());
         	AutoSaveHandler(); 
     	} else {
-    		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.getString("file-type") + ") database!");
+    		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
     	}
     }
 
@@ -180,7 +183,7 @@ public class RedProtect {
 					denyEnter.put(player, regs);
 				}
 			}
-		}, cfgs.getInt("region-settings.delay-after-kick-region"), TimeUnit.SECONDS);
+		}, cfgs.root().region_settings.delay_after_kick_region, TimeUnit.SECONDS);
 		return true;
 	}
 
@@ -197,7 +200,7 @@ public class RedProtect {
     		//shutdown
         	shutDown();
         	
-    		cfgs = new RPConfig();
+    		cfgs = new RPConfig(this.factory);
     		RPLang.init();
     		
     		//start
@@ -227,13 +230,13 @@ public class RedProtect {
 		if (taskid != null && Sponge.getScheduler().getTaskById(taskid).isPresent()){
 			Sponge.getScheduler().getTaskById(taskid).get().cancel();
 		}
-		if (cfgs.getInt("flat-file.auto-save-interval-seconds") != 0){
-			logger.info("Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database every " + cfgs.getInt("flat-file.auto-save-interval-seconds")/60 + " minutes!");
+		if (cfgs.root().flat_file.auto_save_interval_seconds != 0){
+			logger.info("Auto-save Scheduler: Saving "+cfgs.root().file_type+" database every " + cfgs.root().flat_file.auto_save_interval_seconds/60 + " minutes!");
 			
 			taskid = Sponge.getScheduler().createSyncExecutor(container).scheduleWithFixedDelay(() -> {
-                logger.debug("default","Auto-save Scheduler: Saving "+cfgs.getString("file-type")+" database!");
+                logger.debug("default","Auto-save Scheduler: Saving "+cfgs.root().file_type+" database!");
                 rm.saveAll();
-                },cfgs.getInt("flat-file.auto-save-interval-seconds"), cfgs.getInt("flat-file.auto-save-interval-seconds"), TimeUnit.SECONDS).getTask().getUniqueId();
+                },cfgs.root().flat_file.auto_save_interval_seconds, cfgs.root().flat_file.auto_save_interval_seconds, TimeUnit.SECONDS).getTask().getUniqueId();
 			
 		} else {
         	logger.info("Auto-save Scheduler: Disabled");
@@ -244,7 +247,7 @@ public class RedProtect {
         container = Sponge.getPluginManager().getPlugin("redprotect").get();
         serv = Sponge.getServer();        
         cmdService = game.getCommandManager();
-        cfgs = new RPConfig();
+        cfgs = new RPConfig(factory);
         RPLang.init();
         
         WE = checkWE();

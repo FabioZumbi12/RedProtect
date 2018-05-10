@@ -1,29 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandException;
 import org.bukkit.entity.Player;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import java.sql.*;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 class WorldMySQLRegionManager implements WorldRegionManager{

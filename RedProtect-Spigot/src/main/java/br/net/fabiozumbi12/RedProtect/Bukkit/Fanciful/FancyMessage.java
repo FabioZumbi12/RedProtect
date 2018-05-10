@@ -1,22 +1,12 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.TextualComponent.rawText;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.util.ArrayWrapper;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.util.Reflection;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -29,14 +19,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.util.ArrayWrapper;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.util.Reflection;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.logging.Level;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.TextualComponent.rawText;
 
 /**
  * Represents a formattable message. Such messages can use elements such as colors, formatting codes, hover and click data, and other features provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.

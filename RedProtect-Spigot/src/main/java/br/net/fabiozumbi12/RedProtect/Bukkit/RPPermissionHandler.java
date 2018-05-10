@@ -1,15 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class RPPermissionHandler{
       

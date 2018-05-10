@@ -19,11 +19,11 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The {@code TAG_List} tag.

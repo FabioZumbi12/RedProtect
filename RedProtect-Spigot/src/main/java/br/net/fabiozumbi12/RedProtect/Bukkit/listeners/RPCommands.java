@@ -1,16 +1,22 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.Bukkit.*;
+import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Bukkit.actions.RedefineRegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.DeleteRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.RenameRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.AWEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.RPSchematics;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
@@ -23,25 +29,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPEconomy;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPGui;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Updater;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.FancyMessage;
-import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.actions.RedefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.events.DeleteRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Bukkit.events.RenameRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.AWEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.RPSchematics;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("deprecation")
 public class RPCommands implements CommandExecutor, TabCompleter{

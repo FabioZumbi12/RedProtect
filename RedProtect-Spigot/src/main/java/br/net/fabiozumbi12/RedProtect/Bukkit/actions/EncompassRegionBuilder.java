@@ -1,10 +1,11 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,12 +16,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class EncompassRegionBuilder extends RegionBuilder{
 
@@ -58,24 +57,10 @@ public class EncompassRegionBuilder extends RegionBuilder{
         }
         
         //region name conform
-        regionName = regionName.replace("/", "|");  
-        if (RedProtect.get().rm.getRegion(regionName, w) != null) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.existis"));
-            return;
-        }
-        if (regionName.length() < 2 || regionName.length() > 16) {
+        if (regionName.length() < 3) {
             this.setErrorSign(e, RPLang.get("regionbuilder.regionname.invalid"));
             return;
         }
-        if (regionName.contains(" ")) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.spaces"));
-            return;
-        }
-        if (regionName.contains("@")) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
-            return;
-        }
-            	
 
         int maxby = current.getY();
         int minby = current.getY();

@@ -1,12 +1,12 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class RPPermHandler{
 	
@@ -59,11 +59,11 @@ public class RPPermHandler{
     }
     
     private int LimitHandler(User p){
-    	int limit = RedProtect.get().cfgs.getInt("region-settings.limit-amount");
+    	int limit = RedProtect.get().cfgs.root().region_settings.limit_amount;
     	List<Integer> limits = new ArrayList<>();
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.blocks.unlimited")){
-    			for (String perm:RedProtect.get().cfgs.getStringList("permissions-limits.permissions.blocks")){
+    			for (String perm:RedProtect.get().cfgs.root().permissions_limits.blocks){
     				RedProtect.get().logger.debug("default","Perm: "+perm);
     				if (p.hasPermission(perm)){
     					RedProtect.get().logger.debug("default","Has block perm: "+perm);
@@ -84,11 +84,11 @@ public class RPPermHandler{
     }
     
     private int ClaimLimitHandler(User p){
-    	int limit = RedProtect.get().cfgs.getInt("region-settings.claim-amount");  
+    	int limit = RedProtect.get().cfgs.root().region_settings.claim.amount_per_player;
     	List<Integer> limits = new ArrayList<>();
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.claim.unlimited")){
-    			for (String perm:RedProtect.get().cfgs.getStringList("permissions-limits.permissions.claims")){
+    			for (String perm:RedProtect.get().cfgs.root().permissions_limits.claims){
     				RedProtect.get().logger.debug("default","Perm: "+perm);
     				if (p.hasPermission(perm)){
     					RedProtect.get().logger.debug("default","Has claim perm: "+perm);

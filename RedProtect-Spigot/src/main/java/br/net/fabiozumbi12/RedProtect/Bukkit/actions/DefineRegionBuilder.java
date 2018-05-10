@@ -1,18 +1,17 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefineRegionBuilder extends RegionBuilder{
 	
@@ -22,36 +21,29 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
-        regionName = regionName.replaceAll("[.+=;\\-]", "");
-
         //region leader
         String pName = RPUtil.PlayerToUUID(p.getName());
-        //for region name
-        String pRName = RPUtil.UUIDtoPlayer(p.getName());
-        
+
         String wmsg = "";
         if (leader.equals(RPConfig.getString("region-settings.default-leader"))){
         	pName = leader;
-        	pRName = leader;
         	wmsg = "hide ";
         }
-        
-        if (regionName.equals("")) {
-            int i = 0;            
-            regionName = RPUtil.StripName(pRName)+"_"+0;            
-            while (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-            	++i;
-            	regionName = RPUtil.StripName(pRName)+"_"+i;   
-            }            
+
+        if (regionName == null || regionName.equals("")) {
+            regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
-            	RPLang.sendMessage(p, "regionbuilder.autoname.error");
+                RPLang.sendMessage(p, "regionbuilder.autoname.error");
                 return;
             }
         }
-        if (regionName.contains("@")) {
-            p.sendMessage(RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
+
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
             return;
         }
+
         if (loc1 == null || loc2 == null) {
         	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
@@ -64,17 +56,6 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
-        //region name conform
-        regionName = regionName.replace("/", "|");        
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-        	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
-            return;
-        }
-        if (regionName.length() < 3 || regionName.length() > 16) {
-        	RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return;
-        }
-        
         leaders.add(leader);
         if (!pName.equals(leader)) {
         	leaders.add(pName);

@@ -11,7 +11,6 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -34,17 +33,17 @@ public class RPBlockListener78 {
 
         if (sourceLoc != null){
             RedProtect.get().logger.debug("blocks","sourceLoc");
-            Region r = RedProtect.get().rm.getTopRegion(sourceLoc.getLocation());
 
             if (context.containsKey(EventContextKeys.PISTON_EXTEND) || context.containsKey(EventContextKeys.PISTON_RETRACT)){
-                if (RedProtect.get().cfgs.getBool("performance.disable-PistonEvent-handler")){
+                if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler){
                     return;
                 }
 
+                Region r = RedProtect.get().rm.getTopRegion(sourceLoc.getLocation(), this.getClass().getName());
                 for (Location<World> pistonLoc: e.getLocations()){
-                    Region targetr = RedProtect.get().rm.getTopRegion(pistonLoc);
+                    Region targetr = RedProtect.get().rm.getTopRegion(pistonLoc, this.getClass().getName());
 
-                    boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
+                    boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
                     RedProtect.get().logger.debug("blocks","getLocations");
 
                     if (targetr != null && (r == null || r != targetr)){

@@ -1,13 +1,12 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 
 public class RPDoor {
 	

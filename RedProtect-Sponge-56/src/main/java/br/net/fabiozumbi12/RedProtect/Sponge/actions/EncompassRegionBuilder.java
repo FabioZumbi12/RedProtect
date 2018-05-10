@@ -1,11 +1,10 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.Sign;
@@ -22,11 +21,11 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class EncompassRegionBuilder extends RegionBuilder{
 
@@ -63,24 +62,17 @@ public class EncompassRegionBuilder extends RegionBuilder{
                 return;
             }
         }
-        
-        if (RedProtect.get().rm.getRegion(regionName, w) != null) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.existis"));
-            return;
-        }
-        if (regionName.length() < 2 || regionName.length() > 16) {
+
+        //region name conform
+        if (regionName.length() < 3) {
             this.setErrorSign(e, RPLang.get("regionbuilder.regionname.invalid"));
-            return;
-        }
-        if (regionName.contains(" ")) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.spaces"));
             return;
         }
             	
         int maxby = current.getLocation().get().getBlockY();
         int minby = current.getLocation().get().getBlockY();
         
-        for (int i = 0; i < RedProtect.get().cfgs.getInt("region-settings.max-scan"); ++i) {        	
+        for (int i = 0; i < RedProtect.get().cfgs.root().region_settings.max_scan; ++i) {
             int nearbyCount = 0;
             int x = current.getLocation().get().getBlockX();
             int y = current.getLocation().get().getBlockY();
@@ -97,7 +89,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
             
             for (int bi = 0; bi < block.length; ++bi) {
 
-                boolean validBlock = (block[bi].getState().getType().getName().contains(RedProtect.get().cfgs.getString("region-settings.block-id").toLowerCase()));
+                boolean validBlock = (block[bi].getState().getType().getName().contains(RedProtect.get().cfgs.root().region_settings.block_id.toLowerCase()));
                 if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {                
                 	++nearbyCount;
                     next = block[bi];
@@ -167,8 +159,8 @@ public class EncompassRegionBuilder extends RegionBuilder{
                             ++bl;
                         }
 
-                        int maxy = RedProtect.get().cfgs.getInt("region-settings.claim.maxy");
-                        int miny = RedProtect.get().cfgs.getInt("region-settings.claim.miny");
+                        int maxy = RedProtect.get().cfgs.root().region_settings.claim.maxy;
+                        int miny = RedProtect.get().cfgs.root().region_settings.claim.miny;
                         if (maxy <= -1){
                             maxy = w.getDimension().getBuildHeight();
                         }
@@ -205,7 +197,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         
                         //check borders for other regions
                         for (Location<World> loc:limitlocs){
-                        	otherrg = RedProtect.get().rm.getTopRegion(loc);
+                        	otherrg = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
                         	
                         	RedProtect.get().logger.debug("default","protection Block is: " + loc.getBlock().getType().getName());
                         	
@@ -221,7 +213,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         }  
                         
                         //check if same area
-                        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
+                        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());
                         if (otherrg != null && otherrg.get4Points(current.getLocation().get().getBlockY()).equals(region.get4Points(current.getLocation().get().getBlockY()))){
                         	this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                             return;
@@ -281,7 +273,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         }
                         
                         //Drop types
-                        if (owner2 != null && RedProtect.get().cfgs.getBool("region-settings.claim-modes.allow-player-decide") && RPLang.containsValue(owner2)){                        	
+                        if (owner2 != null && RedProtect.get().cfgs.root().region_settings.claim.modes.allow_player_decide && RPLang.containsValue(owner2)){
                         	/*if (owner2.equalsIgnoreCase(RPLang.get("region.mode.drop"))){
                         		drop(b , blocks, p);
                         		RPLang.sendMessage(p, "regionbuilder.region.droped");
@@ -298,10 +290,10 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         	/*if (RedProtect.get().cfgs.getString("region-settings.claim-modes.mode").equalsIgnoreCase("drop")) {
                                 drop(b , blocks, p);
                             }*/
-                            if (RedProtect.get().cfgs.getString("region-settings.claim-modes.mode").equalsIgnoreCase("remove")) {
+                            if (RedProtect.get().cfgs.root().region_settings.claim.modes.mode.equalsIgnoreCase("remove")) {
                                 remove(b, blocks, p);
                             }
-                            if (RedProtect.get().cfgs.getString("region-settings.claim-modes.mode").equalsIgnoreCase("give")){
+                            if (RedProtect.get().cfgs.root().region_settings.claim.modes.mode.equalsIgnoreCase("give")){
                             	give(b, p, blocks);
                             }
                         }
@@ -319,7 +311,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
             }
             else if (i == 1 && nearbyCount == 2) {
             	//check other regions on blocks
-            	Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get());
+            	Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
             	if (rcurrent != null && !rcurrent.canBuild(p)){
             		this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
             		return;
@@ -362,7 +354,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
             current = next;
             oldFacing = curFacing;
         }
-        String maxsize = String.valueOf(RedProtect.get().cfgs.getInt("region-settings.max-scan"));
+        String maxsize = String.valueOf(RedProtect.get().cfgs.root().region_settings.max_scan);
         this.setErrorSign(e, RPLang.get("regionbuilder.area.toobig").replace("{maxsize}", maxsize));
     }
     

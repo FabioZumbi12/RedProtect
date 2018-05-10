@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import org.spongepowered.api.entity.living.player.Player;
+
 import java.util.Map;
 import java.util.Set;
-
-import org.spongepowered.api.entity.living.player.Player;
 
 public interface WorldRegionManager {
 	

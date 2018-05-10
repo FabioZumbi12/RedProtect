@@ -1,15 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.API;
 
-import java.util.Map;
-import java.util.Set;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import java.util.Map;
+import java.util.Set;
 
 public class RedProtectAPI {
 	
@@ -90,7 +89,7 @@ public class RedProtectAPI {
 	 * @return The high priority {@code Region} in a group of regions.
 	 */
 	public Region getHighPriorityRegion(World world, int x, int y, int z){
-		return RedProtect.get().rm.getTopRegion(world, x, y, z);
+		return RedProtect.get().rm.getTopRegion(world, x, y, z, this.getClass().getName());
 	}
 	
 	/**
@@ -193,10 +192,11 @@ public class RedProtectAPI {
 	 * <p>You need to use the predefined permission {@code "RedProtect.get().flag." + YourCustomFlag} to allow player to change the values of Player flags with commands.
 	 * <p>
 	 * @param flag Player Flag to add
-	 * @param flag Player Flag to add
+	 * @param flag Player Flag value to add
 	 */
 	public void addPlayerFlag(String flag, Object defValue){
-		RedProtect.get().cfgs.setConfig("flags."+flag, defValue);
+		if (defValue instanceof Boolean)
+			RedProtect.get().cfgs.root().flags.put(flag, (Boolean)defValue);
 	}
 	
 	/**

@@ -1,25 +1,18 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class RPLang {
 	

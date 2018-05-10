@@ -1,12 +1,12 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.Fanciful.util;
 
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.Bukkit;
 
 /**
  * A class containing static utility methods and caches which are intended as reflective conveniences.

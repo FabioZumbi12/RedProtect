@@ -1,19 +1,18 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-
 import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RedefineRegionBuilder extends RegionBuilder{
 	
@@ -29,9 +28,9 @@ public class RedefineRegionBuilder extends RegionBuilder{
         }
 
 		//check if distance allowed
-		if (l1.getPosition().distanceSquared(l2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+		if (l1.getPosition().distanceSquared(l2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
 			Double dist = l1.getPosition().distanceSquared(l2.getPosition());
-			RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+			RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
 			return;
 		}
 
@@ -39,9 +38,13 @@ public class RedefineRegionBuilder extends RegionBuilder{
         
         int miny = l1.getBlockY();
         int maxy = l2.getBlockY();
-        if (RedProtect.get().cfgs.getBool("region-settings.autoexpandvert-ondefine")){
+        if (RedProtect.get().cfgs.root().region_settings.autoexpandvert_ondefine){
         	miny = 0;
-        	maxy = 256;
+        	maxy = p.getWorld().getBlockMax().getY();
+			if (RedProtect.get().cfgs.root().region_settings.claim.miny != -1)
+				miny = RedProtect.get().cfgs.root().region_settings.claim.miny;
+			if (RedProtect.get().cfgs.root().region_settings.claim.maxy != -1)
+				miny = RedProtect.get().cfgs.root().region_settings.claim.maxy;
         }
         
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
@@ -70,7 +73,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         Region otherrg = null;
 
         //check if same area
-        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
+        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());
         if (otherrg != null && !checkID(region, otherrg) && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
         	this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
         	return;
@@ -105,7 +108,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
             	return;    	
             }*/
         	
-        	otherrg = RedProtect.get().rm.getTopRegion(loc);        	
+        	otherrg = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
         	RedProtect.get().logger.debug("blocks", "protection Block is: " + loc.getBlock().getType().getName());
         	        	
     		if (otherrg != null){

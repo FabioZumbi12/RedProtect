@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.key.Keys;
@@ -19,8 +20,6 @@ import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-
-import com.flowpowered.math.vector.Vector3i;
 
 import java.util.Collections;
 import java.util.List;

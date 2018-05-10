@@ -1,31 +1,23 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.schematics;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.zip.GZIPInputStream;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Player;
-
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.ByteArrayTag;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.CompoundTag;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.IntTag;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.NBTInputStream;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.NamedTag;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.ShortTag;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.StringTag;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.Tag;
+import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.*;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 @SuppressWarnings("deprecation")
 public class RPSchematics {

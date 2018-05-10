@@ -1,13 +1,11 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
-import me.clip.placeholderapi.external.EZPlaceholderHook;
-
-import org.bukkit.entity.Player;
-
 import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import me.clip.placeholderapi.external.EZPlaceholderHook;
+import org.bukkit.entity.Player;
 
 public class RPPlaceHoldersAPI extends EZPlaceholderHook {
 

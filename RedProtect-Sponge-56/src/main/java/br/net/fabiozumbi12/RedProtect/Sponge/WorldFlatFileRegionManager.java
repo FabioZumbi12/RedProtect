@@ -1,24 +1,15 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 class WorldFlatFileRegionManager implements WorldRegionManager{
 
@@ -74,10 +65,10 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public int save() {
     	int saved = 0;
         try {
-            RedProtect.get().logger.debug("default","RegionManager.Save(): File type is " + RedProtect.get().cfgs.getString("file-type"));
+            RedProtect.get().logger.debug("default","RegionManager.Save(): File type is " + RedProtect.get().cfgs.root().file_type);
             String world = this.getWorld().getName();
                   
-            if (RedProtect.get().cfgs.getString("file-type").equals("file")) {            	
+            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
             	
             	File datf  = new File(RedProtect.get().configDir+File.separator+"data", "data_" + world + ".conf");
             	ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
@@ -88,7 +79,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         				continue;
         			}
 
-        			if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
+        			if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
         				if (!r.toSave()){
         					continue;
         				}
@@ -100,13 +91,13 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         			fileDB = RPUtil.addProps(fileDB, r); 
         			saved++;
         			
-        			if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) { 
+        			if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
         				saveConf(fileDB, regionManager);
         				r.setToSave(false);        				 				
         			}
         		}
             	
-            	if (!RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
+            	if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
             		RPUtil.backupRegions(fileDB, world);
     				saveConf(fileDB, regionManager);    				
     			} else {
@@ -159,8 +150,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     	try {
             String world = this.getWorld().getName();
             
-            if (RedProtect.get().cfgs.getString("file-type").equals("file")) {    
-            	if (RedProtect.get().cfgs.getBool("flat-file.region-per-file")) {
+            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
+            	if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
             		File f = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + world);
             		if (!f.exists()){
             			f.mkdir();
@@ -188,7 +179,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 	private void load(String path) {
         String world = this.getWorld().getName();        
 
-        if (RedProtect.get().cfgs.getString("file-type").equals("file")) {        	
+        if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
         	RedProtect.get().logger.debug("default","Load world " + this.world.getName() + ". File type: conf");
         	
         	try {

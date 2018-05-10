@@ -1,10 +1,10 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import org.spongepowered.api.Sponge;
+
 import java.io.File;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import org.spongepowered.api.Sponge;
 
 public class RPLogger{
 	private final SortedMap<Integer,String> MainLog = new TreeMap<>();
@@ -34,13 +34,13 @@ public class RPLogger{
 	}
     
     public void debug(String level, String s) {
-        if (RedProtect.get().cfgs.getBool("debug-messages."+level)) {        	
+        if (RedProtect.get().cfgs.root().debug_messages.get(level)) {
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&b"+s+"&r]"));
         }  
     }
     
     public void addLog(String logLine){
-    	if(!RedProtect.get().cfgs.getBool("log-actions")){
+    	if(!RedProtect.get().cfgs.root().log_actions){
     		return;
     	}
     	int key = MainLog.keySet().size()+1;
@@ -52,7 +52,7 @@ public class RPLogger{
     }
     
     public void SaveLogs(){
-    	if(!RedProtect.get().cfgs.getBool("log-actions")){
+    	if(!RedProtect.get().cfgs.root().log_actions){
     		return;
     	}
     	    	

@@ -1,21 +1,13 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-
-import com.flowpowered.math.vector.Vector3i;
+import java.util.*;
 
 /**
  * Get the region database from here. All functions for manage regions can be found in this variable. 
@@ -40,7 +32,7 @@ public class RegionManager{
             return;
         }
         WorldRegionManager mgr;
-        if (RedProtect.get().cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
+        if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("mysql")) {
             mgr = new WorldMySQLRegionManager(w);
         } else {
             mgr = new WorldFlatFileRegionManager(w);
@@ -91,7 +83,7 @@ public class RegionManager{
     public int getTotalRegionSize(String uuid, String world) {
     	Optional<World> w = Sponge.getServer().getWorld(world);
     	int size = 0;
-    	if (RedProtect.get().cfgs.getBool("region-settings.blocklimit-per-world") && w.isPresent()){
+    	if (RedProtect.get().cfgs.root().region_settings.blocklimit_per_world && w.isPresent()){
     		WorldRegionManager rms = this.regionManagers.get(w.get());   
     		size = rms.getTotalRegionSize(uuid);
     	} else {
@@ -153,7 +145,7 @@ public class RegionManager{
     public int getPlayerRegions(String player, World w){
     	player = RPUtil.PlayerToUUID(player);
     	int size = 0;
-    	if (RedProtect.get().cfgs.getBool("region-settings.claimlimit-per-world")){
+    	if (RedProtect.get().cfgs.root().region_settings.claim.claimlimit_per_world){
     		size = getRegions(player, w).size();
     	} else {
     		size = getRegions(player).size();
@@ -197,9 +189,9 @@ public class RegionManager{
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public Region getTopRegion(Location<World> loc){ 
+    public Region getTopRegion(Location<World> loc, String caller){
     	if (bLoc.containsKey(loc.getBlockPosition())){
-    		RedProtect.get().logger.debug("blocks", "Get from cache: "+loc.getBlockPosition().toString());
+    		RedProtect.get().logger.debug("blocks", "Get from cache: "+loc.getBlockPosition().toString()+ " - ["+caller+"]");
     		return bLoc.get(loc.getBlockPosition());
     	} else {
         	if (!this.regionManagers.containsKey(loc.getExtent())){
@@ -211,7 +203,7 @@ public class RegionManager{
 				bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
 				if (r != null){
 					bLoc.put(loc.getBlockPosition(), r);
-					RedProtect.get().logger.debug("blocks", "Get from DB");
+					RedProtect.get().logger.debug("blocks", "Get from DB - ["+caller+"]");
 				}
 			} catch (Exception ignored){}
         	return r;
@@ -222,8 +214,8 @@ public class RegionManager{
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public Region getTopRegion(World w, int x, int y, int z){
-    	return getTopRegion(new Location<>(w, x, y, z));
+    public Region getTopRegion(World w, int x, int y, int z, String caller){
+    	return getTopRegion(new Location<>(w, x, y, z), caller);
     }
     
     /**
@@ -254,7 +246,7 @@ public class RegionManager{
     public int regenAll(String player){
     	int delay = 0;
 		for (Region r : getRegions(player)) {
-			if (r.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
+			if (r.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
 				WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
 				delay = delay + 10;
 			}
@@ -347,9 +339,7 @@ public class RegionManager{
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
 				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
-		if (old.getRentString().split(":").length >= 3){
-			newr.setRentString(old.getRentString());
-		}
+
 		this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()).get());		
 		this.remove(old, RedProtect.get().serv.getWorld(old.getWorld()).get());		
 	}

@@ -1,8 +1,8 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.Ents;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

@@ -1,13 +1,12 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.io.File;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import java.io.File;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class RPLogger{
 	private final SortedMap<Integer,String> MainLog = new TreeMap<>();

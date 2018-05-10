@@ -1,10 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -13,21 +9,18 @@ import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.effect.particle.ParticleEffect;
-import org.spongepowered.api.effect.particle.ParticleOptions;
 import org.spongepowered.api.effect.particle.ParticleType;
-import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColor;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.Color;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a 3D region created by players.
@@ -56,9 +49,6 @@ public class Region implements Serializable{
 	private Location<World> tppoint;
 	private final boolean waiting = false;
 	private boolean canDelete;
-	private final Map<String, Integer> rent = new HashMap<>();
-	private final Map<String, Long> rentDate = new HashMap<>();
-	private UUID rentTask = null;
 	private boolean tosave = true;
         
 	/**Get unique ID of region based on name of "region + @ + world".
@@ -83,155 +73,7 @@ public class Region implements Serializable{
 	public void setToSave(boolean save){
 		this.tosave = save;
 	}
-	
-	private void startRentScheduler(){
-		rentTask = Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).scheduleAtFixedRate(() -> {
-            RedProtect.get().logger.debug("player", "Region Rent - Run scheduler...");
 
-            List<String> toRemove = new ArrayList<>();
-            long now = RPUtil.getNowMillis();
-
-            for (String key:rentDate.keySet()){
-                long rentdt = rentDate.get(key);
-
-                //compare to remove
-                if (now > rentdt){
-                    if (isLeader(key) && leaders.size() == 1){
-                        addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
-                    }
-                    //remove from all
-                    removeMember(key);
-                    toRemove.add(key);
-
-                    if (RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isPresent()){
-                        RPLang.sendMessage(RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).get(), RPLang.get("region.rentend").replace("{region}", name));
-                    }
-                }
-
-                if (RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).isPresent()){
-                    RedProtect.get().logger.debug("player", "Rent found player...");
-                    if (now == rentdt){
-                        RPLang.sendMessage(RedProtect.get().serv.getPlayer(RPUtil.UUIDtoPlayer(key)).get(), RPLang.get("region.rentalert").replace("{cost}", RPEconomy.getFormatted(getRentValue(key))));
-                    }
-                }
-            }
-
-            for (String key:toRemove){
-                rent.remove(key);
-                rentDate.remove(key);
-            }
-
-            if (rent.isEmpty()){
-                stopRentTask();
-            }
-        }, 5, 5, TimeUnit.MINUTES).getTask().getUniqueId();
-	}
-	
-	private void stopRentTask(){
-		if (rentTask != null){
-			Sponge.getScheduler().getTaskById(rentTask).get().cancel();
-		}		
-	}
-	
-	private void restartRentScheduler(){
-		stopRentTask();
-		startRentScheduler();
-	}
-		
-	public void setRent(String player, Object value){
-		if (value instanceof Long){			
-			rentDate.put(player, (Long)value);
-		} else if (value instanceof Integer){
-			rent.put(player, (Integer)value);
-		}
-		RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-	}
-	
-	public void addrent(String player, Integer value, Long renewal, String rank){
-		setToSave(true);
-		this.rent.put(player, value);
-		this.rentDate.put(player, renewal);
-				
-		/*if (rank.equalsIgnoreCase("admin")){
-			if (isLeader(player)){
-				addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
-			}
-			addAdmin(player);
-			
-		} else	*/		
-		if (rank.equalsIgnoreCase("owner")){			
-			addLeader(player);			
-		} else {
-			if (isLeader(player)){
-				addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
-			}
-			addMember(player);
-		}		
-		RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-		
-		//restart scheduler	
-		restartRentScheduler();
-	}
-	
-	public void removeRent(String player){
-		if (!this.rent.isEmpty()){
-			setToSave(true);
-			this.rent.remove(player);
-			this.rentDate.remove(player);
-			if (isLeader(player) && leaders.size() == 1){
-				addLeader(RedProtect.get().cfgs.getString("region-settings.default-owner"));
-			}	
-			removeMember(player);
-			RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-			if (this.rent.isEmpty()){
-				stopRentTask();
-			}
-		}
-	}
-	
-	public String getRentDateFormated(String player){
-		SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.get().cfgs.getString("region-settings.date-format"));
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(getRentDateMillis(player));
-		return sdf.format(cal.getTime());
-	}
-	
-	public boolean isRentFor(String player){
-		return this.rent.containsKey(player);
-	}
-	
-	public int getRentValue(String player){
-		return this.rent.get(player);
-	}
-	
-	public Long getRentDateMillis(String player){
-		return this.rentDate.get(player);
-	}
-	
-	public String getRentString(){
-		String rent = "";
-        for (String key:this.rent.keySet()){
-        	rent = rent+","+key+":"+getRentValue(key)+":"+getRentDateMillis(key);
-        }
-        if (rent.equals("")){
-        	return "";
-        }
-        return rent.substring(1);
-	}
-	
-	public void setRentString(String string){
-		setToSave(true);
-		for (String key:string.split(",")){
-			String[] s = key.split(":");
-			this.rent.put(s[0], Integer.valueOf(s[1]));
-			this.rentDate.put(s[0], Long.valueOf(s[2]));
-		}
-		//RedProtect.get().rm.updateLiveRegion(this, "rent", getRentString());
-		
-		//restart scheduler	
-		restartRentScheduler();
-	}
-	
 	public boolean canDelete(){
 		return this.canDelete;
 	}
@@ -325,7 +167,7 @@ public class Region implements Serializable{
 	}
 
 	public void updateSigns(String fname){
-		if (!RedProtect.get().cfgs.getBool("region-settings.enable-flag-sign")){
+		if (!RedProtect.get().cfgs.root().region_settings.enable_flag_sign){
 			return;
 		}
 		List<Location> locs = RedProtect.get().cfgs.getSigns(this.getID());
@@ -560,14 +402,14 @@ public class Region implements Serializable{
 		String leadersstring = "";
         String adminstring = "";
         String memberstring = "";
-        String wMsgTemp = "";
+        String wMsgTemp;
         String IsTops = RPLang.translBool(isOnTop());
-        String today = this.date;
+        String today;
         String wName = this.world;
         String colorChar = "";
         
-        if (RedProtect.get().cfgs.getString("region-settings.world-colors." + this.world) != null){
-        	colorChar = RedProtect.get().cfgs.getString("region-settings.world-colors." + this.world);
+        if (RedProtect.get().cfgs.root().region_settings.world_colors.containsKey(this.world)){
+        	colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(this.world);
         }
         
         for (int i = 0; i < this.leaders.size(); ++i) {
@@ -620,7 +462,7 @@ public class Region implements Serializable{
         for (String pname:this.leaders){        	
         	if (RedProtect.get().OnlineMode){
         		User play = null;
-        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.getString("region-settings.default-leader"))){
+        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)){
                 	play = RPUtil.getUser(pname);
             	}            
             	if (pname != null && play != null && play.isOnline()){
@@ -635,7 +477,7 @@ public class Region implements Serializable{
         for (String pname:this.admins){        	
         	if (RedProtect.get().OnlineMode){
         		User play = null;
-        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.getString("region-settings.default-leader"))){
+        		if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)){
                 	play = RPUtil.getUser(pname);
             	}            
             	if (pname != null && play != null && play.isOnline()){
@@ -647,15 +489,7 @@ public class Region implements Serializable{
         		break; 
         	}  
         } 
-        
-        String rents = "";
-        if (!rent.isEmpty()){
-        	for (String play:rent.keySet()){
-        		rents = rents+"\n"+RPLang.get("general.color")+"- "+RPLang.get("region.rent").replace("{player}", RPUtil.UUIDtoPlayer(play)).replace("{value}", RPEconomy.getFormatted(getRentValue(play))).replace("{renew}", getRentDateFormated(play));
-        	}
-        	rents.substring(2);
-        }
-        
+
         return RPUtil.toText(RPLang.get("region.name") + " " + colorChar+this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +      
         RPLang.get("region.priority.top") + " "  + IsTops  + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPEconomy.getFormatted(this.value) + "\n" +
        RPLang.get("region.world") + " " + colorChar+wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
@@ -663,8 +497,7 @@ public class Region implements Serializable{
        RPLang.get("region.leaders") + " " + leadersstring + "\n" +
        RPLang.get("region.admins") + " " + adminstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
        RPLang.get("region.date") + " " + today + "\n" +
-       RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ")? RPLang.get("region.hiding") : wMsgTemp) +
-       (rent.isEmpty() ? "":"\n"+RPLang.get("region.rentlist")+"\n"+rents));       
+       RPLang.get("region.welcome.msg") + " " + wMsgTemp);
     }
 	
 	private String conformName(String name){
@@ -1050,7 +883,7 @@ public class Region implements Serializable{
     		if (RedProtect.get().cfgs.getDefFlagsValues().get(key) != null){
     			return (Boolean) RedProtect.get().cfgs.getDefFlagsValues().get(key);
     		} else {
-    			return RedProtect.get().cfgs.getBool("flags."+key);
+    			return RedProtect.get().cfgs.root().flags.get(key);
     		}  		
     	}
         return this.flags.get(key) instanceof Boolean && (Boolean)this.flags.get(key);
@@ -1061,7 +894,7 @@ public class Region implements Serializable{
     		if (RedProtect.get().cfgs.getDefFlagsValues().get(key) != null){
     			return (String) RedProtect.get().cfgs.getDefFlagsValues().get(key);
     		} else {
-    			return RedProtect.get().cfgs.getString("flags."+key);
+    			return RedProtect.get().cfgs.root().flags.get(key).toString();
     		}
     	}
         return this.flags.get(key).toString();
@@ -1110,7 +943,7 @@ public class Region implements Serializable{
     }
         
     public boolean isOnTop(){
-    	Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ());
+    	Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
 		return newr == null || newr.equals(this);    	
     }
     
@@ -1438,14 +1271,14 @@ public class Region implements Serializable{
     		return false;
     	}
     	if (!RedProtect.get().cfgs.isFlagEnabled("build")){
-    		return RedProtect.get().cfgs.getBool("flags.build") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("build") || checkAllowedPlayer(p);
     	}
         return getFlagBool("build") || checkAllowedPlayer(p);
     }
 	
 	public boolean leavesDecay() {
 		if (!RedProtect.get().cfgs.isFlagEnabled("leaves-decay")){
-    		return RedProtect.get().cfgs.getBool("flags.leaves-decay");
+    		return RedProtect.get().cfgs.root().flags.get("leaves-decay");
     	}
 		return getFlagBool("leaves-decay");
 	}
@@ -1456,14 +1289,14 @@ public class Region implements Serializable{
 	 */
 	public boolean allowSpawner(Player p) {
 		if (!RedProtect.get().cfgs.isFlagEnabled("allow-spawner")){
-    		return RedProtect.get().cfgs.getBool("flags.allow-spawner");
+    		return RedProtect.get().cfgs.root().flags.get("allow-spawner");
     	}
 		return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canTeleport(Player p) {
 		if (!RedProtect.get().cfgs.isFlagEnabled("teleport")){
-    		return checkAllowedPlayer(p) || RedProtect.get().cfgs.getBool("flags.teleport");
+    		return checkAllowedPlayer(p) || RedProtect.get().cfgs.root().flags.get("teleport");
     	}
         return checkAllowedPlayer(p) || getFlagBool("teleport");
 	}
@@ -1474,126 +1307,126 @@ public class Region implements Serializable{
 	 */
 	public boolean canFly(Player p) {
 		if (!RedProtect.get().cfgs.isFlagEnabled("allow-fly")){
-    		return RedProtect.get().cfgs.getBool("flags.allow-fly");
+    		return RedProtect.get().cfgs.root().flags.get("allow-fly");
     	}
 		return getFlagBool("allow-fly") || checkAllowedPlayer(p);
 	}
 	
 	public boolean FlowDamage() {
 		if (!RedProtect.get().cfgs.isFlagEnabled("flow-damage")){
-    		return RedProtect.get().cfgs.getBool("flags.flow-damage");
+    		return RedProtect.get().cfgs.root().flags.get("flow-damage");
     	}
 		return getFlagBool("flow-damage");
 	}
 	
 	public boolean canMobLoot() {
     	if (!RedProtect.get().cfgs.isFlagEnabled("mob-loot")){
-    		return RedProtect.get().cfgs.getBool("flags.mob-loot");
+    		return RedProtect.get().cfgs.root().flags.get("mob-loot");
     	}
         return getFlagBool("mob-loot");
     }
 	
 	public boolean allowEffects(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("allow-effects")){
-    		return RedProtect.get().cfgs.getBool("flags.allow-effects");
+    		return RedProtect.get().cfgs.root().flags.get("allow-effects");
     	}    	
         return getFlagBool("allow-effects") || checkAllowedPlayer(p);
     }
 	
 	public boolean usePotions(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("use-potions")){
-    		return RedProtect.get().cfgs.getBool("flags.use-potions");
+    		return RedProtect.get().cfgs.root().flags.get("use-potions");
     	}    	
         return getFlagBool("use-potions") || checkAllowedPlayer(p);
     }
     
     public boolean canPVP(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("pvp")){
-    		return RedProtect.get().cfgs.getBool("flags.pvp") || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
+    		return RedProtect.get().cfgs.root().flags.get("pvp") || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
     	}
         return getFlagBool("pvp") || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
     }
     
     public boolean canChest(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("chest")){
-    		return RedProtect.get().cfgs.getBool("flags.chest") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("chest") || checkAllowedPlayer(p);
     	}
         return getFlagBool("chest") || checkAllowedPlayer(p);
     }
     
     public boolean canLever(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("lever")){
-    		return RedProtect.get().cfgs.getBool("flags.lever") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("lever") || checkAllowedPlayer(p);
     	}
         return getFlagBool("lever") || checkAllowedPlayer(p);
     }
     
     public boolean canButton(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("button")){
-    		return RedProtect.get().cfgs.getBool("flags.button") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("button") || checkAllowedPlayer(p);
     	}
         return getFlagBool("button") || checkAllowedPlayer(p);
     }
     
     public boolean canDoor(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("door")){
-    		return RedProtect.get().cfgs.getBool("flags.door") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("door") || checkAllowedPlayer(p);
     	}
         return getFlagBool("door") || checkAllowedPlayer(p);
     }
     
     public boolean canSpawnMonsters() {
     	if (!RedProtect.get().cfgs.isFlagEnabled("spawn-monsters")){
-    		return RedProtect.get().cfgs.getBool("flags.spawn-monsters");
+    		return RedProtect.get().cfgs.root().flags.get("spawn-monsters");
     	}
         return getFlagBool("spawn-monsters");
     }
         
     public boolean canSpawnPassives() {
     	if (!RedProtect.get().cfgs.isFlagEnabled("spawn-animals")){
-    		return RedProtect.get().cfgs.getBool("flags.spawn-animals");
+    		return RedProtect.get().cfgs.root().flags.get("spawn-animals");
     	}
         return getFlagBool("spawn-animals");
     }
     
 	public boolean canMinecart(Player p) {
 		if (!RedProtect.get().cfgs.isFlagEnabled("minecart")){
-    		return RedProtect.get().cfgs.getBool("flags.minecart") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("minecart") || checkAllowedPlayer(p);
     	}
         return getFlagBool("minecart") || checkAllowedPlayer(p);
 	}
 	
 	public boolean canInteractPassives(Player p) {
     	if (!RedProtect.get().cfgs.isFlagEnabled("passives")){
-    		return RedProtect.get().cfgs.getBool("flags.passives") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("passives") || checkAllowedPlayer(p);
     	}
         return getFlagBool("passives") || checkAllowedPlayer(p);
     }
     
     public boolean canFlow() {
     	if (!RedProtect.get().cfgs.isFlagEnabled("flow")){
-    		return RedProtect.get().cfgs.getBool("flags.flow");
+    		return RedProtect.get().cfgs.root().flags.get("flow");
     	}
         return getFlagBool("flow");
     }
     
     public boolean canFire() {
     	if (!RedProtect.get().cfgs.isFlagEnabled("fire")){
-    		return RedProtect.get().cfgs.getBool("flags.fire");
+    		return RedProtect.get().cfgs.root().flags.get("fire");
     	}
         return getFlagBool("fire");
     }
     
     public boolean AllowHome(Player p) {
 		if (!RedProtect.get().cfgs.isFlagEnabled("allow-home")){
-    		return RedProtect.get().cfgs.getBool("flags.allow-home") || checkAllowedPlayer(p);
+    		return RedProtect.get().cfgs.root().flags.get("allow-home") || checkAllowedPlayer(p);
     	}
 		return getFlagBool("allow-home") || checkAllowedPlayer(p);
 	}
     
     public boolean canGrow() {
     	if (!RedProtect.get().cfgs.isFlagEnabled("can-grow")){
-    		return RedProtect.get().cfgs.getBool("flags.can-grow");
+    		return RedProtect.get().cfgs.root().flags.get("can-grow");
     	}
 		return getFlagBool("can-grow");
 	}
@@ -1643,7 +1476,7 @@ public class Region implements Serializable{
                 for (int y = miny; y <= maxy; ++y) {
                     if ((z == loc1.getBlockZ() || z == loc2.getBlockZ() ||
                         x == loc1.getBlockX() || x == loc2.getBlockX())
-                        && (define || new Location<>(w, x, y, z).getBlock().getType().getName().contains(RedProtect.get().cfgs.getString("region-settings.block-id")))) {
+                        && (define || new Location<>(w, x, y, z).getBlock().getType().getName().contains(RedProtect.get().cfgs.root().region_settings.block_id))) {
                     	locBlocks.add(new Location<>(w, x, y, z));
                     }
                 }
@@ -1671,19 +1504,19 @@ public class Region implements Serializable{
 		}
 		StringBuilder adminsList = new StringBuilder();
 		for (String admin:this.admins){
-			adminsList.append(", "+RPUtil.UUIDtoPlayer(admin));
+			adminsList.append(", ").append(RPUtil.UUIDtoPlayer(admin));
 		}
 		return "["+adminsList.toString().substring(2)+"]";
 	}
 	
 	public String getLeadersDesc() {
-		if (this.leaders.size() == 0){
-			addLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"));
+		if (this.leaders.isEmpty()){
+			addLeader(RedProtect.get().cfgs.root().region_settings.default_leader);
 			return this.leaders.get(0);
 		}
 		StringBuilder leaderList = new StringBuilder();
 		for (String leader:this.leaders){
-			leaderList.append(", "+RPUtil.UUIDtoPlayer(leader));
+			leaderList.append(", ").append(RPUtil.UUIDtoPlayer(leader));
 		}
 		return "["+leaderList.toString().substring(2)+"]";
 	}

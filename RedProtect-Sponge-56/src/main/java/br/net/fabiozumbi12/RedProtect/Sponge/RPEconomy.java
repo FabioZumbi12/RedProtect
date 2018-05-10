@@ -1,13 +1,12 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.type.TileEntityInventory;
 import org.spongepowered.api.world.World;
-
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 
 public class RPEconomy {
 

@@ -1,25 +1,18 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
+import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
-
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
-
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 
 public class RPLang {
 	
@@ -40,7 +33,7 @@ public class RPLang {
 	}
 	
 	public static void init() {
-		resLang = "lang" + RedProtect.get().cfgs.getString("language") + ".properties";
+		resLang = "lang" + RedProtect.get().cfgs.root().language + ".properties";
 		pathLang = RedProtect.get().configDir + File.separator + resLang;
 		
 		File lang = new File(pathLang);
@@ -61,7 +54,7 @@ public class RPLang {
 		
 		loadLang();
 		loadBaseLang();
-		RedProtect.get().logger.info("Language file loaded - Using: "+ RedProtect.get().cfgs.getString("language"));	
+		RedProtect.get().logger.info("Language file loaded - Using: "+ RedProtect.get().cfgs.root().language);
 	}
 	
 	static void loadBaseLang(){

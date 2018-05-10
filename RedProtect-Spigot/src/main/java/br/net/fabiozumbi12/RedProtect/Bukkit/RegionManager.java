@@ -1,21 +1,15 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.AWEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.AWEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import java.util.*;
 
 /**
  * Get the region database from here. All functions for manage regions can be found in this variable. 

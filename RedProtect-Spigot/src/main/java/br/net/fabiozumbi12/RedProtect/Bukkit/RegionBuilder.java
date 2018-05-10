@@ -1,9 +1,8 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 
 public abstract class RegionBuilder{
 	

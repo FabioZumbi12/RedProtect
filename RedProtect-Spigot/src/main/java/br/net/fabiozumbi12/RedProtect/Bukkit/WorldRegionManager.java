@@ -1,9 +1,9 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
+import org.bukkit.entity.Player;
+
 import java.util.Map;
 import java.util.Set;
-
-import org.bukkit.entity.Player;
 
 public interface WorldRegionManager {
 	

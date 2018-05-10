@@ -1,8 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import java.util.List;
-import java.util.Optional;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.event.Listener;
@@ -11,8 +10,8 @@ import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import java.util.List;
+import java.util.Optional;
 
 public class RPWorldListener {
     
@@ -57,7 +56,7 @@ public class RPWorldListener {
     	World w = wOpt.get().getWorld();
     	List<Entity> ents = e.getEntities();
     	for (Entity ent:ents){
-    		Region entr = RedProtect.get().rm.getTopRegion(ent.getLocation());
+    		Region entr = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
     		if (entr != null){
     			if (!entr.canSpawnMonsters() && ent instanceof Monster){
         			ent.remove();

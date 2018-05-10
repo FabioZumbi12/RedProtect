@@ -1,8 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 
-import java.util.Map;
-import java.util.Set;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -10,8 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import java.util.Map;
+import java.util.Set;
 
 public class RedProtectAPI {
 	

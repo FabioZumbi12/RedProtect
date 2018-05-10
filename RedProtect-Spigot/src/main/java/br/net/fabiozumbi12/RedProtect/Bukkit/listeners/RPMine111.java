@@ -1,12 +1,11 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 
 public class RPMine111{
 

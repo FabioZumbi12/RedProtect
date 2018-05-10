@@ -1,16 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class RPCommentedConfig {
 	
@@ -86,10 +84,6 @@ public class RPCommentedConfig {
 		setDefault("region-settings.leadership-request-time", 20, "Time in seconds to wait player accept leadership request.");
 		setDefault("region-settings.enable-flag-sign", true, "This wiil allow players to create flag signs to change flag states using [flag] on first line and the flag name on second line.");
 		setDefault("region-settings.deny-build-near", 0, "Deny players to build near other regions. Distance in blocks. 0 to disable and > 0 to enable.");
-		setDefault("region-settings.rent.default-level", "admin", "Set the default rent level of players renting regions. Options: member, admin, leader.");
-		setDefault("region-settings.rent.add-player", false, "Allow who pay for rent to add more players in rent regions?");
-		setDefault("region-settings.rent.command-renew-adds", "1:MONTH", "The amount of days or mounts the command to renew will be added. The sintax is: <number>:<type>. The types are: DAY or MONTH.");
-		setDefault("region-settings.rent.renew-anytime", false, "Renew in anytime or only on renew date?");
 		setDefault("region-settings.first-home.can-delete-after-claims", 10, "Player can remove the protection of first home after this amount of claims. Use -1 to do not allow to delete.");
 		setDefault("region-settings.delay-after-kick-region", 60, "Delay before a kicked player can back to a region (in seconds).");
 		setDefault("region-settings.claimlimit-per-world", true, "Use claim limit per worlds?");
@@ -145,7 +139,7 @@ public class RPCommentedConfig {
 		
 		setDefault("server-protection", null, "General server protections options.");		
 		setDefault("server-protection.deny-potions", Collections.singletonList("INVISIBILITY"), "List of potions the player cant use on server. Here the PotioTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html");
-		setDefault("server-protection.deny-playerdeath-by", Collections.singletonList("SUFFOCATION"), " List of causes the player cant die/take damage for. here the list of DamageCauses: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html");
+		setDefault("server-protection.deny-playerdeath-by", Collections.singletonList("SUFFOCATION"), " List of causes the player cant die/take damage for. Here the list of DamageCauses: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html");
 		setDefault("server-protection.deny-commands-on-worlds.world", Collections.singletonList("command"), "Deny certain commands on specific worlds.");
 		setDefault("server-protection.nickname-cap-filter.enable", false, "Deny players with same nick but cap char diferences to join on server (most used on offline severs).");
 		setDefault("server-protection.sign-spy.enable", false, "Show all lines of a sign when player place signs in any world.");

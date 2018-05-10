@@ -1,20 +1,18 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-
 import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefineRegionBuilder extends RegionBuilder{
 	
@@ -24,56 +22,38 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
-        regionName = regionName.replaceAll("[.+=;\\-]", "");
-
     	//region leader
         String pName = RPUtil.PlayerToUUID(p.getName());
-        //for region name
-        String pRName = RPUtil.UUIDtoPlayer(p.getName());
-        
+
         String wmsg = "";
-        if (leader.equals(RedProtect.get().cfgs.getString("region-settings.default-leader"))){
+        if (leader.equals(RedProtect.get().cfgs.root().region_settings.default_leader)){
         	pName = leader;
-        	pRName = leader;
         	wmsg = "hide ";
         }
-        
-        if (regionName.equals("")) {
-            int i = 0;            
-            regionName = RPUtil.StripName(pRName)+"_"+0;            
-            while (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-            	++i;
-            	regionName = RPUtil.StripName(pRName)+"_"+i;   
-            }            
+
+        if (regionName == null || regionName.equals("")) {
+            regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
-            	RPLang.sendMessage(p, "regionbuilder.autoname.error");
+                RPLang.sendMessage(p, "regionbuilder.autoname.error");
                 return;
             }
         }
-        if (regionName.contains("@")) {
-        	RPLang.sendMessage(p, RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
+
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
             return;
         }
+
         if (loc1 == null || loc2 == null) {
         	RPLang.sendMessage(p, "regionbuilder.selection.notset");
             return;
         }
 
         //check if distance allowed
-        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
             Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
-            return;
-        }
-        
-        //region name conform
-        regionName = regionName.replace(File.pathSeparator, "|");  
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-        	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
-            return;
-        }
-        if (regionName.length() < 3 || regionName.length() > 16) {
-        	RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
             return;
         }
 
@@ -84,9 +64,13 @@ public class DefineRegionBuilder extends RegionBuilder{
         
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
-        if (RedProtect.get().cfgs.getBool("region-settings.autoexpandvert-ondefine")){
-        	miny = 0;
-        	maxy = p.getWorld().getBlockMax().getY();
+        if (RedProtect.get().cfgs.root().region_settings.autoexpandvert_ondefine){
+            miny = 0;
+            maxy = p.getWorld().getBlockMax().getY();
+            if (RedProtect.get().cfgs.root().region_settings.claim.miny != -1)
+                miny = RedProtect.get().cfgs.root().region_settings.claim.miny;
+            if (RedProtect.get().cfgs.root().region_settings.claim.maxy != -1)
+                miny = RedProtect.get().cfgs.root().region_settings.claim.maxy;
         }
         
         Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), wmsg, 0, null, true);
@@ -118,7 +102,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         Region otherrg = null;
         
         //check if same area
-        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
+        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());
         if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
         	this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
         	return;
@@ -147,7 +131,7 @@ public class DefineRegionBuilder extends RegionBuilder{
             	return;    	
             }*/
         	
-        	otherrg = RedProtect.get().rm.getTopRegion(loc);        	
+        	otherrg = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
         	RedProtect.get().logger.debug("blocks", "protection Block is: " + loc.getBlock().getType().getName());
         	
     		if (otherrg != null){                    			

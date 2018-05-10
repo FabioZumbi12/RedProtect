@@ -1,21 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import com.google.common.reflect.TypeToken;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -30,10 +23,9 @@ import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-
-import com.google.common.reflect.TypeToken;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class RPConfig{
 	
@@ -84,11 +76,7 @@ public class RPConfig{
 			"particles",
 			"deny-exit-items");
 	
-	
-	private final File defConfig = new File(RedProtect.get().configDir,"config.conf");
-	private ConfigurationLoader<CommentedConfigurationNode> configManager;
-	private CommentedConfigurationNode tempConfig;
-	
+
 	private final File guiConfig = new File(RedProtect.get().configDir,"guiconfig.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> guiManager;
 	private CommentedConfigurationNode gui;
@@ -108,82 +96,62 @@ public class RPConfig{
 	private final File signFile = new File(RedProtect.get().configDir,"signs.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> signManager;
 	private CommentedConfigurationNode signCfgs;
-	
-	private CommentedConfigurationNode config;
-	
-	//getters	
-	public CommentedConfigurationNode configs(){
-		return config;
+
+	private File defConfig = new File(RedProtect.get().configDir,"config.conf");
+
+	private CommentedConfigurationNode configRoot;
+	private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
+	private RPMainCategory root;
+	public RPMainCategory root(){
+		return this.root;
 	}
-	
-	private CommentedConfigurationNode updateFromIn(CommentedConfigurationNode temp, CommentedConfigurationNode out){
-		for (Object key:temp.getChildrenMap().keySet()){          	
-        	if (temp.getNode(key).hasMapChildren()){        		
-        		for (Object key2:temp.getNode(key).getChildrenMap().keySet()){          			
-        			if (temp.getNode(key,key2).hasMapChildren()){		        				
-		        		for (Object key3:temp.getNode(key,key2).getChildrenMap().keySet()){  
-		        			out.getNode(key,key2,key3).setValue(temp.getNode(key,key2,key3).getValue());
-		        		}				        		
-		        	}	        			
-        			out.getNode(key,key2).setValue(temp.getNode(key,key2).getValue());
-        		}
-        	}
-        	out.getNode(key).setValue(temp.getNode(key).getValue());    	            	   	            	
-        }
-		return out;
-	}
-	
-	private CommentedConfigurationNode updateFromOut(CommentedConfigurationNode temp, CommentedConfigurationNode out){
-		for (Object key:out.getChildrenMap().keySet()){          	
-        	if (out.getNode(key).hasMapChildren()){        		
-        		for (Object key2:out.getNode(key).getChildrenMap().keySet()){          			
-        			if (out.getNode(key,key2).hasMapChildren()){		        				
-		        		for (Object key3:out.getNode(key,key2).getChildrenMap().keySet()){  
-		        			out.getNode(key,key2,key3).setValue(temp.getNode(key,key2,key3).getValue(out.getNode(key,key2,key3).getValue()));
-		        		}				        		
-		        	}	        			
-        			out.getNode(key,key2).setValue(temp.getNode(key,key2).getValue(out.getNode(key,key2).getValue()));
-        		}
-        	}
-        	out.getNode(key).setValue(temp.getNode(key).getValue(out.getNode(key).getValue()));    	            	   	            	
-        }
-		return out;
-	}
-	
+
 	//init
-	public RPConfig() {		
+	public RPConfig(GuiceObjectMapperFactory factory) throws ObjectMappingException {
 		try {			
 			if (!RedProtect.get().configDir.exists()){
 				RedProtect.get().configDir.mkdir();
 			}
-			if (!new File(RedProtect.get().configDir+File.separator+"data").exists()){
-            	new File(RedProtect.get().configDir+File.separator+"data").mkdir();
-            } 
-			
-			if (!defConfig.exists()) {
-		         defConfig.createNewFile();
-		         configManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("config.conf").get().getUrl()).build();
-		         config = configManager.load();
-		         configManager = HoconConfigurationLoader.builder().setFile(defConfig).build();
-		         configManager.save(config);
-		     }
-			
-		 	 if (!guiConfig.exists()) {
-			 	 guiConfig.createNewFile();
-				 guiManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("guiconfig.conf").get().getUrl()).build();
-				 gui = guiManager.load();
-				 guiManager = HoconConfigurationLoader.builder().setFile(guiConfig).build();
-				 guiManager.save(gui);
-		     }
+			if (!new File(RedProtect.get().configDir,"data").exists()){
+            	new File(RedProtect.get().configDir,"data").mkdir();
+            }
 
-		 	 if (!gFlagsConfig.exists()) {
-		 		gFlagsConfig.createNewFile();
-		     }	
-		 	 
-		 	 if (!ecoFile.exists()) {
-		 		 Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
-		 		 ecoAsset.copyToDirectory(RedProtect.get().configDir.toPath());
-		     }
+			/*--------------------- config.conf ---------------------------*/
+            String header = ""
+					+ "# +--------------------------------------------------------------------+ #\n"
+					+ "# <               RedProtect World configuration File                  > #\n"
+					+ "# <--------------------------------------------------------------------> #\n"
+					+ "# <       This is the configuration file, feel free to edit it.        > #\n"
+					+ "# <        For more info about cmds and flags, check our Wiki:         > #\n"
+					+ "# <         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
+					+ "# +--------------------------------------------------------------------+ #\n"
+					+ "#\n"
+					+ "# Notes:\n"
+					+ "# Lists are [object1, object2, ...]\n"
+					+ "# Strings containing the char & always need to be quoted";
+
+			cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();
+			configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
+			this.root = configRoot.getValue(TypeToken.of(RPMainCategory.class), new RPMainCategory());
+
+			/*--------------------- end config.conf ---------------------------*/
+
+			if (!guiConfig.exists()) {
+				guiConfig.createNewFile();
+				guiManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("guiconfig.conf").get().getUrl()).build();
+				gui = guiManager.load();
+				guiManager = HoconConfigurationLoader.builder().setFile(guiConfig).build();
+				guiManager.save(gui);
+			}
+
+			if (!gFlagsConfig.exists()) {
+				gFlagsConfig.createNewFile();
+			}
+
+			if (!ecoFile.exists()) {
+				Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
+				ecoAsset.copyToDirectory(RedProtect.get().configDir.toPath());
+			}
 		} catch (IOException e1) {			
 			RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
 			e1.printStackTrace();
@@ -192,13 +160,6 @@ public class RPConfig{
 
 		//load configs
 		try {
-			//tempconfig
-			configManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("config.conf").get().getUrl()).build();
-			tempConfig = configManager.load();
-
-			configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
-			config = configManager.load();
-
 			guiManager = HoconConfigurationLoader.builder().setPath(guiConfig.toPath()).build();
 			gui = guiManager.load();
 
@@ -268,151 +229,100 @@ public class RPConfig{
 			e1.printStackTrace();
 		}
 
-
-		//------------------------------ Add default Values ----------------------------//
-
-		config = updateFromIn(tempConfig, config);
-
-		try {
-			configManager = HoconConfigurationLoader.builder().setPath(defConfig.toPath()).build();
-			tempConfig = configManager.load();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		config = updateFromOut(tempConfig, config);
-
-
-
-		//--------------------------------------------------------------------------//
-
-
 		RedProtect.get().logger.info("Server version: " + RedProtect.get().game.getPlatform().getMinecraftVersion().getName());
-
-		//add allowed claim worlds to config
-		try {
-			if (getNodes("allowed-claim-worlds").getList(TypeToken.of(String.class)).isEmpty()) {
-				List<String> worlds = new ArrayList<>();
-				for (World w:RedProtect.get().serv.getWorlds()){
-					worlds.add(w.getName());
-					RedProtect.get().logger.warning("Added world to claim list " + w.getName());
-				}
-				worlds.remove("example_world");
-				getNodes("allowed-claim-worlds").setValue(worlds);
-			}
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
-		}
 
 		/*------------- ---- Add default config for not updateable configs ------------------*/
 
 		//update new player flags according version
-		List<String> flags = new LinkedList<>(Collections.emptyList());
-		try {
-			flags = getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class));
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
-		}
+
 		int update = 0;
-		if (getNodes("config-version").getDouble() < 6.8D){
-			getNodes("config-version").setValue(6.8D);
+		if (root.config_version < 6.8D){
+			root.config_version = 6.8D;
 
-			if (!flags.contains("smart-door")){
-				flags.add("smart-door");
-				getNodes("flags.smart-door").setValue(true);
+			if (!root.flags_configuration.enabled_flags.contains("smart-door")){
+				root.flags_configuration.enabled_flags.add("smart-door");
 			}
-			if (!flags.contains("allow-potions")){
-				flags.add("allow-potions");
-				getNodes("flags.allow-potions").setValue(true);
+			if (!root.flags_configuration.enabled_flags.contains("allow-potions")){
+				root.flags_configuration.enabled_flags.add("allow-potions");
 			}
-			if (!flags.contains("mob-loot")){
-				flags.add("mob-loot");
-				getNodes("flags.mob-loot").setValue(false);
+			if (!root.flags_configuration.enabled_flags.contains("mob-loot")){
+				root.flags_configuration.enabled_flags.add("mob-loot");
 			}
-			if (!flags.contains("flow-damage")){
-				flags.add("flow-damage");
-				getNodes("flags.flow-damage").setValue(false);
+			if (!root.flags_configuration.enabled_flags.contains("flow-damage")){
+				root.flags_configuration.enabled_flags.add("flow-damage");
 			}
 			update++;
 		}
 
-		if (getNodes("config-version").getDouble() < 6.9D){
-			getNodes("config-version").setValue(6.9D);
-			if (!flags.contains("allow-fly")){
-				flags.add("allow-fly");
-				getNodes("flags.allow-fly").setValue(true);
+		if (root.config_version < 6.9D){
+			root.config_version = 6.9D;
+			if (!root.flags_configuration.enabled_flags.contains("allow-fly")){
+				root.flags_configuration.enabled_flags.add("allow-fly");
+				root.flags.put("allow-fly", true);
 			}
-			if (!flags.contains("can-grow")){
-				flags.add("can-grow");
-				getNodes("flags.can-grow").setValue(true);
+			if (!root.flags_configuration.enabled_flags.contains("can-grow")){
+				root.flags_configuration.enabled_flags.add("can-grow");
+				root.flags.put("can-grow", true);
 			}
-			if (!flags.contains("teleport")){
-				flags.add("teleport");
-				getNodes("flags.teleport").setValue(false);
-			}
-			update++;
-		}
-
-		if (getNodes("config-version").getDouble() < 7.0D){
-			getNodes("config-version").setValue(7.0D);
-			if (!flags.contains("allow-effects")){
-				flags.add("allow-effects");
-				getNodes("flags.allow-effects").setValue(true);
-			}
-			if (!flags.contains("use-potions")){
-				flags.add("use-potions");
-				getNodes("flags.use-potions").setValue(true);
-			}
-			if (flags.contains("allow-potions")){
-				flags.remove("allow-potions");
-				getNodes("flags").removeChild("allow-potions");
+			if (!root.flags_configuration.enabled_flags.contains("teleport")){
+				root.flags_configuration.enabled_flags.add("teleport");
+				root.flags.put("teleport", false);
 			}
 			update++;
 		}
 
-		if (getNodes("config-version").getDouble() < 7.1D){
-			getNodes("config-version").setValue(7.1D);
-			getNodes("language").setValue("en-EN");
-			update++;
-		}
-
-		if (getNodes("config-version").getDouble() < 7.2D){
-			getNodes("config-version").setValue(7.2D);
-			if (!flags.contains("allow-spawner")){
-				flags.add("allow-spawner");
-				getNodes("flags.allow-spawner").setValue(false);
+		if (root.config_version < 7.0D){
+			root.config_version = 7.0D;
+			if (!root.flags_configuration.enabled_flags.contains("allow-effects")){
+				root.flags_configuration.enabled_flags.add("allow-effects");
+				root.flags.put("allow-effects", true);
 			}
-			if (!flags.contains("leaves-decay")){
-				flags.add("leaves-decay");
-				getNodes("flags.leaves-decay").setValue(false);
+			if (!root.flags_configuration.enabled_flags.contains("use-potions")){
+				root.flags_configuration.enabled_flags.add("use-potions");
+				root.flags.put("use-potions", true);
+			}
+			if (root.flags_configuration.enabled_flags.contains("allow-potions")){
+				root.flags_configuration.enabled_flags.remove("allow-potions");
+				root.flags.remove("allow-potions");
 			}
 			update++;
 		}
 
-		if (getNodes("config-version").getDouble() < 7.3D){
-			getNodes("config-version").setValue(7.3D);
-			if (!flags.contains("build")){
-				flags.add("build");
-				getNodes("flags.build").setValue(false);
+		if (root.config_version < 7.1D){
+			root.config_version = 7.1D;
+			root.language = "EN-US";
+			update++;
+		}
+
+		if (root.config_version < 7.2D){
+			root.config_version = 7.2D;
+			if (!root.flags_configuration.enabled_flags.contains("allow-spawner")){
+				root.flags_configuration.enabled_flags.add("allow-spawner");
+				root.flags.put("allow-spawner", false);
+			}
+			if (!root.flags_configuration.enabled_flags.contains("leaves-decay")){
+				root.flags_configuration.enabled_flags.add("leaves-decay");
+				root.flags.put("leaves-decay", false);
 			}
 			update++;
 		}
 
-		if (getNodes("config-version").getDouble() < 7.4D){
-			getNodes("config-version").setValue(7.4D);
-			try {
-				List<String> blocks = getNodes("private.allowed-blocks").getList(TypeToken.of(String.class));
-				blocks.add("minecraft:[a-z_]+_shulker_box");
-				getNodes("private.allowed-blocks").setValue(blocks);
-			} catch (ObjectMappingException e) {
-				e.printStackTrace();
+		if (root.config_version < 7.3D){
+			root.config_version = 7.3D;
+			if (!root.flags_configuration.enabled_flags.contains("build")){
+				root.flags_configuration.enabled_flags.add("build");
+				root.flags.put("build", false);
 			}
+			update++;
+		}
 
+		if (root.config_version < 7.4D){
+			root.config_version = 7.4D;
+			root.private_cat.allowed_blocks.add("minecraft:[a-z_]+_shulker_box");
 			update++;
 		}
 
 		if (update > 0){
-			getNodes("flags-configuration.enabled-flags").setValue(flags);
 			RedProtect.get().logger.warning("Configuration UPDATED!");
 		}
 		/*---------------------------------------- Global Flags for worlds loaded --------------------------------------------*/
@@ -468,7 +378,7 @@ public class RPConfig{
 
 		//create logs folder
 		File logs = new File(RedProtect.get().configDir+File.separator+"logs");
-		if(getBool("log-actions") && !logs.exists()){
+		if(root.log_actions && !logs.exists()){
 			logs.mkdir();
 			RedProtect.get().logger.info("Created folder: " + RedProtect.get().configDir+File.separator+"logs");
 		}
@@ -478,24 +388,7 @@ public class RPConfig{
 
 	}
     
-	public void loadPerWorlds(World w) {		
-		if (getNodes("region-settings.claim-types.worlds."+w.getName()).getString("").equals("")) {
-    		getNodes("region-settings.claim-types.worlds."+w.getName()).setValue("BLOCK");
-    	}
-		
-		if (getNodes("region-settings.world-colors."+w.getName()).getString("").equals("")) {
-			if (w.getDimension().getType().equals(DimensionTypes.OVERWORLD)){
-				getNodes("region-settings.world-colors."+w.getName()).setValue("&a&l");			            		
-			} else
-			if (w.getDimension().getType().equals(DimensionTypes.NETHER)){
-				getNodes("region-settings.world-colors."+w.getName()).setValue("&c&l");			            		
-			} else
-			if (w.getDimension().getType().equals(DimensionTypes.THE_END)){
-				getNodes("region-settings.world-colors."+w.getName()).setValue("&5&l");			            		
-			}
-			RedProtect.get().logger.warning("Added world to color list " + w.getName());
-		}
-		
+	public void loadPerWorlds(World w) {
 		try {
 			//RedProtect.get().logger.debug("default","Writing global flags for world "+ w.getName() + "...");
 			gflags.getNode(w.getName(),"build").setValue(gflags.getNode(w.getName(),"build").getBoolean(true));
@@ -578,7 +471,7 @@ public class RPConfig{
 	}
     
     public ItemStack getGuiSeparator() {
-    	ItemStack separator = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, gui.getNode("gui-separator","material").getString()), 1);//new ItemStack(Material.getMaterial(guiItems.getString("gui-separator.material")), 1, (short)guiItems.getInt("gui-separator.data"));
+    	ItemStack separator = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, gui.getNode("gui-separator","material").getString()), 1);//new ItemStack(Material.getBorderMaterial(guiItems.getString("gui-separator.material")), 1, (short)guiItems.getInt("gui-separator.data"));
     	separator.offer(Keys.DISPLAY_NAME, getGuiString("separator"));
     	separator.offer(Keys.ITEM_DURABILITY, gui.getNode("gui-separator","data").getInt());
     	separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, getGuiString("separator")));
@@ -597,79 +490,39 @@ public class RPConfig{
     	}
 		return Collections.max(slots);
 	}
-    
-    public Boolean getBool(String key){
-		return getNodes(key).getBoolean(false);
-	}
-    
-    public void setConfig(String key, Object value){
-    	getNodes(key).setValue(value);
-    }
-    
+
     public HashMap<String, Object> getDefFlagsValues(){
     	HashMap<String,Object> flags = new HashMap<>();
-    	for (Object oflag:getNodes("flags").getChildrenMap().keySet()/*getList(TypeToken.of(String.class)*/){
+    	for (Object oflag:root.flags.keySet()){
     		if (oflag instanceof String && isFlagEnabled(((String)oflag).replace("flags.", ""))){
     			String flag = (String)oflag;
-    			try {
-					if (flag.equals("pvp") && !getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class)).contains("pvp")){
-						continue;
-					}
-				} catch (ObjectMappingException e) {
-					e.printStackTrace();
+				if (flag.equals("pvp") && !root.flags_configuration.enabled_flags.contains("pvp")){
+					continue;
 				}
-    			flags.put(flag, getNodes("flags."+flag).getValue());
+    			flags.put(flag, root.flags.get(flag));
     		}
     	}    	
 		return flags;
 	}
     
-    public boolean isFlagEnabled(String flag){    	
-    	try {
-			return getNodes("flags-configuration.enabled-flags").getList(TypeToken.of(String.class)).contains(flag) || AdminFlags.contains(flag);
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
-		}
-    	return false;
+    public boolean isFlagEnabled(String flag){
+		return root.flags_configuration.enabled_flags.contains(flag) || AdminFlags.contains(flag);
     }
     
     public SortedSet<String> getDefFlags(){
         return new TreeSet<>(getDefFlagsValues().keySet());
     }
-    
-    public String getString(String key){
-		return getNodes(key).getString();
-	}
-    
-    public Integer getInt(String key){	
-		return getNodes(key).getInt();
-	}
-    
-    public Object getObject(String key) {		
-		return getNodes(key).getValue();
-	}
-    
-    private CommentedConfigurationNode getNodes(String key){    	
-    	Object[] args = key.split("\\.");
-    	return config.getNode(args);
-    }
-    
-    public List<String> getStringList(String key){
-		try {
-			return getNodes(key).getList(TypeToken.of(String.class));
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
+
+    public BlockType getBorderMaterial(){
+		if (Sponge.getRegistry().getType(BlockType.class, root.region_settings.border.material).isPresent()){
+			return Sponge.getRegistry().getType(BlockType.class, root.region_settings.border.material).get();
 		}
-		return null;
-	}
-    
-    public BlockType getMaterial(String key){
     	return BlockTypes.GLOWSTONE;
     }
     
     public void save(){
     	try {
-			configManager.save(config);	
+			cfgLoader.save(configRoot);
 			gFlagsManager.save(gflags);
 			ecoManager.save(ecoCfgs);
 			protManager.save(protCfgs);
@@ -681,7 +534,7 @@ public class RPConfig{
 		}
     }
     
-    public void saveGui(){ 
+    public void saveGui(){
     	try {
     		guiManager.save(gui);
 		} catch (IOException e) {
@@ -691,12 +544,7 @@ public class RPConfig{
     }    
     	
     public boolean isAllowedWorld(Player p) {
-		try {
-			return getNodes("allowed-claim-worlds").getList(TypeToken.of(String.class)).contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
 	}
 
 	public SortedSet<String> getAllFlags() {
@@ -712,14 +560,12 @@ public class RPConfig{
 				return true;
 			}
 		} else {
-			if (config.getNode("flags",flag).getValue() == null){
-				config.getNode("flags",flag).setValue(defaultValue);
+			if (!root.flags.containsKey(flag)){
+				root.flags.put(flag, defaultValue);
                 try {
-                    List<String> flags = config.getNode("flags-configuration","enabled-flags").getList(TypeToken.of(String.class));
-                    flags.add(flag);
-                    config.getNode("flags-configuration","enabled-flags").setValue(flags);
-                    configManager.save(config);
-                } catch (ObjectMappingException | IOException e) {
+					root.flags_configuration.enabled_flags.add(flag);
+					cfgLoader.save(configRoot);
+                } catch (IOException e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -784,23 +630,23 @@ public class RPConfig{
 	}
 
 	public String getWorldClaimType(String w) {		
-		return getNodes("region-settings.claim-types.worlds."+w).getString("");
+		return root.region_settings.claim.world_types.getOrDefault(w, "");
 	}
 	
 	public boolean needClaimToBuild(Player p, BlockSnapshot b) {     	
-    	boolean bool = getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());    	
+    	boolean bool = root.needed_claim_to_build.worlds.contains(p.getWorld().getName());
     	if (bool){
-    		if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") &&
+    		if (b != null && root.needed_claim_to_build.allow_only_protections_blocks &&
 					(getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
 							getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))){
-    			boolean blocks = b.getState().getName().contains(getString("region-settings.block-id")) || b.getState().getName().contains("SIGN") ||
-                        getStringList("needed-claim-to-build.allow-break-blocks").stream().anyMatch(str -> str.equalsIgnoreCase(b.getState().getName()));
+    			boolean blocks = b.getState().getName().contains(root.region_settings.block_id) || b.getState().getName().contains("SIGN") ||
+                        root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getState().getId()));
     			if (!blocks){
     				RPLang.sendMessage(p, "need.claim.blockids");
     			} else {
         			return false;
         		}
-    		} 
+    		}
     		RPLang.sendMessage(p, "need.claim.tobuild");    		
     	}
 		return bool;

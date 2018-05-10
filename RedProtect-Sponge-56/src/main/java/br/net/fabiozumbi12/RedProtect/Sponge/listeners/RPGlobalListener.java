@@ -1,14 +1,11 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-
 import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import org.spongepowered.api.Sponge;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.property.block.MatterProperty;
@@ -17,8 +14,6 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.explosive.PrimedTNT;
 import org.spongepowered.api.entity.hanging.Hanging;
-import org.spongepowered.api.entity.hanging.ItemFrame;
-import org.spongepowered.api.entity.hanging.Painting;
 import org.spongepowered.api.entity.living.Ambient;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Living;
@@ -27,7 +22,6 @@ import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.golem.Golem;
 import org.spongepowered.api.entity.living.monster.Creeper;
 import org.spongepowered.api.entity.living.monster.Monster;
-import org.spongepowered.api.entity.living.monster.Skeleton;
 import org.spongepowered.api.entity.living.monster.Wither;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.projectile.Projectile;
@@ -38,8 +32,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.action.InteractEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
-import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.CollideEntityEvent;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
@@ -53,16 +45,11 @@ import org.spongepowered.api.event.world.ChangeWorldWeatherEvent;
 import org.spongepowered.api.event.world.ExplosionEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.weather.Weathers;
-
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 
 public class RPGlobalListener{
 	
@@ -86,7 +73,7 @@ public class RPGlobalListener{
     public void PlayerDropItem(DropItemEvent.Dispense e, @Root Player p){
     	for (Entity ent:e.getEntities()){
     		Location<World> l = ent.getLocation();
-    		Region r = RedProtect.get().rm.getTopRegion(l);
+    		Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 	    	
 	    	if (r == null && !RedProtect.get().cfgs.getGlobalFlag(l.getExtent().getName(),"player-candrop") && !p.hasPermission("redprotect.world.bypass")){
 	    		e.setCancelled(true);
@@ -100,74 +87,39 @@ public class RPGlobalListener{
     		if (!(ent instanceof Item)){
     			continue;
     		}    		
-    		Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+    		Region r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
     		if (r == null && !RedProtect.get().cfgs.getGlobalFlag(ent.getLocation().getExtent().getName(),"player-canpickup") && !p.hasPermission("redprotect.world.bypass")){
     			event.setCancelled(true);
     		}
     	}
     }
-	
+
+
 	@Listener(order = Order.FIRST, beforeModifications = true)
-    public void onFlow(NotifyNeighborBlockEvent e){
-		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is NotifyNeighborBlockEvent event");
+	public void onFlow(ChangeBlockEvent.Pre e, @First LocatableBlock locatable){
+		RedProtect.get().logger.debug("blocks","Is BlockListener - onFlow event");
 
-		LocatableBlock locatable = e.getCause().first(LocatableBlock.class).orElse(null);
-		if (locatable != null) {
-			BlockState sourceState = locatable.getBlockState();
+		BlockState sourceState = locatable.getBlockState();
 
-			boolean flow = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"liquid-flow");
-			boolean allowWater = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","water-flow");
-			boolean allowLava = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","lava-flow");
+		//liquid check
+		MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
+		if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID){
+			e.getLocations().forEach(loc ->{
+				Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+				if (r == null){
+					boolean flow = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"liquid-flow");
+					boolean allowWater = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","water-flow");
+					boolean allowLava = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","lava-flow");
 
-			MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
-			if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID){
-				//set source as not flowing
-				Region r1 = RedProtect.get().rm.getTopRegion(locatable.getLocation());
-				if (r1 == null && sourceState.getType().getName().contains("flowing_")) {
-					if (!flow){
-						changeBlockLiquid(locatable.getLocation(), sourceState.getType());
-					} else
-					if (!allowWater && (sourceState.getType() == BlockTypes.WATER || sourceState.getType() == BlockTypes.FLOWING_WATER)){
-						changeBlockLiquid(locatable.getLocation(), sourceState.getType());
-					} else
-					if (!allowLava && (sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA)){
-						changeBlockLiquid(locatable.getLocation(), sourceState.getType());
-					}
+					if (!flow)
+						e.setCancelled(true);
+					if (!allowWater && (loc.getBlockType() == BlockTypes.WATER || loc.getBlockType() == BlockTypes.FLOWING_WATER))
+						e.setCancelled(true);
+					if (!allowLava && (loc.getBlockType() == BlockTypes.LAVA || loc.getBlockType() == BlockTypes.FLOWING_LAVA))
+						e.setCancelled(true);
 				}
-				//remove others
-				Iterator<Direction> it = e.getNeighbors().keySet().iterator();
-				while (it.hasNext()){
-					Direction dir = it.next();
-					Location<World> newLoc = locatable.getLocation().getBlockRelative(dir);
-					Region r = RedProtect.get().rm.getTopRegion(newLoc);
-					if (r != null) continue;
-
-					//flow check
-					if (!flow) {
-						it.remove();
-						continue;
-					}
-					if (!allowWater && (newLoc.getBlockType() == BlockTypes.WATER || newLoc.getBlockType() == BlockTypes.FLOWING_WATER)){
-						it.remove();
-						continue;
-					}
-					if (!allowLava && (newLoc.getBlockType() == BlockTypes.LAVA || newLoc.getBlockType() == BlockTypes.FLOWING_LAVA)){
-						it.remove();
-						continue;
-					}
-					//TODO temp fix for pixelmon infinite berry bug
-					if (newLoc.getBlockType().getName().contains("_berry")){
-						it.remove();
-						RedProtect.get().getPVHelper().setBlock(locatable.getLocation(), BlockTypes.AIR.getDefaultState());
-					}
-				}
-			}
+			});
 		}
-    }
-
-	private void changeBlockLiquid(Location<World> local, BlockType blockType){
-		Optional<BlockType> type = Sponge.getRegistry().getType(BlockType.class, blockType.getName().replace("flowing_", ""));
-		type.ifPresent(bt -> RedProtect.get().getPVHelper().setBlock(local, bt.getDefaultState()));
 	}
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
@@ -177,11 +129,13 @@ public class RPGlobalListener{
 		LocatableBlock locatable = e.getCause().first(LocatableBlock.class).orElse(null);
 		if (locatable != null) {
 			BlockState sourceState = locatable.getBlockState();
-			boolean allowdamage = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","flow-damage");
+
 			//liquid check
 			MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
 			if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID){
-				Region r = RedProtect.get().rm.getTopRegion(locatable.getLocation());
+				boolean allowdamage = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"allow-changes-of","flow-damage");
+
+				Region r = RedProtect.get().rm.getTopRegion(locatable.getLocation(), this.getClass().getName());
 				if (r == null && !allowdamage && locatable.getLocation().getBlockType() != BlockTypes.AIR){
 					e.setCancelled(true);
 				}
@@ -191,9 +145,11 @@ public class RPGlobalListener{
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onDecay(ChangeBlockEvent.Decay e){
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onDecay event");
+
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
 		boolean allowDecay = RedProtect.get().cfgs.getGlobalFlag(bfrom.getLocation().get().getExtent().getName(),"allow-changes-of","leaves-decay");
-		Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get());
+		Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get(), this.getClass().getName());
 		if (r == null && !allowDecay){
           	 e.setCancelled(true);
         }
@@ -210,7 +166,7 @@ public class RPGlobalListener{
         } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
         	item = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
         }
-		Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get());
+		Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
 				
 		if (r != null){
 			return;
@@ -236,6 +192,8 @@ public class RPGlobalListener{
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onChangeWeather(ChangeWorldWeatherEvent e) {
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onChangeWeather event");
+
 		if (!RedProtect.get().cfgs.getGlobalFlag(e.getTargetWorld().getName(),"allow-weather") && !e.getWeather().equals(Weathers.CLEAR)){
 			e.setCancelled(true);
 		}
@@ -256,7 +214,7 @@ public class RPGlobalListener{
 			loc = p.getLocation();
 		}
 		
-		Region r = RedProtect.get().rm.getTopRegion(loc);
+		Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
 
 		if (!canInteract(p, r)){
         	e.setCancelled(true);
@@ -287,7 +245,7 @@ public class RPGlobalListener{
 		RedProtect.get().logger.debug("default","RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
 
 		BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
-		Region r = RedProtect.get().rm.getTopRegion(bt.getLocation().get());
+		Region r = RedProtect.get().rm.getTopRegion(bt.getLocation().get(), this.getClass().getName());
 		if (r != null){
 			return;
 		}
@@ -304,29 +262,63 @@ public class RPGlobalListener{
 	
 	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onBlockBurnGlobal(ChangeBlockEvent.Modify e){
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onBlockBurnGlobal event");
+
 		Transaction<BlockSnapshot> b = e.getTransactions().get(0);
-		Region r = RedProtect.get().rm.getTopRegion(b.getOriginal().getLocation().get());
-    	if (r != null){
-    		return;
-    	}
-    	
+
     	if (e.getCause().first(Monster.class).isPresent()) {
-            if (!RedProtect.get().cfgs.getGlobalFlag(b.getOriginal().getLocation().get().getExtent().getName(),"entity-block-damage")){
+			Region r = RedProtect.get().rm.getTopRegion(b.getOriginal().getLocation().get(), this.getClass().getName());
+            if (r == null && !RedProtect.get().cfgs.getGlobalFlag(b.getOriginal().getLocation().get().getExtent().getName(),"entity-block-damage")){
             	e.setCancelled(true);
             }
     	}
-    	
-		if (b.getFinal().getState().getType().equals(BlockTypes.FIRE) && !RedProtect.get().cfgs.getGlobalFlag(b.getOriginal().getLocation().get().getExtent().getName(),"fire-block-damage")){
-			e.setCancelled(true);
-        }
     }
+
+
+	@Listener(order = Order.FIRST, beforeModifications = true)
+	public void onFireSpread(ChangeBlockEvent.Place e, @First LocatableBlock locatable) {
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onFireSpread event!");
+
+		BlockState sourceState = locatable.getBlockState();
+
+		if (sourceState.getType() == BlockTypes.FIRE || sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA){
+			boolean fireDamage = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"fire-block-damage");
+			if (!fireDamage){
+				Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
+				if (r == null){
+					RedProtect.get().logger.debug("blocks", "Tryed to PLACE FIRE!");
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@Listener(order = Order.FIRST, beforeModifications = true)
+	public void onFireSpread(ChangeBlockEvent.Break e, @First LocatableBlock locatable) {
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onBlockBreakGeneric event");
+
+		BlockState sourceState = locatable.getBlockState();
+
+		if (sourceState.getType() == BlockTypes.FIRE){
+			BlockSnapshot b = e.getTransactions().get(0).getOriginal();
+			boolean fireDamage = RedProtect.get().cfgs.getGlobalFlag(locatable.getLocation().getExtent().getName(),"fire-block-damage");
+			if (!fireDamage && b.getState().getType() != BlockTypes.FIRE){
+				Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+				if (r == null){
+					RedProtect.get().logger.debug("blocks", "Tryed to break from FIRE!");
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
 
 	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onPlayerInteract(InteractEntityEvent e, @Root Player p) {
-		
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onPlayerInteract event");
+
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
                 
         if (!canInteract(p, r)){
         	e.setCancelled(true);
@@ -355,8 +347,10 @@ public class RPGlobalListener{
 			
 	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onBucketUse(UseItemStackEvent.Start e, @Root Player p){
+		RedProtect.get().logger.debug("blocks","RPGlobalListener - Is onBucketUse event");
+
     	Location<World> l = p.getLocation();
-		Region r = RedProtect.get().rm.getTopRegion(l);	
+		Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 		
 		if (!canInteract(p, r)){
         	e.setCancelled(true);
@@ -367,7 +361,7 @@ public class RPGlobalListener{
 	public void onProjectileHit(CollideEntityEvent event, @Root Projectile proj) {
 		RedProtect.get().logger.debug("entity","Is CollideEntityEvent(onProjectileHit) event.");
 		RedProtect.get().logger.debug("entity","Projectile: "+proj.getType().getName());
-		if (RedProtect.get().rm.getTopRegion(proj.getLocation()) != null) return;
+		if (RedProtect.get().rm.getTopRegion(proj.getLocation(), this.getClass().getName()) != null) return;
 
 		for (Entity ent:event.getEntities()) {
 			RedProtect.get().logger.debug("entity","Entity: "+ent.getType().getName());
@@ -416,8 +410,9 @@ public class RPGlobalListener{
 
 		RedProtect.get().logger.debug("entity","RPGlobalListener: DamageEntityEvent - e1: "+e1.getType().getName());
 
-        Region r = RedProtect.get().rm.getTopRegion(e1.getLocation());
+
         if (e1 instanceof Living && !(e1 instanceof Monster)){
+			Region r = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
         	if (r == null && RedProtect.get().cfgs.getGlobalFlag(e1.getWorld().getName(),"invincible")){
         		e.setCancelled(true);
         	}
@@ -433,12 +428,13 @@ public class RPGlobalListener{
 		RedProtect.get().logger.debug("entity","RPGlobalListener: DamageEntityEvent - e1: "+e1.getType().getName() +" - e2: "+ e2.getType().getName());
 
         Location<World> loc = e1.getLocation();
-		Region r1 = RedProtect.get().rm.getTopRegion(loc);
-		if (r1 != null){
-			return;
-		}
 
 		if (e2 instanceof Projectile) {
+			Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+			if (r1 != null){
+				return;
+			}
+
 			Projectile proj = (Projectile)e2;
 			if (proj.getShooter() instanceof Entity){
 				e2 = (Entity)proj.getShooter();
@@ -455,6 +451,11 @@ public class RPGlobalListener{
 		}
 
 		if (e2 instanceof Creeper || e2 instanceof PrimedTNT || e2 instanceof TNTMinecart) {
+			Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+			if (r1 != null){
+				return;
+			}
+
 			if (e1 instanceof Player) {
                 if (!RedProtect.get().cfgs.getGlobalFlag(e1.getWorld().getName(),"explosion-entity-damage")) {
                     e.setCancelled(true);
@@ -482,6 +483,11 @@ public class RPGlobalListener{
 		}
 
 		if (e2 instanceof Player) {
+			Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+			if (r1 != null){
+				return;
+			}
+
         	Player p = (Player)e2;
 
         	if (e1 instanceof Player) {
@@ -523,39 +529,18 @@ public class RPGlobalListener{
     	    	
     	World w = e.getTargetWorld();
         for (Location<World> b:e.getAffectedLocations()) {
-            Region r = RedProtect.get().rm.getTopRegion(b);
+            Region r = RedProtect.get().rm.getTopRegion(b, this.getClass().getName());
         	if (r == null && !RedProtect.get().cfgs.getGlobalFlag(w.getName(),"entity-block-damage")){
         		e.setCancelled(true);
         		return;
         	} 
         }
     }
-	
-	@Listener(order = Order.FIRST, beforeModifications = true)	
-    public void onFireSpread(NotifyNeighborBlockEvent  e, @Root BlockSnapshot source){
-		
-		Map<Direction, BlockState> dirs = e.getNeighbors();
-    	
-    	for (Direction dir:dirs.keySet()){
-    		BlockSnapshot b = source.getLocation().get().getRelative(dir).createSnapshot();
-    		BlockState bstate = source.getState();
-        	Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get());   
-    		if (r != null){
-        		return;
-        	}
-    		
-    		if ((bstate.getType().equals(BlockTypes.FIRE) || bstate.getType().getName().contains("lava")) && 
-    				!RedProtect.get().cfgs.getGlobalFlag(b.getLocation().get().getExtent().getName(),"fire-spread")){
-    			e.setCancelled(true);
-    			return;
-    		}
-    	}
-	}
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onFramePlace(SpawnEntityEvent event, @Root Player p) {
 		for (Entity e: event.getEntities()) {
-			if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation()) != null) {
+			if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) {
 				continue;
 			}
 
@@ -579,22 +564,25 @@ public class RPGlobalListener{
 		if (event.getCause().first(Player.class).isPresent()) return;
 
         for (Entity e: event.getEntities()){
-        	if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation()) != null){
+        	if (e == null){
         		continue;
         	}
 
         	if (e instanceof Wither && !RedProtect.get().cfgs.getGlobalFlag(e.getWorld().getName(),"spawn-wither")){
+        		if (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) continue;
 				RedProtect.get().logger.debug("spawn","RPGlobalListener - Cancelled spawn of Wither " + e.getType().getName());
                 event.setCancelled(true);
                 return;
             }
 
         	if (e instanceof Monster && !RedProtect.get().cfgs.getGlobalFlag(e.getWorld().getName(),"spawn-monsters")) {
+				if (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) continue;
 				RedProtect.get().logger.debug("spawn","RPGlobalListener - Cancelled spawn of Monster " + e.getType().getName());
 				event.setCancelled(true);
 				return;
             }
             if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !RedProtect.get().cfgs.getGlobalFlag(e.getWorld().getName(),"spawn-passives")) {
+				if (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) continue;
 				RedProtect.get().logger.debug("spawn","RPGlobalListener - Cancelled spawn of Animal " + e.getType().getName());
 				event.setCancelled(true);
 				return;

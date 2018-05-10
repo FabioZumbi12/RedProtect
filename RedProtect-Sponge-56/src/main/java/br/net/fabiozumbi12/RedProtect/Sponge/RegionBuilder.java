@@ -1,11 +1,10 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
-
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 
 public abstract class RegionBuilder{
 	

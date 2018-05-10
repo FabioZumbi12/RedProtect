@@ -1,14 +1,14 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import java.awt.*;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
+import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.actions.RedefineRegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -34,20 +34,13 @@ import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Text.Builder;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.actions.RedefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class RPCommands implements CommandCallable {
@@ -100,7 +93,7 @@ public class RPCommands implements CommandCallable {
 							RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'file' before convert from FILE to Mysql.");
 							return cmdr;
 						} else {
-							RedProtect.get().cfgs.setConfig("file-type", "mysql");
+							RedProtect.get().cfgs.root().file_type = "mysql";
 							RedProtect.get().cfgs.save();	
 							RedProtect.get().reload();
 		        			RedProtect.get().logger.sucess("Redprotect reloaded with Mysql as database! Ready to use!");
@@ -118,7 +111,7 @@ public class RPCommands implements CommandCallable {
 							RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to File.");
 							return cmdr;
 						} else {
-							RedProtect.get().cfgs.setConfig("file-type", "file");
+							RedProtect.get().cfgs.root().file_type = "file";
 							RedProtect.get().cfgs.save();
 							RedProtect.get().reload();
 							RedProtect.get().logger.sucess("Redprotect reloaded with File as database! Ready to use!");
@@ -178,9 +171,14 @@ public class RPCommands implements CommandCallable {
             	}   
         		
         		if (args[0].equalsIgnoreCase("reload-config")) {
-        			RedProtect.get().cfgs = new RPConfig();
-                    RPLang.init();
-        			RedProtect.get().logger.sucess("Redprotect Plus configs reloaded!");
+					try {
+						RedProtect.get().cfgs = new RPConfig(RedProtect.get().factory);
+						RPLang.init();
+						RedProtect.get().logger.sucess("Redprotect Plus configs reloaded!");
+					} catch (ObjectMappingException e) {
+						RedProtect.get().logger.severe("Redprotect Plus configs NOT reloaded!");
+						e.printStackTrace();
+					}
         			return cmdr;
         		} 		
         	} 
@@ -293,30 +291,6 @@ public class RPCommands implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.yourclaims") + currentUsed + RPLang.get("general.color") + "/&e" + limit + RPLang.get("general.color")));
                     return cmdr;
         		}
-        		 
-        		
-        		if  (args[0].equalsIgnoreCase("setconfig")){
-        			if (args[1].contains("debug-messages") || args[1].contains("file-type")){
-        				Object from = RedProtect.get().cfgs.getObject(args[1]); 
-            			if (args[2].equals("true") || args[2].equals("false")){
-            				RedProtect.get().cfgs.setConfig(args[1], Boolean.parseBoolean(args[2]));
-            			} else {
-            				try {
-                				int value = Integer.parseInt(args[2]);
-                				RedProtect.get().cfgs.setConfig(args[1], value);
-                		    } catch(NumberFormatException ex){
-                		    	RedProtect.get().cfgs.setConfig(args[1], args[2]);
-                		    }
-            			}
-            			sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.configset")+" "+from+" > "+args[2]));
-            			RedProtect.get().cfgs.save();
-            			return cmdr;
-            		} else {
-            			sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.confignotset")+" "+args[1]));
-            			return cmdr;
-            		}
-        		}
-
 
         		//rp info <region> <world>
         		if (checkCmd(args[0], "info")) {
@@ -532,7 +506,7 @@ public class RPCommands implements CommandCallable {
     			if (!RedProtect.get().WE){
     				return cmdr;
     			}
-    			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+    			Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
     			if (r == null){
     				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
     				return cmdr;
@@ -547,7 +521,7 @@ public class RPCommands implements CommandCallable {
     			if (!RedProtect.get().WE){
     				return cmdr;
     			}
-    			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+    			Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
     			if (r == null){
     				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
     				return cmdr;
@@ -572,9 +546,9 @@ public class RPCommands implements CommandCallable {
                     if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
                         Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
                         Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
-                        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !player.hasPermission("redprotect.bypass.define-max-distance")){
+                        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !player.hasPermission("redprotect.bypass.define-max-distance")){
                             Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
                         } else {
                             RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                         }
@@ -592,9 +566,9 @@ public class RPCommands implements CommandCallable {
                     if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
                         Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
                         Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
-                        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player,"redprotect.bypass.define-max-distance")){
+                        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(player,"redprotect.bypass.define-max-distance")){
                             Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                            RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
                         } else {
                             RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                         }
@@ -673,7 +647,7 @@ public class RPCommands implements CommandCallable {
         	}
 
         	if (checkCmd(args[0], "settp") && RedProtect.get().ph.hasGenPerm(player, "settp")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         		if (r != null){
         			if (RedProtect.get().ph.hasRegionPermLeader(player, "settp", r)){
         				r.setTPPoint(player.getLocation());
@@ -690,7 +664,7 @@ public class RPCommands implements CommandCallable {
         	}
 
         	if (checkCmd(args[0], "deltp") && RedProtect.get().ph.hasGenPerm(player, "settp")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         		if (r != null){
         			if (RedProtect.get().ph.hasRegionPermLeader(player, "settp", r)){
         				r.setTPPoint(null);
@@ -707,7 +681,7 @@ public class RPCommands implements CommandCallable {
         	}
 
         	if (checkCmd(args[0], "border") && RedProtect.get().ph.hasGenPerm(player, "border")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         		if (r != null){
         			RPUtil.addBorder(player, r.get4Points(player.getLocation().getBlockY()));
         			return cmdr;
@@ -718,7 +692,7 @@ public class RPCommands implements CommandCallable {
         	}
 
         	if (checkCmd(args[0], "cancelbuy") && RedProtect.get().ph.hasGenPerm(player, "redprotect.eco.cancelbuy")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         		if (r == null){
         			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return cmdr;
@@ -752,7 +726,7 @@ public class RPCommands implements CommandCallable {
         	}
 
         	if (checkCmd(args[0], "value") && RedProtect.get().ph.hasGenPerm(player, "value")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         		if (r != null){
         			if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)){
         				if (r.getArea() < RedProtect.get().cfgs.getEcoInt("max-area-toget-value")){
@@ -799,7 +773,7 @@ public class RPCommands implements CommandCallable {
                     RPLang.sendMessage(player, "no.permission");
                     return cmdr;
                 }
-        		String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
+        		String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                 String name = RPUtil.nameGen(serverName, player.getWorld().getName());
 
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new LinkedList<>(), true);
@@ -852,7 +826,7 @@ public class RPCommands implements CommandCallable {
 
         	if (checkCmd(args[0], "wand") && player.hasPermission("redprotect.magicwand")) {
         		Inventory inv = player.getInventory();
-        		ItemType mat = (ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.getString("wands.adminWandID"));
+        		ItemType mat = (ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID);
         		ItemStack item = ItemStack.of(mat, 1);
         		item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
         		Iterable<Slot> slotIter = player.getInventory().slots();
@@ -916,7 +890,7 @@ public class RPCommands implements CommandCallable {
 
             if (checkCmd(args[0], "flag")) {
             	if (RedProtect.get().ph.hasUserPerm(player, "flaggui")) {
-        			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        			Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         			if (r != null){
         				if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasAdminFlagPerm(player, "redprotect.admin.flaggui")){
         					RPGui gui = new RPGui(r.getName(), player, r, RedProtect.get().cfgs.getGuiMaxSlot());
@@ -932,42 +906,6 @@ public class RPCommands implements CommandCallable {
         			}
         		}
             }
-
-          //rp renew-rent
-        	if (checkCmd(args[0], "renew-rent") && RedProtect.get().ph.hasGenPerm(player, "redprotect.rent.renew-rent")) {
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-    			if (r == null){
-    				RPLang.sendMessage(player, "cmdmanager.region.doesexists");
-    				return cmdr;
-    			}
-    			String puuid = RPUtil.PlayerToUUID(player.getName());
-    			if (!r.isRentFor(puuid)){
-    				RPLang.sendMessage(player, "cmdmanager.rent.younotrented");
-    				return cmdr;
-    			}
-
-    			if (RPUtil.getNowMillis() != r.getRentDateMillis(puuid) && !RedProtect.get().cfgs.getBool("region-settings.rent.renew-anytime")){
-    				RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.cantrenewanytime").replace("{renew}", r.getRentDateFormated(puuid)));
-    				return cmdr;
-    			}
-
-    			UniqueAccount acc = RedProtect.get().econ.getOrCreateAccount(player.getUniqueId()).get();
-    			if (acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue() >= r.getRentValue(puuid)){
-    				Calendar cal = Calendar.getInstance();
-    				String[] opts = RedProtect.get().cfgs.getString("region-settings.rent.command-renew-adds").split(":");
-    				if (opts[1].equalsIgnoreCase("MONTH")){
-    					cal.add(Calendar.MONTH, Integer.valueOf(opts[0]));
-    				} else if (opts[1].equalsIgnoreCase("DAY")){
-    					cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(opts[0]));
-    				}
-    				acc.withdraw(RedProtect.get().econ.getDefaultCurrency(), BigDecimal.valueOf(r.getRentValue(puuid)), RedProtect.get().getPVHelper().getCause(player));
-    				r.setRent(puuid, cal.getTimeInMillis());
-    				RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.renewsuccess").replace("{region}", r.getName()).replace("{value}", RPEconomy.getFormatted(r.getRentValue(puuid))));
-    			} else {
-    				RPLang.sendMessage(player, "cmdmanager.rent.renewfail");
-    			}
-    			return cmdr;
-        	}
         }
 
         if (args.length == 2) {
@@ -1026,7 +964,7 @@ public class RPCommands implements CommandCallable {
                     RPLang.sendMessage(player, "no.permission");
                     return cmdr;
                 }
-        		String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
+        		String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                 String name = args[1].replace("/", "|");
 
 				RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new LinkedList<>(), true);
@@ -1094,28 +1032,6 @@ public class RPCommands implements CommandCallable {
                 }
                 return cmdr;
             }
-
-            //rp del-rent <player>
-        	if (checkCmd(args[0], "del-rent") && RedProtect.get().ph.hasUserPerm(player, "del-rent")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        		if (r == null){
-        			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-    				return cmdr;
-        		}
-
-        		if (!r.isLeader(player) && !RedProtect.get().ph.hasGenPerm(player, "redprotect.rent.others")){
-        			sendNoPermissionMessage(player);
-        			return cmdr;
-        		}
-
-        		if (r.isRentFor(RPUtil.PlayerToUUID(args[1]))){
-        			r.removeRent(RPUtil.PlayerToUUID(args[1]));
-        			RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.playerremoved").replace("{region}", r.getName()));
-        		} else {
-        			RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.noplayerrented"));
-        		}
-        		return cmdr;
-        	}
         }
 
         if (args.length == 3) {
@@ -1163,42 +1079,6 @@ public class RPCommands implements CommandCallable {
 				}
     			return cmdr;
     		}
-
-        	//rp edit-rent <player> <valor/date>
-        	if (checkCmd(args[0], "edit-rent") && RedProtect.get().ph.hasUserPerm(player, "edit-rent")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        		if (r == null){
-        			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-    				return cmdr;
-        		}
-
-        		if (!r.isLeader(player) && !RedProtect.get().ph.hasUserPerm(player, "rent.others")){
-        			sendNoPermissionMessage(player);
-        			return cmdr;
-        		}
-
-        		if (!r.isRentFor(RPUtil.PlayerToUUID(args[1]))){
-        			RPLang.sendMessage(player, "cmdmanager.rent.playernotrented");
-        			return cmdr;
-        		}
-
-        		try {
-        			int value = Integer.valueOf(args[2]);
-        			r.setRent(RPUtil.PlayerToUUID(args[1]), value);
-        			RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.renteditok").replace("{player}", args[1]).replace("{value}", args[2]));
-        			return cmdr;
-        		} catch (NumberFormatException ex){
-        			Calendar cal = Calendar.getInstance();
-        			SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.get().cfgs.getString("region-settings.date-format"));
-        			try {
-						cal.setTime(sdf.parse(args[2]));
-						r.setRent(RPUtil.PlayerToUUID(args[1]), cal.getTimeInMillis());
-						RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.renteditok").replace("{player}", args[1]).replace("{value}", args[2]));
-						return cmdr;
-					} catch (ParseException ignored) {
-					}
-        		}
-        	}
 
         	//rp claim [regionName] [leader]
         	if (checkCmd(args[0], "claim")){
@@ -1273,7 +1153,7 @@ public class RPCommands implements CommandCallable {
 					RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", args[2]));
 				}
 
-				String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
+				String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
 				String name = args[1].replace("/", "|");
 
 				Region r2;
@@ -1303,60 +1183,13 @@ public class RPCommands implements CommandCallable {
 				}
 				return cmdr;
 			}
-
-        	//rp add-rent <player> <valor> <date>
-        	if (checkCmd(args[0], "add-rent") && player.hasPermission("redprotect.add-rent")){
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        		if (r == null){
-        			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-    				return cmdr;
-        		}
-
-        		if (!r.isLeader(player) && !player.hasPermission("redprotect.rent.others")){
-        			sendNoPermissionMessage(player);
-        			return cmdr;
-        		}
-
-        		int value = 0;
-        		long renewal = 0;
-        		try {
-        			Calendar cal = Calendar.getInstance();
-        			SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.get().cfgs.getString("region-settings.date-format"));
-
-        			cal.setTime(sdf.parse(args[3]));
-        			renewal = cal.getTimeInMillis();
-        			value = Integer.valueOf(args[2]);
-        		} catch (Exception ex){
-        			RPLang.sendMessage(player,RPLang.get("correct.command")+ " &b/rp "+getCmd("help"));
-        			ex.printStackTrace();
-        			return cmdr;
-        		}
-
-        		String play = RPUtil.PlayerToUUID(args[1]);
-        		if (args.length == 4){
-        			r.addrent(play, value, renewal, RedProtect.get().cfgs.getString("region-settings.rent.default-level"));
-        		} else
-        		if (args.length == 5){
-        			if (args[4].equalsIgnoreCase("member") || args[4].equalsIgnoreCase("admin") || args[4].equalsIgnoreCase("leader")){
-        				r.addrent(play, value, renewal, args[4]);
-        			} else {
-        				RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.validranks").replace("{ranks}", "member, admin, leader"));
-        				return cmdr;
-        			}
-        		}
-        		RPLang.sendMessage(player, RPLang.get("cmdmanager.rent.addedrent").replace("{player}", args[1]).replace("{date}", args[3]).replace("{cost}", args[2]));
-        		if (RedProtect.get().serv.getPlayer(args[1]).isPresent()){
-        			RPLang.sendMessage(RedProtect.get().serv.getPlayer(args[1]).get(), RPLang.get("cmdmanager.rent.playeraddedrent").replace("{region}", r.getName()).replace("{date}", args[3]).replace("{cost}", args[2]));
-        		}
-        		return cmdr;
-        	}
         }
 
 
 		//rp kick <player> [region] [world]
 		if (checkCmd(args[0], "kick")){
 			if (args.length == 2 || args.length == 4){
-				Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+				Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
 
 				if (r == null){
 					RPLang.sendMessage(player, "cmdmanager.region.todo.that");
@@ -1387,13 +1220,13 @@ public class RPCommands implements CommandCallable {
 					return cmdr;
 				}
 
-				Region rv = RedProtect.get().rm.getTopRegion(visit.get().getLocation());
+				Region rv = RedProtect.get().rm.getTopRegion(visit.get().getLocation(), this.getClass().getName());
 				if (rv == null || !rv.getID().equals(r.getID())){
 					RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
 					return cmdr;
 				}
 
-				String sec = String.valueOf(RedProtect.get().cfgs.getInt("region-settings.delay-after-kick-region"));
+				String sec = String.valueOf(RedProtect.get().cfgs.root().region_settings.delay_after_kick_region);
 				if (RedProtect.get().denyEnterRegion(r.getID(), visit.get().getName())){
 					RPUtil.DenyEnterPlayer(visit.get().getWorld(), new Transform<>(visit.get().getLocation()), new Transform<>(visit.get().getLocation()), r, true);
 					RPLang.sendMessage(player, RPLang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
@@ -1413,7 +1246,7 @@ public class RPCommands implements CommandCallable {
     		Region r;
     		//rp expand-vert
     		if (args.length == 1){
-    			r = RedProtect.get().rm.getTopRegion(player.getLocation());
+    			r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
     			if (r == null){
         			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     				return cmdr;
@@ -1459,7 +1292,7 @@ public class RPCommands implements CommandCallable {
     		//rp setmaxy <size>
 			switch (args.length) {
 				case 2:
-					r = RedProtect.get().rm.getTopRegion(player.getLocation());
+					r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
 					if (r == null) {
 						RPLang.sendMessage(player, "cmdmanager.region.todo.that");
 						return cmdr;
@@ -1518,7 +1351,7 @@ public class RPCommands implements CommandCallable {
     		//rp setmaxy <size>
 			switch (args.length) {
 				case 2:
-					r = RedProtect.get().rm.getTopRegion(player.getLocation());
+					r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
 					if (r == null) {
 						RPLang.sendMessage(player, "cmdmanager.region.todo.that");
 						return cmdr;
@@ -1570,7 +1403,7 @@ public class RPCommands implements CommandCallable {
 
     	if (checkCmd(args[0], "buy") && RedProtect.get().ph.hasGenPerm(player, "redprotect.eco.buy")){
 
-    		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+    		Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         	if (r == null){
     			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     			return cmdr;
@@ -1589,7 +1422,7 @@ public class RPCommands implements CommandCallable {
 
 
         if (checkCmd(args[0], "sell") && RedProtect.get().ph.hasGenPerm(player, "redprotect.eco.sell")){
-        	Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        	Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         	if (r == null){
     			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
     			return cmdr;
@@ -1922,21 +1755,21 @@ public class RPCommands implements CommandCallable {
         }
 
         if (checkCmd(args[0], "flag")) {
-        	Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        	Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
         	if (r == null){
         		RPLang.sendMessage(player, "cmdmanager.region.todo.that");
         		return cmdr;
         	}
 
             if (args.length == 2) {
-            	if (RedProtect.get().cfgs.getBool("flags-configuration.change-flag-delay.enable")){
-            		if (RedProtect.get().cfgs.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])){
+            	if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.enable){
+            		if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.flags.contains(args[1])){
             			if (!RedProtect.get().changeWait.contains(r.getName()+args[1])){
             				RPUtil.startFlagChanger(r.getName(), args[1], player);
             				handleFlag(player, args[1], "", r);
             				return cmdr;
             			} else {
-            				RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.getString("flags-configuration.change-flag-delay.seconds")));
+            				RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds+""));
 							return cmdr;
             			}
             		}
@@ -1950,14 +1783,14 @@ public class RPCommands implements CommandCallable {
             	for (int i = 2; i < args.length; i++){
             		text = text + " " + args[i];
             	}
-            	if (RedProtect.get().cfgs.getBool("flags-configuration.change-flag-delay.enable")){
-            		if (RedProtect.get().cfgs.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])){
+            	if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.enable){
+            		if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.flags.contains(args[1])){
             			if (!RedProtect.get().changeWait.contains(r.getName()+args[1])){
             				RPUtil.startFlagChanger(r.getName(), args[1], player);
             				handleFlag(player, args[1], text.substring(1), r);
             				return cmdr;
             			} else {
-            				RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.getString("flags-configuration.change-flag-delay.seconds")));
+            				RPLang.sendMessage(player,RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds+""));
 							return cmdr;
             			}
             		}
@@ -2016,7 +1849,7 @@ public class RPCommands implements CommandCallable {
 				for (String seller : sellers){
 					UserStorageService uss = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
 					Optional<User> offp = uss.get(RPUtil.UUIDtoPlayer(seller));
-					if (!seller.equals(RedProtect.get().cfgs.getString("region-settings.default-leader")) && offp.isPresent()){
+					if (!seller.equals(RedProtect.get().cfgs.root().region_settings.default_leader) && offp.isPresent()){
 						UniqueAccount offAcc = RedProtect.get().econ.getOrCreateAccount(offp.get().getUniqueId()).get();
 						offAcc.deposit(RedProtect.get().econ.getDefaultCurrency(), BigDecimal.valueOf(value), RedProtect.get().getPVHelper().getCause(player));
 						if (offp.get().isOnline()){
@@ -2062,7 +1895,7 @@ public class RPCommands implements CommandCallable {
 	}
 
     private void handlePriority(Player p, int prior) {
-    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
     	if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
     		if (r != null){
     			r.setPrior(prior);
@@ -2075,20 +1908,14 @@ public class RPCommands implements CommandCallable {
 	}
 
     private void handleDelete(Player p) {
-		Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+		Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "delete", r)) {
             if (r == null) {
                 sendNotInRegionMessage(p);
                 return;
             }
 
-            String puuid = RPUtil.PlayerToUUID(p.getName());
-			if (r.isRentFor(puuid)){
-				RPLang.sendMessage(p, "cmdmanager.rent.cantdothisrent");
-				return;
-			}
-
-			int claims = RedProtect.get().cfgs.getInt("region-settings.first-home.can-delete-after-claims");
+			int claims = RedProtect.get().cfgs.root().region_settings.can_delete_first_home_after_claims;
 			if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")){
 				if (claims != -1){
 					RPLang.sendMessage(p, RPLang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", ""+claims));
@@ -2131,13 +1958,7 @@ public class RPCommands implements CommandCallable {
                 return;
             }
 
-            String puuid = RPUtil.PlayerToUUID(p.getName());
-			if (r.isRentFor(puuid)){
-				RPLang.sendMessage(p, "cmdmanager.rent.cantdothisrent");
-				return;
-			}
-
-			int claims = RedProtect.get().cfgs.getInt("region-settings.first-home.can-delete-after-claims");
+			int claims = RedProtect.get().cfgs.root().region_settings.can_delete_first_home_after_claims;
 			if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")){
 				if (claims != -1){
 					RPLang.sendMessage(p, RPLang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", ""+claims));
@@ -2162,7 +1983,7 @@ public class RPCommands implements CommandCallable {
     }
 
 	private void handleInfoTop(Player p) {
-    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
     	if (r == null) {
             sendNotInRegionMessage(p);
             return;
@@ -2214,7 +2035,7 @@ public class RPCommands implements CommandCallable {
 	private void handleAddMember(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
-			r = RedProtect.get().rm.getTopRegion(p.getLocation());
+			r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 			if (r == null) {
 				sendNotInRegionMessage(p);
 				return;
@@ -2222,10 +2043,6 @@ public class RPCommands implements CommandCallable {
 		}
 
 		if (RedProtect.get().ph.hasRegionPermAdmin(src, "addmember", r)) {
-            if (r.isRentFor(RPUtil.PlayerToUUID(src.getName()))){
-            	RPLang.sendMessage(src, "cmdmanager.rent.cantaddmore");
-            	return;
-            }
 
             String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if (RPUtil.UUIDtoPlayer(VictimUUID) == null){
@@ -2264,7 +2081,7 @@ public class RPCommands implements CommandCallable {
 	private void handleAddLeader(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
-			r = RedProtect.get().rm.getTopRegion(p.getLocation());
+			r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 			if (r == null) {
 				sendNotInRegionMessage(p);
 				return;
@@ -2272,10 +2089,6 @@ public class RPCommands implements CommandCallable {
 		}
 
         if (RedProtect.get().ph.hasRegionPermLeader(src, "addleader", r)) {
-            if (r.isRentFor(RPUtil.PlayerToUUID(src.getName()))){
-            	RPLang.sendMessage(src, "cmdmanager.rent.cantaddmore");
-            	return;
-            }
 
             Player pVictim = null;
             if (RedProtect.get().serv.getPlayer(sVictim).isPresent()){
@@ -2321,7 +2134,7 @@ public class RPCommands implements CommandCallable {
                     	    RPLang.sendMessage(src, RPLang.get("cmdmanager.region.leader.requestexpired").replace("{player}", pVictimf.getName()));
                     	}
                     }
-                }, RedProtect.get().cfgs.getInt("region-settings.leadership-request-time"), TimeUnit.SECONDS);
+                }, RedProtect.get().cfgs.root().region_settings.leadership_request_time, TimeUnit.SECONDS);
             } else {
                 RPLang.sendMessage(src,"&c" + sVictim + " " + RPLang.get("cmdmanager.region.leader.already"));
             }
@@ -2335,7 +2148,7 @@ public class RPCommands implements CommandCallable {
 	private void handleAddAdmin(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
-			r = RedProtect.get().rm.getTopRegion(p.getLocation());
+			r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 			if (r == null) {
 				sendNotInRegionMessage(p);
 				return;
@@ -2343,10 +2156,6 @@ public class RPCommands implements CommandCallable {
 		}
 
         if (RedProtect.get().ph.hasRegionPermAdmin(src, "addadmin", r)) {
-            if (r.isRentFor(RPUtil.PlayerToUUID(src.getName()))){
-            	RPLang.sendMessage(src, "cmdmanager.rent.cantaddmore");
-            	return;
-            }
 
             Player pVictim = null;
             if (RedProtect.get().serv.getPlayer(sVictim).isPresent()){
@@ -2383,7 +2192,7 @@ public class RPCommands implements CommandCallable {
 	private void handleRemoveMember(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
-			r = RedProtect.get().rm.getTopRegion(p.getLocation());
+			r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 			if (r == null) {
 				sendNotInRegionMessage(p);
 				return;
@@ -2403,11 +2212,6 @@ public class RPCommands implements CommandCallable {
             }
 
             String victname = RPUtil.UUIDtoPlayer(VictimUUID);
-
-            if (r.isRentFor(RPUtil.PlayerToUUID(src.getName())) || r.isRentFor(VictimUUID)){
-            	RPLang.sendMessage(src, "cmdmanager.rent.cantchangerank");
-            	return;
-            }
 
             if ((r.isMember(VictimUUID) || r.isAdmin(VictimUUID)) && !r.isLeader(VictimUUID)) {
                 RPLang.sendMessage(src,RPLang.get("general.color") + sVictim + " " + RPLang.get("cmdmanager.region.member.removed") + " " + r.getName());
@@ -2430,7 +2234,7 @@ public class RPCommands implements CommandCallable {
 		Map<Integer,Region> regions = new HashMap<>();
 		if (src instanceof Player){
 			Player p = (Player)src;
-			r = RedProtect.get().rm.getTopRegion(p.getLocation());
+			r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 			rLow = RedProtect.get().rm.getLowRegion(p.getLocation());
 			regions = RedProtect.get().rm.getGroupRegion(p.getLocation());
 			if (r == null) {
@@ -2452,10 +2256,6 @@ public class RPCommands implements CommandCallable {
             }
 
             String victname = RPUtil.UUIDtoPlayer(VictimUUID);
-            if (r.isRentFor(RPUtil.PlayerToUUID(src.getName())) || r.isRentFor(VictimUUID)){
-            	RPLang.sendMessage(src, "cmdmanager.rent.cantchangerank");
-            	return;
-            }
 
             if (rLow != null && rLow != r && ((!RedProtect.get().ph.hasRegionPermLeader(src, "removeleader", rLow) || (regions.size() > 1 && rLow.isLeader(VictimUUID))))){
         		RPLang.sendMessage(src,RPLang.get("cmdmanager.region.leader.cantremove.lowregion").replace("{player}", sVictim) + " " +rLow.getName());
@@ -2485,7 +2285,7 @@ public class RPCommands implements CommandCallable {
 	private void handleRemoveAdmin(CommandSource src, String sVictim, Region r) {
 		if (src instanceof Player){
 			Player p = (Player)src;
-			r = RedProtect.get().rm.getTopRegion(p.getLocation());
+			r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 			if (r == null) {
 				sendNotInRegionMessage(p);
 				return;
@@ -2505,10 +2305,6 @@ public class RPCommands implements CommandCallable {
             }
 
             String victname = RPUtil.UUIDtoPlayer(VictimUUID);
-            if (r.isRentFor(RPUtil.PlayerToUUID(src.getName())) || r.isRentFor(VictimUUID)){
-            	RPLang.sendMessage(src, "cmdmanager.rent.cantchangerank");
-            	return;
-            }
 
             if (r.isAdmin(VictimUUID)) {
             	RPLang.sendMessage(src,RPLang.get("general.color") + sVictim + " " + RPLang.get("cmdmanager.region.member.added") + " " +r.getName());
@@ -2528,7 +2324,7 @@ public class RPCommands implements CommandCallable {
     }
 
 	private void handleRename(Player p, String newName) {
-    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "rename", r)) {
             if (r == null) {
                 sendNotInRegionMessage(p);
@@ -2985,9 +2781,9 @@ public class RPCommands implements CommandCallable {
         	p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
         	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.created.list") + " " +pname);
         	p.sendMessage(RPUtil.toText("-----"));
-        	if (RedProtect.get().cfgs.getBool("region-settings.region-list.simple-listing")){
+        	if (RedProtect.get().cfgs.root().region_settings.region_list.simple_listing){
         		for (World w:Sponge.getServer().getWorlds()){
-        			String colorChar = RedProtect.get().cfgs.getString("region-settings.world-colors." + w.getName());
+        			String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
         			Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
         			if (wregions.size() > 0){
         				Iterator<Region> it = wregions.iterator();
@@ -3058,7 +2854,7 @@ public class RPCommands implements CommandCallable {
     }
 
 	private static void handleWelcome(Player p, String wMessage) {
-    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+    	Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), RPCommands.class.getName());
     	if (RedProtect.get().ph.hasRegionPermAdmin(p, "welcome", r)) {
         	if (r != null){
 				switch (wMessage) {
@@ -3119,7 +2915,7 @@ public class RPCommands implements CommandCallable {
     		loc = new Location<>(w, region.getTPPoint().getBlockX() + 0.500, region.getTPPoint().getBlockY(), region.getTPPoint().getBlockZ() + 0.500);
     	} else {
     		int limit = w.getBlockMax().getY();
-        	if (w.getDimension().equals(DimensionTypes.NETHER)){
+        	if (w.getDimension().getType().equals(DimensionTypes.NETHER)){
         		limit = 124;
         	}
         	for (int i = limit; i > 0; i--){
@@ -3158,7 +2954,7 @@ public class RPCommands implements CommandCallable {
                     p.setLocation(loc);
                     RPLang.sendMessage(p,RPLang.get("cmdmanager.region.teleport") + " " + rname);
                 }
-            }, RedProtect.get().cfgs.getInt("region-settings.teleport-time"), TimeUnit.SECONDS);
+            }, RedProtect.get().cfgs.root().region_settings.teleport_time, TimeUnit.SECONDS);
     	} else {
     		RPLang.sendMessage(p, "cmdmanager.region.tpneedwait");
     	}
@@ -3260,7 +3056,7 @@ public class RPCommands implements CommandCallable {
         			for (String flag:RedProtect.get().cfgs.getDefFlags()){
         				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
 							if (flag.equalsIgnoreCase(args[1])){
-								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation());
+								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation(), this.getClass().getName());
 								if (r != null && r.canBuild(((Player)source)) && r.flags.containsKey(flag)){
 									return Collections.singletonList(r.flags.get(flag).toString());
 								}
@@ -3274,7 +3070,7 @@ public class RPCommands implements CommandCallable {
         			for (String flag:RedProtect.get().cfgs.AdminFlags){
         				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
 							if (flag.equalsIgnoreCase(args[1])){
-								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation());
+								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation(), this.getClass().getName());
 								if (r != null && r.canBuild(((Player)source)) && r.flags.containsKey(flag)){
 									return Collections.singletonList(r.flags.get(flag).toString());
 								}

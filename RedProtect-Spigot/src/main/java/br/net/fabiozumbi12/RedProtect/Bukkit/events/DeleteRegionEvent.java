@@ -1,11 +1,10 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.events;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 
 public class DeleteRegionEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();

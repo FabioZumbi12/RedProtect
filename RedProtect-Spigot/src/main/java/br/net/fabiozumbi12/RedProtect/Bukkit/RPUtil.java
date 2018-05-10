@@ -1,41 +1,18 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.RPBukkitBlocks;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.RPBukkitEntities;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.TaskChain;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.AWEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.ConsoleCommandSender;
@@ -46,17 +23,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.RPBukkitBlocks;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.RPBukkitEntities;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.TaskChain;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.AWEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class RPUtil {
