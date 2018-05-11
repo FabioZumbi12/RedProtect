@@ -231,6 +231,14 @@ public class RPConfig{
 
 		RedProtect.get().logger.info("Server version: " + RedProtect.get().game.getPlatform().getMinecraftVersion().getName());
 
+		//add allowed claim worlds to config
+		if (root.allowed_claim_worlds.isEmpty()) {
+			for (World w:RedProtect.get().serv.getWorlds()){
+				root.allowed_claim_worlds.add(w.getName());
+				RedProtect.get().logger.warning("Added world to claim list " + w.getName());
+			}
+		}
+
 		/*------------- ---- Add default config for not updateable configs ------------------*/
 
 		//update new player flags according version
@@ -395,6 +403,23 @@ public class RPConfig{
 	}
     
 	public void loadPerWorlds(World w) {
+		if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
+			root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
+		}
+
+		if (!root.region_settings.world_colors.containsKey(w.getName())) {
+			if (w.getDimension().getType().equals(DimensionTypes.OVERWORLD)){
+				root.region_settings.world_colors.put(w.getName(), "&a&l");
+			} else
+			if (w.getDimension().getType().equals(DimensionTypes.NETHER)){
+				root.region_settings.world_colors.put(w.getName(), "&c&l");
+			} else
+			if (w.getDimension().getType().equals(DimensionTypes.THE_END)){
+				root.region_settings.world_colors.put(w.getName(), "&5&l");
+			}
+			RedProtect.get().logger.warning("Added world to color list " + w.getName());
+		}
+
 		try {
 			//RedProtect.get().logger.debug("default","Writing global flags for world "+ w.getName() + "...");
 			gflags.getNode(w.getName(),"build").setValue(gflags.getNode(w.getName(),"build").getBoolean(true));
@@ -525,10 +550,19 @@ public class RPConfig{
 		}
     	return BlockTypes.GLOWSTONE;
     }
-    
+
+    private void saveConfig() {
+		try {
+			configRoot.setValue(TypeToken.of(RPMainCategory.class), root);
+			cfgLoader.save(configRoot);
+		} catch (IOException | ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+
     public void save(){
     	try {
-			cfgLoader.save(configRoot);
+			saveConfig();
 			gFlagsManager.save(gflags);
 			ecoManager.save(ecoCfgs);
 			protManager.save(protCfgs);
@@ -568,13 +602,8 @@ public class RPConfig{
 		} else {
 			if (!root.flags.containsKey(flag)){
 				root.flags.put(flag, defaultValue);
-                try {
-					root.flags_configuration.enabled_flags.add(flag);
-					cfgLoader.save(configRoot);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+				root.flags_configuration.enabled_flags.add(flag);
+				saveConfig();
                 return true;
 			}
 		}

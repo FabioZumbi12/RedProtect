@@ -2,9 +2,6 @@ package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.world.DimensionTypes;
-import org.spongepowered.api.world.World;
 
 import java.util.*;
 
@@ -14,17 +11,10 @@ public class RPMainCategory {
     public RPMainCategory(){}
 
     @Setting(value="config-version", comment = "Dont touch <3")
-    public double config_version = 7.4;
+    public double config_version = 7.5;
 
     @Setting(value = "allowed-claim-worlds", comment = "Worlds where players will be allowed to claim regions.")
-    public List<String> allowed_claim_worlds = popClaimWorlds();
-    private List<String> popClaimWorlds(){
-        List<String> list = new ArrayList<>();
-        for (World w:Sponge.getServer().getWorlds()){
-            list.add(w.getName());
-        }
-        return list;
-    }
+    public List<String> allowed_claim_worlds = new ArrayList<>();
 
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")
     public String file_type = "file";
@@ -326,14 +316,7 @@ public class RPMainCategory {
                     + "-> If BLOCK, the players needs to surround your house with the block type in configuration,\nand place a sign under this fence with [rp] on first line.\n"
                     + "-> If WAND, the players will need a wand (default glass_bottle), click on two point of your region,\nand then use /rp claim [name of region] to claim te region.\n"
                     + "-> If BOTH, will allow both claim type protections.")
-            public Map<String, String> world_types = createMapWorldType();
-            private Map<String, String> createMapWorldType(){
-                Map<String, String> myMap = new HashMap<>();
-                for (World w:Sponge.getServer().getWorlds()){
-                    myMap.put(w.getName(), "BLOCK");
-                }
-                return myMap;
-            }
+            public Map<String, String> world_types = new HashMap<>();
 
             @Setting(value = "claimlimit-per-world", comment = "Split the claim limits per world.")
             public boolean claimlimit_per_world = true;
@@ -374,22 +357,7 @@ public class RPMainCategory {
         @Setting(value = "teleport-time", comment = "Delay to teleport command.")
         public int teleport_time = 3;
         @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
-        public Map<String, String> world_colors = createMapWorldColors();
-        private Map<String, String> createMapWorldColors(){
-            Map<String, String> myMap = new HashMap<>();
-            for (World w:Sponge.getServer().getWorlds()){
-                if (w.getDimension().getType().equals(DimensionTypes.OVERWORLD)){
-                    myMap.put(w.getName(), "&a&l");
-                } else
-                if (w.getDimension().getType().equals(DimensionTypes.NETHER)){
-                    myMap.put(w.getName(), "&c&l");
-                } else
-                if (w.getDimension().getType().equals(DimensionTypes.THE_END)){
-                    myMap.put(w.getName(), "&5&l");
-                }
-            }
-            return myMap;
-        }
+        public Map<String, String> world_colors = new HashMap<>();
     }
 
     @Setting
