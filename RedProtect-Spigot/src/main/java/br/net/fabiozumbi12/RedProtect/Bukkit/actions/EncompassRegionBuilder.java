@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
@@ -331,13 +332,12 @@ public class EncompassRegionBuilder extends RegionBuilder{
             }
             else if (i != 0) {
                 this.setErrorSign(e, RPLang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getX() + ", y: " + current.getY() + ", z: " + current.getZ() + ")"));
-                Block newb = current.getRelative(0, 1, 0);
-                if (Material.getMaterial("SIGN") != null){
-                    newb.setType(Material.getMaterial("SIGN"));
+                Block newb = current.getRelative(BlockFace.UP);
+                if (Material.getMaterial("SIGN_POST") != null){
+                    newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
                 } else {
-                    newb.setType(Material.getMaterial("SIGN_POST"));
+                    newb.getState().getBlock().setType(Material.getMaterial("SIGN"));
                 }
-
                 Sign s = (Sign) newb.getState();
                 s.setLine(0, "§4xxxxxxxxxxxxxx");
                 s.setLine(1, RPLang.get("_redprotect.prefix"));

@@ -24,7 +24,9 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Crops;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RPBlockListener implements Listener{
 	
@@ -332,7 +334,7 @@ public class RPBlockListener implements Listener{
 		}
 		
 		try {
-			for (Block block:p.getLineOfSight(null, 8)){
+			for (Block block:p.getLineOfSight(new HashSet<Material>(), 8)){
 				if (block == null){
 					continue;
 				}
