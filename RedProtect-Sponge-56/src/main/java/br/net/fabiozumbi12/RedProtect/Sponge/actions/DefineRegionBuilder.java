@@ -5,6 +5,8 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.world.Location;
@@ -22,16 +24,15 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
-    	//region leader
-        String pName = RPUtil.PlayerToUUID(p.getName());
-
-        String wmsg = "";
-        if (leader.equals(RedProtect.get().cfgs.root().region_settings.default_leader)){
-        	pName = leader;
-        	wmsg = "hide ";
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return;
         }
 
-        if (regionName == null || regionName.equals("")) {
+        //filter region name
+        regionName = regionName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+        if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 RPLang.sendMessage(p, "regionbuilder.autoname.error");
@@ -39,10 +40,13 @@ public class DefineRegionBuilder extends RegionBuilder{
             }
         }
 
-        //region name conform
-        if (regionName.length() < 3) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return;
+    	//region leader
+        String pName = RPUtil.PlayerToUUID(p.getName());
+
+        String wmsg = "";
+        if (leader.equals(RedProtect.get().cfgs.root().region_settings.default_leader)){
+        	pName = leader;
+        	wmsg = "hide ";
         }
 
         if (loc1 == null || loc2 == null) {
@@ -162,7 +166,13 @@ public class DefineRegionBuilder extends RegionBuilder{
         		return;
         	}
         }
-        
+
+        //fire event
+        CreateRegionEvent event = new CreateRegionEvent(r, p);
+        if (Sponge.getEventManager().post(event)){
+            return;
+        }
+
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit)));
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? "&a"+regionarea:"&c- "+regionarea) + "\n" +

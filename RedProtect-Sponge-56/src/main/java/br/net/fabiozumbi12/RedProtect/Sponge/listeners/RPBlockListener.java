@@ -32,7 +32,9 @@ import org.spongepowered.api.event.entity.IgniteEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -56,7 +58,7 @@ public class RPBlockListener {
     	List<Text> lines = e.getText().asList();
         Location<World> loc = s.getLocation();
         World w = p.getWorld();
-        BlockSnapshot b = w.createSnapshot(loc.getBlockPosition());
+        BlockSnapshot b = loc.createSnapshot();
 
         Region signr = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
                 
@@ -90,29 +92,49 @@ public class RPBlockListener {
         	}
         }
         
-        if ((RedProtect.get().cfgs.root().private_cat.use && s.getType().equals(TileEntityTypes.SIGN)) && (line1.toPlain().equalsIgnoreCase("private") || line1.toPlain().equalsIgnoreCase("[private]") || line1.toPlain().equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line1.toPlain().equalsIgnoreCase("["+RPLang.get("blocklistener.container.signline")+"]"))) {
+        if ((RedProtect.get().cfgs.root().private_cat.use && s.getType().equals(TileEntityTypes.SIGN))) {
         	Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
         	Boolean out = RedProtect.get().cfgs.root().private_cat.allow_outside;
-        	if (out || r != null){
-        		if (cont.isContainer(b)){
-            		int length = p.getName().length();
-                    if (length > 16) {
-                      length = 16;
-                    }
-                    lines.set(1, RPUtil.toText(p.getName().substring(0, length)));
-                    e.getText().setElements(lines);
-                	RPLang.sendMessage(p, "blocklistener.container.protected");
-                    return;
-            	} else {
-            		RPLang.sendMessage(p, "blocklistener.container.notprotected");
-            		RedProtect.get().getPVHelper().getCause(p);
-            		return;
-            	}
-        	} else {
-        		RPLang.sendMessage(p, "blocklistener.container.notregion");
-				RedProtect.get().getPVHelper().getCause(p);
-        		return;
-        	}        	
+        	//private sign
+        	if (cont.validatePrivateSign(lines.get(0).toPlain())){
+				if (out || r != null){
+					if (cont.isContainer(b, false)){
+						int length = p.getName().length();
+						if (length > 16) {
+							length = 16;
+						}
+						lines.set(1, RPUtil.toText(p.getName().substring(0, length)));
+						e.getText().setElements(lines);
+						RPLang.sendMessage(p, "blocklistener.container.protected");
+						return;
+					} else {
+						RPLang.sendMessage(p, "blocklistener.container.notprotected");
+						//RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
+						return;
+					}
+				} else {
+					RPLang.sendMessage(p, "blocklistener.container.notregion");
+					//RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
+					return;
+				}
+			}
+			if (cont.validateMoreSign(lines.get(0).toPlain())){
+				if (out || r != null){
+					if (cont.isContainer(b, true)){
+						RPLang.sendMessage(p, "blocklistener.container.protected");
+						return;
+					} else {
+						RPLang.sendMessage(p, "blocklistener.container.notprotected");
+						//RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
+						return;
+					}
+				} else {
+					RPLang.sendMessage(p, "blocklistener.container.notregion");
+					//RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
+					return;
+				}
+			}
+
         }
                 
         if (line1.toPlain().equalsIgnoreCase("[rp]")){
@@ -158,7 +180,7 @@ public class RPBlockListener {
         Boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
         
-        if (r == null && RedProtect.get().cfgs.getGlobalFlagList(w.getName(),"if-build-false","place-blocks").contains(b.getState().getType().getName())){
+        if (r == null && RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.contains(b.getState().getType().getName())){
         	return;
         }
         
@@ -203,16 +225,12 @@ public class RPBlockListener {
     	
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
-    	World w = bloc.getExtent();
 
         Boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(bloc, this.getClass().getName());
         
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
-        	int x = bloc.getBlockX();
-    		int y = bloc.getBlockY();
-    		int z = bloc.getBlockZ();
-    		BlockSnapshot ib = w.createSnapshot(x, y+1, z);
+			BlockSnapshot ib = bloc.getBlockRelative(Direction.UP).createSnapshot();
     		if ((antih && !cont.canBreak(p, ib)) || !cont.canBreak(p, b)){
     			RPLang.sendMessage(p, "blocklistener.container.breakinside");
     			e.setCancelled(true);
@@ -220,7 +238,7 @@ public class RPBlockListener {
     		}
         }
         
-        if (r == null && RedProtect.get().cfgs.getGlobalFlagList(p.getWorld().getName(),"if-build-false","break-blocks").contains(b.getState().getType().getName())){
+        if (r == null && RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_build_false.break_blocks.contains(b.getState().getType().getName())){
         	return;
         }
         

@@ -2,8 +2,11 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.Sign;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.block.tileentity.TileEntityTypes;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -17,47 +20,45 @@ import java.util.List;
 public class RPContainer {
 
 	public boolean canOpen(BlockSnapshot b, Player p) {
-    	if (!RedProtect.get().cfgs.root().private_cat.use){
+    	if (!RedProtect.get().cfgs.root().private_cat.use || p.hasPermission("redprotect.bypass")){
     		return true;
     	}
-    	
+
     	List<Direction> dirs = Arrays.asList(Direction.EAST,Direction.NORTH,Direction.SOUTH,Direction.WEST);
     	String blocktype = b.getState().getType().getName();
     	Location<World> loc = b.getLocation().get();
-    	World w = loc.getExtent();
     	List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
-    	
+		boolean deny = true;
         if (blocks.stream().anyMatch(blocktype::matches)){
         	for (Direction dir:dirs){        		
-        		Location<World> loc1 = getRelative(loc, dir);        		
-        		if (isSign(loc1.getBlockType())){
-        			BlockSnapshot sign1 = w.createSnapshot(loc1.getBlockPosition());
-            		if (!validateOpenBlock(sign1, p)){
-            			return false;
+        		Location<World> loc1 = loc.getBlockRelative(dir);
+        		if (isSign(loc1.createSnapshot())){
+					deny = false;
+            		if (validateOpenBlock(loc1.createSnapshot(), p)){
+            			return true;
             		}
             	} 
         		        		
         		if (blocks.stream().anyMatch(loc1.getBlockType().getName()::matches) && loc1.getBlockType().equals(b.getState().getType())){
         			for (Direction dir2:dirs){
-        				Location<World> loc3 = getRelative(loc1, dir2);              			
-            			if (isSign(loc3.getBlockType())){
-            				BlockSnapshot sign2 = w.createSnapshot(loc3.getBlockPosition());
-            				if (!validateOpenBlock(sign2, p)){
-                    			return false;
+        				Location<World> loc3 = loc1.getBlockRelative(dir2);
+            			if (isSign(loc3.createSnapshot())){
+							deny = false;
+            				if (validateOpenBlock(loc3.createSnapshot(), p)){
+                    			return true;
                     		}
                     	}
         			}
         		}        		
         	}           
         }
-		return true;        
+		return deny;
     }
 	
 	public boolean canBreak(Player p, BlockSnapshot b){
     	if (!RedProtect.get().cfgs.root().private_cat.use){
     		return true;
     	}
-    	
     	
     	Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
     	if (reg == null && !RedProtect.get().cfgs.root().private_cat.allow_outside){
@@ -67,40 +68,41 @@ public class RPContainer {
     	List<Direction> dirs = Arrays.asList(Direction.EAST,Direction.NORTH,Direction.SOUTH,Direction.WEST,Direction.UP,Direction.DOWN);
     	String blocktype = b.getState().getType().getName();
     	Location<World> loc = b.getLocation().get();
-    	World w = loc.getExtent();
     	List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
+
+		boolean deny = true;
     	
-    	if (isSign(loc.getBlockType())){
-			BlockSnapshot sign1 = w.createSnapshot(loc.getBlockPosition());
-    		if (!validateBreakSign(sign1, p)){
-    			return false;
+    	if (isSign(loc.createSnapshot())){
+			deny = false;
+    		if (validateBreakSign(loc.createSnapshot(), p)){
+    			return true;
     		}
     	}
     	
         if (blocks.stream().anyMatch(blocktype::matches)){
         	for (Direction dir:dirs){        		
-        		Location<World> loc1 = getRelative(loc, dir);        		
-        		if (isSign(loc1.getBlockType())){
-        			BlockSnapshot sign1 = w.createSnapshot(loc1.getBlockPosition());
-            		if (!validateBreakSign(sign1, p)){
-            			return false;
+        		Location<World> loc1 = loc.getBlockRelative(dir);
+        		if (isSign(loc1.createSnapshot())){
+					deny = false;
+            		if (validateBreakSign(loc1.createSnapshot(), p)){
+            			return true;
             		}
             	} 
         		        		
         		if (blocks.stream().anyMatch(loc1.getBlockType().getName()::matches) && loc1.getBlockType().equals(b.getState().getType())){
         			for (Direction dir2:dirs){
-        				Location<World> loc3 = getRelative(loc1, dir2);              			
-            			if (isSign(loc3.getBlockType())){
-            				BlockSnapshot sign2 = w.createSnapshot(loc3.getBlockPosition());
-            				if (!validateBreakSign(sign2, p)){
-                    			return false;
+        				Location<World> loc3 = loc1.getBlockRelative(dir2);
+            			if (isSign(loc3.createSnapshot())){
+							deny = false;
+            				if (validateBreakSign(loc3.createSnapshot(), p)){
+                    			return true;
                     		}
                     	}
         			}
         		}        		
         	}           
         }        
-        return true;
+        return deny;
     }
     
 	public boolean canWorldBreak(BlockSnapshot b){	
@@ -116,32 +118,31 @@ public class RPContainer {
     	List<Direction> dirs = Arrays.asList(Direction.EAST,Direction.NORTH,Direction.SOUTH,Direction.WEST,Direction.UP,Direction.DOWN);
     	String blocktype = b.getState().getType().getName();
     	Location<World> loc = b.getLocation().get();
-    	World w = loc.getExtent();
     	List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
     	
-    	if (isSign(loc.getBlockType())){
-			BlockSnapshot sign1 = w.createSnapshot(loc.getBlockPosition());
-    		if (!validatePrivateSign(sign1)){
+    	if (isSign(loc.createSnapshot())){
+			BlockSnapshot sign1 = loc.createSnapshot();
+    		if (validWorldBreak(sign1)){
     			return false;
     		}
     	}
     	
         if (blocks.stream().anyMatch(blocktype::matches)){
         	for (Direction dir:dirs){        		
-        		Location<World> loc1 = getRelative(loc, dir);        		
-        		if (isSign(loc1.getBlockType())){
-        			BlockSnapshot sign1 = w.createSnapshot(loc1.getBlockPosition());
-            		if (!validatePrivateSign(sign1)){
+        		Location<World> loc1 = loc.getBlockRelative(dir);
+        		if (isSign(loc1.createSnapshot())){
+        			BlockSnapshot sign1 = loc1.createSnapshot();
+            		if (validWorldBreak(sign1)){
             			return false;
             		}
             	} 
         		        		
         		if (blocks.stream().anyMatch(loc1.getBlockType().getName()::matches) && loc1.getBlockType().equals(b.getState().getType())){
         			for (Direction dir2:dirs){
-        				Location<World> loc3 = getRelative(loc1, dir2);              			
-            			if (isSign(loc3.getBlockType())){
-            				BlockSnapshot sign2 = w.createSnapshot(loc3.getBlockPosition());
-            				if (!validatePrivateSign(sign2)){
+        				Location<World> loc3 = loc1.getBlockRelative(dir2);
+            			if (isSign(loc3.createSnapshot())){
+            				BlockSnapshot sign2 = loc3.createSnapshot();
+            				if (validWorldBreak(sign2)){
                     			return false;
                     		}
                     	}
@@ -152,52 +153,111 @@ public class RPContainer {
         return true;
     }
 
-	private boolean validatePrivateSign(BlockSnapshot b){
-		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
-			return true;
-		}
-		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
-		return line.equalsIgnoreCase("[private]") || line.equalsIgnoreCase("private") || line.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) || line.equalsIgnoreCase("[" + RPLang.get("blocklistener.container.signline") + "]");
+	private boolean validWorldBreak(BlockSnapshot b){
+		return validatePrivateSign(b) || validateMoreSign(b);
+	}
+
+	public boolean validatePrivateSign(String line){
+		String priv = RPLang.get("blocklistener.container.signline");
+
+		return line.equalsIgnoreCase("[private]") ||
+				line.equalsIgnoreCase("private") ||
+				line.equalsIgnoreCase(priv) ||
+				line.equalsIgnoreCase("[" + priv + "]");
+	}
+
+	public boolean validatePrivateSign(BlockSnapshot b){
+		String line = b.getLocation().get().get(Keys.SIGN_LINES).get().get(0).toPlain();
+		return validatePrivateSign(line);
+	}
+
+	public boolean validateMoreSign(String line){
+		String more = RPLang.get("blocklistener.container.signline.more");
+
+		return line.equalsIgnoreCase("[more]") ||
+				line.equalsIgnoreCase("more") ||
+				line.equalsIgnoreCase(more) ||
+				line.equalsIgnoreCase("[" + more + "]");
+	}
+
+	public boolean validateMoreSign(BlockSnapshot b){
+		String line = b.getLocation().get().get(Keys.SIGN_LINES).get().get(0).toPlain();
+		return validateMoreSign(line);
 	}
 	
 	private boolean validateBreakSign(BlockSnapshot b, Player p){
-		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
-			return true;
-		}
-		String line = b.get(Keys.SIGN_LINES).get().get(0).toPlain();
-		String line1 = b.get(Keys.SIGN_LINES).get().get(1).toPlain();
-		return (!line.equalsIgnoreCase("[private]") && !line.equalsIgnoreCase("private") && !line.equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) && !line.equalsIgnoreCase("[" + RPLang.get("blocklistener.container.signline") + "]")) ||
-				line1.equals(p.getName());
+		String line1 = b.getLocation().get().get(Keys.SIGN_LINES).get().get(1).toPlain();
+		return (validatePrivateSign(b) && (line1.isEmpty() || line1.equals(p.getName()))) || (validateMoreSign(b) && validateMore(b, p.getName()));
 	}
-	
+
 	private boolean validateOpenBlock(BlockSnapshot b, Player p){
-		if (!isSign(b.getState().getType()) || !b.get(Keys.SIGN_LINES).isPresent()){
-			return true;
-		}
-		List<Text> lines = b.get(Keys.SIGN_LINES).get();
-		return (!lines.get(0).toPlain().equalsIgnoreCase("[private]") && !lines.get(0).toPlain().equalsIgnoreCase("private") && !lines.get(0).toPlain().equalsIgnoreCase(RPLang.get("blocklistener.container.signline")) && !lines.get(0).toPlain().equalsIgnoreCase("[" + RPLang.get("blocklistener.container.signline") + "]")) ||
-				(lines.get(1).toPlain().equals(p.getName()) ||
-						lines.get(2).toPlain().equals(p.getName()) ||
-						lines.get(3).toPlain().equals(p.getName()));
+		return testPrivate(b,p) || testMore(b,p);
 	}
-	    
-	public boolean isContainer(BlockSnapshot block){
-		Location<World> loc = block.getLocation().get();
+
+	private boolean validateMore(BlockSnapshot b, String valid){
 		List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
 
-		return blocks.stream().anyMatch(b -> getRelative(loc, Direction.UP).getBlockType().getName().matches(b)) ||
-		blocks.stream().anyMatch(b -> getRelative(loc, Direction.DOWN).getBlockType().getName().matches(b)) ||
-		blocks.stream().anyMatch(b -> getRelative(loc, Direction.EAST).getBlockType().getName().matches(b)) ||
-		blocks.stream().anyMatch(b -> getRelative(loc, Direction.NORTH).getBlockType().getName().matches(b)) ||
-		blocks.stream().anyMatch(b -> getRelative(loc, Direction.SOUTH).getBlockType().getName().matches(b)) ||
-		blocks.stream().anyMatch(b -> getRelative(loc, Direction.WEST).getBlockType().getName().matches(b));
+		Location<World> attachedLoc = b.getLocation().get().getRelative(b.getLocation().get().get(Keys.DIRECTION).get().getOpposite());
+		//get valid block
+		if (blocks.stream().anyMatch(attachedLoc.getBlockType().getName()::matches)){
+			//check if theres connected blocks
+			if (attachedLoc.get(Keys.CONNECTED_DIRECTIONS).isPresent()){
+				for (Direction dir:attachedLoc.get(Keys.CONNECTED_DIRECTIONS).get()){
+					Location<World> loc1 = attachedLoc.getBlockRelative(dir);
+
+					//check if sign first
+					if (attachedLoc.getBlockRelative(attachedLoc.get(Keys.DIRECTION).get()).getTileEntity().isPresent()){
+						TileEntity tt = attachedLoc.getBlockRelative(attachedLoc.get(Keys.DIRECTION).get()).getTileEntity().get();
+						if (tt.getType().equals(TileEntityTypes.SIGN) &&
+								(validatePrivateSign(((Sign)tt).lines().get(1).toPlain()) || validateMoreSign(((Sign)tt).lines().get(1).toPlain()))
+								||
+								(((Sign)tt).lines().get(1).toPlain().equals(valid) ||
+										((Sign)tt).lines().get(2).toPlain().equals(valid) ||
+										((Sign)tt).lines().get(3).toPlain().equals(valid))){
+							return true;
+						}
+					}
+
+					//same block type = double chest
+					if (loc1.getBlockType().equals(attachedLoc.getBlockType())){
+						if (attachedLoc.getBlockRelative(attachedLoc.get(Keys.DIRECTION).get()).getTileEntity().isPresent()){
+							TileEntity tt = attachedLoc.getBlockRelative(attachedLoc.get(Keys.DIRECTION).get()).getTileEntity().get();
+							if (tt.getType().equals(TileEntityTypes.SIGN) &&
+									(validatePrivateSign(((Sign)tt).lines().get(1).toPlain()) || validateMoreSign(((Sign)tt).lines().get(1).toPlain()))
+									||
+									(((Sign)tt).lines().get(1).toPlain().equals(valid) ||
+											((Sign)tt).lines().get(2).toPlain().equals(valid) ||
+											((Sign)tt).lines().get(3).toPlain().equals(valid))){
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
-	private boolean isSign(BlockType type){
-		return type.equals(BlockTypes.STANDING_SIGN) || type.equals(BlockTypes.WALL_SIGN);
+	private boolean testPrivate(BlockSnapshot b, Player p){
+		List<Text> lines = b.getLocation().get().get(Keys.SIGN_LINES).get();
+		return  validatePrivateSign(b) &&
+				(lines.get(1).toPlain().equals(p.getName()) || lines.get(2).toPlain().equals(p.getName()) || lines.get(3).toPlain().equals(p.getName()));
 	}
 
-	private Location<World> getRelative(Location<World> loc,Direction dir){
-		return loc.getRelative(dir);
+	private boolean testMore(BlockSnapshot b, Player p){
+		List<Text> lines = b.getLocation().get().get(Keys.SIGN_LINES).get();
+		return validateMoreSign(b) &&
+				(lines.get(1).toPlain().equals(p.getName()) || lines.get(2).toPlain().equals(p.getName()) || lines.get(3).toPlain().equals(p.getName()));
+	}
+	    
+	public boolean isContainer(BlockSnapshot block, boolean more){
+		Location<World> loc = block.getLocation().get().getBlockRelative(block.getLocation().get().get(Keys.DIRECTION).get().getOpposite());
+		List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
+
+		return blocks.stream().anyMatch(loc.getBlockType().getName()::matches) && (!more || validateMore(block, ""));
+	}
+
+	public boolean isSign(BlockSnapshot b){
+		return (b.getState().getType().equals(BlockTypes.STANDING_SIGN) || b.getState().getType().equals(BlockTypes.WALL_SIGN)) && b.getLocation().get().get(Keys.SIGN_LINES).isPresent();
 	}
 }

@@ -1063,44 +1063,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				return true;    
         		}
         	}
-        	
-        	if (checkCmd(args[0], "cancelbuy") && player.hasPermission("redprotect.eco.cancelbuy")){
-        		if (!RedProtect.get().Vault){
-        			return true;
-        		}
-        		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        		if (r == null){
-        			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-    				return true;
-        		}
-        		
-        		if (r.isLeader(RPUtil.PlayerToUUID(player.getName()))){
-        			if (r.isForSale()){
-            			r.removeFlag("for-sale");        			
-            			r.setWelcome("");
-            			if (r.leaderSize() == 0){
-            				if (RPConfig.getEcoBool("rename-region")){
-            					RedProtect.get().rm.renameRegion(RPUtil.nameGen(player.getName(),r.getWorld()), r);
-            				}            				        		
-            				r.addLeader(RPUtil.PlayerToUUID(player.getName()));
-            			} else {
-            				if (RPConfig.getEcoBool("rename-region")){
-            					RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(r.getLeaders().get(0)),r.getWorld()),r);
-            				}
-            			}        			
-            			RPLang.sendMessage(player, "economy.region.cancelbuy");
-            			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" cancelled buy stat of region "+r.getName());
-        				return true;
-            		} else {
-            			RPLang.sendMessage(player, "economy.region.buy.notforsale");
-            			return true;
-            		}
-        		} else {
-        			RPLang.sendMessage(player, "economy.region.sell.own");
-        			return true;
-        		}
-        	}
-        	        	
+
         	if (checkCmd(args[0], "value") && RedProtect.get().ph.hasGenPerm(player, "value")){
         		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
         		if (r != null){
@@ -1275,7 +1238,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
         			if (r != null){
         				if (RedProtect.get().ph.hasRegionPermAdmin(player, "flaggui", r)){
-        					RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, RedProtect.get(), false, RPConfig.getGuiMaxSlot());        					
+        					RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, false, RPConfig.getGuiMaxSlot());
         					gui.open();
                 			return true;
         				} else {
@@ -1334,7 +1297,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		if (player.hasPermission("redprotect.gui.edit")){
         			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				RPGui gui = new RPGui(RPLang.get("gui.editflag"), player, r, RedProtect.get(), true, RPConfig.getGuiMaxSlot());
+        				RPGui gui = new RPGui(RPLang.get("gui.editflag"), player, r, true, RPConfig.getGuiMaxSlot());
     					gui.open();
         			} else {
         				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
@@ -1519,7 +1482,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			}
         			Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
         			if (r != null){
-        				RPGui gui = new RPGui(RPLang.get("gui.editflag"), player, r, RedProtect.get(), true, MaxSlot);
+        				RPGui gui = new RPGui(RPLang.get("gui.editflag"), player, r, true, MaxSlot);
     					gui.open();
         			} else {
         				RPLang.sendMessage(player, "cmdmanager.region.todo.that");
@@ -2792,26 +2755,23 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 sendNotInRegionMessage(p);
                 return;
             }
-            
-            //region name conform
-            newName = newName.replace("/", "|");
-            if (RedProtect.get().rm.getRegion(newName, p.getWorld()) != null) {
-                RPLang.sendMessage(p, "cmdmanager.region.rename.already");
-                return;
-            }
-            if (newName.length() < 2 || newName.length() > 16) {
-                RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
-                return;
-            }
-            if (newName.contains(" ")) {
-                RPLang.sendMessage(p, "cmdmanager.region.rename.spaces");
-                return;
-            }            
-            if (newName.contains("@")) {
-                p.sendMessage(RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
-                return;
-            }
-            
+
+			//region name conform
+			if (newName.length() < 3) {
+				RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+				return;
+			}
+
+			//filter region name
+			newName = newName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+			if (newName.isEmpty() || newName.length() < 3) {
+				newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
+				if (newName.length() > 16) {
+					RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
+					return;
+				}
+			}
+
             RenameRegionEvent event = new RenameRegionEvent(r, newName, r.getName(), p);
 			Bukkit.getPluginManager().callEvent(event);    			
 			if (event.isCancelled()){

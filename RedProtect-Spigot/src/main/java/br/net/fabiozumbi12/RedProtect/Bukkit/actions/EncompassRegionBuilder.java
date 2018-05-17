@@ -6,10 +6,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.CreateRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.RenameRegionEvent;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -47,20 +46,22 @@ public class EncompassRegionBuilder extends RegionBuilder{
         if (!RPConfig.isAllowedWorld(p)){
         	this.setErrorSign(e, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
-        }  
-        
-        if (regionName == null || regionName.equals("")) {
+        }
+
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return;
+        }
+
+        //filter region name
+        regionName = regionName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+        if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
         	regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
         	if (regionName.length() > 16) {
                 this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
                 return;
             }
-        }
-        
-        //region name conform
-        if (regionName.length() < 3) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.invalid"));
-            return;
         }
 
         int maxby = current.getY();
@@ -259,7 +260,14 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         		return;
                         	}
                         }
-                        
+
+                        //fire event
+                        CreateRegionEvent event = new CreateRegionEvent(r, p);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (event.isCancelled()){
+                            return;
+                        }
+
                         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
                         p.sendMessage(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));
                         p.sendMessage(RPLang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? ChatColor.GREEN+""+regionarea:ChatColor.RED+"- "+regionarea) + "\n" + 

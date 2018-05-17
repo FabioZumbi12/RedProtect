@@ -1,4 +1,4 @@
-package br.net.fabiozumbi12.RedProtect.Sponge.config;
+package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -6,14 +6,14 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import java.util.*;
 
 @ConfigSerializable
-public class RPMainCategory {
+public class MainCategory {
 
-    public RPMainCategory(){}
+    public MainCategory(){}
 
     @Setting(value="config-version", comment = "Dont touch <3")
     public double config_version = 7.5;
 
-    @Setting(value = "allowed-claim-worlds", comment = "Worlds where players will be allowed to claim regions.")
+    @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
 
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")
@@ -105,6 +105,7 @@ public class RPMainCategory {
                 "can-grow",
                 "allow-spawner",
                 "leaves-decay",
+                "ender-chest",
                 "build");
     }
 

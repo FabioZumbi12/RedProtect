@@ -52,6 +52,11 @@ public class RPVHelper56 implements RPVHelper {
 	}
 
 	@Override
+	public void digBlock(Player p, Vector3i loc) {
+		p.getWorld().digBlock(loc, Cause.of(NamedCause.owner(RedProtect.get().container)));
+	}
+
+	@Override
 	public void removeBlock(Location<World> loc) {
 		loc.removeBlock(Cause.of(NamedCause.owner(RedProtect.get().container)));
 	}

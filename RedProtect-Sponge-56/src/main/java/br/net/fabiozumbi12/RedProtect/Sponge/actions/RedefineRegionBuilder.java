@@ -70,7 +70,7 @@ public class RedefineRegionBuilder extends RegionBuilder{
         }
         
         List<String> othersName = new ArrayList<>();
-        Region otherrg = null;
+        Region otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());

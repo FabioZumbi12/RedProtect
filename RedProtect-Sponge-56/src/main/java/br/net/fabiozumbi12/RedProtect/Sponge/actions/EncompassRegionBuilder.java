@@ -5,6 +5,9 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.Sign;
@@ -53,9 +56,17 @@ public class EncompassRegionBuilder extends RegionBuilder{
         if (!RedProtect.get().cfgs.isAllowedWorld(p)){
         	this.setErrorSign(e, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
-        }                
-        
-        if (regionName == null || regionName.equals("")) {
+        }
+
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return;
+        }
+
+        //filter region name
+        regionName = regionName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+        if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
         	regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
         	if (regionName.length() > 16) {
                 this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
@@ -63,12 +74,6 @@ public class EncompassRegionBuilder extends RegionBuilder{
             }
         }
 
-        //region name conform
-        if (regionName.length() < 3) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.regionname.invalid"));
-            return;
-        }
-            	
         int maxby = current.getLocation().get().getBlockY();
         int minby = current.getLocation().get().getBlockY();
         
@@ -258,6 +263,12 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         		this.setErrorSign(e, RPLang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol")+reco));
                         		return;
                         	}
+                        }
+
+                        //fire event
+                        CreateRegionEvent event = new CreateRegionEvent(r, p);
+                        if (Sponge.getEventManager().post(event)){
+                            return;
                         }
                         
                         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));

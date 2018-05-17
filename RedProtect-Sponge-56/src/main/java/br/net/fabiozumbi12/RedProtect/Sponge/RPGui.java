@@ -31,8 +31,10 @@ public class RPGui {
 	private Region region;
 	private Inventory inv;
 	private String name;
+	private boolean edit;
 	
-	public RPGui(String name, Player player, Region region, int MaxSlot){
+	public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot){
+		this.edit = edit;
 		this.name = name;
 		this.player = player;
 		this.region = region;
@@ -65,23 +67,23 @@ public class RPGui {
 			if (!(region.flags.get(flag) instanceof Boolean)){
 				continue;
 			}
-			if (RedProtect.get().ph.hasFlagPerm(player, flag) && RedProtect.get().cfgs.isFlagEnabled(flag) && RPUtil.testRegistry(ItemType.class, RedProtect.get().cfgs.getGuiFlagString(flag,"material").toPlain())){
+			if (RedProtect.get().ph.hasFlagPerm(player, flag) && RedProtect.get().cfgs.isFlagEnabled(flag) && RPUtil.testRegistry(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material)){
 				if (flag.equals("pvp") && !RedProtect.get().cfgs.root().flags_configuration.enabled_flags.contains("pvp")){
     				continue;
 				}
 
 				int i = RedProtect.get().cfgs.getGuiSlot(flag);
 				
-				this.guiItens[i] = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class,RedProtect.get().cfgs.getGuiFlagString(flag,"material").toPlain()), 1);
+				this.guiItens[i] = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material), 1);
 
-				this.guiItens[i].offer(Keys.DISPLAY_NAME, RedProtect.get().cfgs.getGuiFlagString(flag,"name"));
+				this.guiItens[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).name));
 								
 				this.guiItens[i].offer(Keys.ITEM_LORE, Arrays.asList(
 						Text.of(RedProtect.get().cfgs.getGuiString("value"),RedProtect.get().cfgs.getGuiString(region.flags.get(flag).toString())),
 						RPUtil.toText("&0"+flag),
-						RedProtect.get().cfgs.getGuiFlagString(flag,"description"),
-						RedProtect.get().cfgs.getGuiFlagString(flag,"description1"),
-						RedProtect.get().cfgs.getGuiFlagString(flag,"description2")));
+						RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description),
+						RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description1),
+						RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description2)));
 												
 				if (!this.region.getFlagBool(flag)){
 					this.guiItens[i].remove(Keys.ITEM_ENCHANTMENTS);
@@ -117,6 +119,34 @@ public class RPGui {
 	@Listener
 	public void onCloseInventory(InteractInventoryEvent.Close event){
 		if (event.getTargetInventory().getName().get().equals(this.inv.getName().get())){
+			if (this.edit){
+				for (int i = 0; i < this.size; i++){
+					try{
+						int line = 0;
+						int slot = i;
+						if (i > 8){
+							line = i/9;
+							slot = i-(line*9);
+						}
+						if (RedProtect.get().getPVHelper().query(event.getTargetInventory(), slot, line).peek().isPresent()){
+							final int fi = i;
+							ItemStack stack = RedProtect.get().getPVHelper().query(event.getTargetInventory(), slot, line).peek().get();
+							stack.get(Keys.ITEM_LORE).ifPresent(ls -> {
+								String flag = ls.get(1).toPlain().replace("§0", "");
+								if (RedProtect.get().cfgs.getDefFlags().contains(flag))
+									RedProtect.get().cfgs.setGuiSlot(flag, fi);
+							});
+						}
+					} catch (Exception e){
+						RPLang.sendMessage(this.player, "gui.edit.error");
+						close(false);
+						e.printStackTrace();
+						return;
+					}
+				}
+				RedProtect.get().cfgs.saveGui();
+				RPLang.sendMessage(this.player, "gui.edit.ok");
+			}
 			close(false);
 		}
 	}
@@ -147,7 +177,11 @@ public class RPGui {
 	@Listener
 	public void onInventoryClick(ClickInventoryEvent event){	
 		if (event.getTargetInventory().getName().get().equals(this.inv.getName().get())) {
-			
+
+			if (this.edit){
+				return;
+			}
+
 			if (event.getTransactions().size() > 0) {
 				Transaction<ItemStackSnapshot> clickTransaction = event.getTransactions().get(0);
 				
@@ -197,9 +231,9 @@ public class RPGui {
 		item.offer(Keys.ITEM_LORE, Arrays.asList(
 				Text.of(RedProtect.get().cfgs.getGuiString("value"),RedProtect.get().cfgs.getGuiString(this.region.getFlagString(flag))),
 				RPUtil.toText("&0"+flag),
-				RedProtect.get().cfgs.getGuiFlagString(flag,"description"),
-				RedProtect.get().cfgs.getGuiFlagString(flag,"description1"),
-				RedProtect.get().cfgs.getGuiFlagString(flag,"description2")));
+				RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description),
+				RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description1),
+				RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description2)));
 		
 		//RedProtect.get().logger.severe("Item Lore: "+item.get(Keys.ITEM_LORE).get().get(0).toPlain());
 			

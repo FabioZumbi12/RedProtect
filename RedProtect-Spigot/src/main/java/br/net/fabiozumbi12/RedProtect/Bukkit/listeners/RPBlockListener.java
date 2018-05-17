@@ -79,34 +79,30 @@ public class RPBlockListener implements Listener{
         if (RPConfig.getBool("server-protection.sign-spy.enabled") && !(lines[0].isEmpty() && lines[1].isEmpty() && lines[2].isEmpty() && lines[3].isEmpty())){
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+b.getX()).replace("{y}", ""+b.getY()).replace("{z}", ""+b.getZ()).replace("{world}", b.getWorld().getName()));
         	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
-        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0].toString()).replace("{line2}", lines[1].toString()));
-        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2].toString()).replace("{line4}", lines[3].toString()));
+        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0]).replace("{line2}", lines[1]));
+        	Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2]).replace("{line4}", lines[3]));
         	if (!RPConfig.getBool("server-protection.sign-spy.only-console")){
         		for (Player play:Bukkit.getOnlinePlayers()){
         			if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/){
         				play.sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", ""+b.getX()).replace("{y}", ""+b.getY()).replace("{z}", ""+b.getZ()).replace("{world}", b.getWorld().getName()));
         	        	play.sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
-        	        	play.sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0].toString()).replace("{line2}", lines[1].toString()));
-        	        	play.sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2].toString()).replace("{line4}", lines[3].toString()));
+        	        	play.sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0]).replace("{line2}", lines[1]));
+        	        	play.sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2]).replace("{line4}", lines[3]));
         			}
         		}
         	}
         }
-        
-        String priv = RPLang.get("blocklistener.container.signline");
-        String more = RPLang.get("blocklistener.container.signline.more");
+
         if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN))) { 
         	Boolean out = RPConfig.getBool("private.allow-outside");
-        	if (line1.equalsIgnoreCase("more") || 
-            		line1.equalsIgnoreCase("[more]") || 
-            		line1.equalsIgnoreCase(more) || 
-            		line1.equalsIgnoreCase("["+more+"]")){
+        	if (cont.validatePrivateSign(b)){
         		if (out || signr != null){
-            		if (cont.isContainer(b, true)){
+            		if (cont.isContainer(b, false)){
                 		int length = p.getName().length();
                         if (length > 16) {
                           length = 16;
                         }
+						e.setLine(1, p.getName().substring(0, length));
                     	RPLang.sendMessage(p, "blocklistener.container.protected.added");
                         return;
                 	} else {
@@ -120,17 +116,13 @@ public class RPBlockListener implements Listener{
             		return;
             	} 
         	}
-        	if (line1.equalsIgnoreCase("private") || 
-        		line1.equalsIgnoreCase("[private]") || 
-        		line1.equalsIgnoreCase(priv) || 
-        		line1.equalsIgnoreCase("["+priv+"]")){        		
+        	if (cont.validateMoreSign(b)){
             	if (out || signr != null){
-            		if (cont.isContainer(b, false)){
+            		if (cont.isContainer(b, true)){
                 		int length = p.getName().length();
                         if (length > 16) {
                           length = 16;
                         }
-                    	e.setLine(1, p.getName().substring(0, length));
                     	RPLang.sendMessage(p, "blocklistener.container.protected");
                         return;
                 	} else {
@@ -268,10 +260,7 @@ public class RPBlockListener implements Listener{
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
                         
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
-        	int x = b.getX();
-    		int y = b.getY();
-    		int z = b.getZ();
-    		Block ib = w.getBlockAt(x, y+1, z);
+			Block ib = b.getRelative(BlockFace.UP);
     		if ((antih && !cont.canBreak(p, ib)) || !cont.canBreak(p, b)){
     			RPLang.sendMessage(p, "blocklistener.container.breakinside");
     			e.setCancelled(true);

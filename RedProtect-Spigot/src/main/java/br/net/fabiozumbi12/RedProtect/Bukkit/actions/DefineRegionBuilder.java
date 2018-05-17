@@ -6,6 +6,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.CreateRegionEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -21,16 +23,15 @@ public class DefineRegionBuilder extends RegionBuilder{
             return;
         }
 
-        //region leader
-        String pName = RPUtil.PlayerToUUID(p.getName());
-
-        String wmsg = "";
-        if (leader.equals(RPConfig.getString("region-settings.default-leader"))){
-        	pName = leader;
-        	wmsg = "hide ";
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return;
         }
 
-        if (regionName == null || regionName.equals("")) {
+        //filter region name
+        regionName = regionName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+        if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 RPLang.sendMessage(p, "regionbuilder.autoname.error");
@@ -38,10 +39,13 @@ public class DefineRegionBuilder extends RegionBuilder{
             }
         }
 
-        //region name conform
-        if (regionName.length() < 3) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return;
+        //region leader
+        String pName = RPUtil.PlayerToUUID(p.getName());
+
+        String wmsg = "";
+        if (leader.equals(RPConfig.getString("region-settings.default-leader"))){
+        	pName = leader;
+        	wmsg = "hide ";
         }
 
         if (loc1 == null || loc2 == null) {
@@ -156,7 +160,14 @@ public class DefineRegionBuilder extends RegionBuilder{
         		return;
         	}
         }
-        
+
+        //fire event
+        CreateRegionEvent event = new CreateRegionEvent(r, p);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()){
+            return;
+        }
+
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         if (!admin){
         	p.sendMessage(RPLang.get("regionbuilder.claim.left") + (claimused+1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit));

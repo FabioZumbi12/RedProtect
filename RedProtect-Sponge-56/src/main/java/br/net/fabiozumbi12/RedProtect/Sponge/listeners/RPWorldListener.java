@@ -50,7 +50,7 @@ public class RPWorldListener {
     @Listener
     public void onChunkUnload(ChunkLoad e) {
     	Optional<Entity> wOpt = e.getEntities().stream().findFirst();
-    	if (!wOpt.isPresent() || !RedProtect.get().cfgs.getGlobalFlag(wOpt.get().getWorld().getName(), "remove-entities-not-allowed-to-spawn")){
+    	if (!wOpt.isPresent() || !RedProtect.get().cfgs.gFlags().worlds.get(wOpt.get().getWorld().getName()).remove_entities_not_allowed_to_spawn){
     		return;
     	}
     	World w = wOpt.get().getWorld();
@@ -63,11 +63,11 @@ public class RPWorldListener {
         		}
     		} else {
     			if (ent instanceof Monster){
-    				if (!RedProtect.get().cfgs.getGlobalFlag(w.getName(), "spawn-monsters")){
+    				if (!RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).spawn_monsters){
     					ent.remove();
     				}    			   				
     			}
-    			else if (!RedProtect.get().cfgs.getGlobalFlag(w.getName(), "spawn-passives")){
+    			else if (!RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).spawn_passives){
     				if (ent.getCreator().isPresent()){
     					return;
     				}

@@ -39,7 +39,7 @@ public class RPMine18 {
         if (r == null){
         	//global flags
         	if (ent.getType().equals(EntityTypes.ARMOR_STAND)) {
-                if (!RedProtect.get().cfgs.getGlobalFlag(l.getExtent().getName(),"build")) {
+                if (!RedProtect.get().cfgs.gFlags().worlds.get(l.getExtent().getName()).build) {
                 	e.setCancelled(true);
                     return;
                 }
@@ -95,7 +95,7 @@ public class RPMine18 {
 			//global flags
 			if (e1 instanceof ArmorStand){
             	if (e2 instanceof Player) {
-                    if (!RedProtect.get().cfgs.getGlobalFlag(loc.getExtent().getName(),"build")){
+                    if (!RedProtect.get().cfgs.gFlags().worlds.get(loc.getExtent().getName()).build){
                     	e.setCancelled(true);
                     	return;
                     }

@@ -2,6 +2,9 @@ package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.FlagGuiCategory;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.GlobalFlagsCategory;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.MainCategory;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -77,13 +80,8 @@ public class RPConfig{
 			"deny-exit-items");
 	
 
-	private final File guiConfig = new File(RedProtect.get().configDir,"guiconfig.conf");
-	private ConfigurationLoader<CommentedConfigurationNode> guiManager;
-	private CommentedConfigurationNode gui;
-	
-	private final File gFlagsConfig = new File(RedProtect.get().configDir,"globalflags.conf");
-	private ConfigurationLoader<CommentedConfigurationNode> gFlagsManager;	
-	private CommentedConfigurationNode gflags;
+
+
 	
 	private final File protFile = new File(RedProtect.get().configDir,"protections.conf");
 	private ConfigurationLoader<CommentedConfigurationNode> protManager;
@@ -97,12 +95,24 @@ public class RPConfig{
 	private ConfigurationLoader<CommentedConfigurationNode> signManager;
 	private CommentedConfigurationNode signCfgs;
 
-	private File defConfig = new File(RedProtect.get().configDir,"config.conf");
+	private final File guiConfig = new File(RedProtect.get().configDir,"guiconfig.conf");
+	private ConfigurationLoader<CommentedConfigurationNode> guiLoader;
+	private CommentedConfigurationNode guiCfgRoot;
+	private FlagGuiCategory guiRoot;
+	public FlagGuiCategory guiRoot(){ return this.guiRoot; }
 
+	private final File gFlagsConfig = new File(RedProtect.get().configDir,"globalflags.conf");
+	private ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
+	private CommentedConfigurationNode gflagsRoot;
+	private GlobalFlagsCategory gflags;
+	public GlobalFlagsCategory gFlags(){ return this.gflags; }
+
+
+	private File defConfig = new File(RedProtect.get().configDir,"config.conf");
 	private CommentedConfigurationNode configRoot;
 	private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
-	private RPMainCategory root;
-	public RPMainCategory root(){
+	private MainCategory root;
+	public MainCategory root(){
 		return this.root;
 	}
 
@@ -118,35 +128,78 @@ public class RPConfig{
 
 			/*--------------------- config.conf ---------------------------*/
             String header = ""
-					+ "# +--------------------------------------------------------------------+ #\n"
-					+ "# <               RedProtect World configuration File                  > #\n"
-					+ "# <--------------------------------------------------------------------> #\n"
-					+ "# <       This is the configuration file, feel free to edit it.        > #\n"
-					+ "# <        For more info about cmds and flags, check our Wiki:         > #\n"
-					+ "# <         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-					+ "# +--------------------------------------------------------------------+ #\n"
-					+ "#\n"
-					+ "# Notes:\n"
-					+ "# Lists are [object1, object2, ...]\n"
-					+ "# Strings containing the char & always need to be quoted";
+					+ "+--------------------------------------------------------------------+ #\n"
+					+ "<               RedProtect World configuration File                  > #\n"
+					+ "<--------------------------------------------------------------------> #\n"
+					+ "<       This is the configuration file, feel free to edit it.        > #\n"
+					+ "<        For more info about cmds and flags, check our Wiki:         > #\n"
+					+ "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
+					+ "+--------------------------------------------------------------------+ #\n"
+					+ "\n"
+					+ "Notes:\n"
+					+ "Lists are [object1, object2, ...]\n"
+					+ "Strings containing the char & always need to be quoted";
 
 			cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();
 			configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
-			this.root = configRoot.getValue(TypeToken.of(RPMainCategory.class), new RPMainCategory());
+			this.root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());
 
 			/*--------------------- end config.conf ---------------------------*/
 
-			if (!guiConfig.exists()) {
-				guiConfig.createNewFile();
-				guiManager = HoconConfigurationLoader.builder().setURL(RedProtect.get().container.getAsset("guiconfig.conf").get().getUrl()).build();
-				gui = guiManager.load();
-				guiManager = HoconConfigurationLoader.builder().setFile(guiConfig).build();
-				guiManager.save(gui);
+			/*--------------------- globalflags.conf ---------------------------*/
+			String headerg = ""
+					+ "+--------------------------------------------------------------------+ #\n"
+					+ "<          RedProtect Global Flags configuration File                > #\n"
+					+ "<--------------------------------------------------------------------> #\n"
+					+ "<         This is the global flags configuration file.               > #\n"
+					+ "<                       Feel free to edit it.                        > #\n"
+					+ "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
+					+ "+--------------------------------------------------------------------+ #\n"
+					+ "\n"
+					+ "Notes:\n"
+					+ "Lists are [object1, object2, ...]\n"
+					+ "Strings containing the char & always need to be quoted";
+
+			gFlagsLoader = HoconConfigurationLoader.builder().setFile(gFlagsConfig).build();
+			gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerg));
+
+			//import old world values
+			if (gFlagsConfig.exists() && !gflagsRoot.getNode("worlds").hasMapChildren()){
+				Object values = gflagsRoot.getValue();
+				gflagsRoot.setValue(null);
+				gflagsRoot.getNode("worlds").setValue(values);
+				RedProtect.get().logger.warning("File \"globalflags.conf\" updated with new configurations!");
 			}
 
-			if (!gFlagsConfig.exists()) {
-				gFlagsConfig.createNewFile();
+			this.gflags = gflagsRoot.getValue(TypeToken.of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
+
+			/*--------------------- end globalflags.conf ---------------------------*/
+
+			/*--------------------- guiconfig.conf ---------------------------*/
+			String headerGui = ""
+					+ "+--------------------------------------------------------------------+ #\n"
+					+ "<             RedProtect Gui Flags configuration File                > #\n"
+					+ "<--------------------------------------------------------------------> #\n"
+					+ "<            This is the gui flags configuration file.               > #\n"
+					+ "<                       Feel free to edit it.                        > #\n"
+					+ "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
+					+ "+--------------------------------------------------------------------+ #\n"
+					+ "\n"
+					+ "Notes:\n"
+					+ "Lists are [object1, object2, ...]\n"
+					+ "Strings containing the char & always need to be quoted";
+
+			guiLoader = HoconConfigurationLoader.builder().setFile(guiConfig).build();
+			guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
+			this.guiRoot = guiCfgRoot.getValue(TypeToken.of(FlagGuiCategory.class), new FlagGuiCategory());
+
+			for (String key:getDefFlagsValues().keySet()){
+				if (!guiRoot.gui_flags.containsKey(key)){
+					guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("&e"+key, getGuiMaxSlot()));
+				}
 			}
+
+			/*--------------------- end guiconfig.conf ---------------------------*/
 
 			if (!ecoFile.exists()) {
 				Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
@@ -160,12 +213,6 @@ public class RPConfig{
 
 		//load configs
 		try {
-			guiManager = HoconConfigurationLoader.builder().setPath(guiConfig.toPath()).build();
-			gui = guiManager.load();
-
-			gFlagsManager = HoconConfigurationLoader.builder().setPath(gFlagsConfig.toPath()).build();
-			gflags = gFlagsManager.load();
-
 			ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
 			ecoCfgs = ecoManager.load();
 
@@ -347,23 +394,6 @@ public class RPConfig{
 
 		/*------------------------------------------ Gui Items ------------------------------------------*/
 
-		gui.getNode("gui-strings","value").setValue(gui.getNode("gui-strings","value").getString("&bValue: "));
-		gui.getNode("gui-strings","true").setValue(gui.getNode("gui-strings","true").getString("&atrue"));
-		gui.getNode("gui-strings","false").setValue(gui.getNode("gui-strings","false").getString("&cfalse"));
-		gui.getNode("gui-strings","separator").setValue(gui.getNode("gui-strings","separator").getString("&7|"));
-
-		gui.getNode("gui-separator","material").setValue(gui.getNode("gui-separator","material").getString("stained_glass_pane"));
-		gui.getNode("gui-separator","data").setValue(gui.getNode("gui-separator","data").getInt(0));
-
-		for (String key:getDefFlagsValues().keySet()){
-			gui.getNode("gui-flags",key,"slot").setValue(gui.getNode("gui-flags",key,"slot").setValue(gui.getNode("gui-flags",key,"slot").getInt(getDefFlagsValues().size())));
-			gui.getNode("gui-flags",key,"material").setValue(gui.getNode("gui-flags",key,"material").setValue(gui.getNode("gui-flags",key,"material").getString("golden_apple")));
-			gui.getNode("gui-flags",key,"name").setValue(gui.getNode("gui-flags",key,"name").setValue(gui.getNode("gui-flags",key,"name").getString("&e"+key)));
-			gui.getNode("gui-flags",key,"description").setValue(gui.getNode("gui-flags",key,"description").setValue(gui.getNode("gui-flags",key,"description").getString("&bDescription: &2Add a flag description here.")));
-			gui.getNode("gui-flags",key,"description1").setValue(gui.getNode("gui-flags",key,"description1").setValue(gui.getNode("gui-flags",key,"description1").getString("")));
-			gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").setValue(gui.getNode("gui-flags",key,"description2").getString("")));
-		}
-
 		List<String> names = new ArrayList<>();
 		Sponge.getRegistry().getAllOf(BlockType.class).forEach((type)-> names.add(type.getName()));
 
@@ -420,104 +450,37 @@ public class RPConfig{
 			RedProtect.get().logger.warning("Added world to color list " + w.getName());
 		}
 
-		try {
-			//RedProtect.get().logger.debug("default","Writing global flags for world "+ w.getName() + "...");
-			gflags.getNode(w.getName(),"build").setValue(gflags.getNode(w.getName(),"build").getBoolean(true));
-        	gflags.getNode(w.getName(),"if-build-false","break-blocks").setValue(gflags.getNode(w.getName(),"if-build-false","break-blocks").getList(TypeToken.of(String.class)));
-        	gflags.getNode(w.getName(),"if-build-false","place-blocks").setValue(gflags.getNode(w.getName(),"if-build-false","place-blocks").getList(TypeToken.of(String.class)));
-        	gflags.getNode(w.getName(),"pvp").setValue(gflags.getNode(w.getName(),"pvp").getBoolean(false));
-        	gflags.getNode(w.getName(),"interact").setValue(gflags.getNode(w.getName(),"interact").getBoolean(true));
-        	gflags.getNode(w.getName(),"use-minecart").setValue(gflags.getNode(w.getName(),"use-minecart").getBoolean(true));
-        	gflags.getNode(w.getName(),"entity-block-damage").setValue(gflags.getNode(w.getName(),"entity-block-damage").getBoolean(false));
-        	gflags.getNode(w.getName(),"explosion-entity-damage").setValue(gflags.getNode(w.getName(),"explosion-entity-damage").getBoolean(true));
-        	gflags.getNode(w.getName(),"fire-block-damage").setValue(gflags.getNode(w.getName(),"fire-block-damage").getBoolean(false));
-        	gflags.getNode(w.getName(),"fire-spread").setValue(gflags.getNode(w.getName(),"fire-spread").getBoolean(false));
-        	gflags.getNode(w.getName(),"player-hurt-monsters").setValue(gflags.getNode(w.getName(),"player-hurt-monsters").getBoolean(true));
-        	gflags.getNode(w.getName(),"player-hurt-passives").setValue(gflags.getNode(w.getName(),"player-hurt-passives").getBoolean(true));
-        	gflags.getNode(w.getName(),"spawn-monsters").setValue(gflags.getNode(w.getName(),"spawn-monsters").getBoolean(true));
-        	gflags.getNode(w.getName(),"spawn-passives").setValue(gflags.getNode(w.getName(),"spawn-passives").getBoolean(true));
-        	gflags.getNode(w.getName(),"remove-entities-not-allowed-to-spawn").setValue(gflags.getNode(w.getName(),"remove-entities-not-allowed-to-spawn").getBoolean(false));
-        	gflags.getNode(w.getName(),"allow-weather").setValue(gflags.getNode(w.getName(),"allow-weather").getBoolean(true));        	
-        	gflags.getNode(w.getName(),"deny-item-usage","allow-on-claimed-rps").setValue(gflags.getNode(w.getName(),"deny-item-usage","allow-on-claimed-rps").getBoolean(true));
-        	gflags.getNode(w.getName(),"deny-item-usage","allow-on-wilderness").setValue(gflags.getNode(w.getName(),"deny-item-usage","allow-on-wilderness").getBoolean(true));
-        	gflags.getNode(w.getName(),"deny-item-usage","items").setValue(gflags.getNode(w.getName(),"deny-item-usage","items").getList(TypeToken.of(String.class)));  
-        	gflags.getNode(w.getName(),"on-enter-cmds").setValue(gflags.getNode(w.getName(),"on-enter-cmds").getList(TypeToken.of(String.class)));  
-        	gflags.getNode(w.getName(),"on-exit-cmds").setValue(gflags.getNode(w.getName(),"on-exit-cmds").getList(TypeToken.of(String.class)));
-        	gflags.getNode(w.getName(),"allow-changes-of","water-flow").setValue(gflags.getNode(w.getName(),"allow-changes-of","water-flow").getBoolean(true));  
-        	gflags.getNode(w.getName(),"allow-changes-of","lava-flow").setValue(gflags.getNode(w.getName(),"allow-changes-of","lava-flow").getBoolean(true)); 
-        	gflags.getNode(w.getName(),"allow-changes-of","leaves-decay").setValue(gflags.getNode(w.getName(),"allow-changes-of","leaves-decay").getBoolean(true)); 
-        	gflags.getNode(w.getName(),"allow-changes-of","flow-damage").setValue(gflags.getNode(w.getName(),"allow-changes-of","flow-damage").getBoolean(true));         	
-        	gflags.getNode(w.getName(),"spawn-wither").setValue(gflags.getNode(w.getName(),"spawn-wither").getBoolean(true)); 
-        	gflags.getNode(w.getName(),"invincible").setValue(gflags.getNode(w.getName(),"invincible").getBoolean(false)); 
-        	gflags.getNode(w.getName(),"player-candrop").setValue(gflags.getNode(w.getName(),"player-candrop").getBoolean(true)); 
-        	gflags.getNode(w.getName(),"player-canpickup").setValue(gflags.getNode(w.getName(),"player-canpickup").getBoolean(true));
-			gflags.getNode(w.getName(),"blocks-spawn-items").setValue(gflags.getNode(w.getName(),"blocks-spawn-items").getBoolean(true));
-			gflags.getNode(w.getName(),"liquid-flow").setValue(gflags.getNode(w.getName(),"liquid-flow").getBoolean(true));
-			if (!gflags.getNode(w.getName(),"command-ranges").hasMapChildren()){
-        		gflags.getNode(w.getName(),"command-ranges","home","min-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","min-range").getDouble(0));  
-        		gflags.getNode(w.getName(),"command-ranges","home","max-range").setValue(gflags.getNode(w.getName(),"command-ranges","home","max-range").getDouble(w.getBlockMax().getY()));  
-        		gflags.getNode(w.getName(),"command-ranges","home","message").setValue(gflags.getNode(w.getName(),"command-ranges","home","message").getString("&cYou cant use /home when mining or in caves!"));        		
-        	}      	
-            //write gflags to gflags file
-            gFlagsManager.save(gflags);
-		} catch (IOException | ObjectMappingException e) {
-			e.printStackTrace();
-		} 
-	}
-	
-    public Boolean getGlobalFlag(String world, String action){		
-		return this.gflags.getNode(world,action).getBoolean();
-	}
-    
-    public Boolean getGlobalFlag(Object... key){
-		return this.gflags.getNode(key).getBoolean();
+		if (!gflags.worlds.containsKey(w.getName())){
+			gflags.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
+		}
 	}
 
-    public ItemStack getGuiItemStack(String key){
-    	RedProtect.get().logger.debug("default","Gui Material to get: " + key);
-    	RedProtect.get().logger.debug("default","Result: " + gui.getNode("gui-flags",key,"material").getString());
-    	return ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, gui.getNode("gui-flags",key,"material").getString()), 1);
-    }
-    
-    public Text getGuiFlagString(String flag, String option){    	
-    	//RedProtect.get().logger.severe("Flag: "+flag+" - FlagString: "+this.gui.getNode("gui-flags",flag,option).getString());
-    	if (this.gui.getNode("gui-flags",flag,option).getString() == null){
-    		return Text.of();
-    	}    	
-    	return RPUtil.toText(gui.getNode("gui-flags",flag,option).getString());
-    }
-    
     public Text getGuiString(String string) {
-		return RPUtil.toText(gui.getNode("gui-strings",string).getString());
+		return RPUtil.toText(guiRoot.gui_strings.get(string));
 	}
     
     public int getGuiSlot(String flag) {
-		return this.gui.getNode("gui-flags",flag,"slot").getInt();
+		return guiRoot.gui_flags.get(flag).slot;
 	}
     
     public void setGuiSlot(/*String mat, */String flag, int slot) {
-    	this.gui.getNode("gui-flags",flag,"slot").setValue(slot);
-		//GuiItems.set("gui-flags."+flag+".material", mat);
-		
+		guiRoot.gui_flags.get(flag).slot = slot;
+		//guiRoot.gui_flags.get(flag).material = mat;
+		saveGui();
 	}
     
     public ItemStack getGuiSeparator() {
-    	ItemStack separator = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, gui.getNode("gui-separator","material").getString()), 1);//new ItemStack(Material.getBorderMaterial(guiItems.getString("gui-separator.material")), 1, (short)guiItems.getInt("gui-separator.data"));
+    	ItemStack separator = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, guiRoot.gui_separator.material), 1);//new ItemStack(Material.getBorderMaterial(guiItems.getString("gui-separator.material")), 1, (short)guiItems.getInt("gui-separator.data"));
     	separator.offer(Keys.DISPLAY_NAME, getGuiString("separator"));
-    	separator.offer(Keys.ITEM_DURABILITY, gui.getNode("gui-separator","data").getInt());
+    	separator.offer(Keys.ITEM_DURABILITY, guiRoot.gui_separator.data);
     	separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, getGuiString("separator")));
 		return separator;
 	}
     
     public int getGuiMaxSlot() {
     	SortedSet<Integer> slots = new TreeSet<>(new ArrayList<>());
-    	for (CommentedConfigurationNode key:gui.getNode("gui-flags").getChildrenMap().values()){
-    		for (Object key1:key.getChildrenMap().keySet()){    			
-        		if (key1.toString().contains("slot")){
-        			slots.add(key.getChildrenMap().get(key1).getInt());
-        			//RedProtect.get().logger.severe("Key: "+key.getChildrenMap().get(key1).getInt());
-        		}    		
-        	}    		
+    	for (FlagGuiCategory.GuiFlag key:guiRoot.gui_flags.values()){
+			slots.add(key.slot);
     	}
 		return Collections.max(slots);
 	}
@@ -553,7 +516,7 @@ public class RPConfig{
 
     private void saveConfig() {
 		try {
-			configRoot.setValue(TypeToken.of(RPMainCategory.class), root);
+			configRoot.setValue(TypeToken.of(MainCategory.class), root);
 			cfgLoader.save(configRoot);
 		} catch (IOException | ObjectMappingException e) {
 			e.printStackTrace();
@@ -563,7 +526,10 @@ public class RPConfig{
     public void save(){
     	try {
 			saveConfig();
-			gFlagsManager.save(gflags);
+
+			gflagsRoot.setValue(TypeToken.of(GlobalFlagsCategory.class), gflags);
+			gFlagsLoader.save(gflagsRoot);
+
 			ecoManager.save(ecoCfgs);
 			protManager.save(protCfgs);
 			signManager.save(signCfgs);
@@ -571,17 +537,20 @@ public class RPConfig{
 		} catch (IOException e) {
 			RedProtect.get().logger.severe("Problems during save file:");
 			e.printStackTrace();
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
 		}
-    }
+	}
     
     public void saveGui(){
     	try {
-    		guiManager.save(gui);
-		} catch (IOException e) {
+			guiCfgRoot.setValue(TypeToken.of(FlagGuiCategory.class), guiRoot);
+			guiLoader.save(guiCfgRoot);
+		} catch (IOException | ObjectMappingException e) {
 			RedProtect.get().logger.severe("Problems during save gui file:");
 			e.printStackTrace();
 		}
-    }    
+	}
     	
     public boolean isAllowedWorld(Player p) {
 		return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
@@ -617,41 +586,7 @@ public class RPConfig{
 	public int getEnchantCost(String enchantment) {
 		return ecoCfgs.getNode("enchantments","values",enchantment).getInt();
 	}
-	
 
-	public boolean hasGlobalKey(Object... path){
-		return gflags.getNode(path).hasMapChildren();
-	}
-	
-	public String getGlobalFlagString(Object... string) {		
-		return gflags.getNode(string).getString();
-	}
-	
-	public double getGlobalFlagDouble(Object... key){		
-		return gflags.getNode(key).getDouble();
-	}
-	
-	public float getGlobalFlagFloat(Object... key){			
-		return gflags.getNode(key).getFloat();
-	}
-	
-	public int getGlobalFlagInt(Object... key){		
-		return gflags.getNode(key).getInt();
-	}
-	
-    public Boolean getGlobalFlagBool(Object... key){		
-		return gflags.getNode(key).getBoolean();
-	}
-    
-    public List<String> getGlobalFlagList(Object... key){
-		try {
-			return gflags.getNode(key).getList(TypeToken.of(String.class));
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
-		}
-		return new ArrayList<>();
-	}
-    
 	public String getEcoString(String key){
 		return ecoCfgs.getNode(key).getString("&4Missing economy string for &c"+key);
 	}

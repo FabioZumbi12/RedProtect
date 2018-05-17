@@ -901,10 +901,10 @@ public class RPPlayerListener{
     		return;
     	}
     	
-    	if (RedProtect.get().cfgs.hasGlobalKey(p.getWorld().getName(),"command-ranges",cmd.toLowerCase()) && !cmd.equals(".")){    		
-    		double min = RedProtect.get().cfgs.getGlobalFlagDouble(p.getWorld().getName(),"command-ranges",cmd,"min-range");
-    		double max = RedProtect.get().cfgs.getGlobalFlagDouble(p.getWorld().getName(),"command-ranges",cmd,"max-range");
-    		String mesg = RedProtect.get().cfgs.getGlobalFlagString(p.getWorld().getName(),"command-ranges",cmd,"message");
+    	if (RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).command_ranges.containsKey(cmd) && !cmd.equals(".")){
+    		double min = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).min_range;
+    		double max = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).max_range;
+    		String mesg = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).message;
     		double py = p.getLocation().getY();
     		if (py < min || py > max){
     			if (mesg != null && !mesg.equals("")){
@@ -1327,6 +1327,7 @@ public class RPPlayerListener{
                             .particles(false)
                             .potionType((PotionEffectType)RPUtil.getRegistryFor(PotionEffectType.class, eff))
                             .amplifier(Integer.parseInt(amplifier))
+                            .duration(RedProtect.get().cfgs.root().flags_configuration.effects_duration)
                             .build();
                     String TaskId = Sponge.getScheduler().createAsyncExecutor(RedProtect.get().container).scheduleWithFixedDelay(new Runnable() {
                         public void run() {

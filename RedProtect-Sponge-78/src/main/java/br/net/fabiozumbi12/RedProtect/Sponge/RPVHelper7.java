@@ -55,6 +55,11 @@ public class RPVHelper7 implements RPVHelper{
 	}
 
 	@Override
+	public void digBlock(Player p, Vector3i loc) {
+		p.getWorld().digBlock(loc, p.getProfile());
+	}
+
+	@Override
 	public void removeBlock(Location<World> loc) {
 		loc.removeBlock();
 	}

@@ -9,6 +9,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class RPContainer {
 
 	@SuppressWarnings("deprecation")
@@ -22,10 +24,12 @@ public class RPContainer {
         	blocktype = Integer.toString(b.getType().getId());
         } else {
         	blocktype = b.getType().name();
-        }  
+        }
+
+		List<String> blocks = RPConfig.getStringList("private.allowed-blocks");
     	
         boolean deny = true;
-        if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype::matches)){
+        if (blocks.stream().anyMatch(blocktype::matches)){
         	int x = b.getX();
             int y = b.getY();
             int z = b.getZ();
@@ -51,7 +55,7 @@ public class RPContainer {
     	            } else {
     	            	blocktype2 = b.getType().name();
     	            }
-    				if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype2::matches)){
+    				if (blocks.stream().anyMatch(blocktype2::matches)){
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);    	        				
@@ -98,9 +102,11 @@ public class RPContainer {
         	signbtype = Integer.toString(b.getType().getId());
         } else {
         	signbtype = b.getType().name();
-        }         
-        
-        if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches)){
+        }
+
+		List<String> blocks = RPConfig.getStringList("private.allowed-blocks");
+
+        if (blocks.stream().anyMatch(signbtype::matches)){
         	for (int sx = -1; sx <= 1; sx++){
         		for (int sy = -1; sy <= 1; sy++){
         			for (int sz = -1; sz <= 1; sz++){
@@ -123,7 +129,7 @@ public class RPContainer {
         	            int y2 = bs.getY();
         	            int z2 = bs.getZ();
         	            
-        				if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype2::matches)){
+        				if (blocks.stream().anyMatch(blocktype2::matches)){
         					for (int ux = -1; ux <= 1; ux++){
             	        		for (int uy = -1; uy <= 1; uy++){
             	        			for (int uz = -1; uz <= 1; uz++){
@@ -169,9 +175,11 @@ public class RPContainer {
         	signbtype = Integer.toString(b.getType().getId());
         } else {
         	signbtype = b.getType().name();
-        } 
-        
-        if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches)){
+        }
+
+		List<String> blocks = RPConfig.getStringList("private.allowed-blocks");
+
+        if (blocks.stream().anyMatch(signbtype::matches)){
         	for (int sx = -1; sx <= 1; sx++){
         		for (int sz = -1; sz <= 1; sz++){
     				Block bs = w.getBlockAt(x+sx, y, z+sz);
@@ -190,7 +198,7 @@ public class RPContainer {
     	            int y2 = bs.getY();
     	            int z2 = bs.getZ();
     	            
-    				if (RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(blocktype2::matches)){
+    				if (blocks.stream().anyMatch(blocktype2::matches)){
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);
@@ -219,7 +227,7 @@ public class RPContainer {
 		return validatePrivateSign(b) || validateMoreSign(b);
 	}
 	
-	private boolean validatePrivateSign(Block b){
+	public boolean validatePrivateSign(Block b){
 		Sign s = (Sign) b.getState();
 		String priv = RPLang.get("blocklistener.container.signline");
 
@@ -247,20 +255,14 @@ public class RPContainer {
 	private boolean testPrivate(Block b, Player p){
 		Sign s = (Sign) b.getState();
 		String priv = RPLang.get("blocklistener.container.signline");
-        return (s.getLine(0).equalsIgnoreCase("[private]") ||
-                s.getLine(0).equalsIgnoreCase("private") ||
-                s.getLine(0).equalsIgnoreCase(priv) ||
-                s.getLine(0).equalsIgnoreCase("[" + priv + "]")) &&
+        return validatePrivateSign(b) &&
                 (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
     }
 	
 	private boolean testMore(Block b, Player p){
 		Sign s = (Sign) b.getState();
 		String more = RPLang.get("blocklistener.container.signline.more");
-        return (s.getLine(0).equalsIgnoreCase("[more]") ||
-                s.getLine(0).equalsIgnoreCase("more") ||
-                s.getLine(0).equalsIgnoreCase(more) ||
-                s.getLine(0).equalsIgnoreCase("[" + more + "]")) &&
+        return validateMoreSign(b) &&
                 (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
     }
 	
@@ -268,38 +270,26 @@ public class RPContainer {
 		return testPrivate(b,p) || testMore(b,p);
 	}
 		
-	public boolean validateMore(Block b, String valid){
+	private boolean validateMore(Block b, String valid){
 		Block relative = getBlockRelative(b);
 		BlockFace[] aside = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 		for (BlockFace bf:aside){
 			if (b.getRelative(bf).getType().equals(Material.WALL_SIGN)){				
 				if (getBlockRelative(b.getRelative(bf)).getType().equals(relative.getType()) && validatePrivateSign(b.getRelative(bf))){
-                    return valid.isEmpty() || ((Sign) b.getRelative(bf).getState()).getLine(1).equals(valid);
+				    if (!((Sign) b.getRelative(bf).getState()).getLine(1).equals(valid) &&
+                            !((Sign) b.getRelative(bf).getState()).getLine(2).equals(valid) &&
+                            !((Sign) b.getRelative(bf).getState()).getLine(3).equals(valid)){
+				        return false;
+                    }
                 }
 			}
 		}
-		return false;
+		return true;
 	}
 	
     @SuppressWarnings("deprecation")
 	public boolean isContainer(Block b, boolean more) {
         Block container = getBlockRelative(b);
-    	/*
-    	int face = b.getData() & 0x7;
-	    if (face == 3) {
-	    	container = b.getRelative(BlockFace.NORTH);
-	    }
-	    if (face == 4) {
-	    	container = b.getRelative(BlockFace.EAST);
-	    }
-	    if (face == 2) {
-	    	container = b.getRelative(BlockFace.SOUTH);
-	    }
-	    if (face == 5) {
-	    	container = b.getRelative(BlockFace.WEST);
-	    }   	  
-	    */
-
         String signbtype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
             signbtype = Integer.toString(container.getType().getId());

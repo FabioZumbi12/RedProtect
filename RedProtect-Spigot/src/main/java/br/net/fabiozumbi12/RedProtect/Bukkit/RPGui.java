@@ -35,7 +35,7 @@ public class RPGui implements Listener{
 	private final boolean edit;
 	private Inventory inv;
 
-	public RPGui(String name, Player player, Region region,Plugin plugin, boolean edit, int MaxSlot){
+	public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot){
 		this.edit = edit;		
 		this.name = name;
 		this.player = player;
@@ -126,7 +126,7 @@ public class RPGui implements Listener{
 			}
 		}	
 		
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		RedProtect.get().getServer().getPluginManager().registerEvents(this, RedProtect.get());
 	}
 	
 	@EventHandler

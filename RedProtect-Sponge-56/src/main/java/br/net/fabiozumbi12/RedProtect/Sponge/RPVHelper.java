@@ -22,7 +22,9 @@ public interface RPVHelper {
 	void setBlock(Location<World> loc, BlockState block);
 
 	void digBlock(Player p, ItemStack item, Vector3i loc);
-	
+
+	void digBlock(Player p, Vector3i loc);
+
 	void removeBlock(Location<World> loc);
 	
 	boolean checkCause(Cause cause, String toCompare);
