@@ -1182,7 +1182,6 @@ public class RPUtil {
     }
 	
 	public static Region loadProps(YamlConfiguration fileDB, String rname, World world){
-		//rname = rname.replaceAll("[.+=;_\\-]", "");
 		if (fileDB.getString(rname+".name") == null){
 			return null;
 		}
@@ -1243,7 +1242,7 @@ public class RPUtil {
 	public static YamlConfiguration addProps(YamlConfiguration fileDB, Region r){
 		RedProtect.get().logger.debug("Region ID: "+r.getID());
 		RedProtect.get().logger.debug("Region: "+r.getName());
-		String rname = r.getName().replaceAll("[.+=;\\-]", "");
+		String rname = r.getName();
 		fileDB.createSection(rname);
 		fileDB.set(rname+".name",rname);
 		fileDB.set(rname+".lastvisit",r.getDate());
