@@ -281,8 +281,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             		return true;
             	}
         		if (checkCmd(args[0], "reload")) {
-        			RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
-        			RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
+        			RedProtect.get().FullReload();
             		RedProtect.get().logger.sucess("RedProtect Plus reloaded!");
             		return true;
             	}      
@@ -1166,8 +1165,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         		}        		
         	}
         	if (checkCmd(args[0], "reload") && player.hasPermission("redprotect.admin.reload")) {
-        		RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
-    			RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
+				RedProtect.get().FullReload();
         		RPLang.sendMessage(player, "cmdmanager.reloaded");
         		return true;
         	}

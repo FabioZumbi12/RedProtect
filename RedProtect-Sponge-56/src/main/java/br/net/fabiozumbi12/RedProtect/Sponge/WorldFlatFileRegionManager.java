@@ -336,7 +336,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 
 	@Override
 	public int getTotalRegionNum() {
-		return 0;
+		return regions.size();
 	}
 
 	@Override

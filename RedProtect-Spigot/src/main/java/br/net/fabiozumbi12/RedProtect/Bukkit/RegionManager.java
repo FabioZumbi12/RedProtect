@@ -48,10 +48,10 @@ public class RegionManager{
     		regionManagers.get(w).clearRegions();
     		if (RedProtect.get().Dyn){
     			RedProtect.get().dynmap.removeAll(w);
-    		}    		
-    		this.bLoc.clear();
+    		}
     	}
     	this.regionManagers.clear();
+        this.bLoc.clear();
     }
     
     public void unload(World w) {

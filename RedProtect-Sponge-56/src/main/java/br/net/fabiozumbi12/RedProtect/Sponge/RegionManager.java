@@ -59,11 +59,12 @@ public class RegionManager{
         this.regionManagers.remove(w);
     }
     
-    public void saveAll() {
+    public int saveAll() {
     	int saved = 0;
 		for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
 			saved = worldRegionManager.save() + saved;
 		}
+		return saved;
 	}
     
     public Region getRegionById(String rid) {

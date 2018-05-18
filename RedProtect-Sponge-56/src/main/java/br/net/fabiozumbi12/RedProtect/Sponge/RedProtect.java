@@ -85,16 +85,7 @@ public class RedProtect {
 
     @Listener
 	public void onStopServer(GameStoppingServerEvent e) {
-    	for (Player p:game.getServer().getOnlinePlayers()){
-    		pvhelp.closeInventory(p);
-    	}
-    	rm.saveAll();
-        rm.unloadAll();
-        logger.SaveLogs();
-        for (Task task:Sponge.getScheduler().getScheduledTasks(this)){
-        	task.cancel();
-        }
-        logger.severe(container.getName() + " disabled.");
+		shutDown();
     }
     
     @Listener
@@ -113,15 +104,24 @@ public class RedProtect {
 				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
 			}
 
-            initVars();               
+			container = Sponge.getPluginManager().getPlugin("redprotect").get();
+			serv = Sponge.getServer();
+			cmdService = game.getCommandManager();
+
+			ph = new RPPermHandler();
+			rm = new RegionManager();
+
             OnlineMode = serv.getOnlineMode();
-            cmdService.register(container, new RPCommands(), Arrays.asList("redprotect","rp","regionp","regp"));
+
+			startLoad();
 
 			if (newApi){
 				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener78").newInstance());
 			} else {
 				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
 			}
+
+			cmdService.register(container, new RPCommands(), Arrays.asList("redprotect","rp","regionp","regp"));
 
 			game.getEventManager().registerListeners(container, new RPBlockListener());
             game.getEventManager().registerListeners(container, new RPGlobalListener());
@@ -130,8 +130,8 @@ public class RedProtect {
             game.getEventManager().registerListeners(container, new RPWorldListener());
             game.getEventManager().registerListeners(container, new RPMine18());
             game.getEventManager().registerListeners(container, new RPAddProtection());
-            
-            loadRegions();
+
+			WE = checkWE();
 
 			logger.info("Loading API...");
 			this.rpAPI = new RedProtectAPI();
@@ -149,16 +149,6 @@ public class RedProtect {
     		e.printStackTrace();
     		logger.severe("Error enabling RedProtect, plugin will shut down.");
         }
-    }
-    
-    private void loadRegions() throws Exception {
-    	rm.loadAll();
-    	if (cfgs.root().file_type.equalsIgnoreCase("file")){
-        	RPUtil.ReadAllDB(rm.getAllRegions());
-        	AutoSaveHandler(); 
-    	} else {
-    		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
-    	}
     }
 
 	public boolean denyEnterRegion(String rid, String player){
@@ -190,21 +180,31 @@ public class RedProtect {
     private void shutDown(){
     	rm.saveAll();
     	rm.unloadAll();
+		for (Task task:Sponge.getScheduler().getScheduledTasks(this)) task.cancel();
     	logger.SaveLogs();
-    	Sponge.getScheduler().getScheduledTasks(container).forEach(Task::cancel);
     	logger.severe(container.getName() + " turn off...");
     }
-    
-    public void reload(){
+
+	private void startLoad() throws Exception {
+		cfgs = new RPConfig(this.factory);
+		RPLang.init();
+
+		rm = new RegionManager();
+		rm.loadAll();
+		if (cfgs.root().file_type.equalsIgnoreCase("file")){
+			RPUtil.ReadAllDB(rm.getAllRegions());
+			AutoSaveHandler();
+		}
+		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
+	}
+
+	public void reload(){
     	try {
     		//shutdown
         	shutDown();
-        	
-    		cfgs = new RPConfig(this.factory);
-    		RPLang.init();
-    		
+
     		//start
-			loadRegions();
+			startLoad();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -243,19 +243,6 @@ public class RedProtect {
         }
 	}
 
-    private void initVars() throws Exception {
-        container = Sponge.getPluginManager().getPlugin("redprotect").get();
-        serv = Sponge.getServer();        
-        cmdService = game.getCommandManager();
-        cfgs = new RPConfig(factory);
-        RPLang.init();
-        
-        WE = checkWE();
-        
-        ph = new RPPermHandler();
-        rm = new RegionManager();
-    }
-    
     private boolean checkWE() {
 		return Sponge.getPluginManager().getPlugin("worldedit").isPresent();
 	}

@@ -32,7 +32,6 @@ import org.spongepowered.api.event.entity.IgniteEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.LocatableBlock;
@@ -98,7 +97,7 @@ public class RPBlockListener {
         	//private sign
         	if (cont.validatePrivateSign(lines.get(0).toPlain())){
 				if (out || r != null){
-					if (cont.isContainer(b, false)){
+					if (cont.isContainer(b)){
 						int length = p.getName().length();
 						if (length > 16) {
 							length = 16;
@@ -118,23 +117,6 @@ public class RPBlockListener {
 					return;
 				}
 			}
-			if (cont.validateMoreSign(lines.get(0).toPlain())){
-				if (out || r != null){
-					if (cont.isContainer(b, true)){
-						RPLang.sendMessage(p, "blocklistener.container.protected");
-						return;
-					} else {
-						RPLang.sendMessage(p, "blocklistener.container.notprotected");
-						//RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
-						return;
-					}
-				} else {
-					RPLang.sendMessage(p, "blocklistener.container.notregion");
-					//RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
-					return;
-				}
-			}
-
         }
                 
         if (line1.toPlain().equalsIgnoreCase("[rp]")){

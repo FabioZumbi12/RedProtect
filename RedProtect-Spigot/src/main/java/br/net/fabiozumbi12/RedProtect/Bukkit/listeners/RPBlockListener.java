@@ -26,7 +26,6 @@ import org.bukkit.material.Crops;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class RPBlockListener implements Listener{
 	
@@ -93,36 +92,16 @@ public class RPBlockListener implements Listener{
         	}
         }
 
-        if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN))) { 
+        if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN))) {
         	Boolean out = RPConfig.getBool("private.allow-outside");
-        	if (cont.validatePrivateSign(b)){
+        	if (cont.validatePrivateSign(e.getLines())){
         		if (out || signr != null){
-            		if (cont.isContainer(b, false)){
+            		if (cont.isContainer(b)){
                 		int length = p.getName().length();
                         if (length > 16) {
                           length = 16;
                         }
 						e.setLine(1, p.getName().substring(0, length));
-                    	RPLang.sendMessage(p, "blocklistener.container.protected.added");
-                        return;
-                	} else {
-                		RPLang.sendMessage(p, "blocklistener.container.protected.notadded");
-                		b.breakNaturally();
-                		return;
-                	}
-            	} else {
-            		RPLang.sendMessage(p, "blocklistener.container.notregion");
-            		b.breakNaturally();
-            		return;
-            	} 
-        	}
-        	if (cont.validateMoreSign(b)){
-            	if (out || signr != null){
-            		if (cont.isContainer(b, true)){
-                		int length = p.getName().length();
-                        if (length > 16) {
-                          length = 16;
-                        }
                     	RPLang.sendMessage(p, "blocklistener.container.protected");
                         return;
                 	} else {
@@ -134,8 +113,8 @@ public class RPBlockListener implements Listener{
             		RPLang.sendMessage(p, "blocklistener.container.notregion");
             		b.breakNaturally();
             		return;
-            	}  
-        	}        	      	
+            	} 
+        	}
         }
         
         if (line1.equalsIgnoreCase("[rp]")){
@@ -278,7 +257,7 @@ public class RPBlockListener implements Listener{
 			BlockFace[] aside = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 			for (BlockFace bf:aside){
 				Block brel = b.getRelative(bf);
-				if (brel != null && brel.getType().equals(Material.WALL_SIGN) && cont.validateMoreSign(brel) && cont.getBlockRelative(brel).getType().equals(btype)){
+				if (brel != null && brel.getType().equals(Material.WALL_SIGN) && cont.getBlockRelative(brel).getType().equals(btype)){
 					brel.breakNaturally();
 					break;
 				}

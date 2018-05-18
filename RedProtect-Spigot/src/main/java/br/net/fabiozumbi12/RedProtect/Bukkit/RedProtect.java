@@ -76,11 +76,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     public void onDisable() {
-        rm.saveAll();
-        rm.unloadAll();
-        logger.SaveLogs();
-        Bukkit.getScheduler().cancelTasks(this);
-        logger.severe(pdf.getFullName() + " disabled.");
+        shutDown();
     }
     
     public void onEnable() {
@@ -103,11 +99,15 @@ public class RedProtect extends JavaPlugin {
             Fac = checkFac();
             PLib = checkPLib();
             PlaceHolderAPI = checkPHAPI();
+
             JarFile = this.getFile();
-            initVars();
-            RPConfig.init();
-            RPLang.init();
-            rm.loadAll();
+
+            serv = getServer();
+            pdf = getDescription();
+
+            ph = new RPPermissionHandler();
+            rm = new RegionManager();
+
             OnlineMode = serv.getOnlineMode();
             
             serv.getPluginManager().registerEvents(new RPGlobalListener(), this);
@@ -116,7 +116,9 @@ public class RedProtect extends JavaPlugin {
             serv.getPluginManager().registerEvents(new RPEntityListener(), this);
             serv.getPluginManager().registerEvents(new RPWorldListener(), this);  
             serv.getPluginManager().registerEvents(new RPAddProtection(), this);
-            
+
+            startLoad();
+
             version = getBukkitVersion();
             logger.debug("Version String: "+version);
             
@@ -196,11 +198,6 @@ public class RedProtect extends JavaPlugin {
             	serv.getPluginManager().registerEvents(new RPFactions(), this);
             	logger.info("Factions found. Hooked.");
             }
-            if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")){
-            	RPUtil.ReadAllDB(rm.getAllRegions());
-        	} else {
-        		logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
-        	}
 
             logger.info("Loading API...");
             this.rpAPI = new RedProtectAPI();
@@ -220,9 +217,6 @@ public class RedProtect extends JavaPlugin {
             		logger.info("No update available.");
             	}
             }
-            if (RPConfig.getString("file-type").equals("yml")){
-            	AutoSaveHandler(); 
-            }
         }
         catch (Exception e) {
     		e.printStackTrace();
@@ -230,6 +224,43 @@ public class RedProtect extends JavaPlugin {
                 logger.severe("Error enabling RedProtect, plugin will shut down.");
                 this.disable();
         	}
+        }
+    }
+
+    public void FullReload() {
+        try{
+            //shutdown
+            shutDown();
+
+            //start
+            startLoad();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void shutDown(){
+        rm.saveAll();
+        rm.unloadAll();
+        Bukkit.getScheduler().cancelTasks(this);
+        logger.SaveLogs();
+        logger.severe(pdf.getFullName() + " turn off...");
+    }
+
+    private void startLoad(){
+        RPConfig.init();
+        RPLang.init();
+
+        try {
+            rm = new RegionManager();
+            rm.loadAll();
+            if (RPConfig.getString("file-type").equalsIgnoreCase("file")){
+                RPUtil.ReadAllDB(rm.getAllRegions());
+                AutoSaveHandler();
+            }
+            logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -303,15 +334,7 @@ public class RedProtect extends JavaPlugin {
 	public void disable() {
         super.setEnabled(false);
     }
-    
-    private void initVars() throws Exception {
-        serv = getServer();
-        pdf = getDescription();
-        
-        ph = new RPPermissionHandler();
-        rm = new RegionManager();
-    }
-    
+
   //check if plugin GriefPrevention is installed
     private boolean checkGP() {
     	Plugin pGP = Bukkit.getPluginManager().getPlugin("GriefPrevention");

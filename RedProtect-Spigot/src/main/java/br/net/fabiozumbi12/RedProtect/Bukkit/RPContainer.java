@@ -2,10 +2,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -38,7 +36,7 @@ public class RPContainer {
             for (int sx = -1; sx <= 1; sx++){
             	for (int sz = -1; sz <= 1; sz++){
     				Block bs = w.getBlockAt(x+sx, y, z+sz);
-    				if (bs.getState() instanceof Sign && (validatePrivateSign(bs) || validateMoreSign(bs))){
+    				if (bs.getState() instanceof Sign && (validatePrivateSign(bs))){
     					deny = false;	
     					if (validateOpenBlock(bs, p)){
         					return true;			
@@ -59,7 +57,7 @@ public class RPContainer {
     					for (int ux = -1; ux <= 1; ux++){
     						for (int uz = -1; uz <= 1; uz++){
     	        				Block bu = w.getBlockAt(x2+ux, y2, z2+uz);    	        				
-    	        				if (bu.getState() instanceof Sign && (validatePrivateSign(bu) || validateMoreSign(bu))){
+    	        				if (bu.getState() instanceof Sign && (validatePrivateSign(bu))){
     	        					deny = false;	
     	        					if (validateOpenBlock(bu, p)){
         	        					return true;			
@@ -90,7 +88,7 @@ public class RPContainer {
         
         boolean deny = true;
         
-        if (b.getState() instanceof Sign && (validatePrivateSign(b) || validateMoreSign(b))){
+        if (b.getState() instanceof Sign && validatePrivateSign(b)){
 			deny = false;	
 			if (validateBreakSign(b, p)){
 				return true;			
@@ -111,7 +109,7 @@ public class RPContainer {
         		for (int sy = -1; sy <= 1; sy++){
         			for (int sz = -1; sz <= 1; sz++){
         				Block bs = w.getBlockAt(x+sx, y+sy, z+sz);        				
-        				if (bs.getState() instanceof Sign && (validatePrivateSign(bs) || validateMoreSign(bs))){
+        				if (bs.getState() instanceof Sign && (validatePrivateSign(bs))){
         					deny = false;	
         					if (validateBreakSign(bs, p)){
 	        					return true;			
@@ -134,7 +132,7 @@ public class RPContainer {
             	        		for (int uy = -1; uy <= 1; uy++){
             	        			for (int uz = -1; uz <= 1; uz++){
             	        				Block bu = w.getBlockAt(x2+ux, y2+uy, z2+uz);
-            	        				if (bu.getState() instanceof Sign && (validatePrivateSign(bu) || validateMoreSign(bu))){
+            	        				if (bu.getState() instanceof Sign && (validatePrivateSign(bu))){
             	        					deny = false;	
             	        					if (validateBreakSign(bu, p)){
             		        					return true;			
@@ -224,71 +222,40 @@ public class RPContainer {
     }
 	
 	private boolean validWorldBreak(Block b){
-		return validatePrivateSign(b) || validateMoreSign(b);
+		return validatePrivateSign(b);
 	}
-	
+
+	public boolean validatePrivateSign(String[] lines){
+		String priv = RPLang.get("blocklistener.container.signline");
+		String line1 = lines[0];
+		return line1.equalsIgnoreCase("[private]") ||
+				line1.equalsIgnoreCase("private") ||
+				line1.equalsIgnoreCase(priv) ||
+				line1.equalsIgnoreCase("[" + priv + "]");
+	}
+
 	public boolean validatePrivateSign(Block b){
 		Sign s = (Sign) b.getState();
-		String priv = RPLang.get("blocklistener.container.signline");
-
-        return s.getLine(0).equalsIgnoreCase("[private]") ||
-                s.getLine(0).equalsIgnoreCase("private") ||
-                s.getLine(0).equalsIgnoreCase(priv) ||
-                s.getLine(0).equalsIgnoreCase("[" + priv + "]");
+        return validatePrivateSign(s.getLines());
     }
-	
-	public boolean validateMoreSign(Block b){
-		Sign s = (Sign) b.getState();
-		String more = RPLang.get("blocklistener.container.signline.more");
 
-        return s.getLine(0).equalsIgnoreCase("[more]") ||
-                s.getLine(0).equalsIgnoreCase("more") ||
-                s.getLine(0).equalsIgnoreCase(more) ||
-                s.getLine(0).equalsIgnoreCase("[" + more + "]");
-    }
-	
 	private boolean validateBreakSign(Block b, Player p) {
         Sign s = (Sign) b.getState();
-        return validatePrivateSign(b) && s.getLine(1).equals(p.getName()) || validateMoreSign(b) && validateMore(b, p.getName());
+        return validatePrivateSign(b) && s.getLine(1).equals(p.getName());
     }
 	
 	private boolean testPrivate(Block b, Player p){
 		Sign s = (Sign) b.getState();
-		String priv = RPLang.get("blocklistener.container.signline");
         return validatePrivateSign(b) &&
                 (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
     }
-	
-	private boolean testMore(Block b, Player p){
-		Sign s = (Sign) b.getState();
-		String more = RPLang.get("blocklistener.container.signline.more");
-        return validateMoreSign(b) &&
-                (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
-    }
-	
+
 	private boolean validateOpenBlock(Block b, Player p){
-		return testPrivate(b,p) || testMore(b,p);
+		return testPrivate(b,p);
 	}
-		
-	private boolean validateMore(Block b, String valid){
-		Block relative = getBlockRelative(b);
-		BlockFace[] aside = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-		for (BlockFace bf:aside){
-			if (b.getRelative(bf).getType().equals(Material.WALL_SIGN)){				
-				if (getBlockRelative(b.getRelative(bf)).getType().equals(relative.getType()) && validatePrivateSign(b.getRelative(bf))){
-				    if (!((Sign) b.getRelative(bf).getState()).getLine(1).equals(valid) &&
-                            !((Sign) b.getRelative(bf).getState()).getLine(2).equals(valid) &&
-                            !((Sign) b.getRelative(bf).getState()).getLine(3).equals(valid)){
-				        return false;
-                    }
-                }
-			}
-		}
-		return true;
-	}
-	
+
     @SuppressWarnings("deprecation")
-	public boolean isContainer(Block b, boolean more) {
+	public boolean isContainer(Block b) {
         Block container = getBlockRelative(b);
         String signbtype;
         if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
@@ -297,7 +264,7 @@ public class RPContainer {
             signbtype = container.getType().name();
         }
 
-        return RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches) && (!more || validateMore(b, ""));
+        return RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches);
     }
     
 }

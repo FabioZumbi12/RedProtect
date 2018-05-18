@@ -142,10 +142,9 @@ public class RPCommands implements CommandCallable {
         			return cmdr;
         		}
         		        		
-        		if (args[0].equalsIgnoreCase("save-all")) {            
-        			RedProtect.get().rm.saveAll();
+        		if (args[0].equalsIgnoreCase("save-all")) {
         			RedProtect.get().logger.SaveLogs();
-            		RedProtect.get().logger.sucess(RedProtect.get().rm.getAllRegions().size() + " regions saved with success!");  
+            		RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll() + " regions saved with success!");
             		return cmdr;
             	}
         		if (args[0].equalsIgnoreCase("load-all")) {            
@@ -715,9 +714,8 @@ public class RPCommands implements CommandCallable {
 
         	if (args[0].equalsIgnoreCase("save-all")) {
         		if (RedProtect.get().ph.hasGenPerm(player, "save-all")) {
-        			RedProtect.get().rm.saveAll();
         			RedProtect.get().logger.SaveLogs();
-        			RPLang.sendMessage(player,"&a" + RedProtect.get().rm.getAllRegions().size() + " regions saved with success!");
+        			RPLang.sendMessage(player,"&a" + RedProtect.get().rm.saveAll() + " regions saved with success!");
         			return cmdr;
         		}
         	}

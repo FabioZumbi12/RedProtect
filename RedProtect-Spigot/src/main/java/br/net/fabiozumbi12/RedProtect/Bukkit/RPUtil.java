@@ -300,8 +300,7 @@ public class RPUtil {
     }
            
     //TODO read all db
-    static void ReadAllDB(Set<Region> regions) {     	
-    	RedProtect.get().logger.info("Loaded " + regions.size() + " regions (" + RPConfig.getString("file-type") + ")");
+    static void ReadAllDB(Set<Region> regions) {
     	int i = 0;
     	int pls = 0;
     	int origupdt = 0;
