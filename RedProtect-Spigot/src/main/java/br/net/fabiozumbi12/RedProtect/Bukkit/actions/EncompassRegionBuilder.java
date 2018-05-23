@@ -55,7 +55,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
         }
 
         //filter region name
-        regionName = regionName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+        regionName = regionName.replaceAll("[^\\p{L}_0-9 ]", "");
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
         	regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
         	if (regionName.length() > 16) {
@@ -167,7 +167,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
                         
                         List<String> othersName = new ArrayList<>();
-                        Region otherrg = null;
+                        Region otherrg;
                         List<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
                                      
                         //check retangular region

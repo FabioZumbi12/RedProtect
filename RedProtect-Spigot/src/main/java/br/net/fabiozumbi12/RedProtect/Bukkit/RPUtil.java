@@ -268,7 +268,7 @@ public class RPUtil {
                 else {
                 	rname = p + "_" + i;
                 }
-                rname = rname.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+                rname = rname.replaceAll("[^\\p{L}_0-9 ]", "");
                 if (RedProtect.get().rm.getRegion(rname, w) == null) {
                     break;
                 }
