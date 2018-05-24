@@ -2348,7 +2348,7 @@ public class RPCommands implements CommandCallable {
 					return;
 				}
 			}
-			if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+			if (RedProtect.get().rm.getRegion(newName, p.getWorld()) != null) {
 			   	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
 			   	return;
 			}
