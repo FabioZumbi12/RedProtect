@@ -39,7 +39,11 @@ public class DefineRegionBuilder extends RegionBuilder{
                 return;
             }
         }
-
+	if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+        	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+            return;
+        }
+		
     	//region leader
         String pName = RPUtil.PlayerToUUID(p.getName());
 
