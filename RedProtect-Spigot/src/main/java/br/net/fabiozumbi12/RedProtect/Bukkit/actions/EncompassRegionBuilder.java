@@ -64,6 +64,11 @@ public class EncompassRegionBuilder extends RegionBuilder{
             }
         }
 
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+            return;
+        }
+
         int maxby = current.getY();
         int minby = current.getY();
         

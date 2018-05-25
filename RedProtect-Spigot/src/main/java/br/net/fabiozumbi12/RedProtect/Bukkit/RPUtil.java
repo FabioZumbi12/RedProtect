@@ -258,23 +258,23 @@ public class RPUtil {
      */
     public static String nameGen(String p, String World){
     	String rname;
-    	World w = RedProtect.get().serv.getWorld(World);    	
-            int i = 0;
-            while (true) {
-            	int is = String.valueOf(i).length();
-                if (p.length() > 13) {
-                	rname = p.substring(0, 14-is) + "_" + i;
-                }
-                else {
-                	rname = p + "_" + i;
-                }
-                rname = rname.replaceAll("[^\\p{L}_0-9 ]", "");
-                if (RedProtect.get().rm.getRegion(rname, w) == null) {
-                    break;
-                }
-                ++i;
-            }           
-        return rname;
+    	World w = RedProtect.get().serv.getWorld(World);
+		int i = 0;
+		while (true) {
+			int is = String.valueOf(i).length();
+			if (p.length() > 13) {
+				rname = p.substring(0, 14-is) + "_" + i;
+			}
+			else {
+				rname = p + "_" + i;
+			}
+			rname = rname.replaceAll("[^\\p{L}_0-9 ]", "");
+			if (RedProtect.get().rm.getRegion(rname, w) == null) {
+				break;
+			}
+			++i;
+		}
+		return rname;
     }
 
     public static String DateNow(){
