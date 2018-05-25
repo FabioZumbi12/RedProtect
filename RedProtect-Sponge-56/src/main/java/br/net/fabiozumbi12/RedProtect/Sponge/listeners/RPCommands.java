@@ -2340,7 +2340,7 @@ public class RPCommands implements CommandCallable {
 			}
 
 			//filter region name
-			newName = newName.replaceAll("[^\\d_A-Za-z ]", "").replaceAll("\\s+", "+");
+			newName = newName.replaceAll("[^\\p{L}_0-9 ]", "");
 			if (newName.isEmpty() || newName.length() < 3) {
 				newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
 				if (newName.length() > 16) {
@@ -2348,7 +2348,10 @@ public class RPCommands implements CommandCallable {
 					return;
 				}
 			}
-
+			if (RedProtect.get().rm.getRegion(newName, p.getWorld()) != null) {
+			   	RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+			   	return;
+			}
             RenameRegionEvent event = new RenameRegionEvent(r, newName, r.getName(), p);
 			if (Sponge.getEventManager().post(event)){
 				return;
