@@ -4,7 +4,7 @@
 
 ### Before open an issue, checkout this steps:
 * If you are running the plugin at first time, try to run again to see if the problem persists.
-* Check if your build is the latest on our Jenkins. Click Here: <http://areaz12server.net.br:8080/job/RedProtect>
+* Check if your build is the latest on our Jenkins. Click Here: <https://host.areaz12server.net.br:8080/job/RedProtect>
 * Its important to you include the plugin jar name, because version and build info.
 
 _Put if is the **Spigot** or **Sponge** version._  
