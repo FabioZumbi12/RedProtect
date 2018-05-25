@@ -8,7 +8,7 @@
 * Its important to you include the plugin jar name, because version and build info.
 
 _Put if is the **Spigot** or **Sponge** version._  
-Plataform:  
+Platform:
 
 _Inform you RedProtect jar name like **RedProtect-Spigot-7.0.3.jar**._  
 Jar version:  
@@ -19,5 +19,5 @@ Minecraft version:
 _Issue or Suggestion?_  
 What you want?:  
 
-_Descript your issue/Suggestion. If issue, use the site [hastebin.com](https://hastebin.com/) to put your error or console logs._  
+_Describe your issue/Suggestion. If issue, use the site [hastebin.com](https://hastebin.com/) to put your error or console logs._
 Description:  
