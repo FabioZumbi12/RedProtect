@@ -15,7 +15,7 @@ Sponge: https://ore.spongepowered.org/FabioZumbi12/RedProtect
 The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
 
 ## Dev builds: 
-Available on jenkins: [![Build Status](http://areaz12server.net.br:8080/buildStatus/icon?job=RedProtect)](http://areaz12server.net.br:8080/job/RedProtect/)
+Available on jenkins: [![Build Status](https://host.areaz12server.net.br:8080/buildStatus/icon?job=RedProtect)](https://host.areaz12server.net.br:8080/job/RedProtect/)
 
 ## Maven repository:
 Now you can hook with uchat using maven repository (from Github) to use in your projects.
