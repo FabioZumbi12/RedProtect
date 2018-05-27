@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import org.spongepowered.api.entity.Entity;
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class RPWorldListener {
     
     public RPWorldListener() {
-        RedProtect.get().logger.debug("world","Loaded RPEntityListener...");
+        RedProtect.get().logger.debug(LogLevel.WORLD,"Loaded RPEntityListener...");
     }
     
     @Listener

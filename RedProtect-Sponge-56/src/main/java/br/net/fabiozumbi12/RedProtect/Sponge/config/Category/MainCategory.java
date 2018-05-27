@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -23,12 +24,9 @@ public class MainCategory {
     public Map<String, Boolean>  debug_messages = createMapDebug();
     private Map<String, Boolean> createMapDebug() {
         Map<String, Boolean> myMap = new HashMap<>();
-        myMap.put("blocks", false);
-        myMap.put("default", false);
-        myMap.put("entity", false);
-        myMap.put("player", false);
-        myMap.put("world", false);
-        myMap.put("spawn", false);
+        for (LogLevel level:LogLevel.values()){
+            myMap.put(level.name().toLowerCase(), false);
+        }
         return myMap;
     }
 

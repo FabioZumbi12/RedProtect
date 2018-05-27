@@ -65,7 +65,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
     public int save() {
     	int saved = 0;
         try {
-            RedProtect.get().logger.debug("default","RegionManager.Save(): File type is " + RedProtect.get().cfgs.root().file_type);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT,"RegionManager.Save(): File type is " + RedProtect.get().cfgs.root().file_type);
             String world = this.getWorld().getName();
                   
             if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
@@ -180,7 +180,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         String world = this.getWorld().getName();        
 
         if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
-        	RedProtect.get().logger.debug("default","Load world " + this.world.getName() + ". File type: conf");
+        	RedProtect.get().logger.debug(LogLevel.DEFAULT,"Load world " + this.world.getName() + ". File type: conf");
         	
         	try {
         		File tempRegionFile = new File(path);    
@@ -213,8 +213,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
         
 		for (Region r:regions.values()){
-			RedProtect.get().logger.debug("default","Radius: " + radius);
-			RedProtect.get().logger.debug("default","X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
+			RedProtect.get().logger.debug(LogLevel.DEFAULT,"Radius: " + radius);
+			RedProtect.get().logger.debug(LogLevel.DEFAULT,"X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
 			if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius){
 				ret.add(r);
 			}

@@ -33,8 +33,8 @@ public class RPLogger{
     	Sponge.getServer().getConsole().sendMessage(RPUtil.toText(s));
 	}
     
-    public void debug(String level, String s) {
-        if (RedProtect.get().cfgs.root().debug_messages.get(level)) {
+    public void debug(LogLevel level, String s) {
+        if (RedProtect.get().cfgs.root().debug_messages.get(level.name().toLowerCase())) {
         	Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&b"+s+"&r]"));
         }  
     }

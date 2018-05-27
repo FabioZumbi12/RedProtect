@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
@@ -24,7 +25,7 @@ public class RPAddProtection {
 	private static final List<String> muted = new ArrayList<>();
 	
 	public RPAddProtection(){
-		RedProtect.get().logger.debug("default","Loaded RPAddProtection...");
+		RedProtect.get().logger.debug(LogLevel.DEFAULT,"Loaded RPAddProtection...");
 	}
 	
 	@Listener(order=Order.EARLY)

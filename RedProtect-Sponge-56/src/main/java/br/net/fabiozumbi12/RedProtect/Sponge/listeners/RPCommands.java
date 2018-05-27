@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 public class RPCommands implements CommandCallable {
     
 	public RPCommands(){
-		RedProtect.get().logger.debug("default","Loaded RPCommands...");
+		RedProtect.get().logger.debug(LogLevel.DEFAULT,"Loaded RPCommands...");
 	}
 	
     private static void sendNotInRegionMessage(Player p) {
@@ -696,7 +696,7 @@ public class RPCommands implements CommandCallable {
         			if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)){
         				if (r.getArea() < RedProtect.get().cfgs.getEcoInt("max-area-toget-value")){
             				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(RPEconomy.getRegionValue(r)) + " " +RedProtect.get().cfgs.getEcoString("economy-name")));
-            				RedProtect.get().logger.debug("player","Region Value: "+RPEconomy.getRegionValue(r));
+            				RedProtect.get().logger.debug(LogLevel.PLAYER,"Region Value: "+RPEconomy.getRegionValue(r));
                 			return cmdr;
             			} else {
             				RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().cfgs.getEcoInt("max-area-toget-value").toString()));

@@ -51,12 +51,12 @@ public class RPUtil {
     }
         
     public static boolean isBukkitBlock(BlockState b){
-    	RedProtect.get().logger.debug("default","BlockType: "+b.getType().getName());
+    	RedProtect.get().logger.debug(LogLevel.DEFAULT,"BlockType: "+b.getType().getName());
     	return b.getType().getName().startsWith("minecraft:");
     }
     
     public static boolean isBukkitEntity(Entity e){
-    	RedProtect.get().logger.debug("default","EntityType: "+e.getType().getName());
+    	RedProtect.get().logger.debug(LogLevel.DEFAULT,"EntityType: "+e.getType().getName());
     	return Sponge.getGame().getRegistry().getType(EntityType.class, e.getType().getName()).isPresent();
     }
 
@@ -984,7 +984,7 @@ public class RPUtil {
 	
 	private static boolean checkTableExists(String tableName) throws SQLException {
         try {
-        	RedProtect.get().logger.debug("default", "Checking if table exists... " + tableName);
+        	RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
         	Connection con = DriverManager.getConnection("jdbc:mysql://"+RedProtect.get().cfgs.root().mysql.host+"/"+RedProtect.get().cfgs.root().mysql.db_name,RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
         	DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getTables(null, null, tableName, null);

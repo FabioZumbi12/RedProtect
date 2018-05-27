@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
@@ -17,12 +18,12 @@ public class RPBlockListener56 {
     private static final RPContainer cont = new RPContainer();
 
     public RPBlockListener56(){
-        RedProtect.get().logger.debug("blocks","Loaded RPBlockListener56...");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS,"Loaded RPBlockListener56...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPiston(ChangeBlockEvent.Pre e){
-        RedProtect.get().logger.debug("blocks","RPBlockListener78 - Is onChangeBlock event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener78 - Is onChangeBlock event");
 
         Location<World> piston = null;
         Location<World> block = null;

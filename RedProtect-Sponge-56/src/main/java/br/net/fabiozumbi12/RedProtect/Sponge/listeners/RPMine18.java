@@ -1,5 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
@@ -24,7 +25,7 @@ import org.spongepowered.api.world.World;
 public class RPMine18 {
 	
 	public RPMine18(){
-		RedProtect.get().logger.debug("default","Loaded RPMine18...");
+		RedProtect.get().logger.debug(LogLevel.DEFAULT,"Loaded RPMine18...");
 	}
 	
 	static final RPContainer cont = new RPContainer();
@@ -114,7 +115,7 @@ public class RPMine18 {
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onBlockExplode(ExplosionEvent.Detonate e){
-		RedProtect.get().logger.debug("default","Is BlockListener - BlockExplodeEvent event");
+		RedProtect.get().logger.debug(LogLevel.DEFAULT,"Is BlockListener - BlockExplodeEvent event");
 		
 		for (Location<World> bex:e.getAffectedLocations()){
 			Region r = RedProtect.get().rm.getTopRegion(bex, this.getClass().getName());

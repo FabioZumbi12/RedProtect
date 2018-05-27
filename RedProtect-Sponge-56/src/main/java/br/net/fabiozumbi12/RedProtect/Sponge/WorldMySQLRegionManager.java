@@ -73,7 +73,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             return true;
         }     
         try {   
-        	RedProtect.get().logger.debug("default", "Checking if table exists... " + tableName);
+        	RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
         	Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
             DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getTables(null, null, tableName, null);
@@ -269,7 +269,7 @@ class WorldMySQLRegionManager implements WorldRegionManager{
             st.setString(1, this.world.getName());
             ResultSet rs = st.executeQuery();            
             while (rs.next()){ 
-            	RedProtect.get().logger.debug("default", "Load Region: "+rs.getString("name")+", World: "+this.world.getName());
+            	RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: "+rs.getString("name")+", World: "+this.world.getName());
             	List<String> leaders = new ArrayList<>();
             	List<String> admins = new ArrayList<>();
                 List<String> members = new ArrayList<>();
@@ -457,11 +457,11 @@ class WorldMySQLRegionManager implements WorldRegionManager{
                 }
                 st.close(); 
                 rs.close();
-                RedProtect.get().logger.debug("default", "Adding region to cache: "+rname);
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Adding region to cache: "+rname);
                 Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
                 if (regions.containsKey(rname)){
                     regions.remove(rname);
-                    RedProtect.get().logger.debug("default", "Removed cached region: "+rname);
+                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed cached region: "+rname);
                 }
                 }, RedProtect.get().cfgs.root().mysql.region_cache_minutes, TimeUnit.MINUTES);
             }

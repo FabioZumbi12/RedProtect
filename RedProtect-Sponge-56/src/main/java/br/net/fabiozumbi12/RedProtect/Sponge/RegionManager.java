@@ -192,7 +192,7 @@ public class RegionManager{
      */
     public Region getTopRegion(Location<World> loc, String caller){
     	if (bLoc.containsKey(loc.getBlockPosition())){
-    		RedProtect.get().logger.debug("blocks", "Get from cache: "+loc.getBlockPosition().toString()+ " - ["+caller+"]");
+    		RedProtect.get().logger.debug(LogLevel.BLOCKS, "Get from cache: "+loc.getBlockPosition().toString()+ " - ["+caller+"]");
     		return bLoc.get(loc.getBlockPosition());
     	} else {
         	if (!this.regionManagers.containsKey(loc.getExtent())){
@@ -204,7 +204,7 @@ public class RegionManager{
 				bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
 				if (r != null){
 					bLoc.put(loc.getBlockPosition(), r);
-					RedProtect.get().logger.debug("blocks", "Get from DB - ["+caller+"]");
+					RedProtect.get().logger.debug(LogLevel.BLOCKS, "Get from DB - ["+caller+"]");
 				}
 			} catch (Exception ignored){}
         	return r;

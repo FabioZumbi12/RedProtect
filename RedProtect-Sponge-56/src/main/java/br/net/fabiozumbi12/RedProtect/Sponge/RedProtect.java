@@ -234,7 +234,7 @@ public class RedProtect {
 			logger.info("Auto-save Scheduler: Saving "+cfgs.root().file_type+" database every " + cfgs.root().flat_file.auto_save_interval_seconds/60 + " minutes!");
 			
 			taskid = Sponge.getScheduler().createSyncExecutor(container).scheduleWithFixedDelay(() -> {
-                logger.debug("default","Auto-save Scheduler: Saving "+cfgs.root().file_type+" database!");
+                logger.debug(LogLevel.DEFAULT,"Auto-save Scheduler: Saving "+cfgs.root().file_type+" database!");
                 rm.saveAll();
                 },cfgs.root().flat_file.auto_save_interval_seconds, cfgs.root().flat_file.auto_save_interval_seconds, TimeUnit.SECONDS).getTask().getUniqueId();
 			

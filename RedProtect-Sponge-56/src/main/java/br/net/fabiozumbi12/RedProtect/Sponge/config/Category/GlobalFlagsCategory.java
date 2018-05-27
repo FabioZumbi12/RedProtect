@@ -3,10 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ConfigSerializable
 public class GlobalFlagsCategory {
@@ -28,7 +25,7 @@ public class GlobalFlagsCategory {
         @ConfigSerializable
         public static class buildFalse {
             @Setting(value = "break-blocks")
-            public List<String> break_blocks = new ArrayList<>();
+            public List<String> break_blocks = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower");
 
             @Setting(value = "place-blocks")
             public List<String> place_blocks = new ArrayList<>();
@@ -37,8 +34,26 @@ public class GlobalFlagsCategory {
         @Setting(comment = "Allow pvp?")
         public boolean pvp = true;
 
-        @Setting(comment = "Allow player interactions, with entities or blocks?")
+        @Setting(comment = "Allow player interactions, with all entities or blocks?")
         public boolean interact = true;
+
+        @Setting(value = "if-interact-false", comment = "If interact option is false, choose what blocks or entity the player can interact.\n" +
+                "The item names is like you see holding \"F3\" and pressing \"H\".")
+        public interactFalse if_interact_false = new interactFalse();
+        @ConfigSerializable
+        public static class interactFalse {
+            @Setting(value = "interact-blocks")
+            public List<String> interact_blocks = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower");
+
+            @Setting(value = "interact-entities")
+            public List<String> interact_entities = Arrays.asList("villager");
+
+            @Setting(comment = "Allow player interactions with passive entities?")
+            public boolean entity_passives = true;
+
+            @Setting(comment = "Allow player interactions with monsters entities")
+            public boolean entity_monsters = true;
+        }
 
         @Setting(value = "use-minecart", comment = "Allow players to place Minecarts and Boats?")
         public boolean use_minecart = true;

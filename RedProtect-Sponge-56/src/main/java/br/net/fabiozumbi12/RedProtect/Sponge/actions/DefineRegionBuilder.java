@@ -1,9 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import org.spongepowered.api.Sponge;
@@ -141,7 +138,7 @@ public class DefineRegionBuilder extends RegionBuilder{
             }*/
         	
         	otherrg = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
-        	RedProtect.get().logger.debug("blocks", "protection Block is: " + loc.getBlock().getType().getName());
+        	RedProtect.get().logger.debug(LogLevel.BLOCKS, "protection Block is: " + loc.getBlock().getType().getName());
         	
     		if (otherrg != null){                    			
     			if (!otherrg.isLeader(p) && !RedProtect.get().ph.hasGenPerm(p, "redprotect.bypass")){

@@ -64,9 +64,9 @@ public class RPPermHandler{
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.blocks.unlimited")){
     			for (String perm:RedProtect.get().cfgs.root().permissions_limits.blocks){
-    				RedProtect.get().logger.debug("default","Perm: "+perm);
+    				RedProtect.get().logger.debug(LogLevel.DEFAULT,"Perm: "+perm);
     				if (p.hasPermission(perm)){
-    					RedProtect.get().logger.debug("default","Has block perm: "+perm);
+    					RedProtect.get().logger.debug(LogLevel.DEFAULT,"Has block perm: "+perm);
 						String pStr = perm.replaceAll("[^-?0-9]+", "");
 						if (!pStr.isEmpty()){
 							limits.add(Integer.parseInt(pStr));
@@ -89,9 +89,9 @@ public class RPPermHandler{
     	if (limit > 0){
     		if (!p.hasPermission("redprotect.limit.claim.unlimited")){
     			for (String perm:RedProtect.get().cfgs.root().permissions_limits.claims){
-    				RedProtect.get().logger.debug("default","Perm: "+perm);
+    				RedProtect.get().logger.debug(LogLevel.DEFAULT,"Perm: "+perm);
     				if (p.hasPermission(perm)){
-    					RedProtect.get().logger.debug("default","Has claim perm: "+perm);
+    					RedProtect.get().logger.debug(LogLevel.DEFAULT,"Has claim perm: "+perm);
 						String pStr = perm.replaceAll("[^-?0-9]+", "");
 						if (!pStr.isEmpty()){
 							limits.add(Integer.parseInt(pStr));

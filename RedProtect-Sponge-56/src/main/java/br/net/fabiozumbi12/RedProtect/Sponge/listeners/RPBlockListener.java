@@ -46,12 +46,12 @@ public class RPBlockListener {
 	private static final RPContainer cont = new RPContainer();
 	
 	public RPBlockListener(){
-		RedProtect.get().logger.debug("blocks","Loaded RPBlockListener...");
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"Loaded RPBlockListener...");
 	}    
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onSignPlace(ChangeSignEvent e, @First Player p) {   
-    	RedProtect.get().logger.debug("blocks","BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
+    	RedProtect.get().logger.debug(LogLevel.BLOCKS,"BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
     	
     	Sign s = e.getTargetTile();
     	List<Text> lines = e.getText().asList();
@@ -147,7 +147,7 @@ public class RPBlockListener {
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
-    	RedProtect.get().logger.debug("blocks","BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
+    	RedProtect.get().logger.debug(LogLevel.BLOCKS,"BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
     	    	
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
@@ -203,7 +203,7 @@ public class RPBlockListener {
     
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockBreak(ChangeBlockEvent.Break e, @First Player p) {
-    	RedProtect.get().logger.debug("blocks","BlockListener - Is ChangeBlockEvent.Break event!");
+    	RedProtect.get().logger.debug(LogLevel.BLOCKS,"BlockListener - Is ChangeBlockEvent.Break event!");
     	
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
@@ -236,14 +236,14 @@ public class RPBlockListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onFireSpread(ChangeBlockEvent.Place e, @First LocatableBlock locatable) {
-		RedProtect.get().logger.debug("blocks","BlockListener - Is onFireSpread event!");
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"BlockListener - Is onFireSpread event!");
 
 		BlockState sourceState = locatable.getBlockState();
 
     	if (sourceState.getType() == BlockTypes.FIRE || sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA){
     		Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
     		if (r != null && !r.canFire()){
-				RedProtect.get().logger.debug("blocks", "Tryed to PLACE FIRE!");
+				RedProtect.get().logger.debug(LogLevel.BLOCKS, "Tryed to PLACE FIRE!");
     			e.setCancelled(true);
     		}
     	}
@@ -251,7 +251,7 @@ public class RPBlockListener {
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onFireSpread(ChangeBlockEvent.Break e, @First LocatableBlock locatable) {
-		RedProtect.get().logger.debug("blocks","RPBlockListener - Is onBlockBreakGeneric event");
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener - Is onBlockBreakGeneric event");
 
 		BlockState sourceState = locatable.getBlockState();
 
@@ -259,7 +259,7 @@ public class RPBlockListener {
 			BlockSnapshot b = e.getTransactions().get(0).getOriginal();
 			Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
 			if (r != null && !r.canFire() && b.getState().getType() != BlockTypes.FIRE){
-				RedProtect.get().logger.debug("blocks", "Tryed to break from FIRE!");
+				RedProtect.get().logger.debug(LogLevel.BLOCKS, "Tryed to break from FIRE!");
 				e.setCancelled(true);
 			}
 		}
@@ -267,19 +267,19 @@ public class RPBlockListener {
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockGrow(ChangeBlockEvent.Grow e) {
-    	RedProtect.get().logger.debug("blocks","RPBlockListener - Is ChangeBlockEvent.Grow event");
+    	RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener - Is ChangeBlockEvent.Grow event");
 		
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
 		Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
 		if (r != null && !r.canGrow()){
 			e.setCancelled(true);
-			RedProtect.get().logger.debug("blocks", "Cancel grow "+b.getState().getName());
+			RedProtect.get().logger.debug(LogLevel.BLOCKS, "Cancel grow "+b.getState().getName());
 		}
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onFrameAndBoatBrake(DamageEntityEvent e) {
-    	RedProtect.get().logger.debug("blocks","Is BlockListener - DamageEntityEvent event");
+    	RedProtect.get().logger.debug(LogLevel.BLOCKS,"Is BlockListener - DamageEntityEvent event");
 
     	Entity ent = e.getTargetEntity();
     	Location<World> l = e.getTargetEntity().getLocation();
@@ -309,7 +309,7 @@ public class RPBlockListener {
     	Entity b = e.getTargetEntity();
     	Cause ignit = e.getCause(); 
 
-    	RedProtect.get().logger.debug("blocks","Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
+    	RedProtect.get().logger.debug(LogLevel.BLOCKS,"Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
     	
     	Region r = RedProtect.get().rm.getTopRegion(b.getLocation(), this.getClass().getName());
 		if (r != null && !r.canFire()){
@@ -337,7 +337,7 @@ public class RPBlockListener {
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onFlow(ChangeBlockEvent.Pre e, @First LocatableBlock locatable){
-		RedProtect.get().logger.debug("blocks","Is BlockListener - onFlow event");
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"Is BlockListener - onFlow event");
 
 		BlockState sourceState = locatable.getBlockState();
 
@@ -355,7 +355,7 @@ public class RPBlockListener {
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onLightning(LightningEvent.Pre e, @First Lightning light){
-		RedProtect.get().logger.debug("blocks","Is LightningStrikeEvent event");
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"Is LightningStrikeEvent event");
 		Location<World> l = light.getLocation();
 		Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 		if (r != null && !r.canFire()){
@@ -366,7 +366,7 @@ public class RPBlockListener {
 	@Listener(order = Order.FIRST, beforeModifications = true)
 	public void onDecay(ChangeBlockEvent.Decay e){
 		BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
-		RedProtect.get().logger.debug("blocks","Is BlockFromToEvent.Decay event is to " + bfrom.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"Is BlockFromToEvent.Decay event is to " + bfrom.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
 		Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get(), this.getClass().getName());
 		if (r != null && !r.leavesDecay()){
 			e.setCancelled(true);
@@ -378,11 +378,11 @@ public class RPBlockListener {
     	BlockSnapshot b = event.getTargetBlock();
         Location<World> l;
         
-        RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER,"RPBlockListener - Is InteractBlockEvent event");
         
         if (!b.getState().getType().equals(BlockTypes.AIR)){
         	l = b.getLocation().get();
-        	RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent event. The block is " + b.getState().getType().getName());
+        	RedProtect.get().logger.debug(LogLevel.PLAYER,"RPBlockListener - Is InteractBlockEvent event. The block is " + b.getState().getType().getName());
         } else {
         	l = p.getLocation();
         }
@@ -406,7 +406,7 @@ public class RPBlockListener {
     public void onInteractPrimBlock(InteractBlockEvent.Primary event, @First Player p) {
     	BlockSnapshot b = event.getTargetBlock();
         
-        RedProtect.get().logger.debug("player","RPBlockListener - Is InteractBlockEvent.Primary event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER,"RPBlockListener - Is InteractBlockEvent.Primary event");
         
     	if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){        	
     		if (b.getState().getType().getName().contains("sign") && !cont.canBreak(p, b)){

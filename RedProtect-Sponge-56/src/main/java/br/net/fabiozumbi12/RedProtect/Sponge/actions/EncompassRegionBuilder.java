@@ -1,9 +1,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
@@ -181,7 +178,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         Region region = new Region(regionName, new LinkedList<>(), new LinkedList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
                         
                         List<String> othersName = new ArrayList<>();
-                        Region otherrg = null;
+                        Region otherrg;
                         List<Location<World>> limitlocs = region.getLimitLocs(minby, maxby, false);
                                    
                         //check retangular region
@@ -209,7 +206,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         for (Location<World> loc:limitlocs){
                         	otherrg = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
                         	
-                        	RedProtect.get().logger.debug("default","protection Block is: " + loc.getBlock().getType().getName());
+                        	RedProtect.get().logger.debug(LogLevel.DEFAULT,"protection Block is: " + loc.getBlock().getType().getName());
                         	
                     		if (otherrg != null){                    			
                     			if (!otherrg.isLeader(p) && !RedProtect.get().ph.hasGenPerm(p, "redprotect.admin")){
