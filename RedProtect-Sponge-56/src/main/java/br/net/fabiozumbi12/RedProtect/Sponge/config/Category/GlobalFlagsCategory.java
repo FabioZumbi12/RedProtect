@@ -38,20 +38,21 @@ public class GlobalFlagsCategory {
         public boolean interact = true;
 
         @Setting(value = "if-interact-false", comment = "If interact option is false, choose what blocks or entity the player can interact.\n" +
-                "The item names is like you see holding \"F3\" and pressing \"H\".")
+                "The item names is like you see holding \"F3\" and pressing \"H\".\n" +
+                "The entity name you can see enabling debug type \"entity\" on debug options and interacting with the entity.")
         public interactFalse if_interact_false = new interactFalse();
         @ConfigSerializable
         public static class interactFalse {
             @Setting(value = "interact-blocks")
-            public List<String> interact_blocks = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower");
+            public List<String> interact_blocks = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower", "minecraft:chest");
 
             @Setting(value = "interact-entities")
-            public List<String> interact_entities = Arrays.asList("villager");
+            public List<String> interact_entities = Collections.singletonList("villager");
 
-            @Setting(comment = "Allow player interactions with passive entities?")
+            @Setting(value="entity-passives" ,comment = "Allow player interactions with passives?")
             public boolean entity_passives = true;
 
-            @Setting(comment = "Allow player interactions with monsters entities")
+            @Setting(value="entity-monsters" ,comment = "Allow player interactions with monsters?")
             public boolean entity_monsters = true;
         }
 
