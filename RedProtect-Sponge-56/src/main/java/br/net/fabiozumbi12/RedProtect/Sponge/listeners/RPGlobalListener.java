@@ -47,6 +47,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.weather.Weathers;
 
+import java.util.List;
+
 public class RPGlobalListener{
 	
 	public RPGlobalListener(){
@@ -217,30 +219,36 @@ public class RPGlobalListener{
 			Entity ent = ((InteractEntityEvent) e).getTargetEntity();
 			RedProtect.get().logger.debug(LogLevel.ENTITY, "RPGlobalListener - Entity: "+ent.getType().getName());
 			if (ent instanceof Minecart || ent instanceof Boat) {
-				if (RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).use_minecart || p.hasPermission("redprotect.world.bypass")) {
+				if (!RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).use_minecart && !p.hasPermission("redprotect.world.bypass")) {
+					e.setCancelled(true);
 					return;
 				}
 			}
 			if (ent instanceof Hanging || ent instanceof ArmorStand){
-				if (RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).build || p.hasPermission("redprotect.world.bypass")){
+				if (!RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).build && !p.hasPermission("redprotect.world.bypass")){
+					e.setCancelled(true);
 					return;
 				}
 			}
-			if (ent instanceof Monster && RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.entity_monsters || p.hasPermission("redprotect.world.bypass")) {
+			if (ent instanceof Monster && !RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.entity_monsters && !p.hasPermission("redprotect.world.bypass")) {
+				e.setCancelled(true);
 				return;
 			}
 			if (ent instanceof Animal || ent instanceof Golem || ent instanceof Ambient || ent instanceof Aquatic) {
-				if (RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.entity_passives || p.hasPermission("redprotect.world.bypass")) {
+				if (!RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.entity_passives && !p.hasPermission("redprotect.world.bypass")) {
+					e.setCancelled(true);
 					return;
 				}
 			}
-			if (!RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).interact && !p.hasPermission("redprotect.world.bypass") && (!(ent instanceof Player))) {
-				if (RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.interact_entities.stream().anyMatch(ent.getType().getName()::matches)){
-					return;
+			if (!RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).interact){
+				if (!p.hasPermission("redprotect.world.bypass") && !(ent instanceof Player)){
+					List<String> list = RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.interact_entities;
+					if (!list.isEmpty() && list.stream().noneMatch(ent.getType().getName()::matches)){
+						e.setCancelled(true);
+						return;
+					}
 				}
 			}
-			e.setCancelled(true);
-			return;
 		}
 
 		if (e instanceof InteractBlockEvent){
@@ -248,22 +256,24 @@ public class RPGlobalListener{
 			String bname = eb.getTargetBlock().getState().getType().getName();
 			RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Block: "+bname);
 			if (bname.contains("rail") || bname.contains("water")){
-				if (RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).use_minecart || p.hasPermission("redprotect.world.bypass")){
-					return;
+				if (!RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).use_minecart && p.hasPermission("redprotect.world.bypass")){
+					e.setCancelled(true);
 				}
 			} else {
-				if (RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).interact || p.hasPermission("redprotect.world.bypass")){
-					return;
+				if (!RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).interact){
+					if (!p.hasPermission("redprotect.world.bypass")){
+						List<String> list = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_interact_false.interact_blocks;
+						if ((!list.isEmpty() && list.stream().noneMatch(bname::matches))){
+							e.setCancelled(true);
+							return;
+						}
+					}
 				}
-				if ((RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).build || p.hasPermission("redprotect.world.bypass"))
+				if ((!RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).build && !p.hasPermission("redprotect.world.bypass"))
 						&& bname.contains("leaves")){
-					return;
-				}
-				if (RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_interact_false.interact_blocks.stream().anyMatch(bname::matches)){
-					return;
+					e.setCancelled(true);
 				}
 			}
-			e.setCancelled(true);
 		}
 	}
 	
