@@ -10,17 +10,18 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Get the region database from here. All functions for manage regions can be found in this variable. 
  */
 public class RegionManager{
 	
-	private final HashMap<World, WorldRegionManager> regionManagers;
-	private final HashMap<Location, Region> bLoc = new HashMap<>();
+	private final ConcurrentHashMap<World, WorldRegionManager> regionManagers;
+	private final ConcurrentHashMap<Location, Region> bLoc = new ConcurrentHashMap<>();
     
     protected RegionManager() {
-        this.regionManagers = new HashMap<>();
+        this.regionManagers = new ConcurrentHashMap<>();
     }
     
     public void loadAll() throws Exception {

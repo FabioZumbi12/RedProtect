@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("deprecation")
 class WorldMySQLRegionManager implements WorldRegionManager{
@@ -20,12 +21,12 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 	private final String tableName;
     private Connection dbcon;
 
-    private final HashMap<String, Region> regions;
+    private final ConcurrentHashMap<String, Region> regions;
     private final World world;
     
     public WorldMySQLRegionManager(World world) throws SQLException {
         super();
-        this.regions = new HashMap<>();
+        this.regions = new ConcurrentHashMap<>();
         this.world = world;
         this.tableName = RPConfig.getString("mysql.table-prefix")+world.getName();
         

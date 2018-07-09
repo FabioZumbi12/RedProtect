@@ -64,7 +64,7 @@ public class RPGui {
 		}
 
 		for (String flag:region.flags.keySet()){
-			if (!(region.flags.get(flag) instanceof Boolean)){
+			if (!(region.flags.get(flag) instanceof Boolean) || !RedProtect.get().cfgs.guiRoot().gui_flags.containsKey(flag)){
 				continue;
 			}
 			if (RedProtect.get().ph.hasFlagPerm(player, flag) && RedProtect.get().cfgs.isFlagEnabled(flag) && RPUtil.testRegistry(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material)){

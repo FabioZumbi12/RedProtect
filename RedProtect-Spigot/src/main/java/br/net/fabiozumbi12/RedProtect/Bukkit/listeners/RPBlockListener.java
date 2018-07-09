@@ -250,20 +250,20 @@ public class RPBlockListener implements Listener{
         if (r == null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())){
         	return;
         }
-        
+        /*
         //remove more sign
         if (b.getType().equals(Material.WALL_SIGN)){
 			Material btype = cont.getBlockRelative(b).getType();
 			BlockFace[] aside = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 			for (BlockFace bf:aside){
 				Block brel = b.getRelative(bf);
-				if (brel != null && brel.getType().equals(Material.WALL_SIGN) && cont.getBlockRelative(brel).getType().equals(btype)){
+				if (brel != null && brel.getType().equals(Material.WALL_SIGN) && cont.getBlockRelative(brel).getType().equals(btype) && cont.){
 					brel.breakNaturally();
 					break;
 				}
 			}
 		}
-        
+        */
         if (r != null && b.getType().equals(Material.MOB_SPAWNER) && r.allowSpawner(p)){    		
         	return;
     	}
