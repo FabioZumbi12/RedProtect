@@ -14,11 +14,11 @@ import java.util.*;
  */
 public class RegionManager{
 	
-	private final HashMap<World, WorldRegionManager> regionManagers;
-	private final HashMap<Vector3i, Region> bLoc = new HashMap<>();
+	private final ConcurrentHashMap<World, WorldRegionManager> regionManagers;
+	private final ConcurrentHashMap<Vector3i, Region> bLoc = new ConcurrentHashMap<>();
     
     protected RegionManager() {
-        this.regionManagers = new HashMap<>();
+        this.regionManagers = new ConcurrentHashMap<>();
     }
     
     public void loadAll() throws Exception {
