@@ -2761,7 +2761,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 			}
 
 			//filter region name
-			newName = newName.replaceAll("[^\\p{L}_0-9 ]", "");
+			newName = newName.replace(" ","_").replaceAll("[^\\p{L}_0-9 ]", "");
 			if (newName.isEmpty() || newName.length() < 3) {
 				newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
 				if (newName.length() > 16) {

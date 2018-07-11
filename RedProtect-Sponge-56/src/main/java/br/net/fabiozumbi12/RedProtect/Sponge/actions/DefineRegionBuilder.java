@@ -28,7 +28,7 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
 
         //filter region name
-        regionName = regionName.replaceAll("[^\\p{L}_0-9 ]", "");
+        regionName = regionName.replace(" ","_").replaceAll("[^\\p{L}_0-9 ]", "");
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
