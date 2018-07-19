@@ -208,7 +208,7 @@ public class RPBlockListener implements Listener{
             	return;
             }
         	
-        	if (b.getType().equals(Material.MOB_SPAWNER) && r.allowSpawner(p)){
+        	if ((b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.allowSpawner(p)){
             	return;
         	}
         	
@@ -264,7 +264,7 @@ public class RPBlockListener implements Listener{
 			}
 		}
         */
-        if (r != null && b.getType().equals(Material.MOB_SPAWNER) && r.allowSpawner(p)){    		
+        if (r != null && (b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.allowSpawner(p)){
         	return;
     	}
         

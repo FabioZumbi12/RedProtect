@@ -208,7 +208,7 @@ public class RPSchematics {
         		return;
         	}
         }    
-        
+        /*
         if (RPConfig.getBool("hooks.worldedit.use-for-schematics") && RedProtect.get().WE){
         	WEListener.pasteWithWE(p, file);
         } else {
@@ -217,7 +217,7 @@ public class RPSchematics {
         		//paste schematic
         		b.setTypeIdAndData(blocks[key], blockData[key], true);
         	}
-        }
+        }*/
         
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         RPLang.sendMessage(p, "playerlistener.region.startdone");
