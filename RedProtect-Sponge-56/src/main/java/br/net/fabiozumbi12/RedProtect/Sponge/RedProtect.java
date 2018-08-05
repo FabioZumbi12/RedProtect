@@ -148,6 +148,9 @@ public class RedProtect {
         } catch (Exception e) {
     		e.printStackTrace();
     		logger.severe("Error enabling RedProtect, plugin will shut down.");
+    		game.getServer().setHasWhitelist(true);
+    		game.getServer().getOnlinePlayers().forEach(Player::kick);
+			logger.warning("RedProtect turned the whitelist on and kicked all players to avoid players to loose your protected regions due an error on load RedProtect!");
         }
     }
 

@@ -224,6 +224,9 @@ public class RedProtect extends JavaPlugin {
                 logger.severe("Error enabling RedProtect, plugin will shut down.");
                 this.disable();
         	}
+            getServer().setWhitelist(true);
+            getServer().getOnlinePlayers().forEach(p -> p.kickPlayer("The server is disabled due an error on load plugins!"));
+            logger.warning("RedProtect turned the whitelist on and kicked all players to avoid players to loose your protected regions due an error on load RedProtect!");
         }
     }
 
