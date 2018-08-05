@@ -537,7 +537,8 @@ public class RPConfig{
     public static ItemStack getGuiItemStack(String key){
     	RedProtect.get().logger.debug("Gui Material to get: " + key);
     	RedProtect.get().logger.debug("Result: " + GuiItems.getString("gui-flags."+key+".material"));
-    	return new ItemStack(Material.getMaterial(GuiItems.getString("gui-flags."+key+".material")));
+    	String item = GuiItems.getString("gui-flags."+key+".material", "WHITE_STAINED_GLASS_PANE");
+    	return new ItemStack(Material.getMaterial(item));
     }
     
     public static String getGuiFlagString(String flag, String option){
@@ -562,7 +563,7 @@ public class RPConfig{
 	}
     
     public static ItemStack getGuiSeparator() {
-    	ItemStack separator = new ItemStack(Material.getMaterial(GuiItems.getString("gui-separator.material")), 1, (short)GuiItems.getInt("gui-separator.data"));
+    	ItemStack separator = new ItemStack(Material.getMaterial(GuiItems.getString("gui-separator.material","WHITE_STAINED_GLASS_PANE")), 1, (short)GuiItems.getInt("gui-separator.data"));
     	ItemMeta meta = separator.getItemMeta();
     	meta.setDisplayName(getGuiString("separator"));
     	meta.setLore(Arrays.asList("", getGuiString("separator")));

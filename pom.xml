@@ -4,7 +4,7 @@
   <artifactId>RedProtect</artifactId>
   <packaging>pom</packaging>
   <name>RedProtect</name>
-  <version>7.4.1</version>
+  <version>7.5.0</version>
   
   <scm>
      <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
@@ -64,7 +64,11 @@
      <repository>
             <id>EssentialsX</id>
             <url>http://repo.ess3.net/content/groups/essentials</url>
-     </repository> 
+     </repository>
+      <repository>
+          <id>MyPet3.0</id>
+          <url>http://nexus.keyle.de</url>
+      </repository>
   </repositories>
   
   <dependencies>

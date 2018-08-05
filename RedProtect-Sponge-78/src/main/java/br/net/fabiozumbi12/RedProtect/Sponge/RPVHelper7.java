@@ -94,10 +94,10 @@ public class RPVHelper7 implements RPVHelper{
 	public long getInvValue(Iterable<Inventory> inv){
 		long value = 0;
 		for (Inventory item:inv){
-			if (!item.peek().isPresent()){
+			if (item.peek().isEmpty()){
 				continue;
 			}
-			ItemStack stack = item.peek().get();
+			ItemStack stack = item.peek();
 			value += ((RedProtect.get().cfgs.getBlockCost(stack.getType().getId()) * stack.getQuantity()));
 			if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
 				for (Enchantment enchant:stack.get(Keys.ITEM_ENCHANTMENTS).get()){

@@ -6,6 +6,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.RPProtocolLib;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -98,12 +99,14 @@ public class RPGui implements Listener{
 				} else {
 					fvalue = RPConfig.getGuiString(region.flags.get(flag).toString());
 				}
-				
+
+				this.guiItens[i] = RPConfig.getGuiItemStack(flag);
+				/*
 				if (RedProtect.get().PLib && allowEnchant){
 					this.guiItens[i] = RPProtocolLib.removeAttributes(RPConfig.getGuiItemStack(flag));
 				} else {
 					this.guiItens[i] = RPConfig.getGuiItemStack(flag);					
-				}				
+				}*/
 				ItemMeta guiMeta = this.guiItens[i].getItemMeta();
 				guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag,"name"));
 				guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value")+fvalue,"§0"+flag,RPConfig.getGuiFlagString(flag,"description"),RPConfig.getGuiFlagString(flag,"description1"),RPConfig.getGuiFlagString(flag,"description2")));

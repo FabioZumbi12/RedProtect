@@ -103,7 +103,7 @@ public class RPUtil {
     	}
     	return false;
     }
-    
+
     private static boolean isSecure(Location loc){
     	Block b = loc.add(0, -1, 0).getBlock();
     	return (!b.isLiquid() && !b.isEmpty()) || b.getType().name().contains("LAVA");

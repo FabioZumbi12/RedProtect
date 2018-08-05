@@ -4,7 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
-import de.Keyle.MyPet.api.skill.skills.ranged.CraftMyPetProjectile;
+import de.Keyle.MyPet.api.entity.skill.ranged.CraftMyPetProjectile;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
 public class MPListener implements Listener {
-   
+
     @EventHandler
     public void onEntityDamageByPet(EntityDamageEvent e) {
         if (e.isCancelled()) {

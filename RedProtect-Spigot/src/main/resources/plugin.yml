@@ -1,6 +1,7 @@
 name: RedProtect
 main: br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect
 version: ${project.version}
+api-version: 1.13
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
 softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap, SimpleClans, Factions, PlaceholderAPI, ProtocolLib]

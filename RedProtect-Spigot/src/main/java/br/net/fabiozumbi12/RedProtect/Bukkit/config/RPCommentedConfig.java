@@ -137,8 +137,8 @@ public class RPCommentedConfig {
 		setDefault("netherProtection.maxYsize", 128, "Max size of your world nether.");
 		setDefault("netherProtection.execute-cmd", Collections.singletonList("spawn {player}"), "Execute this if player go up to maxYsize of nether.");
 		
-		setDefault("server-protection", null, "General server protections options.");		
-		setDefault("server-protection.deny-potions", Collections.singletonList("INVISIBILITY"), "List of potions the player cant use on server. Here the PotioTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html");
+		setDefault("server-protection", null, "General server protections options.");
+		setDefault("server-protection.deny-potions", Collections.singletonList("INVISIBILITY"), "List of potions the player cant use on server. Here the PotionTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html");
 		setDefault("server-protection.deny-playerdeath-by", Collections.singletonList("SUFFOCATION"), " List of causes the player cant die/take damage for. Here the list of DamageCauses: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html");
 		setDefault("server-protection.deny-commands-on-worlds.world", Collections.singletonList("command"), "Deny certain commands on specific worlds.");
 		setDefault("server-protection.nickname-cap-filter.enable", false, "Deny players with same nick but cap char diferences to join on server (most used on offline severs).");

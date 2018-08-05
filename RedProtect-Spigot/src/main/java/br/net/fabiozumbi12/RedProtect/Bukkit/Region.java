@@ -38,7 +38,6 @@ public class Region implements Serializable{
     private String world;
     private String date;
     public Map<String, Object> flags;
-    protected boolean[] f = new boolean[10];
 	private long value;
 	private Location tppoint;
 	private boolean tosave = true;

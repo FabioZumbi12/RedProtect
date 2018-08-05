@@ -28,6 +28,7 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
+import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult.Type;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -795,6 +796,7 @@ public class RPCommands implements CommandCallable {
         		item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
         		Iterable<Slot> slotIter = player.getInventory().slots();
 
+        		/*
         		for (Slot slot:slotIter) {
     			    if (slot.peek().isPresent()) {
     			    	ItemStack stack = slot.peek().get();
@@ -804,8 +806,8 @@ public class RPCommands implements CommandCallable {
     			    	}
     			    }
     			}
-
-    			if (inv.query(Inventory.class).offer(item).getType().equals(Type.SUCCESS)){
+    			*/
+    			if (inv.query(Hotbar.class).offer(item).getType().equals(Type.SUCCESS)){
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.given").replace("{item}", mat.getName()));
     			} else {
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
@@ -1018,12 +1020,12 @@ public class RPCommands implements CommandCallable {
     			if (!RedProtect.get().WE){
     				return cmdr;
     			}
-    			World w = RedProtect.get().serv.getWorld(args[2]).get();
-    			if (w == null){
+				Optional<World> w = RedProtect.get().serv.getWorld(args[2]);
+    			if (!w.isPresent()){
     				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                 	return cmdr;
                 }
-    			Region r = RedProtect.get().rm.getRegion(args[1], w);
+    			Region r = RedProtect.get().rm.getRegion(args[1], w.get());
     			if (r == null){
     				RPLang.sendMessage(sender, RPLang.get("correct.usage") + " &eInvalid region: " + args[1]);
     				return cmdr;
@@ -1038,12 +1040,12 @@ public class RPCommands implements CommandCallable {
     			if (!RedProtect.get().WE){
     				return cmdr;
     			}
-    			World w = RedProtect.get().serv.getWorld(args[2]).get();
-    			if (w == null){
+				Optional<World> w = RedProtect.get().serv.getWorld(args[2]);
+    			if (!w.isPresent()){
     				RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                 	return cmdr;
                 }
-    			Region r = RedProtect.get().rm.getRegion(args[1], w);
+    			Region r = RedProtect.get().rm.getRegion(args[1], w.get());
     			if (r == null){
     				RPLang.sendMessage(sender, RPLang.get("correct.usage") + " &eInvalid region: " + args[1]);
     				return cmdr;

@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.13-pre7-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.13-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
@@ -19,7 +19,7 @@
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.21" level="project" />
     <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.13-pre7-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.13-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: MassiveCore:MassiveCore:v1">
         <CLASSES>
@@ -120,15 +120,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: MyPet-2.2.8:MyPet-2.2.8:v1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/MyPet-2.2.8.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Maven: PvPManager:PvPManager:v1">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/PvPManager.jar!/" />
@@ -150,9 +141,10 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.natrolite:vault-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:Essentials:2.14-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.0.8" level="project" />
-    <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.2.1" level="project" />
-    <orderEntry type="library" name="Maven: cglib:cglib-nodep:2.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: de.keyle:mypet:3.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />

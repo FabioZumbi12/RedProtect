@@ -4,7 +4,7 @@ gui-strings:
   value: '&bValue: '
   separator: '&7|'
 gui-separator:
-  material: THIN_GLASS
+  material: WHITE_STAINED_GLASS_PANE
   data: 0
 gui-flags:
   door:

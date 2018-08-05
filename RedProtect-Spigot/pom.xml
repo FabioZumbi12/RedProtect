@@ -3,7 +3,7 @@
   <parent>
     <groupId>br.net.fabiozumbi12.RedProtect</groupId>
     <artifactId>RedProtect</artifactId>
-    <version>7.4.1</version>
+    <version>7.5.0</version>
   </parent>
   <artifactId>RedProtect-Spigot</artifactId>
   
@@ -121,14 +121,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>MyPet-2.2.8</groupId>
-			<artifactId>MyPet-2.2.8</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MyPet-2.2.8.jar</systemPath>
-		</dependency>
-		
-		<dependency>
 			<groupId>PvPManager</groupId>
 			<artifactId>PvPManager</artifactId>
 			<version>v1</version>
@@ -172,13 +164,19 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
-            <version>4.2.1</version>
+            <version>4.4.0-SNAPSHOT</version>
         </dependency>
-        
+
+	    <dependency>
+		    <groupId>de.keyle</groupId>
+		    <artifactId>mypet</artifactId>
+		    <version>3.0-SNAPSHOT</version>
+	    </dependency>
+
   </dependencies>
 
   <properties>
-  	<mineVersion>1.13-pre7-R0.1-SNAPSHOT</mineVersion>
+  	<mineVersion>1.13-R0.1-SNAPSHOT</mineVersion>
   </properties>
   
   <build>
