@@ -95,10 +95,7 @@ public class RPGui {
 			}
 		}
 				
-		this.inv = Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
-				.property(InventoryDimension.PROPERTY_NAME, new InventoryDimension(9, this.size/9))
-				.property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(RPUtil.toText(this.name)))
-				.build(RedProtect.get().container);
+		this.inv = RedProtect.get().getPVHelper().newInventory(size, name);
 
         for (int slotc=0; slotc < this.size; slotc++){
 			if (this.guiItens[slotc] == null){
@@ -187,7 +184,7 @@ public class RPGui {
 				
 				ItemStack item = clickTransaction.getOriginal().createStack();
 								
-				if (!item.getItem().equals(ItemTypes.NONE) && item.get(Keys.ITEM_LORE).isPresent()){					
+				if (!RedProtect.get().getPVHelper().getItemType(item).equals(ItemTypes.NONE) && item.get(Keys.ITEM_LORE).isPresent()){
 					String flag = item.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", "");
 					if (RedProtect.get().cfgs.getDefFlags().contains(flag)){
 						if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.enable){
@@ -239,14 +236,14 @@ public class RPGui {
 			
 		event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
 		event.getTransactions().get(0).getSlot().offer(item);
-				
-		RPUtil.removeGuiItem(this.player);
+
+		RedProtect.get().getPVHelper().removeGuiItem(this.player);
 		
 		RedProtect.get().logger.addLog("(World "+this.region.getWorld()+") Player "+player.getName()+" CHANGED flag "+flag+" of region "+this.region.getName()+" to "+this.region.getFlagString(flag));
 	}
 	
 	public void close(boolean close){
-		RPUtil.removeGuiItem(this.player);
+		RedProtect.get().getPVHelper().removeGuiItem(this.player);
 		RedProtect.get().game.getEventManager().unregisterListeners(this);
 		this.guiItens = null;
 		if (close) RedProtect.get().getPVHelper().closeInventory(this.player);

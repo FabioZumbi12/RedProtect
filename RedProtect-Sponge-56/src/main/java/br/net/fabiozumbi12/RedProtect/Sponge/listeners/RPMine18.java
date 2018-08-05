@@ -48,15 +48,10 @@ public class RPMine18 {
         	return;
         }
         
-        ItemType itemInHand = ItemTypes.NONE;
-        if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-        	itemInHand = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	itemInHand = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-        }
+        ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
         
         if (!itemInHand.equals(ItemTypes.NONE) && itemInHand.getType().equals(ItemTypes.ARMOR_STAND)){
-        	if (r != null && !r.canBuild(p)){
+        	if (!r.canBuild(p)){
         		e.setCancelled(true);
         		RPLang.sendMessage(p, "blocklistener.region.cantbuild");
             	return;
@@ -65,7 +60,7 @@ public class RPMine18 {
         
         //TODO Not working!
         if (ent.getType().equals(EntityTypes.ARMOR_STAND)) {
-            if (r != null && !r.canBuild(p)) {
+            if (!r.canBuild(p)) {
                 if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
                 	RPLang.sendMessage(p, "playerlistener.region.cantedit");
                     e.setCancelled(true);

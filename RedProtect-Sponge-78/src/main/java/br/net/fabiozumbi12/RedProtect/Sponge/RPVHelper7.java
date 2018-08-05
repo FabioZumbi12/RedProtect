@@ -1,21 +1,29 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.animal.RideableHorse;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKey;
 import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.item.enchantment.EnchantmentTypes;
 import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.property.InventoryDimension;
+import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.world.Location;
@@ -111,5 +119,55 @@ public class RPVHelper7 implements RPVHelper{
 	@Override
 	public Inventory query(Inventory inventory, int x, int y){
 		return inventory.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(x,y)));
+	}
+
+	@Override
+	public ItemStack getItemMainHand(Player player){
+		if (!player.getItemInHand(HandTypes.MAIN_HAND).isEmpty())
+			return player.getItemInHand(HandTypes.MAIN_HAND);
+
+		return player.getItemInHand(HandTypes.MAIN_HAND);
+	}
+
+	@Override
+	public ItemStack getItemOffHand(Player player){
+		if (player.getItemInHand(HandTypes.OFF_HAND).isEmpty())
+			return player.getItemInHand(HandTypes.OFF_HAND);
+
+		return ItemStack.empty();
+	}
+
+	@Override
+	public ItemType getItemInHand(Player player){
+		if (player.getItemInHand(HandTypes.MAIN_HAND).isEmpty()){
+			return player.getItemInHand(HandTypes.MAIN_HAND).getType();
+		} else if (player.getItemInHand(HandTypes.OFF_HAND).isEmpty()){
+			return player.getItemInHand(HandTypes.OFF_HAND).getType();
+		}
+		return ItemTypes.NONE;
+	}
+	@Override
+	public ItemType getItemType(ItemStack itemStack){
+		return itemStack.getType();
+	}
+
+	@Override
+	public Inventory newInventory(int size, String name){
+		return Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
+				.property(InventoryDimension.of(new Vector2i(9,size/9)))
+				.property(InventoryTitle.of(RPUtil.toText(name)))
+				.build(RedProtect.get().container);
+	}
+
+	@Override
+	public void removeGuiItem(Player p){
+		p.getInventory().slots().forEach(slot -> {
+			if (!slot.peek().isEmpty()){
+				ItemStack pitem = slot.peek();
+				if (RPUtil.removeGuiItem(pitem)){
+					slot.poll();
+				}
+			}
+		});
 	}
 }

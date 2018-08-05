@@ -157,12 +157,7 @@ public class RPEntityListener {
                 Player p2 = (Player)e2; 
                 if (r1 != null) {
                 	
-                	ItemType itemInHand = ItemTypes.NONE;                
-                    if (p2.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-                    	itemInHand = p2.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-                    } else if (p2.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-                    	itemInHand = p2.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-                    }
+                	ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p2);
                     
                 	if (itemInHand.getType().equals(ItemTypes.EGG) && !r1.canProtectiles(p2)){
                 		e.setCancelled(true);

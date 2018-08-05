@@ -122,17 +122,7 @@ public class RPUtil {
 		locs.add(new Location<>(min.getExtent(), min.getX() + (max.getX() - min.getX()), y, min.getZ()));
 		return locs;
 	}
-
-    public static ItemType getItemHand(Player p){
-    	ItemType itemInHand = ItemTypes.NONE;
-        if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-        	itemInHand = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	itemInHand = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-        }
-        return itemInHand;
-    }
-    
+/*
     public static long getNowMillis(){
     	SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
 		Calendar cal = Calendar.getInstance();
@@ -143,7 +133,7 @@ public class RPUtil {
 		}
 		return cal.getTimeInMillis();
     }
-    
+    */
     private static void saveToZipFile(File file, String ZippedFile, CommentedConfigurationNode conf){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
@@ -158,18 +148,7 @@ public class RPUtil {
     		e.printStackTrace();
     	}    	
     }
-    
-    public static void removeGuiItem(Player p){
-		p.getInventory().slots().forEach(slot -> {
-			if (slot.peek().isPresent()){
-				ItemStack pitem = slot.peek().get();
-				if (removeGuiItem(pitem)){
-					slot.poll().get();
-				}
-			}
-		});
-	}
-    
+
     public static boolean removeGuiItem(ItemStack item) {    	
     	if (item.get(Keys.ITEM_LORE).isPresent()){
     		try{
@@ -194,7 +173,7 @@ public class RPUtil {
 		return false;
     }
 
-    public static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb){
+    static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb){
     	try{
     		final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry(ZippedFile);
@@ -290,7 +269,7 @@ public class RPUtil {
         int sec = Calendar.getInstance().get(Calendar.SECOND);        
 		return "["+hour+":"+min+":"+sec+"]";    	
     }
-    
+    /*
     static void fixWorld(String regionname){
     	for (World w:RedProtect.get().serv.getWorlds()){
     		Region r = RedProtect.get().rm.getRegion(regionname, w);
@@ -299,7 +278,7 @@ public class RPUtil {
     		}
     	}
     }
-    
+    */
     //TODO read all db
     static void ReadAllDB(Set<Region> regions){
     	int i = 0;
@@ -558,24 +537,19 @@ public class RPUtil {
             	RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls-i) + "&a&l regions!");
         	}
         	RedProtect.get().rm.saveAll();        	
-        	RedProtect.get().logger.sucess("Regions saved!");  
-        	pls = 0;
-        	i = 0;
+        	RedProtect.get().logger.sucess("Regions saved!");
         }
         
         if (skipped > 0){
         	RedProtect.get().logger.sucess(skipped + " regions skipped due to max size limit to regen!");
-        	skipped = 0;
         }
         
         if (purged > 0){
         	RedProtect.get().logger.warning("Purged a total of &6&l" + purged + "&a&l regions!");
-        	purged = 0;
         }
-        
+
         if (sell > 0){
         	RedProtect.get().logger.warning("Put to sell a total of &6&l" + sell + "&a&l regions!");
-        	sell = 0;
         }
         regions.clear();   
 	}
@@ -674,7 +648,7 @@ public class RPUtil {
     		return false;
     	}		
     }
-    
+    /*
     static void addRegion(List<Region> regions, World w){    	
     	for (int i = 0; i < regions.size(); i++){
     		if (!RedProtect.get().rm.getRegionsByWorld(w).contains(regions.get(i))){
@@ -684,7 +658,7 @@ public class RPUtil {
 		}	 
     	regions.clear();
     }
-    
+    */
     public static Object parseObject(String value){
     	Object obj = value;
     	try {
@@ -941,7 +915,7 @@ public class RPUtil {
 		}		
 	}
 	
-    public static void backupRegions(CommentedConfigurationNode fileDB, String world) {
+    static void backupRegions(CommentedConfigurationNode fileDB, String world) {
         if (!RedProtect.get().cfgs.root().flat_file.backup) {
             return;
         }
@@ -1096,7 +1070,7 @@ public class RPUtil {
 		return total;
 	}
 	
-	public static CommentedConfigurationNode addProps(CommentedConfigurationNode fileDB, Region r){
+	static CommentedConfigurationNode addProps(CommentedConfigurationNode fileDB, Region r){
 		String rname = r.getName().replaceAll("[.+=;\\-]", "");
 		fileDB.getNode(rname,"name").setValue(rname);
 		fileDB.getNode(rname,"lastvisit").setValue(r.getDate());
@@ -1132,7 +1106,7 @@ public class RPUtil {
 		return fileDB;
 	}
 	
-	public static Region loadRegion(CommentedConfigurationNode region, String rname, String world) throws ObjectMappingException {		
+	static Region loadRegion(CommentedConfigurationNode region, String rname, String world) throws ObjectMappingException {
 		int maxX = region.getNode(rname,"maxX").getInt();
 		int maxZ = region.getNode(rname,"maxZ").getInt();
 		int minX = region.getNode(rname,"minX").getInt();
@@ -1281,7 +1255,7 @@ public class RPUtil {
 		}		
 		return true;
 	}
-	
+	/*
 	public static String regionNameConfiorm(String regionName, Player p){		
 		String pRName = RPUtil.UUIDtoPlayer(p.getName());
 		if (regionName.equals("")) {
@@ -1313,5 +1287,5 @@ public class RPUtil {
         }
         
         return regionName;
-	}	
+	}	*/
 }

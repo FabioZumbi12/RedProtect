@@ -137,7 +137,7 @@ public class RPSchematics {
         
         //check if player already have claims
         int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()); 
-        if (claimused > 0 && !p.hasPermission("RedProtect.get().bypass")){
+        if (claimused > 0 && !p.hasPermission("redprotect.bypass")){
         	RPLang.sendMessage(p, "playerlistener.region.claimlimit.start");
         	return;
         }
@@ -157,7 +157,7 @@ public class RPSchematics {
         //check regions inside region
         for (Region r:RedProtect.get().rm.getRegionsByWorld(p.getWorld())){
         	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
-        		if (!r.isLeader(p) && !p.hasPermission("RedProtect.get().bypass")){
+        		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
         			p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                 	return;
             	}
@@ -181,7 +181,7 @@ public class RPSchematics {
         	RedProtect.get().logger.debug("protection Block is: " + locr.getBlock().getType().name());
         	
     		if (otherrg != null){                    			
-            	if (!otherrg.isLeader(p) && !p.hasPermission("RedProtect.get().bypass")){
+            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
             		p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                 	return;
             	}
@@ -192,7 +192,7 @@ public class RPSchematics {
         }
                 
         //check cost per block
-        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("RedProtect.get().eco.bypass")){
+        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")){
         	Double peco = RedProtect.get().econ.getBalance(p);
         	long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
         	

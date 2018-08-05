@@ -158,12 +158,7 @@ public class RPGlobalListener{
 		RedProtect.get().logger.debug(LogLevel.DEFAULT,"RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + e.isCancelled());
 		
 		BlockSnapshot b = e.getTransactions().get(0).getFinal();
-		ItemType item = ItemTypes.NONE;
-		if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-			item = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	item = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-        }
+		ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
 		Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
 				
 		if (r != null){
@@ -659,12 +654,7 @@ public class RPGlobalListener{
 		boolean claimRps = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps;
 		boolean wilderness = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_wilderness;
 		
-		ItemType item = ItemTypes.NONE;
-		if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-			item = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	item = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-        }
+		ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
 		
 		//deny item usage		
     	if (!RedProtect.get().ph.hasPerm(p, "redprotect.world.bypass") && !item.equals(ItemTypes.NONE) && RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).deny_item_usage.items.stream().anyMatch(item.getType().getName()::matches)){

@@ -5,6 +5,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
@@ -38,4 +39,16 @@ public interface RPVHelper {
 	long getInvValue(Iterable<Inventory> inv);
 
 	Inventory query(Inventory inventory, int x, int y);
+
+	ItemStack getItemMainHand(Player player);
+
+	ItemStack getItemOffHand(Player player);
+
+	ItemType getItemInHand(Player player);
+
+	ItemType getItemType(ItemStack itemStack);
+
+	Inventory newInventory(int size, String name);
+
+	void removeGuiItem(Player p);
 }

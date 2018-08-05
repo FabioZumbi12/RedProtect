@@ -73,7 +73,7 @@ public class RPPlayerListener{
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onConsume(UseItemStackEvent.Start e, @First Player p){
         ItemStack stack = e.getItemStackInUse().createStack();
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is UseItemStackEvent.Start event. Item: "+stack.getItem().getName());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is UseItemStackEvent.Start event. Item: "+RedProtect.get().getPVHelper().getItemType(stack).getName());
         
         //deny potion
         List<String> Pots = RedProtect.get().cfgs.root().server_protection.deny_potions;
@@ -90,12 +90,12 @@ public class RPPlayerListener{
         
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
         
-        if (r != null && stack.getItem().equals(ItemTypes.POTION) && !r.usePotions(p)){
+        if (r != null && RedProtect.get().getPVHelper().getItemType(stack).equals(ItemTypes.POTION) && !r.usePotions(p)){
         	RPLang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);			
 		}
         
-        if (r != null && stack.getItem().getName().equals("minecraft:chorus_fruit") && !r.canTeleport(p)){
+        if (r != null && RedProtect.get().getPVHelper().getItemType(stack).getName().equals("minecraft:chorus_fruit") && !r.canTeleport(p)){
         	RPLang.sendMessage(p, "playerlistener.region.cantuse");
         	e.setCancelled(true);
         }
@@ -116,12 +116,7 @@ public class RPPlayerListener{
         	l = p.getLocation();
         }
         
-        ItemType itemInHand = ItemTypes.NONE;
-        if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-        	itemInHand = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	itemInHand = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-        }
+        ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
         
         String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
     	if (event instanceof InteractBlockEvent.Primary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.root().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
@@ -163,7 +158,7 @@ public class RPPlayerListener{
         }
         
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
-        ItemType itemInHand = RPUtil.getItemHand(p);
+        ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
         
         String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
     	if (event instanceof InteractBlockEvent.Secondary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.root().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
@@ -230,16 +225,16 @@ public class RPPlayerListener{
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         ItemType itemInHand = ItemTypes.NONE;
         ItemStack stack;
-        if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-        	stack = p.getItemInHand(HandTypes.MAIN_HAND).get();
-        	itemInHand = stack.getItem();
+        if (!RedProtect.get().getPVHelper().getItemMainHand(p).isEmpty()){
+        	stack = RedProtect.get().getPVHelper().getItemMainHand(p);
+        	itemInHand = RedProtect.get().getPVHelper().getItemType(stack);
         	if (RPUtil.removeGuiItem(stack)){        	
             	p.setItemInHand(HandTypes.MAIN_HAND,ItemStack.of(ItemTypes.NONE, 1));
             	event.setCancelled(true);
             }
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	stack = p.getItemInHand(HandTypes.OFF_HAND).get();
-        	itemInHand = stack.getItem();
+        } else if (!RedProtect.get().getPVHelper().getItemOffHand(p).isEmpty()){
+        	stack = RedProtect.get().getPVHelper().getItemOffHand(p);
+        	itemInHand = RedProtect.get().getPVHelper().getItemType(stack);
         	if (RPUtil.removeGuiItem(stack)){        	
             	p.setItemInHand(HandTypes.OFF_HAND,ItemStack.of(ItemTypes.NONE, 1));
             	event.setCancelled(true);
@@ -1490,7 +1485,7 @@ public class RPPlayerListener{
     public void PlayerDropItemGui(DropItemEvent.Pre e, @Root Player p){
     	e.getDroppedItems().forEach(item -> {
     		if (RPUtil.isGuiItem(item.createStack())){
-    			RPUtil.removeGuiItem(p);
+    			RedProtect.get().getPVHelper().removeGuiItem(p);
     			e.setCancelled(true);
     		}
     	});
@@ -1513,6 +1508,6 @@ public class RPPlayerListener{
     
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerMoveInv(InteractInventoryEvent.Close e, @Root Player p){
-    	RPUtil.removeGuiItem(p);
+        RedProtect.get().getPVHelper().removeGuiItem(p);
     }
 }

@@ -153,12 +153,7 @@ public class RPBlockListener {
     	Location<World> bloc = b.getLocation().get();
     	World w = bloc.getExtent();
     	
-        ItemType m = ItemTypes.NONE;
-        if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-        	m = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-        	m = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-        }
+        ItemType m = RedProtect.get().getPVHelper().getItemInHand(p);
         Boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
         
@@ -389,12 +384,7 @@ public class RPBlockListener {
         
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         if (r != null){
-        	ItemType itemInHand = ItemTypes.NONE;                
-            if (p.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
-            	itemInHand = p.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-            } else if (p.getItemInHand(HandTypes.OFF_HAND).isPresent()){
-            	itemInHand = p.getItemInHand(HandTypes.OFF_HAND).get().getItem();
-            }
+        	ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
             if (itemInHand.equals(ItemTypes.ARMOR_STAND) && !r.canBuild(p)){
     			RPLang.sendMessage(p, "blocklistener.region.cantbuild");
                 event.setCancelled(true); 
