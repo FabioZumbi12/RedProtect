@@ -42,43 +42,6 @@
   
   <build>
     <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
-    <plugins>
-               
-        <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                        <artifactSet>                          
-                          <includes>
-                            <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot</include>	   
-                            <include>br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-56</include>	                        
-                          </includes>                          
-                        </artifactSet>
-                        <filters> 
-                           <filter>
-                              <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
-                              <includes>
-                              <include>**</include>
-                              </includes>
-                           </filter>                                           
-                        </filters>  
-                        <outputFile>${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Universal.jar</outputFile>           
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>                    
-                </configuration>
-            </plugin>
-            
-    </plugins>
   </build>
   
 </project>
