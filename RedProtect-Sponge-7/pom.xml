@@ -5,7 +5,7 @@
     <artifactId>RedProtect</artifactId>
     <version>7.5.0</version>
   </parent>
-  <artifactId>RedProtect-Sponge-78</artifactId>
+  <artifactId>RedProtect-Sponge-7</artifactId>
 
   <dependencies>
     <dependency>
@@ -37,11 +37,11 @@
   </dependencies>
   
   <properties>
-  	<spongeVersion>8.0.0-SNAPSHOT</spongeVersion>
+  	<spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
   </properties>  
   
   <build>
-    <finalName>DONT-DOWNLOAD-SpongeAPI78-Reference</finalName>
+    <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
     <plugins>
                
         <plugin>

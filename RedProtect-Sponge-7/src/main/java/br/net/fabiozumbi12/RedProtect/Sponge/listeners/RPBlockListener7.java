@@ -16,17 +16,17 @@ import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-public class RPBlockListener78 {
+public class RPBlockListener7 {
 
     private static final RPContainer cont = new RPContainer();
 
-    public RPBlockListener78(){
-        RedProtect.get().logger.debug(LogLevel.BLOCKS,"Loaded RPBlockListener78...");
+    public RPBlockListener7(){
+        RedProtect.get().logger.debug(LogLevel.BLOCKS,"Loaded RPBlockListener7...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPiston(ChangeBlockEvent.Pre e){
-        RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener78 - Is onChangeBlock event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener7 - Is onChangeBlock event");
 
         EventContext context = e.getContext();
         Cause cause = e.getCause();

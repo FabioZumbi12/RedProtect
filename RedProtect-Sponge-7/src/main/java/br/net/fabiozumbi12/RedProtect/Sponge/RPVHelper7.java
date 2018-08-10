@@ -7,7 +7,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.animal.RideableHorse;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
@@ -54,7 +53,7 @@ public class RPVHelper7 implements RPVHelper{
 
 	@Override
 	public void setBlock(Location<World> loc, BlockState block) {
-        loc.setBlock(block);
+		loc.setBlock(block);
 	}
 
 	@Override
@@ -74,8 +73,8 @@ public class RPVHelper7 implements RPVHelper{
 
 	@Override
 	public boolean checkCause(Cause cause, String toCompare) {
-        return RedProtect.get().game.getRegistry().getType(EventContextKey.class, toCompare).isPresent() && cause.contains(RedProtect.get().game.getRegistry().getType(EventContextKey.class, toCompare).get());
-    }
+		return RedProtect.get().game.getRegistry().getType(EventContextKey.class, toCompare).isPresent() && cause.contains(RedProtect.get().game.getRegistry().getType(EventContextKey.class, toCompare).get());
+	}
 
 	@Override
 	public boolean checkHorseOwner(Entity ent, Player p) {
@@ -92,20 +91,20 @@ public class RPVHelper7 implements RPVHelper{
 		return Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList());
 	}
 
-    @Override
-    public ItemStack offerEnchantment(ItemStack item) {
-        item.offer(Keys.ITEM_ENCHANTMENTS, Collections.singletonList(Enchantment.builder().type(EnchantmentTypes.UNBREAKING).level(1).build()));
-        return item;
-    }
+	@Override
+	public ItemStack offerEnchantment(ItemStack item) {
+		item.offer(Keys.ITEM_ENCHANTMENTS, Collections.singletonList(Enchantment.builder().type(EnchantmentTypes.UNBREAKING).level(1).build()));
+		return item;
+	}
 
 	@Override
 	public long getInvValue(Iterable<Inventory> inv){
 		long value = 0;
 		for (Inventory item:inv){
-			if (item.peek().isEmpty()){
+			if (!item.peek().isPresent()){
 				continue;
 			}
-			ItemStack stack = item.peek();
+			ItemStack stack = item.peek().get();
 			value += ((RedProtect.get().cfgs.getBlockCost(stack.getType().getId()) * stack.getQuantity()));
 			if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()){
 				for (Enchantment enchant:stack.get(Keys.ITEM_ENCHANTMENTS).get()){
@@ -123,26 +122,26 @@ public class RPVHelper7 implements RPVHelper{
 
 	@Override
 	public ItemStack getItemMainHand(Player player){
-		if (!player.getItemInHand(HandTypes.MAIN_HAND).isEmpty())
-			return player.getItemInHand(HandTypes.MAIN_HAND);
+		if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
+			return player.getItemInHand(HandTypes.MAIN_HAND).get();
 
-		return player.getItemInHand(HandTypes.MAIN_HAND);
+		return ItemStack.empty();
 	}
 
 	@Override
 	public ItemStack getItemOffHand(Player player){
-		if (player.getItemInHand(HandTypes.OFF_HAND).isEmpty())
-			return player.getItemInHand(HandTypes.OFF_HAND);
+		if (player.getItemInHand(HandTypes.OFF_HAND).isPresent())
+			return player.getItemInHand(HandTypes.OFF_HAND).get();
 
 		return ItemStack.empty();
 	}
 
 	@Override
 	public ItemType getItemInHand(Player player){
-		if (player.getItemInHand(HandTypes.MAIN_HAND).isEmpty()){
-			return player.getItemInHand(HandTypes.MAIN_HAND).getType();
-		} else if (player.getItemInHand(HandTypes.OFF_HAND).isEmpty()){
-			return player.getItemInHand(HandTypes.OFF_HAND).getType();
+		if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()){
+			return player.getItemInHand(HandTypes.MAIN_HAND).get().getType();
+		} else if (player.getItemInHand(HandTypes.OFF_HAND).isPresent()){
+			return player.getItemInHand(HandTypes.OFF_HAND).get().getType();
 		}
 		return ItemTypes.NONE;
 	}
@@ -162,8 +161,8 @@ public class RPVHelper7 implements RPVHelper{
 	@Override
 	public void removeGuiItem(Player p){
 		p.getInventory().slots().forEach(slot -> {
-			if (!slot.peek().isEmpty()){
-				ItemStack pitem = slot.peek();
+			if (slot.peek().isPresent()){
+				ItemStack pitem = slot.peek().get();
 				if (RPUtil.removeGuiItem(pitem)){
 					slot.poll();
 				}

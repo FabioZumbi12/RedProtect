@@ -9,7 +9,9 @@
         <module name="RedProtect-Spigot" />
         <module name="RedProtect-Sponge-56" />
         <module name="RedProtect-Sponge-7" />
-        <module name="RedProtect-Sponge-78" />
+        <module name="RedProtect-Sponge-78 (1)" />
+        <module name="RedProtect-Sponge-78 (2)" />
+        <module name="RedProtect-Sponge-8" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -23,7 +25,9 @@
       <module name="RedProtect-Sponge-7" target="1.8" />
       <module name="RedProtect-Sponge-7 (1)" target="1.8" />
       <module name="RedProtect-Sponge-7 (2)" target="1.8" />
-      <module name="RedProtect-Sponge-78" target="1.8" />
+      <module name="RedProtect-Sponge-78 (1)" target="1.5" />
+      <module name="RedProtect-Sponge-78 (2)" target="1.5" />
+      <module name="RedProtect-Sponge-8" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

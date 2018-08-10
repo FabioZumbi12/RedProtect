@@ -5,7 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/RedProtect.iml" filepath="$PROJECT_DIR$/RedProtect.iml" />
       <module fileurl="file://$PROJECT_DIR$/RedProtect-Spigot/RedProtect-Spigot.iml" filepath="$PROJECT_DIR$/RedProtect-Spigot/RedProtect-Spigot.iml" />
       <module fileurl="file://$PROJECT_DIR$/RedProtect-Sponge-56/RedProtect-Sponge-56.iml" filepath="$PROJECT_DIR$/RedProtect-Sponge-56/RedProtect-Sponge-56.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RedProtect-Sponge-78/RedProtect-Sponge-78.iml" filepath="$PROJECT_DIR$/RedProtect-Sponge-78/RedProtect-Sponge-78.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RedProtect-Sponge-7/RedProtect-Sponge-7.iml" filepath="$PROJECT_DIR$/RedProtect-Sponge-7/RedProtect-Sponge-7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RedProtect-Sponge-7/RedProtect-Sponge-78 (1).iml" filepath="$PROJECT_DIR$/RedProtect-Sponge-7/RedProtect-Sponge-78 (1).iml" />
+      <module fileurl="file://$PROJECT_DIR$/RedProtect-Sponge-8/RedProtect-Sponge-78 (2).iml" filepath="$PROJECT_DIR$/RedProtect-Sponge-8/RedProtect-Sponge-78 (2).iml" />
+      <module fileurl="file://$PROJECT_DIR$/RedProtect-Sponge-8/RedProtect-Sponge-8.iml" filepath="$PROJECT_DIR$/RedProtect-Sponge-8/RedProtect-Sponge-8.iml" />
     </modules>
   </component>
 </project>

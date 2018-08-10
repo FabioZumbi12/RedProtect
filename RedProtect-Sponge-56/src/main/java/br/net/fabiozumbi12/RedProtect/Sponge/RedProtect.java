@@ -84,7 +84,7 @@ public class RedProtect {
 	public GuiceObjectMapperFactory factory;
 
     @Listener
-	public void onStopServer(GameStoppingServerEvent e) {
+	public void onStopServer(GameStoppingServerEvent event) {
 		shutDown();
     }
     
@@ -92,14 +92,13 @@ public class RedProtect {
     public void onServerStart(GameStartedServerEvent event) {
         try {
 			String v = Sponge.getGame().getPlatform().getContainer(Component.API).getVersion().get();
-			boolean newApi = false;
-			if (v.startsWith("7") || v.startsWith("8")){
-				newApi = true;
-			}
+
             instance = this;
 
-			if (newApi){
+			if (v.startsWith("7")){
 				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
+			} else if (v.startsWith("8")){
+				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
 			} else {
 				pvhelp = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
 			}
@@ -115,8 +114,10 @@ public class RedProtect {
 
 			startLoad();
 
-			if (newApi){
-				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener78").newInstance());
+			if (v.startsWith("7")){
+				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener7").newInstance());
+			} else if (v.startsWith("8")){
+				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener8").newInstance());
 			} else {
 				game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
 			}

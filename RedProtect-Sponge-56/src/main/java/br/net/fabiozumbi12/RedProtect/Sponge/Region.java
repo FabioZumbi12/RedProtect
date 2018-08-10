@@ -159,14 +159,7 @@ public class Region implements Serializable{
 		}
 	}
 
-
-	public void updateSigns(){
-		for (String s:this.flags.keySet()){
-			updateSigns(s);
-		}
-	}
-
-	public void updateSigns(String fname){
+	private void updateSigns(String fname){
 		if (!RedProtect.get().cfgs.root().region_settings.enable_flag_sign){
 			return;
 		}

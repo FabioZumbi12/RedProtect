@@ -1841,96 +1841,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     			return true;
     		}        		
     	}
-        
 
-    	if (checkCmd(args[0], "buy") && player.hasPermission("redprotect.eco.buy")){
-    		if (!RedProtect.get().Vault){
-    			return true;
-    		}    		
-    		Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        	if (r == null){
-    			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-    			return true;
-    		}        	
-        	if (!r.isForSale()){
-    			RPLang.sendMessage(player, "economy.region.buy.notforsale");
-    			return true;
-    		} 
-        	
-    		if (args.length == 1){
-    			buyHandler(player, r.getValue(), r);
-    			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" BUY region "+r.getName()+" for "+r.getValue());
-				return true;    			
-    		}    				    		
-    	}
-        
-        if (checkCmd(args[0], "sell") && player.hasPermission("redprotect.eco.sell")){  
-        	if (!RedProtect.get().Vault){
-    			return true;
-    		}        	
-        	Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        	if (r == null){
-    			RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-    			return true;
-    		}        	
-        	if (r.isForSale()){
-    			RPLang.sendMessage(player, "economy.region.sell.already");
-    			return true;
-    		} 
-        	
-        	if (args.length == 1){
-        		r.setValue(RPEconomy.getRegionValue(r));
-        		if (r.isLeader(player)){
-        			sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), r.getValue());
-        		} else {
-        			sellHandler(r, player, r.getLeaders().get(0), r.getValue());            		
-        		}
-        		RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" for "+r.getValue());
-        		return true;
-        		
-        	}        	
-        	
-        	if (args.length == 2){         
-        		// rp sell <value/player>
-        		try {
-        			long value = Long.valueOf(args[1]);
-    				if (player.hasPermission("redprotect.eco.setvalue")){
-    					r.setValue(value);
-    					if (r.isLeader(player)){
-    	        			sellHandler(r, player, RPUtil.PlayerToUUID(player.getName()), r.getValue());
-    	        		} else {
-    	        			sellHandler(r, player, r.getLeaders().get(0), r.getValue());            		
-    	        		}
-    					RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" for "+r.getValue());
-    					return true;
-    				}    				
-    			} catch (NumberFormatException e){
-    				if (player.hasPermission("redprotect.eco.others")){
-    					r.setValue(RPEconomy.getRegionValue(r));
-    					sellHandler(r, player, RPUtil.PlayerToUUID(args[1]), r.getValue());
-    					RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" in name of player "+args[1]+" for "+r.getValue());
-            			return true;
-                	}   				
-    			}
-        	} 
-        	
-        	if (args.length == 3){   
-        		// rp sell player value
-        		try {
-        			long value = Long.valueOf(args[2]);
-    				if (player.hasPermission("redprotect.eco.setvalue")){
-    					r.setValue(value);
-    					sellHandler(r, player, RPUtil.PlayerToUUID(args[1]), value);
-    					RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+player.getName()+" SELL region "+r.getName()+" in name of player "+args[1]+" for "+value);
-    					return true;
-    				}    				
-    			} catch (NumberFormatException e){    
-    				RPLang.sendMessage(player, "cmdmanager.eco.notdouble");
-            		return true;
-    			}
-        	}
-        }
-        
         if (checkCmd(args[0], "teleport")) {
         	if (args.length == 1) {
 				RPLang.sendMessage(player, RPLang.get("cmdmanager.help.teleport").replace("{cmd}", getCmd("teleport")).replace("{alias}", getCmdAlias("teleport")));
@@ -2274,50 +2185,6 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         RPLang.sendMessage(player,RPLang.get("correct.command") + " " + ChatColor.DARK_AQUA + "/rp "+getCmd("help"));   
         return true;
     }
-
-	private void buyHandler(Player player, long value, Region r) {		
-		       		
-		if (r.isLeader(RPUtil.PlayerToUUID(player.getName()))){
-			RPLang.sendMessage(player, "economy.region.buy.own");
-			return;
-		}
-		
-		Double money = RedProtect.get().econ.getBalance(player);
-		if (money >= value){
-			String rname = r.getName();
-			ArrayList<String> sellers = new ArrayList<>(r.getLeaders()); 
-			if (RPEconomy.BuyRegion(r, RPUtil.PlayerToUUID(player.getName()))){
-				RedProtect.get().econ.withdrawPlayer(player, value);				
-				for (String seller : sellers){	
-					OfflinePlayer offp = RedProtect.get().serv.getOfflinePlayer(RPUtil.UUIDtoPlayer(seller));
-					if (!seller.equals(RPConfig.getString("region-settings.default-leader")) && offp != null){
-						RedProtect.get().econ.depositPlayer(offp, value / sellers.size());
-						if (offp.isOnline()){
-							RPLang.sendMessage(offp.getPlayer(), RPLang.get("economy.region.buy.bought").replace("{player}", player.getName()).replace("{region}", rname).replace("{world}", r.getWorld()));
-						}
-					}
-				}				
-				RPLang.sendMessage(player, RPLang.get("economy.region.buy.success").replace("{region}", r.getName()).replace("{value}", String.valueOf(value)).replace("{ecosymbol}", RPConfig.getEcoString("economy-name")));
-			} else {
-				RPLang.sendMessage(player, "economy.region.error");
-			}
-		} else {
-			RPLang.sendMessage(player, "economy.region.buy.nomoney");
-		}
-	}
-
-	private void sellHandler(Region r, Player player, String leader, long value) {       		
-		
-		if (r.isLeader(player) || player.hasPermission("redprotect.eco.admin")){
-			if (RPEconomy.putToSell(r, leader, value)){
-				RPLang.sendMessage(player, "economy.region.sell.success");
-			} else {
-				RPLang.sendMessage(player, "economy.region.error");
-			}
-		} else {
-			RPLang.sendMessage(player, "economy.region.sell.own");
-		}		
-	}
 
 	private static void handlePrioritySingle(Player p, int prior, String region) {
     	Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
