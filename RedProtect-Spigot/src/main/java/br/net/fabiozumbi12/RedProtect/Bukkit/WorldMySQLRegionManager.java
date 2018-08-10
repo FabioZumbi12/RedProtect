@@ -160,8 +160,8 @@ class WorldMySQLRegionManager implements WorldRegionManager{
 		                st.setString(16, r.getWorld());
 		                st.setLong(17, r.getValue());
 		                st.setString(18, r.getTPPointString());
-		                st.setInt(20, r.canDelete() ? 1 : 0);
-		                st.setString(21, r.getFlagStrings());
+		                st.setInt(19, r.canDelete() ? 1 : 0);
+		                st.setString(20, r.getFlagStrings());
 						
                 st.executeUpdate();
                 st.close();
