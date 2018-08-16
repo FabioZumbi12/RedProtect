@@ -12,14 +12,11 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -163,7 +160,9 @@ public class RPUtil {
 	}
     
     public static boolean isGuiItem(ItemStack pitem){
-    	if (pitem.get(Keys.ITEM_LORE).isPresent() && RedProtect.get().cfgs.getDefFlags().contains(pitem.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", ""))){
+    	if (pitem.get(Keys.ITEM_LORE).isPresent() &&
+				pitem.get(Keys.ITEM_LORE).get().size() >=1 &&
+				RedProtect.get().cfgs.getDefFlags().contains(pitem.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", ""))){
 			return true;
 		}
 		if (pitem.get(Keys.ITEM_LORE).isPresent()){

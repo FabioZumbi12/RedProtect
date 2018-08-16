@@ -79,7 +79,7 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/BossBarAPI_v2.4.1.jar</systemPath>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>dynmap-2.5</groupId>
 			<artifactId>dynmap-2.5</artifactId>
@@ -87,15 +87,12 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/dynmap-2.5.jar</systemPath>
 		</dependency>
-		
-		<dependency>
-			<groupId>GriefPrevention</groupId>
-			<artifactId>GriefPrevention</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/GriefPrevention.jar</systemPath>
-		</dependency>
-		
+	    <dependency>
+	   	    <groupId>com.github.TechFortress</groupId>
+		    <artifactId>GriefPrevention</artifactId>
+		    <version>LATEST</version>
+	    </dependency>
+
 		<dependency>
 			<groupId>MagicCarpet</groupId>
 			<artifactId>MagicCarpet</artifactId>
@@ -149,22 +146,24 @@
            <version>LATEST</version>
            <scope>provided</scope>
         </dependency>
+
 		<dependency>
             <groupId>net.ess3</groupId>
-            <artifactId>Essentials</artifactId>
-            <version>2.14-SNAPSHOT</version>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.15.0</version>
         </dependency>
+
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.0.8</version>
+            <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
-            <version>4.4.0-SNAPSHOT</version>
+            <version>LATEST</version>
         </dependency>
 
 	    <dependency>
@@ -172,7 +171,12 @@
 		    <artifactId>mypet</artifactId>
 		    <version>3.0-SNAPSHOT</version>
 	    </dependency>
-
+	  <!--
+	    <dependency>
+		    <groupId>org.dynmap</groupId>
+		    <artifactId>dynmap-api</artifactId>
+		    <version>LATEST</version>
+	    </dependency>-->
   </dependencies>
 
   <properties>

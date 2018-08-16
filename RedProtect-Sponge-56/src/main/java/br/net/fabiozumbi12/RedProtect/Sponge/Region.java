@@ -494,8 +494,7 @@ public class Region implements Serializable{
     }
 	
 	private String conformName(String name){
-		name = RPUtil.toText(name).toPlain();
-		return name;
+		return RPUtil.toText(name).toPlain();
 	}
 
 	/**

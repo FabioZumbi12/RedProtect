@@ -158,17 +158,6 @@ public class RPUtil {
 		} 
     	return setTo;
 	}
-    
-    public static long getNowMillis(){
-    	SimpleDateFormat sdf = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));			
-		Calendar cal = Calendar.getInstance();
-		try {
-			cal.setTime(sdf.parse(sdf.format(cal.getTime())));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return cal.getTimeInMillis();
-    }
 
 	public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
 	    TaskChain.newChain().add(new TaskChain.GenericTask() {
@@ -289,16 +278,7 @@ public class RPUtil {
         int sec = Calendar.getInstance().get(Calendar.SECOND);        
 		return "["+hour+":"+min+":"+sec+"]";    	
     }
-    
-    static void fixWorld(String regionname){
-    	for (World w:RedProtect.get().serv.getWorlds()){
-    		Region r = RedProtect.get().rm.getRegion(regionname, w);
-    		if (r != null){
-    			r.setWorld(w.getName());
-    		}
-    	}
-    }
-           
+
     //TODO read all db
     static void ReadAllDB(Set<Region> regions) {
     	int i = 0;
@@ -1125,7 +1105,7 @@ public class RPUtil {
 				newmin.setY(0);
 				newmax.setY(w.getMaxHeight());
 				
-				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_"), w.getName()), new ArrayList<>(), new ArrayList<>(), leaders,
+				Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new ArrayList<>(), new ArrayList<>(), leaders,
 						newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null, true);				
 				
 				Region other = RedProtect.get().rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());

@@ -63,11 +63,19 @@
      </repository>
      <repository>
             <id>EssentialsX</id>
-            <url>http://repo.ess3.net/content/groups/essentials</url>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
      </repository>
       <repository>
           <id>MyPet3.0</id>
           <url>http://nexus.keyle.de</url>
+      </repository>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
+      <repository>
+          <id>dynmap</id>
+          <url>http://repo.mikeprimm.com/</url>
       </repository>
   </repositories>
   
