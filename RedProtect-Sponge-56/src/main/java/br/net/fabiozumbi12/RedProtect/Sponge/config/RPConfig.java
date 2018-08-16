@@ -77,6 +77,7 @@ public class RPConfig{
 			"set-portal",
 			"exit",
 			"particles",
+			"dynmap",
 			"deny-exit-items");
 	
 

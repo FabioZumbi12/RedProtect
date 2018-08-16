@@ -645,13 +645,13 @@ public class RPPlayerListener{
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
         		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
-        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
         	}
             
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
         		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
-        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
         	}
             
             //Deny Fly
@@ -808,14 +808,14 @@ public class RPPlayerListener{
         	
         	//Allow enter with items
             if (!rto.canEnterWithItens(p)){
-            	RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.flags.get("allow-enter-items").toString()));	
+            	RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.getFlags().get("allow-enter-items").toString()));
         		e.setCancelled(true);	
         		return;
         	}
             
             //Deny enter with item
             if (!rto.denyEnterWithItens(p)){
-            	RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", rto.flags.get("deny-enter-items").toString()));
+            	RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", rto.getFlags().get("deny-enter-items").toString()));
         		e.setCancelled(true);
         		return;		
         	}

@@ -22,7 +22,7 @@ import java.util.*;
 public class RPConfig{
 	
 	private static RPCommentedConfig comConfig;
-	private static YamlConfiguration gflags;
+	private static RPCommentedGlobalFlags comGflags;
 	private static YamlConfiguration signs;
 	private static YamlConfiguration GuiItems;
 	private static YamlConfiguration Prots;
@@ -78,7 +78,6 @@ public class RPConfig{
 			
 	public static void init() {
 
-		gflags = new YamlConfiguration();
 		signs = new YamlConfiguration();
 		GuiItems = new YamlConfiguration();
 		Prots = new YamlConfiguration();
@@ -293,9 +292,7 @@ public class RPConfig{
         if (RedProtect.get().getConfig().getDouble("config-version") < 7.6D){
             RedProtect.get().getConfig().set("config-version", 7.6D);
 
-            if (flags.contains("allow-potions")){
-                flags.remove("allow-potions");
-            }
+            flags.remove("allow-potions");
             if (!flags.contains("use-potions")){
                 flags.add("use-potions");
             }
@@ -362,58 +359,8 @@ public class RPConfig{
         			/*------------------------------------------------------------------------------------*/
 
         //load and write globalflags to global file
-        gflags = YamlConfiguration.loadConfiguration(globalflags);
-
-        for (World w:RedProtect.get().serv.getWorlds()){
-            gflags.set(w.getName()+".build", gflags.getBoolean(w.getName()+".build", true));
-            gflags.set(w.getName()+".liquid-flow", gflags.getBoolean(w.getName()+".liquid-flow", true));
-            gflags.set(w.getName()+".allow-changes-of.water-flow", gflags.getBoolean(w.getName()+".allow-changes-of.water-flow", true));
-            gflags.set(w.getName()+".allow-changes-of.lava-flow", gflags.getBoolean(w.getName()+".allow-changes-of.lava-flow", true));
-            gflags.set(w.getName()+".allow-changes-of.leaves-decay", gflags.getBoolean(w.getName()+".allow-changes-of.leaves-decay", true));
-            gflags.set(w.getName()+".allow-changes-of.flow-damage", gflags.getBoolean(w.getName()+".allow-changes-of.flow-damage", true));
-            gflags.set(w.getName()+".if-build-false.break-blocks", gflags.getStringList(w.getName()+".if-build-false.break-blocks"));
-            gflags.set(w.getName()+".if-build-false.place-blocks", gflags.getStringList(w.getName()+".if-build-false.place-blocks"));
-            gflags.set(w.getName()+".pvp", gflags.getBoolean(w.getName()+".pvp", true));
-            gflags.set(w.getName()+".iceform-by.player", gflags.getBoolean(w.getName()+".iceform-by.player", false));
-            gflags.set(w.getName()+".iceform-by.world", gflags.getBoolean(w.getName()+".iceform-by.world", true));
-            gflags.set(w.getName()+".interact", gflags.getBoolean(w.getName()+".interact", true));
-            gflags.set(w.getName()+".if-interact-false.allow-blocks", gflags.getStringList(w.getName()+".if-interact-false.allow-blocks"));
-            gflags.set(w.getName()+".if-interact-false.allow-entities", gflags.getStringList(w.getName()+".if-interact-false.allow-entities"));
-            gflags.set(w.getName()+".use-minecart", gflags.getBoolean(w.getName()+".use-minecart", true));
-            gflags.set(w.getName()+".entity-block-damage", gflags.getBoolean(w.getName()+".entity-block-damage", false));
-            gflags.set(w.getName()+".explosion-entity-damage", gflags.getBoolean(w.getName()+".explosion-entity-damage", true));
-            gflags.set(w.getName()+".fire-block-damage", gflags.getBoolean(w.getName()+".fire-block-damage", false));
-            gflags.set(w.getName()+".fire-spread", gflags.getBoolean(w.getName()+".fire-spread", false));
-            gflags.set(w.getName()+".player-hurt-monsters", gflags.getBoolean(w.getName()+".player-hurt-monsters", true));
-            gflags.set(w.getName()+".player-hurt-passives", gflags.getBoolean(w.getName()+".player-hurt-passives", true));
-            gflags.set(w.getName()+".spawn-monsters", gflags.getBoolean(w.getName()+".spawn-monsters", true));
-            gflags.set(w.getName()+".spawn-passives", gflags.getBoolean(w.getName()+".spawn-passives", true));
-            gflags.set(w.getName()+".remove-entities-not-allowed-to-spawn", gflags.getBoolean(w.getName()+".remove-entities-not-allowed-to-spawn", false));
-            gflags.set(w.getName()+".elytra.allow", gflags.getBoolean(w.getName()+".elytra.allow", true));
-            gflags.set(w.getName()+".elytra.boost", gflags.getDouble(w.getName()+".elytra.boost", 0.5D));
-            gflags.set(w.getName()+".deny-item-usage.allow-on-claimed-rps", gflags.getBoolean(w.getName()+".deny-item-usage.allow-on-claimed-rps", true));
-            gflags.set(w.getName()+".deny-item-usage.allow-on-wilderness", gflags.getBoolean(w.getName()+".deny-item-usage.allow-on-wilderness", true));
-            gflags.set(w.getName()+".deny-item-usage.items", gflags.getStringList(w.getName()+".deny-item-usage.items"));
-            gflags.set(w.getName()+".player-velocity.walk-speed", gflags.getDouble(w.getName()+".player-velocity.walk-speed", -1));
-            gflags.set(w.getName()+".player-velocity.fly-speed", gflags.getDouble(w.getName()+".player-velocity.fly-speed", -1));
-            gflags.set(w.getName()+".on-enter-cmds", gflags.getStringList(w.getName()+".on-enter-cmds"));
-            gflags.set(w.getName()+".on-exit-cmds", gflags.getStringList(w.getName()+".on-exit-cmds"));
-            gflags.set(w.getName()+".spawn-wither", gflags.getBoolean(w.getName()+".spawn-wither", true));
-            gflags.set(w.getName()+".invincible", gflags.getBoolean(w.getName()+".invincible", false));
-            gflags.set(w.getName()+".player-candrop", gflags.getBoolean(w.getName()+".player-candrop", true));
-            gflags.set(w.getName()+".player-canpickup", gflags.getBoolean(w.getName()+".player-canpickup", true));
-            gflags.set(w.getName()+".rain.trys-before-rain", gflags.getInt(w.getName()+".rain.trys-before-rain", 3));
-            gflags.set(w.getName()+".rain.duration", gflags.getInt(w.getName()+".rain.duration", 60));
-            gflags.set(w.getName()+".allow-crops-trample", gflags.getBoolean(w.getName()+".allow-crops-trample", true));
-            if (!gflags.contains(w.getName()+".command-ranges")){
-                gflags.set(w.getName()+".command-ranges.home.min-range", gflags.getDouble(w.getName()+".command-ranges.home.min-range", 0));
-                gflags.set(w.getName()+".command-ranges.home.max-range", gflags.getDouble(w.getName()+".command-ranges.home.max-range", w.getMaxHeight()));
-                gflags.set(w.getName()+".command-ranges.home.message", gflags.getString(w.getName()+".command-ranges.home.message", "&cYou cant use /home when mining or in caves!"));
-            }
-
-            w.setSpawnFlags(gflags.getBoolean(w.getName()+".spawn-monsters"), gflags.getBoolean(w.getName()+".spawn-passives"));
-            RedProtect.get().logger.debug("Spawn Animals: " + w.getAllowAnimals() + " | " + "Spawn Monsters: " + w.getAllowMonsters());
-        }
+        comGflags = new RPCommentedGlobalFlags();
+        comGflags.addDef();
 
 
                     /*------------------------------------------------------------------------------------*/
@@ -507,31 +454,31 @@ public class RPConfig{
 	}
 	
 	public static boolean hasGlobalKey(String path){
-		return gflags.contains(path);
+		return comGflags.gflags.contains(path);
 	}
 	
 	public static String getGlobalFlagString(String string) {		
-		return gflags.getString(string);
+		return comGflags.gflags.getString(string);
 	}
 	
 	public static double getGlobalFlagDouble(String key){		
-		return gflags.getDouble(key);
+		return comGflags.gflags.getDouble(key);
 	}
 	
 	public static float getGlobalFlagFloat(String key){			
-		return Float.valueOf(gflags.getString(key));
+		return Float.valueOf(comGflags.gflags.getString(key));
 	}
 	
 	public static int getGlobalFlagInt(String key){		
-		return gflags.getInt(key);
+		return comGflags.gflags.getInt(key);
 	}
 	
     public static Boolean getGlobalFlagBool(String key){		
-		return gflags.getBoolean(key);
+		return comGflags.gflags.getBoolean(key);
 	}
     
     public static List<String> getGlobalFlagList(String key){		
-		return gflags.getStringList(key);
+		return comGflags.gflags.getStringList(key);
 	}
     
     public static ItemStack getGuiItemStack(String key){
@@ -634,15 +581,14 @@ public class RPConfig{
     	File main = RedProtect.get().getDataFolder();
         File gui = new File(main, "guiconfig.yml");
         File bvalues = new File(main, "economy.yml");
-        File globalflags = new File(main, "globalflags.yml");
         File protections = new File(main, "protections.yml");
         File signsf = new File(main, "signs.yml");       
     	try {
-			gflags.save(globalflags);
 			GuiItems.save(gui);
 			EconomyConfig.save(bvalues);
 			Prots.save(protections);
 			signs.save(signsf);
+            comGflags.saveConfig();
 			comConfig.saveConfig();
 		} catch (IOException e) {
 			RedProtect.get().logger.severe("Problems during save file:");

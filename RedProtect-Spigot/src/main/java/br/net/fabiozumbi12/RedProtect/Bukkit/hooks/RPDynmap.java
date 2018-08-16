@@ -4,21 +4,35 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.ChangeRegionFlagEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
 
-public class RPDynmap {
+public class RPDynmap implements Listener {
 
 	private static DynmapAPI Dyn;
-	static MarkerSet MSet;
+	private static MarkerSet MSet;
 	private static MarkerAPI MApi;
 
+	@EventHandler
+	public void onChangeFlag(ChangeRegionFlagEvent event){
+		if (event.getFlag().equalsIgnoreCase("dynmap")){
+			boolean value = (boolean) event.getFlagValue();
+			if (value){
+				addMark(event.getRegion());
+			} else {
+				removeMark(event.getRegion());
+			}
+		}
+	}
 	  
 	public RPDynmap(DynmapAPI dyn){
 		Dyn = dyn;

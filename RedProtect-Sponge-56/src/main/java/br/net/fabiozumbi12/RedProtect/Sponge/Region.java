@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -12,6 +13,7 @@ import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -44,13 +46,21 @@ public class Region implements Serializable{
     private String wMessage;
     private String world;
     private String date;
-    public Map<String, Object> flags;
+    private Map<String, Object> flags;
 	private long value;
 	private Location<World> tppoint;
 	private final boolean waiting = false;
 	private boolean canDelete;
 	private boolean tosave = true;
-        
+
+	public Map<String, Object> getFlags() {
+		return flags;
+	}
+
+	public void setFlags(Map<String, Object> flags) {
+		this.flags = flags;
+	}
+
 	/**Get unique ID of region based on name of "region + @ + world".
 	 * @return {@code id string}
 	 */
@@ -83,12 +93,16 @@ public class Region implements Serializable{
 		this.canDelete = canDelete;
 	}
 	
-    public void setFlag(String fname, Object value) {
+    public boolean setFlag(Cause cause, String fname, Object value) {
+		ChangeRegionFlagEvent event = new ChangeRegionFlagEvent(cause, this, fname, value);
+		if (Sponge.getEventManager().post(event)) return false;
+
     	setToSave(true);
-    	this.flags.put(fname, value);
-    	RedProtect.get().rm.updateLiveFlags(this, fname, value.toString());
-		updateSigns(fname);
+    	this.flags.put(event.getFlag(), event.getFlagValue());
+    	RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
+		updateSigns(event.getFlag());
 		checkParticle();
+		return true;
     }
     
     public void removeFlag(String Name) {
@@ -1521,4 +1535,8 @@ public class Region implements Serializable{
 		}
 		return false;
 	}
+
+    public boolean allowDynmap() {
+		return !flagExists("dynmap") || getFlagBool("dynmap");
+    }
 }

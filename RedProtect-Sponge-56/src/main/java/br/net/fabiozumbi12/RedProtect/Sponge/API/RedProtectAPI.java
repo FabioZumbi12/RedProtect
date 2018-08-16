@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -129,9 +130,24 @@ public class RedProtectAPI {
 	 * @see  #equals(Object)
 	 */
 	public void setRegionFlag(Region region, String flag, Object value){
-		region.setFlag(flag, value);
+		setRegionFlag(null, region, flag, value);
 	}
-	
+
+	/**
+	 * Set a flag for the given Region with flag name and value.
+	 * <p>
+	 * @param cause Who changes this flag.
+	 * @param region Region to set the flag.
+	 * @param flag String with flag name.
+	 * @param value Object to define the flag. This Object need to be a {@code Boolean}, {@code String} or {@code Integer}.
+	 * <p>Use cast to convert the non Object to Object:
+	 * <p>{@code Object value = (String)MyValue;}
+	 * @see  #equals(Object)
+	 */
+	public void setRegionFlag(Cause cause, Region region, String flag, Object value){
+		region.setFlag(cause, flag, value);
+	}
+
 	/**
 	 * Get a boolean value from given region of booleans flags.
 	 * <p>

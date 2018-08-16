@@ -485,9 +485,10 @@ public class RPCommands implements CommandCallable {
         			Region r = RedProtect.get().rm.getRegion(args[1], w);
         			if (r != null && (RedProtect.get().cfgs.getDefFlags().contains(args[2]) || RedProtect.get().cfgs.AdminFlags.contains(args[2]))){
         				Object objflag = RPUtil.parseObject(args[3]);
-        				r.setFlag(args[2], objflag);
-        				sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[2]+"'") + " " + r.getFlagString(args[2])));
-        				RedProtect.get().logger.addLog("Console changed flag "+args[2]+" to "+r.getFlagString(args[2]));
+        				if (r.setFlag(RedProtect.get().getPVHelper().getCause(sender), args[2], objflag)){
+							sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[2]+"'") + " " + r.getFlagString(args[2])));
+							RedProtect.get().logger.addLog("Console changed flag "+args[2]+" to "+r.getFlagString(args[2]));
+						}
         				return cmdr;
         			}
     			}
@@ -1129,8 +1130,8 @@ public class RPCommands implements CommandCallable {
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
     				return cmdr;
     			}
-    			for (String key:from.flags.keySet()){
-        			to.setFlag(key, from.flags.get(key));
+    			for (Map.Entry<String, Object> key:from.getFlags().entrySet()){
+        			to.setFlag(RedProtect.get().getPVHelper().getCause(sender), key.getKey(), key.getValue());
     			}
     			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.flag.copied") + args[1] + " > " + args[2]);
     			RedProtect.get().logger.addLog("Player "+player.getName()+" Copied FLAGS from "+ args[1] + " to " + args[2]);
@@ -1166,7 +1167,7 @@ public class RPCommands implements CommandCallable {
 					r2 = RedProtect.get().rm.getRegion(name, w.get());
 					RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));
 					RPLang.sendMessage(player, "cmdmanager.region.portalhint");
-					r2.setFlag("set-portal", args[2]+" "+w.get().getName());
+					r2.setFlag(RedProtect.get().getPVHelper().getCause(sender), "set-portal", args[2]+" "+w.get().getName());
 
 					RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.get().getName());
 				} else {
@@ -1176,7 +1177,7 @@ public class RPCommands implements CommandCallable {
 						RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));
 						RPLang.sendMessage(player, "cmdmanager.region.portalhint");
 
-						r2.setFlag("set-portal", args[2]+" "+w.get().getName());
+						r2.setFlag(RedProtect.get().getPVHelper().getCause(sender), "set-portal", args[2]+" "+w.get().getName());
 						RedProtect.get().rm.add(r2, player.getWorld());
 
 						RedProtect.get().firstLocationSelections.remove(player);
@@ -2200,12 +2201,6 @@ public class RPCommands implements CommandCallable {
                 return;
             }
 
-			//region name conform
-			if (newName.length() < 3) {
-				RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
-				return;
-			}
-
 			//filter region name
 			newName = newName.replace(" ","_").replaceAll("[^\\p{L}_0-9 ]", "");
 			if (newName.isEmpty() || newName.length() < 3) {
@@ -2214,6 +2209,12 @@ public class RPCommands implements CommandCallable {
 					RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
 					return;
 				}
+			}
+
+			//region name conform
+			if (newName.length() < 3) {
+				RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+				return;
 			}
 
 			if (RedProtect.get().rm.getRegion(newName, p.getWorld()) != null) {
@@ -2264,7 +2265,7 @@ public class RPCommands implements CommandCallable {
                 }
 
             	if (value.equalsIgnoreCase("remove")){
-            		if (RedProtect.get().cfgs.AdminFlags.contains(flag) && r.flags.containsKey(flag)){
+            		if (RedProtect.get().cfgs.AdminFlags.contains(flag) && r.getFlags().containsKey(flag)){
             			r.removeFlag(flag);
                         RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", r.getName()));
                         RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" REMOVED FLAG "+flag+" of region "+r.getName());
@@ -2310,9 +2311,10 @@ public class RPCommands implements CommandCallable {
                     	}
             			*/
             			if (objflag instanceof Boolean){
-            				r.setFlag(flag, objflag);
-                            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
-                            RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+            				if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, objflag)){
+								RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
+								RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+							}
                             return;
             			} else {
             				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
@@ -2325,9 +2327,10 @@ public class RPCommands implements CommandCallable {
                 			SendFlagUsageMessage(p, flag);
                 			return;
                 		}
-                		r.setFlag(flag, objflag);
-                		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
-            			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+                		if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, objflag)){
+							RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
+							RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+						}
                         return;
                 	}
 
@@ -2369,9 +2372,10 @@ public class RPCommands implements CommandCallable {
                 	}
         			*/
             		if (RedProtect.get().cfgs.getDefFlagsValues().containsKey(flag)) {
-            			r.setFlag(flag, !r.getFlagBool(flag));
-                        RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
-            			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+            			if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, !r.getFlagBool(flag))){
+							RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
+							RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+						}
                     } else {
             			if (RedProtect.get().cfgs.AdminFlags.contains(flag)){
             				SendFlagUsageMessage(p, flag);
@@ -2459,6 +2463,7 @@ public class RPCommands implements CommandCallable {
 				flag.equalsIgnoreCase("spawn-animals") ||
 				flag.equalsIgnoreCase("minecart") ||
 				flag.equalsIgnoreCase("forcepvp") ||
+				flag.equalsIgnoreCase("dynmap") ||
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}
@@ -2928,8 +2933,8 @@ public class RPCommands implements CommandCallable {
         				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
 							if (flag.equalsIgnoreCase(args[1])){
 								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation(), this.getClass().getName());
-								if (r != null && r.canBuild(((Player)source)) && r.flags.containsKey(flag)){
-									return Collections.singletonList(r.flags.get(flag).toString());
+								if (r != null && r.canBuild(((Player)source)) && r.getFlags().containsKey(flag)){
+									return Collections.singletonList(r.getFlags().get(flag).toString());
 								}
 								return SotTab;
 							}
@@ -2942,8 +2947,8 @@ public class RPCommands implements CommandCallable {
         				if (RedProtect.get().ph.hasAdminFlagPerm((Player)source, flag) && !tab.contains(flag)){
 							if (flag.equalsIgnoreCase(args[1])){
 								Region r = RedProtect.get().rm.getTopRegion(((Player)source).getLocation(), this.getClass().getName());
-								if (r != null && r.canBuild(((Player)source)) && r.flags.containsKey(flag)){
-									return Collections.singletonList(r.flags.get(flag).toString());
+								if (r != null && r.canBuild(((Player)source)) && r.getFlags().containsKey(flag)){
+									return Collections.singletonList(r.getFlags().get(flag).toString());
 								}
 								return SotTab;
 							}

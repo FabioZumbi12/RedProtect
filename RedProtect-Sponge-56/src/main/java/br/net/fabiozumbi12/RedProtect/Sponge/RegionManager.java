@@ -44,6 +44,9 @@ public class RegionManager{
     public void unloadAll() {
     	for (World w:this.regionManagers.keySet()){
     		regionManagers.get(w).clearRegions();
+			if (RedProtect.get().Dyn){
+				RedProtect.get().dynmap.removeAll(w);
+			}
     	}
     	this.regionManagers.clear();
 		this.bLoc.clear();
@@ -95,11 +98,11 @@ public class RegionManager{
     	} 
         return size;
     }
-    
+    /*
     public Set<Region> getWorldRegions(String player, World w) {
         return this.regionManagers.get(w).getRegions(player);
     }
-    
+    */
     /**Return a {@code set<region>} of regions by player UUID or Name;
      * 
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
@@ -155,7 +158,15 @@ public class RegionManager{
     }
     
     public void add(Region r, World w) {
-        this.regionManagers.get(w).add(r);
+    	this.regionManagers.get(w).add(r);
+		if (RedProtect.get().Dyn){
+			try {
+				RedProtect.get().dynmap.addMark(r);
+			} catch (Exception ex){
+				ex.printStackTrace();
+				RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
+			}
+		}
     }
     
     public void save(World w){
@@ -167,6 +178,14 @@ public class RegionManager{
     	WorldRegionManager rms = this.regionManagers.get(w);
     	rms.remove(r);
         removeCache(r);
+		if (RedProtect.get().Dyn){
+			try {
+				RedProtect.get().dynmap.removeMark(r);
+			} catch (Exception ex){
+				ex.printStackTrace();
+				RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
+			}
+		}
     }
     	
     private void removeCache(Region r){
@@ -339,7 +358,7 @@ public class RegionManager{
 	@SuppressWarnings("deprecation")
 	public void renameRegion(String newName, Region old){
 		Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] {old.getMinMbrX(),old.getMinMbrX(),old.getMaxMbrX(),old.getMaxMbrX()},
-				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.flags, old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+				new int[] {old.getMinMbrZ(),old.getMinMbrZ(),old.getMaxMbrZ(),old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
 		this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()).get());		
 		this.remove(old, RedProtect.get().serv.getWorld(old.getWorld()).get());		

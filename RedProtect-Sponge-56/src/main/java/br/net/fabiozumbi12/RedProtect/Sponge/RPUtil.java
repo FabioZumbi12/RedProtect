@@ -1022,7 +1022,7 @@ public class RPUtil {
 			}, RedProtect.get().cfgs.root().region_settings.border.time_showing, TimeUnit.SECONDS);
         }
     }		
-	
+	/*
 	private static String StripName(String pRName) {
         String regionName;
 		if (pRName.length() > 13) {
@@ -1032,7 +1032,7 @@ public class RPUtil {
         } 
 		return regionName;
 	}
-	
+	*/
 	public static <T extends CatalogType> boolean testRegistry(Class<T> class1, String value){
 		return (Sponge.getRegistry().getType(class1, value).isPresent());
 	}
@@ -1086,8 +1086,8 @@ public class RPUtil {
 		fileDB.getNode(rname,"maxY").setValue(r.getMaxY());
 		fileDB.getNode(rname,"minY").setValue(r.getMinY());
 		fileDB.getNode(rname,"candelete").setValue(r.canDelete());
-		for (String flag:r.flags.keySet()){
-			fileDB.getNode(rname,"flags",flag).setValue(r.flags.get(flag));	
+		for (Map.Entry<String, Object> flag:r.getFlags().entrySet()){
+			fileDB.getNode(rname,"flags",flag.getKey()).setValue(flag.getValue());
 		}
 		fileDB.getNode(rname,"value").setValue(r.getValue());
 		
@@ -1152,14 +1152,14 @@ public class RPUtil {
 
   	    for (String flag:RedProtect.get().cfgs.getDefFlags()){
     		if (region.getNode(rname,"flags",flag) != null){
-  			    newr.flags.put(flag,region.getNode(rname,"flags",flag).getBoolean()); 
+  			    newr.getFlags().put(flag,region.getNode(rname,"flags",flag).getBoolean());
   		    } else {
-  			    newr.flags.put(flag,RedProtect.get().cfgs.getDefFlagsValues().get(flag)); 
+  			    newr.getFlags().put(flag, RedProtect.get().cfgs.getDefFlagsValues().get(flag));
   		    }    	    		
   	    } 
     	for (String flag:RedProtect.get().cfgs.AdminFlags){
     		if (region.getNode(rname,"flags",flag).getString() != null){
-    			newr.flags.put(flag,region.getNode(rname,"flags",flag).getValue());
+    			newr.getFlags().put(flag,region.getNode(rname,"flags",flag).getValue());
     		}
     	}
     	return newr;

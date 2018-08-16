@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -71,7 +72,7 @@ public class RPEconomy {
 			r.clearAdmins();
 			r.setValue(value);
 			r.setWelcome(getCostMessage(r));			
-			r.setFlag("for-sale", true);
+			r.setFlag(Bukkit.getConsoleSender(), "for-sale", true);
 			if (RPConfig.getEcoBool("rename-region")){
 				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}			
@@ -89,7 +90,7 @@ public class RPEconomy {
 			r.addLeader(uuid);
 			r.setDate(RPUtil.DateNow());
 			r.setWelcome("");
-			r.flags = RPConfig.getDefFlagsValues();
+			r.setFlags(RPConfig.getDefFlagsValues());
 			if (RPConfig.getEcoBool("rename-region")){
 				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}	

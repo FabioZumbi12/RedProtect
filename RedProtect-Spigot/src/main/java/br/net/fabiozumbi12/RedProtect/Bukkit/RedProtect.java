@@ -188,6 +188,7 @@ public class RedProtect extends JavaPlugin {
             	logger.info("Dynmap found. Hooked.");
             	logger.info("Loading dynmap markers...");
             	dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+                serv.getPluginManager().registerEvents(dynmap, this);
             	logger.info("Dynmap markers loaded!");
             }
             if (PlaceHolderAPI){

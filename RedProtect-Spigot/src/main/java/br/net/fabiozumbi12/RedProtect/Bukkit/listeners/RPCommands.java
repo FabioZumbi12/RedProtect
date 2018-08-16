@@ -89,8 +89,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         				if (sender.hasPermission("redprotect.flag."+ flag) && !tab.contains(flag)){
 							if (flag.equalsIgnoreCase(args[1])){
 								Region r = RedProtect.get().rm.getTopRegion(((Player)sender).getLocation());
-								if (r != null && r.canBuild(((Player)sender)) && r.flags.containsKey(flag)){
-									return Collections.singletonList(r.flags.get(flag).toString());
+								if (r != null && r.canBuild(((Player)sender)) && r.getFlags().containsKey(flag)){
+									return Collections.singletonList(r.getFlags().get(flag).toString());
 								}
 								return SotTab;
 							}
@@ -103,8 +103,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 						if (sender.hasPermission("redprotect.admin.flag."+ flag) && !tab.contains(flag)){
 							if (flag.equalsIgnoreCase(args[1])){
 								Region r = RedProtect.get().rm.getTopRegion(((Player)sender).getLocation());
-								if (r != null && r.canBuild(((Player)sender)) && r.flags.containsKey(flag)){
-									return Collections.singletonList(r.flags.get(flag).toString());
+								if (r != null && r.canBuild(((Player)sender)) && r.getFlags().containsKey(flag)){
+									return Collections.singletonList(r.getFlags().get(flag).toString());
 								}
 								return SotTab;
 							}
@@ -739,7 +739,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
         			Region r = RedProtect.get().rm.getRegion(args[1], w);
         			if (r != null && (RPConfig.getDefFlags().contains(args[2]) || RPConfig.AdminFlags.contains(args[2]))){
         				Object objflag = RPUtil.parseObject(args[3]);
-        				r.setFlag(args[2], objflag);
+        				r.setFlag(sender, args[2], objflag);
         				sender.sendMessage(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+args[2]+"'") + " " + r.getFlagString(args[2]));
         				RedProtect.get().logger.addLog("Console changed flag "+args[2]+" to "+r.getFlagString(args[2]));
         				return true;
@@ -1467,7 +1467,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     		
         	if (checkCmd(args[0], "flag") && args[1].equalsIgnoreCase("gui-edit")) {
         		if (player.hasPermission("redprotect.gui.edit")){
-        			int MaxSlot = 0;
+        			int MaxSlot;
         			try{
         				MaxSlot = 9*Integer.parseInt(args[2]);
         				if (MaxSlot > 54 || MaxSlot < RPConfig.getGuiMaxSlot()){
@@ -1534,8 +1534,8 @@ public class RPCommands implements CommandExecutor, TabCompleter{
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
     				return true;
     			}
-    			for (String key:from.flags.keySet()){
-        			to.setFlag(key, from.flags.get(key));
+    			for (Map.Entry<String, Object> key:from.getFlags().entrySet()){
+        			to.setFlag(sender, key.getKey(), key.getValue());
     			}
     			RPLang.sendMessage(player,RPLang.get("cmdmanager.region.flag.copied") + args[1] + " > " + args[2]);
     			RedProtect.get().logger.addLog("Player "+player.getName()+" Copied FLAGS from "+ args[1] + " to " + args[2]);
@@ -1597,7 +1597,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 					r2 = RedProtect.get().rm.getRegion(name, w);
 					RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
 					RPLang.sendMessage(player, "cmdmanager.region.portalhint");
-					r2.setFlag("set-portal", args[2]+" "+w.getName());
+					r2.setFlag(sender, "set-portal", args[2]+" "+w.getName());
 
 					RedProtect.get().logger.addLog("(World "+r2.getWorld()+") Player "+player.getName()+" CREATED A PORTAL "+r2.getName()+" to "+args[2]+" world "+w.getName());
 				} else {
@@ -1607,7 +1607,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 						RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
 						RPLang.sendMessage(player, "cmdmanager.region.portalhint");
 
-						r2.setFlag("set-portal", args[2]+" "+w.getName());
+						r2.setFlag(sender, "set-portal", args[2]+" "+w.getName());
 						RedProtect.get().rm.add(r2, player.getWorld());
 
 						RedProtect.get().firstLocationSelections.remove(player);
@@ -2621,12 +2621,6 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 return;
             }
 
-			//region name conform
-			if (newName.length() < 3) {
-				RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
-				return;
-			}
-
 			//filter region name
 			newName = newName.replace(" ","_").replaceAll("[^\\p{L}_0-9 ]", "");
 			if (newName.isEmpty() || newName.length() < 3) {
@@ -2635,6 +2629,12 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 					RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
 					return;
 				}
+			}
+
+			//region name conform
+			if (newName.length() < 3) {
+				RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+				return;
 			}
 
 			if (RedProtect.get().rm.getRegion(newName, p.getWorld()) != null) {
@@ -2684,7 +2684,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 }  
             	
             	if (value.equalsIgnoreCase("remove")){
-            		if (RPConfig.AdminFlags.contains(flag) && r.flags.containsKey(flag)){
+            		if (RPConfig.AdminFlags.contains(flag) && r.getFlags().containsKey(flag)){
             			r.removeFlag(flag);
                         RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", r.getName())); 
                         RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" REMOVED FLAG "+flag+" of region "+r.getName());
@@ -2723,16 +2723,18 @@ public class RPCommands implements CommandExecutor, TabCompleter{
             					RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
                         		return;
             				}  
-            				r.setFlag(flag, value);
-                            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
-                            RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+            				if (r.setFlag(p, flag, value)){
+								RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
+								RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+							}
                             return;
                     	}
             			
             			if (objflag instanceof Boolean){
-            				r.setFlag(flag, objflag);
-                            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
-                            RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+            				if (r.setFlag(p, flag, objflag)){
+								RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
+								RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+							}
                             return;
             			} else {
             				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
@@ -2745,9 +2747,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 			SendFlagUsageMessage(p, flag);               			
                 			return;
                 		}
-                		r.setFlag(flag, objflag);
-                		RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
-            			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));                     
+                		if (r.setFlag(p, flag, objflag)){
+							RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
+							RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+						}
                         return;               		
                 	} 
 
@@ -2774,11 +2777,12 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                         		return;
             				}  
             				if (r.getFlagString(flag).equalsIgnoreCase("")){
-            					r.setFlag(flag, clan.getTag());   
-            					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+clan.getClan().getColorTag()+"'"));
+            					if (r.setFlag(p, flag, clan.getTag())){
+									RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+clan.getClan().getColorTag()+"'"));
+								}
             				} else {            					
             					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'"+r.getFlagString(flag)+"'"));
-            					r.setFlag(flag, "");
+            					r.setFlag(p, flag, "");
             				}            				
                             RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag)); 
                             return;
@@ -2789,9 +2793,10 @@ public class RPCommands implements CommandExecutor, TabCompleter{
                 	}
         			
             		if (RPConfig.getDefFlagsValues().containsKey(flag)) {
-            			r.setFlag(flag, !r.getFlagBool(flag));
-                        RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
-            			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+            			if (r.setFlag(p, flag, !r.getFlagBool(flag))){
+							RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
+							RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
+						}
 					} else {
             			if (RPConfig.AdminFlags.contains(flag)){
             				SendFlagUsageMessage(p, flag);  
@@ -2879,6 +2884,7 @@ public class RPCommands implements CommandExecutor, TabCompleter{
 				flag.equalsIgnoreCase("spawn-animals") ||
 				flag.equalsIgnoreCase("minecart") ||
 				flag.equalsIgnoreCase("forcepvp") ||
+				flag.equalsIgnoreCase("dynmap") ||
 				flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)){
 			return false;
 		}

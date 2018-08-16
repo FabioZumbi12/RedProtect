@@ -2,10 +2,12 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,14 +39,22 @@ public class Region implements Serializable{
     private String wMessage;
     private String world;
     private String date;
-    public Map<String, Object> flags;
+    private Map<String, Object> flags;
 	private long value;
 	private Location tppoint;
 	private boolean tosave = true;
 	private final boolean waiting = false;
 	private boolean canDelete;
-	
-	public boolean canDelete(){
+
+    public Map<String, Object> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(Map<String, Object> flags) {
+        this.flags = flags;
+    }
+
+    public boolean canDelete(){
 		return this.canDelete;
 	}
 
@@ -159,20 +169,19 @@ public class Region implements Serializable{
     	}
     }
 
-
-    public void setFlag(String fname, Object value) {
-        setToSave(true);
-        this.flags.put(fname, value);
-        RedProtect.get().rm.updateLiveFlags(this, fname, value.toString());
-        updateSigns(fname);
-        if (fname.equalsIgnoreCase("dynmap") && RedProtect.get().dynmap != null){
-            if (Boolean.getBoolean(value.toString())){
-                RedProtect.get().dynmap.addMark(this);
-            } else {
-                RedProtect.get().dynmap.removeMark(this);
-            }
+    public boolean setFlag(CommandSender cause, String fname, Object value) {
+        ChangeRegionFlagEvent event = new ChangeRegionFlagEvent(cause, this, fname, value);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()){
+            return false;
         }
+
+        setToSave(true);
+        this.flags.put(event.getFlag(), event.getFlagValue());
+        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
+        updateSigns(event.getFlag());
         checkParticle();
+        return true;
     }
 
     public void removeFlag(String Name) {

@@ -252,7 +252,7 @@ public class RPCommentedConfig {
 		setDefault("hooks", null, null);
 		setDefault("hooks.check-uuid-names-onstart", false, "Convert/check names if need to update to/from UUID/names on server start? Disable for Bungeecoord.");
 		setDefault("hooks.essentials.import-lastvisits", false, "Import last visits from Essentials to RedProtect Regions.");
-		setDefault("hooks.dynmap.enable", true, "Enable hook to show all regions on dynmap plugin?");
+		setDefault("hooks.dynmap.enabled", true, "Enable hook to show all regions on dynmap plugin?");
 		setDefault("hooks.dynmap.hide-by-default", true, "Hide the Redprotect tab group by default?");
 		setDefault("hooks.dynmap.marks-groupname", "RedProtect", "Group name to show on hide/show tab map.");
 		setDefault("hooks.dynmap.layer-priority", 10, "If you use another region mark plugin.");
@@ -286,7 +286,7 @@ public class RPCommentedConfig {
  	private void setComment(String key, String comment){
  		comments.put(key, comment);
  	}
- 	
+
  	public void saveConfig(){
  		StringBuilder b = new StringBuilder();
  		RedProtect.get().getConfig().options().header(null);
@@ -306,13 +306,13 @@ public class RPCommentedConfig {
  		
  		for (String line:RedProtect.get().getConfig().getKeys(true)){
  			String[] key = line.split("\\"+RedProtect.get().getConfig().options().pathSeparator());
- 			String spaces = "";
+ 			StringBuilder spaces = new StringBuilder();
  			for (int i = 0; i < key.length; i++){
  				if (i == 0) continue;
- 				spaces = spaces+" "; 				
+ 				spaces.append(" ");
  			} 			
  			if (comments.containsKey(line)){
- 				if (spaces.isEmpty()){
+ 				if (spaces.length() == 0){
  					b.append("\n# ").append(comments.get(line).replace("\n", "\n# ")).append('\n');
  				} else {
  					b.append(spaces).append("# ").append(comments.get(line).replace("\n", "\n"+spaces+"# ")).append('\n');
@@ -341,7 +341,6 @@ public class RPCommentedConfig {
  			} else {
  				b.append(spaces).append(key[key.length-1]).append(":\n");
  			}
- 					
  		}
  		
  		try {

@@ -10,7 +10,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.property.block.MatterProperty;
-import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.explosive.PrimedTNT;
@@ -20,7 +19,6 @@ import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.golem.Golem;
 import org.spongepowered.api.entity.living.monster.Creeper;
 import org.spongepowered.api.entity.living.monster.Monster;
-import org.spongepowered.api.entity.living.monster.Wither;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.entity.vehicle.Boat;
@@ -580,29 +578,46 @@ public class RPGlobalListener{
 		if (event.getCause().first(Player.class).isPresent()) return;
 
         for (Entity e: event.getEntities()){
-        	if (e == null){
+        	if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null){
         		continue;
         	}
 
-        	if (e instanceof Wither && !RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_wither){
-        		if (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) continue;
-				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Wither " + e.getType().getName());
-                event.setCancelled(true);
-                return;
-            }
-
-        	if (e instanceof Monster && !RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_monsters) {
-				if (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) continue;
+        	//blacklist
+        	if (e instanceof Monster && RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist.contains("MONSTERS")) {
 				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Monster " + e.getType().getName());
 				event.setCancelled(true);
 				return;
             }
-            if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_passives) {
-				if (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null) continue;
+            if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist.contains("PASSIVES")) {
 				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Animal " + e.getType().getName());
 				event.setCancelled(true);
 				return;
             }
+            if (RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist.contains(e.getType().getName())){
+				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of " + e.getType().getName());
+				event.setCancelled(true);
+				return;
+			}
+
+			//whitelist
+			List<String> wtl = RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_whitelist;
+			if (!wtl.isEmpty()){
+				if (e instanceof Monster && !wtl.contains("MONSTERS")) {
+					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Monster " + e.getType().getName());
+					event.setCancelled(true);
+					return;
+				}
+				if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !wtl.contains("PASSIVES")) {
+					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Animal " + e.getType().getName());
+					event.setCancelled(true);
+					return;
+				}
+				if (!wtl.contains(e.getType().getName())){
+					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of " + e.getType().getName());
+					event.setCancelled(true);
+					return;
+				}
+			}
 			RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Spawn mob " + e.getType().getName());
         }         
     }

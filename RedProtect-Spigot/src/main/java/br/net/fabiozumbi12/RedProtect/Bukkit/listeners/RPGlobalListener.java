@@ -663,28 +663,42 @@ public class RPGlobalListener implements Listener{
         if (r != null){
         	return;
         }
-        
-        if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-wither")){ 
-            event.setCancelled(true);
-            return;
-        }        
-        if (e instanceof Monster && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-monsters")) {        	
-            if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
-            	event.setCancelled(true);
-                return;
-            }
-        }
-        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-passives")) {        	
-            if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-                    		|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
-            	event.setCancelled(true);
+
+		if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
+				|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
+				|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
+				|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
+
+			//blacklist
+			if (e instanceof Monster && RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains("MONSTER")) {
+				event.setCancelled(true);
+				return;
 			}
-        }
+			if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains("PASSIVES")) {
+				event.setCancelled(true);
+				return;
+			}
+			if (RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains(e.getType().name())){
+				event.setCancelled(true);
+				return;
+			}
+
+			//whitelist
+			List<String> wtl = RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-whitelist");
+			if (!wtl.isEmpty()){
+				if (e instanceof Monster && !wtl.contains("MONSTER")) {
+					event.setCancelled(true);
+					return;
+				}
+				if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !wtl.contains("PASSIVES")) {
+					event.setCancelled(true);
+					return;
+				}
+				if (!wtl.contains(e.getType().name())){
+					event.setCancelled(true);
+				}
+			}
+		}
     }
 	
 	@EventHandler

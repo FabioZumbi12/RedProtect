@@ -251,9 +251,9 @@ public class RPPlayerListener implements Listener{
         		else if (b.getState() instanceof Sign && RPConfig.getBool("region-settings.enable-flag-sign")){
                 	Sign s = (Sign) b.getState();
                 	String[] lines = s.getLines();
-                	if (lines[0].equalsIgnoreCase("[flag]") && r.flags.containsKey(lines[1])){
+                	if (lines[0].equalsIgnoreCase("[flag]") && r.getFlags().containsKey(lines[1])){
                 		String flag = lines[1];
-                		if (!(r.flags.get(flag) instanceof Boolean)){
+                		if (!(r.getFlags().get(flag) instanceof Boolean)){
                 			RPLang.sendMessage(p, RPLang.get("playerlistener.region.sign.cantflag"));
             				return;
             			}
@@ -381,14 +381,15 @@ public class RPPlayerListener implements Listener{
     }
     
     private void changeFlag(Region r, String flag, Player p, Sign s){
-    	r.setFlag(flag, !r.getFlagBool(flag));
-        RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
-        RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+RPLang.translBool(r.getFlagString(flag)));
-        s.setLine(3, RPLang.get("region.value")+" "+RPLang.translBool(r.getFlagString(flag)));
-        s.update();
-        if (!RPConfig.getSigns(r.getID()).contains(s.getLocation())){
-        	RPConfig.putSign(r.getID(), s.getLocation());
-        }
+    	if (r.setFlag(p, flag, !r.getFlagBool(flag))){
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
+			RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+RPLang.translBool(r.getFlagString(flag)));
+			s.setLine(3, RPLang.get("region.value")+" "+RPLang.translBool(r.getFlagString(flag)));
+			s.update();
+			if (!RPConfig.getSigns(r.getID()).contains(s.getLocation())){
+				RPConfig.putSign(r.getID(), s.getLocation());
+			}
+		}
     }
     
     @EventHandler
@@ -594,14 +595,14 @@ public class RPPlayerListener implements Listener{
 
     		//Allow teleport to with items
             if (!rto.canEnterWithItens(p)){
-        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.flags.get("allow-enter-items").toString()));	
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.getFlags().get("allow-enter-items").toString()));
         		e.setCancelled(true);
         		return;
         	}
             
             //Deny teleport to with item
             if (!rto.denyEnterWithItens(p)){
-        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", rto.flags.get("deny-enter-items").toString()));
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", rto.getFlags().get("deny-enter-items").toString()));
         		e.setCancelled(true);
         		return;
         	}
@@ -986,13 +987,13 @@ public class RPPlayerListener implements Listener{
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
         		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.flags.get("allow-enter-items").toString()));			
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
         	}
             
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
         		e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.flags.get("deny-enter-items").toString()));			
+        		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
         	}
             
             //update region admin or leander visit

@@ -419,5 +419,41 @@ public class MainCategory {
         @Setting(value = "check-uuid-names-onstart", comment = "This will try to convert your player UUIDs to Player Names" +
                 "\nif you recently changed your server from Online mode to Offline, and from the other way too.")
         public boolean check_uuid_names_onstart = false;
+
+        @Setting
+        public dynmapCat dynmap = new dynmapCat();
+        @ConfigSerializable
+        public static class dynmapCat {
+            @Setting(comment = "Enable hook to show all regions on dynmap plugin?")
+            public boolean enable = true;
+            @Setting(value = "hide-by-default", comment = "Hide the Redprotect tab group by default?")
+            public boolean hide_by_default = true;
+            @Setting(value = "marks-groupname", comment = "Group name to show on hide/show tab map.")
+            public String marks_groupname = "RedProtect";
+            @Setting(value = "layer-priority", comment = "If you use another region mark plugin.")
+            public int layer_priority = 10;
+            @Setting(value = "show-label", comment = "Show names under regions.")
+            public boolean show_label = true;
+            @Setting(value = "show-icon", comment = "Show icons under regions.")
+            public boolean show_icon = true;
+            @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
+            public String marker_icon = "shield";
+            @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
+            public boolean show_leaders_admins = true;
+
+            @Setting(value = "cuboid-region")
+            public cuboidCat cuboid_region = new cuboidCat();
+
+            @ConfigSerializable
+            public static class cuboidCat {
+                @Setting(comment = "Cuboid region config.")
+                public boolean enabled = true;
+                @Setting(value = "if-disable-set-center")
+                public int if_disable_set_center = 60;
+            }
+
+            @Setting(value ="min-zoom")
+            public int min_zoom = 0;
+        }
     }
 }

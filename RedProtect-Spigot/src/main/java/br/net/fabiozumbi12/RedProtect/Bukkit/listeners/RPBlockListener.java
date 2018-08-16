@@ -134,9 +134,9 @@ public class RPBlockListener implements Listener{
 			}
         } 
         else if (RPConfig.getBool("region-settings.enable-flag-sign") && line1.equalsIgnoreCase("[flag]") && signr != null){
-        	if (signr.flags.containsKey(lines[1])){
+        	if (signr.getFlags().containsKey(lines[1])){
         		String flag = lines[1];
-        		if (!(signr.flags.get(flag) instanceof Boolean)){
+        		if (!(signr.getFlags().get(flag) instanceof Boolean)){
         			RPLang.sendMessage(p, RPLang.get("playerlistener.region.sign.cantflag"));
         			b.breakNaturally();
     				return;

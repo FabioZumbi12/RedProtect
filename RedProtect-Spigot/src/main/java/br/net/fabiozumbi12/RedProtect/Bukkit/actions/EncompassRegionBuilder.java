@@ -48,12 +48,6 @@ public class EncompassRegionBuilder extends RegionBuilder{
             return;
         }
 
-        //region name conform
-        if (regionName.length() < 3) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return;
-        }
-
         //filter region name
         regionName = regionName.replace(" ","_").replaceAll("[^\\p{L}_0-9]", "");
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
@@ -62,6 +56,12 @@ public class EncompassRegionBuilder extends RegionBuilder{
                 this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
                 return;
             }
+        }
+
+        //region name conform
+        if (regionName.length() < 3) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return;
         }
 
         if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {

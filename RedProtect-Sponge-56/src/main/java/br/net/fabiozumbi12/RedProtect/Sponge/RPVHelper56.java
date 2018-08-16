@@ -3,6 +3,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.data.type.HandType;
@@ -35,7 +36,7 @@ public class RPVHelper56 implements RPVHelper {
 	RPVHelper56(){}
 	
 	@Override
-	public Cause getCause(Player p) {
+	public Cause getCause(CommandSource p) {
 		return Cause.of(NamedCause.simulated(p));
 	}
 

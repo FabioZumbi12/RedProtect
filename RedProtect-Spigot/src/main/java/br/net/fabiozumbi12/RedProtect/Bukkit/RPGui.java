@@ -69,8 +69,8 @@ public class RPGui implements Listener{
 
         allowEnchant = RedProtect.get().version >= 181;
 		
-		for (String flag:region.flags.keySet()){
-			if (!(region.flags.get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")){
+		for (String flag:region.getFlags().keySet()){
+			if (!(region.getFlags().get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")){
 				continue;
 			}
 			if (flag.equalsIgnoreCase("clan")){
@@ -91,13 +91,13 @@ public class RPGui implements Listener{
 				
 				String fvalue;
 				if (flag.equalsIgnoreCase("clan")){
-					if (region.flags.get(flag).toString().equals("")){
+					if (region.getFlags().get(flag).toString().equals("")){
 						fvalue = RPConfig.getGuiString("false");
 					} else {
 						fvalue = RPConfig.getGuiString("true");
 					}					
 				} else {
-					fvalue = RPConfig.getGuiString(region.flags.get(flag).toString());
+					fvalue = RPConfig.getGuiString(region.getFlags().get(flag).toString());
 				}
 
 				this.guiItens[i] = RPConfig.getGuiItemStack(flag);
@@ -217,18 +217,21 @@ public class RPGui implements Listener{
 			Player p = (Player) event.getInventory().getHolder();
 			ClanPlayer cp = RedProtect.get().clanManager.getClanPlayer(p);			
 			if (this.region.getFlagString(flag).equals("")){	
-				this.region.setFlag(flag, cp.getTag());
-				flagv = true;
-				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+cp.getClan().getColorTag()+"'"));
+				if (this.region.setFlag(this.player, flag, cp.getTag())){
+					flagv = true;
+					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+cp.getClan().getColorTag()+"'"));
+				}
 			} else {            					
 				RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'"+this.region.getFlagString(flag)+"'"));
-				this.region.setFlag(flag, "");
-				flagv = false;
+				if (this.region.setFlag(this.player, flag, "")){
+					flagv = false;
+				}
 			}
 		} else {
 			flagv = !this.region.getFlagBool(flag);
-			this.region.setFlag(flag, flagv);
-			RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + flagv);
+			if (this.region.setFlag(this.player, flag, flagv)){
+				RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + flagv);
+			}
 		}
 		
 		if (allowEnchant){

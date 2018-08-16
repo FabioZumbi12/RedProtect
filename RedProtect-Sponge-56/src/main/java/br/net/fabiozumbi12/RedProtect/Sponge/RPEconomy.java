@@ -71,7 +71,7 @@ public class RPEconomy {
 			r.clearAdmins();
 			r.setValue(value);
 			r.setWelcome(getCostMessage(r));			
-			r.setFlag("for-sale", true);
+			r.setFlag(null, "for-sale", true);
 			if (RedProtect.get().cfgs.getEcoBool("rename-region")){
 				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}			
@@ -89,7 +89,7 @@ public class RPEconomy {
 			r.addLeader(uuid);
 			r.setDate(RPUtil.DateNow());
 			r.setWelcome("");
-			r.flags = RedProtect.get().cfgs.getDefFlagsValues();
+			r.setFlags(RedProtect.get().cfgs.getDefFlagsValues());
 			if (RedProtect.get().cfgs.getEcoBool("rename-region")){
 				RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid),r.getWorld()),r);
 			}	

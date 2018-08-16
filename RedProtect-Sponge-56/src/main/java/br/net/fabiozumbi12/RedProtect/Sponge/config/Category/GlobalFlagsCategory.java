@@ -77,11 +77,19 @@ public class GlobalFlagsCategory {
         @Setting(value = "player-hurt-passives", comment = "Players can damage passive entities?")
         public boolean player_hurt_passives = true;
 
-        @Setting(value = "spawn-monsters")
-        public boolean spawn_monsters = true;
+        @Setting(value = "spawn-whitelist", comment = "" +
+                "spawn-whitelist: ONLY this mobs will spawn in this world!\n\n" +
+                "You can use MONSTERS or PASSIVES groups.\n" +
+                "Check the entity types here:\n" +
+                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+        public List<String> spawn_whitelist = new ArrayList<>();
 
-        @Setting(value = "spawn-passives")
-        public boolean spawn_passives = true;
+        @Setting(value = "spawn-blacklist", comment = "" +
+                "spawn-blacklist: This mobs will NOT spawn in this world!\n\n" +
+                "You can use MONSTERS or PASSIVES groups.\n" +
+                "Check the entity types here:\n" +
+                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+        public List<String> spawn_blacklist = new ArrayList<>();
 
         @Setting(value = "allow-weather", comment = "Allow weather changes?")
         public boolean allow_weather = true;
@@ -125,12 +133,6 @@ public class GlobalFlagsCategory {
             @Setting(value = "flow-damage")
             public boolean flow_damage = true;
         }
-
-        @Setting(value = "remove-entities-not-allowed-to-spawn")
-        public boolean remove_entities_not_allowed_to_spawn = true;
-
-        @Setting(value = "spawn-wither")
-        public boolean spawn_wither = true;
 
         @Setting(comment = "Entities will be invincible?")
         public boolean invincible = false;

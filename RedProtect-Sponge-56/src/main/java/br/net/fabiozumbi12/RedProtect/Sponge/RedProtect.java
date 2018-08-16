@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.RPDynmap;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
@@ -36,9 +37,10 @@ name = "RedProtect",
 version = VersionData.VERSION,
 authors="FabioZumbi12", 
 description="Complete antigrief plugin",
-dependencies=@Dependency(id = "worldedit", optional = true))
+dependencies={ @Dependency(id = "worldedit", optional = true), @Dependency(id = "dynmap", optional = true) })
 public class RedProtect {
 	public boolean WE;
+	public boolean Dyn;
 	private UUID taskid;
 	private CommandManager cmdService;
 	public RegionManager rm;
@@ -54,6 +56,7 @@ public class RedProtect {
 	public EconomyService econ;
 	public final HashMap<Player,String> alWait = new HashMap<>();
 	public final HashMap<String, List<String>> denyEnter = new HashMap<>();
+	public RPDynmap dynmap;
 	
 	private RPVHelper pvhelp;
 	public RPVHelper getPVHelper(){
@@ -133,6 +136,19 @@ public class RedProtect {
             game.getEventManager().registerListeners(container, new RPAddProtection());
 
 			WE = checkWE();
+			Dyn = checkDM();
+
+			if (Dyn){
+				logger.info("Dynmap found. Hooked.");
+				logger.info("Loading dynmap markers...");
+				try {
+					dynmap = new RPDynmap();
+					game.getEventManager().registerListeners(container, dynmap);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				logger.info("Dynmap markers loaded!");
+			}
 
 			logger.info("Loading API...");
 			this.rpAPI = new RedProtectAPI();
@@ -250,5 +266,9 @@ public class RedProtect {
     private boolean checkWE() {
 		return Sponge.getPluginManager().getPlugin("worldedit").isPresent();
 	}
+	private boolean checkDM() {
+		return Sponge.getPluginManager().getPlugin("dynmap").isPresent();
+	}
+
     
 }

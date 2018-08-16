@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
@@ -37,8 +38,11 @@ public class RPVHelper7 implements RPVHelper{
 	RPVHelper7(){}
 
 	@Override
-	public Cause getCause(Player p){
-		return Cause.of(EventContext.builder().add(EventContextKeys.PLAYER, p).build(), p);
+	public Cause getCause(CommandSource p){
+		if (p instanceof Player)
+			return Cause.of(EventContext.builder().add(EventContextKeys.PLAYER, (Player)p).build(), p);
+		else
+			return Cause.of(EventContext.builder().add(EventContextKeys.PLUGIN, RedProtect.get().container).build(), p);
 	}
 
 	@Override

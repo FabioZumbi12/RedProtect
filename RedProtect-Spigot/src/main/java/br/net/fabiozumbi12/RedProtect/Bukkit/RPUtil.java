@@ -10,6 +10,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
@@ -555,7 +557,7 @@ public class RPUtil {
         	if (RedProtect.get().SC){
         		//remove deleted clans from regions
         		if (r.flagExists("clan")  && !RedProtect.get().clanManager.isClan(r.getFlagString("clan"))){
-        			r.setFlag("clan", "");
+        			r.setFlag(Bukkit.getConsoleSender(),"clan", "");
         		}        		
         	}
         }     
@@ -1205,14 +1207,14 @@ public class RPUtil {
   	    Region newr = new Region(name, admins, members, leaders, new int[] {minX,minX,maxX,maxX}, new int[] {minZ,minZ,maxZ,maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
     	for (String flag:RPConfig.getDefFlags()){
     		if (fileDB.get(rname+".flags."+flag) != null){
-  			    newr.flags.put(flag,fileDB.get(rname+".flags."+flag)); 
+  			    newr.getFlags().put(flag,fileDB.get(rname+".flags."+flag));
   		    } else {
-  			    newr.flags.put(flag,RPConfig.getDefFlagsValues().get(flag)); 
+  			    newr.getFlags().put(flag,RPConfig.getDefFlagsValues().get(flag));
   		    }    	    		
   	    } 
     	for (String flag:RPConfig.AdminFlags){
     		if (fileDB.get(rname+".flags."+flag) != null){
-    			newr.flags.put(flag,fileDB.get(rname+".flags."+flag));
+    			newr.getFlags().put(flag,fileDB.get(rname+".flags."+flag));
     		}
     	}
     	return newr;
@@ -1238,7 +1240,7 @@ public class RPUtil {
 		fileDB.set(rname+".maxY",r.getMaxY());
 		fileDB.set(rname+".minY",r.getMinY());
 		fileDB.set(rname+".value",r.getValue());	
-		fileDB.set(rname+".flags",r.flags);	
+		fileDB.set(rname+".flags",r.getFlags());
 		fileDB.set(rname+".candelete",r.canDelete());	
 		
 		Location loc = r.getTPPoint();
@@ -1392,5 +1394,5 @@ public class RPUtil {
         }
         
         return regionName;
-	}	
+	}
 }
