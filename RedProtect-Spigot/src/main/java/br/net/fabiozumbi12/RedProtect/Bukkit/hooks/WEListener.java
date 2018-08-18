@@ -8,10 +8,13 @@ import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.internal.LocalWorldAdapter;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.selector.CuboidRegionSelector;
 import com.sk89q.worldedit.world.DataException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,7 +38,21 @@ public class WEListener {
 		}
 		return false;
 	}
-	
+
+	public static void setSelectionFromRP(Player p, Location pos1, Location pos2){
+        WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        if (worldEdit.getSelection(p) == null || !worldEdit.getSelection(p).getRegionSelector().isDefined()){
+            worldEdit.setSelection(p, new CuboidSelection(pos1.getWorld() , pos1, pos2));
+            RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
+                    .replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
+                    .replace("{pos2}",pos2.getBlockX()+","+pos2.getBlockY()+","+pos2.getBlockZ())
+            );
+        } else {
+            worldEdit.getSelection(p).getRegionSelector().clear();
+            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.select-we.hide"));
+        }
+    }
+
 	public static void pasteWithWE(Player p, File file) {
 		World world = p.getWorld();	
 		Location loc = p.getLocation();

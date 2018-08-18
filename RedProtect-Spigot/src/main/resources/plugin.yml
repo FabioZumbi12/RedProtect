@@ -204,6 +204,7 @@ permissions:
       redprotect.rent.others: true
       redprotect.start: true
       redprotect.list-areas: true
+      redprotect.select-we: true
   redprotect.bypass-chat:
     description: "Permissions to bypass chat checks."
     default: false

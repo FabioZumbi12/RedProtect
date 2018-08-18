@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.events.EnterExitRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import com.earth2me.essentials.User;
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
@@ -165,6 +166,10 @@ public class RPPlayerListener implements Listener{
                 if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)){
                 	Location loc1 = RedProtect.get().firstLocationSelections.get(p);
                 	Location loc2 = RedProtect.get().secondLocationSelections.get(p);
+					if (RedProtect.get().WE && RPConfig.getBool("hooks.useWECUI")){
+						WEListener.setSelectionFromRP(p, loc1, loc2);
+					}
+
 					if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")){
                         Double dist = loc1.distanceSquared(loc2);
                         RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));

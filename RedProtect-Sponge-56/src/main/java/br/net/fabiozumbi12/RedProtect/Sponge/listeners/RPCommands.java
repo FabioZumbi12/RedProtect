@@ -40,6 +40,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -502,6 +504,19 @@ public class RPCommands implements CommandCallable {
 
         if (args.length == 1) {
 
+			//rp select-we
+			if (checkCmd(args[0], "select-we") && player.hasPermission("redprotect.select-we")) {
+				if (RedProtect.get().WE){
+					Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+					if (r == null){
+						RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+						return cmdr;
+					}
+					WEListener.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());
+				}
+				return cmdr;
+			}
+
         	//rp regen
     		if (checkCmd(args[0], "regen") && player.hasPermission("redprotect.regen")) {
     			if (!RedProtect.get().WE){
@@ -547,6 +562,10 @@ public class RPCommands implements CommandCallable {
                     if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
                         Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
                         Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
+						if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI){
+							WEListener.setSelectionRP(player, loc1, loc2);
+						}
+
                         if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !player.hasPermission("redprotect.bypass.define-max-distance")){
                             Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
                             RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
@@ -567,6 +586,10 @@ public class RPCommands implements CommandCallable {
                     if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)){
                         Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
                         Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
+						if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI){
+							WEListener.setSelectionRP(player, loc1, loc2);
+						}
+
                         if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(player,"redprotect.bypass.define-max-distance")){
                             Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
                             RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));

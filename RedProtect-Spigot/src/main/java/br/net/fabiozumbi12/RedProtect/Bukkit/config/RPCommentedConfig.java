@@ -252,6 +252,7 @@ public class RPCommentedConfig {
 		setDefault("hooks", null, null);
 		setDefault("hooks.check-uuid-names-onstart", false, "Convert/check names if need to update to/from UUID/names on server start? Disable for Bungeecoord.");
 		setDefault("hooks.essentials.import-lastvisits", false, "Import last visits from Essentials to RedProtect Regions.");
+		setDefault("hooks.useWECUI", true, "Use worldeditCUI to visualize the region limits. (Need WorldEdit on server and WECUI on client)");
 		setDefault("hooks.dynmap.enabled", true, "Enable hook to show all regions on dynmap plugin?");
 		setDefault("hooks.dynmap.hide-by-default", true, "Hide the Redprotect tab group by default?");
 		setDefault("hooks.dynmap.marks-groupname", "RedProtect", "Group name to show on hide/show tab map.");

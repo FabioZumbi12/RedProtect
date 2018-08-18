@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -315,7 +316,12 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         	p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.firstwarning")));    
                         	p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
                         }                        
-                        
+
+                        //wecui selection
+                        if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI){
+                            WEListener.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
+                        }
+
                         this.r = region;
                         RedProtect.get().logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED region "+region.getName());
                         return;

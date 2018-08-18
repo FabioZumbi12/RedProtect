@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
@@ -11,6 +12,8 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionSelector;
+import com.sk89q.worldedit.regions.selector.limit.SelectorLimits;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.sponge.SpongePlayer;
 import com.sk89q.worldedit.sponge.SpongeWorld;
@@ -42,7 +45,37 @@ public class WEListener {
 		}
 		return false;
 	}
-	
+
+	private static void setSelection(SpongeWorld ws, Player p, Location pos1, Location pos2){
+		SpongeWorldEdit worldEdit = SpongeWorldEdit.inst();
+		RegionSelector regs = worldEdit.getSession(p).getRegionSelector(ws);
+		regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
+		regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
+		worldEdit.getSession(p).setRegionSelector(ws, regs);
+		RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
+				.replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
+				.replace("{pos2}",pos2.getBlockX()+","+pos2.getBlockY()+","+pos2.getBlockZ())
+		);
+		worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
+	}
+
+	public static void setSelectionRP(Player p, Location pos1, Location pos2){
+		SpongeWorld ws = SpongeWorldEdit.inst().getWorld(p.getWorld());
+		setSelection(ws, p, pos1, pos2);
+	}
+
+	public static void setSelectionFromRP(Player p, Location pos1, Location pos2){
+		SpongeWorldEdit worldEdit = SpongeWorldEdit.inst();
+		SpongeWorld ws = SpongeWorldEdit.inst().getWorld(p.getWorld());
+		if (worldEdit.getSession(p) == null || !worldEdit.getSession(p).isSelectionDefined(ws)){
+			setSelection(ws, p, pos1, pos2);
+		} else {
+			worldEdit.getSession(p).getRegionSelector(ws).clear();
+			RPLang.sendMessage(p,RPLang.get("cmdmanager.region.select-we.hide"));
+		}
+		worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
+	}
+
 	public static void pasteWithWE(Player p, File f) throws DataException {
 		SpongePlayer sp = SpongeWorldEdit.inst().wrapPlayer(p);
 		SpongeWorld ws = SpongeWorldEdit.inst().getWorld(p.getWorld());

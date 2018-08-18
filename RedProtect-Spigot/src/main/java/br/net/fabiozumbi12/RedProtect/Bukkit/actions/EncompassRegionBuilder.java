@@ -8,6 +8,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.events.RenameRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -315,8 +316,13 @@ public class EncompassRegionBuilder extends RegionBuilder{
                         if (RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0){
                         	p.sendMessage(RPLang.get("cmdmanager.region.firstwarning"));
                         	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-                        }                       
-                        
+                        }
+
+                        //wecui
+                        if (RedProtect.get().WE && RPConfig.getBool("hooks.useWECUI")){
+                            WEListener.setSelectionFromRP(p, region.getMinLocation(), region.getMaxLocation());
+                        }
+
                         this.r = region;
                         RedProtect.get().logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED region "+region.getName());
                         return;
