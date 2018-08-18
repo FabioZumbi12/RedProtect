@@ -77,6 +77,9 @@ public class GlobalFlagsCategory {
         @Setting(value = "player-hurt-passives", comment = "Players can damage passive entities?")
         public boolean player_hurt_passives = true;
 
+        @Setting(value = "spawn-allow-on-regions", comment = "Allow entities to spawn only inside regions if blacklisted/whitelisted?")
+        public boolean spawn_allow_on_regions = false;
+
         @Setting(value = "spawn-whitelist", comment = "" +
                 "spawn-whitelist: ONLY this mobs will spawn in this world!\n\n" +
                 "You can use MONSTERS or PASSIVES groups.\n" +

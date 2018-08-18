@@ -575,10 +575,9 @@ public class RPGlobalListener{
 	@IsCancelled(Tristate.FALSE)
     public void onCreatureSpawn(SpawnEntityEvent event) {
 
-		if (event.getCause().first(Player.class).isPresent()) return;
-
         for (Entity e: event.getEntities()){
-        	if (e == null || RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null){
+        	if (e == null || (RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName()) != null &&
+					RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_allow_on_regions)){
         		continue;
         	}
 

@@ -650,9 +650,7 @@ public class RPGlobalListener implements Listener{
 	@EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
 		RedProtect.get().logger.debug("RPGlobalListener - Is CreatureSpawnEvent event! Cancelled? " + event.isCancelled());
-    	if (event.isCancelled()) {
-            return;
-        }
+
         Entity e = event.getEntity();
         if (e == null) {
             return;
@@ -660,43 +658,37 @@ public class RPGlobalListener implements Listener{
         
         Location l = event.getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
-        if (r != null){
+        if (r != null && RPConfig.getGlobalFlagBool(e.getWorld().getName()+".spawn-allow-on-regions")){
         	return;
         }
 
-		if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL)
-				|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)
-				|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CHUNK_GEN)
-				|| event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.DEFAULT)) {
+		//blacklist
+		if (e instanceof Monster && RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains("MONSTER")) {
+			event.setCancelled(true);
+			return;
+		}
+		if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains("PASSIVES")) {
+			event.setCancelled(true);
+			return;
+		}
+		if (RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains(e.getType().name())){
+			event.setCancelled(true);
+			return;
+		}
 
-			//blacklist
-			if (e instanceof Monster && RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains("MONSTER")) {
+		//whitelist
+		List<String> wtl = RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-whitelist");
+		if (!wtl.isEmpty()){
+			if (e instanceof Monster && !wtl.contains("MONSTER")) {
 				event.setCancelled(true);
 				return;
 			}
-			if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains("PASSIVES")) {
+			if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !wtl.contains("PASSIVES")) {
 				event.setCancelled(true);
 				return;
 			}
-			if (RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-blacklist").contains(e.getType().name())){
+			if (!wtl.contains(e.getType().name())){
 				event.setCancelled(true);
-				return;
-			}
-
-			//whitelist
-			List<String> wtl = RPConfig.getGlobalFlagList(e.getWorld().getName()+".spawn-whitelist");
-			if (!wtl.isEmpty()){
-				if (e instanceof Monster && !wtl.contains("MONSTER")) {
-					event.setCancelled(true);
-					return;
-				}
-				if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !wtl.contains("PASSIVES")) {
-					event.setCancelled(true);
-					return;
-				}
-				if (!wtl.contains(e.getType().name())){
-					event.setCancelled(true);
-				}
 			}
 		}
     }
