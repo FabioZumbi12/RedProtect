@@ -4,9 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Openable;
+import org.bukkit.block.data.Openable;
 
 public class RPDoor {
 	
@@ -14,8 +12,7 @@ public class RPDoor {
 		if ((!RPConfig.isFlagEnabled("smart-door") && !RPConfig.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")){
 			return;
 		}
-		
-		//RedProtect.get().logger.severe("Porta: "+isOpenable(b));
+
 		if (b.getType().name().contains("IRON")){
 			b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
 			toggleDoor(b);
@@ -34,7 +31,6 @@ public class RPDoor {
 		
 		for (Block b2:block){
 			if (b.getType().equals(b2.getType())){
-				//b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
 				toggleDoor(b2);
 				break;
 			}
@@ -44,15 +40,13 @@ public class RPDoor {
 	private static void toggleDoor(Block b){
 		if (b.getRelative(BlockFace.DOWN).getType().equals(b.getType())){
 			b = b.getRelative(BlockFace.DOWN);			
-		} 
-		BlockState state = b.getState();
-		Openable op = (Openable) state.getData();
-		op.setOpen(!op.isOpen());
-		state.setData((MaterialData)op);
-		state.update();	
+		}
+		Openable openable = (Openable) b.getBlockData();
+		openable.setOpen(!openable.isOpen());
+		b.setBlockData(openable);
 	}
 	
 	public static boolean isOpenable(Block b){
-		return b.getState().getData() instanceof Openable;	
+		return b.getBlockData() instanceof Openable;
 	}	
 }
