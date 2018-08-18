@@ -70,7 +70,7 @@ public class RPCommentedGlobalFlags {
 			setDefault(w.getName()+".player-hurt-monsters", true, null);
 			setDefault(w.getName()+".player-hurt-passives", true, null);
 
-			setDefault(w.getName()+"spawn-allow-on-regions", false, "Allow entities to spawn only inside regions if blacklisted/whitelisted?");
+			setDefault(w.getName()+".spawn-allow-on-regions", false, "Allow entities to spawn only inside regions if blacklisted/whitelisted?");
 			setDefault(w.getName()+".spawn-blacklist", new ArrayList<>(), "" +
 					"spawn-blacklist: This mobs will NOT spawn in this world!\n" +
 					"\n" +
