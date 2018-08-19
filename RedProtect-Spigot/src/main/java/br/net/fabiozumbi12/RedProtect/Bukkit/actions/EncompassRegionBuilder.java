@@ -320,7 +320,7 @@ public class EncompassRegionBuilder extends RegionBuilder{
 
                         //wecui
                         if (RedProtect.get().WE && RPConfig.getBool("hooks.useWECUI")){
-                            WEListener.setSelectionFromRP(p, region.getMinLocation(), region.getMaxLocation());
+                            WEListener.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
                         }
 
                         this.r = region;

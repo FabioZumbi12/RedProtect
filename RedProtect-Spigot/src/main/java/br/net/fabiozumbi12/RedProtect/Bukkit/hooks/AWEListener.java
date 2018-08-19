@@ -4,11 +4,10 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
+import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionSelector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,13 +41,16 @@ public class AWEListener {
             if (RPUtil.stopRegen){
                 return;
             }
-            CuboidSelection csel = new CuboidSelection(w , p1, p2);
-            Region wreg;
+
+            RegionSelector regs = new LocalSession().getRegionSelector(new BukkitWorld(w));
+            regs.selectPrimary(new Vector(p1.getX(),p1.getY(),p1.getZ()), null);
+            regs.selectSecondary(new Vector(p2.getX(),p2.getY(),p2.getZ()), null);
+
+            Region wreg = null;
             try {
-                wreg = csel.getRegionSelector().getRegion();
+                wreg = regs.getRegion();
             } catch (IncompleteRegionException e1) {
                 e1.printStackTrace();
-                return;
             }
 
             AsyncWorldEditBukkit aweMain = (AsyncWorldEditBukkit)Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");

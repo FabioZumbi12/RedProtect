@@ -4,17 +4,12 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
+import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.internal.LocalWorldAdapter;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.regions.selector.CuboidRegionSelector;
+import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.world.DataException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,26 +34,44 @@ public class WEListener {
 		return false;
 	}
 
-	public static void setSelectionFromRP(Player p, Location pos1, Location pos2){
+    private static void setSelection(BukkitWorld ws, Player p, Location pos1, Location pos2){
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        if (worldEdit.getSelection(p) == null || !worldEdit.getSelection(p).getRegionSelector().isDefined()){
-            worldEdit.setSelection(p, new CuboidSelection(pos1.getWorld() , pos1, pos2));
-            RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
-                    .replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
-                    .replace("{pos2}",pos2.getBlockX()+","+pos2.getBlockY()+","+pos2.getBlockZ())
-            );
+        RegionSelector regs = worldEdit.getSession(p).getRegionSelector(ws);
+        regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
+        regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
+        worldEdit.getSession(p).setRegionSelector(ws, regs);
+        RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
+                .replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
+                .replace("{pos2}",pos2.getBlockX()+","+pos2.getBlockY()+","+pos2.getBlockZ())
+        );
+        worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
+    }
+
+    public static void setSelectionRP(Player p, Location pos1, Location pos2){
+        BukkitWorld ws = new BukkitWorld(p.getWorld());
+        setSelection(ws, p, pos1, pos2);
+    }
+
+    public static void setSelectionFromRP(Player p, Location pos1, Location pos2){
+        WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        BukkitWorld ws = new BukkitWorld(p.getWorld());
+        if (worldEdit.getSession(p) == null || !worldEdit.getSession(p).isSelectionDefined(ws)){
+            setSelection(ws, p, pos1, pos2);
         } else {
-            worldEdit.getSelection(p).getRegionSelector().clear();
+            worldEdit.getSession(p).getRegionSelector(ws).clear();
             RPLang.sendMessage(p,RPLang.get("cmdmanager.region.select-we.hide"));
         }
+        worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
 	public static void pasteWithWE(Player p, File file) {
 		World world = p.getWorld();	
 		Location loc = p.getLocation();
-		
-		EditSession es = new EditSession(new BukkitWorld(world), 999999999);		
-		try {
+
+        WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        EditSession es = new EditSession(LocalWorldAdapter.adapt(new BukkitWorld(world)), -1);
+
+        try {
 			CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
 			cc.paste(es, new com.sk89q.worldedit.Vector(loc.getX(),loc.getY(),loc.getZ()), false);
 		} catch (DataException | IOException | MaxChangedBlocksException e) {
@@ -72,15 +85,20 @@ public class WEListener {
             if (RPUtil.stopRegen){
                 return;
             }
-            CuboidSelection csel = new CuboidSelection(w , p1, p2);
+
+            RegionSelector regs = new LocalSession().getRegionSelector(new BukkitWorld(w));
+            regs.selectPrimary(new Vector(p1.getX(),p1.getY(),p1.getZ()), null);
+            regs.selectSecondary(new Vector(p2.getX(),p2.getY(),p2.getZ()), null);
+
             Region wreg = null;
             try {
-                wreg = csel.getRegionSelector().getRegion();
+                wreg = regs.getRegion();
             } catch (IncompleteRegionException e1) {
                 e1.printStackTrace();
             }
 
-            EditSession esession = new EditSession(LocalWorldAdapter.adapt(wreg.getWorld()), -1);
+            EditSession esession = new EditSession(LocalWorldAdapter.adapt(new BukkitWorld(w)), -1);
+
             eSessions.put(r.getID(), esession);
             int delayCount = 1+delay/10;
 

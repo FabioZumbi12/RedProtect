@@ -129,7 +129,15 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-bukkit:6.1.7.3" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: worldedit:worldedit:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.natrolite:vault-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:EssentialsX:2.15.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.9.1" level="project" />

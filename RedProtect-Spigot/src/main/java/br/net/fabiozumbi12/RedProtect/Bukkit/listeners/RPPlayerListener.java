@@ -167,7 +167,7 @@ public class RPPlayerListener implements Listener{
                 	Location loc1 = RedProtect.get().firstLocationSelections.get(p);
                 	Location loc2 = RedProtect.get().secondLocationSelections.get(p);
 					if (RedProtect.get().WE && RPConfig.getBool("hooks.useWECUI")){
-						WEListener.setSelectionFromRP(p, loc1, loc2);
+						WEListener.setSelectionRP(p, loc1, loc2);
 					}
 
 					if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")){
