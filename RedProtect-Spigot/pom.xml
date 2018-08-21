@@ -1,161 +1,162 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>br.net.fabiozumbi12.RedProtect</groupId>
-    <artifactId>RedProtect</artifactId>
-    <version>7.5.3</version>
-  </parent>
-  <artifactId>RedProtect-Spigot</artifactId>
-  
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+        <artifactId>RedProtect</artifactId>
+        <version>7.5.3</version>
+    </parent>
+    <artifactId>RedProtect-Spigot</artifactId>
 
-	  <!-- Spigot -->
+    <dependencies>
+
+        <!-- Spigot -->
         <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>${mineVersion}</version>
-        </dependency>
-        
-        <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>${mineVersion}</version>
-          <classifier>javadoc</classifier>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${mineVersion}</version>
         </dependency>
 
-	  <!-- bukkit snapshots
-	  <dependency>
-		  <groupId>org.bukkit</groupId>
-		  <artifactId>bukkit</artifactId>
-		  <version>18w03b-R0.1-SNAPSHOT</version>
-	  </dependency>-->
-
-		<!-- start of local repos -->
-		
-		<dependency>
-			<groupId>MassiveCore</groupId>
-			<artifactId>MassiveCore</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>Factions</groupId>
-			<artifactId>Factions</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/Factions.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>AsyncWorldEdit</groupId>
-			<artifactId>AsyncWorldEdit</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/AsyncWorldEdit.jar</systemPath>
-		</dependency>
-		
         <dependency>
-			<groupId>FastAsyncWorldEdit</groupId>
-			<artifactId>FastAsyncWorldEdit</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/FastAsyncWorldEdit.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>SimpleClans</groupId>
-			<artifactId>SimpleClans</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>BossBarAPI_v2.4.1</groupId>
-			<artifactId>BossBarAPI_v2.4.1</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/BossBarAPI_v2.4.1.jar</systemPath>
-		</dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${mineVersion}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>dynmap-2.5</groupId>
-			<artifactId>dynmap-2.5</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/dynmap-2.5.jar</systemPath>
-		</dependency>
-	    <dependency>
-	   	    <groupId>com.github.TechFortress</groupId>
-		    <artifactId>GriefPrevention</artifactId>
-		    <version>LATEST</version>
-	    </dependency>
+        <!-- bukkit snapshots
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>18w03b-R0.1-SNAPSHOT</version>
+        </dependency>-->
 
-		<dependency>
-			<groupId>MagicCarpet</groupId>
-			<artifactId>MagicCarpet</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MagicCarpet.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>mcMMO</groupId>
-			<artifactId>mcMMO</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>MyChunk</groupId>
-			<artifactId>MyChunk</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/MyChunk.jar</systemPath>
-		</dependency>
+        <!-- start of local repos -->
 
-		<dependency>
-			<groupId>PvPManager</groupId>
-			<artifactId>PvPManager</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/PvPManager.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>SkillAPI</groupId>
-			<artifactId>SkillAPI</artifactId>
-			<version>v1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/SkillAPI.jar</systemPath>
-		</dependency>
+        <dependency>
+            <groupId>MassiveCore</groupId>
+            <artifactId>MassiveCore</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
+        </dependency>
 
-	  <dependency>
-		  <groupId>worldedit</groupId>
-		  <artifactId>worldedit</artifactId>
-		  <version>v1</version>
-		  <scope>system</scope>
-		  <systemPath>${project.basedir}/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar</systemPath>
-	  </dependency>
+        <dependency>
+            <groupId>Factions</groupId>
+            <artifactId>Factions</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>AsyncWorldEdit</groupId>
+            <artifactId>AsyncWorldEdit</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/AsyncWorldEdit.jar</systemPath>
+        </dependency>
 
-		<!-- end of local repos
-		<dependency>
+        <dependency>
+            <groupId>FastAsyncWorldEdit</groupId>
+            <artifactId>FastAsyncWorldEdit</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit.jar</systemPath>
+        </dependency>-->
+
+        <dependency>
+            <groupId>SimpleClans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>BossBarAPI_v2.4.1</groupId>
+            <artifactId>BossBarAPI_v2.4.1</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/BossBarAPI_v2.4.1.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>dynmap-2.5</groupId>
+            <artifactId>dynmap-2.5</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/dynmap-2.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TechFortress</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <dependency>
+            <groupId>MagicCarpet</groupId>
+            <artifactId>MagicCarpet</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MagicCarpet.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>MyChunk</groupId>
+            <artifactId>MyChunk</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MyChunk.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>PvPManager</groupId>
+            <artifactId>PvPManager</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/PvPManager.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>SkillAPI</groupId>
+            <artifactId>SkillAPI</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SkillAPI.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>worldedit</groupId>
+            <artifactId>worldedit</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar</systemPath>
+        </dependency>
+
+        <!-- end of local repos
+        <dependency>
            <groupId>com.sk89q.worldedit</groupId>
            <artifactId>worldedit-bukkit</artifactId>
            <version>LATEST</version>
            <scope>provided</scope>
         </dependency>-->
-		<dependency>
-           <groupId>org.natrolite</groupId>
-           <artifactId>vault-api</artifactId>
-           <version>LATEST</version>
-           <scope>provided</scope>
+        <dependency>
+            <groupId>org.natrolite</groupId>
+            <artifactId>vault-api</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.15.0</version>
@@ -167,31 +168,31 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>LATEST</version>
         </dependency>
 
-	    <dependency>
-		    <groupId>de.keyle</groupId>
-		    <artifactId>mypet</artifactId>
-		    <version>3.0-SNAPSHOT</version>
-	    </dependency>
-	  <!--
-	    <dependency>
-		    <groupId>org.dynmap</groupId>
-		    <artifactId>dynmap-api</artifactId>
-		    <version>LATEST</version>
-	    </dependency>-->
-  </dependencies>
+        <dependency>
+            <groupId>de.keyle</groupId>
+            <artifactId>mypet</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+        <!--
+          <dependency>
+              <groupId>org.dynmap</groupId>
+              <artifactId>dynmap-api</artifactId>
+              <version>LATEST</version>
+          </dependency>-->
+    </dependencies>
 
-  <properties>
-  	<mineVersion>1.13-R0.1-SNAPSHOT</mineVersion>
-  </properties>
-  
-  <build>
-    <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
-  </build>
+    <properties>
+        <mineVersion>1.13-R0.1-SNAPSHOT</mineVersion>
+    </properties>
+
+    <build>
+        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+    </build>
 </project>

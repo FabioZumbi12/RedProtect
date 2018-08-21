@@ -39,24 +39,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: AsyncWorldEdit:AsyncWorldEdit:v1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/AsyncWorldEdit.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Maven: FastAsyncWorldEdit:FastAsyncWorldEdit:v1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/FastAsyncWorldEdit.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Maven: SimpleClans:SimpleClans:v1">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/SimpleClans.jar!/" />

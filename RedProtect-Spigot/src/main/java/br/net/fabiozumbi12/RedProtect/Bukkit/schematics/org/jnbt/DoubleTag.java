@@ -21,7 +21,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt;
 
 /**
  * The {@code TAG_Double} tag.
- * 
  */
 public final class DoubleTag extends Tag {
 

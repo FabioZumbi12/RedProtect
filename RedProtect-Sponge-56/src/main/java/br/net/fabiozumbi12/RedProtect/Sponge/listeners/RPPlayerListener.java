@@ -1181,7 +1181,12 @@ public class RPPlayerListener{
 			} 
 			SendNotifyMsg(p, m);
 		} else {
-			SendWelcomeMsg(p, "&6" + r.getName() + ": &r" + r.getWelcome());
+            String wel = r.getWelcome().replace("{r}",r.getName())
+                    .replace("{p}", p.getName());
+            if (RedProtect.get().cfgs.root().notify.welcome_region_name)
+                SendWelcomeMsg(p, "&6" + r.getName() + ": &r" + wel);
+            else
+                SendWelcomeMsg(p, wel);
 		}
     }
     

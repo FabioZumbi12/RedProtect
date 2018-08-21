@@ -13,183 +13,199 @@ import java.util.Map;
 import java.util.Set;
 
 public class RedProtectAPI {
-	
-	/**
-	 * Return all regions for all loaded worlds;
-	 * <p> 
-	 * @return {@code Set<Region>} with all regions. Empty list if no regions.
-	 */
-	public Set<Region> getAllRegions(){
-		return RedProtect.get().rm.getAllRegions();
-	}
-	
-	/**
-	 * Give the Region based on given name and world.
-	 * <p>
-	 * @param regionName Region Name.
-	 * @param world World where this Region is.
-	 * @return {@code Region} matching the name or {@code null} if region not found.
-	 */
-	public Region getRegion(String regionName, World world){
-		return RedProtect.get().rm.getRegion(regionName, world);
-	}
-	
-	/**
-	 * Return the Region on location. 
-	 * <p>
-	 * *Note: If theres more region in this same location this method will 
-	 * return only the high priority region. To get all possible region in	 
-	 * one location use {@code getGroupRegions()}
-	 * <p>
-	 * @param location Player location.
-	 * @return {@code Region} of location or {@code null} if no regions on player location.
-	 */
-	public Region getRegion(Location location){
-		return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
-	}
-	
-	/**
-	 * A set of regions created by this player based on uuid or player name.
-	 * <p>
-	 * @param uuid The uuid of player in String format!
-	 * Make a way to give player name for servers using 'offline mode'.
-	 * @return {@code set<Region>} with all regions created by given player.
-	 */
-	public Set<Region> getPlayerRegions(String uuid){
-		return RedProtect.get().rm.getRegions(uuid);
-	}
-	
-	/**
-	 * A set of regions created by this player based on uuid or player name and specific world.
-	 * <p>
-	 * @param uuid The uuid of player in String format!
-	 * Make a way to give player name for servers using 'offline mode'.
-	 * @param world to search for given region.
-	 * @return {@code set<Region>} with all regions created by given player.
-	 */
-	public Set<Region> getPlayerRegions(String uuid, World world){
-		return RedProtect.get().rm.getRegions(uuid, world);
-	}
 
-	/**
-	 * A set of regions created by this player.
-	 * <p>
-	 * @param player The player.
-	 * @return {@code set<Region>} with all regions created by given player.
-	 */
-	public Set<Region> getPlayerRegions(Player player){
-		return RedProtect.get().rm.getRegions(Bukkit.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
-	}
+    /**
+     * Return all regions for all loaded worlds;
+     * <p>
+     *
+     * @return {@code Set<Region>} with all regions. Empty list if no regions.
+     */
+    public Set<Region> getAllRegions() {
+        return RedProtect.get().rm.getAllRegions();
+    }
 
-	/**
-	 * A set of regions created by this player based on x and z.
-	 * <p>
-	 * @param player Owner of regions.
-	 * @param x Coord x of a location.
-	 * @param y Coord y of a location.
-	 * @param z Coord z of a location.
-	 * @return {@code set<Region>} with all regions created by given player.
-	 */
-	public Set<Region> getPlayerRegions(Player player, int x, int y, int z){
-		return RedProtect.get().rm.getRegions(player, x, y, z);
-	}
-	
-	/**
-	 * In a location with more than one region, use to get the upper region with high priority.
-	 * <p>
-	 * @param world World to search for regions.
-	 * @param x Coord x of a location.
-	 * @param y Coord y of a location.
-	 * @param z Coord z of a location.
-	 * @return The high priority {@code Region} in a group of regions.
-	 */
-	public Region getHighPriorityRegion(World world, int x, int y, int z){
-		return RedProtect.get().rm.getTopRegion(world, x, y, z);
-	}
-	
-	/**
-	 * In a location with more than one region, use to get the lower region with low priority.
-	 * <p>
-	 * @param world World to search for regions.
-	 * @param x Coord x of a location.
-	 * @param y Coord y of a location.
-	 * @param z Coord z of a location.
-	 * @return The lower priority {@code Region} in a group of regions.
-	 */
-	public Region getLowPriorytyRegion(World world, int x, int y, int z){
-		return RedProtect.get().rm.getLowRegion(world, x, y, z);
-	}
-	
-	/**
-	 * The group of Regions on given location x and z.
-	 * <p>
-	 * @param world World to search for regions.
-	 * @param x Coord x of a location.
-	 * @param y Coord y of a location.
-	 * @param z Coord z of a location.
-	 * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
-	 */
-	public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z){
-		return RedProtect.get().rm.getGroupRegion(world, x, y, z);
-	}
-	
-	/**
-	 * The group of Regions on given location x and z.
-	 * <p>
-	 * @param loc {@code Location} to check the regions
-	 * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
-	 */
-	public Map<Integer, Region> getGroupRegions(Location loc){
-		return RedProtect.get().rm.getGroupRegion(loc);
-	}
-	
-	/**
-	 * Return all regions present on provided chunk, including low and hight priority.
-	 * <p>
-	 * @param chunk Chunk to get Regions.
-	 * @return {@code Set<Region>} with all regions on provided chunk.
-	 */
-	public Set<Region> getChunkRegions(Chunk chunk){
-		return RedProtect.get().rm.getRegionsForChunk(chunk);
-	}
-	
-	/**
-	 * Add a region.
-	 * <p>
-	 * @param region {@code Region} to add.
-	 * @param world {@code World} of {@code Region} to add.
-	 */
-	public void addRegion(Region region, World world){
-		RedProtect.get().rm.add(region, world);
-	}
-	
-	/**
-	 * Remove a region.
-	 * <p>
-	 * @param region {@code Region} to remove.
-	 */
-	public void removeRegion(Region region){
-		RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()));
-	}
-	
-	/**
-	 * Rename a region;
-	 * <p>
-	 * @param region Region to rename.
-	 * @param newName New name of region;
-	 */
-	public void renameRegion(Region region, String newName){
-		RedProtect.get().rm.renameRegion(newName, region);
-	}
+    /**
+     * Give the Region based on given name and world.
+     * <p>
+     *
+     * @param regionName Region Name.
+     * @param world      World where this Region is.
+     * @return {@code Region} matching the name or {@code null} if region not found.
+     */
+    public Region getRegion(String regionName, World world) {
+        return RedProtect.get().rm.getRegion(regionName, world);
+    }
+
+    /**
+     * Return the Region on location.
+     * <p>
+     * *Note: If theres more region in this same location this method will
+     * return only the high priority region. To get all possible region in
+     * one location use {@code getGroupRegions()}
+     * <p>
+     *
+     * @param location Player location.
+     * @return {@code Region} of location or {@code null} if no regions on player location.
+     */
+    public Region getRegion(Location location) {
+        return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    /**
+     * A set of regions created by this player based on uuid or player name.
+     * <p>
+     *
+     * @param uuid The uuid of player in String format!
+     *             Make a way to give player name for servers using 'offline mode'.
+     * @return {@code set<Region>} with all regions created by given player.
+     */
+    public Set<Region> getPlayerRegions(String uuid) {
+        return RedProtect.get().rm.getRegions(uuid);
+    }
+
+    /**
+     * A set of regions created by this player based on uuid or player name and specific world.
+     * <p>
+     *
+     * @param uuid  The uuid of player in String format!
+     *              Make a way to give player name for servers using 'offline mode'.
+     * @param world to search for given region.
+     * @return {@code set<Region>} with all regions created by given player.
+     */
+    public Set<Region> getPlayerRegions(String uuid, World world) {
+        return RedProtect.get().rm.getRegions(uuid, world);
+    }
+
+    /**
+     * A set of regions created by this player.
+     * <p>
+     *
+     * @param player The player.
+     * @return {@code set<Region>} with all regions created by given player.
+     */
+    public Set<Region> getPlayerRegions(Player player) {
+        return RedProtect.get().rm.getRegions(Bukkit.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
+    }
+
+    /**
+     * A set of regions created by this player based on x and z.
+     * <p>
+     *
+     * @param player Owner of regions.
+     * @param x      Coord x of a location.
+     * @param y      Coord y of a location.
+     * @param z      Coord z of a location.
+     * @return {@code set<Region>} with all regions created by given player.
+     */
+    public Set<Region> getPlayerRegions(Player player, int x, int y, int z) {
+        return RedProtect.get().rm.getRegions(player, x, y, z);
+    }
+
+    /**
+     * In a location with more than one region, use to get the upper region with high priority.
+     * <p>
+     *
+     * @param world World to search for regions.
+     * @param x     Coord x of a location.
+     * @param y     Coord y of a location.
+     * @param z     Coord z of a location.
+     * @return The high priority {@code Region} in a group of regions.
+     */
+    public Region getHighPriorityRegion(World world, int x, int y, int z) {
+        return RedProtect.get().rm.getTopRegion(world, x, y, z);
+    }
+
+    /**
+     * In a location with more than one region, use to get the lower region with low priority.
+     * <p>
+     *
+     * @param world World to search for regions.
+     * @param x     Coord x of a location.
+     * @param y     Coord y of a location.
+     * @param z     Coord z of a location.
+     * @return The lower priority {@code Region} in a group of regions.
+     */
+    public Region getLowPriorytyRegion(World world, int x, int y, int z) {
+        return RedProtect.get().rm.getLowRegion(world, x, y, z);
+    }
+
+    /**
+     * The group of Regions on given location x and z.
+     * <p>
+     *
+     * @param world World to search for regions.
+     * @param x     Coord x of a location.
+     * @param y     Coord y of a location.
+     * @param z     Coord z of a location.
+     * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
+     */
+    public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z) {
+        return RedProtect.get().rm.getGroupRegion(world, x, y, z);
+    }
+
+    /**
+     * The group of Regions on given location x and z.
+     * <p>
+     *
+     * @param loc {@code Location} to check the regions
+     * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
+     */
+    public Map<Integer, Region> getGroupRegions(Location loc) {
+        return RedProtect.get().rm.getGroupRegion(loc);
+    }
+
+    /**
+     * Return all regions present on provided chunk, including low and hight priority.
+     * <p>
+     *
+     * @param chunk Chunk to get Regions.
+     * @return {@code Set<Region>} with all regions on provided chunk.
+     */
+    public Set<Region> getChunkRegions(Chunk chunk) {
+        return RedProtect.get().rm.getRegionsForChunk(chunk);
+    }
+
+    /**
+     * Add a region.
+     * <p>
+     *
+     * @param region {@code Region} to add.
+     * @param world  {@code World} of {@code Region} to add.
+     */
+    public void addRegion(Region region, World world) {
+        RedProtect.get().rm.add(region, world);
+    }
+
+    /**
+     * Remove a region.
+     * <p>
+     *
+     * @param region {@code Region} to remove.
+     */
+    public void removeRegion(Region region) {
+        RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()));
+    }
+
+    /**
+     * Rename a region;
+     * <p>
+     *
+     * @param region  Region to rename.
+     * @param newName New name of region;
+     */
+    public void renameRegion(Region region, String newName) {
+        RedProtect.get().rm.renameRegion(newName, region);
+    }
 
     /**
      * Add custom flags.
-     * @param flag The name of flag.
+     *
+     * @param flag         The name of flag.
      * @param defaultValue Default value if not admin flag.
-     * @param isAdmin Is flag admin? If admin, will require admin permission (redprotect.admin.flag.FlagName)
+     * @param isAdmin      Is flag admin? If admin, will require admin permission (redprotect.admin.flag.FlagName)
      * @return true if added or false if the flag already exists.
      */
-	public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
-	    return RPConfig.addFlag(flag, defaultValue, isAdmin);
+    public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
+        return RPConfig.addFlag(flag, defaultValue, isAdmin);
     }
 }

@@ -15,6 +15,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.regions.selector.limit.SelectorLimits;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.session.SessionOwner;
 import com.sk89q.worldedit.sponge.SpongePlayer;
 import com.sk89q.worldedit.sponge.SpongeWorld;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
@@ -47,16 +48,15 @@ public class WEListener {
 	}
 
 	private static void setSelection(SpongeWorld ws, Player p, Location pos1, Location pos2){
-		SpongeWorldEdit worldEdit = SpongeWorldEdit.inst();
-		RegionSelector regs = worldEdit.getSession(p).getRegionSelector(ws);
+		RegionSelector regs = SpongeWorldEdit.inst().getSession(p).getRegionSelector(ws);
 		regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
 		regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
-		worldEdit.getSession(p).setRegionSelector(ws, regs);
+		SpongeWorldEdit.inst().getSession(p).setRegionSelector(ws, regs);
 		RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
 				.replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
 				.replace("{pos2}",pos2.getBlockX()+","+pos2.getBlockY()+","+pos2.getBlockZ())
 		);
-		worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
+		SpongeWorldEdit.inst().getSession(p).dispatchCUISelection(SpongeWorldEdit.inst().wrapPlayer(p));
 	}
 
 	public static void setSelectionRP(Player p, Location pos1, Location pos2){
@@ -107,21 +107,31 @@ public class WEListener {
             if (RPUtil.stopRegen){
                 return;
             }
-            Region wreg = new CuboidRegion(new Vector(p1.getX(),p1.getY(),p1.getZ()), new Vector(p2.getX(),p2.getY(),p2.getZ())).getFaces();
-            SpongeWorld ws = SpongeWorldEdit.inst().getWorld(w);
-            EditSession esession = new EditSessionFactory().getEditSession(ws, -1);
+
+			RegionSelector regs = new LocalSession().getRegionSelector(SpongeWorldEdit.inst().getWorld(w));
+			regs.selectPrimary(new Vector(p1.getX(), p1.getY(), p1.getZ()), null);
+			regs.selectSecondary(new Vector(p2.getX(), p2.getY(), p2.getZ()), null);
+
+			Region wreg = null;
+			try {
+				wreg = regs.getRegion();
+			} catch (IncompleteRegionException e1) {
+				e1.printStackTrace();
+			}
+
+            EditSession esession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(SpongeWorldEdit.inst().getWorld(w), -1);
 
             eSessions.put(r.getID(), esession);
             int delayCount = 1+delay/10;
 
             if (sender != null){
-                if (ws.regenerate(wreg, esession)){
+                if (wreg.getWorld().regenerate(wreg, esession)){
                     RPLang.sendMessage(sender,"["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
                 } else {
                     RPLang.sendMessage(sender,"["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");
                 }
             } else {
-                if (ws.regenerate(wreg, esession)){
+                if (wreg.getWorld().regenerate(wreg, esession)){
                     RedProtect.get().logger.warning("["+delayCount+"]"+" &aRegion "+r.getID().split("@")[0]+" regenerated with success!");
                 } else {
                     RedProtect.get().logger.warning("["+delayCount+"]"+" &cTheres an error when regen the region "+r.getID().split("@")[0]+"!");

@@ -34,62 +34,62 @@ import java.util.UUID;
 
 public class MojangUUIDs {
 
-	public static String getName(String UUID) {
-		try {
-		   URL url = new URL("https://api.mojang.com/user/profiles/"+ UUID.replaceAll("-", "") + "/names");
-		   BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-		   String line = in.readLine();
-		   if (line == null){
-			   return null;
-		   }
-		   JSONArray array = (JSONArray) new JSONParser().parse(line);
-		   HashMap<Long, String> names = new HashMap<>();
-		   String name = "";
-		   for (Object profile : array) {
-			   JSONObject jsonProfile = (JSONObject) profile;
-			   if (jsonProfile.containsKey("changedToAt")){
-				   names.put((long)jsonProfile.get("changedToAt"), (String)jsonProfile.get("name"));
-				   continue;
-			   }			   
-			   name = (String) jsonProfile.get("name");
-		   }	
-		   if (!names.isEmpty()){
-			   Long key = Collections.max(names.keySet());
-			   return names.get(key);
-		   } else {
-			   return name;
-		   }
-		} catch (Exception ex) {
-		   ex.printStackTrace();
-		}
-		   return null;
-		}
-	
-	public static String getUUID(String player) {
-		try {
-		  URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + player);
-		  BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-		  String line = in.readLine();
-		  if (line == null){
-		     return null;
-		  }
-		  JSONObject jsonProfile = (JSONObject) new JSONParser().parse(line);
-		  String name = (String) jsonProfile.get("id");		
-		  return toUUID(name);
-		} catch (Exception ex) {
-		   ex.printStackTrace();
-		}
-		return null;
-	}
-	
-	private static String toUUID(String uuid){
-		return uuid.substring(0, 8) + "-" + uuid.substring(8, 12) + "-"
-				   + uuid.substring(12, 16) + "-" + uuid.substring(16, 20)
-				   + "-" + uuid.substring(20, 32);
-	}
-	
-	public static String getName(UUID uuid) {
-		return getName(uuid.toString());
-	}
-	    
+    public static String getName(String UUID) {
+        try {
+            URL url = new URL("https://api.mojang.com/user/profiles/" + UUID.replaceAll("-", "") + "/names");
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+            String line = in.readLine();
+            if (line == null) {
+                return null;
+            }
+            JSONArray array = (JSONArray) new JSONParser().parse(line);
+            HashMap<Long, String> names = new HashMap<>();
+            String name = "";
+            for (Object profile : array) {
+                JSONObject jsonProfile = (JSONObject) profile;
+                if (jsonProfile.containsKey("changedToAt")) {
+                    names.put((long) jsonProfile.get("changedToAt"), (String) jsonProfile.get("name"));
+                    continue;
+                }
+                name = (String) jsonProfile.get("name");
+            }
+            if (!names.isEmpty()) {
+                Long key = Collections.max(names.keySet());
+                return names.get(key);
+            } else {
+                return name;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getUUID(String player) {
+        try {
+            URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + player);
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+            String line = in.readLine();
+            if (line == null) {
+                return null;
+            }
+            JSONObject jsonProfile = (JSONObject) new JSONParser().parse(line);
+            String name = (String) jsonProfile.get("id");
+            return toUUID(name);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String toUUID(String uuid) {
+        return uuid.substring(0, 8) + "-" + uuid.substring(8, 12) + "-"
+                + uuid.substring(12, 16) + "-" + uuid.substring(16, 20)
+                + "-" + uuid.substring(20, 32);
+    }
+
+    public static String getName(UUID uuid) {
+        return getName(uuid.toString());
+    }
+
 }

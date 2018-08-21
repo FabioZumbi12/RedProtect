@@ -176,6 +176,8 @@ public class MainCategory {
         public boolean region_exit = true;
         @Setting(value = "welcome-mode", comment = "Available: \"BOSSBAR\", \"OFF\" or \"CHAT\"")
         public String welcome_mode = "CHAT";
+        @Setting(value = "welcome-region-name", comment = "Notifications configs.\nYour players can use this placeholders on Welcome Message: {r} and {p}")
+        public boolean welcome_region_name = false;
     }
 
     @Setting

@@ -36,7 +36,7 @@ public final class ListTag extends Tag {
     /**
      * Creates the tag with an empty name.
      *
-     * @param type the type of tag
+     * @param type  the type of tag
      * @param value the value of the tag
      */
     public ListTag(Class<? extends Tag> type, List<? extends Tag> value) {
@@ -72,11 +72,11 @@ public final class ListTag extends Tag {
 
     /**
      * Get the tag if it exists at the given index.
-     * 
+     *
      * @param index the index
      * @return the tag or null
      */
-    
+
     public Tag getIfExists(int index) {
         try {
             return value.get(index);
@@ -307,10 +307,10 @@ public final class ListTag extends Tag {
      * a list but the list of of a different type, then an empty
      * list will also be returned.</p>
      *
-     * @param index the index
+     * @param index    the index
      * @param listType the class of the contained type
+     * @param <T>      the NBT type
      * @return a list of tags
-     * @param <T> the NBT type
      */
     @SuppressWarnings("unchecked")
     public <T extends Tag> List<T> getList(int index, Class<T> listType) {

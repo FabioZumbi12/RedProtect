@@ -297,10 +297,10 @@ public final class CompoundTag extends Tag {
      * a list but the list of of a different type, then an empty
      * list will also be returned.</p>
      *
-     * @param key the key
+     * @param key      the key
      * @param listType the class of the contained type
+     * @param <T>      the type of list
      * @return a list of tags
-     * @param <T> the type of list
      */
     @SuppressWarnings("unchecked")
     public <T extends Tag> List<T> getList(String key, Class<T> listType) {

@@ -21,7 +21,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt;
 
 /**
  * The {@code TAG_Long} tag.
- * 
  */
 public final class LongTag extends Tag {
 

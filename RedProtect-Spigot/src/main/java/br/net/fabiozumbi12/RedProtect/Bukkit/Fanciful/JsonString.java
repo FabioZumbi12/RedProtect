@@ -14,33 +14,33 @@ import java.util.Map;
  */
 final class JsonString implements JsonRepresentedObject, ConfigurationSerializable {
 
-	private final String _value;
-	
-	public JsonString(CharSequence value){
-		_value = value == null ? null : value.toString();
-	}
+    private final String _value;
 
-	@Override
-	public void writeJson(JsonWriter writer) throws IOException {
-		writer.value(getValue());
-	}
-	
-	public String getValue(){
-		return _value;
-	}
+    public JsonString(CharSequence value) {
+        _value = value == null ? null : value.toString();
+    }
 
-	public Map<String, Object> serialize() {
-		HashMap<String, Object> theSingleValue = new HashMap<>();
-		theSingleValue.put("stringValue", _value);
-		return theSingleValue;
-	}
-	
-	public static JsonString deserialize(Map<String, Object> map){
-		return new JsonString(map.get("stringValue").toString());
-	}
-	
-	@Override
-	public String toString(){
-		return _value;
-	}
+    @Override
+    public void writeJson(JsonWriter writer) throws IOException {
+        writer.value(getValue());
+    }
+
+    public String getValue() {
+        return _value;
+    }
+
+    public Map<String, Object> serialize() {
+        HashMap<String, Object> theSingleValue = new HashMap<>();
+        theSingleValue.put("stringValue", _value);
+        return theSingleValue;
+    }
+
+    public static JsonString deserialize(Map<String, Object> map) {
+        return new JsonString(map.get("stringValue").toString());
+    }
+
+    @Override
+    public String toString() {
+        return _value;
+    }
 }

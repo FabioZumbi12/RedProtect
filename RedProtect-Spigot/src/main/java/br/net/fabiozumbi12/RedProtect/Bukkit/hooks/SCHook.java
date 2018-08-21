@@ -7,13 +7,13 @@ import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.entity.Player;
 
 public class SCHook {
-	public static boolean getPlayerClan(Region r,Player p){		
-		ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
-		return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
-	}
-		
-	@SuppressWarnings("deprecation")
-	public static boolean inWar(Region r, Player attack, Player defend) {
+    public static boolean getPlayerClan(Region r, Player p) {
+        ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
+        return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
+    }
+
+    @SuppressWarnings("deprecation")
+    public static boolean inWar(Region r, Player attack, Player defend) {
         if (!RPConfig.getBool("hooks.simpleclans.use-war")) {
             return false;
         }

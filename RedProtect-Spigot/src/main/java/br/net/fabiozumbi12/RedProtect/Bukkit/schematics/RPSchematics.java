@@ -5,7 +5,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.org.jnbt.*;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -21,38 +20,38 @@ import java.util.zip.GZIPInputStream;
 
 @SuppressWarnings("deprecation")
 public class RPSchematics {
-	
+
     public static void pasteSchematic(Player p) throws IOException {
-    	File file = new File(RedProtect.get().getDataFolder(),"schematics"+File.separator+RPConfig.getString("schematics.first-house-file"));
-        FileInputStream stream = new FileInputStream(file);     
-        
+        File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RPConfig.getString("schematics.first-house-file"));
+        FileInputStream stream = new FileInputStream(file);
+
         World world = p.getWorld();
-		Location loc = p.getLocation();
-		
-    	NBTInputStream nbtStream = new NBTInputStream(new GZIPInputStream(stream));
-    	 
-        NamedTag  rootTag = nbtStream.readNamedTag();
+        Location loc = p.getLocation();
+
+        NBTInputStream nbtStream = new NBTInputStream(new GZIPInputStream(stream));
+
+        NamedTag rootTag = nbtStream.readNamedTag();
         nbtStream.close();
         if (!rootTag.getName().equals("Schematic")) {
             throw new IllegalArgumentException("Tag \"Schematic\" does not exist or is not first");
         }
-        
+
         CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
-        
+
         Map<String, Tag> schematic = schematicTag.getValue();
         if (!schematic.containsKey("Blocks")) {
             throw new IllegalArgumentException("Schematic file is missing a \"Blocks\" tag");
         }
- 
+
         short width = getChildTag(schematic, "Width", ShortTag.class).getValue();
         short length = getChildTag(schematic, "Length", ShortTag.class).getValue();
         short height = getChildTag(schematic, "Height", ShortTag.class).getValue();
-        
+
         String materials = getChildTag(schematic, "Materials", StringTag.class).getValue();
         if (!materials.equals("Alpha")) {
             throw new IllegalArgumentException("Schematic file is not an Alpha schematic");
         }
-        
+
         // Get blocks
         byte[] blockId = getChildTag(schematic, "Blocks", ByteArrayTag.class).getValue();
         byte[] blockData = getChildTag(schematic, "Data", ByteArrayTag.class).getValue();
@@ -64,7 +63,7 @@ public class RPSchematics {
         if (schematic.containsKey("AddBlocks")) {
             addId = getChildTag(schematic, "AddBlocks", ByteArrayTag.class).getValue();
         }
-        
+
         // Combine the AddBlocks data with the first 8-bit block ID
         for (int index = 0; index < blockId.length; index++) {
             if ((index >> 1) >= addId.length) { // No corresponding AddBlocks index
@@ -77,12 +76,12 @@ public class RPSchematics {
                 }
             }
         }
-                
+
 
         int offsetX = 0;
         int offsetY = 0;
         int offsetZ = 0;
-        
+
         try {
             offsetX = getChildTag(schematic, "WEOffsetX", IntTag.class).getValue();
             offsetY = getChildTag(schematic, "WEOffsetY", IntTag.class).getValue();
@@ -90,14 +89,14 @@ public class RPSchematics {
         } catch (Exception e) {
             // No offset data
         }
-                
+
         Map<Integer, BlockState> blist = new HashMap<>();
         Location pos1 = loc;
         Location pos2 = loc;
         int order = 0;
         int base = 0;
         int validBlock = 0;
-        
+
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
@@ -105,108 +104,108 @@ public class RPSchematics {
                     Location locblock = new Location(world, x + loc.getX() + offsetX, y + loc.getY() + offsetY, z + loc.getZ() + offsetZ);
                     Block block = locblock.getBlock();
                     BlockState bstate = block.getState();
-                                        
+
                     blist.put(index, bstate);
-                    
-                    if (order == 0){
-                    	pos1 = locblock;
+
+                    if (order == 0) {
+                        pos1 = locblock;
                     } else {
-                    	pos2 = locblock;
+                        pos2 = locblock;
                     }
-                    
+
                     //get ground blocks
-                    if (block.getLocation().getBlockY() == pos1.getBlockY()){
-                    	base++;
-                    	if (block.getType().isSolid()){
-                    		validBlock++;
-                    	}
-                    }                    
-                    order++;                  
+                    if (block.getLocation().getBlockY() == pos1.getBlockY()) {
+                        base++;
+                        if (block.getType().isSolid()) {
+                            validBlock++;
+                        }
+                    }
+                    order++;
                 }
             }
         }
-        
+
         //check if can place the schematic
-        if (validBlock < base/2){
-        	RPLang.sendMessage(p, "playerlistener.region.needground");
-        	return;
+        if (validBlock < base / 2) {
+            RPLang.sendMessage(p, "playerlistener.region.needground");
+            return;
         }
-        
+
         String regionName = RPUtil.regionNameConfiorm("", p);
         String pName = RPUtil.PlayerToUUID(p.getName());
-        
+
         //check if player already have claims
-        int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()); 
-        if (claimused > 0 && !p.hasPermission("redprotect.bypass")){
-        	RPLang.sendMessage(p, "playerlistener.region.claimlimit.start");
-        	return;
+        int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld());
+        if (claimused > 0 && !p.hasPermission("redprotect.bypass")) {
+            RPLang.sendMessage(p, "playerlistener.region.claimlimit.start");
+            return;
         }
-        
-        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), Collections.singletonList(pName), new int[] { pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX() }, new int[] { pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ() }, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
-        
+
+        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), Collections.singletonList(pName), new int[]{pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX()}, new int[]{pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ()}, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
+
         List<String> othersName = new ArrayList<>();
         Region otherrg = null;
-        
+
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
-        if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))){
-        	p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
-        	return;
+        if (otherrg != null && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))) {
+            p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+            return;
         }
-        
+
         //check regions inside region
-        for (Region r:RedProtect.get().rm.getRegionsByWorld(p.getWorld())){
-        	if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()){
-        		if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")){
-        			p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
-                	return;
-            	}
-        		if (!othersName.contains(r.getName())){
-            		othersName.add(r.getName());
-            	}
-        	}
+        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+            if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
+                if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
+                    p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+                    return;
+                }
+                if (!othersName.contains(r.getName())) {
+                    othersName.add(r.getName());
+                }
+            }
         }
-        
+
         //check borders for other regions
         List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
-        for (Location locr:limitlocs){
+        for (Location locr : limitlocs) {
         	
         	/*
         	//check regions near
         	if (!RPUtil.canBuildNear(p, loc)){
             	return;    	
             }*/
-        	
-        	otherrg = RedProtect.get().rm.getTopRegion(locr);        	
-        	RedProtect.get().logger.debug("protection Block is: " + locr.getBlock().getType().name());
-        	
-    		if (otherrg != null){                    			
-            	if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")){
-            		p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
-                	return;
-            	}
-            	if (!othersName.contains(otherrg.getName())){
-            		othersName.add(otherrg.getName());
-            	}
+
+            otherrg = RedProtect.get().rm.getTopRegion(locr);
+            RedProtect.get().logger.debug("protection Block is: " + locr.getBlock().getType().name());
+
+            if (otherrg != null) {
+                if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
+                    p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+                    return;
+                }
+                if (!othersName.contains(otherrg.getName())) {
+                    othersName.add(otherrg.getName());
+                }
             }
         }
-                
+
         //check cost per block
-        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")){
-        	Double peco = RedProtect.get().econ.getBalance(p);
-        	long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
-        	
-        	if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")){
-        		reco = reco * Math.abs(region.getMaxY()-region.getMinY());
-        	}
-        	
-        	if (peco >= reco){
-        		RedProtect.get().econ.withdrawPlayer(p, reco);
-        		p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco+" "+RPConfig.getEcoString("economy-name")));
-        	} else {
-        		RPLang.sendMessage(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RPConfig.getEcoString("economy-symbol")+reco));
-        		return;
-        	}
+        if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
+            Double peco = RedProtect.get().econ.getBalance(p);
+            long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
+
+            if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")) {
+                reco = reco * Math.abs(region.getMaxY() - region.getMinY());
+            }
+
+            if (peco >= reco) {
+                RedProtect.get().econ.withdrawPlayer(p, reco);
+                p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RPConfig.getEcoString("economy-symbol") + reco + " " + RPConfig.getEcoString("economy-name")));
+            } else {
+                RPLang.sendMessage(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RPConfig.getEcoString("economy-symbol") + reco));
+                return;
+            }
         }    
         /*
         if (RPConfig.getBool("hooks.worldedit.use-for-schematics") && RedProtect.get().WE){
@@ -218,28 +217,28 @@ public class RPSchematics {
         		b.setTypeIdAndData(blocks[key], blockData[key], true);
         	}
         }*/
-        
+
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         RPLang.sendMessage(p, "playerlistener.region.startdone");
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         RPLang.sendMessage(p, "cmdmanager.region.firstwarning");
-    	p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        
-        
-        RedProtect.get().logger.addLog("(World "+region.getWorld()+") Player "+p.getName()+" CREATED(SCHEMATIC) region "+region.getName());
+        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+
+
+        RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
         RedProtect.get().rm.add(region, p.getWorld());
     }
-    
+
     /**
-    * Get child tag of a NBT structure.
-    *
-    * @param items The parent tag map
-    * @param key The name of the tag to get
-    * @param expected The expected type of the tag
-    * @return child tag casted to the expected type
-    * @throws IllegalArgumentException if the tag does not exist or the tag is not of the
-    * expected type
-    */
+     * Get child tag of a NBT structure.
+     *
+     * @param items    The parent tag map
+     * @param key      The name of the tag to get
+     * @param expected The expected type of the tag
+     * @return child tag casted to the expected type
+     * @throws IllegalArgumentException if the tag does not exist or the tag is not of the
+     *                                  expected type
+     */
     private static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws IllegalArgumentException {
         if (!items.containsKey(key)) {
             throw new IllegalArgumentException("Schematic file is missing a \"" + key + "\" tag");
@@ -249,5 +248,5 @@ public class RPSchematics {
             throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
         }
         return expected.cast(tag);
-    }	    
+    }
 }

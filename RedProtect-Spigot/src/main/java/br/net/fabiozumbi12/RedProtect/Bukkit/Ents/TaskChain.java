@@ -10,12 +10,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Facilitates Control Flow for the Bukkit Scheduler to easily jump between
  * Async and Sync tasks without deeply nested callbacks, passing the response of the
  * previous task to the next task to use.
- *
+ * <p>
  * Usage example: TaskChain.newChain()
- *  .add(new TaskChain.AsyncTask {})
- *  .add(new TaskChain.Task {})
- *  .add(new AsyncTask {})
- *  .execute();
+ * .add(new TaskChain.AsyncTask {})
+ * .add(new TaskChain.Task {})
+ * .add(new AsyncTask {})
+ * .execute();
  */
 @SuppressWarnings("rawtypes")
 public class TaskChain {
@@ -37,6 +37,7 @@ public class TaskChain {
     Object previous = null;
     boolean async;
     private final Plugin plugin;
+
     public TaskChain() {
         this.plugin = RedProtect.get(); // TODO: Change to get an instance to your plugin!
         this.async = !Bukkit.isPrimaryThread();
@@ -47,6 +48,7 @@ public class TaskChain {
 
     /**
      * Starts a new chain.
+     *
      * @return
      */
     public static TaskChain newChain() {
@@ -55,6 +57,7 @@ public class TaskChain {
 
     /**
      * Adds a delay to the chain execution
+     *
      * @param ticks # of ticks to delay before next task (20 = 1 second)
      * @return
      */
@@ -65,6 +68,7 @@ public class TaskChain {
                 final BaseTask peek = TaskChain.this.chainQueue.peek();
                 this.async = peek != null ? peek.async : TaskChain.this.async;
             }
+
             @Override
             public void run() {
                 final GenericTask task = this;
@@ -79,6 +83,7 @@ public class TaskChain {
     /**
      * Adds a step to the chain execution. Async*Task will run off of main thread,
      * *Task will run sync with main thread
+     *
      * @param task
      * @return
      */
@@ -141,6 +146,7 @@ public class TaskChain {
     /**
      * Provides foundation of a task with what the previous task type should return
      * to pass to this and what this task will return.
+     *
      * @param <R> Return Type
      * @param <A> Argument Type Expected
      */
@@ -151,6 +157,7 @@ public class TaskChain {
 
         /**
          * Task Type classes will implement this
+         *
          * @param arg
          * @return
          */
@@ -158,6 +165,7 @@ public class TaskChain {
 
         /**
          * Called internally by Task Chain to facilitate executing the task and then the next task.
+         *
          * @param chain
          */
         private void run(TaskChain chain) {
@@ -165,7 +173,7 @@ public class TaskChain {
             chain.previous = null;
             this.chain = chain;
             @SuppressWarnings("unchecked")
-			R ret = this.runTask((A) arg);
+            R ret = this.runTask((A) arg);
             if (chain.previous == null) {
                 chain.previous = ret;
             }
@@ -194,15 +202,16 @@ public class TaskChain {
 
         /**
          * Only to be used when paired with return this.async(); Must be called to execute the next task.
-         *
+         * <p>
          * To be used inside a callback of another operation that is performed async.
+         *
          * @param resp
          */
         public void next(R resp) {
             synchronized (this) {
                 if (executed) {
                     throw new RuntimeException(
-                        "This task has already been executed. return this.async()");
+                            "This task has already been executed. return this.async()");
                 }
             }
             chain.async = !Bukkit.isPrimaryThread(); // We don't know where the task called this from.
@@ -213,16 +222,16 @@ public class TaskChain {
 
     /**
      * General abstract classes to be used for various tasks in the chain.
-     *
-     * First Tasks are for when you do not have or do not care about the return 
+     * <p>
+     * First Tasks are for when you do not have or do not care about the return
      * value of a previous task.
-     *
+     * <p>
      * Last Tasks are for when you do not need to use a return type.
-     *
-     * A Generic task simply does not care about Previous Return or return 
+     * <p>
+     * A Generic task simply does not care about Previous Return or return
      * anything itself.
-     *
-     * Async Tasks will not run on the Minecraft Thread and should not use the 
+     * <p>
+     * Async Tasks will not run on the Minecraft Thread and should not use the
      * Bukkit API unless it is thread safe.
      */
     public abstract static class Task<R, A> extends BaseTask<R, A> {
@@ -233,8 +242,10 @@ public class TaskChain {
             return run(arg);
         }
     }
+
     public abstract static class GenericTask extends BaseTask<Object, Object> {
         protected abstract void run();
+
         @Override
         protected Object runTask(Object arg) {
             run();
@@ -245,6 +256,7 @@ public class TaskChain {
             next(null);
         }
     }
+
     public abstract static class FirstTask<R> extends BaseTask<R, Object> {
         protected abstract R run();
 
@@ -253,6 +265,7 @@ public class TaskChain {
             return run();
         }
     }
+
     public abstract static class LastTask<A> extends BaseTask<Object, A> {
         protected abstract void run(A arg);
 
@@ -261,14 +274,30 @@ public class TaskChain {
             run(arg);
             return null;
         }
+
         public void next() {
             next(null);
         }
     }
 
     // Async helpers
-    public abstract static class AsyncTask<R, A> extends Task<R, A> {{async = true;}}
-    public abstract static class AsyncGenericTask extends GenericTask {{async = true;}}
-    public abstract static class AsyncFirstTask<R> extends FirstTask<R> {{async = true;}}
-    public abstract static class AsyncLastTask<A> extends LastTask<A> {{async = true;}}
+    public abstract static class AsyncTask<R, A> extends Task<R, A> {
+        {
+            async = true;
+        }}
+
+    public abstract static class AsyncGenericTask extends GenericTask {
+        {
+            async = true;
+        }}
+
+    public abstract static class AsyncFirstTask<R> extends FirstTask<R> {
+        {
+            async = true;
+        }}
+
+    public abstract static class AsyncLastTask<A> extends LastTask<A> {
+        {
+            async = true;
+        }}
 }
