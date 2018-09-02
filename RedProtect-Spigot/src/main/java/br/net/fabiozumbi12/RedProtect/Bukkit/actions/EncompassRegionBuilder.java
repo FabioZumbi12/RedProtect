@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EncompassRegionBuilder extends RegionBuilder {
 
@@ -49,13 +51,20 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
+        regionName = regionName.replace(" ", "_");
+
+        if (hasSpecialChar(regionName)) {
+            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return;
+        }
+
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
-            if (regionName.length() > 16) {
-                this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
-                return;
-            }
+        }
+
+        if (regionName.length() > 16) {
+            this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
+            return;
         }
 
         //region name conform
@@ -376,6 +385,16 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
         String maxsize = String.valueOf(RPConfig.getInt("region-settings.max-scan"));
         this.setErrorSign(e, RPLang.get("regionbuilder.area.toobig").replace("{maxsize}", maxsize));
+    }
+
+    private boolean hasSpecialChar(String text) {
+        if (text.contains("&")) {
+            String translated = ChatColor.translateAlternateColorCodes('&', text);
+            return !text.equals(translated);
+        }
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(text);
+        return m.find();
     }
 
     private void drop(Block sign, List<Block> blocks) {

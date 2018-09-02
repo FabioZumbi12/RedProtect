@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+        </autoDetectTypes>
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -122,7 +131,7 @@
     </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.natrolite:vault-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:EssentialsX:2.15.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.9.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.9.2" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" level="project" />

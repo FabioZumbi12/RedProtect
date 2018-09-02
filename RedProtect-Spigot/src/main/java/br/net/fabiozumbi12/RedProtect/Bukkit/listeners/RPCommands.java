@@ -33,6 +33,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class RPCommands implements CommandExecutor, TabCompleter {
@@ -2592,13 +2594,20 @@ public class RPCommands implements CommandExecutor, TabCompleter {
             }
 
             //filter region name
-            newName = newName.replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
+            newName = newName.replace(" ", "_");
+
+            if (hasSpecialChar(newName)) {
+                p.sendMessage(RPLang.get("_redprotect.prefix") + " RedProtect name cannot has special character!");
+                return;
+            }
+
             if (newName.isEmpty() || newName.length() < 3) {
                 newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
-                if (newName.length() > 16) {
-                    RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
-                    return;
-                }
+            }
+
+            if (newName.length() > 16) {
+                RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
+                return;
             }
 
             //region name conform
@@ -3353,4 +3362,13 @@ public class RPCommands implements CommandExecutor, TabCompleter {
         }
     }
 
+    private static boolean hasSpecialChar(String text) {
+        if (text.contains("&")) {
+            String translated = ChatColor.translateAlternateColorCodes('&', text);
+            return !text.equals(translated);
+        }
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(text);
+        return m.find();
+    }
 }
