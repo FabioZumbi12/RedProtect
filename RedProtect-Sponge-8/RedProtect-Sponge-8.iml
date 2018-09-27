@@ -9,6 +9,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.13.1-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.13.1-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.13.1-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.13.1-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spongepowered:spongeapi:8.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:21.0" level="project" />
@@ -32,10 +36,120 @@
     <orderEntry type="library" name="Maven: com.flowpowered:flow-noise:1.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.2" level="project" />
     <orderEntry type="library" name="Maven: org.spongepowered:spongeapi:javadoc:8.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: br.net.fabiozumbi12.RedProtect:RedProtect-Spigot:7.5.2" level="project" />
-    <orderEntry type="library" name="Maven: br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-56:7.5.2" level="project" />
+    <orderEntry type="module" module-name="RedProtect-Spigot" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.13.1-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.13-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.13.1-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: MassiveCore:MassiveCore:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/MassiveCore.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: Factions:Factions:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/Factions.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: SimpleClans:SimpleClans:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/SimpleClans.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: BossBarAPI_v2.4.1:BossBarAPI_v2.4.1:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/BossBarAPI_v2.4.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: dynmap-2.5:dynmap-2.5:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/dynmap-2.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Maven: com.github.TechFortress:GriefPrevention:16.11.3" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: MagicCarpet:MagicCarpet:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/MagicCarpet.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: mcMMO:mcMMO:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/mcMMO.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: MyChunk:MyChunk:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/MyChunk.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: PvPManager:PvPManager:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/PvPManager.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: SkillAPI:SkillAPI:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/SkillAPI.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: worldedit:worldedit:v1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Maven: net.ess3:EssentialsX:2.15.0" level="project" />
+    <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0" level="project" />
+    <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />
+    <orderEntry type="library" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: de.keyle:mypet:3.0-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="RedProtect-Sponge-56" />
     <orderEntry type="library" name="Maven: com.github.webbukkit:DynmapCoreAPI:v2.5" level="project" />
-    <orderEntry type="library" name="Maven: br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-7:7.5.2" level="project" />
+    <orderEntry type="module" module-name="RedProtect-Sponge-7" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
@@ -43,6 +157,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.thoughtworks.paranamer:paranamer:2.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.lib:jlibnoise:1.0.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:jchronic:0.2.4a" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: junit:junit:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.8.1" level="project" />
   </component>
 </module>

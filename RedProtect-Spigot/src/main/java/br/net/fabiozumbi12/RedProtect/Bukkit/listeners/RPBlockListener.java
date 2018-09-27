@@ -195,7 +195,7 @@ public class RPBlockListener implements Listener {
             }
         }
 
-        if (r == null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").contains(b.getType().name())) {
+        if (r == null && canPlaceList(p.getWorld(), b.getType().name())) {
             return;
         }
 
@@ -218,6 +218,32 @@ public class RPBlockListener implements Listener {
         }
     }
 
+    private boolean canPlaceList(World w, String type){
+        //blacklist
+        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
+        if (blt.stream().anyMatch(type::matches)) return false;
+
+        //whitelist
+        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+            return false;
+        }
+        return RPConfig.getGlobalFlagBool(w.getName() + ".build");
+    }
+
+    private boolean canBreakList(World w, String type){
+        //blacklist
+        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
+        if (blt.stream().anyMatch(type::matches)) return false;
+
+        //whitelist
+        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+            return false;
+        }
+        return RPConfig.getGlobalFlagBool(w.getName() + ".build");
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent e) {
         RedProtect.get().logger.debug("BlockListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
@@ -233,7 +259,7 @@ public class RPBlockListener implements Listener {
             e.setCancelled(true);
             return;
         }
-        World w = p.getWorld();
+
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
@@ -246,23 +272,10 @@ public class RPBlockListener implements Listener {
             }
         }
 
-        if (r == null && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").contains(b.getType().name())) {
+        if (r == null && canBreakList(p.getWorld(), b.getType().name())) {
             return;
         }
-        /*
-        //remove more sign
-        if (b.getType().equals(Material.WALL_SIGN)){
-			Material btype = cont.getBlockRelative(b).getType();
-			BlockFace[] aside = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-			for (BlockFace bf:aside){
-				Block brel = b.getRelative(bf);
-				if (brel != null && brel.getType().equals(Material.WALL_SIGN) && cont.getBlockRelative(brel).getType().equals(btype) && cont.){
-					brel.breakNaturally();
-					break;
-				}
-			}
-		}
-        */
+
         if (r != null && (b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.allowSpawner(p)) {
             return;
         }

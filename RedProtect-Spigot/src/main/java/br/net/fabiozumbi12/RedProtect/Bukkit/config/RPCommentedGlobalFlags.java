@@ -9,9 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class RPCommentedGlobalFlags {
 
@@ -47,8 +45,12 @@ public class RPCommentedGlobalFlags {
             setDefault(w.getName() + ".if-build-false", null, "" +
                     "If build option is false, choose what blocks the player can place/break.\n" +
                     "Materials: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
-            setDefault(w.getName() + ".if-build-false.break-blocks", new ArrayList<>(), null);
-            setDefault(w.getName() + ".if-build-false.place-blocks", new ArrayList<>(), null);
+            Material.PLAN
+            setDefault(w.getName() + ".if-build-false.break-blocks.blacklist", new ArrayList<>(), "This blocks will not be allowed to be break, all others yes.");
+            setDefault(w.getName() + ".if-build-false.break-blocks.whitelist", Arrays.asList("[*]_PLANT","GRASS", "TALL_GRASS", "POPPY", "DANDELION"), "Only this blocks will be allowed to break, all others will not.");
+
+            setDefault(w.getName() + ".if-build-false.place-blocks.blacklist", new ArrayList<>(), "This blocks will not be allowed to be place, all others yes.");
+            setDefault(w.getName() + ".if-build-false.place-blocks.whitelist", new ArrayList<>(), "Only this blocks will be allowed to place, all others will not.");
 
             setDefault(w.getName() + ".pvp", true, null);
 
@@ -60,8 +62,13 @@ public class RPCommentedGlobalFlags {
             setDefault(w.getName() + ".if-interact-false", null, "" +
                     "If interact option is false, choose what blocks or entity the player can interact.\n" +
                     "EntityTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
-            setDefault(w.getName() + ".if-interact-false.allow-blocks", new ArrayList<>(), null);
-            setDefault(w.getName() + ".if-interact-false.allow-entities", new ArrayList<>(), null);
+
+            setDefault(w.getName() + ".if-interact-false.interact-blocks.blacklist", new ArrayList<>(), "This items will not be allowed to interact, all other items will be.");
+            setDefault(w.getName() + ".if-interact-false.interact-blocks.whitelist", Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower", "minecraft:chest"),
+                    "Only this items will allowed to interact, all other item will not be allowed.");
+
+            setDefault(w.getName() + ".if-interact-false.interact-entities.blacklist", new ArrayList<>(), "Only this entities will not be allowed to interact.");
+            setDefault(w.getName() + ".if-interact-false.interact-entities.whitelist", Collections.singletonList("villager"), "Only this entities will be allowed to interact, all others no.");
 
             setDefault(w.getName() + ".use-minecart", true, "Allow to use minecarts and boats in this world?");
             setDefault(w.getName() + ".entity-block-damage", false, "Like creeperds and Endermans.");
@@ -118,6 +125,10 @@ public class RPCommentedGlobalFlags {
                 setDefault(w.getName() + ".command-ranges.home.max-range", w.getMaxHeight(), null);
                 setDefault(w.getName() + ".command-ranges.home.message", "&cYou cant use /home when mining or in caves!", null);
             }
+
+            //remove old configs
+            gflags.set(w.getName() + ".if-interact-false.allow-blocks", null);
+            gflags.set(w.getName() + ".if-interact-false.allow-entities", null);
         }
     }
 

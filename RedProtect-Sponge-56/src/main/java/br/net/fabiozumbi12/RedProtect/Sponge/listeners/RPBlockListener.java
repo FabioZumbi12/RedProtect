@@ -144,6 +144,32 @@ public class RPBlockListener {
         e.getTargetTile().offer(Keys.SIGN_LINES, lines);
         RPLang.sendMessage(p, RPLang.get("regionbuilder.signerror") + ": " + error);
     }
+
+	private boolean canPlaceList(World w, String type){
+		//blacklist
+		List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
+		if (blt.stream().anyMatch(type::matches)) return false;
+
+		//whitelist
+		List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
+		if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+			return false;
+		}
+		return true;
+	}
+
+	private boolean canBreakList(World w, String type){
+		//blacklist
+		List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
+		if (blt.stream().anyMatch(type::matches)) return false;
+
+		//whitelist
+		List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
+		if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+			return false;
+		}
+		return true;
+	}
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
@@ -154,10 +180,10 @@ public class RPBlockListener {
     	World w = bloc.getExtent();
     	
         ItemType m = RedProtect.get().getPVHelper().getItemInHand(p);
-        Boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
         
-        if (r == null && RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.contains(b.getState().getType().getName())){
+        if (r == null && canPlaceList(w, b.getState().getType().getName())){
         	return;
         }
         
@@ -203,7 +229,7 @@ public class RPBlockListener {
     	BlockSnapshot b = e.getTransactions().get(0).getOriginal();
     	Location<World> bloc = b.getLocation().get();
 
-        Boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(bloc, this.getClass().getName());
         
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
@@ -215,7 +241,7 @@ public class RPBlockListener {
     		}
         }
         
-        if (r == null && RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_build_false.break_blocks.contains(b.getState().getType().getName())){
+        if (r == null && canBreakList(p.getWorld(), b.getState().getType().getName())){
         	return;
         }
         

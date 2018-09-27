@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.TechFortress:GriefPrevention:16.11.3">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/TechFortress/GriefPrevention/16.11.3/GriefPrevention-16.11.3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/TechFortress/GriefPrevention/16.11.3/GriefPrevention-16.11.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/TechFortress/GriefPrevention/16.11.3/GriefPrevention-16.11.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

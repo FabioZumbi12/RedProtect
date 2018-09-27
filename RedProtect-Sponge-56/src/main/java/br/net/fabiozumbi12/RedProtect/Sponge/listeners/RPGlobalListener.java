@@ -60,9 +60,35 @@ public class RPGlobalListener{
 	 * @return Boolean - Can build or not.
 	 */
 	private boolean bypassBuild(Player p, BlockSnapshot b, int fat) {
-		return (fat == 1 && RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_build_false.place_blocks.stream().anyMatch(b.getState().getType().getName()::matches)) ||
-				(fat == 2 && RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_build_false.place_blocks.stream().anyMatch(b.getState().getType().getName()::matches)) ||
+		return (fat == 1 && canPlaceList(p.getWorld(), b.getState().getType().getName())) ||
+				(fat == 2 && canBreakList(p.getWorld(), b.getState().getType().getName())) ||
 				p.hasPermission("redprotect.bypass.world") || (!RedProtect.get().cfgs.needClaimToBuild(p, b) && RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).build);
+	}
+
+	private boolean canPlaceList(World w, String type){
+		//blacklist
+		List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
+		if (blt.stream().anyMatch(type::matches)) return false;
+
+		//whitelist
+		List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
+		if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+			return false;
+		}
+		return  RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).build;
+	}
+
+	private boolean canBreakList(World w, String type){
+		//blacklist
+		List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
+		if (blt.stream().anyMatch(type::matches)) return false;
+
+		//whitelist
+		List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
+		if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+			return false;
+		}
+		return  RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).build;
 	}
 
 	@Listener(order = Order.FIRST, beforeModifications = true)
@@ -235,8 +261,7 @@ public class RPGlobalListener{
 			}
 			if (!RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).interact){
 				if (!p.hasPermission("redprotect.world.bypass") && !(ent instanceof Player)){
-					List<String> list = RedProtect.get().cfgs.gFlags().worlds.get(ent.getWorld().getName()).if_interact_false.interact_entities;
-					if (!list.isEmpty() && list.stream().noneMatch(ent.getType().getName()::matches)){
+					if (!canInteractEntitiesList(p.getWorld(), ent.getType().getName())){
 						e.setCancelled(true);
 						return;
 					}
@@ -255,8 +280,7 @@ public class RPGlobalListener{
 			} else {
 				if (!RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).interact){
 					if (!p.hasPermission("redprotect.world.bypass")){
-						List<String> list = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).if_interact_false.interact_blocks;
-						if ((!list.isEmpty() && list.stream().noneMatch(bname::matches))){
+						if (!canInteractBlocksList(p.getWorld(), bname)){
 							e.setCancelled(true);
 							return;
 						}
@@ -269,7 +293,33 @@ public class RPGlobalListener{
 			}
 		}
 	}
-	
+
+	private boolean canInteractBlocksList(World w, String type){
+		//blacklist
+		List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_blocks.blacklist;
+		if (blt.stream().anyMatch(type::matches)) return false;
+
+		//whitelist
+		List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_blocks.whitelist;
+		if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+			return false;
+		}
+		return RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).interact;
+	}
+
+	private boolean canInteractEntitiesList(World w, String type){
+		//blacklist
+		List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_entities.blacklist;
+		if (blt.stream().anyMatch(type::matches)) return false;
+
+		//whitelist
+		List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_entities.whitelist;
+		if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+			return false;
+		}
+		return RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).interact;
+	}
+
 	@Listener(order = Order.FIRST, beforeModifications = true)	
 	public void onBlockBreakGlobal(ChangeBlockEvent.Break e, @Root Player p) {
 		RedProtect.get().logger.debug(LogLevel.DEFAULT,"RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
@@ -582,18 +632,19 @@ public class RPGlobalListener{
         	}
 
         	//blacklist
-        	if (e instanceof Monster && RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist.contains("MONSTERS")) {
-				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Monster " + e.getType().getName());
+			List<String> blacklist = RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist;
+        	if (e instanceof Monster && blacklist.contains("MONSTERS")) {
+				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of BLACKLISTED Monster " + e.getType().getName());
 				event.setCancelled(true);
 				return;
             }
-            if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist.contains("PASSIVES")) {
-				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Animal " + e.getType().getName());
+            if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && blacklist.contains("PASSIVES")) {
+				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of BLACKLISTED Animal " + e.getType().getName());
 				event.setCancelled(true);
 				return;
             }
-            if (RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_blacklist.contains(e.getType().getName())){
-				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of " + e.getType().getName());
+            if (blacklist.contains(e.getType().getName())){
+				RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of BLACKLISTED " + e.getType().getName());
 				event.setCancelled(true);
 				return;
 			}
@@ -602,17 +653,17 @@ public class RPGlobalListener{
 			List<String> wtl = RedProtect.get().cfgs.gFlags().worlds.get(e.getWorld().getName()).spawn_whitelist;
 			if (!wtl.isEmpty()){
 				if (e instanceof Monster && !wtl.contains("MONSTERS")) {
-					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Monster " + e.getType().getName());
+					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of NON WHITELISTED Monster " + e.getType().getName());
 					event.setCancelled(true);
 					return;
 				}
 				if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !wtl.contains("PASSIVES")) {
-					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of Animal " + e.getType().getName());
+					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of NON WHITELISTED Animal " + e.getType().getName());
 					event.setCancelled(true);
 					return;
 				}
 				if (!wtl.contains(e.getType().getName())){
-					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of " + e.getType().getName());
+					RedProtect.get().logger.debug(LogLevel.SPAWN,"RPGlobalListener - Cancelled spawn of NON WHITELISTED " + e.getType().getName());
 					event.setCancelled(true);
 					return;
 				}

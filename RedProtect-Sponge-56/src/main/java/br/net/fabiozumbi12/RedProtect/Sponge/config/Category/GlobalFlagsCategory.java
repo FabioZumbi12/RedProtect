@@ -24,11 +24,30 @@ public class GlobalFlagsCategory {
         public buildFalse if_build_false = new buildFalse();
         @ConfigSerializable
         public static class buildFalse {
+
             @Setting(value = "break-blocks")
-            public List<String> break_blocks = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower");
+            public breakBlocks break_blocks = new breakBlocks();
+
+            @ConfigSerializable
+            public static class breakBlocks {
+                @Setting(comment = "This blocks will not be allowed to be break, all others yes.")
+                public List<String> blacklist = new ArrayList<>();
+
+                @Setting(comment = "Only this blocks will be allowed to break, all others will not.")
+                public List<String> whitelist = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower");
+            }
 
             @Setting(value = "place-blocks")
-            public List<String> place_blocks = new ArrayList<>();
+            public placeBlocks place_blocks = new placeBlocks();
+
+            @ConfigSerializable
+            public static class placeBlocks {
+                @Setting(comment = "This blocks will not be allowed to be place, all others yes.")
+                public List<String> blacklist = new ArrayList<>();
+
+                @Setting(comment = "Only this blocks will be allowed to place, all others will not.")
+                public List<String> whitelist = new ArrayList<>();
+            }
         }
 
         @Setting(comment = "Allow pvp?")
@@ -44,10 +63,28 @@ public class GlobalFlagsCategory {
         @ConfigSerializable
         public static class interactFalse {
             @Setting(value = "interact-blocks")
-            public List<String> interact_blocks = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower", "minecraft:chest");
+            public interactBlocks interact_blocks = new interactBlocks();
+
+            @ConfigSerializable
+            public static class interactBlocks {
+                @Setting(comment = "This items will not be allowed to interact, all other items will be.")
+                public List<String> blacklist = new ArrayList<>();
+
+                @Setting(comment = "Only this items will allowed to interact, all other item will not be allowed.")
+                public List<String> whitelist = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower", "minecraft:chest");
+            }
 
             @Setting(value = "interact-entities")
-            public List<String> interact_entities = Collections.singletonList("villager");
+            public interactEntities interact_entities = new interactEntities();
+
+            @ConfigSerializable
+            public static class interactEntities {
+                @Setting(comment = "Only this entities will not be allowed to interact.")
+                public List<String> blacklist = new ArrayList<>();
+
+                @Setting(comment = "Only this entities will be allowed to interact, all others no.")
+                public List<String> whitelist = Collections.singletonList("villager");
+            }
 
             @Setting(value="entity-passives" ,comment = "Allow player interactions with passives?")
             public boolean entity_passives = true;

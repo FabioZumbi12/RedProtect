@@ -5,10 +5,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.*;
@@ -46,7 +43,61 @@ public class RPGlobalListener implements Listener {
      * @return Boolean - Can build or not.
      */
     private boolean bypassBuild(Player p, Block b, int fat) {
-        return fat == 1 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").stream().anyMatch(b.getType().name()::matches) || fat == 2 && RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().anyMatch(b.getType().name()::matches) || p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".build"));
+        return (fat == 1 && canPlaceList(p.getWorld(), b.getType().name())) ||
+                (fat == 2 && canBreakList(p.getWorld(), b.getType().name())) ||
+                p.hasPermission("redprotect.bypass.world") || (!RPConfig.needClaimToBuild(p, b) && RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".build"));
+    }
+
+    private boolean canPlaceList(World w, String type){
+        //blacklist
+        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
+        if (blt.stream().anyMatch(type::matches)) return false;
+
+        //whitelist
+        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+            return false;
+        }
+        return RPConfig.getGlobalFlagBool(w.getName() + "build");
+    }
+
+    private boolean canBreakList(World w, String type){
+        //blacklist
+        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
+        if (blt.stream().anyMatch(type::matches)) return false;
+
+        //whitelist
+        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+            return false;
+        }
+        return RPConfig.getGlobalFlagBool(w.getName() + "build");
+    }
+
+    private boolean canInteractBlocksList(World w, String type){
+        //blacklist
+        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.blacklist");
+        if (blt.stream().anyMatch(type::matches)) return false;
+
+        //whitelist
+        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.whitelist");
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+            return false;
+        }
+        return RPConfig.getGlobalFlagBool(w.getName() + "interact");
+    }
+
+    private boolean canInteractEntitiesList(World w, String type){
+        //blacklist
+        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.blacklist");
+        if (blt.stream().anyMatch(type::matches)) return false;
+
+        //whitelist
+        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.whitelist");
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+            return false;
+        }
+        return RPConfig.getGlobalFlagBool(w.getName() + "interact");
     }
 
     @EventHandler
@@ -333,8 +384,8 @@ public class RPGlobalListener implements Listener {
                 b.getType().name().contains("NOTE_BLOCK") ||
                 b.getType().name().contains("CAKE")) {
 
-            if ((RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().noneMatch(b.getType().name()::matches)
-                    || RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").stream().noneMatch(b.getType().name()::matches)) &&
+            if ((!canBreakList(p.getWorld(), b.getType().name())
+                    || !canInteractBlocksList(p.getWorld(), b.getType().name())) &&
                     !bypassBuild(p, null, 0)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 e.setCancelled(true);
@@ -350,8 +401,8 @@ public class RPGlobalListener implements Listener {
                     return;
                 }
             }
-            if (itemInHand.getType().equals(Material.PAINTING) || itemInHand.getType().equals(Material.ITEM_FRAME) || itemInHand.getType().equals(Material.ARMOR_STAND)) {
-                if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.place-blocks").stream().noneMatch(itemInHand.getType().name()::matches) && !bypassBuild(p, null, 0)) {
+            if (itemInHand.getType().equals(Material.PAINTING) || itemInHand.getType().equals(Material.ITEM_FRAME) || itemInHand.getType().name().equals("ARMOR_STAND")) {
+                if (canPlaceList(p.getWorld(), itemInHand.getType().name()) && !bypassBuild(p, null, 0)) {
                     e.setUseItemInHand(Event.Result.DENY);
                     e.setCancelled(true);
                     return;
@@ -360,7 +411,7 @@ public class RPGlobalListener implements Listener {
         }
 
         if (!RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".interact") && !p.hasPermission("redprotect.bypass.world")) {
-            if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-blocks").stream().anyMatch(b.getType().name()::matches)) {
+            if (canInteractBlocksList(p.getWorld(), b.getType().name())) {
                 return;
             }
             e.setUseItemInHand(Event.Result.DENY);
@@ -397,7 +448,7 @@ public class RPGlobalListener implements Listener {
         }
 
         if (!RPConfig.getGlobalFlagBool(l.getWorld().getName() + ".interact") && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
-            if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-interact-false.allow-entities").stream().anyMatch(ent.getType().name()::matches)) {
+            if (canInteractEntitiesList(p.getWorld(), ent.getType().name())) {
                 return;
             }
             e.setCancelled(true);
@@ -537,7 +588,7 @@ public class RPGlobalListener implements Listener {
                 }
             }
             if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {
-                if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().noneMatch(e1.getType().name()::matches) && !bypassBuild(p, null, 0)) {
+                if (!canBreakList(p.getWorld(), e1.getType().name()) && !bypassBuild(p, null, 0)) {
                     e.setCancelled(true);
                     return;
                 }
@@ -568,7 +619,7 @@ public class RPGlobalListener implements Listener {
                     }
                 }
                 if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {
-                    if (RPConfig.getGlobalFlagList(p.getWorld().getName() + ".if-build-false.break-blocks").stream().noneMatch(e1.getType().name()::matches) && !bypassBuild(p, null, 0)) {
+                    if (!canBreakList(p.getWorld(), e1.getType().name()) && !bypassBuild(p, null, 0)) {
                         e.setCancelled(true);
                     }
                 }
@@ -661,15 +712,16 @@ public class RPGlobalListener implements Listener {
         }
 
         //blacklist
-        if (e instanceof Monster && RPConfig.getGlobalFlagList(e.getWorld().getName() + ".spawn-blacklist").contains("MONSTER")) {
+        List<String> blacklist = RPConfig.getGlobalFlagList(e.getWorld().getName() + ".spawn-blacklist");
+        if (e instanceof Monster && blacklist.contains("MONSTERS")) {
             event.setCancelled(true);
             return;
         }
-        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && RPConfig.getGlobalFlagList(e.getWorld().getName() + ".spawn-blacklist").contains("PASSIVES")) {
+        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient) && blacklist.contains("PASSIVES")) {
             event.setCancelled(true);
             return;
         }
-        if (RPConfig.getGlobalFlagList(e.getWorld().getName() + ".spawn-blacklist").contains(e.getType().name())) {
+        if (blacklist.stream().anyMatch(e.getType().name()::matches)) {
             event.setCancelled(true);
             return;
         }
@@ -677,15 +729,15 @@ public class RPGlobalListener implements Listener {
         //whitelist
         List<String> wtl = RPConfig.getGlobalFlagList(e.getWorld().getName() + ".spawn-whitelist");
         if (!wtl.isEmpty()) {
-            if (e instanceof Monster && !wtl.contains("MONSTER")) {
+            if (e instanceof Monster && !wtl.contains("MONSTERS")) {
                 event.setCancelled(true);
                 return;
             }
-            if ((e instanceof Animals || e instanceof Villager || e instanceof Golem) && !wtl.contains("PASSIVES")) {
+            if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient) && !wtl.contains("PASSIVES")) {
                 event.setCancelled(true);
                 return;
             }
-            if (!wtl.contains(e.getType().name())) {
+            if (wtl.stream().noneMatch(e.getType().name()::matches)) {
                 event.setCancelled(true);
             }
         }
