@@ -45,7 +45,7 @@ public class RPCommentedGlobalFlags {
             setDefault(w.getName() + ".if-build-false", null, "" +
                     "If build option is false, choose what blocks the player can place/break.\n" +
                     "Materials: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
-            Material.PLAN
+
             setDefault(w.getName() + ".if-build-false.break-blocks.blacklist", new ArrayList<>(), "This blocks will not be allowed to be break, all others yes.");
             setDefault(w.getName() + ".if-build-false.break-blocks.whitelist", Arrays.asList("[*]_PLANT","GRASS", "TALL_GRASS", "POPPY", "DANDELION"), "Only this blocks will be allowed to break, all others will not.");
 
