@@ -189,7 +189,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.13.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>

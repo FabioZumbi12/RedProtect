@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="RedProtect-Spigot" />
+        <module name="RedProtect-Spigot-1.13" />
         <module name="RedProtect-Sponge-56" />
         <module name="RedProtect-Sponge-7" />
         <module name="RedProtect-Sponge-8" />
@@ -15,6 +16,7 @@
     <bytecodeTargetLevel>
       <module name="RedProtect" target="1.8" />
       <module name="RedProtect-Spigot" target="1.8" />
+      <module name="RedProtect-Spigot-1.13" target="1.8" />
       <module name="RedProtect-Sponge-56" target="1.8" />
       <module name="RedProtect-Sponge-7" target="1.8" />
       <module name="RedProtect-Sponge-8" target="1.8" />
