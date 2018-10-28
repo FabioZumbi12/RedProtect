@@ -1132,16 +1132,19 @@ public class RPPlayerListener{
     }
 
     private void stopTaskPlayer(String taskId){
-        Sponge.getScheduler().getTaskById(UUID.fromString(taskId.split("_")[0])).get().cancel();
+        Sponge.getScheduler().getTaskById(UUID.fromString(taskId.split("_")[0])).ifPresent(Task::cancel);
     }
 
     private void stopTaskPlayer(Player p){
     	List<String> toremove = new ArrayList<>();
     	for (String taskId:PlayertaskID.keySet()){
-    		if (PlayertaskID.get(taskId).equals(p.getName())){
-    			Sponge.getScheduler().getTaskById(UUID.fromString(taskId.split("_")[0])).get().cancel();  
-    			toremove.add(taskId);    			
-    		}    		  			
+            Sponge.getScheduler().getTaskById(UUID.fromString(taskId.split("_")[0])).ifPresent(t -> {
+                if (PlayertaskID.get(taskId).equals(p.getName())){
+                    t.cancel();
+                    toremove.add(taskId);
+                }
+            });
+
     	}
     	for (String remove:toremove){
     		PlayertaskID.remove(remove);
@@ -1258,11 +1261,13 @@ public class RPPlayerListener{
 						for (String taskId:PlayertaskID.keySet()){
 							String id = taskId.split("_")[0];
 							String ideff = id+"_"+eff+er.getName();
-							if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
-								Sponge.getScheduler().getTaskById(UUID.fromString(id)).get().cancel();
-								removeTasks.add(taskId);
-								RedProtect.get().logger.debug(LogLevel.PLAYER,"(RegionFlags-eff)Removed task ID: " + taskId + " for player " + p.getName());
-							}
+                            Sponge.getScheduler().getTaskById(UUID.fromString(id)).ifPresent(t -> {
+                                if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
+                                    t.cancel();
+                                    removeTasks.add(taskId);
+                                    RedProtect.get().logger.debug(LogLevel.PLAYER,"(RegionFlags-eff)Removed task ID: " + taskId + " for player " + p.getName());
+                                }
+                            });
 						}
 						for (String key:removeTasks){
 							PlayertaskID.remove(key);
@@ -1285,11 +1290,13 @@ public class RPPlayerListener{
 					for (String taskId:PlayertaskID.keySet()){
 						String id = taskId.split("_")[0];
 						String ideff = id+"_"+"forcefly"+er.getName();
-						if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
-							Sponge.getScheduler().getTaskById(UUID.fromString(id)).get().cancel();
-							removeTasks.add(taskId);
-							RedProtect.get().logger.debug(LogLevel.PLAYER,"(RegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
-						}
+                        Sponge.getScheduler().getTaskById(UUID.fromString(id)).ifPresent(t -> {
+                            if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
+                                t.cancel();
+                                removeTasks.add(taskId);
+                                RedProtect.get().logger.debug(LogLevel.PLAYER,"(RegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
+                            }
+                        });
 					}
 					for (String key:removeTasks){
 						PlayertaskID.remove(key);
@@ -1403,11 +1410,13 @@ public class RPPlayerListener{
 						for (String taskId:PlayertaskID.keySet()){
 							String id = taskId.split("_")[0];
 							String ideff = id+"_"+eff+er.getName();
-							if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
-								Sponge.getScheduler().getTaskById(UUID.fromString(id)).get().cancel();
-								removeTasks.add(taskId);
-								RedProtect.get().logger.debug(LogLevel.PLAYER,"(noRegionFlags eff)Removed task ID: " + taskId + " for effect " + effect);
-							}
+                            Sponge.getScheduler().getTaskById(UUID.fromString(id)).ifPresent(t -> {
+                                if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
+                                    t.cancel();
+                                    removeTasks.add(taskId);
+                                    RedProtect.get().logger.debug(LogLevel.PLAYER,"(noRegionFlags eff)Removed task ID: " + taskId + " for effect " + effect);
+                                }
+                            });
 						}
 						for (String key:removeTasks){
 							PlayertaskID.remove(key);
@@ -1426,11 +1435,13 @@ public class RPPlayerListener{
     				for (String taskId:PlayertaskID.keySet()){
     					String id = taskId.split("_")[0];
     					String ideff = id+"_"+"forcefly"+er.getName();
-    					if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
-    						Sponge.getScheduler().getTaskById(UUID.fromString(id)).get().cancel();
-    						removeTasks.add(taskId);
-    						RedProtect.get().logger.debug(LogLevel.PLAYER,"(noRegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
-    					}
+                        Sponge.getScheduler().getTaskById(UUID.fromString(id)).ifPresent(t -> {
+                            if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())){
+                                t.cancel();
+                                removeTasks.add(taskId);
+                                RedProtect.get().logger.debug(LogLevel.PLAYER,"(noRegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
+                            }
+                        });
     				}
     				for (String key:removeTasks){
     					PlayertaskID.remove(key);

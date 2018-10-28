@@ -8,6 +8,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
@@ -49,55 +50,55 @@ public class RPGlobalListener implements Listener {
     }
 
     private boolean canPlaceList(World w, String type){
-        //blacklist
-        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
-        if (blt.stream().anyMatch(type::matches)) return false;
+        if (!RPConfig.getGlobalFlagBool(w.getName() + ".build")){
+            //blacklist
+            List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
+            if (blt.stream().anyMatch(type::matches)) return false;
 
-        //whitelist
-        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
-            return false;
+            //whitelist
+            List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
+            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
         }
-        return RPConfig.getGlobalFlagBool(w.getName() + "build");
+        return true;
     }
 
     private boolean canBreakList(World w, String type){
-        //blacklist
-        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
-        if (blt.stream().anyMatch(type::matches)) return false;
+        if (!RPConfig.getGlobalFlagBool(w.getName() + ".build")){
+            //blacklist
+            List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
+            if (blt.stream().anyMatch(type::matches)) return false;
 
-        //whitelist
-        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
-            return false;
+            //whitelist
+            List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
+            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
         }
-        return RPConfig.getGlobalFlagBool(w.getName() + "build");
+        return true;
     }
 
     private boolean canInteractBlocksList(World w, String type){
-        //blacklist
-        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.blacklist");
-        if (blt.stream().anyMatch(type::matches)) return false;
+        if (!RPConfig.getGlobalFlagBool(w.getName() + ".interact")){
+            //blacklist
+            List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.blacklist");
+            if (blt.stream().anyMatch(type::matches)) return false;
 
-        //whitelist
-        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.whitelist");
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
-            return false;
+            //whitelist
+            List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.whitelist");
+            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
         }
-        return RPConfig.getGlobalFlagBool(w.getName() + "interact");
+        return true;
     }
 
     private boolean canInteractEntitiesList(World w, String type){
-        //blacklist
-        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.blacklist");
-        if (blt.stream().anyMatch(type::matches)) return false;
+        if (!RPConfig.getGlobalFlagBool(w.getName() + ".interact")){
+            //blacklist
+            List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.blacklist");
+            if (blt.stream().anyMatch(type::matches)) return false;
 
-        //whitelist
-        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.whitelist");
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
-            return false;
+            //whitelist
+            List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.whitelist");
+            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
         }
-        return RPConfig.getGlobalFlagBool(w.getName() + "interact");
+        return true;
     }
 
     @EventHandler
@@ -252,6 +253,8 @@ public class RPGlobalListener implements Listener {
                 e.setCancelled(true);
             }
         }
+
+        RedProtect.get().logger.debug("TeleportCause: "+e.getCause().name());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

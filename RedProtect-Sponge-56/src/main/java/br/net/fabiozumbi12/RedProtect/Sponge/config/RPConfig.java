@@ -556,13 +556,13 @@ public class RPConfig{
     public boolean isAllowedWorld(Player p) {
 		return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
 	}
-
+/*
 	public SortedSet<String> getAllFlags() {
 		SortedSet<String> values = new TreeSet<>(getDefFlagsValues().keySet());
 		values.addAll(new TreeSet<>(AdminFlags));
 		return values;
 	}
-
+*/
 	public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
 		if (isAdmin){
 			if (!AdminFlags.contains(flag)){

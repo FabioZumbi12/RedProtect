@@ -9,15 +9,12 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
-import com.sk89q.worldedit.world.DataException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 @SuppressWarnings("deprecation")
@@ -62,7 +59,7 @@ public class WEListener {
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
-
+/*
     public static void pasteWithWE(Player p, File file) {
         World world = p.getWorld();
         Location loc = p.getLocation();
@@ -76,7 +73,7 @@ public class WEListener {
             e.printStackTrace();
         }
     }
-
+*/
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {

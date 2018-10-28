@@ -44,7 +44,7 @@ public class RegionManager{
     public void unloadAll() {
     	for (World w:this.regionManagers.keySet()){
     		regionManagers.get(w).clearRegions();
-			if (RedProtect.get().Dyn){
+			if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable){
 				RedProtect.get().dynmap.removeAll(w);
 			}
     	}
@@ -159,7 +159,7 @@ public class RegionManager{
     
     public void add(Region r, World w) {
     	this.regionManagers.get(w).add(r);
-		if (RedProtect.get().Dyn){
+		if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable){
 			try {
 				RedProtect.get().dynmap.addMark(r);
 			} catch (Exception ex){
@@ -178,7 +178,7 @@ public class RegionManager{
     	WorldRegionManager rms = this.regionManagers.get(w);
     	rms.remove(r);
         removeCache(r);
-		if (RedProtect.get().Dyn){
+		if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable){
 			try {
 				RedProtect.get().dynmap.removeMark(r);
 			} catch (Exception ex){

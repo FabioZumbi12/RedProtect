@@ -632,7 +632,7 @@ public class RPPlayerListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
+        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) || e.getCause().name().contains("CHORUS_FRUIT")) {
             if (rfrom != null && !rfrom.canTeleport(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantteleportitem");
                 e.setCancelled(true);
