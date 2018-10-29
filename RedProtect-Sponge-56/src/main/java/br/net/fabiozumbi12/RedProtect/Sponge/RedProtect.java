@@ -94,7 +94,7 @@ public class RedProtect {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         try {
-			String v = Sponge.getGame().getPlatform().getContainer(Component.API).getVersion().get();
+			String v = Sponge.getGame().getPlatform().getContainer(Component.API).getVersion().orElse("0");
 
             instance = this;
 
