@@ -132,7 +132,7 @@ public class RedProtect extends JavaPlugin {
                 serv.getPluginManager().registerEvents(new RPMine19(), this);
             }
 
-            if (version == 1120) {
+            if (version <= 1120) {
                 rpvhelper = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper112").newInstance();
             }
             if (version >= 1130) {
