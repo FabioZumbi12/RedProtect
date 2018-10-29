@@ -4,7 +4,7 @@
     <parent>
         <groupId>br.net.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>7.5.4</version>
+        <version>7.5.5</version>
     </parent>
     <artifactId>RedProtect-Spigot-1.13</artifactId>
 
@@ -34,7 +34,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.13.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.13.2-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
