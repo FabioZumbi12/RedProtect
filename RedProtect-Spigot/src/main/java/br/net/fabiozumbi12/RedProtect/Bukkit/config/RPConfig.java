@@ -355,6 +355,7 @@ public class RPConfig {
         if (configUp > 0) {
             RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
             RedProtect.get().logger.warning("Configuration UPDATE! We added new flags or new options, or just updated some other config. See change log for details.");
+            comConfig.saveConfig();
         }
 
         /*------------------------------------------------------------------------------------*/
@@ -385,7 +386,7 @@ public class RPConfig {
         GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse"));
         GuiItems.set("gui-strings.separator", GuiItems.getString("gui-strings.separator", "&7|"));
 
-        GuiItems.set("gui-separator.material", GuiItems.getString("gui-separator.material", "THIN_GLASS"));
+        GuiItems.set("gui-separator.material", GuiItems.getString("gui-separator.material", "WHITE_STAINED_GLASS_PANE"));
         GuiItems.set("gui-separator.data", GuiItems.getInt("gui-separator.data", 0));
 
         for (String key : getDefFlagsValues().keySet()) {

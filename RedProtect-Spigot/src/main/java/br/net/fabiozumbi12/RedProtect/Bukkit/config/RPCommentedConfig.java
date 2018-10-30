@@ -222,7 +222,8 @@ public class RPCommentedConfig {
                 "clan",
                 "ender-chest",
                 "leaves-decay",
-                "build"), "Flags enabled to players use with commands and flag Gui.");
+                "build",
+                "press-plate"), "Flags enabled to players use with commands and flag Gui.");
         setDefault("flags-configuration.pvparena-nopvp-kick-cmd", "spawn {player}", "Command to use if players with pvp off enter in a region with 'pvparena' enabled.");
         setDefault("flags-configuration.change-flag-delay.enable", true, "Enable delay to change flags.");
         setDefault("flags-configuration.change-flag-delay.seconds", 10, "Delay the player can change a flag after last change.");

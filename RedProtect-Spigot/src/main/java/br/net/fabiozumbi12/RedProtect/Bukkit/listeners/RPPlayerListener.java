@@ -60,6 +60,19 @@ public class RPPlayerListener implements Listener {
         RedProtect.get().logger.debug("Loaded RPPlayerListener...");
     }
 
+    public void onPressPlateChange(PlayerInteractEvent e) {
+        if(e.getAction() == Action.PHYSICAL) {
+            if(e.getClickedBlock().getType().name().contains("_PLATE")) {
+                Location loc = e.getClickedBlock().getLocation();
+                Region r = RedProtect.get().rm.getTopRegion(loc);
+                if (r != null && !r.allowPressPlate(e.getPlayer())){
+                    e.setCancelled(true);
+                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantpressplate");
+                }
+            }
+        }
+    }
+
     @EventHandler
     public void onBrewing(BrewEvent e) {
         ItemStack[] cont = e.getContents().getContents();
