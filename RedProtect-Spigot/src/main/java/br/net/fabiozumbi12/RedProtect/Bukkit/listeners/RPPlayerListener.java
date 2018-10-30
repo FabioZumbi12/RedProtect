@@ -46,7 +46,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener {
 
-    static final RPContainer cont = new RPContainer();
+    private static final RPContainer cont = new RPContainer();
     private final HashMap<String, String> Ownerslist = new HashMap<>();
     private final HashMap<String, String> PlayerCmd = new HashMap<>();
     private final HashMap<String, Boolean> PvPState = new HashMap<>();
@@ -60,14 +60,25 @@ public class RPPlayerListener implements Listener {
         RedProtect.get().logger.debug("Loaded RPPlayerListener...");
     }
 
+    @EventHandler
     public void onPressPlateChange(PlayerInteractEvent e) {
-        if(e.getAction() == Action.PHYSICAL) {
-            if(e.getClickedBlock().getType().name().contains("_PLATE")) {
+        if (e.getAction() == Action.PHYSICAL) {
+            if (e.getClickedBlock().getType().name().contains("_PLATE")) {
                 Location loc = e.getClickedBlock().getLocation();
                 Region r = RedProtect.get().rm.getTopRegion(loc);
                 if (r != null && !r.allowPressPlate(e.getPlayer())){
                     e.setCancelled(true);
                     RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantpressplate");
+                }
+            }
+        }
+        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            Block b = e.getPlayer().getTargetBlock(null, 5);
+            if (b.getType() == Material.FIRE){
+                Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+                if (r != null && !r.canBuild(e.getPlayer())){
+                    e.setCancelled(true);
+                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
                 }
             }
         }
@@ -293,8 +304,8 @@ public class RPPlayerListener implements Listener {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
-                } else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
-                        RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches))) {
+                } else if (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
+                        RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches)) {
 
                     if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
