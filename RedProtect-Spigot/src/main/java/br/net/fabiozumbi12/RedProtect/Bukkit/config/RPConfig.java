@@ -350,6 +350,9 @@ public class RPConfig {
             if (!flags.contains("press-plate")) {
                 flags.add("press-plate");
             }
+            if (!flags.contains("fishing")) {
+                flags.add("fishing");
+            }
             configUp++;
         }
         if (configUp > 0) {

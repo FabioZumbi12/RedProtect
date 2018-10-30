@@ -2,6 +2,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Openable;
+import org.bukkit.entity.EntityType;
 
 public class RPVHelper113 implements RPVHelper {
 

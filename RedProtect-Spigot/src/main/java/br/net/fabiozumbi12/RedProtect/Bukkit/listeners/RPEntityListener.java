@@ -278,7 +278,7 @@ public class RPEntityListener implements Listener {
                     RedProtect.get().logger.debug("Cancelled ItemFrame drop Item");
                     e.setCancelled(true);
                 }
-            } else if (e2 instanceof Explosive) {
+            }  else if (e2 instanceof Explosive) {
                 if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())) {
                     e.setCancelled(true);
                 }

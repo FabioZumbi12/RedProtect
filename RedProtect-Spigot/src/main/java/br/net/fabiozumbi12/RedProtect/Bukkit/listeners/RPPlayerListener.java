@@ -334,6 +334,12 @@ public class RPPlayerListener implements Listener {
                         event.setUseItemInHand(Event.Result.DENY);
                         event.setCancelled(true);
                     }
+                } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
+                    if (!r.allowFishing(p)) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                        event.setUseItemInHand(Event.Result.DENY);
+                        event.setCancelled(true);
+                    }
                 } else if ((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) &&
                         b.getType().name().contains("SIGN") && !r.canSign(p)) {
                     Sign sign = (Sign) b.getState();
@@ -374,10 +380,10 @@ public class RPPlayerListener implements Listener {
                     event.setCancelled(true);
                 } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) &&
                         (itemInHand.getType().equals(Material.FLINT_AND_STEEL) ||
-                                itemInHand.getType().equals(Material.WATER_BUCKET) ||
                                 itemInHand.getType().equals(Material.BUCKET) ||
                                 itemInHand.getType().equals(Material.LAVA_BUCKET) ||
                                 itemInHand.getType().equals(Material.ITEM_FRAME) ||
+                                (!r.allowFishing(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                 itemInHand.getType().equals(Material.PAINTING))) {
                     RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);

@@ -1352,6 +1352,13 @@ public class Region implements Serializable {
 
 
     //---------------------- Player Flags --------------------------//
+    public boolean allowFishing(Player p){
+        if (!RPConfig.isFlagEnabled("fishing")){
+            return RPConfig.getBool("flags.fishing") || checkAllowedPlayer(p);
+        }
+        return getFlagBool("fishing") || checkAllowedPlayer(p);
+    }
+
     public boolean allowPressPlate(Player p){
         if (!RPConfig.isFlagEnabled("press-plate")){
             return RPConfig.getBool("flags.press-plate") || checkAllowedPlayer(p);
