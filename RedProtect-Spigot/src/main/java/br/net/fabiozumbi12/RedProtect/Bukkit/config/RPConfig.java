@@ -344,6 +344,14 @@ public class RPConfig {
             RedProtect.get().getConfig().set("private.allowed-blocks", blocks);
             configUp++;
         }
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.13D) {
+            RedProtect.get().getConfig().set("config-version", 7.13D);
+
+            if (!flags.contains("press-plate")) {
+                flags.add("press-plate");
+            }
+            configUp++;
+        }
         if (configUp > 0) {
             RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
             RedProtect.get().logger.warning("Configuration UPDATE! We added new flags or new options, or just updated some other config. See change log for details.");

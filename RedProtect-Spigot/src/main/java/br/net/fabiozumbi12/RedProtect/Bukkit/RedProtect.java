@@ -194,7 +194,7 @@ public class RedProtect extends JavaPlugin {
                 clanManager = SimpleClans.getInstance().getClanManager();
                 logger.info("SimpleClans found. Hooked.");
             }
-            if (Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+            if (Dyn && RPConfig.getBool("hooks.dynmap.enabled")) {
                 logger.info("Dynmap found. Hooked.");
                 logger.info("Loading dynmap markers...");
                 dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));

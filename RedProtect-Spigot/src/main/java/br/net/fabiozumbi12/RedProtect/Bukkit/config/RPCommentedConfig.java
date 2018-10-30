@@ -28,7 +28,7 @@ public class RPCommentedConfig {
             }
         }
 
-        setDefault("config-version", 7.12, "Dont touch <3");
+        setDefault("config-version", 7.13, "Dont touch <3");
         setDefault("debug-messages", false, "Enable debug messages");
         setDefault("log-actions", true, "Log all commands used by players");
         setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR");
@@ -188,6 +188,7 @@ public class RPCommentedConfig {
         setDefault("flags.allow-spawner", false, null);
         setDefault("flags.leaves-decay", false, null);
         setDefault("flags.build", false, null);
+        setDefault("flags.press-plate", false, null);
 
         setDefault("flags-configuration", null, ""
                 + "effects-duration: Duration for timed flags like potions effects, jump, etc.\n"
