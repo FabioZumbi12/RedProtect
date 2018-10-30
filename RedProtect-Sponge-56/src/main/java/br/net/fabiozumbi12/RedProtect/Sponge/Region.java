@@ -1271,7 +1271,14 @@ public class Region implements Serializable{
 	}
 	
 	
-	//---------------------- Player Flags --------------------------//	
+	//---------------------- Player Flags --------------------------//
+    public boolean allowPressPlate(Player p){
+        if (!RedProtect.get().cfgs.isFlagEnabled("press-plate")){
+            return RedProtect.get().cfgs.root().flags.get("press-plate");
+        }
+        return getFlagBool("press-plate") || checkAllowedPlayer(p);
+    }
+
 	public boolean canBuild(Player p) {
     	if (flagExists("for-sale") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
     		return false;

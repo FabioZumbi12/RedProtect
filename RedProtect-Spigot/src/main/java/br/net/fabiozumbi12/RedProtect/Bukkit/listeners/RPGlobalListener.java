@@ -590,7 +590,7 @@ public class RPGlobalListener implements Listener {
                     return;
                 }
             }
-            if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {
+            if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1.getType().name().contains("ARMOR_STAND")) {
                 if (!canBreakList(p.getWorld(), e1.getType().name()) && !bypassBuild(p, null, 0)) {
                     e.setCancelled(true);
                     return;
@@ -621,7 +621,7 @@ public class RPGlobalListener implements Listener {
                         return;
                     }
                 }
-                if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1 instanceof ArmorStand) {
+                if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1.getType().name().contains("ARMOR_STAND")) {
                     if (!canBreakList(p.getWorld(), e1.getType().name()) && !bypassBuild(p, null, 0)) {
                         e.setCancelled(true);
                     }

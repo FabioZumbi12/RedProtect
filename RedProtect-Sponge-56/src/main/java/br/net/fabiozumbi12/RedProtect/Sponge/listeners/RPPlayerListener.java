@@ -7,6 +7,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
@@ -26,6 +27,8 @@ import org.spongepowered.api.entity.projectile.ThrownPotion;
 import org.spongepowered.api.entity.projectile.source.ProjectileSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.block.CollideBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
@@ -70,7 +73,20 @@ public class RPPlayerListener{
     public RPPlayerListener() {
     	RedProtect.get().logger.debug(LogLevel.PLAYER,"Loaded RPPlayerListener...");
     }
-    
+
+    @Listener(order = Order.FIRST, beforeModifications = true)
+    public void onPressPlateChange(CollideBlockEvent e, @First Player p){
+
+        if (e.getTargetBlock().getName().contains("pressure_plate")){
+            Location<World> loc = e.getTargetLocation();
+            Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+            if (r != null && !r.allowPressPlate(p)){
+                e.setCancelled(true);
+                RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
+            }
+        }
+    }
+
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onConsume(UseItemStackEvent.Start e, @First Player p){
         ItemStack stack = e.getItemStackInUse().createStack();

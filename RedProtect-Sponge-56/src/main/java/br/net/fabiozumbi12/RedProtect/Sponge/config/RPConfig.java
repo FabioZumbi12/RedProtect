@@ -384,6 +384,15 @@ public class RPConfig{
 			update++;
 		}
 
+        if (root.config_version < 7.6D){
+            root.config_version = 7.6D;
+            if (!root.flags_configuration.enabled_flags.contains("press-plate")){
+                root.flags_configuration.enabled_flags.add("press-plate");
+                root.flags.put("press-plate", false);
+            }
+            update++;
+        }
+
 		if (update > 0){
 			RedProtect.get().logger.warning("Configuration UPDATED!");
 		}

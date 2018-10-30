@@ -12,7 +12,7 @@ public class MainCategory {
     public MainCategory(){}
 
     @Setting(value="config-version", comment = "Dont touch <3")
-    public double config_version = 7.5;
+    public double config_version = 7.6;
 
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
@@ -52,6 +52,7 @@ public class MainCategory {
         myMap.put("minecart", false);
         myMap.put("mob-loot", false);
         myMap.put("passives", false);
+        myMap.put("press-plate", false);
         myMap.put("pvp", false);
         myMap.put("smart-door", true);
         myMap.put("spawn-animals", true);
@@ -89,6 +90,7 @@ public class MainCategory {
                 "spawn-monsters",
                 "spawn-animals",
                 "passives",
+                "press-plate",
                 "flow",
                 "fire",
                 "minecart",
