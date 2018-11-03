@@ -59,9 +59,9 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-            Double dist = loc1.distanceSquared(loc2);
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+            double dist = new Region(null, loc1, loc2, null).getArea();
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist));
             return;
         }
 
@@ -75,6 +75,10 @@ public class DefineRegionBuilder extends RegionBuilder {
         if (RPConfig.getBool("region-settings.autoexpandvert-ondefine")) {
             miny = 0;
             maxy = p.getWorld().getMaxHeight();
+            if (RPConfig.getInt("region-settings.claim.miny") != -1)
+                miny = RPConfig.getInt("region-settings.claim.miny");
+            if (RPConfig.getInt("region-settings.claim.maxy") != -1)
+                maxy = RPConfig.getInt("region-settings.claim.maxy");
         }
 
         Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
@@ -150,7 +154,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
-            Double peco = RedProtect.get().econ.getBalance(p);
+            double peco = RedProtect.get().econ.getBalance(p);
             long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")) {

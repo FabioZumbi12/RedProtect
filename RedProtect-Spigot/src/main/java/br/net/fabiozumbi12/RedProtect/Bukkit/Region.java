@@ -710,7 +710,6 @@ public class Region implements Serializable {
         this.members = new ArrayList<>();
         this.leaders = Arrays.asList(RPConfig.getString("region-settings.default-leader"));
         this.flags = RPConfig.getDefFlagsValues();
-        this.tppoint = new Location(Bukkit.getWorld(world), this.getCenterX(), this.getCenterY(), this.getCenterZ());
         this.canDelete = true;
         this.world = world;
         this.wMessage = "";

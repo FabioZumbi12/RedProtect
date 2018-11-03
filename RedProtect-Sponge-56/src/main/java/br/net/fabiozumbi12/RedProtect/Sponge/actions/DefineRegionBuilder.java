@@ -57,9 +57,9 @@ public class DefineRegionBuilder extends RegionBuilder{
         }
 
         //check if distance allowed
-        if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
-            Double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
+        if (new Region(null, loc1, loc2, null).getArea() > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+            double dist = new Region(null, loc1, loc2, null).getArea();
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist));
             return;
         }
 
@@ -76,7 +76,7 @@ public class DefineRegionBuilder extends RegionBuilder{
             if (RedProtect.get().cfgs.root().region_settings.claim.miny != -1)
                 miny = RedProtect.get().cfgs.root().region_settings.claim.miny;
             if (RedProtect.get().cfgs.root().region_settings.claim.maxy != -1)
-                miny = RedProtect.get().cfgs.root().region_settings.claim.maxy;
+                maxy = RedProtect.get().cfgs.root().region_settings.claim.maxy;
         }
         
         Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), wmsg, 0, null, true);

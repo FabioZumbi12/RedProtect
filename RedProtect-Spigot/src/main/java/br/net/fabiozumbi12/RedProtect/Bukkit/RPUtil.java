@@ -1335,7 +1335,7 @@ public class RPUtil {
         for (Location loc : r2.get4Points(r2.getCenterY())) {
             Map<Integer, Region> pregs = RedProtect.get().rm.getGroupRegion(loc);
             pregs.remove(r2.getPrior());
-            Region other = null;
+            Region other;
             if (pregs.size() > 0) {
                 other = pregs.get(Collections.max(pregs.keySet()));
             } else {
