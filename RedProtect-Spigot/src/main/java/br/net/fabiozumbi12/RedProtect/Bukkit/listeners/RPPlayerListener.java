@@ -39,9 +39,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.inventivetalent.bossbar.BossBarAPI;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener {
@@ -69,16 +67,6 @@ public class RPPlayerListener implements Listener {
                 if (r != null && !r.allowPressPlate(e.getPlayer())){
                     e.setCancelled(true);
                     RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantpressplate");
-                }
-            }
-        }
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-            Block b = e.getPlayer().getTargetBlock(null, 5);
-            if (b.getType() == Material.FIRE){
-                Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
-                if (r != null && !r.canBuild(e.getPlayer())){
-                    e.setCancelled(true);
-                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
                 }
             }
         }

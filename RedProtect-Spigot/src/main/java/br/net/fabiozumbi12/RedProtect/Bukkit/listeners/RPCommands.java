@@ -2723,14 +2723,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                         return;
                     }
 
-
-                    if (RPConfig.AdminFlags.contains(flag)) {
-                        SendFlagUsageMessage(p, flag);
-                    } else {
-                        RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
-                    }
                     sendFlagHelp(p);
-
                 } else {
 
                     //flag clan
