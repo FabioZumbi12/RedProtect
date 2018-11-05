@@ -14,6 +14,7 @@ import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.scheduler.Task;
@@ -1039,7 +1040,7 @@ public class Region implements Serializable{
 
 		for (Slot slot:SlotItems) {
 			if (slot.peek().isPresent()) {
-				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+				if (items.stream().anyMatch(k -> Sponge.getRegistry().getType(ItemType.class, k).orElse(null) == slot.peek().get().getItem())){
 					return false;
 				}
 			}
@@ -1060,7 +1061,7 @@ public class Region implements Serializable{
 		Iterable<Slot> SlotItems =  p.getInventory().slots();
 		for (Slot slot:SlotItems) {
 		    if (slot.peek().isPresent()) {
-				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+				if (items.stream().anyMatch(k -> Sponge.getRegistry().getType(ItemType.class, k).orElse(null) == slot.peek().get().getItem())){
 					return true;
 				}
 		    }
@@ -1081,7 +1082,7 @@ public class Region implements Serializable{
 		
 		for (Slot slot:SlotItems){
 			if (slot.peek().isPresent()) {
-				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+				if (items.stream().anyMatch(k -> Sponge.getRegistry().getType(ItemType.class, k).orElse(null) == slot.peek().get().getItem())){
 					return false;
 				}
 			}

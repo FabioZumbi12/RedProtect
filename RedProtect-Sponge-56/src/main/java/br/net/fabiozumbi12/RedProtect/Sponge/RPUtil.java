@@ -1022,7 +1022,7 @@ public class RPUtil {
 			}, RedProtect.get().cfgs.root().region_settings.border.time_showing, TimeUnit.SECONDS);
         }
     }
-
+/*
 	public static <T extends CatalogType> boolean testRegistry(Class<T> class1, String value){
 		return (Sponge.getRegistry().getType(class1, value).isPresent() && Sponge.getRegistry().getType(class1, value).get().getName().equals(value));
 	}
@@ -1033,7 +1033,7 @@ public class RPUtil {
 		}
 		return Optional.of(Sponge.getRegistry().getType(class1, value).get());
 	}
-
+*/
 	public static int simuleTotalRegionSize(String player, Region r2) {
 		int total = 0;
 		int regs = 0;			

@@ -481,7 +481,7 @@ public class RPConfig{
 	}
     
     public ItemStack getGuiSeparator() {
-    	ItemStack separator = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, guiRoot.gui_separator.material).orElse(ItemTypes.GLASS_PANE), 1);
+    	ItemStack separator = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, guiRoot.gui_separator.material).orElse(ItemTypes.GLASS_PANE), 1);
     	separator.offer(Keys.DISPLAY_NAME, getGuiString("separator"));
     	separator.offer(Keys.ITEM_DURABILITY, guiRoot.gui_separator.data);
     	separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, getGuiString("separator")));

@@ -1239,7 +1239,7 @@ public class RPPlayerListener{
 
             //enter Gamemode flag
             if (r.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
-                p.offer(Keys.GAME_MODE, (GameMode)RPUtil.getRegistryFor(GameMode.class, r.getFlagString("gamemode")).orElse(GameModes.SURVIVAL));
+                p.offer(Keys.GAME_MODE, Sponge.getRegistry().getType(GameMode.class, r.getFlagString("gamemode")).orElse(GameModes.SURVIVAL));
             }
 
             //Check portal (/rp flag set-portal <rp> <world>
@@ -1355,7 +1355,7 @@ public class RPPlayerListener{
                     String amplifier = effect.split(" ")[1];
                     PotionEffect fulleffect = PotionEffect.builder()
                             .particles(false)
-                            .potionType((PotionEffectType)RPUtil.getRegistryFor(PotionEffectType.class, eff).orElse(PotionEffectTypes.STRENGTH))
+                            .potionType(Sponge.getRegistry().getType(PotionEffectType.class, eff).orElse(PotionEffectTypes.STRENGTH))
                             .amplifier(Integer.parseInt(amplifier))
                             .duration(RedProtect.get().cfgs.root().flags_configuration.effects_duration)
                             .build();

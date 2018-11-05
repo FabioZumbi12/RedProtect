@@ -72,14 +72,14 @@ public class RPGui {
 				continue;
 			}
 			try {
-				if (RedProtect.get().ph.hasFlagPerm(player, flag.getKey()) && RedProtect.get().cfgs.isFlagEnabled(flag.getKey()) && RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material).isPresent()){
+				if (RedProtect.get().ph.hasFlagPerm(player, flag.getKey()) && RedProtect.get().cfgs.isFlagEnabled(flag.getKey()) && Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material).isPresent()){
 					if (flag.getKey().equals("pvp") && !RedProtect.get().cfgs.root().flags_configuration.enabled_flags.contains("pvp")){
 						continue;
 					}
 
 					int i = RedProtect.get().cfgs.getGuiSlot(flag.getKey());
 
-					this.guiItens[i] = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material).orElse(ItemTypes.GLASS_PANE), 1);
+					this.guiItens[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material).orElse(ItemTypes.GLASS_PANE), 1);
 
 					this.guiItens[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).name));
 

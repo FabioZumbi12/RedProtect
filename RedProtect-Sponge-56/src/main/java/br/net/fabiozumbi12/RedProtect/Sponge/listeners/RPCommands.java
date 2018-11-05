@@ -816,7 +816,7 @@ public class RPCommands implements CommandCallable {
 
         	if (checkCmd(args[0], "wand") && player.hasPermission("redprotect.magicwand")) {
         		Inventory inv = player.getInventory();
-        		ItemType mat = (ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
+        		ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
         		ItemStack item = ItemStack.of(mat, 1);
         		item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
         		Iterable<Slot> slotIter = player.getInventory().slots();
@@ -2432,7 +2432,7 @@ public class RPCommands implements CommandCallable {
 			if (val.length != 2 && val.length != 5 && val.length != 6){
 				return false;
 			}
-			if (!RPUtil.testRegistry(ParticleType.class, val[0])){
+			if (!Sponge.getRegistry().getType(ParticleType.class, val[0]).isPresent()){
 				return false;
 			}
 			try {
@@ -2479,7 +2479,7 @@ public class RPCommands implements CommandCallable {
 			if (!(value instanceof String)){
 				return false;
 			}
-			if (!RPUtil.testRegistry(GameMode.class, value.toString())){
+			if (!Sponge.getRegistry().getType(GameMode.class, value.toString()).isPresent()){
 				return false;
 			}
 		}
@@ -2498,7 +2498,7 @@ public class RPCommands implements CommandCallable {
 			}
 			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
-			    if (RPUtil.testRegistry(ItemType.class, item)) {
+			    if (Sponge.getRegistry().getType(ItemType.class, item).isPresent()) {
                     return true;
                 }
 			}
@@ -2511,7 +2511,7 @@ public class RPCommands implements CommandCallable {
 			}
 			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
-				if (RPUtil.testRegistry(EntityType.class, item) || RPUtil.testRegistry(ItemType.class, item)){
+				if (Sponge.getRegistry().getType(EntityType.class, item).isPresent() || Sponge.getRegistry().getType(ItemType.class, item).isPresent()){
 					return true;
 				}
 			}
@@ -2579,7 +2579,7 @@ public class RPCommands implements CommandCallable {
 				if (effect.length < 2){
 					return false;
 				}
-				if (!RPUtil.testRegistry(PotionEffectType.class, effect[0])){
+				if (!Sponge.getRegistry().getType(PotionEffectType.class, effect[0]).isPresent()){
 					return false;
 				}
 				try {
