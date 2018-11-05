@@ -111,15 +111,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Maven: worldedit:worldedit:v1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Maven: net.ess3:EssentialsX:2.15.0" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0" level="project" />
     <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />

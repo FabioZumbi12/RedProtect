@@ -25,6 +25,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
@@ -815,22 +816,11 @@ public class RPCommands implements CommandCallable {
 
         	if (checkCmd(args[0], "wand") && player.hasPermission("redprotect.magicwand")) {
         		Inventory inv = player.getInventory();
-        		ItemType mat = (ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID);
+        		ItemType mat = (ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
         		ItemStack item = ItemStack.of(mat, 1);
         		item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
         		Iterable<Slot> slotIter = player.getInventory().slots();
 
-        		/*
-        		for (Slot slot:slotIter) {
-    			    if (slot.peek().isPresent()) {
-    			    	ItemStack stack = slot.peek().get();
-    			    	if (stack.getItem().equals(mat)){
-    			    		RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
-    			    		return cmdr;
-    			    	}
-    			    }
-    			}
-    			*/
     			if (inv.query(Hotbar.class).offer(item).getType().equals(Type.SUCCESS)){
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.given").replace("{item}", mat.getName()));
     			} else {
@@ -2442,7 +2432,7 @@ public class RPCommands implements CommandCallable {
 			if (val.length != 2 && val.length != 5 && val.length != 6){
 				return false;
 			}
-			if (!Sponge.getRegistry().getType(ParticleType.class, val[0]).isPresent()){
+			if (!RPUtil.testRegistry(ParticleType.class, val[0])){
 				return false;
 			}
 			try {
@@ -2508,10 +2498,11 @@ public class RPCommands implements CommandCallable {
 			}
 			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
-				if (!RPUtil.testRegistry(ItemType.class, item)){
-					return false;
-				}
+			    if (RPUtil.testRegistry(ItemType.class, item)) {
+                    return true;
+                }
 			}
+			return false;
 		}
 
 		if (flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
@@ -2520,10 +2511,11 @@ public class RPCommands implements CommandCallable {
 			}
 			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
-				if (!RPUtil.testRegistry(EntityType.class, item) && !RPUtil.testRegistry(ItemType.class, item)){
-					return false;
+				if (RPUtil.testRegistry(EntityType.class, item) || RPUtil.testRegistry(ItemType.class, item)){
+					return true;
 				}
 			}
+			return false;
 		}
 
 		if (flag.equalsIgnoreCase("cmd-onhealth")){
@@ -2554,7 +2546,7 @@ public class RPCommands implements CommandCallable {
 			try{
 				String[] cmds = value.toString().split(",");
 				for (String cmd:cmds){
-					if (cmds.length > 0 && (cmd.contains("cmd:") || cmd.contains("arg:"))){
+					if (cmd.contains("cmd:") || cmd.contains("arg:")){
 						String[] cmdargs = cmd.split(" ");
 						for (String cmd1:cmdargs){
 							if (cmd1.startsWith("cmd:")){

@@ -262,7 +262,9 @@ public class RPCommentedConfig {
         setDefault("hooks.dynmap.layer-priority", 10, "If you use another region mark plugin.");
         setDefault("hooks.dynmap.show-label", true, "Show names under regions.");
         setDefault("hooks.dynmap.show-icon", true, "Show icons under regions.");
-        setDefault("hooks.dynmap.marker-icon", "shield", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
+        setDefault("hooks.dynmap.marker-icon", null, "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
+        setDefault("hooks.dynmap.marker-icon.player", "shield", null);
+        setDefault("hooks.dynmap.marker-icon.server", "star", null);
         setDefault("hooks.dynmap.show-leaders-admins", false, "Show leaders and admins on hover?");
         setDefault("hooks.dynmap.cuboid-region.enable", true, "Cuboid region config.");
         setDefault("hooks.dynmap.cuboid-region.if-disable-set-center", 60, null);

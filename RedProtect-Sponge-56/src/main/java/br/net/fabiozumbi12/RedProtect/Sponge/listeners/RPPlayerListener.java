@@ -16,6 +16,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.*;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.player.Player;
@@ -35,6 +36,7 @@ import org.spongepowered.api.event.cause.entity.damage.source.BlockDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
+import org.spongepowered.api.event.cause.entity.teleport.TeleportCause;
 import org.spongepowered.api.event.cause.entity.teleport.TeleportType;
 import org.spongepowered.api.event.cause.entity.teleport.TeleportTypes;
 import org.spongepowered.api.event.command.SendCommandEvent;
@@ -648,53 +650,57 @@ public class RPPlayerListener{
             if (!r.canEnter(p)){
                 e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                 RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
+                return;
             }
 
     		//enter max players flag
             if (r.maxPlayers() != -1){
             	if (!checkMaxPlayer(p, r)){
             		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
-            		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));	
+            		RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));
+                    return;
             	}
-            } 
-            
+            }
+
             //remove pots
             if (!r.allowEffects(p) && p.get(Keys.POTION_EFFECTS).isPresent()){
             	for (PotionEffect pot:p.get(Keys.POTION_EFFECTS).get()){
             		if (pot.getDuration() < 36000){
             			p.offer(Keys.POTION_EFFECTS, new ArrayList<>());
-            		}           		
-            	}            	
+            		}
+            	}
             }
 
             //Allow enter with items
             if (!r.canEnterWithItens(p)){
         		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
+                return;
         	}
-            
+
             //Deny enter with item
             if (!r.denyEnterWithItens(p)){
         		e.setToTransform(RPUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
         		RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
+                return;
         	}
-            
+
             //Deny Fly
             if (!p.get(Keys.GAME_MODE).get().getName().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.get(Keys.IS_FLYING).get()){
             	p.offer(Keys.IS_FLYING, false);
         		//p.setAllowFlight(false);
         		RPLang.sendMessage(p, "playerlistener.region.cantfly");
-        	} 
-            
+        	}
+
             //update region admin or leader visit
             if (RedProtect.get().cfgs.root().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")){
         		if (r.isLeader(p) || r.isAdmin(p)){
                 	if (r.getDate() == null || (!r.getDate().equals(RPUtil.DateNow()))){
                 		r.setDate(RPUtil.DateNow());
-                	}        	
+                	}
         		}
         	}
-            
+
             if (!Ownerslist.containsKey(p) || !Ownerslist.get(p).equals(r.getID())){
     			Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p));
     			Ownerslist.put(p, r.getID());
@@ -755,13 +761,7 @@ public class RPPlayerListener{
     
 	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerTeleport(MoveEntityEvent.Teleport e, @First Player p){
-    	TeleportType tcause = TeleportTypes.UNKNOWN;
-    	if (e.getCause().containsType(TeleportType.class)){
-    		tcause = e.getCause().first(TeleportType.class).get();
-    	}
-    	
-    	RedProtect.get().logger.debug(LogLevel.PLAYER,"RPLayerListener: Is MoveEntityEvent.Teleport event. Player: "+p.getName()+", cause: "+tcause.getId()); 
-    	
+
     	if (RedProtect.get().tpWait.contains(p.getName())){
     		RedProtect.get().tpWait.remove(p.getName());
     		RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
@@ -865,19 +865,8 @@ public class RPPlayerListener{
     		RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY+""));
     		e.setCancelled(true); 
     	}
-    	
-    	if (tcause.equals(TeleportTypes.ENTITY_TELEPORT)){
-    		if (rfrom != null && !rfrom.canTeleport(p)){
-        		RPLang.sendMessage(p, "playerlistener.region.cantuse");
-                e.setCancelled(true);    		
-        	}
-        	if (rto != null && !rto.canTeleport(p)){
-        		RPLang.sendMessage(p, "playerlistener.region.cantuse");
-                e.setCancelled(true);    		
-        	}
-    	}   
-    	
-    	if (tcause.equals(TeleportTypes.PORTAL)){        	
+
+    	if (e instanceof MoveEntityEvent.Teleport.Portal){
         	if (rto != null && !rto.canExitPortal(p)){
         		RPLang.sendMessage(p, "playerlistener.region.cantteleport");
         		e.setCancelled(true);
@@ -887,7 +876,16 @@ public class RPPlayerListener{
         		RPLang.sendMessage(p, "playerlistener.region.cantenterteleport");
         		e.setCancelled(true);
         	}
-    	}
+    	} else{
+            if (rfrom != null && !rfrom.canTeleport(p)){
+                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                e.setCancelled(true);
+            }
+            if (rto != null && !rto.canTeleport(p)){
+                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                e.setCancelled(true);
+            }
+        }
     }
     
 	private boolean checkMaxPlayer(Player p, Region r) {  
@@ -1241,7 +1239,7 @@ public class RPPlayerListener{
 
             //enter Gamemode flag
             if (r.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")){
-                p.offer(Keys.GAME_MODE, (GameMode)RPUtil.getRegistryFor(GameMode.class, r.getFlagString("gamemode")));
+                p.offer(Keys.GAME_MODE, (GameMode)RPUtil.getRegistryFor(GameMode.class, r.getFlagString("gamemode")).orElse(GameModes.SURVIVAL));
             }
 
             //Check portal (/rp flag set-portal <rp> <world>
@@ -1357,7 +1355,7 @@ public class RPPlayerListener{
                     String amplifier = effect.split(" ")[1];
                     PotionEffect fulleffect = PotionEffect.builder()
                             .particles(false)
-                            .potionType((PotionEffectType)RPUtil.getRegistryFor(PotionEffectType.class, eff))
+                            .potionType((PotionEffectType)RPUtil.getRegistryFor(PotionEffectType.class, eff).orElse(PotionEffectTypes.STRENGTH))
                             .amplifier(Integer.parseInt(amplifier))
                             .duration(RedProtect.get().cfgs.root().flags_configuration.effects_duration)
                             .build();

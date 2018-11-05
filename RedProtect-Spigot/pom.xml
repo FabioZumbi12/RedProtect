@@ -111,20 +111,13 @@
         </dependency>
 
         <dependency>
-            <groupId>worldedit</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar</systemPath>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- end of local repos
-        <dependency>
-           <groupId>com.sk89q.worldedit</groupId>
-           <artifactId>worldedit-bukkit</artifactId>
-           <version>LATEST</version>
-           <scope>provided</scope>
-        </dependency>-->
+        <!-- end of local repos -->
         <dependency>
             <groupId>org.natrolite</groupId>
             <artifactId>vault-api</artifactId>

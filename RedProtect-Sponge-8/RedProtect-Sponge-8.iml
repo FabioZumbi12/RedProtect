@@ -129,22 +129,13 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Maven: worldedit:worldedit:v1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Maven: net.ess3:EssentialsX:2.15.0" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0" level="project" />
     <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: de.keyle:mypet:3.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="RedProtect-Spigot-1.13" />
-    <orderEntry type="library" name="Maven: br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-56:7.5.4" level="project" />
+    <orderEntry type="module" module-name="RedProtect-Sponge-56" />
     <orderEntry type="library" name="Maven: com.github.webbukkit:DynmapCoreAPI:v2.5" level="project" />
     <orderEntry type="module" module-name="RedProtect-Sponge-7" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT" level="project" />

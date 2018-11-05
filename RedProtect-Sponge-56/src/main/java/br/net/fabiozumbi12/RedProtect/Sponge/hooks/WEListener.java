@@ -4,6 +4,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.sponge.SpongeWorld;
@@ -33,8 +34,8 @@ public class WEListener {
 
 	private static void setSelection(SpongeWorld ws, Player p, Location pos1, Location pos2){
 		RegionSelector regs = SpongeWorldEdit.inst().getSession(p).getRegionSelector(ws);
-		regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
-		regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
+		regs.selectPrimary(BlockVector3.at(pos1.getX(),pos1.getY(),pos1.getZ()), null);
+		regs.selectSecondary(BlockVector3.at(pos2.getX(),pos2.getY(),pos2.getZ()), null);
 		SpongeWorldEdit.inst().getSession(p).setRegionSelector(ws, regs);
 		RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
 				.replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
@@ -93,8 +94,8 @@ public class WEListener {
             }
 
 			RegionSelector regs = new LocalSession().getRegionSelector(SpongeWorldEdit.inst().getWorld(w));
-			regs.selectPrimary(new Vector(p1.getX(), p1.getY(), p1.getZ()), null);
-			regs.selectSecondary(new Vector(p2.getX(), p2.getY(), p2.getZ()), null);
+			regs.selectPrimary(BlockVector3.at(p1.getX(), p1.getY(), p1.getZ()), null);
+			regs.selectSecondary(BlockVector3.at(p2.getX(), p2.getY(), p2.getZ()), null);
 
 			Region wreg = null;
 			try {

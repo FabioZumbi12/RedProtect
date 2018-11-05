@@ -955,6 +955,7 @@ public class RPPlayerListener implements Listener {
             if (!r.canEnter(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
+                return;
             }
 
             //enter max players flag
@@ -962,6 +963,7 @@ public class RPPlayerListener implements Listener {
                 if (!checkMaxPlayer(p, r)) {
                     e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                     RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));
+                    return;
                 }
             }
 
@@ -989,12 +991,21 @@ public class RPPlayerListener implements Listener {
             if (!r.canEnterWithItens(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
+                return;
             }
 
             //Deny enter with item
             if (!r.denyEnterWithItens(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
+                return;
+            }
+
+            //Deny Fly
+            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying()) {
+                p.setFlying(false);
+                //p.setAllowFlight(false);
+                RPLang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
             //update region admin or leander visit
@@ -1004,13 +1015,6 @@ public class RPPlayerListener implements Listener {
                         r.setDate(RPUtil.DateNow());
                     }
                 }
-            }
-
-            //Deny Fly
-            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying()) {
-                p.setFlying(false);
-                //p.setAllowFlight(false);
-                RPLang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
             if (!Ownerslist.containsKey(p.getName()) || !Ownerslist.get(p.getName()).equals(r.getID())) {

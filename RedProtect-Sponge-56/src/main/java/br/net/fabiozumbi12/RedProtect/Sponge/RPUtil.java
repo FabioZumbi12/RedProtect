@@ -1021,36 +1021,26 @@ public class RPUtil {
 				p.resetBlockChange(loc.getBlockPosition());
 			}, RedProtect.get().cfgs.root().region_settings.border.time_showing, TimeUnit.SECONDS);
         }
-    }		
-	/*
-	private static String StripName(String pRName) {
-        String regionName;
-		if (pRName.length() > 13) {
-            regionName = pRName.substring(0, 13);
-        } else {
-        	regionName = pRName;
-        } 
-		return regionName;
-	}
-	*/
+    }
+
 	public static <T extends CatalogType> boolean testRegistry(Class<T> class1, String value){
-		return (Sponge.getRegistry().getType(class1, value).isPresent());
+		return (Sponge.getRegistry().getType(class1, value).isPresent() && Sponge.getRegistry().getType(class1, value).get().getName().equals(value));
 	}
-	
-	public static <T extends CatalogType> Object getRegistryFor(Class<T> class1, String value){
+
+	public static <T extends CatalogType> Optional<Object> getRegistryFor(Class<T> class1, String value){
 		if (!testRegistry(class1,value)){
-			return null;
+			return Optional.empty();
 		}
-		return Sponge.getRegistry().getType(class1, value).get();
+		return Optional.of(Sponge.getRegistry().getType(class1, value).get());
 	}
-	
+
 	public static int simuleTotalRegionSize(String player, Region r2) {
 		int total = 0;
 		int regs = 0;			
 		for (Location<World> loc:r2.get4Points(r2.getCenterY())){		
 			Map<Integer, Region> pregs = RedProtect.get().rm.getGroupRegion(loc.getExtent(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			pregs.remove(r2.getPrior());				
-			Region other = null;
+			Region other;
 			if (pregs.size() > 0){
 				other = pregs.get(Collections.max(pregs.keySet()));
 			} else {

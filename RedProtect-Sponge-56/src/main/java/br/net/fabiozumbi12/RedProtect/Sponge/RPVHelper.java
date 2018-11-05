@@ -6,6 +6,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.teleport.TeleportType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public interface RPVHelper {
 	Cause getCause(CommandSource p);
-	
+
 	void closeInventory(Player p);
 	
 	void openInventory(Inventory inv, Player p);
