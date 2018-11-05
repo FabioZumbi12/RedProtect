@@ -2948,11 +2948,18 @@ public class RPCommands implements CommandExecutor, TabCompleter {
             }
             String[] valida = value.toString().replace(" ", "").split(",");
             for (String item : valida) {
-                if (Material.getMaterial(item.toUpperCase()) == null && EntityType.valueOf(item.toUpperCase()) == null) {
-                    return false;
+                Material mat = Material.getMaterial(item.toUpperCase());
+                try{
+                    EntityType.valueOf(item.toUpperCase());
+                } catch (Exception ex){
+                    if (mat == null)
+                        return false;
                 }
+                if (mat == null)
+                    return false;
             }
         }
+
         if (flag.equalsIgnoreCase("cmd-onhealth")) {
             if (!(value instanceof String)) {
                 return false;
