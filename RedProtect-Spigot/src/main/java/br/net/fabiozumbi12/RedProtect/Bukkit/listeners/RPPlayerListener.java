@@ -377,7 +377,7 @@ public class RPPlayerListener implements Listener {
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
-                } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b)) {
+                } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
                     RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                     event.setUseInteractedBlock(Event.Result.DENY);
@@ -441,6 +441,7 @@ public class RPPlayerListener implements Listener {
             }
         } else if (RedProtect.get().MyPet && e instanceof MyPetBukkitEntity) {
             if (((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
+
             }
         } else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
             Region r = RedProtect.get().rm.getTopRegion(l);

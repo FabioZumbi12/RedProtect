@@ -1372,7 +1372,7 @@ public class Region implements Serializable {
         if (!RPConfig.isFlagEnabled("build")) {
             return RPConfig.getBool("flags.build") || checkAllowedPlayer(p);
         }
-        return getFlagBool("build") || checkAllowedPlayer(p);
+        return (getFlagBool("build") || checkAllowedPlayer(p));
     }
 
     public boolean leavesDecay() {

@@ -47,7 +47,6 @@ permissions:
       redprotect.flag.build: true
       redprotect.flag.pvp: true
       redprotect.flag.chest: true
-      redprotect.flag.ender-chest: true
       redprotect.flag.lever: true
       redprotect.flag.button: true
       redprotect.flag.door: true
@@ -142,7 +141,6 @@ permissions:
       redprotect.admin.claim: true
       redprotect.magicwand: true
       redprotect.admin.create: true
-      redprotect.admin.claim: true
       redprotect.flag.special: true
       redprotect.admin.delete: true
       redprotect.admin.removeadmin: true

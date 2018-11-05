@@ -1247,8 +1247,6 @@ public class RPPlayerListener{
                 String[] cmds = r.getFlagString("set-portal").split(" ");
                 RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), "rp teleport "+p.getName()+" "+cmds[0]+" "+cmds[1]);
             }
-
-
         }
 
         if (er != null && er.canExit(p)){

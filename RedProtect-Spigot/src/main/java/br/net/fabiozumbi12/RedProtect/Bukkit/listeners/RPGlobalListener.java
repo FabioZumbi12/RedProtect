@@ -720,7 +720,7 @@ public class RPGlobalListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient) && blacklist.contains("PASSIVES")) {
+        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient || e instanceof WaterMob) && blacklist.contains("PASSIVES")) {
             event.setCancelled(true);
             return;
         }
@@ -736,7 +736,7 @@ public class RPGlobalListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient) && !wtl.contains("PASSIVES")) {
+            if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient || e instanceof WaterMob) && !wtl.contains("PASSIVES")) {
                 event.setCancelled(true);
                 return;
             }
