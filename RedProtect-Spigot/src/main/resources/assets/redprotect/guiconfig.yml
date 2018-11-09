@@ -9,7 +9,7 @@ gui-separator:
 gui-flags:
   door:
     slot: 0
-    material: WOOD_DOOR
+    material: ACACIA_DOOR
     name: '&e=> Allow Door Open'
     description: '&6Description: &aAllow no members to open'
     description1: '&aand close doors in this region.'
@@ -30,7 +30,7 @@ gui-flags:
     description2: '&ano members.'
   allow-home:
     slot: 2
-    material: BED
+    material: RED_BED
     name: '&e=> Allow Set Home'
     description: '&6Description: &aAllow no members to use the'
     description1: '&acommand /sethome or /home to set or come to'
@@ -51,7 +51,7 @@ gui-flags:
     description2: ''
   button:
     slot: 6
-    material: WOOD_BUTTON
+    material: ACACIA_BUTTON
     name: '&e=> Use Buttons'
     description: '&6Description: &aAllow no members to use'
     description1: '&abuttons in this region.'
@@ -184,14 +184,14 @@ gui-flags:
     description2: ''
   allow-spawner:
     slot: 10
-    material: MOB_SPAWNER
+    material: SPAWNER
     name: '&e=> Allow Place or Break Spawners'
     description: '&bDescription: &aAllow non members'
     description1: '&aof this region to break or'
     description2: '&aplace mob spawners.'
   leaves-decay:
-    slot: 11
-    material: LEAVES
+    slot: 18
+    material: ACACIA_LEAVES
     name: '&e=> Allow Leaves Decay or Not'
     description: '&bDescription: &aAllow leaves decay'
     description1: '&anaturally or not.'
@@ -203,3 +203,10 @@ gui-flags:
     description: '&bDescription: &aAllow non members to'
     description1: '&abuild on region. This mean break and'
     description2: '&aplace blocks.'
+  press-plate:
+    slot: 27
+    material: LIGHT_WEIGHTED_PRESSURE_PLATE
+    name: '&e=> Allow Pressure Plates'
+    description: '&bDescription: &aAllow players to walk'
+    description1: '&aand activate presure plates.'
+    description2: ''

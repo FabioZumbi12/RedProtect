@@ -11,10 +11,7 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.dynmap.DynmapAPI;
-import org.dynmap.markers.AreaMarker;
-import org.dynmap.markers.Marker;
-import org.dynmap.markers.MarkerAPI;
-import org.dynmap.markers.MarkerSet;
+import org.dynmap.markers.*;
 
 public class RPDynmap implements Listener {
 
@@ -44,7 +41,7 @@ public class RPDynmap implements Listener {
         MSet.setHideByDefault(RPConfig.getBool("hooks.dynmap.hide-by-default"));
         MSet.setLayerPriority(RPConfig.getInt("hooks.dynmap.layer-priority"));
         MSet.setLabelShow(RPConfig.getBool("hooks.dynmap.show-label"));
-        MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")));
+        MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon.player")));
         int minzoom = RPConfig.getInt("hooks.dynmap.min-zoom");
         if (minzoom > 0) {
             MSet.setMinZoom(minzoom);
@@ -120,8 +117,14 @@ public class RPDynmap implements Listener {
             if (center == -1) {
                 center = r.getCenterY();
             }
+            MarkerIcon icon;
+            if (r.getLeaders().contains(RPConfig.getString("region-settings.default-leader")))
+                icon = MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon.server"));
+            else
+                icon = MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon.player"));
+
             if (m == null) {
-                MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon")), true);
+                MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), icon, true);
             } else {
                 m.setLocation(r.getWorld(), r.getCenterX(), center, r.getCenterZ());
             }

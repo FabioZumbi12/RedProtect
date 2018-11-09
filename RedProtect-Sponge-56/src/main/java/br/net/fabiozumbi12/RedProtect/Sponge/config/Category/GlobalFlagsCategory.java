@@ -33,8 +33,9 @@ public class GlobalFlagsCategory {
                 @Setting(comment = "This blocks will not be allowed to be break, all others yes.")
                 public List<String> blacklist = new ArrayList<>();
 
-                @Setting(comment = "Only this blocks will be allowed to break, all others will not.")
-                public List<String> whitelist = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower");
+                @Setting(comment = "Only this blocks will be allowed to break, all others will not.\n" +
+                        "\"minecraft:grass\", \"minecraft:tallgrass\", \"minecraft:red_flower\", \"minecraft:chest\"")
+                public List<String> whitelist = new ArrayList<>();
             }
 
             @Setting(value = "place-blocks")
@@ -70,8 +71,10 @@ public class GlobalFlagsCategory {
                 @Setting(comment = "This items will not be allowed to interact, all other items will be.")
                 public List<String> blacklist = new ArrayList<>();
 
-                @Setting(comment = "Only this items will allowed to interact, all other item will not be allowed.")
-                public List<String> whitelist = Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower", "minecraft:chest");
+                @Setting(comment = "Only this items will allowed to interact, all other item will not be allowed.\n" +
+                        "You can add this blocks to allow basic exploration (accept regex):\n" +
+                        "\"minecraft:grass\", \"minecraft:tallgrass\", \"minecraft:red_flower\", \"minecraft:chest\"")
+                public List<String> whitelist = new ArrayList<>();
             }
 
             @Setting(value = "interact-entities")

@@ -126,23 +126,23 @@ public class RPConfig {
         }
 
         if (!gui.exists()) {
-            RPUtil.saveResource("/assets/redprotect/guiconfig.yml", gui);//create guiconfig file
+            RPUtil.saveResource("/assets/redprotect/guiconfig" + RedProtect.get().version + ".yml", "/assets/redprotect/guiconfig.yml", gui);//create guiconfig file
             RedProtect.get().logger.info("Created guiconfig file: " + gui);
         }
 
         if (!bvalues.exists()) {
-            RPUtil.saveResource("/assets/redprotect/economy.yml", bvalues);//create blockvalues file
+            RPUtil.saveResource("/assets/redprotect/economy.yml", null, bvalues);//create blockvalues file
             RedProtect.get().logger.info("Created economy file: " + bvalues);
         }
 
         if (!protections.exists()) {
-            RPUtil.saveResource("/assets/redprotect/protections.yml", protections);//create protections file
+            RPUtil.saveResource("/assets/redprotect/protections.yml", null, protections);//create protections file
             RedProtect.get().logger.info("Created protections file: " + protections);
         }
 
         if (!schema.exists()) {
             new File(main, "schematics").mkdir();
-            RPUtil.saveResource("/assets/redprotect/schematics/house1.schematic", schema);//save schematic file
+            RPUtil.saveResource("/assets/redprotect/schematics/house1.schematic", null, schema);//save schematic file
             RedProtect.get().logger.info("Saved schematic file: house1.schematic");
         }
 
@@ -344,9 +344,21 @@ public class RPConfig {
             RedProtect.get().getConfig().set("private.allowed-blocks", blocks);
             configUp++;
         }
+        if (RedProtect.get().getConfig().getDouble("config-version") < 7.13D) {
+            RedProtect.get().getConfig().set("config-version", 7.13D);
+
+            if (!flags.contains("press-plate")) {
+                flags.add("press-plate");
+            }
+            if (!flags.contains("fishing")) {
+                flags.add("fishing");
+            }
+            configUp++;
+        }
         if (configUp > 0) {
             RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
             RedProtect.get().logger.warning("Configuration UPDATE! We added new flags or new options, or just updated some other config. See change log for details.");
+            comConfig.saveConfig();
         }
 
         /*------------------------------------------------------------------------------------*/
@@ -377,7 +389,7 @@ public class RPConfig {
         GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse"));
         GuiItems.set("gui-strings.separator", GuiItems.getString("gui-strings.separator", "&7|"));
 
-        GuiItems.set("gui-separator.material", GuiItems.getString("gui-separator.material", "THIN_GLASS"));
+        GuiItems.set("gui-separator.material", GuiItems.getString("gui-separator.material", "WHITE_STAINED_GLASS_PANE"));
         GuiItems.set("gui-separator.data", GuiItems.getInt("gui-separator.data", 0));
 
         for (String key : getDefFlagsValues().keySet()) {

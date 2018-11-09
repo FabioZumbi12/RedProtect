@@ -21,29 +21,33 @@ public class RedefineRegionBuilder extends RegionBuilder {
     }
 
     @SuppressWarnings("deprecation")
-    public RedefineRegionBuilder(Player p, Region old, Location l1, Location l2) {
-        if (l1 == null || l2 == null) {
+    public RedefineRegionBuilder(Player p, Region old, Location loc1, Location loc2) {
+        if (loc1 == null || loc2 == null) {
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
         }
 
         //check if distance allowed
-        if (l1.getWorld().equals(l2.getWorld()) && l1.distanceSquared(l2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-            Double dist = l1.distanceSquared(l2);
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+            double dist = new Region(null, loc1, loc2, null).getArea();
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist));
             return;
         }
 
         World w = p.getWorld();
 
-        int miny = l1.getBlockY();
-        int maxy = l2.getBlockY();
+        int miny = loc1.getBlockY();
+        int maxy = loc2.getBlockY();
         if (RPConfig.getBool("region-settings.autoexpandvert-ondefine")) {
             miny = 0;
             maxy = w.getMaxHeight();
+            if (RPConfig.getInt("region-settings.claim.miny") != -1)
+                miny = RPConfig.getInt("region-settings.claim.miny");
+            if (RPConfig.getInt("region-settings.claim.maxy") != -1)
+                maxy = RPConfig.getInt("region-settings.claim.maxy");
         }
 
-        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX()}, new int[]{l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
         region.setPrior(RPUtil.getUpdatedPrior(region));
 
@@ -127,7 +131,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
-            Double peco = RedProtect.get().econ.getBalance(p);
+            double peco = RedProtect.get().econ.getBalance(p);
             long reco = (region.getArea() <= old.getArea() ? 0 : region.getArea() - old.getArea()) * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")) {

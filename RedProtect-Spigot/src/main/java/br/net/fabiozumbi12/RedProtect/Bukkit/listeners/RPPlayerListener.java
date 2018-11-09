@@ -39,14 +39,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.inventivetalent.bossbar.BossBarAPI;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener {
 
-    static final RPContainer cont = new RPContainer();
+    private static final RPContainer cont = new RPContainer();
     private final HashMap<String, String> Ownerslist = new HashMap<>();
     private final HashMap<String, String> PlayerCmd = new HashMap<>();
     private final HashMap<String, Boolean> PvPState = new HashMap<>();
@@ -58,6 +56,20 @@ public class RPPlayerListener implements Listener {
 
     public RPPlayerListener() {
         RedProtect.get().logger.debug("Loaded RPPlayerListener...");
+    }
+
+    @EventHandler
+    public void onPressPlateChange(PlayerInteractEvent e) {
+        if (e.getAction() == Action.PHYSICAL) {
+            if (e.getClickedBlock().getType().name().contains("_PLATE")) {
+                Location loc = e.getClickedBlock().getLocation();
+                Region r = RedProtect.get().rm.getTopRegion(loc);
+                if (r != null && !r.allowPressPlate(e.getPlayer())){
+                    e.setCancelled(true);
+                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantpressplate");
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -280,8 +292,8 @@ public class RPPlayerListener implements Listener {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
-                } else if (!b.getType().equals(Material.ENDER_CHEST) && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
-                        RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches))) {
+                } else if (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
+                        RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches)) {
 
                     if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
@@ -307,6 +319,12 @@ public class RPPlayerListener implements Listener {
                 } else if (itemInHand != null && (itemInHand.getType().name().startsWith("BOAT") || itemInHand.getType().name().contains("MINECART"))) {
                     if (!r.canMinecart(p)) {
                         RPLang.sendMessage(p, "blocklistener.region.cantplace");
+                        event.setUseItemInHand(Event.Result.DENY);
+                        event.setCancelled(true);
+                    }
+                } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
+                    if (!r.allowFishing(p)) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setUseItemInHand(Event.Result.DENY);
                         event.setCancelled(true);
                     }
@@ -350,16 +368,16 @@ public class RPPlayerListener implements Listener {
                     event.setCancelled(true);
                 } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) &&
                         (itemInHand.getType().equals(Material.FLINT_AND_STEEL) ||
-                                itemInHand.getType().equals(Material.WATER_BUCKET) ||
                                 itemInHand.getType().equals(Material.BUCKET) ||
                                 itemInHand.getType().equals(Material.LAVA_BUCKET) ||
                                 itemInHand.getType().equals(Material.ITEM_FRAME) ||
+                                (!r.allowFishing(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                 itemInHand.getType().equals(Material.PAINTING))) {
                     RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
-                } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b)) {
+                } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
                     RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                     event.setUseInteractedBlock(Event.Result.DENY);
@@ -423,6 +441,7 @@ public class RPPlayerListener implements Listener {
             }
         } else if (RedProtect.get().MyPet && e instanceof MyPetBukkitEntity) {
             if (((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
+
             }
         } else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
             Region r = RedProtect.get().rm.getTopRegion(l);
@@ -632,7 +651,7 @@ public class RPPlayerListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
+        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) || e.getCause().name().contains("CHORUS_FRUIT")) {
             if (rfrom != null && !rfrom.canTeleport(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantteleportitem");
                 e.setCancelled(true);
@@ -937,6 +956,7 @@ public class RPPlayerListener implements Listener {
             if (!r.canEnter(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
+                return;
             }
 
             //enter max players flag
@@ -944,6 +964,7 @@ public class RPPlayerListener implements Listener {
                 if (!checkMaxPlayer(p, r)) {
                     e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                     RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));
+                    return;
                 }
             }
 
@@ -971,12 +992,21 @@ public class RPPlayerListener implements Listener {
             if (!r.canEnterWithItens(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
+                return;
             }
 
             //Deny enter with item
             if (!r.denyEnterWithItens(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
+                return;
+            }
+
+            //Deny Fly
+            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying()) {
+                p.setFlying(false);
+                //p.setAllowFlight(false);
+                RPLang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
             //update region admin or leander visit
@@ -986,13 +1016,6 @@ public class RPPlayerListener implements Listener {
                         r.setDate(RPUtil.DateNow());
                     }
                 }
-            }
-
-            //Deny Fly
-            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying()) {
-                p.setFlying(false);
-                //p.setAllowFlight(false);
-                RPLang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
             if (!Ownerslist.containsKey(p.getName()) || !Ownerslist.get(p.getName()).equals(r.getID())) {
@@ -1119,22 +1142,17 @@ public class RPPlayerListener implements Listener {
     public void onPlayerLogout(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         stopTaskPlayer(p);
-        if (RedProtect.get().tpWait.contains(p.getName())) {
-            RedProtect.get().tpWait.remove(p.getName());
-        }
+        RedProtect.get().tpWait.remove(p.getName());
         String worldneeded = RPConfig.getString("server-protection.teleport-player.on-leave.need-world-to-teleport");
         if (RPConfig.getBool("server-protection.teleport-player.on-leave.enable") &&
                 (worldneeded.equals("none") || worldneeded.equals(p.getWorld().getName()))) {
             String[] loc = RPConfig.getString("server-protection.teleport-player.on-leave.location").split(",");
-            p.teleport(new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1]) + 0.500, Double.parseDouble(loc[2]), Double.parseDouble(loc[3]) + 0.500));
         }
     }
 
     @EventHandler
     public void PlayerLogin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        //Adjust inside region
-        p.teleport(new Location(p.getWorld(), p.getLocation().getBlockX(), p.getLocation().getBlockY() + 0.1, p.getLocation().getBlockZ()));
 
         if (p.hasPermission("redprotect.update") && RedProtect.get().Update && !RPConfig.getBool("update-check.auto-update")) {
             RPLang.sendMessage(p, ChatColor.AQUA + "An update is available for RedProtect: " + RedProtect.get().UptVersion);

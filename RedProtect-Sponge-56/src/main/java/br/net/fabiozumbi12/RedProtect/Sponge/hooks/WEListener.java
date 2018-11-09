@@ -4,32 +4,21 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import com.sk89q.worldedit.*;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
-import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.sponge.SpongePlayer;
 import com.sk89q.worldedit.sponge.SpongeWorld;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
-import com.sk89q.worldedit.util.io.Closer;
-import com.sk89q.worldedit.world.DataException;
-import com.sk89q.worldedit.world.registry.WorldData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+
+//import com.sk89q.worldedit.world.registry.WorldData;
 
 public class WEListener {
 
@@ -45,8 +34,8 @@ public class WEListener {
 
 	private static void setSelection(SpongeWorld ws, Player p, Location pos1, Location pos2){
 		RegionSelector regs = SpongeWorldEdit.inst().getSession(p).getRegionSelector(ws);
-		regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
-		regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
+		regs.selectPrimary(BlockVector3.at(pos1.getX(),pos1.getY(),pos1.getZ()), null);
+		regs.selectSecondary(BlockVector3.at(pos2.getX(),pos2.getY(),pos2.getZ()), null);
 		SpongeWorldEdit.inst().getSession(p).setRegionSelector(ws, regs);
 		RPLang.sendMessage(p ,RPLang.get("cmdmanager.region.select-we.show")
 				.replace("{pos1}",pos1.getBlockX()+","+pos1.getBlockY()+","+pos1.getBlockZ())
@@ -71,7 +60,7 @@ public class WEListener {
 		}
 		worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
 	}
-
+/*
 	public static void pasteWithWE(Player p, File f) throws DataException {
 		SpongePlayer sp = SpongeWorldEdit.inst().wrapPlayer(p);
 		SpongeWorld ws = SpongeWorldEdit.inst().getWorld(p.getWorld());
@@ -97,7 +86,7 @@ public class WEListener {
 			e.printStackTrace();
 		}		
 	}
-	
+	*/
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Sponge.Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
     	Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             if (RPUtil.stopRegen){
@@ -105,8 +94,8 @@ public class WEListener {
             }
 
 			RegionSelector regs = new LocalSession().getRegionSelector(SpongeWorldEdit.inst().getWorld(w));
-			regs.selectPrimary(new Vector(p1.getX(), p1.getY(), p1.getZ()), null);
-			regs.selectSecondary(new Vector(p2.getX(), p2.getY(), p2.getZ()), null);
+			regs.selectPrimary(BlockVector3.at(p1.getX(), p1.getY(), p1.getZ()), null);
+			regs.selectSecondary(BlockVector3.at(p2.getX(), p2.getY(), p2.getZ()), null);
 
 			Region wreg = null;
 			try {

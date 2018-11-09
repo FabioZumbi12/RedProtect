@@ -25,6 +25,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
@@ -815,22 +816,11 @@ public class RPCommands implements CommandCallable {
 
         	if (checkCmd(args[0], "wand") && player.hasPermission("redprotect.magicwand")) {
         		Inventory inv = player.getInventory();
-        		ItemType mat = (ItemType)RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID);
+        		ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
         		ItemStack item = ItemStack.of(mat, 1);
         		item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
         		Iterable<Slot> slotIter = player.getInventory().slots();
 
-        		/*
-        		for (Slot slot:slotIter) {
-    			    if (slot.peek().isPresent()) {
-    			    	ItemStack stack = slot.peek().get();
-    			    	if (stack.getItem().equals(mat)){
-    			    		RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
-    			    		return cmdr;
-    			    	}
-    			    }
-    			}
-    			*/
     			if (inv.query(Hotbar.class).offer(item).getType().equals(Type.SUCCESS)){
     				RPLang.sendMessage(player,RPLang.get("cmdmanager.wand.given").replace("{item}", mat.getName()));
     			} else {
@@ -2311,28 +2301,6 @@ public class RPCommands implements CommandCallable {
             	*/
             	if (!value.equals("")){
             		if (RedProtect.get().cfgs.getDefFlagsValues().containsKey(flag)) {
-            			/*
-            			//flag clan
-            			if (flag.equalsIgnoreCase("clan")){
-            				if (!RedProtect.get().SC || !RedProtect.get().ph.hasGenPerm(p, "RedProtect.get().admin.flag.clan")){
-            					sendFlagHelp(p);
-                            	return;
-            				}
-            				if (!RedProtect.get().clanManager.isClan(value)){
-            					RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.invalidclan").replace("{tag}", value));
-                        		return;
-            				}
-            				Clan clan = RedProtect.get().clanManager.getClan(value);
-            				if (!clan.isLeader(p)){
-            					RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
-                        		return;
-            				}
-            				r.setFlag(flag, value);
-                            RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagString(flag));
-                            RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
-                            return;
-                    	}
-            			*/
             			if (objflag instanceof Boolean){
             				if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, objflag)){
 								RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
@@ -2357,43 +2325,8 @@ public class RPCommands implements CommandCallable {
                         return;
                 	}
 
-
-                	if (RedProtect.get().cfgs.AdminFlags.contains(flag)){
-                		SendFlagUsageMessage(p, flag);
-            		} else {
-                    	RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
-            		}
                 	sendFlagHelp(p);
-
                 } else {
-            		/*
-            		//flag clan
-        			if (flag.equalsIgnoreCase("clan")){
-        				if (RedProtect.get().SC){
-        					ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
-        					if (clan == null){
-            					RPLang.sendMessage(p, "cmdmanager.region.flag.haveclan");
-                        		return;
-            				}
-            				if (!clan.isLeader()){
-            					RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
-                        		return;
-            				}
-            				if (r.getFlagString(flag).equalsIgnoreCase("")){
-            					r.setFlag(flag, clan.getTag());
-            					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'"+clan.getClan().getColorTag()+"'"));
-            				} else {
-            					RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'"+r.getFlagString(flag)+"'"));
-            					r.setFlag(flag, "");
-            				}
-                            RedProtect.get().logger.addLog("(World "+r.getWorld()+") Player "+p.getName()+" SET FLAG "+flag+" of region "+r.getName()+" to "+r.getFlagString(flag));
-                            return;
-        				} else {
-        					sendFlagHelp(p);
-                        	return;
-        				}
-                	}
-        			*/
             		if (RedProtect.get().cfgs.getDefFlagsValues().containsKey(flag)) {
             			if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, !r.getFlagBool(flag))){
 							RPLang.sendMessage(p,RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'"+flag+"'") + " " + r.getFlagBool(flag));
@@ -2425,7 +2358,7 @@ public class RPCommands implements CommandCallable {
 				flag.equalsIgnoreCase("allow-enter-items") ||
 				flag.equalsIgnoreCase("deny-enter-items") ||
 				flag.equalsIgnoreCase("gamemode") ||
-				flag.equalsIgnoreCase("view-distance") ||
+				flag.equalsIgnoreCase("set-portal") ||
 				flag.equalsIgnoreCase("allow-cmds") ||
 				flag.equalsIgnoreCase("deny-cmds") ||
 				flag.equalsIgnoreCase("allow-break") ||
@@ -2546,7 +2479,7 @@ public class RPCommands implements CommandCallable {
 			if (!(value instanceof String)){
 				return false;
 			}
-			if (!RPUtil.testRegistry(GameMode.class, value.toString())){
+			if (!Sponge.getRegistry().getType(GameMode.class, value.toString()).isPresent()){
 				return false;
 			}
 		}
@@ -2565,10 +2498,11 @@ public class RPCommands implements CommandCallable {
 			}
 			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
-				if (!RPUtil.testRegistry(ItemType.class, item)){
-					return false;
-				}
+			    if (Sponge.getRegistry().getType(ItemType.class, item).isPresent()) {
+                    return true;
+                }
 			}
+			return false;
 		}
 
 		if (flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")){
@@ -2577,10 +2511,11 @@ public class RPCommands implements CommandCallable {
 			}
 			String[] valida = value.toString().replace(" ", "").split(",");
 			for (String item:valida){
-				if (!RPUtil.testRegistry(EntityType.class, item) && !RPUtil.testRegistry(ItemType.class, item)){
-					return false;
+				if (Sponge.getRegistry().getType(EntityType.class, item).isPresent() || Sponge.getRegistry().getType(ItemType.class, item).isPresent()){
+					return true;
 				}
 			}
+			return false;
 		}
 
 		if (flag.equalsIgnoreCase("cmd-onhealth")){
@@ -2611,7 +2546,7 @@ public class RPCommands implements CommandCallable {
 			try{
 				String[] cmds = value.toString().split(",");
 				for (String cmd:cmds){
-					if (cmds.length > 0 && (cmd.contains("cmd:") || cmd.contains("arg:"))){
+					if (cmd.contains("cmd:") || cmd.contains("arg:")){
 						String[] cmdargs = cmd.split(" ");
 						for (String cmd1:cmdargs){
 							if (cmd1.startsWith("cmd:")){
@@ -2644,7 +2579,7 @@ public class RPCommands implements CommandCallable {
 				if (effect.length < 2){
 					return false;
 				}
-				if (!RPUtil.testRegistry(PotionEffectType.class, effect[0])){
+				if (!Sponge.getRegistry().getType(PotionEffectType.class, effect[0]).isPresent()){
 					return false;
 				}
 				try {

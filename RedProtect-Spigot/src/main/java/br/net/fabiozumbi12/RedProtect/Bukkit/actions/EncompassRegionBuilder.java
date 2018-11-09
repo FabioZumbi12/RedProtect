@@ -250,7 +250,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
-                            Double peco = RedProtect.get().econ.getBalance(p);
+                            double peco = RedProtect.get().econ.getBalance(p);
                             long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
 
                             if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")) {

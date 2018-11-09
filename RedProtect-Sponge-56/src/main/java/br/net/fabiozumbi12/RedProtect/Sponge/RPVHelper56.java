@@ -14,6 +14,8 @@ import org.spongepowered.api.entity.living.animal.Horse;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.entity.teleport.TeleportType;
+import org.spongepowered.api.event.cause.entity.teleport.TeleportTypes;
 import org.spongepowered.api.item.Enchantment;
 import org.spongepowered.api.item.Enchantments;
 import org.spongepowered.api.item.ItemType;
@@ -40,7 +42,7 @@ public class RPVHelper56 implements RPVHelper {
 		return Cause.of(NamedCause.simulated(p));
 	}
 
-	@Override
+    @Override
 	public void closeInventory(Player p) {
 		p.closeInventory(getCause(p));
 	}

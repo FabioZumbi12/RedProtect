@@ -4,7 +4,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Openable;
 
 public class RPDoor {
 
@@ -41,12 +40,10 @@ public class RPDoor {
         if (b.getRelative(BlockFace.DOWN).getType().equals(b.getType())) {
             b = b.getRelative(BlockFace.DOWN);
         }
-        Openable openable = (Openable) b.getBlockData();
-        openable.setOpen(!openable.isOpen());
-        b.setBlockData(openable);
+        RedProtect.get().rpvhelper.toggleDoor(b);
     }
 
     public static boolean isOpenable(Block b) {
-        return b.getBlockData() instanceof Openable;
+        return RedProtect.get().rpvhelper.isOpenable(b);
     }
 }

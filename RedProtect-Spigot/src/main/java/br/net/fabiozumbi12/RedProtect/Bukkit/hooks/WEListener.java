@@ -7,17 +7,15 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
-import com.sk89q.worldedit.world.DataException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 @SuppressWarnings("deprecation")
@@ -36,8 +34,8 @@ public class WEListener {
     private static void setSelection(BukkitWorld ws, Player p, Location pos1, Location pos2) {
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         RegionSelector regs = worldEdit.getSession(p).getRegionSelector(ws);
-        regs.selectPrimary(new Vector(pos1.getX(), pos1.getY(), pos1.getZ()), null);
-        regs.selectSecondary(new Vector(pos2.getX(), pos2.getY(), pos2.getZ()), null);
+        regs.selectPrimary(BlockVector3.at(pos1.getX(), pos1.getY(), pos1.getZ()), null);
+        regs.selectSecondary(BlockVector3.at(pos2.getX(), pos2.getY(), pos2.getZ()), null);
         worldEdit.getSession(p).setRegionSelector(ws, regs);
         RPLang.sendMessage(p, RPLang.get("cmdmanager.region.select-we.show")
                 .replace("{pos1}", pos1.getBlockX() + "," + pos1.getBlockY() + "," + pos1.getBlockZ())
@@ -62,7 +60,7 @@ public class WEListener {
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
-
+/*
     public static void pasteWithWE(Player p, File file) {
         World world = p.getWorld();
         Location loc = p.getLocation();
@@ -76,7 +74,7 @@ public class WEListener {
             e.printStackTrace();
         }
     }
-
+*/
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
@@ -85,8 +83,8 @@ public class WEListener {
             }
 
             RegionSelector regs = new LocalSession().getRegionSelector(new BukkitWorld(w));
-            regs.selectPrimary(new Vector(p1.getX(), p1.getY(), p1.getZ()), null);
-            regs.selectSecondary(new Vector(p2.getX(), p2.getY(), p2.getZ()), null);
+            regs.selectPrimary(BlockVector3.at(p1.getX(), p1.getY(), p1.getZ()), null);
+            regs.selectSecondary(BlockVector3.at(p2.getX(), p2.getY(), p2.getZ()), null);
 
             Region wreg = null;
             try {

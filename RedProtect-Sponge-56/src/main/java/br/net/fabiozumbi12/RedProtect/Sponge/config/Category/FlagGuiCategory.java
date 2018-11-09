@@ -64,6 +64,7 @@ public class FlagGuiCategory {
         guiMap.put("spawn-monsters", new GuiFlag("&6Description: &aAllow natural spawn of", "&amonsters in this region.", "", "minecraft:pumpkin", "&e=> Allow Spawn Monsters", 26));
         guiMap.put("teleport", new GuiFlag("&6Description: &aAllow players to", "&ateleport on this region using itens", "&alike ender pearls and chorus fruits.", "minecraft:ender_pearl", "&e=> Allow Teleport", 10));
         guiMap.put("use-potions", new GuiFlag("&6Description: &aAllow use or throw", "&aany type of potions for no members", "&aof region.", "minecraft:glass_bottle", "&e=> Use Potions", 16));
+        guiMap.put("press-plate", new GuiFlag("&6Description: &aAllow players to", "&awalk on presure plates and interact.", "", "minecraft:light_weighted_pressure_plate", "&e=> Use Pressure Plates", 9));
         return guiMap;
     }
 

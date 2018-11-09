@@ -17,6 +17,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -27,6 +28,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -38,6 +40,20 @@ public class RPMine18 implements Listener {
 
     static final RPContainer cont = new RPContainer();
     static HashMap<Player, String> Ownerslist = new HashMap<>();
+
+    @EventHandler
+    public void onPressPlateChange(PlayerInteractEvent e) {
+        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            Block b = e.getPlayer().getTargetBlock(null, 5);
+            if (b.getType() == Material.FIRE){
+                Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+                if (r != null && !r.canBuild(e.getPlayer())){
+                    e.setCancelled(true);
+                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
+                }
+            }
+        }
+    }
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
@@ -76,7 +92,7 @@ public class RPMine18 implements Listener {
         }
 
         if (ent instanceof ArmorStand) {
-            if (r != null && !r.canBuild(p)) {
+            if (!r.canBuild(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantedit");
                 e.setCancelled(true);
             }

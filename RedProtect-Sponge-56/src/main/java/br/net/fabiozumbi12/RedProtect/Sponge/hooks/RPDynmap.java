@@ -6,10 +6,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.DynmapCommonAPIListener;
-import org.dynmap.markers.AreaMarker;
-import org.dynmap.markers.Marker;
-import org.dynmap.markers.MarkerAPI;
-import org.dynmap.markers.MarkerSet;
+import org.dynmap.markers.*;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
@@ -46,7 +43,7 @@ public class RPDynmap {
 				MSet.setHideByDefault(RedProtect.get().cfgs.root().hooks.dynmap.hide_by_default);
 				MSet.setLayerPriority(RedProtect.get().cfgs.root().hooks.dynmap.layer_priority);
 				MSet.setLabelShow(RedProtect.get().cfgs.root().hooks.dynmap.show_label);
-				MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon));
+				MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.player));
 				int minzoom = RedProtect.get().cfgs.root().hooks.dynmap.min_zoom;
 				if (minzoom > 0) {
 					MSet.setMinZoom(minzoom);
@@ -124,11 +121,17 @@ public class RPDynmap {
 			if (center == -1){
 				center = r.getCenterY();
 			}
-			if (m == null){		    				
-				MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon), true);
-			} else {
-				m.setLocation(r.getWorld(), r.getCenterX(), center, r.getCenterZ());
-			}
+            MarkerIcon icon;
+            if (r.getLeaders().contains(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.server))
+                icon = MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.server);
+            else
+                icon = MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.player);
+
+            if (m == null) {
+                MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), icon, true);
+            } else {
+                m.setLocation(r.getWorld(), r.getCenterX(), center, r.getCenterZ());
+            }
 		}
 	}
 }

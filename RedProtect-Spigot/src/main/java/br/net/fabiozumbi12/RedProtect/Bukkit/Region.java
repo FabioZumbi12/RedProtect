@@ -710,7 +710,6 @@ public class Region implements Serializable {
         this.members = new ArrayList<>();
         this.leaders = Arrays.asList(RPConfig.getString("region-settings.default-leader"));
         this.flags = RPConfig.getDefFlagsValues();
-        this.tppoint = new Location(Bukkit.getWorld(world), this.getCenterX(), this.getCenterY(), this.getCenterZ());
         this.canDelete = true;
         this.world = world;
         this.wMessage = "";
@@ -1352,6 +1351,20 @@ public class Region implements Serializable {
 
 
     //---------------------- Player Flags --------------------------//
+    public boolean allowFishing(Player p){
+        if (!RPConfig.isFlagEnabled("fishing")){
+            return RPConfig.getBool("flags.fishing") || checkAllowedPlayer(p);
+        }
+        return getFlagBool("fishing") || checkAllowedPlayer(p);
+    }
+
+    public boolean allowPressPlate(Player p){
+        if (!RPConfig.isFlagEnabled("press-plate")){
+            return RPConfig.getBool("flags.press-plate") || checkAllowedPlayer(p);
+        }
+        return getFlagBool("press-plate") || checkAllowedPlayer(p);
+    }
+
     public boolean canBuild(Player p) {
         if (flagExists("for-sale") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
             return false;
@@ -1359,7 +1372,7 @@ public class Region implements Serializable {
         if (!RPConfig.isFlagEnabled("build")) {
             return RPConfig.getBool("flags.build") || checkAllowedPlayer(p);
         }
-        return getFlagBool("build") || checkAllowedPlayer(p);
+        return (getFlagBool("build") || checkAllowedPlayer(p));
     }
 
     public boolean leavesDecay() {

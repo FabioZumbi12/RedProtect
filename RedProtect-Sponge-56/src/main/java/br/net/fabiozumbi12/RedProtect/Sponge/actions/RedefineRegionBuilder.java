@@ -18,33 +18,33 @@ public class RedefineRegionBuilder extends RegionBuilder{
 	}
 	
     @SuppressWarnings("deprecation")
-	public RedefineRegionBuilder(Player p, Region old, Location<World> l1, Location<World> l2) {
-        if (l1 == null || l2 == null) {
+	public RedefineRegionBuilder(Player p, Region old, Location<World> loc1, Location<World> loc2) {
+        if (loc1 == null || loc2 == null) {
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
         }
 
 		//check if distance allowed
-		if (l1.getPosition().distanceSquared(l2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
-			Double dist = l1.getPosition().distanceSquared(l2.getPosition());
-			RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist.intValue()));
-			return;
-		}
+        if (new Region(null, loc1, loc2, null).getArea() > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p,"redprotect.bypass.define-max-distance")){
+            double dist = new Region(null, loc1, loc2, null).getArea();
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist));
+            return;
+        }
 
         World w = p.getWorld();
         
-        int miny = l1.getBlockY();
-        int maxy = l2.getBlockY();
+        int miny = loc1.getBlockY();
+        int maxy = loc2.getBlockY();
         if (RedProtect.get().cfgs.root().region_settings.autoexpandvert_ondefine){
         	miny = 0;
         	maxy = p.getWorld().getBlockMax().getY();
 			if (RedProtect.get().cfgs.root().region_settings.claim.miny != -1)
 				miny = RedProtect.get().cfgs.root().region_settings.claim.miny;
 			if (RedProtect.get().cfgs.root().region_settings.claim.maxy != -1)
-				miny = RedProtect.get().cfgs.root().region_settings.claim.maxy;
+				maxy = RedProtect.get().cfgs.root().region_settings.claim.maxy;
         }
         
-        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] { l1.getBlockX(), l1.getBlockX(), l2.getBlockX(), l2.getBlockX() }, new int[] { l1.getBlockZ(), l1.getBlockZ(), l2.getBlockZ(), l2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[] { loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX() }, new int[] { loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ() }, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
         region.setPrior(RPUtil.getUpdatedPrior(region));    
         

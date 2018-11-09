@@ -16,11 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RegionManager {
 
-    private final ConcurrentHashMap<World, WorldRegionManager> regionManagers;
-    private final ConcurrentHashMap<Location, Region> bLoc = new ConcurrentHashMap<>();
+    private final HashMap<World, WorldRegionManager> regionManagers;
+    private final HashMap<Location, Region> bLoc = new HashMap<>();
 
     protected RegionManager() {
-        this.regionManagers = new ConcurrentHashMap<>();
+        this.regionManagers = new HashMap<>();
     }
 
     public void loadAll() throws Exception {
@@ -46,7 +46,7 @@ public class RegionManager {
     public void unloadAll() {
         for (World w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
-            if (RedProtect.get().Dyn) {
+            if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
                 RedProtect.get().dynmap.removeAll(w);
             }
         }
@@ -185,7 +185,7 @@ public class RegionManager {
 
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
-        if (RedProtect.get().Dyn) {
+        if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
             try {
                 RedProtect.get().dynmap.addMark(r);
             } catch (Exception ex) {
@@ -204,7 +204,7 @@ public class RegionManager {
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
         removeCache(r);
-        if (RedProtect.get().Dyn) {
+        if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
             try {
                 RedProtect.get().dynmap.removeMark(r);
             } catch (Exception ex) {

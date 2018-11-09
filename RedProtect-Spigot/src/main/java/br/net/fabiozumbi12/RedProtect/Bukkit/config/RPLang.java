@@ -43,7 +43,7 @@ public class RPLang {
                 resLang = "langEN-US.properties";
                 pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
             }
-            RPUtil.saveResource("/assets/redprotect/" + resLang, new File(RedProtect.get().getDataFolder(), resLang));
+            RPUtil.saveResource("/assets/redprotect/" + resLang, null, new File(RedProtect.get().getDataFolder(), resLang));
             RedProtect.get().logger.info("Created language file: " + pathLang);
         }
 

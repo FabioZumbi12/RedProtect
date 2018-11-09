@@ -132,7 +132,7 @@ public class RPEntityListener implements Listener {
         } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
             if (r1 != null && e2 instanceof Player) {
                 Player p2 = (Player) e2;
-                if (!r1.canInteractPassives(p2)) {
+                if ((!r1.canInteractPassives(p2) && (e1 instanceof WaterMob && !r1.allowFishing(p2))) || !r1.canInteractPassives(p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
                 }
@@ -257,7 +257,7 @@ public class RPEntityListener implements Listener {
             } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
                 if (r1 != null && e2 instanceof Player) {
                     Player p2 = (Player) e2;
-                    if (!r1.canInteractPassives(p2)) {
+                    if ((!r1.canInteractPassives(p2) && (e1 instanceof WaterMob && !r1.allowFishing(p2))) || !r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
                     }
@@ -278,7 +278,7 @@ public class RPEntityListener implements Listener {
                     RedProtect.get().logger.debug("Cancelled ItemFrame drop Item");
                     e.setCancelled(true);
                 }
-            } else if (e2 instanceof Explosive) {
+            }  else if (e2 instanceof Explosive) {
                 if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())) {
                     e.setCancelled(true);
                 }
@@ -334,7 +334,7 @@ public class RPEntityListener implements Listener {
         Location l = e.getRightClicked().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
         Entity et = e.getRightClicked();
-        if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager || et instanceof Golem)) {
+        if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager || et instanceof Golem || (et instanceof WaterMob && !r.allowFishing(p)))) {
             if (et instanceof Tameable) {
                 Tameable tam = (Tameable) et;
                 if (tam.isTamed() && tam.getOwner() != null && tam.getOwner().getName().equals(p.getName())) {

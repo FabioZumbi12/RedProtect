@@ -13,13 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 class WorldFlatFileRegionManager implements WorldRegionManager {
 
-    private final ConcurrentHashMap<String, Region> regions;
+    private final HashMap<String, Region> regions;
     private final World world;
     private final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
 
     public WorldFlatFileRegionManager(World world) {
         super();
-        this.regions = new ConcurrentHashMap<>();
+        this.regions = new HashMap<>();
         this.world = world;
     }
 

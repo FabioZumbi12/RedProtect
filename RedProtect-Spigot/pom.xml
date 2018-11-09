@@ -4,7 +4,7 @@
     <parent>
         <groupId>br.net.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>7.5.4</version>
+        <version>7.5.5</version>
     </parent>
     <artifactId>RedProtect-Spigot</artifactId>
 
@@ -24,13 +24,6 @@
             <classifier>javadoc</classifier>
         </dependency>
 
-        <!-- bukkit snapshots
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>18w03b-R0.1-SNAPSHOT</version>
-        </dependency>-->
-
         <!-- start of local repos -->
 
         <dependency>
@@ -48,23 +41,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>AsyncWorldEdit</groupId>
-            <artifactId>AsyncWorldEdit</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/AsyncWorldEdit.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>FastAsyncWorldEdit</groupId>
-            <artifactId>FastAsyncWorldEdit</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit.jar</systemPath>
-        </dependency>-->
-
         <dependency>
             <groupId>SimpleClans</groupId>
             <artifactId>SimpleClans</artifactId>
@@ -135,20 +111,13 @@
         </dependency>
 
         <dependency>
-            <groupId>worldedit</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/worldedit-bukkit-7.0.0-SNAPSHOT-dist.jar</systemPath>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- end of local repos
-        <dependency>
-           <groupId>com.sk89q.worldedit</groupId>
-           <artifactId>worldedit-bukkit</artifactId>
-           <version>LATEST</version>
-           <scope>provided</scope>
-        </dependency>-->
+        <!-- end of local repos -->
         <dependency>
             <groupId>org.natrolite</groupId>
             <artifactId>vault-api</artifactId>
@@ -189,7 +158,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.13.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.12.1-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>

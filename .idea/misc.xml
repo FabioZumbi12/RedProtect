@@ -11,13 +11,11 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/RedProtect-Spigot/target/classes/META-INF/maven/br.net.fabiozumbi12.RedProtect/RedProtect-Spigot/pom.xml" />
-        <option value="$PROJECT_DIR$/RedProtect-Sponge-7/target/classes/META-INF/maven/br.net.fabiozumbi12.RedProtect/RedProtect-Sponge-7/pom.xml" />
-        <option value="$PROJECT_DIR$/RedProtect-Sponge-56/target/classes/META-INF/maven/br.net.fabiozumbi12.RedProtect/RedProtect-Sponge-56/pom.xml" />
+        <option value="$PROJECT_DIR$/RedProtect-Spigot-1.13/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/classes" />
   </component>
 </project>

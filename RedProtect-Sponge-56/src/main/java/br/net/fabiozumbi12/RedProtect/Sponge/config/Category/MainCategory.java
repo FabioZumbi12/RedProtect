@@ -12,7 +12,7 @@ public class MainCategory {
     public MainCategory(){}
 
     @Setting(value="config-version", comment = "Dont touch <3")
-    public double config_version = 7.5;
+    public double config_version = 7.6;
 
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
@@ -52,6 +52,7 @@ public class MainCategory {
         myMap.put("minecart", false);
         myMap.put("mob-loot", false);
         myMap.put("passives", false);
+        myMap.put("press-plate", false);
         myMap.put("pvp", false);
         myMap.put("smart-door", true);
         myMap.put("spawn-animals", true);
@@ -89,6 +90,7 @@ public class MainCategory {
                 "spawn-monsters",
                 "spawn-animals",
                 "passives",
+                "press-plate",
                 "flow",
                 "fire",
                 "minecart",
@@ -441,8 +443,17 @@ public class MainCategory {
             public boolean show_label = true;
             @Setting(value = "show-icon", comment = "Show icons under regions.")
             public boolean show_icon = true;
+
             @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
-            public String marker_icon = "shield";
+            public markiconCat marker_icon = new markiconCat();
+            @ConfigSerializable
+            public static class markiconCat {
+                @Setting
+                public String server = "star";
+                @Setting
+                public String player = "shield";
+            }
+
             @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
             public boolean show_leaders_admins = true;
 

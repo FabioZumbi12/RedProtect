@@ -64,6 +64,7 @@ public class RedProtect extends JavaPlugin {
     public final List<String> openGuis = new ArrayList<>();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
+    public RPVHelper rpvhelper;
 
     private RedProtectAPI rpAPI;
 
@@ -131,6 +132,13 @@ public class RedProtect extends JavaPlugin {
                 serv.getPluginManager().registerEvents(new RPMine19(), this);
             }
 
+            if (version <= 1122) {
+                rpvhelper = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper112").newInstance();
+            }
+            if (version >= 1130) {
+                rpvhelper = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper113").newInstance();
+            }
+
             getCommand("RedProtect").setExecutor(new RPCommands());
 
             if (Vault) {
@@ -186,7 +194,7 @@ public class RedProtect extends JavaPlugin {
                 clanManager = SimpleClans.getInstance().getClanManager();
                 logger.info("SimpleClans found. Hooked.");
             }
-            if (Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+            if (Dyn && RPConfig.getBool("hooks.dynmap.enabled")) {
                 logger.info("Dynmap found. Hooked.");
                 logger.info("Loading dynmap markers...");
                 dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));

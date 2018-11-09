@@ -525,7 +525,12 @@ public class RPBlockListener implements Listener {
         RedProtect.get().logger.debug("Is BlockSpreadEvent event, source is " + bfrom.getType().name());
         Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
         Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
-        if ((bfrom.getType().equals(Material.FIRE) || bfrom.getType().name().contains("LAVA")) && rfrom != null && !rfrom.canFire()) {
+        if ((e.getNewState().getType().equals(Material.FIRE) || e.getNewState().getType().name().contains("LAVA")) && rfrom != null && !rfrom.canFire()) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS")) && ((rfrom != null && !rfrom.canGrow()) || !rto.canGrow())){
             e.setCancelled(true);
             return;
         }

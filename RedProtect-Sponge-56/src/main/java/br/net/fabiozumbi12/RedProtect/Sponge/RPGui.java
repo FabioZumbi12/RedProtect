@@ -1,6 +1,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -71,14 +72,14 @@ public class RPGui {
 				continue;
 			}
 			try {
-				if (RedProtect.get().ph.hasFlagPerm(player, flag.getKey()) && RedProtect.get().cfgs.isFlagEnabled(flag.getKey()) && RPUtil.testRegistry(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material)){
+				if (RedProtect.get().ph.hasFlagPerm(player, flag.getKey()) && RedProtect.get().cfgs.isFlagEnabled(flag.getKey()) && Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material).isPresent()){
 					if (flag.getKey().equals("pvp") && !RedProtect.get().cfgs.root().flags_configuration.enabled_flags.contains("pvp")){
 						continue;
 					}
 
 					int i = RedProtect.get().cfgs.getGuiSlot(flag.getKey());
 
-					this.guiItens[i] = ItemStack.of((ItemType)Objects.requireNonNull(RPUtil.getRegistryFor(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material)), 1);
+					this.guiItens[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).material).orElse(ItemTypes.GLASS_PANE), 1);
 
 					this.guiItens[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag.getKey()).name));
 

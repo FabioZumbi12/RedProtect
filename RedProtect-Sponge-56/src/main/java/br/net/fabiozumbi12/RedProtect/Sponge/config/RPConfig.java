@@ -20,6 +20,7 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.DimensionTypes;
@@ -384,6 +385,15 @@ public class RPConfig{
 			update++;
 		}
 
+        if (root.config_version < 7.6D){
+            root.config_version = 7.6D;
+            if (!root.flags_configuration.enabled_flags.contains("press-plate")){
+                root.flags_configuration.enabled_flags.add("press-plate");
+                root.flags.put("press-plate", false);
+            }
+            update++;
+        }
+
 		if (update > 0){
 			RedProtect.get().logger.warning("Configuration UPDATED!");
 		}
@@ -471,7 +481,7 @@ public class RPConfig{
 	}
     
     public ItemStack getGuiSeparator() {
-    	ItemStack separator = ItemStack.of((ItemType)RPUtil.getRegistryFor(ItemType.class, guiRoot.gui_separator.material), 1);//new ItemStack(Material.getBorderMaterial(guiItems.getString("gui-separator.material")), 1, (short)guiItems.getInt("gui-separator.data"));
+    	ItemStack separator = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, guiRoot.gui_separator.material).orElse(ItemTypes.GLASS_PANE), 1);
     	separator.offer(Keys.DISPLAY_NAME, getGuiString("separator"));
     	separator.offer(Keys.ITEM_DURABILITY, guiRoot.gui_separator.data);
     	separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, getGuiString("separator")));
@@ -556,13 +566,13 @@ public class RPConfig{
     public boolean isAllowedWorld(Player p) {
 		return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
 	}
-
+/*
 	public SortedSet<String> getAllFlags() {
 		SortedSet<String> values = new TreeSet<>(getDefFlagsValues().keySet());
 		values.addAll(new TreeSet<>(AdminFlags));
 		return values;
 	}
-
+*/
 	public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin){
 		if (isAdmin){
 			if (!AdminFlags.contains(flag)){

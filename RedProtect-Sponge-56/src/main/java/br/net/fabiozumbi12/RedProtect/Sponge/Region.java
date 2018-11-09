@@ -14,6 +14,8 @@ import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -511,60 +513,6 @@ public class Region implements Serializable{
 		return RPUtil.toText(name).toPlain();
 	}
 
-	/**
-	 * Represents the region created by player.
-     * @param name Name of region.
-     * @param admins List of admins.
-     * @param members List of members.
-     * @param leaders List of leaders.
-     * @param minLoc Min coord.
-     * @param maxLoc Max coord.
-     * @param flags Flag names and values.
-     * @param wMessage Welcome message.
-     * @param prior Priority of region.
-     * @param worldName Name of world for this region.
-     * @param date Date of latest visit of an admin or leader.
-     * @param value Last value of this region.
-     */
-    /*public Region(String name, List<String> admins, List<String> members, List<String> leaders, Location<World> minLoc, Location<World> maxLoc, HashMap<String,Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
-    	super();        
-        this.maxMbrX = maxLoc.getBlockX();
-        this.minMbrX = minLoc.getBlockX();
-        this.maxMbrZ = maxLoc.getBlockZ();
-        this.minMbrZ = minLoc.getBlockZ();
-        this.maxY = maxLoc.getBlockY();
-        this.minY = minLoc.getBlockY();
-        this.x = new int[] {minMbrX,minMbrX,maxMbrX,maxMbrX};
-        this.z = new int[] {minMbrZ,minMbrZ,maxMbrZ,maxMbrZ};
-        this.name = conformName(name);
-        this.admins = admins;
-        this.members = members;
-        this.leaders = leaders;    
-        this.flags = flags;
-        this.value = value;
-        this.tppoint = tppoint;
-        this.canDelete = candel;
-        this.prior = prior;
-        
-        if (worldName != null){
-            this.world = worldName;
-        } else {
-        	this.world = "";
-        }
-        
-        if (wMessage != null){
-            this.wMessage = wMessage;
-        } else {
-        	this.wMessage = "";
-        }
-        
-        if (date != null){
-            this.date = date;
-        } else {
-        	this.date = RPUtil.DateNow();
-        }
-    }*/
-    
     /**
 	 * Represents the region created by player.
      * @param name Name of region.
@@ -686,6 +634,36 @@ public class Region implements Serializable{
             }
         }
 		checkParticle();
+    }
+
+    /**
+     * Represents the region created by player.
+     *
+     * @param name  Region name.
+     * @param min   Min Location.
+     * @param max   Max Location.
+     * @param world World name.
+     */
+    public Region(String name, Location min, Location max, String world) {
+        super();
+        this.x = new int[]{min.getBlockX(), min.getBlockX(), max.getBlockX(), max.getBlockX()};
+        this.z = new int[]{min.getBlockZ(), min.getBlockZ(), max.getBlockZ(), max.getBlockZ()};
+        this.maxMbrX = max.getBlockX();
+        this.minMbrX = min.getBlockX();
+        this.maxMbrZ = max.getBlockZ();
+        this.minMbrZ = min.getBlockZ();
+        this.maxY = max.getBlockY();
+        this.minY = min.getBlockY();
+        this.admins = new ArrayList<>();
+        this.members = new ArrayList<>();
+        this.leaders = Arrays.asList(RedProtect.get().cfgs.root().region_settings.default_leader);
+        this.flags = RedProtect.get().cfgs.getDefFlagsValues();
+        this.canDelete = true;
+        this.world = world;
+        this.wMessage = "";
+        this.date = RPUtil.DateNow();
+        this.name = conformName(name);
+        checkParticle();
     }
 
     public void clearLeaders(){
@@ -1062,7 +1040,7 @@ public class Region implements Serializable{
 
 		for (Slot slot:SlotItems) {
 			if (slot.peek().isPresent()) {
-				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+				if (items.stream().anyMatch(k -> Sponge.getRegistry().getType(ItemType.class, k).orElse(null) == slot.peek().get().getItem())){
 					return false;
 				}
 			}
@@ -1083,7 +1061,7 @@ public class Region implements Serializable{
 		Iterable<Slot> SlotItems =  p.getInventory().slots();
 		for (Slot slot:SlotItems) {
 		    if (slot.peek().isPresent()) {
-				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+				if (items.stream().anyMatch(k -> Sponge.getRegistry().getType(ItemType.class, k).orElse(null) == slot.peek().get().getItem())){
 					return true;
 				}
 		    }
@@ -1104,7 +1082,7 @@ public class Region implements Serializable{
 		
 		for (Slot slot:SlotItems){
 			if (slot.peek().isPresent()) {
-				if (items.stream().anyMatch(k -> k.equalsIgnoreCase(slot.peek().get().getItem().getName()))){
+				if (items.stream().anyMatch(k -> Sponge.getRegistry().getType(ItemType.class, k).orElse(null) == slot.peek().get().getItem())){
 					return false;
 				}
 			}
@@ -1271,7 +1249,14 @@ public class Region implements Serializable{
 	}
 	
 	
-	//---------------------- Player Flags --------------------------//	
+	//---------------------- Player Flags --------------------------//
+    public boolean allowPressPlate(Player p){
+        if (!RedProtect.get().cfgs.isFlagEnabled("press-plate")){
+            return RedProtect.get().cfgs.root().flags.get("press-plate") || checkAllowedPlayer(p);
+        }
+        return getFlagBool("press-plate") || checkAllowedPlayer(p);
+    }
+
 	public boolean canBuild(Player p) {
     	if (flagExists("for-sale") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass")){
     		return false;

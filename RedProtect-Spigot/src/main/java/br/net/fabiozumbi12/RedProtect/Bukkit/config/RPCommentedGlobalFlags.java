@@ -47,7 +47,10 @@ public class RPCommentedGlobalFlags {
                     "Materials: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
 
             setDefault(w.getName() + ".if-build-false.break-blocks.blacklist", new ArrayList<>(), "This blocks will not be allowed to be break, all others yes.");
-            setDefault(w.getName() + ".if-build-false.break-blocks.whitelist", Arrays.asList("[*]_PLANT","GRASS", "TALL_GRASS", "POPPY", "DANDELION"), "Only this blocks will be allowed to break, all others will not.");
+            setDefault(w.getName() + ".if-build-false.break-blocks.whitelist", new ArrayList<>(),
+                    "Only this blocks will be allowed to break, all others will not.\n" +
+                            "You can add this blocks to allow basic exploration (accept regex):\n" +
+                            "\"[*]_PLANT\",\"GRASS_BLOCK\", \"TALL_GRASS\", \"POPPY\", \"DANDELION\"");
 
             setDefault(w.getName() + ".if-build-false.place-blocks.blacklist", new ArrayList<>(), "This blocks will not be allowed to be place, all others yes.");
             setDefault(w.getName() + ".if-build-false.place-blocks.whitelist", new ArrayList<>(), "Only this blocks will be allowed to place, all others will not.");
@@ -64,11 +67,13 @@ public class RPCommentedGlobalFlags {
                     "EntityTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
 
             setDefault(w.getName() + ".if-interact-false.interact-blocks.blacklist", new ArrayList<>(), "This items will not be allowed to interact, all other items will be.");
-            setDefault(w.getName() + ".if-interact-false.interact-blocks.whitelist", Arrays.asList("minecraft:grass", "minecraft:tallgrass", "minecraft:red_flower", "minecraft:chest"),
-                    "Only this items will allowed to interact, all other item will not be allowed.");
+            setDefault(w.getName() + ".if-interact-false.interact-blocks.whitelist", new ArrayList<>(),
+                    "Only this items will allowed to interact, all other item will not be allowed.\n" +
+                            "You can add this blocks to allow basic exploration (accept regex):\n" +
+                            "\"[*]_PLANT\",\"GRASS_BLOCK\", \"TALL_GRASS\", \"POPPY\", \"DANDELION\"");
 
             setDefault(w.getName() + ".if-interact-false.interact-entities.blacklist", new ArrayList<>(), "Only this entities will not be allowed to interact.");
-            setDefault(w.getName() + ".if-interact-false.interact-entities.whitelist", Collections.singletonList("villager"), "Only this entities will be allowed to interact, all others no.");
+            setDefault(w.getName() + ".if-interact-false.interact-entities.whitelist", Collections.singletonList("VILLAGER"), "Only this entities will be allowed to interact, all others no.");
 
             setDefault(w.getName() + ".use-minecart", true, "Allow to use minecarts and boats in this world?");
             setDefault(w.getName() + ".entity-block-damage", false, "Like creeperds and Endermans.");

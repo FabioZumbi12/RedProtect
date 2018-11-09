@@ -43,9 +43,11 @@ public class RPUtil {
     private static final HashMap<String, Integer> borderIds = new HashMap<>();
     private static final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
 
-    public static void saveResource(String name, File saveTo) {
+    public static void saveResource(String nameVersioned, String nameOri, File saveTo) {
         try {
-            InputStream isReader = RedProtect.class.getResourceAsStream(name);
+            InputStream isReader = RedProtect.class.getResourceAsStream(nameVersioned);
+            if (isReader == null) isReader = RedProtect.class.getResourceAsStream(nameOri);
+
             FileOutputStream fos = new FileOutputStream(saveTo);
             while (isReader.available() > 0) {
                 fos.write(isReader.read());
@@ -1333,7 +1335,7 @@ public class RPUtil {
         for (Location loc : r2.get4Points(r2.getCenterY())) {
             Map<Integer, Region> pregs = RedProtect.get().rm.getGroupRegion(loc);
             pregs.remove(r2.getPrior());
-            Region other = null;
+            Region other;
             if (pregs.size() > 0) {
                 other = pregs.get(Collections.max(pregs.keySet()));
             } else {
