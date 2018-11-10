@@ -11,7 +11,7 @@
  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
  3 - This notice may not be removed or altered from any source distribution.
 
- Este software é fornecido "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
  responsabilizados por quaisquer danos decorrentes do uso deste software.
 
  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
