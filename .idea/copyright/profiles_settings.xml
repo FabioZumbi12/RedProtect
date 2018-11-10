@@ -1,0 +1,10 @@
+<component name="CopyrightManager">
+  <settings default="FabioZumbi12">
+    <module2copyright>
+      <element module="All" copyright="FabioZumbi12" />
+    </module2copyright>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="prefixLines" value="false" />
+    </LanguageOptions>
+  </settings>
+</component>
