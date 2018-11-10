@@ -73,7 +73,7 @@ chat-protection:
     replace-by-word: '-removed-'
 
     # Enable punishiments.
-    punish: 
+    punish:
       enable: false
       # Max attempts the player can send url/ip before punished.
       max-attempts: 3

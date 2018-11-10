@@ -23,11 +23,15 @@ import java.io.File;
 import java.util.*;
 
 public class RedProtect extends JavaPlugin {
+    static boolean McMMo;
+    static boolean SkillAPI;
+    private static RedProtect plugin;
+    public final RPLogger logger = new RPLogger();
+    public final List<String> openGuis = new ArrayList<>();
+    public final List<String> confiemStart = new ArrayList<>();
+    public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public File JarFile = null;
     public PluginDescriptionFile pdf;
-    private int taskid;
-    private boolean PlaceHolderAPI;
-    private boolean Fac;
     public boolean Update;
     public String UptVersion;
     public String UptLink;
@@ -36,17 +40,14 @@ public class RedProtect extends JavaPlugin {
     public List<String> tpWait = new ArrayList<>();
     public HashMap<Player, String> alWait = new HashMap<>();
     public RPPermissionHandler ph;
-    public final RPLogger logger = new RPLogger();
     public Server serv;
     public HashMap<Player, Location> firstLocationSelections = new HashMap<>();
     public HashMap<Player, Location> secondLocationSelections = new HashMap<>();
     public boolean BossBar;
     public boolean MyChunk;
     public boolean MyPet;
-    static boolean McMMo;
     public boolean OnlineMode;
     public boolean Mc;
-    static boolean SkillAPI;
     public boolean Vault;
     public boolean PvPm;
     public boolean Ess;
@@ -61,21 +62,18 @@ public class RedProtect extends JavaPlugin {
     public RPDynmap dynmap;
     public Economy econ;
     public int version;
-    public final List<String> openGuis = new ArrayList<>();
-    public final List<String> confiemStart = new ArrayList<>();
-    public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public RPVHelper rpvhelper;
-
+    private int taskid;
+    private boolean PlaceHolderAPI;
+    private boolean Fac;
     private RedProtectAPI rpAPI;
-
-    public RedProtectAPI getAPI() {
-        return rpAPI;
-    }
-
-    private static RedProtect plugin;
 
     public static RedProtect get() {
         return plugin;
+    }
+
+    public RedProtectAPI getAPI() {
+        return rpAPI;
     }
 
     public void onDisable() {
@@ -133,10 +131,10 @@ public class RedProtect extends JavaPlugin {
             }
 
             if (version <= 1122) {
-                rpvhelper = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper112").newInstance();
+                rpvhelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper112").newInstance();
             }
             if (version >= 1130) {
-                rpvhelper = (RPVHelper)Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper113").newInstance();
+                rpvhelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.RPVHelper113").newInstance();
             }
 
             getCommand("RedProtect").setExecutor(new RPCommands());

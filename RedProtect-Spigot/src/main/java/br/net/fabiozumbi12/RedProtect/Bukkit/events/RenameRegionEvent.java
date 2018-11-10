@@ -9,9 +9,9 @@ import org.bukkit.event.HandlerList;
 public class RenameRegionEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Region region;
-    private String newName;
     private final String oldName;
     private final Player player;
+    private String newName;
     private boolean isCancelled = false;
 
     public RenameRegionEvent(Region region, String newName, String oldName, Player p) {
@@ -19,6 +19,10 @@ public class RenameRegionEvent extends Event implements Cancellable {
         this.newName = newName;
         this.oldName = oldName;
         this.player = p;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public Player getPlayer() {
@@ -57,10 +61,6 @@ public class RenameRegionEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

@@ -11,214 +11,213 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-class WorldFlatFileRegionManager implements WorldRegionManager{
+class WorldFlatFileRegionManager implements WorldRegionManager {
 
     final HashMap<String, Region> regions;
     final World world;
-    
+
     public WorldFlatFileRegionManager(World world) {
         super();
         this.regions = new HashMap<>();
         this.world = world;
     }
-    
+
     @Override
     public void add(Region r) {
         this.regions.put(r.getName(), r);
     }
-    
+
     @Override
     public void remove(Region r) {
-        if (this.regions.containsKey(r.getName())){
-        	this.regions.remove(r.getName());
+        if (this.regions.containsKey(r.getName())) {
+            this.regions.remove(r.getName());
         }
     }
-        
+
     @Override
     public Set<Region> getRegions(String pname) {
-    	SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-		for (Region r:regions.values()){
-			if (r.isLeader(pname)){
-				regionsp.add(r);
-			}
-		}
-		return regionsp;
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(pname)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
     }
-    
+
     @Override
     public Set<Region> getMemberRegions(String uuid) {
-    	SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-		for (Region r:regions.values()){
-			if (r.isLeader(uuid) || r.isAdmin(uuid)){
-				regionsp.add(r);
-			}
-		}
-		return regionsp;
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid) || r.isAdmin(uuid)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
     }
-        
+
     @Override
     public Region getRegion(String rname) {
-    	return regions.get(rname);
+        return regions.get(rname);
     }
-    
+
     @Override
     public int save() {
-    	int saved = 0;
+        int saved = 0;
         try {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT,"RegionManager.Save(): File type is " + RedProtect.get().cfgs.root().file_type);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().cfgs.root().file_type);
             String world = this.getWorld().getName();
-                  
-            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
-            	
-            	File datf  = new File(RedProtect.get().configDir+File.separator+"data", "data_" + world + ".conf");
-            	ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
-            	CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
-        		
-            	for (Region r:regions.values()){
-        			if (r.getName() == null){
-        				continue;
-        			}
 
-        			if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
-        				if (!r.toSave()){
-        					continue;
-        				}
-        				datf  = new File(RedProtect.get().configDir+File.separator+"data", world+File.separator + r.getName() + ".conf");
-        				regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
-        				fileDB = regionManager.createEmptyNode();
-            		}
-        			
-        			fileDB = RPUtil.addProps(fileDB, r); 
-        			saved++;
-        			
-        			if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
-        				saveConf(fileDB, regionManager);
-        				r.setToSave(false);        				 				
-        			}
-        		}
-            	
-            	if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
-            		RPUtil.backupRegions(fileDB, world);
-    				saveConf(fileDB, regionManager);    				
-    			} else {
-    				//remove deleted regions
-    				File wfolder = new File(RedProtect.get().configDir+File.separator+"data", world);
-    				if (wfolder.exists()){
-    					File[] listOfFiles = wfolder.listFiles();    				
-                		for (File region:listOfFiles){
-                			if (region.isFile() && !regions.containsKey(region.getName().replace(".conf", ""))){
-                				region.delete();
-                			}
-                		}
-    				} 
-    			}
-            }     
-        }
-        catch (Exception e4) {
+            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
+
+                File datf = new File(RedProtect.get().configDir + File.separator + "data", "data_" + world + ".conf");
+                ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
+                CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
+
+                for (Region r : regions.values()) {
+                    if (r.getName() == null) {
+                        continue;
+                    }
+
+                    if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                        if (!r.toSave()) {
+                            continue;
+                        }
+                        datf = new File(RedProtect.get().configDir + File.separator + "data", world + File.separator + r.getName() + ".conf");
+                        regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
+                        fileDB = regionManager.createEmptyNode();
+                    }
+
+                    fileDB = RPUtil.addProps(fileDB, r);
+                    saved++;
+
+                    if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                        saveConf(fileDB, regionManager);
+                        r.setToSave(false);
+                    }
+                }
+
+                if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                    RPUtil.backupRegions(fileDB, world);
+                    saveConf(fileDB, regionManager);
+                } else {
+                    //remove deleted regions
+                    File wfolder = new File(RedProtect.get().configDir + File.separator + "data", world);
+                    if (wfolder.exists()) {
+                        File[] listOfFiles = wfolder.listFiles();
+                        for (File region : listOfFiles) {
+                            if (region.isFile() && !regions.containsKey(region.getName().replace(".conf", ""))) {
+                                region.delete();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e4) {
             e4.printStackTrace();
         }
         return saved;
     }
-    
-    private void saveConf(CommentedConfigurationNode fileDB, ConfigurationLoader<CommentedConfigurationNode> regionManager){
-    	try {			
-			regionManager.save(fileDB);			
-		} catch (IOException e) {
-			RedProtect.get().logger.severe("Error during save database file for world " + world + ": ");
-			e.printStackTrace();
-		} 
+
+    private void saveConf(CommentedConfigurationNode fileDB, ConfigurationLoader<CommentedConfigurationNode> regionManager) {
+        try {
+            regionManager.save(fileDB);
+        } catch (IOException e) {
+            RedProtect.get().logger.severe("Error during save database file for world " + world + ": ");
+            e.printStackTrace();
+        }
     }
-        
+
     @Override
     public int getTotalRegionSize(String uuid) {
-		Set<Region> regionslist = new HashSet<>();
-		for (Region r:regions.values()){
-			if (r.isLeader(uuid)){
-				regionslist.add(r);
-			}
-		}
-		int total = 0;
-		for (Region r2 : regionslist) {
-        	total += RPUtil.simuleTotalRegionSize(uuid, r2);
-        }
-		return total;
-    }
-    
-    @Override
-    public void load() {  
-    	
-    	try {
-            String world = this.getWorld().getName();
-            
-            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
-            	if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
-            		File f = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + world);
-            		if (!f.exists()){
-            			f.mkdir();
-            		}
-            		File[] listOfFiles = f.listFiles();
-            		for (File region:listOfFiles){
-            			if (region.getName().endsWith(".conf")){
-            				this.load(region.getPath()); 
-            			}
-            		}
-    			} else {
-    				File oldf = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + world + ".conf");
-                	File newf = new File(RedProtect.get().configDir+File.separator+"data"+File.separator + "data_" + world + ".conf");
-                    if (oldf.exists()){
-                    	oldf.renameTo(newf);
-                    }            
-                    this.load(RedProtect.get().configDir+File.separator+"data"+File.separator + "data_" + world + ".conf");
-    			}            	       	
+        Set<Region> regionslist = new HashSet<>();
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid)) {
+                regionslist.add(r);
             }
-		} catch (Exception e) {
-				e.printStackTrace();
-		}
+        }
+        int total = 0;
+        for (Region r2 : regionslist) {
+            total += RPUtil.simuleTotalRegionSize(uuid, r2);
+        }
+        return total;
     }
-    
-	private void load(String path) {
-        String world = this.getWorld().getName();        
+
+    @Override
+    public void load() {
+
+        try {
+            String world = this.getWorld().getName();
+
+            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
+                if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                    File f = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + world);
+                    if (!f.exists()) {
+                        f.mkdir();
+                    }
+                    File[] listOfFiles = f.listFiles();
+                    for (File region : listOfFiles) {
+                        if (region.getName().endsWith(".conf")) {
+                            this.load(region.getPath());
+                        }
+                    }
+                } else {
+                    File oldf = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + world + ".conf");
+                    File newf = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + "data_" + world + ".conf");
+                    if (oldf.exists()) {
+                        oldf.renameTo(newf);
+                    }
+                    this.load(RedProtect.get().configDir + File.separator + "data" + File.separator + "data_" + world + ".conf");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void load(String path) {
+        String world = this.getWorld().getName();
 
         if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
-        	RedProtect.get().logger.debug(LogLevel.DEFAULT,"Load world " + this.world.getName() + ". File type: conf");
-        	
-        	try {
-        		File tempRegionFile = new File(path);    
-            	if (!tempRegionFile.exists()) {            		
-    				tempRegionFile.createNewFile();    				       		
-            	}
-            	
-            	ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(tempRegionFile.toPath()).build();
-            	CommentedConfigurationNode region = regionManager.load();
-            	        	
-            	for (Object key:region.getChildrenMap().keySet()){
-            		String rname = key.toString();            		
-            		if (!region.getNode(rname).hasMapChildren()){
-            			continue;
-            		}
-            		Region newr = RPUtil.loadRegion(region, rname, world);
-            		newr.setToSave(false);
-            	    regions.put(rname,newr);
-            	}
-        	} catch (IOException | ObjectMappingException e) {
-				e.printStackTrace();
-			} 
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: conf");
+
+            try {
+                File tempRegionFile = new File(path);
+                if (!tempRegionFile.exists()) {
+                    tempRegionFile.createNewFile();
+                }
+
+                ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(tempRegionFile.toPath()).build();
+                CommentedConfigurationNode region = regionManager.load();
+
+                for (Object key : region.getChildrenMap().keySet()) {
+                    String rname = key.toString();
+                    if (!region.getNode(rname).hasMapChildren()) {
+                        continue;
+                    }
+                    Region newr = RPUtil.loadRegion(region, rname, world);
+                    newr.setToSave(false);
+                    regions.put(rname, newr);
+                }
+            } catch (IOException | ObjectMappingException e) {
+                e.printStackTrace();
+            }
         }
     }
-        
+
     @Override
     public Set<Region> getRegionsNear(Player player, int radius) {
-    	int px = player.getLocation().getBlockX();
+        int px = player.getLocation().getBlockX();
         int pz = player.getLocation().getBlockZ();
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
-        
-		for (Region r:regions.values()){
-			RedProtect.get().logger.debug(LogLevel.DEFAULT,"Radius: " + radius);
-			RedProtect.get().logger.debug(LogLevel.DEFAULT,"X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
-			if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius){
-				ret.add(r);
-			}
-		}
+
+        for (Region r : regions.values()) {
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Radius: " + radius);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
+            if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
+                ret.add(r);
+            }
+        }
         return ret;
     }
     
@@ -231,118 +230,121 @@ class WorldFlatFileRegionManager implements WorldRegionManager{
 		return false;
     }
     */
-    
+
     public World getWorld() {
         return this.world;
-    }       
-    
-	@Override
-	public Set<Region> getRegions(int x, int y, int z) {
-		Set<Region> regionl = new HashSet<>();
-		for (Region r:regions.values()){
-			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
-				regionl.add(r);
-			}
-		}
-		return regionl;
-	}
+    }
 
-	@Override
-	public Region getTopRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<>();
-		int max = 0;
-		for (Region r:regions.values()){
-			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
-				if (regionlist.containsKey(r.getPrior())){
-					Region reg1 = regionlist.get(r.getPrior());
-					int Prior = r.getPrior();
-					if (reg1.getArea() >= r.getArea()){
-						r.setPrior(Prior+1);
-					} else {
-						reg1.setPrior(Prior+1);
-					}					
-				}
-				regionlist.put(r.getPrior(), r);
-			}
-		}
-		if (regionlist.size() > 0){
-			max = Collections.max(regionlist.keySet());
+    @Override
+    public Set<Region> getRegions(int x, int y, int z) {
+        Set<Region> regionl = new HashSet<>();
+        for (Region r : regions.values()) {
+            if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
+                regionl.add(r);
+            }
         }
-		return regionlist.get(max);
-	}
-	
-	@Override
-	public Region getLowRegion(int x, int y ,int z) {
-		Map<Integer,Region> regionlist = new HashMap<>();
-		int min = 0;
-		for (Region r:regions.values()){
-			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
-				if (regionlist.containsKey(r.getPrior())){
-					Region reg1 = regionlist.get(r.getPrior());
-					int Prior = r.getPrior();
-					if (reg1.getArea() >= r.getArea()){
-						r.setPrior(Prior+1);
-					} else {
-						reg1.setPrior(Prior+1);
-					}					
-				}
-				regionlist.put(r.getPrior(), r);
-			}
-		}
-		if (regionlist.size() > 0){
-			min = Collections.min(regionlist.keySet());
+        return regionl;
+    }
+
+    @Override
+    public Region getTopRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
+        int max = 0;
+        for (Region r : regions.values()) {
+            if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
+                if (regionlist.containsKey(r.getPrior())) {
+                    Region reg1 = regionlist.get(r.getPrior());
+                    int Prior = r.getPrior();
+                    if (reg1.getArea() >= r.getArea()) {
+                        r.setPrior(Prior + 1);
+                    } else {
+                        reg1.setPrior(Prior + 1);
+                    }
+                }
+                regionlist.put(r.getPrior(), r);
+            }
         }
-		return regionlist.get(min);
-	}
-	
-	@Override
-	public Map<Integer,Region> getGroupRegion(int x, int y, int z) {
-		Map<Integer,Region> regionlist = new HashMap<>();
-		for (Region r:regions.values()){
-			if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()){
-				if (regionlist.containsKey(r.getPrior())){
-					Region reg1 = regionlist.get(r.getPrior());
-					int Prior = r.getPrior();
-					if (reg1.getArea() >= r.getArea()){
-						r.setPrior(Prior+1);
-					} else {
-						reg1.setPrior(Prior+1);
-					}					
-				}
-				regionlist.put(r.getPrior(), r);
-			}
-		}
-		return regionlist;
-	}
+        if (regionlist.size() > 0) {
+            max = Collections.max(regionlist.keySet());
+        }
+        return regionlist.get(max);
+    }
 
-	@Override
-	public Set<Region> getAllRegions() {
-		SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
-		allregions.addAll(regions.values());
-		return allregions;
-	}
+    @Override
+    public Region getLowRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
+        int min = 0;
+        for (Region r : regions.values()) {
+            if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
+                if (regionlist.containsKey(r.getPrior())) {
+                    Region reg1 = regionlist.get(r.getPrior());
+                    int Prior = r.getPrior();
+                    if (reg1.getArea() >= r.getArea()) {
+                        r.setPrior(Prior + 1);
+                    } else {
+                        reg1.setPrior(Prior + 1);
+                    }
+                }
+                regionlist.put(r.getPrior(), r);
+            }
+        }
+        if (regionlist.size() > 0) {
+            min = Collections.min(regionlist.keySet());
+        }
+        return regionlist.get(min);
+    }
 
-	@Override
-	public void clearRegions() {
-		regions.clear();		
-	}
+    @Override
+    public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
+        for (Region r : regions.values()) {
+            if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
+                if (regionlist.containsKey(r.getPrior())) {
+                    Region reg1 = regionlist.get(r.getPrior());
+                    int Prior = r.getPrior();
+                    if (reg1.getArea() >= r.getArea()) {
+                        r.setPrior(Prior + 1);
+                    } else {
+                        reg1.setPrior(Prior + 1);
+                    }
+                }
+                regionlist.put(r.getPrior(), r);
+            }
+        }
+        return regionlist;
+    }
 
-	@Override
-	public void updateLiveRegion(String rname, String columm, Object value) {}
+    @Override
+    public Set<Region> getAllRegions() {
+        SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
+        allregions.addAll(regions.values());
+        return allregions;
+    }
 
-	@Override
-	public void closeConn() {
-	}
+    @Override
+    public void clearRegions() {
+        regions.clear();
+    }
 
-	@Override
-	public int getTotalRegionNum() {
-		return regions.size();
-	}
+    @Override
+    public void updateLiveRegion(String rname, String columm, Object value) {
+    }
 
-	@Override
-	public void updateLiveFlags(String rname, String flag, String value) {}
+    @Override
+    public void closeConn() {
+    }
 
-	@Override
-	public void removeLiveFlags(String rname, String flag) {}
-	
+    @Override
+    public int getTotalRegionNum() {
+        return regions.size();
+    }
+
+    @Override
+    public void updateLiveFlags(String rname, String flag, String value) {
+    }
+
+    @Override
+    public void removeLiveFlags(String rname, String flag) {
+    }
+
 }

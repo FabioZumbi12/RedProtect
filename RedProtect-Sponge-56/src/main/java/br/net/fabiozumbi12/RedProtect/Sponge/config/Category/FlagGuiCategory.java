@@ -9,23 +9,18 @@ import java.util.Map;
 @ConfigSerializable
 public class FlagGuiCategory {
 
-    public FlagGuiCategory(){}
-
     @Setting(value = "gui-separator")
     public guiSeparator gui_separator = new guiSeparator();
+    @Setting(value = "gui-strings", comment = "Gui general customization.")
+    public Map<String, String> gui_strings = createMap();
+    @Setting(value = "gui-flags")
+    public Map<String, GuiFlag> gui_flags = createGuiMaps();
 
-    @ConfigSerializable
-    public static class guiSeparator {
-        @Setting(comment = "Color? Wood type?")
-        public int data = 0;
-        @Setting(comment = "The item names is like you see holding \"F3\" and pressing \"H\".")
-        public String material = "minecraft:stained_glass_pane";
+    public FlagGuiCategory() {
     }
 
-    @Setting(value = "gui-strings", comment = "Gui general customization.")
-    public Map<String,String> gui_strings = createMap();
-    private Map<String,String> createMap(){
-        Map<String,String> map = new HashMap<>();
+    private Map<String, String> createMap() {
+        Map<String, String> map = new HashMap<>();
         map.put("false", "&cfalse");
         map.put("separator", "&7|");
         map.put("true", "&atrue");
@@ -33,9 +28,7 @@ public class FlagGuiCategory {
         return map;
     }
 
-    @Setting(value = "gui-flags")
-    public Map<String, GuiFlag> gui_flags = createGuiMaps();
-    private Map<String, GuiFlag> createGuiMaps(){
+    private Map<String, GuiFlag> createGuiMaps() {
         Map<String, GuiFlag> guiMap = new HashMap<>();
         guiMap.put("allow-effects", new GuiFlag("&6Description: &aAllow or cancel all", "&atype of effects for non members", "&aof this region.", "minecraft:blaze_rod", "&e=> Allow Effects", 15));
         guiMap.put("allow-fly", new GuiFlag("&6Description: &aAllow players with", "&a&afly enabled to fly on this region.", "", "minecraft:feather", "&e=> Allow Fly", 7));
@@ -69,7 +62,15 @@ public class FlagGuiCategory {
     }
 
     @ConfigSerializable
-    public static class GuiFlag{
+    public static class guiSeparator {
+        @Setting(comment = "Color? Wood type?")
+        public int data = 0;
+        @Setting(comment = "The item names is like you see holding \"F3\" and pressing \"H\".")
+        public String material = "minecraft:stained_glass_pane";
+    }
+
+    @ConfigSerializable
+    public static class GuiFlag {
         @Setting
         public String description = "&bDescription: &2Add a flag description here.";
         @Setting
@@ -83,14 +84,15 @@ public class FlagGuiCategory {
         @Setting
         public int slot = 0;
 
-        public GuiFlag(){}
+        public GuiFlag() {
+        }
 
-        public GuiFlag(String name, int slot){
+        public GuiFlag(String name, int slot) {
             this.name = name;
             this.slot = slot;
         }
 
-        public GuiFlag(String desc, String desc1, String desc2, String mat, String name, int slot){
+        public GuiFlag(String desc, String desc1, String desc2, String mat, String name, int slot) {
             this.description = desc;
             this.description1 = desc1;
             this.description2 = desc2;

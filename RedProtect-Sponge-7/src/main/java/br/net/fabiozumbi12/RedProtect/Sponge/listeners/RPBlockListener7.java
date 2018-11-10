@@ -20,41 +20,41 @@ public class RPBlockListener7 {
 
     private static final RPContainer cont = new RPContainer();
 
-    public RPBlockListener7(){
-        RedProtect.get().logger.debug(LogLevel.BLOCKS,"Loaded RPBlockListener7...");
+    public RPBlockListener7() {
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded RPBlockListener7...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
-    public void onPiston(ChangeBlockEvent.Pre e){
-        RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener7 - Is onChangeBlock event");
+    public void onPiston(ChangeBlockEvent.Pre e) {
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPBlockListener7 - Is onChangeBlock event");
 
         EventContext context = e.getContext();
         Cause cause = e.getCause();
         LocatableBlock sourceLoc = cause.first(LocatableBlock.class).orElse(null);
 
-        if (sourceLoc != null){
-            RedProtect.get().logger.debug(LogLevel.BLOCKS,"sourceLoc");
+        if (sourceLoc != null) {
+            RedProtect.get().logger.debug(LogLevel.BLOCKS, "sourceLoc");
 
-            if (context.containsKey(EventContextKeys.PISTON_EXTEND) || context.containsKey(EventContextKeys.PISTON_RETRACT)){
-                if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler){
+            if (context.containsKey(EventContextKeys.PISTON_EXTEND) || context.containsKey(EventContextKeys.PISTON_RETRACT)) {
+                if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler) {
                     return;
                 }
 
                 Region r = RedProtect.get().rm.getTopRegion(sourceLoc.getLocation(), this.getClass().getName());
-                for (Location<World> pistonLoc: e.getLocations()){
+                for (Location<World> pistonLoc : e.getLocations()) {
                     Region targetr = RedProtect.get().rm.getTopRegion(pistonLoc, this.getClass().getName());
 
                     boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
-                    RedProtect.get().logger.debug(LogLevel.BLOCKS,"getLocations");
+                    RedProtect.get().logger.debug(LogLevel.BLOCKS, "getLocations");
 
-                    if (targetr != null && (r == null || r != targetr)){
-                        if (cause.first(Player.class).isPresent() && targetr.canBuild(cause.first(Player.class).get())){
+                    if (targetr != null && (r == null || r != targetr)) {
+                        if (cause.first(Player.class).isPresent() && targetr.canBuild(cause.first(Player.class).get())) {
                             continue;
                         }
 
-                        if (antih){
+                        if (antih) {
                             BlockSnapshot ib = e.getLocations().get(0).add(0, 1, 0).createSnapshot();
-                            if (cont.canWorldBreak(ib) || cont.canWorldBreak(e.getLocations().get(0).createSnapshot())){
+                            if (cont.canWorldBreak(ib) || cont.canWorldBreak(e.getLocations().get(0).createSnapshot())) {
                                 continue;
                             }
                         }

@@ -21,11 +21,11 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class RPEntityListener implements Listener {
 
+    static final RPContainer cont = new RPContainer();
+
     public RPEntityListener() {
         RedProtect.get().logger.debug("Loaded RPEntityListener...");
     }
-
-    static final RPContainer cont = new RPContainer();
 
     @EventHandler
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {
@@ -278,7 +278,7 @@ public class RPEntityListener implements Listener {
                     RedProtect.get().logger.debug("Cancelled ItemFrame drop Item");
                     e.setCancelled(true);
                 }
-            }  else if (e2 instanceof Explosive) {
+            } else if (e2 instanceof Explosive) {
                 if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())) {
                     e.setCancelled(true);
                 }

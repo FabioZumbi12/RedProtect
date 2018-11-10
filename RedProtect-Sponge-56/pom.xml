@@ -1,48 +1,49 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>br.net.fabiozumbi12.RedProtect</groupId>
-    <artifactId>RedProtect</artifactId>
-    <version>7.5.5</version>
-  </parent>
-  <artifactId>RedProtect-Sponge-56</artifactId>  
-  
-  <properties>
-  	<spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
-  </properties>
-  
-  <dependencies>
-    <dependency>
-        <groupId>org.spongepowered</groupId>
-        <artifactId>spongeapi</artifactId>
-        <version>${spongeVersion}</version>
-        <scope>provided</scope>
-    </dependency>    
-    
-    <dependency>
-      <groupId>org.spongepowered</groupId>
-      <artifactId>spongeapi</artifactId>
-      <version>${spongeVersion}</version>
-      <classifier>javadoc</classifier>
-    </dependency> 
-       
-    <dependency>
-      <groupId>com.sk89q.worldedit</groupId>
-      <artifactId>worldedit-sponge</artifactId>
-      <version>LATEST</version>
-      <scope>provided</scope>
-    </dependency>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+        <artifactId>RedProtect</artifactId>
+        <version>7.5.5</version>
+    </parent>
+    <artifactId>RedProtect-Sponge-56</artifactId>
 
-    <dependency>
-      <groupId>com.github.webbukkit</groupId>
-      <artifactId>DynmapCoreAPI</artifactId>
-      <version>v2.5</version>
-    </dependency>
-  </dependencies>
-  
-  
-  <build>
-    <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>
-  </build>
-    
+    <properties>
+        <spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${spongeVersion}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-sponge</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.webbukkit</groupId>
+            <artifactId>DynmapCoreAPI</artifactId>
+            <version>v2.5</version>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <finalName>DONT-DOWNLOAD-SpongeAPI56-Reference</finalName>
+    </build>
+
 </project>

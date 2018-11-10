@@ -6,7 +6,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.entity.teleport.TeleportType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -16,41 +15,41 @@ import org.spongepowered.api.world.World;
 import java.util.List;
 
 public interface RPVHelper {
-	Cause getCause(CommandSource p);
+    Cause getCause(CommandSource p);
 
-	void closeInventory(Player p);
-	
-	void openInventory(Inventory inv, Player p);
+    void closeInventory(Player p);
 
-	void setBlock(Location<World> loc, BlockState block);
+    void openInventory(Inventory inv, Player p);
 
-	void digBlock(Player p, ItemStack item, Vector3i loc);
+    void setBlock(Location<World> loc, BlockState block);
 
-	void digBlock(Player p, Vector3i loc);
+    void digBlock(Player p, ItemStack item, Vector3i loc);
 
-	void removeBlock(Location<World> loc);
-	
-	boolean checkCause(Cause cause, String toCompare);
-	
-	boolean checkHorseOwner(Entity ent, Player owner);
+    void digBlock(Player p, Vector3i loc);
 
-	List<String> getAllEnchants();
+    void removeBlock(Location<World> loc);
 
-	ItemStack offerEnchantment(ItemStack item);
+    boolean checkCause(Cause cause, String toCompare);
 
-	long getInvValue(Iterable<Inventory> inv);
+    boolean checkHorseOwner(Entity ent, Player owner);
 
-	Inventory query(Inventory inventory, int x, int y);
+    List<String> getAllEnchants();
 
-	ItemStack getItemMainHand(Player player);
+    ItemStack offerEnchantment(ItemStack item);
 
-	ItemStack getItemOffHand(Player player);
+    long getInvValue(Iterable<Inventory> inv);
 
-	ItemType getItemInHand(Player player);
+    Inventory query(Inventory inventory, int x, int y);
 
-	ItemType getItemType(ItemStack itemStack);
+    ItemStack getItemMainHand(Player player);
 
-	Inventory newInventory(int size, String name);
+    ItemStack getItemOffHand(Player player);
 
-	void removeGuiItem(Player p);
+    ItemType getItemInHand(Player player);
+
+    ItemType getItemType(ItemStack itemStack);
+
+    Inventory newInventory(int size, String name);
+
+    void removeGuiItem(Player p);
 }

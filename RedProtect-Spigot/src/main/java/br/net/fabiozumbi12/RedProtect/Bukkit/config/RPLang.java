@@ -16,9 +16,9 @@ import java.util.TreeSet;
 
 public class RPLang {
 
-    private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
-    static final Properties BaseLang = new Properties();
     public static final Properties Lang = new Properties();
+    static final Properties BaseLang = new Properties();
+    private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
     //static List<String> langString = new ArrayList<String>();
     private static String pathLang;
     private static String resLang;

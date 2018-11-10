@@ -32,11 +32,10 @@ public class TaskChain {
      * =============================================================================================
      */
     final ConcurrentLinkedQueue<BaseTask> chainQueue = new ConcurrentLinkedQueue<>();
-
+    private final Plugin plugin;
     boolean executed = false;
     Object previous = null;
     boolean async;
-    private final Plugin plugin;
 
     public TaskChain() {
         this.plugin = RedProtect.get(); // TODO: Change to get an instance to your plugin!
@@ -284,20 +283,24 @@ public class TaskChain {
     public abstract static class AsyncTask<R, A> extends Task<R, A> {
         {
             async = true;
-        }}
+        }
+    }
 
     public abstract static class AsyncGenericTask extends GenericTask {
         {
             async = true;
-        }}
+        }
+    }
 
     public abstract static class AsyncFirstTask<R> extends FirstTask<R> {
         {
             async = true;
-        }}
+        }
+    }
 
     public abstract static class AsyncLastTask<A> extends LastTask<A> {
         {
             async = true;
-        }}
+        }
+    }
 }

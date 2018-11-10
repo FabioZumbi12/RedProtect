@@ -8,10 +8,11 @@ import java.util.*;
 @ConfigSerializable
 public class GlobalFlagsCategory {
 
-    public GlobalFlagsCategory(){}
-
     @Setting
     public Map<String, WorldProperties> worlds = new HashMap<>();
+
+    public GlobalFlagsCategory() {
+    }
 
     @ConfigSerializable
     public static class WorldProperties {
@@ -22,11 +23,76 @@ public class GlobalFlagsCategory {
         @Setting(value = "if-build-false", comment = "If build option is false, choose what blocks the player can place/break.\n" +
                 "The item names is like you see holding \"F3\" and pressing \"H\".")
         public buildFalse if_build_false = new buildFalse();
+        @Setting(comment = "Allow pvp?")
+        public boolean pvp = true;
+        @Setting(comment = "Allow player interactions, with all entities or blocks?")
+        public boolean interact = true;
+        @Setting(value = "if-interact-false", comment = "If interact option is false, choose what blocks or entity the player can interact.\n" +
+                "The item names is like you see holding \"F3\" and pressing \"H\".\n" +
+                "The entity name you can see enabling debug type \"entity\" on debug options and interacting with the entity.")
+        public interactFalse if_interact_false = new interactFalse();
+        @Setting(value = "use-minecart", comment = "Allow players to place Minecarts and Boats?")
+        public boolean use_minecart = true;
+        @Setting(value = "entity-block-damage", comment = "Entities can damage blocks like enderman and creepers?")
+        public boolean entity_block_damage = true;
+        @Setting(value = "explosion-entity-damage", comment = "Explosions can damage entities?")
+        public boolean explosion_entity_damage = true;
+        @Setting(value = "fire-block-damage", comment = "Fire can damage blocks like leaves and woods?")
+        public boolean fire_block_damage = false;
+        @Setting(value = "fire-spread", comment = "Allow fire spread?")
+        public boolean fire_spread = false;
+        @Setting(value = "player-hurt-monsters", comment = "Players can damage monsters?")
+        public boolean player_hurt_monsters = true;
+        @Setting(value = "player-hurt-passives", comment = "Players can damage passive entities?")
+        public boolean player_hurt_passives = true;
+        @Setting(value = "spawn-allow-on-regions", comment = "Allow entities to spawn only inside regions if blacklisted/whitelisted?")
+        public boolean spawn_allow_on_regions = false;
+        @Setting(value = "spawn-whitelist", comment = "" +
+                "spawn-whitelist: ONLY this mobs will spawn in this world!\n\n" +
+                "You can use MONSTERS or PASSIVES groups.\n" +
+                "Check the entity types here:\n" +
+                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+        public List<String> spawn_whitelist = new ArrayList<>();
+        @Setting(value = "spawn-blacklist", comment = "" +
+                "spawn-blacklist: This mobs will NOT spawn in this world!\n\n" +
+                "You can use MONSTERS or PASSIVES groups.\n" +
+                "Check the entity types here:\n" +
+                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+        public List<String> spawn_blacklist = new ArrayList<>();
+        @Setting(value = "allow-weather", comment = "Allow weather changes?")
+        public boolean allow_weather = true;
+        @Setting(value = "deny-item-usage", comment = "Control what items the player can use.")
+        public denyItemUsage deny_item_usage = new denyItemUsage();
+        @Setting(value = "on-enter-cmds", comment = "Execute this command on enter in this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
+        public List<String> on_enter_cmds = new ArrayList<>();
+        @Setting(value = "on-exit-cmds", comment = "Execute this command on exit this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
+        public List<String> on_exit_cmds = new ArrayList<>();
+        @Setting(value = "allow-changes-of")
+        public allowChangesOf allow_changes_of = new allowChangesOf();
+        @Setting(comment = "Entities will be invincible?")
+        public boolean invincible = false;
+        @Setting(value = "player-candrop")
+        public boolean player_candrop = true;
+        @Setting(value = "player-canpickup")
+        public boolean player_canpickup = true;
+        @Setting(value = "block-grow", comment = "Allow blocks to grow like wheat?")
+        public boolean block_grow = true;
+        @Setting(value = "command-ranges", comment = "Execute commands in certain coordinate ranges.")
+        public Map<String, CommandRanges> command_ranges = createMap();
+
+        private Map<String, CommandRanges> createMap() {
+            Map<String, CommandRanges> map = new HashMap<>();
+            map.put("home-command", new CommandRanges());
+            return map;
+        }
+
         @ConfigSerializable
         public static class buildFalse {
 
             @Setting(value = "break-blocks")
             public breakBlocks break_blocks = new breakBlocks();
+            @Setting(value = "place-blocks")
+            public placeBlocks place_blocks = new placeBlocks();
 
             @ConfigSerializable
             public static class breakBlocks {
@@ -38,9 +104,6 @@ public class GlobalFlagsCategory {
                 public List<String> whitelist = new ArrayList<>();
             }
 
-            @Setting(value = "place-blocks")
-            public placeBlocks place_blocks = new placeBlocks();
-
             @ConfigSerializable
             public static class placeBlocks {
                 @Setting(comment = "This blocks will not be allowed to be place, all others yes.")
@@ -51,20 +114,16 @@ public class GlobalFlagsCategory {
             }
         }
 
-        @Setting(comment = "Allow pvp?")
-        public boolean pvp = true;
-
-        @Setting(comment = "Allow player interactions, with all entities or blocks?")
-        public boolean interact = true;
-
-        @Setting(value = "if-interact-false", comment = "If interact option is false, choose what blocks or entity the player can interact.\n" +
-                "The item names is like you see holding \"F3\" and pressing \"H\".\n" +
-                "The entity name you can see enabling debug type \"entity\" on debug options and interacting with the entity.")
-        public interactFalse if_interact_false = new interactFalse();
         @ConfigSerializable
         public static class interactFalse {
             @Setting(value = "interact-blocks")
             public interactBlocks interact_blocks = new interactBlocks();
+            @Setting(value = "interact-entities")
+            public interactEntities interact_entities = new interactEntities();
+            @Setting(value = "entity-passives", comment = "Allow player interactions with passives?")
+            public boolean entity_passives = true;
+            @Setting(value = "entity-monsters", comment = "Allow player interactions with monsters?")
+            public boolean entity_monsters = true;
 
             @ConfigSerializable
             public static class interactBlocks {
@@ -77,9 +136,6 @@ public class GlobalFlagsCategory {
                 public List<String> whitelist = new ArrayList<>();
             }
 
-            @Setting(value = "interact-entities")
-            public interactEntities interact_entities = new interactEntities();
-
             @ConfigSerializable
             public static class interactEntities {
                 @Setting(comment = "Only this entities will not be allowed to interact.")
@@ -88,57 +144,8 @@ public class GlobalFlagsCategory {
                 @Setting(comment = "Only this entities will be allowed to interact, all others no.")
                 public List<String> whitelist = Collections.singletonList("villager");
             }
-
-            @Setting(value="entity-passives" ,comment = "Allow player interactions with passives?")
-            public boolean entity_passives = true;
-
-            @Setting(value="entity-monsters" ,comment = "Allow player interactions with monsters?")
-            public boolean entity_monsters = true;
         }
 
-        @Setting(value = "use-minecart", comment = "Allow players to place Minecarts and Boats?")
-        public boolean use_minecart = true;
-
-        @Setting(value = "entity-block-damage", comment = "Entities can damage blocks like enderman and creepers?")
-        public boolean entity_block_damage = true;
-
-        @Setting(value = "explosion-entity-damage", comment = "Explosions can damage entities?")
-        public boolean explosion_entity_damage = true;
-
-        @Setting(value = "fire-block-damage", comment = "Fire can damage blocks like leaves and woods?")
-        public boolean fire_block_damage = false;
-
-        @Setting(value = "fire-spread", comment = "Allow fire spread?")
-        public boolean fire_spread = false;
-
-        @Setting(value = "player-hurt-monsters", comment = "Players can damage monsters?")
-        public boolean player_hurt_monsters = true;
-
-        @Setting(value = "player-hurt-passives", comment = "Players can damage passive entities?")
-        public boolean player_hurt_passives = true;
-
-        @Setting(value = "spawn-allow-on-regions", comment = "Allow entities to spawn only inside regions if blacklisted/whitelisted?")
-        public boolean spawn_allow_on_regions = false;
-
-        @Setting(value = "spawn-whitelist", comment = "" +
-                "spawn-whitelist: ONLY this mobs will spawn in this world!\n\n" +
-                "You can use MONSTERS or PASSIVES groups.\n" +
-                "Check the entity types here:\n" +
-                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
-        public List<String> spawn_whitelist = new ArrayList<>();
-
-        @Setting(value = "spawn-blacklist", comment = "" +
-                "spawn-blacklist: This mobs will NOT spawn in this world!\n\n" +
-                "You can use MONSTERS or PASSIVES groups.\n" +
-                "Check the entity types here:\n" +
-                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
-        public List<String> spawn_blacklist = new ArrayList<>();
-
-        @Setting(value = "allow-weather", comment = "Allow weather changes?")
-        public boolean allow_weather = true;
-
-        @Setting(value = "deny-item-usage", comment = "Control what items the player can use.")
-        public denyItemUsage deny_item_usage = new denyItemUsage();
         @ConfigSerializable
         public static class denyItemUsage {
             @Setting(value = "allow-on-claimed-rps")
@@ -151,14 +158,6 @@ public class GlobalFlagsCategory {
             public List<String> items = new ArrayList<>();
         }
 
-        @Setting(value = "on-enter-cmds", comment = "Execute this command on enter in this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
-        public List<String> on_enter_cmds = new ArrayList<>();
-
-        @Setting(value = "on-exit-cmds", comment = "Execute this command on exit this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
-        public List<String> on_exit_cmds = new ArrayList<>();
-
-        @Setting(value = "allow-changes-of")
-        public allowChangesOf allow_changes_of = new allowChangesOf();
         @ConfigSerializable
         public static class allowChangesOf {
             @Setting(value = "liquid-flow", comment = "Allow any type of liquids to flow? Includes mod liquids.")
@@ -177,28 +176,8 @@ public class GlobalFlagsCategory {
             public boolean flow_damage = true;
         }
 
-        @Setting(comment = "Entities will be invincible?")
-        public boolean invincible = false;
-
-        @Setting(value = "player-candrop")
-        public boolean player_candrop = true;
-
-        @Setting(value = "player-canpickup")
-        public boolean player_canpickup = true;
-
-        @Setting(value = "block-grow", comment = "Allow blocks to grow like wheat?")
-        public boolean block_grow = true;
-
-        @Setting(value = "command-ranges", comment = "Execute commands in certain coordinate ranges.")
-        public Map<String, CommandRanges> command_ranges = createMap();
-        private Map<String, CommandRanges> createMap(){
-            Map<String, CommandRanges> map = new HashMap<>();
-            map.put("home-command", new CommandRanges());
-            return map;
-        }
-
         @ConfigSerializable
-        public static class CommandRanges{
+        public static class CommandRanges {
             @Setting(value = "min-range")
             public double min_range = 0D;
 

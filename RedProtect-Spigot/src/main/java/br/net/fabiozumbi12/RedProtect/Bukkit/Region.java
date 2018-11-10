@@ -23,6 +23,7 @@ import java.util.*;
 public class Region implements Serializable {
 
     private static final long serialVersionUID = 2861198224185302015L;
+    private final boolean waiting = false;
     private int[] x;
     private int[] z;
     private int minMbrX;
@@ -43,470 +44,8 @@ public class Region implements Serializable {
     private long value;
     private Location tppoint;
     private boolean tosave = true;
-    private final boolean waiting = false;
     private boolean canDelete;
-
-    public Map<String, Object> getFlags() {
-        return flags;
-    }
-
-    public void setFlags(Map<String, Object> flags) {
-        this.flags = flags;
-    }
-
-    public boolean canDelete() {
-        return this.canDelete;
-    }
-
-    /**
-     * Get unique ID of region based on name of "region + @ + world".
-     *
-     * @return {@code id string}
-     */
-    @Override
-    public String toString() {
-        return this.name + "@" + this.world;
-    }
-
-    /**
-     * Get unique ID of region based on name of "region + @ + world".
-     *
-     * @return {@code id string}
-     */
-    public String getID() {
-        return this.name + "@" + this.world;
-    }
-
-    public boolean toSave() {
-        return this.tosave;
-    }
-
-    public void setToSave(boolean save) {
-        this.tosave = save;
-    }
-
     private int particleID = 0;
-
-    private void checkParticle() {
-        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
-            if (this.flags.containsKey("particles")) {
-                if (particleID <= 0) {
-
-                    particleID = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () -> {
-                        if (this.flags.containsKey("particles")) {
-                            String[] part = flags.get("particles").toString().split(" ");
-                            for (int i = 0; i < Integer.valueOf(part[1]); i++) {
-                                Vector max = Vector.getMaximum(getMinLocation().toVector(), getMaxLocation().toVector());
-                                Vector min = Vector.getMinimum(getMinLocation().toVector(), getMaxLocation().toVector());
-
-                                int dx = max.getBlockX() - min.getBlockX();
-                                int dy = max.getBlockY() - min.getBlockY();
-                                int dz = max.getBlockZ() - min.getBlockZ();
-                                Random random = new Random();
-                                int x = random.nextInt(Math.abs(dx) + 1) + min.getBlockX();
-                                int y = random.nextInt(Math.abs(dy) + 1) + min.getBlockY();
-                                int z = random.nextInt(Math.abs(dz) + 1) + min.getBlockZ();
-
-
-                                Particle p = Particle.valueOf(part[0].toUpperCase());
-                                World w = Bukkit.getServer().getWorld(world);
-
-                                Location loc = new Location(w, x + new Random().nextDouble(), y + new Random().nextDouble(), z + new Random().nextDouble());
-                                if (w.getNearbyEntities(loc, 30, 30, 30).stream().anyMatch(ent -> ent instanceof Player)) {
-                                    if (loc.getBlock().isEmpty()) {
-                                        if (part.length == 2) {
-                                            w.spawnParticle(p, loc, 1);
-                                        }
-                                        if (part.length == 5) {
-                                            w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]));
-                                        }
-                                        if (part.length == 6) {
-                                            w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]), Double.parseDouble(part[5]), null);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }, 1, 1);
-                }
-            } else if (particleID > 0) {
-                notifyRemove();
-            }
-        }, 20);
-    }
-
-    public void notifyRemove() {
-        if (particleID > 0) {
-            Bukkit.getScheduler().cancelTask(particleID);
-            particleID = 0;
-        }
-    }
-
-    public void updateSigns() {
-        for (String s : this.flags.keySet()) {
-            updateSigns(s);
-        }
-    }
-
-    public void updateSigns(String fname) {
-        if (!RPConfig.getBool("region-settings.enable-flag-sign")) {
-            return;
-        }
-        List<Location> locs = RPConfig.getSigns(this.getID());
-        if (locs.size() > 0) {
-            for (Location loc : locs) {
-                if (loc.getBlock().getState() instanceof Sign) {
-                    Sign s = (Sign) loc.getBlock().getState();
-                    String[] lines = s.getLines();
-                    if (lines[0].equalsIgnoreCase("[flag]")) {
-                        if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))) {
-                            s.setLine(3, RPLang.get("region.value") + " " + RPLang.translBool(getFlagString(fname)));
-                            s.update();
-                            RPConfig.putSign(this.getID(), loc);
-                        }
-                    } else {
-                        RPConfig.removeSign(this.getID(), loc);
-                    }
-                } else {
-                    RPConfig.removeSign(this.getID(), loc);
-                }
-            }
-        }
-    }
-
-    public boolean setFlag(CommandSender cause, String fname, Object value) {
-        ChangeRegionFlagEvent event = new ChangeRegionFlagEvent(cause, this, fname, value);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return false;
-        }
-
-        setToSave(true);
-        this.flags.put(event.getFlag(), event.getFlagValue());
-        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
-        updateSigns(event.getFlag());
-        checkParticle();
-        return true;
-    }
-
-    public void removeFlag(String Name) {
-        setToSave(true);
-        if (this.flags.containsKey(Name)) {
-            this.flags.remove(Name);
-            RedProtect.get().rm.removeLiveFlags(this, Name);
-        }
-        checkParticle();
-    }
-
-    public void setDate(String value) {
-        setToSave(true);
-        this.date = value;
-        RedProtect.get().rm.updateLiveRegion(this, "date", value);
-    }
-
-    public void setTPPoint(Location loc) {
-        setToSave(true);
-        this.tppoint = loc;
-        if (loc != null) {
-            double x = loc.getX();
-            double y = loc.getY();
-            double z = loc.getZ();
-            float yaw = loc.getYaw();
-            float pitch = loc.getPitch();
-            RedProtect.get().rm.updateLiveRegion(this, "tppoint", x + "," + y + "," + z + "," + yaw + "," + pitch);
-        } else {
-            RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
-        }
-
-    }
-
-    public String getFlagStrings() {
-        StringBuilder flags = new StringBuilder();
-        for (String flag : this.flags.keySet()) {
-            flags.append("," + flag + ":" + this.flags.get(flag).toString());
-        }
-        return flags.toString().substring(1);
-    }
-
-    public Location getTPPoint() {
-        return this.tppoint;
-    }
-
-    public String getTPPointString() {
-        if (tppoint == null) {
-            return "";
-        }
-        return this.tppoint.getX() + "," + this.tppoint.getY() + "," + this.tppoint.getZ() + "," + this.tppoint.getYaw() + "," + this.tppoint.getPitch();
-    }
-
-    public String getDate() {
-        return this.date;
-    }
-
-    public int getMaxY() {
-        return this.maxY;
-    }
-
-    public void setMaxY(int y) {
-        setToSave(true);
-        this.maxY = y;
-        RedProtect.get().rm.updateLiveRegion(this, "maxy", String.valueOf(y));
-    }
-
-    public int getMinY() {
-        return this.minY;
-    }
-
-    public void setMinY(int y) {
-        setToSave(true);
-        this.minY = y;
-        RedProtect.get().rm.updateLiveRegion(this, "miny", String.valueOf(y));
-    }
-
-    public void setWorld(String w) {
-        setToSave(true);
-        this.world = w;
-        RedProtect.get().rm.updateLiveRegion(this, "world", w);
-    }
-
-    public Location getMaxLocation() {
-        return new Location(Bukkit.getWorld(this.world), this.maxMbrX, this.maxY, this.maxMbrZ);
-    }
-
-    public Location getMinLocation() {
-        return new Location(Bukkit.getWorld(this.world), this.minMbrX, this.minY, this.minMbrZ);
-    }
-
-    public String getWorld() {
-        return this.world;
-    }
-
-    public void setPrior(int prior) {
-        setToSave(true);
-        this.prior = prior;
-        RedProtect.get().rm.updateLiveRegion(this, "prior", "" + prior);
-    }
-
-    public int getPrior() {
-        return this.prior;
-    }
-
-    public void setWelcome(String s) {
-        setToSave(true);
-        this.wMessage = s;
-        RedProtect.get().rm.updateLiveRegion(this, "wel", s);
-    }
-
-    public String getWelcome() {
-        if (wMessage == null) {
-            return "";
-        }
-        return this.wMessage;
-    }
-
-    public void setX(int[] x) {
-        setToSave(true);
-        this.x = x;
-    }
-
-    public void setZ(int[] z) {
-        setToSave(true);
-        this.z = z;
-    }
-
-    public void setLeaders(List<String> leaders) {
-        setToSave(true);
-        this.leaders = leaders;
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", members.toString().replace("[", "").replace("]", ""));
-    }
-
-    public void setAdmins(List<String> admins) {
-        setToSave(true);
-        this.admins = admins;
-        RedProtect.get().rm.updateLiveRegion(this, "admins", admins.toString().replace("[", "").replace("]", ""));
-    }
-
-    public void setMembers(List<String> members) {
-        setToSave(true);
-        this.members = members;
-        RedProtect.get().rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
-    }
-
-    public int[] getX() {
-        return this.x;
-    }
-
-    public int[] getZ() {
-        return this.z;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Use this method to get raw admins. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
-     * <p>
-     * To check if a player can build on this region use {@code canBuild(p)} instead this method.
-     *
-     * @return {@code List<String>}
-     */
-    @Deprecated()
-    public List<String> getAdmins() {
-        return this.admins;
-    }
-
-    /**
-     * Use this method to get raw members. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
-     * <p>
-     * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
-     *
-     * @return {@code List<String>}
-     */
-    @Deprecated
-    public List<String> getMembers() {
-        return this.members;
-    }
-
-    /**
-     * Use this method to get raw leaders. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
-     * <p>
-     * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
-     *
-     * @return {@code List<String>}
-     */
-    @Deprecated
-    public List<String> getLeaders() {
-        return this.leaders;
-    }
-
-    public int getCenterX() {
-        return (this.minMbrX + this.maxMbrX) / 2;
-    }
-
-    public int getCenterZ() {
-        return (this.minMbrZ + this.maxMbrZ) / 2;
-    }
-
-    public int getCenterY() {
-        return (this.minY + this.maxY) / 2;
-    }
-
-    public int getMaxMbrX() {
-        return this.maxMbrX;
-    }
-
-    public int getMinMbrX() {
-        return this.minMbrX;
-    }
-
-    public int getMaxMbrZ() {
-        return this.maxMbrZ;
-    }
-
-    public int getMinMbrZ() {
-        return this.minMbrZ;
-    }
-
-    public String info() {
-        String leadersstring = "";
-        String adminstring = "";
-        String memberstring = "";
-        String wMsgTemp = "";
-        String IsTops = RPLang.translBool(isOnTop());
-        String today = this.date;
-        String wName = this.world;
-        String colorChar = "";
-
-        if (RPConfig.getString("region-settings.world-colors." + this.world) != null) {
-            colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + this.world));
-        }
-
-        for (int i = 0; i < this.leaders.size(); ++i) {
-            if (this.leaders.get(i) == null) {
-                this.leaders.remove(i);
-            }
-            leadersstring = leadersstring + ", " + RPUtil.UUIDtoPlayer(this.leaders.get(i));
-        }
-        for (int i = 0; i < this.admins.size(); ++i) {
-            if (this.admins.get(i) == null) {
-                this.admins.remove(i);
-            }
-            adminstring = adminstring + ", " + RPUtil.UUIDtoPlayer(this.admins.get(i));
-        }
-        for (int i = 0; i < this.members.size(); ++i) {
-            if (this.members.get(i) == null) {
-                this.members.remove(i);
-            }
-            memberstring = memberstring + ", " + RPUtil.UUIDtoPlayer(this.members.get(i));
-        }
-        if (this.leaders.size() > 0) {
-            leadersstring = leadersstring.substring(2);
-        } else {
-            leadersstring = "None";
-        }
-        if (this.admins.size() > 0) {
-            adminstring = adminstring.substring(2);
-        } else {
-            adminstring = "None";
-        }
-        if (this.members.size() > 0) {
-            memberstring = memberstring.substring(2);
-        } else {
-            memberstring = "None";
-        }
-        if (this.wMessage == null || this.wMessage.equals("")) {
-            wMsgTemp = RPLang.get("region.welcome.notset");
-        } else {
-            wMsgTemp = wMessage;
-        }
-
-        if (this.date.equals(RPUtil.DateNow())) {
-            today = RPLang.get("region.today");
-        } else {
-            today = this.date;
-        }
-        for (String pname : this.leaders) {
-            Player play = RedProtect.get().serv.getPlayer(pname);
-            if (RedProtect.get().OnlineMode && pname != null && !pname.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))) {
-                try {
-                    UUID.fromString(RPUtil.PlayerToUUID(pname));
-                    play = RedProtect.get().serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
-                } catch (Exception ignored) {
-                }
-            }
-            if (pname != null && play != null && play.isOnline()) {
-                today = ChatColor.GREEN + "Online!";
-                break;
-            }
-        }
-        for (String pname : this.admins) {
-            Player play = RedProtect.get().serv.getPlayer(pname);
-            try {
-                UUID.fromString(RPUtil.PlayerToUUID(pname));
-                play = RedProtect.get().serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
-            } catch (Exception ignored) {
-            }
-            if (pname != null && play != null && play.isOnline()) {
-                today = ChatColor.GREEN + "Online!";
-                break;
-            }
-        }
-
-        return RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
-                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + "\n" +
-                RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
-                RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
-                RPLang.get("region.leaders") + " " + leadersstring + "\n" +
-                RPLang.get("region.admins") + " " + adminstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
-                RPLang.get("region.date") + " " + today + "\n" +
-                RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
-    }
-
-    private String conformName(String name) {
-        name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
-        return name;
-    }
 
     /**
      * Represents the region created by player.
@@ -708,14 +247,474 @@ public class Region implements Serializable {
         this.minY = min.getBlockY();
         this.admins = new ArrayList<>();
         this.members = new ArrayList<>();
-        this.leaders = Arrays.asList(RPConfig.getString("region-settings.default-leader"));
+        this.leaders = Collections.singletonList(RPConfig.getString("region-settings.default-leader"));
         this.flags = RPConfig.getDefFlagsValues();
         this.canDelete = true;
         this.world = world;
         this.wMessage = "";
         this.date = RPUtil.DateNow();
-        this.name = conformName(name);
+        this.name = name;
         checkParticle();
+    }
+
+    public Map<String, Object> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(Map<String, Object> flags) {
+        this.flags = flags;
+    }
+
+    public boolean canDelete() {
+        return this.canDelete;
+    }
+
+    /**
+     * Get unique ID of region based on name of "region + @ + world".
+     *
+     * @return {@code id string}
+     */
+    @Override
+    public String toString() {
+        return this.name + "@" + this.world;
+    }
+
+    /**
+     * Get unique ID of region based on name of "region + @ + world".
+     *
+     * @return {@code id string}
+     */
+    public String getID() {
+        return this.name + "@" + this.world;
+    }
+
+    public boolean toSave() {
+        return this.tosave;
+    }
+
+    public void setToSave(boolean save) {
+        this.tosave = save;
+    }
+
+    private void checkParticle() {
+        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
+            if (this.flags.containsKey("particles")) {
+                if (particleID <= 0) {
+
+                    particleID = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () -> {
+                        if (this.flags.containsKey("particles")) {
+                            String[] part = flags.get("particles").toString().split(" ");
+                            for (int i = 0; i < Integer.valueOf(part[1]); i++) {
+                                Vector max = Vector.getMaximum(getMinLocation().toVector(), getMaxLocation().toVector());
+                                Vector min = Vector.getMinimum(getMinLocation().toVector(), getMaxLocation().toVector());
+
+                                int dx = max.getBlockX() - min.getBlockX();
+                                int dy = max.getBlockY() - min.getBlockY();
+                                int dz = max.getBlockZ() - min.getBlockZ();
+                                Random random = new Random();
+                                int x = random.nextInt(Math.abs(dx) + 1) + min.getBlockX();
+                                int y = random.nextInt(Math.abs(dy) + 1) + min.getBlockY();
+                                int z = random.nextInt(Math.abs(dz) + 1) + min.getBlockZ();
+
+
+                                Particle p = Particle.valueOf(part[0].toUpperCase());
+                                World w = Bukkit.getServer().getWorld(world);
+
+                                Location loc = new Location(w, x + new Random().nextDouble(), y + new Random().nextDouble(), z + new Random().nextDouble());
+                                if (w.getNearbyEntities(loc, 30, 30, 30).stream().anyMatch(ent -> ent instanceof Player)) {
+                                    if (loc.getBlock().isEmpty()) {
+                                        if (part.length == 2) {
+                                            w.spawnParticle(p, loc, 1);
+                                        }
+                                        if (part.length == 5) {
+                                            w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]));
+                                        }
+                                        if (part.length == 6) {
+                                            w.spawnParticle(p, loc, 1, Double.parseDouble(part[2]), Double.parseDouble(part[3]), Double.parseDouble(part[4]), Double.parseDouble(part[5]), null);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }, 1, 1);
+                }
+            } else if (particleID > 0) {
+                notifyRemove();
+            }
+        }, 20);
+    }
+
+    public void notifyRemove() {
+        if (particleID > 0) {
+            Bukkit.getScheduler().cancelTask(particleID);
+            particleID = 0;
+        }
+    }
+
+    public void updateSigns() {
+        for (String s : this.flags.keySet()) {
+            updateSigns(s);
+        }
+    }
+
+    public void updateSigns(String fname) {
+        if (!RPConfig.getBool("region-settings.enable-flag-sign")) {
+            return;
+        }
+        List<Location> locs = RPConfig.getSigns(this.getID());
+        if (locs.size() > 0) {
+            for (Location loc : locs) {
+                if (loc.getBlock().getState() instanceof Sign) {
+                    Sign s = (Sign) loc.getBlock().getState();
+                    String[] lines = s.getLines();
+                    if (lines[0].equalsIgnoreCase("[flag]")) {
+                        if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))) {
+                            s.setLine(3, RPLang.get("region.value") + " " + RPLang.translBool(getFlagString(fname)));
+                            s.update();
+                            RPConfig.putSign(this.getID(), loc);
+                        }
+                    } else {
+                        RPConfig.removeSign(this.getID(), loc);
+                    }
+                } else {
+                    RPConfig.removeSign(this.getID(), loc);
+                }
+            }
+        }
+    }
+
+    public boolean setFlag(CommandSender cause, String fname, Object value) {
+        ChangeRegionFlagEvent event = new ChangeRegionFlagEvent(cause, this, fname, value);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        setToSave(true);
+        this.flags.put(event.getFlag(), event.getFlagValue());
+        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
+        updateSigns(event.getFlag());
+        checkParticle();
+        return true;
+    }
+
+    public void removeFlag(String Name) {
+        setToSave(true);
+        if (this.flags.containsKey(Name)) {
+            this.flags.remove(Name);
+            RedProtect.get().rm.removeLiveFlags(this, Name);
+        }
+        checkParticle();
+    }
+
+    public String getFlagStrings() {
+        StringBuilder flags = new StringBuilder();
+        for (String flag : this.flags.keySet()) {
+            flags.append("," + flag + ":" + this.flags.get(flag).toString());
+        }
+        return flags.toString().substring(1);
+    }
+
+    public Location getTPPoint() {
+        return this.tppoint;
+    }
+
+    public void setTPPoint(Location loc) {
+        setToSave(true);
+        this.tppoint = loc;
+        if (loc != null) {
+            double x = loc.getX();
+            double y = loc.getY();
+            double z = loc.getZ();
+            float yaw = loc.getYaw();
+            float pitch = loc.getPitch();
+            RedProtect.get().rm.updateLiveRegion(this, "tppoint", x + "," + y + "," + z + "," + yaw + "," + pitch);
+        } else {
+            RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
+        }
+
+    }
+
+    public String getTPPointString() {
+        if (tppoint == null) {
+            return "";
+        }
+        return this.tppoint.getX() + "," + this.tppoint.getY() + "," + this.tppoint.getZ() + "," + this.tppoint.getYaw() + "," + this.tppoint.getPitch();
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
+    public void setDate(String value) {
+        setToSave(true);
+        this.date = value;
+        RedProtect.get().rm.updateLiveRegion(this, "date", value);
+    }
+
+    public int getMaxY() {
+        return this.maxY;
+    }
+
+    public void setMaxY(int y) {
+        setToSave(true);
+        this.maxY = y;
+        RedProtect.get().rm.updateLiveRegion(this, "maxy", String.valueOf(y));
+    }
+
+    public int getMinY() {
+        return this.minY;
+    }
+
+    public void setMinY(int y) {
+        setToSave(true);
+        this.minY = y;
+        RedProtect.get().rm.updateLiveRegion(this, "miny", String.valueOf(y));
+    }
+
+    public Location getMaxLocation() {
+        return new Location(Bukkit.getWorld(this.world), this.maxMbrX, this.maxY, this.maxMbrZ);
+    }
+
+    public Location getMinLocation() {
+        return new Location(Bukkit.getWorld(this.world), this.minMbrX, this.minY, this.minMbrZ);
+    }
+
+    public String getWorld() {
+        return this.world;
+    }
+
+    public void setWorld(String w) {
+        setToSave(true);
+        this.world = w;
+        RedProtect.get().rm.updateLiveRegion(this, "world", w);
+    }
+
+    public int getPrior() {
+        return this.prior;
+    }
+
+    public void setPrior(int prior) {
+        setToSave(true);
+        this.prior = prior;
+        RedProtect.get().rm.updateLiveRegion(this, "prior", "" + prior);
+    }
+
+    public String getWelcome() {
+        if (wMessage == null) {
+            return "";
+        }
+        return this.wMessage;
+    }
+
+    public void setWelcome(String s) {
+        setToSave(true);
+        this.wMessage = s;
+        RedProtect.get().rm.updateLiveRegion(this, "wel", s);
+    }
+
+    public int[] getX() {
+        return this.x;
+    }
+
+    public void setX(int[] x) {
+        setToSave(true);
+        this.x = x;
+    }
+
+    public int[] getZ() {
+        return this.z;
+    }
+
+    public void setZ(int[] z) {
+        setToSave(true);
+        this.z = z;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Use this method to get raw admins. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
+     * <p>
+     * To check if a player can build on this region use {@code canBuild(p)} instead this method.
+     *
+     * @return {@code List<String>}
+     */
+    @Deprecated()
+    public List<String> getAdmins() {
+        return this.admins;
+    }
+
+    public void setAdmins(List<String> admins) {
+        setToSave(true);
+        this.admins = admins;
+        RedProtect.get().rm.updateLiveRegion(this, "admins", admins.toString().replace("[", "").replace("]", ""));
+    }
+
+    /**
+     * Use this method to get raw members. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
+     * <p>
+     * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
+     *
+     * @return {@code List<String>}
+     */
+    @Deprecated
+    public List<String> getMembers() {
+        return this.members;
+    }
+
+    public void setMembers(List<String> members) {
+        setToSave(true);
+        this.members = members;
+        RedProtect.get().rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
+    }
+
+    /**
+     * Use this method to get raw leaders. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
+     * <p>
+     * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
+     *
+     * @return {@code List<String>}
+     */
+    @Deprecated
+    public List<String> getLeaders() {
+        return this.leaders;
+    }
+
+    public void setLeaders(List<String> leaders) {
+        setToSave(true);
+        this.leaders = leaders;
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", members.toString().replace("[", "").replace("]", ""));
+    }
+
+    public int getCenterX() {
+        return (this.minMbrX + this.maxMbrX) / 2;
+    }
+
+    public int getCenterZ() {
+        return (this.minMbrZ + this.maxMbrZ) / 2;
+    }
+
+    public int getCenterY() {
+        return (this.minY + this.maxY) / 2;
+    }
+
+    public int getMaxMbrX() {
+        return this.maxMbrX;
+    }
+
+    public int getMinMbrX() {
+        return this.minMbrX;
+    }
+
+    public int getMaxMbrZ() {
+        return this.maxMbrZ;
+    }
+
+    public int getMinMbrZ() {
+        return this.minMbrZ;
+    }
+
+    public String info() {
+        String leadersstring = "";
+        String adminstring = "";
+        String memberstring = "";
+        String wMsgTemp = "";
+        String IsTops = RPLang.translBool(isOnTop());
+        String today = this.date;
+        String wName = this.world;
+        String colorChar = "";
+
+        if (RPConfig.getString("region-settings.world-colors." + this.world) != null) {
+            colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + this.world));
+        }
+
+        for (int i = 0; i < this.leaders.size(); ++i) {
+            if (this.leaders.get(i) == null) {
+                this.leaders.remove(i);
+            }
+            leadersstring = leadersstring + ", " + RPUtil.UUIDtoPlayer(this.leaders.get(i));
+        }
+        for (int i = 0; i < this.admins.size(); ++i) {
+            if (this.admins.get(i) == null) {
+                this.admins.remove(i);
+            }
+            adminstring = adminstring + ", " + RPUtil.UUIDtoPlayer(this.admins.get(i));
+        }
+        for (int i = 0; i < this.members.size(); ++i) {
+            if (this.members.get(i) == null) {
+                this.members.remove(i);
+            }
+            memberstring = memberstring + ", " + RPUtil.UUIDtoPlayer(this.members.get(i));
+        }
+        if (this.leaders.size() > 0) {
+            leadersstring = leadersstring.substring(2);
+        } else {
+            leadersstring = "None";
+        }
+        if (this.admins.size() > 0) {
+            adminstring = adminstring.substring(2);
+        } else {
+            adminstring = "None";
+        }
+        if (this.members.size() > 0) {
+            memberstring = memberstring.substring(2);
+        } else {
+            memberstring = "None";
+        }
+        if (this.wMessage == null || this.wMessage.equals("")) {
+            wMsgTemp = RPLang.get("region.welcome.notset");
+        } else {
+            wMsgTemp = wMessage;
+        }
+
+        if (this.date.equals(RPUtil.DateNow())) {
+            today = RPLang.get("region.today");
+        } else {
+            today = this.date;
+        }
+        for (String pname : this.leaders) {
+            Player play = RedProtect.get().serv.getPlayer(pname);
+            if (RedProtect.get().OnlineMode && pname != null && !pname.equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))) {
+                try {
+                    UUID.fromString(RPUtil.PlayerToUUID(pname));
+                    play = RedProtect.get().serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
+                } catch (Exception ignored) {
+                }
+            }
+            if (pname != null && play != null && play.isOnline()) {
+                today = ChatColor.GREEN + "Online!";
+                break;
+            }
+        }
+        for (String pname : this.admins) {
+            Player play = RedProtect.get().serv.getPlayer(pname);
+            try {
+                UUID.fromString(RPUtil.PlayerToUUID(pname));
+                play = RedProtect.get().serv.getPlayer(UUID.fromString(RPUtil.PlayerToUUID(pname)));
+            } catch (Exception ignored) {
+            }
+            if (pname != null && play != null && play.isOnline()) {
+                today = ChatColor.GREEN + "Online!";
+                break;
+            }
+        }
+
+        return RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
+                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + "\n" +
+                RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
+                RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
+                RPLang.get("region.leaders") + " " + leadersstring + "\n" +
+                RPLang.get("region.admins") + " " + adminstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
+                RPLang.get("region.date") + " " + today + "\n" +
+                RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
+    }
+
+    private String conformName(String name) {
+        name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
+        return name;
     }
 
     public void clearLeaders() {
@@ -1351,15 +1350,15 @@ public class Region implements Serializable {
 
 
     //---------------------- Player Flags --------------------------//
-    public boolean allowFishing(Player p){
-        if (!RPConfig.isFlagEnabled("fishing")){
+    public boolean allowFishing(Player p) {
+        if (!RPConfig.isFlagEnabled("fishing")) {
             return RPConfig.getBool("flags.fishing") || checkAllowedPlayer(p);
         }
         return getFlagBool("fishing") || checkAllowedPlayer(p);
     }
 
-    public boolean allowPressPlate(Player p){
-        if (!RPConfig.isFlagEnabled("press-plate")){
+    public boolean allowPressPlate(Player p) {
+        if (!RPConfig.isFlagEnabled("press-plate")) {
             return RPConfig.getBool("flags.press-plate") || checkAllowedPlayer(p);
         }
         return getFlagBool("press-plate") || checkAllowedPlayer(p);

@@ -17,26 +17,26 @@ public class RPBlockListener56 {
 
     private static final RPContainer cont = new RPContainer();
 
-    public RPBlockListener56(){
-        RedProtect.get().logger.debug(LogLevel.BLOCKS,"Loaded RPBlockListener56...");
+    public RPBlockListener56() {
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded RPBlockListener56...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
-    public void onPiston(ChangeBlockEvent.Pre e){
-        RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPBlockListener78 - Is onChangeBlock event");
+    public void onPiston(ChangeBlockEvent.Pre e) {
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPBlockListener78 - Is onChangeBlock event");
 
         Location<World> piston = null;
         Location<World> block = null;
         boolean antih = RedProtect.get().cfgs.root().region_settings.anti_hopper;
 
         if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
-            if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler){
+            if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler) {
                 return;
             }
 
             List<Location<World>> locs = e.getLocations();
-            for (Location<World> loc:locs){
-                if (piston == null){
+            for (Location<World> loc : locs) {
+                if (piston == null) {
                     piston = loc;
                     continue;
                 }
@@ -45,13 +45,13 @@ public class RPBlockListener56 {
         }
 
         if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
-            if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler){
+            if (RedProtect.get().cfgs.root().performance.disable_PistonEvent_handler) {
                 return;
             }
 
             List<Location<World>> locs = e.getLocations();
-            for (Location<World> loc:locs){
-                if (piston == null){
+            for (Location<World> loc : locs) {
+                if (piston == null) {
                     piston = loc;
                     continue;
                 }
@@ -60,17 +60,17 @@ public class RPBlockListener56 {
         }
 
         //process
-        if (piston != null && block != null){
+        if (piston != null && block != null) {
             Region rPi = RedProtect.get().rm.getTopRegion(piston, this.getClass().getName());
             Region rB = RedProtect.get().rm.getTopRegion(block, this.getClass().getName());
-            if (rPi == null && rB != null || (rPi != null && rB != null && rPi != rB && !rPi.sameLeaders(rB))){
+            if (rPi == null && rB != null || (rPi != null && rB != null && rPi != rB && !rPi.sameLeaders(rB))) {
                 e.setCancelled(true);
                 return;
             }
 
-            if (antih){
+            if (antih) {
                 BlockSnapshot ib = block.add(0, 1, 0).createSnapshot();
-                if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(block.createSnapshot())){
+                if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(block.createSnapshot())) {
                     e.setCancelled(true);
                 }
             }

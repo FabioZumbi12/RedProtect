@@ -28,26 +28,25 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class RPMine18 implements Listener {
 
+    static final RPContainer cont = new RPContainer();
+    static HashMap<Player, String> Ownerslist = new HashMap<>();
+
     public RPMine18() {
         RedProtect.get().logger.debug("Loaded RPMine18...");
     }
-
-    static final RPContainer cont = new RPContainer();
-    static HashMap<Player, String> Ownerslist = new HashMap<>();
 
     @EventHandler
     public void onPressPlateChange(PlayerInteractEvent e) {
         if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
             Block b = e.getPlayer().getTargetBlock(null, 5);
-            if (b.getType() == Material.FIRE){
+            if (b.getType() == Material.FIRE) {
                 Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
-                if (r != null && !r.canBuild(e.getPlayer())){
+                if (r != null && !r.canBuild(e.getPlayer())) {
                     e.setCancelled(true);
                     RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
                 }

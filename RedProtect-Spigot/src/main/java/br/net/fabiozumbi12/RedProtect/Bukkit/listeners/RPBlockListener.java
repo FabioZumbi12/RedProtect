@@ -159,7 +159,7 @@ public class RPBlockListener implements Listener {
         }
     }
 
-    void setErrorSign(SignChangeEvent e, Player p, String error) {
+    private void setErrorSign(SignChangeEvent e, Player p, String error) {
         e.setLine(0, RPLang.get("regionbuilder.signerror"));
         RPLang.sendMessage(p, RPLang.get("regionbuilder.signerror") + ": " + error);
     }
@@ -218,27 +218,27 @@ public class RPBlockListener implements Listener {
         }
     }
 
-    private boolean canPlaceList(World w, String type){
+    private boolean canPlaceList(World w, String type) {
         //blacklist
         List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
         List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)) {
             return false;
         }
         return RPConfig.getGlobalFlagBool(w.getName() + ".build");
     }
 
-    private boolean canBreakList(World w, String type){
+    private boolean canBreakList(World w, String type) {
         //blacklist
         List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
         List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)){
+        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)) {
             return false;
         }
         return RPConfig.getGlobalFlagBool(w.getName() + ".build");
@@ -516,7 +516,7 @@ public class RPBlockListener implements Listener {
     @EventHandler
     public void onFireSpread(BlockSpreadEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is BlockSpreadEvent event");
-        if (e.isCancelled()) {
+        if (e.isCancelled() || e.getNewState() == null) {
             return;
         }
 
@@ -530,7 +530,7 @@ public class RPBlockListener implements Listener {
             return;
         }
 
-        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS")) && ((rfrom != null && !rfrom.canGrow()) || !rto.canGrow())){
+        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS")) && ((rfrom != null && !rfrom.canGrow()) || !rto.canGrow())) {
             e.setCancelled(true);
             return;
         }

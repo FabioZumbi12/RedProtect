@@ -1,201 +1,205 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>br.net.fabiozumbi12.RedProtect</groupId>
-  <artifactId>RedProtect</artifactId>
-  <packaging>pom</packaging>
-  <name>RedProtect</name>
-  <version>7.5.5</version>
-  
-  <scm>
-     <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
-     <developerConnection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</developerConnection>
-     <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
-     <tag>${project.version}</tag>
-  </scm>
-  
-  <distributionManagement>
-    <repository>
-        <id>internal.repo</id>
-        <name>Temporary Staging Repository</name>
-        <url>file://${project.build.directory}/mvn-repo</url>
-    </repository>
-  </distributionManagement>
-    
-  <repositories>
-  
-    <!-- Sponge repo -->
-    <repository>
-        <id>sponge-maven-repo</id>
-        <name>Sponge maven repo</name>
-        <url>http://repo.spongepowered.org/maven</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>    
-    <!-- Spigot repo -->
-    <repository>
-	        <id>maven-restlet</id>
-	        <name>Public online Restlet repository</name>
-	        <url>http://maven.restlet.com</url>
-	</repository>
-     <repository>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+    <artifactId>RedProtect</artifactId>
+    <packaging>pom</packaging>
+    <name>RedProtect</name>
+    <version>7.5.5</version>
+
+    <scm>
+        <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
+        <developerConnection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</developerConnection>
+        <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
+        <tag>${project.version}</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+
+        <!-- Sponge repo -->
+        <repository>
+            <id>sponge-maven-repo</id>
+            <name>Sponge maven repo</name>
+            <url>http://repo.spongepowered.org/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <!-- Spigot repo -->
+        <repository>
+            <id>maven-restlet</id>
+            <name>Public online Restlet repository</name>
+            <url>http://maven.restlet.com</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-     </repository>
-     <repository>
+        </repository>
+        <repository>
             <id>vault-repo</id>
             <url>https://nexus.keyle.de/content/groups/public/</url>
         </repository>
-     <repository>
+        <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-     </repository>
-     <repository>
+        </repository>
+        <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
-     </repository>
-     <repository>
+        </repository>
+        <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/repo/</url>
-     </repository>
-     <repository>
+        </repository>
+        <repository>
             <id>EssentialsX</id>
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
-     </repository>
-      <repository>
-          <id>MyPet3.0</id>
-          <url>http://nexus.keyle.de</url>
-      </repository>
-      <repository>
-          <id>jitpack.io</id>
-          <url>https://jitpack.io</url>
-      </repository>
-      <repository>
-          <id>dynmap</id>
-          <url>http://repo.mikeprimm.com/</url>
-      </repository>
-  </repositories>
-  
-  <dependencies>
-    <dependency>
-      <groupId>com.sk89q.worldedit</groupId>
-      <artifactId>worldedit-core</artifactId>
-      <version>LATEST</version>
-      <scope>provided</scope>
-    </dependency>  
-  </dependencies>
-  
-  <build>
-    <finalName>${project.name}-${project.version}</finalName>
-    <resources>
-        <resource>
-            <targetPath>.</targetPath>
-            <filtering>true</filtering>
-            <directory>src/main/resources/</directory>
-        </resource>        
-    </resources>
-    
-    <plugins>
-    
-    <!-- Parse Version to plugin.yml -->
-      <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.10</version>
-          <executions>
-              <execution>
-                  <id>parse-version</id>
-                  <goals>
-                      <goal>parse-version</goal>
-                  </goals>
-              </execution>
-          </executions>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>templating-maven-plugin</artifactId>
-        <version>1.0.0</version>
-            <executions>
-               <execution>
-                  <id>filter-src</id>
-                    <goals>
-                      <goal>filter-sources</goal>
-                    </goals>
-               </execution>
-            </executions>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>        
-      </plugin>
-      
-      <plugin>
-      <artifactId>maven-resources-plugin</artifactId>
-      <version>2.5</version>
-      <configuration>
-        <encoding>UTF-8</encoding>
-        <nonFilteredFileExtensions>
-          <nonFilteredFileExtension>schematic</nonFilteredFileExtension>
-        </nonFilteredFileExtensions>
-      </configuration>
-    </plugin>
-    
-    <!-- Deploy to github for maven repo -->
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.1</version>
-        <configuration>
-            <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-            <groupId>com.github.github</groupId>
-            <artifactId>site-maven-plugin</artifactId>
-            <version>0.12</version>
-            <configuration>
-                <message>Maven artifacts for ${project.artifactId} ${project.version}</message> 
-                <noJekyll>true</noJekyll>                                 
-                <merge>true</merge>
-                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-                <branch>refs/heads/mvn-repo</branch>                       
-                <includes><include>**/*</include></includes>
-                <repositoryName>RedProtect</repositoryName>      
-                <repositoryOwner>FabioZumbi12</repositoryOwner>   
-            </configuration>
-            <executions>            
-              <execution>
-                <id>deploying</id>
-                <goals>
-                  <goal>site</goal>
-                </goals>
-                <phase>deploy</phase>
-              </execution>
-            </executions>
-        </plugin>          
-    </plugins>
-  </build>
-  
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <github.global.server>github-user</github.global.server>
-  </properties>  
-  <modules>
-  	<module>RedProtect-Spigot</module>
-  	<module>RedProtect-Spigot-1.13</module>
-  	<module>RedProtect-Sponge-56</module>
-  	<module>RedProtect-Sponge-7</module>
-	<module>RedProtect-Sponge-8</module>
-  </modules>
+        </repository>
+        <repository>
+            <id>MyPet3.0</id>
+            <url>http://nexus.keyle.de</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>dynmap</id>
+            <url>http://repo.mikeprimm.com/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-core</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>src/main/resources/</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <!-- Parse Version to plugin.yml -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>parse-version</id>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>schematic</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+
+            <!-- Deploy to github for maven repo -->
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo
+                    </altDeploymentRepository>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <configuration>
+                    <message>Maven artifacts for ${project.artifactId} ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <merge>true</merge>
+                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+                    <branch>refs/heads/mvn-repo</branch>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <repositoryName>RedProtect</repositoryName>
+                    <repositoryOwner>FabioZumbi12</repositoryOwner>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>deploying</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <github.global.server>github-user</github.global.server>
+    </properties>
+    <modules>
+        <module>RedProtect-Spigot</module>
+        <module>RedProtect-Spigot-1.13</module>
+        <module>RedProtect-Sponge-56</module>
+        <module>RedProtect-Sponge-7</module>
+        <module>RedProtect-Sponge-8</module>
+    </modules>
 </project>

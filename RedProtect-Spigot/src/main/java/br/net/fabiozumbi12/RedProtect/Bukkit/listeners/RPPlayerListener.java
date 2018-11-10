@@ -39,7 +39,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.inventivetalent.bossbar.BossBarAPI;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener {
@@ -58,13 +60,35 @@ public class RPPlayerListener implements Listener {
         RedProtect.get().logger.debug("Loaded RPPlayerListener...");
     }
 
+    private static Entity getTarget(final Player player) {
+        try {
+            BlockIterator iterator = new BlockIterator(player.getWorld(), player
+                    .getLocation().toVector(), player.getEyeLocation()
+                    .getDirection(), 0, 10);
+            while (iterator.hasNext()) {
+                Block item = iterator.next();
+                for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
+                    int acc = 2;
+                    for (int y = -acc; y < acc; y++) {
+                        if (entity.getLocation().getBlock()
+                                .getRelative(0, y, 0).equals(item)) {
+                            return entity;
+                        }
+                    }
+                }
+            }
+        } catch (IllegalStateException ignored) {
+        }
+        return null;
+    }
+
     @EventHandler
     public void onPressPlateChange(PlayerInteractEvent e) {
         if (e.getAction() == Action.PHYSICAL) {
             if (e.getClickedBlock().getType().name().contains("_PLATE")) {
                 Location loc = e.getClickedBlock().getLocation();
                 Region r = RedProtect.get().rm.getTopRegion(loc);
-                if (r != null && !r.allowPressPlate(e.getPlayer())){
+                if (r != null && !r.allowPressPlate(e.getPlayer())) {
                     e.setCancelled(true);
                     RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantpressplate");
                 }
@@ -858,28 +882,6 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    private static Entity getTarget(final Player player) {
-        try {
-            BlockIterator iterator = new BlockIterator(player.getWorld(), player
-                    .getLocation().toVector(), player.getEyeLocation()
-                    .getDirection(), 0, 10);
-            while (iterator.hasNext()) {
-                Block item = iterator.next();
-                for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
-                    int acc = 2;
-                    for (int y = -acc; y < acc; y++) {
-                        if (entity.getLocation().getBlock()
-                                .getRelative(0, y, 0).equals(item)) {
-                            return entity;
-                        }
-                    }
-                }
-            }
-        } catch (IllegalStateException ignored) {
-        }
-        return null;
-    }
-
     @EventHandler
     public void onPlayerMovement(PlayerMoveEvent e) {
         if (e.isCancelled() || RPConfig.getBool("performance.disable-onPlayerMoveEvent-handler")) {
@@ -1361,7 +1363,7 @@ public class RPPlayerListener implements Listener {
             }
         } else {
             String wel = ChatColor.translateAlternateColorCodes('&',
-                    r.getWelcome().replace("{r}",r.getName())
+                    r.getWelcome().replace("{r}", r.getName())
                             .replace("{p}", p.getName()));
             if (RPConfig.getBool("notify.welcome-region-name"))
                 SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": " + wel);

@@ -16,50 +16,49 @@ import org.spongepowered.api.event.impl.AbstractEvent;
  * player enter/exit a region and nothing will happen, but
  * code can be added here and will work normally, and the flags
  * can be used too. Only default actions is cancelled.
- * @returns <b>null</b> if the ExitedRegion or EnteredRegion is wilderness.
- * 
- * @author FabioZumbi12
  *
+ * @author FabioZumbi12
+ * @returns <b>null</b> if the ExitedRegion or EnteredRegion is wilderness.
  */
-public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, Event{
+public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, Event {
 
-	private final Player player;
-	private final Region ExitedRegion;
-	private final Region EnteredRegion;
-	private boolean cancelled;
-	
-	
-	public EnterExitRegionEvent(Region ExitedRegion, Region EnteredRegion, Player player){
-		this.player = player;
-		this.ExitedRegion = ExitedRegion;
-		this.EnteredRegion = EnteredRegion;
-	}
-	
-	public Region getExitedRegion(){
-		return this.ExitedRegion;
-	}
-	
-	public Region getEnteredRegion(){
-		return this.EnteredRegion;
-	}
-	
-	public Player getPlayer(){
-		return this.player;
-	}
+    private final Player player;
+    private final Region ExitedRegion;
+    private final Region EnteredRegion;
+    private boolean cancelled;
 
-	@Override
-	public boolean isCancelled() {
-		return this.cancelled;
-	}
 
-	@Override
-	public void setCancelled(boolean arg0) {
-		this.cancelled = arg0;
-		
-	}
+    public EnterExitRegionEvent(Region ExitedRegion, Region EnteredRegion, Player player) {
+        this.player = player;
+        this.ExitedRegion = ExitedRegion;
+        this.EnteredRegion = EnteredRegion;
+    }
 
-	@Override
-	public Cause getCause() {
-		return RedProtect.get().getPVHelper().getCause(player);
-	}   
+    public Region getExitedRegion() {
+        return this.ExitedRegion;
+    }
+
+    public Region getEnteredRegion() {
+        return this.EnteredRegion;
+    }
+
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean arg0) {
+        this.cancelled = arg0;
+
+    }
+
+    @Override
+    public Cause getCause() {
+        return RedProtect.get().getPVHelper().getCause(player);
+    }
 }

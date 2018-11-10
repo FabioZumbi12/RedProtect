@@ -21,6 +21,10 @@ public class ChangeRegionFlagEvent extends Event implements Cancellable {
         this.cause = cause;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public Region getRegion() {
         return this.region;
     }
@@ -53,10 +57,6 @@ public class ChangeRegionFlagEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

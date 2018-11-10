@@ -4,7 +4,10 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -60,21 +63,22 @@ public class WEListener {
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
-/*
-    public static void pasteWithWE(Player p, File file) {
-        World world = p.getWorld();
-        Location loc = p.getLocation();
 
-        EditSession es = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1);
+    /*
+        public static void pasteWithWE(Player p, File file) {
+            World world = p.getWorld();
+            Location loc = p.getLocation();
 
-        try {
-            CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
-            cc.paste(es, new com.sk89q.worldedit.Vector(loc.getX(), loc.getY(), loc.getZ()), false);
-        } catch (DataException | IOException | MaxChangedBlocksException e) {
-            e.printStackTrace();
+            EditSession es = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1);
+
+            try {
+                CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
+                cc.paste(es, new com.sk89q.worldedit.Vector(loc.getX(), loc.getY(), loc.getZ()), false);
+            } catch (DataException | IOException | MaxChangedBlocksException e) {
+                e.printStackTrace();
+            }
         }
-    }
-*/
+    */
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {

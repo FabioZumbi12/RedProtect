@@ -46,6 +46,40 @@ public class ListTagBuilder {
     }
 
     /**
+     * Create a new builder instance.
+     *
+     * @return a new builder
+     */
+    public static ListTagBuilder create(Class<? extends Tag> type) {
+        return new ListTagBuilder(type);
+    }
+
+    /**
+     * Create a new builder instance.
+     *
+     * @return a new builder
+     */
+    @SafeVarargs
+    public static <T extends Tag> ListTagBuilder createWith(T... entries) {
+        checkNotNull(entries);
+
+        if (entries.length == 0) {
+            throw new IllegalArgumentException("This method needs an array of at least one entry");
+        }
+
+        Class<? extends Tag> type = entries[0].getClass();
+        for (int i = 1; i < entries.length; i++) {
+            if (!type.isInstance(entries[i])) {
+                throw new IllegalArgumentException("An array of different tag types was provided");
+            }
+        }
+
+        ListTagBuilder builder = new ListTagBuilder(type);
+        builder.addAll(Arrays.asList(entries));
+        return builder;
+    }
+
+    /**
      * Add the given tag.
      *
      * @param value the tag
@@ -79,40 +113,6 @@ public class ListTagBuilder {
      */
     public ListTag build() {
         return new ListTag(type, new ArrayList<>(entries));
-    }
-
-    /**
-     * Create a new builder instance.
-     *
-     * @return a new builder
-     */
-    public static ListTagBuilder create(Class<? extends Tag> type) {
-        return new ListTagBuilder(type);
-    }
-
-    /**
-     * Create a new builder instance.
-     *
-     * @return a new builder
-     */
-    @SafeVarargs
-    public static <T extends Tag> ListTagBuilder createWith(T... entries) {
-        checkNotNull(entries);
-
-        if (entries.length == 0) {
-            throw new IllegalArgumentException("This method needs an array of at least one entry");
-        }
-
-        Class<? extends Tag> type = entries[0].getClass();
-        for (int i = 1; i < entries.length; i++) {
-            if (!type.isInstance(entries[i])) {
-                throw new IllegalArgumentException("An array of different tag types was provided");
-            }
-        }
-
-        ListTagBuilder builder = new ListTagBuilder(type);
-        builder.addAll(Arrays.asList(entries));
-        return builder;
     }
 
 }

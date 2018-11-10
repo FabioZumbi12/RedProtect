@@ -24,13 +24,13 @@ import java.util.Arrays;
 
 public class RPGui implements Listener {
 
+    private final boolean allowEnchant;
+    private final boolean edit;
     private String name;
     private int size;
     private ItemStack[] guiItens;
     private Player player;
     private Region region;
-    private final boolean allowEnchant;
-    private final boolean edit;
     private Inventory inv;
 
     public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot) {

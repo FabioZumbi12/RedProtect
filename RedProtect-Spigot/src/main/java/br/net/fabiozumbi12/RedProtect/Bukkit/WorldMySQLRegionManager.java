@@ -19,10 +19,9 @@ class WorldMySQLRegionManager implements WorldRegionManager {
     private final String dbname = RPConfig.getString("mysql.db-name");
     private final boolean tblexists = false;
     private final String tableName;
-    private Connection dbcon;
-
     private final ConcurrentHashMap<String, Region> regions;
     private final World world;
+    private Connection dbcon;
 
     public WorldMySQLRegionManager(World world) throws SQLException {
         super();

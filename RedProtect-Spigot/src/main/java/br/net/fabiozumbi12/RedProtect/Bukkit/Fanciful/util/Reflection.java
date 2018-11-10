@@ -14,6 +14,20 @@ import java.util.Map;
  */
 public final class Reflection {
 
+    /**
+     * Stores loaded classes from the {@code net.minecraft.server} package.
+     */
+    private static final Map<String, Class<?>> _loadedNMSClasses = new HashMap<>();
+    /**
+     * Stores loaded classes from the {@code org.bukkit.craftbukkit} package (and subpackages).
+     */
+    private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<>();
+    /**
+     * Contains loaded methods in a cache.
+     * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
+     */
+    private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<>();
     private static String _versionString;
 
     private Reflection() {
@@ -38,15 +52,6 @@ public final class Reflection {
 
         return _versionString;
     }
-
-    /**
-     * Stores loaded classes from the {@code net.minecraft.server} package.
-     */
-    private static final Map<String, Class<?>> _loadedNMSClasses = new HashMap<>();
-    /**
-     * Stores loaded classes from the {@code org.bukkit.craftbukkit} package (and subpackages).
-     */
-    private static final Map<String, Class<?>> _loadedOBCClasses = new HashMap<>();
 
     /**
      * Gets a {@link Class} object representing a type contained within the {@code net.minecraft.server} versioned package.
@@ -116,8 +121,6 @@ public final class Reflection {
         }
     }
 
-    private static final Map<Class<?>, Map<String, Field>> _loadedFields = new HashMap<>();
-
     /**
      * Retrieves a {@link Field} instance declared by the specified class with the specified name.
      * Java access modifiers are ignored during this retrieval. No guarantee is made as to whether the field
@@ -161,12 +164,6 @@ public final class Reflection {
             return null;
         }
     }
-
-    /**
-     * Contains loaded methods in a cache.
-     * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
-     */
-    private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<>();
 
     /**
      * Retrieves a {@link Method} instance declared by the specified class with the specified name and argument types.

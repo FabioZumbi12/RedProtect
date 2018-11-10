@@ -39,9 +39,9 @@ import java.util.zip.ZipOutputStream;
 @SuppressWarnings("deprecation")
 public class RPUtil {
     public static final HashMap<String, HashMap<Location, Material>> pBorders = new HashMap<>();
-    public static boolean stopRegen = false;
     private static final HashMap<String, Integer> borderIds = new HashMap<>();
     private static final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
+    public static boolean stopRegen = false;
 
     public static void saveResource(String nameVersioned, String nameOri, File saveTo) {
         try {

@@ -19,18 +19,6 @@ public class RPDynmap implements Listener {
     private static MarkerSet MSet;
     private static MarkerAPI MApi;
 
-    @EventHandler
-    public void onChangeFlag(ChangeRegionFlagEvent event) {
-        if (event.getFlag().equalsIgnoreCase("dynmap")) {
-            boolean value = (boolean) event.getFlagValue();
-            if (value) {
-                addMark(event.getRegion());
-            } else {
-                removeMark(event.getRegion());
-            }
-        }
-    }
-
     public RPDynmap(DynmapAPI dyn) {
         Dyn = dyn;
         MApi = Dyn.getMarkerAPI();
@@ -54,6 +42,18 @@ public class RPDynmap implements Listener {
             for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                 if (!r.allowDynmap()) continue;
                 addMark(r);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onChangeFlag(ChangeRegionFlagEvent event) {
+        if (event.getFlag().equalsIgnoreCase("dynmap")) {
+            boolean value = (boolean) event.getFlagValue();
+            if (value) {
+                addMark(event.getRegion());
+            } else {
+                removeMark(event.getRegion());
             }
         }
     }

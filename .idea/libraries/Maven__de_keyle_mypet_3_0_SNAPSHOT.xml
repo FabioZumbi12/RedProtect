@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: de.keyle:mypet:3.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/keyle/mypet/3.0-SNAPSHOT/mypet-3.0-20181105.101530-40.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/de/keyle/mypet/3.0-SNAPSHOT/mypet-3.0-20181105.101530-40-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/keyle/mypet/3.0-SNAPSHOT/mypet-3.0-20181105.101530-40-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

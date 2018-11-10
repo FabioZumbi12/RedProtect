@@ -31,12 +31,12 @@ public class EnterExitRegionEvent extends Event implements Cancellable {
         this.EnteredRegion = EnteredRegion;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    public HandlerList getHandlers() {
         return handlers;
     }
 

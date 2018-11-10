@@ -9,31 +9,64 @@ import java.util.*;
 @ConfigSerializable
 public class MainCategory {
 
-    public MainCategory(){}
-
-    @Setting(value="config-version", comment = "Dont touch <3")
+    @Setting(value = "config-version", comment = "Dont touch <3")
     public double config_version = 7.6;
-
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
-
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")
     public String file_type = "file";
+    @Setting(value = "debug-messages")
+    public Map<String, Boolean> debug_messages = createMapDebug();
+    @Setting(comment = "Default flag values for new regions.\nThis will not change the values for already created regions.")
+    public Map<String, Boolean> flags = createMapFlags();
+    @Setting(value = "flags-configuration")
+    public flagsConfig flags_configuration = new flagsConfig();
+    @Setting(value = "flat-file", comment = "Options for flatfile database.")
+    public flatFile flat_file = new flatFile();
+    @Setting(comment = "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR")
+    public String language = "EN-US";
+    @Setting(value = "log-actions", comment = "Log all redprotect commands?")
+    public boolean log_actions = true;
+    @Setting(comment = "Mysql options")
+    public mysqlOptions mysql = new mysqlOptions();
+    @Setting(value = "needed-claim-to-build", comment = "Adding world names to the list will automatically enable this on that world.")
+    public needClaim needed_claim_to_build = new needClaim();
+    @Setting(value = "nether-protection")
+    public netherProtection nether_protection = new netherProtection();
+    @Setting(comment = "Show messages on enter, exit and welcome messages.")
+    public notifyCat notify = new notifyCat();
+    @Setting
+    public performanceCat performance = new performanceCat();
+    @Setting(value = "permissions-limits", comment = "Declare here the permissions you want to use for your players and groups.")
+    public permLimits permissions_limits = new permLimits();
+    @Setting(value = "private", comment = "Private containers using signs.")
+    public privateCat private_cat = new privateCat();
+    @Setting
+    public purgeCat purge = new purgeCat();
+    @Setting(value = "region-settings", comment = "general regions settings.")
+    public regionSettings region_settings = new regionSettings();
+    @Setting
+    public sellCat sell = new sellCat();
+    @Setting(value = "server-protection")
+    public serverProtection server_protection = new serverProtection();
+    @Setting
+    public wandsCat wands = new wandsCat();
+    @Setting
+    public hooksCat hooks = new hooksCat();
 
-    @Setting(value="debug-messages")
-    public Map<String, Boolean>  debug_messages = createMapDebug();
+    public MainCategory() {
+    }
+
     private Map<String, Boolean> createMapDebug() {
         Map<String, Boolean> myMap = new HashMap<>();
-        for (LogLevel level:LogLevel.values()){
+        for (LogLevel level : LogLevel.values()) {
             myMap.put(level.name().toLowerCase(), false);
         }
         return myMap;
     }
 
-    @Setting(comment = "Default flag values for new regions.\nThis will not change the values for already created regions.")
-    public Map<String, Boolean> flags = createMapFlags();
-    private Map<String, Boolean> createMapFlags(){
-        Map<String,Boolean> myMap = new HashMap<>();
+    private Map<String, Boolean> createMapFlags() {
+        Map<String, Boolean> myMap = new HashMap<>();
         myMap.put("allow-effects", true);
         myMap.put("allow-fly", true);
         myMap.put("allow-home", false);
@@ -62,21 +95,10 @@ public class MainCategory {
         return myMap;
     }
 
-    @Setting(value = "flags-configuration")
-    public flagsConfig flags_configuration = new flagsConfig();
     @ConfigSerializable
     public static class flagsConfig {
         @Setting(value = "change-flag-delay", comment = "Delay to change the same flag again, if listed.")
         public flagsDelay change_flag_delay = new flagsDelay();
-        @ConfigSerializable
-        public static class flagsDelay {
-            @Setting
-            public boolean enable = true;
-            @Setting
-            public List<String> flags = Collections.singletonList("pvp");
-            @Setting
-            public int seconds = 10;
-        }
         @Setting(value = "effects-duration", comment = "Delay for effects flags.")
         public int effects_duration = 5;
         @Setting(value = "enabled-flags", comment = "This flags will be available to player who have the flags permissions, \nto change the flag state via command on flag gui.")
@@ -107,10 +129,18 @@ public class MainCategory {
                 "leaves-decay",
                 "ender-chest",
                 "build");
+
+        @ConfigSerializable
+        public static class flagsDelay {
+            @Setting
+            public boolean enable = true;
+            @Setting
+            public List<String> flags = Collections.singletonList("pvp");
+            @Setting
+            public int seconds = 10;
+        }
     }
 
-    @Setting(value = "flat-file", comment = "Options for flatfile database.")
-    public flatFile flat_file = new flatFile();
     @ConfigSerializable
     public static class flatFile {
         @Setting(value = "auto-save-interval-seconds")
@@ -123,13 +153,6 @@ public class MainCategory {
         public boolean region_per_file = false;
     }
 
-    @Setting(comment = "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR")
-    public String language = "EN-US";
-    @Setting(value = "log-actions",comment = "Log all redprotect commands?")
-    public boolean log_actions = true;
-
-    @Setting(comment = "Mysql options")
-    public mysqlOptions mysql = new mysqlOptions();
     @ConfigSerializable
     public static class mysqlOptions {
         @Setting(value = "db-name")
@@ -146,8 +169,6 @@ public class MainCategory {
         public String user_pass = "redprotect";
     }
 
-    @Setting(value = "needed-claim-to-build", comment = "Adding world names to the list will automatically enable this on that world.")
-    public needClaim needed_claim_to_build = new needClaim();
     @ConfigSerializable
     public static class needClaim {
         @Setting(value = "allow-break-blocks", comment = "Allow break only this blocks on worlds where this is enabled.")
@@ -158,8 +179,6 @@ public class MainCategory {
         public List<String> worlds = Collections.singletonList("example_world");
     }
 
-    @Setting(value = "nether-protection")
-    public netherProtection nether_protection = new netherProtection();
     @ConfigSerializable
     public static class netherProtection {
         @Setting(value = "execute-cmd", comment = "If the player go to your world nether roof, this commands be fired.")
@@ -168,8 +187,6 @@ public class MainCategory {
         public int maxYsize = 128;
     }
 
-    @Setting(comment = "Show messages on enter, exit and welcome messages.")
-    public notifyCat notify = new notifyCat();
     @ConfigSerializable
     public static class notifyCat {
         @Setting(value = "region-enter-mode", comment = "Available: \"BOSSBAR\", \"OFF\" or \"CHAT\"")
@@ -182,8 +199,6 @@ public class MainCategory {
         public boolean welcome_region_name = false;
     }
 
-    @Setting
-    public performanceCat performance = new performanceCat();
     @ConfigSerializable
     public static class performanceCat {
         @Setting(value = "disable-PistonEvent-handler")
@@ -192,8 +207,6 @@ public class MainCategory {
         public boolean disable_onPlayerMoveEvent_handler = false;
     }
 
-    @Setting(value = "permissions-limits", comment = "Declare here the permissions you want to use for your players and groups.")
-    public permLimits permissions_limits = new permLimits();
     @ConfigSerializable
     public static class permLimits {
         @Setting
@@ -202,8 +215,6 @@ public class MainCategory {
         public List<String> claims = Collections.singletonList("redprotect.limit.claim.20");
     }
 
-    @Setting(value = "private", comment = "Private containers using signs.")
-    public privateCat private_cat = new privateCat();
     @ConfigSerializable
     public static class privateCat {
         @Setting(value = "allow-outside", comment = "Allow player to create private container outside regions? (on wilderness)")
@@ -232,8 +243,6 @@ public class MainCategory {
         public boolean use = true;
     }
 
-    @Setting
-    public purgeCat purge = new purgeCat();
     @ConfigSerializable
     public static class purgeCat {
         @Setting
@@ -244,6 +253,9 @@ public class MainCategory {
 
         @Setting
         public regenCat regen = new regenCat();
+        @Setting(value = "remove-oldest", comment = "Remove regions where the leader not logged in for more than x days?")
+        public int remove_oldest = 90;
+
         @ConfigSerializable
         public static class regenCat {
             @Setting(comment = "If worldedit is installed, regen the region instead remove?")
@@ -251,13 +263,8 @@ public class MainCategory {
             @Setting(value = "max-area-regen", comment = "Regions with an area greater than this will be ignored.")
             public int max_area_regen = 500;
         }
-
-        @Setting(value = "remove-oldest", comment = "Remove regions where the leader not logged in for more than x days?")
-        public int remove_oldest = 90;
     }
 
-    @Setting(value = "region-settings", comment = "general regions settings.")
-    public regionSettings region_settings = new regionSettings();
     @ConfigSerializable
     public static class regionSettings {
         @Setting(value = "allow-sign-interact-tags", comment = "Allow non meber of regions to interact with signs with this headers. (line 1 of the sign)")
@@ -278,53 +285,8 @@ public class MainCategory {
 
         @Setting
         public borderCat border = new borderCat();
-        @ConfigSerializable
-        public static class borderCat {
-            @Setting
-            public String material = "minecraft:glowstone";
-            @Setting(value = "time-showing")
-            public int time_showing = 5;
-        }
-
         @Setting
         public claimCat claim = new claimCat();
-        @ConfigSerializable
-        public static class claimCat {
-            @Setting(comment = "Default vertical max size of a region on claim/define. Set -1 to set to world size.")
-            public int maxy = -1;
-            @Setting(comment = "Default vertical min size of a region on claim/define. Set -1 to set to world size.")
-            public int miny = -1;
-            @Setting(value = "amount-per-player", comment = "Default claim amount per player if no claim permissions set. The permission \"redprotect.limit.claim.<limit>\" overrides this setting.")
-            public int amount_per_player = 20;
-
-            @Setting
-            public modesCat modes = new modesCat();
-            @ConfigSerializable
-            public static class modesCat {
-                @Setting(value = "allow-player-decide", comment = "Allow players to decide what mode to use? \n" +
-                        "If true, the player need to set the line 4 of the sign with \n" +
-                        "[keep], [drop], [remove], [give] or a translation from \"lang*.properties\".")
-                public boolean allow_player_decide = false;
-                @Setting(comment = "Default modes for claim regions. Modes available: keep, drop, remove or give.\n"
-                        + "-> keep or none: Nothing happens\n"
-                        + "-> drop: Will drop all protection blocks\n"
-                        + "-> remove: Will remove all protection blocks\n"
-                        + "-> give: Give back the protection blocks to player, and drop(on player location) if players's inventory is full.")
-                public String mode = "none";
-                @Setting(value = "use-perm", comment = "If \"allow-player-decide\" is true, player need to have the permission \"redprotect.use-claim-modes\" to use modes on signs.")
-                public boolean use_perm = false;
-            }
-
-            @Setting(value = "world-types", comment = "Claim types allowed for normal players. Options: BLOCK, WAND or BOTH.\n"
-                    + "-> If BLOCK, the players needs to surround your house with the block type in configuration,\nand place a sign under this fence with [rp] on first line.\n"
-                    + "-> If WAND, the players will need a wand (default glass_bottle), click on two point of your region,\nand then use /rp claim [name of region] to claim te region.\n"
-                    + "-> If BOTH, will allow both claim type protections.")
-            public Map<String, String> world_types = new HashMap<>();
-
-            @Setting(value = "claimlimit-per-world", comment = "Split the claim limits per world.")
-            public boolean claimlimit_per_world = true;
-        }
-
         @Setting(value = "enable-flag-sign", comment = "Allow players to create signs to change your regions flags states?")
         public boolean enable_flag_sign = true;
         @Setting(value = "date-format", comment = "Time format to use with data and time infos.")
@@ -348,23 +310,64 @@ public class MainCategory {
         public int max_scan = 600;
         @Setting(value = "record-player-visit-method", comment = "Method to record the player visit on regions. Available: \"ON-LOGIN\" or \"ON-REGION-ENTER\"")
         public String record_player_visit_method = "ON-LOGIN";
-
         @Setting(value = "region-list")
         public regionListing region_list = new regionListing();
+        @Setting(value = "teleport-time", comment = "Delay to teleport command.")
+        public int teleport_time = 3;
+        @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
+        public Map<String, String> world_colors = new HashMap<>();
+
+        @ConfigSerializable
+        public static class borderCat {
+            @Setting
+            public String material = "minecraft:glowstone";
+            @Setting(value = "time-showing")
+            public int time_showing = 5;
+        }
+
+        @ConfigSerializable
+        public static class claimCat {
+            @Setting(comment = "Default vertical max size of a region on claim/define. Set -1 to set to world size.")
+            public int maxy = -1;
+            @Setting(comment = "Default vertical min size of a region on claim/define. Set -1 to set to world size.")
+            public int miny = -1;
+            @Setting(value = "amount-per-player", comment = "Default claim amount per player if no claim permissions set. The permission \"redprotect.limit.claim.<limit>\" overrides this setting.")
+            public int amount_per_player = 20;
+
+            @Setting
+            public modesCat modes = new modesCat();
+            @Setting(value = "world-types", comment = "Claim types allowed for normal players. Options: BLOCK, WAND or BOTH.\n"
+                    + "-> If BLOCK, the players needs to surround your house with the block type in configuration,\nand place a sign under this fence with [rp] on first line.\n"
+                    + "-> If WAND, the players will need a wand (default glass_bottle), click on two point of your region,\nand then use /rp claim [name of region] to claim te region.\n"
+                    + "-> If BOTH, will allow both claim type protections.")
+            public Map<String, String> world_types = new HashMap<>();
+            @Setting(value = "claimlimit-per-world", comment = "Split the claim limits per world.")
+            public boolean claimlimit_per_world = true;
+
+            @ConfigSerializable
+            public static class modesCat {
+                @Setting(value = "allow-player-decide", comment = "Allow players to decide what mode to use? \n" +
+                        "If true, the player need to set the line 4 of the sign with \n" +
+                        "[keep], [drop], [remove], [give] or a translation from \"lang*.properties\".")
+                public boolean allow_player_decide = false;
+                @Setting(comment = "Default modes for claim regions. Modes available: keep, drop, remove or give.\n"
+                        + "-> keep or none: Nothing happens\n"
+                        + "-> drop: Will drop all protection blocks\n"
+                        + "-> remove: Will remove all protection blocks\n"
+                        + "-> give: Give back the protection blocks to player, and drop(on player location) if players's inventory is full.")
+                public String mode = "none";
+                @Setting(value = "use-perm", comment = "If \"allow-player-decide\" is true, player need to have the permission \"redprotect.use-claim-modes\" to use modes on signs.")
+                public boolean use_perm = false;
+            }
+        }
+
         @ConfigSerializable
         public static class regionListing {
             @Setting(value = "simple-listing", comment = "Recommended to use true. Its a legacy option.")
             public boolean simple_listing = true;
         }
-
-        @Setting(value = "teleport-time", comment = "Delay to teleport command.")
-        public int teleport_time = 3;
-        @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
-        public Map<String, String> world_colors = new HashMap<>();
     }
 
-    @Setting
-    public sellCat sell = new sellCat();
     @ConfigSerializable
     public static class sellCat {
         @Setting
@@ -376,28 +379,26 @@ public class MainCategory {
         public int sell_oldest = 90;
     }
 
-    @Setting(value = "server-protection")
-    public serverProtection server_protection = new serverProtection();
     @ConfigSerializable
     public static class serverProtection {
 
         @Setting(value = "deny-command-on-worlds", comment = "Deny a command in specific world.")
         public Map<String, List<String>> deny_commands_on_worlds = createMapCmdWorld();
-        private Map<String, List<String>> createMapCmdWorld() {
-            Map<String, List<String>> myMap = new HashMap<>();
-            myMap.put("world", Collections.singletonList("command"));
-            return myMap;
-        }
-
         @Setting(value = "deny-playerdeath-by", comment = "Deny player death or get damage by this types of damage. \n" +
                 "List of types: https://goo.gl/9EyhSd")
         public List<String> deny_playerdeath_by = Collections.singletonList("SUFFOCATE");
         @Setting(value = "deny-potions", comment = "Deny this types of potions to be used on server. \n" +
                 "List of types: https://goo.gl/qKufWT")
         public List<String> deny_potions = Collections.singletonList("INVISIBILITY");
-
         @Setting(value = "sign-spy", comment = "Show every placed sign for who have the permission \"redprotect.signspy\" and for console.")
         public signSpy sign_spy = new signSpy();
+
+        private Map<String, List<String>> createMapCmdWorld() {
+            Map<String, List<String>> myMap = new HashMap<>();
+            myMap.put("world", Collections.singletonList("command"));
+            return myMap;
+        }
+
         @ConfigSerializable
         public static class signSpy {
             @Setting
@@ -406,8 +407,7 @@ public class MainCategory {
             public boolean only_console = true;
         }
     }
-    @Setting
-    public wandsCat wands = new wandsCat();
+
     @ConfigSerializable
     public static class wandsCat {
         @Setting(comment = "Its used to define regions and for players to claim regions.")
@@ -416,8 +416,6 @@ public class MainCategory {
         public String infoWandID = "minecraft:paper";
     }
 
-    @Setting
-    public hooksCat hooks = new hooksCat();
     @ConfigSerializable
     public static class hooksCat {
         @Setting(value = "check-uuid-names-onstart", comment = "This will try to convert your player UUIDs to Player Names" +
@@ -429,6 +427,7 @@ public class MainCategory {
 
         @Setting
         public dynmapCat dynmap = new dynmapCat();
+
         @ConfigSerializable
         public static class dynmapCat {
             @Setting(comment = "Enable hook to show all regions on dynmap plugin?")
@@ -446,6 +445,13 @@ public class MainCategory {
 
             @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
             public markiconCat marker_icon = new markiconCat();
+            @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
+            public boolean show_leaders_admins = true;
+            @Setting(value = "cuboid-region")
+            public cuboidCat cuboid_region = new cuboidCat();
+            @Setting(value = "min-zoom")
+            public int min_zoom = 0;
+
             @ConfigSerializable
             public static class markiconCat {
                 @Setting
@@ -454,12 +460,6 @@ public class MainCategory {
                 public String player = "shield";
             }
 
-            @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
-            public boolean show_leaders_admins = true;
-
-            @Setting(value = "cuboid-region")
-            public cuboidCat cuboid_region = new cuboidCat();
-
             @ConfigSerializable
             public static class cuboidCat {
                 @Setting(comment = "Cuboid region config.")
@@ -467,9 +467,6 @@ public class MainCategory {
                 @Setting(value = "if-disable-set-center")
                 public int if_disable_set_center = 60;
             }
-
-            @Setting(value ="min-zoom")
-            public int min_zoom = 0;
         }
     }
 }

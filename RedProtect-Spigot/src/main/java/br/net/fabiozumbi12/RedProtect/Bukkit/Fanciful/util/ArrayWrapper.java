@@ -19,6 +19,8 @@ import java.util.Collection;
  */
 public final class ArrayWrapper<E> {
 
+    private E[] _array;
+
     /**
      * Creates an array wrapper with some elements.
      *
@@ -29,7 +31,39 @@ public final class ArrayWrapper<E> {
         setArray(elements);
     }
 
-    private E[] _array;
+    /**
+     * Converts an iterable element collection to an array of elements.
+     * The iteration order of the specified object will be used as the array element order.
+     *
+     * @param list The iterable of objects which will be converted to an array.
+     * @param c    The type of the elements of the array.
+     * @return An array of elements in the specified iterable.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] toArray(Iterable<? extends T> list, Class<T> c) {
+        int size = -1;
+        if (list instanceof Collection<?>) {
+            @SuppressWarnings("rawtypes")
+            Collection coll = (Collection) list;
+            size = coll.size();
+        }
+
+
+        if (size < 0) {
+            size = 0;
+            // Ugly hack: Count it ourselves
+            for (@SuppressWarnings("unused") T element : list) {
+                size++;
+            }
+        }
+
+        T[] result = (T[]) Array.newInstance(c, size);
+        int i = 0;
+        for (T element : list) { // Assumes iteration order is consistent
+            result[i++] = element; // Assign array element at index THEN increment counter
+        }
+        return result;
+    }
 
     /**
      * Retrieves a reference to the wrapped array instance.
@@ -70,39 +104,5 @@ public final class ArrayWrapper<E> {
     @Override
     public int hashCode() {
         return Arrays.hashCode(_array);
-    }
-
-    /**
-     * Converts an iterable element collection to an array of elements.
-     * The iteration order of the specified object will be used as the array element order.
-     *
-     * @param list The iterable of objects which will be converted to an array.
-     * @param c    The type of the elements of the array.
-     * @return An array of elements in the specified iterable.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Iterable<? extends T> list, Class<T> c) {
-        int size = -1;
-        if (list instanceof Collection<?>) {
-            @SuppressWarnings("rawtypes")
-            Collection coll = (Collection) list;
-            size = coll.size();
-        }
-
-
-        if (size < 0) {
-            size = 0;
-            // Ugly hack: Count it ourselves
-            for (@SuppressWarnings("unused") T element : list) {
-                size++;
-            }
-        }
-
-        T[] result = (T[]) Array.newInstance(c, size);
-        int i = 0;
-        for (T element : list) { // Assumes iteration order is consistent
-            result[i++] = element; // Assign array element at index THEN increment counter
-        }
-        return result;
     }
 }

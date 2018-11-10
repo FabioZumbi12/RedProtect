@@ -102,84 +102,6 @@ public class Updater {
     private Updater.UpdateResult result = Updater.UpdateResult.SUCCESS;
 
     /**
-     * Gives the developer the result of the update process. Can be obtained by called {@link #getResult()}
-     */
-    public enum UpdateResult {
-        /**
-         * The updater found an update, and has readied it to be loaded the next time the server restarts/reloads.
-         */
-        SUCCESS,
-        /**
-         * The updater did not find an update, and nothing was downloaded.
-         */
-        NO_UPDATE,
-        /**
-         * The server administrator has disabled the updating system.
-         */
-        DISABLED,
-        /**
-         * The updater found an update, but was unable to download it.
-         */
-        FAIL_DOWNLOAD,
-        /**
-         * For some reason, the updater was unable to contact dev.bukkit.org to download the file.
-         */
-        FAIL_DBO,
-        /**
-         * When running the version check, the file on DBO did not contain a recognizable version.
-         */
-        FAIL_NOVERSION,
-        /**
-         * The id provided by the plugin running the updater was invalid and doesn't exist on DBO.
-         */
-        FAIL_BADID,
-        /**
-         * The server administrator has improperly configured their API key in the configuration.
-         */
-        FAIL_APIKEY,
-        /**
-         * The updater found an update, but because of the UpdateType being set to NO_DOWNLOAD, it wasn't downloaded.
-         */
-        UPDATE_AVAILABLE
-    }
-
-    /**
-     * Allows the developer to specify the type of update that will be run.
-     */
-    public enum UpdateType {
-        /**
-         * Run a version check, and then if the file is out of date, download the newest version.
-         */
-        DEFAULT,
-        /**
-         * Don't run a version check, just find the latest update and download it.
-         */
-        NO_VERSION_CHECK,
-        /**
-         * Get information about the version and the download size, but don't actually download anything.
-         */
-        NO_DOWNLOAD
-    }
-
-    /**
-     * Represents the various release types of a file on BukkitDev.
-     */
-    public enum ReleaseType {
-        /**
-         * An "alpha" file.
-         */
-        ALPHA,
-        /**
-         * A "beta" file.
-         */
-        BETA,
-        /**
-         * A "release" file.
-         */
-        RELEASE
-    }
-
-    /**
      * Initialize the updater.
      *
      * @param plugin   The plugin that is checking for an update.
@@ -698,26 +620,6 @@ public class Updater {
         }
     }
 
-    /**
-     * Called on main thread when the Updater has finished working, regardless
-     * of result.
-     */
-    public interface UpdateCallback {
-        /**
-         * Called when the updater has finished working.
-         *
-         * @param updater The updater instance
-         */
-        void onFinish(Updater updater);
-    }
-
-    private class UpdateRunnable implements Runnable {
-        @Override
-        public void run() {
-            runUpdater();
-        }
-    }
-
     private void runUpdater() {
         if (this.url != null && (this.read() && this.versionCheck())) {
             // Obtain the results of the project's file feed
@@ -745,5 +647,103 @@ public class Updater {
 
     private void runCallback() {
         this.callback.onFinish(this);
+    }
+
+    /**
+     * Gives the developer the result of the update process. Can be obtained by called {@link #getResult()}
+     */
+    public enum UpdateResult {
+        /**
+         * The updater found an update, and has readied it to be loaded the next time the server restarts/reloads.
+         */
+        SUCCESS,
+        /**
+         * The updater did not find an update, and nothing was downloaded.
+         */
+        NO_UPDATE,
+        /**
+         * The server administrator has disabled the updating system.
+         */
+        DISABLED,
+        /**
+         * The updater found an update, but was unable to download it.
+         */
+        FAIL_DOWNLOAD,
+        /**
+         * For some reason, the updater was unable to contact dev.bukkit.org to download the file.
+         */
+        FAIL_DBO,
+        /**
+         * When running the version check, the file on DBO did not contain a recognizable version.
+         */
+        FAIL_NOVERSION,
+        /**
+         * The id provided by the plugin running the updater was invalid and doesn't exist on DBO.
+         */
+        FAIL_BADID,
+        /**
+         * The server administrator has improperly configured their API key in the configuration.
+         */
+        FAIL_APIKEY,
+        /**
+         * The updater found an update, but because of the UpdateType being set to NO_DOWNLOAD, it wasn't downloaded.
+         */
+        UPDATE_AVAILABLE
+    }
+
+    /**
+     * Allows the developer to specify the type of update that will be run.
+     */
+    public enum UpdateType {
+        /**
+         * Run a version check, and then if the file is out of date, download the newest version.
+         */
+        DEFAULT,
+        /**
+         * Don't run a version check, just find the latest update and download it.
+         */
+        NO_VERSION_CHECK,
+        /**
+         * Get information about the version and the download size, but don't actually download anything.
+         */
+        NO_DOWNLOAD
+    }
+
+    /**
+     * Represents the various release types of a file on BukkitDev.
+     */
+    public enum ReleaseType {
+        /**
+         * An "alpha" file.
+         */
+        ALPHA,
+        /**
+         * A "beta" file.
+         */
+        BETA,
+        /**
+         * A "release" file.
+         */
+        RELEASE
+    }
+
+    /**
+     * Called on main thread when the Updater has finished working, regardless
+     * of result.
+     */
+    public interface UpdateCallback {
+        /**
+         * Called when the updater has finished working.
+         *
+         * @param updater The updater instance
+         */
+        void onFinish(Updater updater);
+    }
+
+    private class UpdateRunnable implements Runnable {
+        @Override
+        public void run() {
+            runUpdater();
+        }
     }
 }

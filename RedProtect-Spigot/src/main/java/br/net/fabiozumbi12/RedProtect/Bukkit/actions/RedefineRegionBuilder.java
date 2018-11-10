@@ -16,10 +16,6 @@ import java.util.List;
 
 public class RedefineRegionBuilder extends RegionBuilder {
 
-    private boolean checkID(Region newr, Region oldr) {
-        return newr.getID().equals(oldr.getID());
-    }
-
     @SuppressWarnings("deprecation")
     public RedefineRegionBuilder(Player p, Region old, Location loc1, Location loc2) {
         if (loc1 == null || loc2 == null) {
@@ -99,11 +95,11 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check borders for other regions
         List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
         for (Location loc : limitlocs) {
-        	
+
         	/*
         	//check regions near
         	if (!RPUtil.canBuildNear(p, loc)){
-            	return;    	
+            	return;
             }*/
 
             otherrg = RedProtect.get().rm.getTopRegion(loc);
@@ -167,5 +163,9 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         this.r = region;
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " REDEFINED region " + region.getName());
+    }
+
+    private boolean checkID(Region newr, Region oldr) {
+        return newr.getID().equals(oldr.getID());
     }
 }

@@ -21,12 +21,6 @@ import java.util.*;
 
 public class RPConfig {
 
-    private static RPCommentedConfig comConfig;
-    private static RPCommentedGlobalFlags comGflags;
-    private static YamlConfiguration signs;
-    private static YamlConfiguration GuiItems;
-    private static YamlConfiguration Prots;
-    private static YamlConfiguration EconomyConfig;
     public static final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
@@ -75,6 +69,12 @@ public class RPConfig {
             "dynmap",
             "particles",
             "deny-exit-items");
+    private static RPCommentedConfig comConfig;
+    private static RPCommentedGlobalFlags comGflags;
+    private static YamlConfiguration signs;
+    private static YamlConfiguration GuiItems;
+    private static YamlConfiguration Prots;
+    private static YamlConfiguration EconomyConfig;
 
     public static void init() {
 
