@@ -541,7 +541,7 @@ public class RPBlockListener implements Listener {
     @EventHandler
     public void onFireSpread(BlockSpreadEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is BlockSpreadEvent event");
-        if (e.isCancelled() || e.getNewState() == null) {
+        if (e.isCancelled()) {
             return;
         }
 
@@ -555,7 +555,7 @@ public class RPBlockListener implements Listener {
             return;
         }
 
-        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS")) && ((rfrom != null && !rfrom.canGrow()) || !rto.canGrow())) {
+        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS")) && ((rfrom != null && !rfrom.canGrow()) || (rto != null && !rto.canGrow()))) {
             e.setCancelled(true);
             return;
         }
