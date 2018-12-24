@@ -41,10 +41,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class EncompassRegionBuilder extends RegionBuilder {
 
@@ -143,7 +140,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     }
 
                     if (current.equals(first)) {
-                        List<String> leaders = new LinkedList<>();
+                        Set<String> leaders = new HashSet<>();
                         leaders.add(pName);
                         if (owner1 == null) {
                             e.setLine(2, "--");
@@ -194,7 +191,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
 
                         List<String> othersName = new ArrayList<>();
                         Region otherrg;

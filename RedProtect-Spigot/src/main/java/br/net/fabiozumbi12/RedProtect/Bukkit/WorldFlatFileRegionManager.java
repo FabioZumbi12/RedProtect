@@ -26,6 +26,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -37,32 +38,43 @@ import java.util.*;
 
 class WorldFlatFileRegionManager implements WorldRegionManager {
 
-    private final HashMap<String, Region> regions;
+    private final HashMap<String, Region> regionsMap = new HashMap<>();
+    private final Map<Chunk, Set<Region>> chunksMap = new HashMap<>();
     private final World world;
     private final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
 
     public WorldFlatFileRegionManager(World world) {
         super();
-        this.regions = new HashMap<>();
         this.world = world;
     }
 
     @Override
-    public void add(Region r) {
-        this.regions.put(r.getName(), r);
+    public void add(Region region) {
+        // Add to name-region map
+        regionsMap.put(region.getName(), region);
+
+        // Add to chunk-set<region> map
+        region.getOccupiedChunks().forEach(chunk -> chunksMap
+                .computeIfAbsent(chunk, k -> new HashSet<>())
+                .add(region)
+        );
     }
 
     @Override
-    public void remove(Region r) {
-        if (this.regions.containsValue(r)) {
-            this.regions.remove(r.getName());
+    public void remove(Region region) {
+        if (regionsMap.containsValue(region)) {
+            regionsMap.remove(region.getName());
         }
+        region.getOccupiedChunks().forEach(chunk -> chunksMap
+                .computeIfAbsent(chunk, k -> new HashSet<>())
+                .remove(region)
+        );
     }
 
     @Override
     public Set<Region> getRegions(String pname) {
         SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (r.isLeader(pname)) {
                 regionsp.add(r);
             }
@@ -73,7 +85,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getMemberRegions(String uuid) {
         SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (r.isLeader(uuid) || r.isAdmin(uuid)) {
                 regionsp.add(r);
             }
@@ -83,7 +95,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public Region getRegion(String rname) {
-        return regions.get(rname);
+        return regionsMap.get(rname);
     }
 
     @Override
@@ -98,7 +110,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                 datf = new File(pathData, "data_" + world + ".yml");
                 YamlConfiguration fileDB = new YamlConfiguration();
 
-                for (Region r : regions.values()) {
+                for (Region r : regionsMap.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
@@ -128,9 +140,11 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                     File wfolder = new File(pathData + world);
                     if (wfolder.exists()) {
                         File[] listOfFiles = new File(pathData + world).listFiles();
-                        for (File region : listOfFiles) {
-                            if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))) {
-                                region.delete();
+                        if (listOfFiles != null) {
+                            for (File region : listOfFiles) {
+                                if (region.isFile() && !regionsMap.containsKey(region.getName().replace(".yml", ""))) {
+                                    region.delete();
+                                }
                             }
                         }
                     }
@@ -154,7 +168,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public int getTotalRegionSize(String uuid) {
         Set<Region> regionslist = new HashSet<>();
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (r.isLeader(uuid)) {
                 regionslist.add(r);
             }
@@ -223,8 +237,10 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
 
             for (String rname : fileDB.getKeys(false)) {
                 Region newr = RPUtil.loadProps(fileDB, rname, this.world);
+                if (newr == null) return;
+
                 newr.setToSave(false);
-                regions.put(rname, newr);
+                add(newr);
             }
         }
     }
@@ -235,7 +251,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
         int pz = player.getLocation().getBlockZ();
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
 
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             RedProtect.get().logger.debug("Radius: " + radius);
             RedProtect.get().logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
             if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
@@ -244,11 +260,16 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         return ret;
     }
+
+    @Override
+    public Set<Region> getRegionsInChunk(Chunk chunk) {
+        return chunksMap.getOrDefault(chunk, new HashSet<>());
+    }
     
     /*
     @Override
     public boolean regionExists(Region region) {
-    	if (regions.containsValue(region)){
+    	if (regionsMap.containsValue(region)){
 			return true;
 		}
 		return false;
@@ -262,18 +283,28 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getInnerRegions(Region region) {
         Set<Region> regionl = new HashSet<>();
-        for (Region r : regions.values()) {
-            if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
-                regionl.add(r);
-            }
-        }
+        region.getOccupiedChunks()
+                .stream()
+                .map(chunksMap::get)
+                .flatMap(Set::stream)
+                .forEach(r -> {
+                    if (r.getMaxMbrX() <= region.getMaxMbrX()
+                            && r.getMaxY() <= region.getMaxY()
+                            && r.getMaxMbrZ() <= region.getMaxMbrZ()
+                            && r.getMinMbrX() >= region.getMinMbrX()
+                            && r.getMinY() >= region.getMinY()
+                            && r.getMinMbrZ() >= region.getMinMbrZ()) {
+                        regionl.add(r);
+                    }
+                });
+
         return regionl;
     }
 
     @Override
     public Set<Region> getRegions(int x, int y, int z) {
         Set<Region> regionl = new HashSet<>();
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 regionl.add(r);
             }
@@ -285,7 +316,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     public Region getTopRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
         int max = 0;
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -309,7 +340,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     public Region getLowRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
         int min = 0;
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -332,7 +363,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
-        for (Region r : regions.values()) {
+        for (Region r : regionsMap.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -352,13 +383,13 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getAllRegions() {
         SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
-        allregions.addAll(regions.values());
+        allregions.addAll(regionsMap.values());
         return allregions;
     }
 
     @Override
     public void clearRegions() {
-        regions.clear();
+        regionsMap.clear();
     }
 
     @Override
@@ -371,7 +402,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public int getTotalRegionNum() {
-        return regions.size();
+        return regionsMap.size();
     }
 
     @Override

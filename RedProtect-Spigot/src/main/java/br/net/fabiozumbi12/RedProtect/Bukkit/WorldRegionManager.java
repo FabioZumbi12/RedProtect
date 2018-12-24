@@ -25,6 +25,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -49,6 +50,8 @@ public interface WorldRegionManager {
     Set<Region> getRegions(String p0);
 
     Set<Region> getRegionsNear(Player p0, int p1);
+
+    Set<Region> getRegionsInChunk(Chunk chunk);
 
     void add(Region p0);
 
