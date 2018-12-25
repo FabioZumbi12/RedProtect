@@ -53,7 +53,7 @@ public class RPGui implements Listener {
     private final boolean edit;
     private String name;
     private int size;
-    private ItemStack[] guiItens;
+    private ItemStack[] guiItems;
     private Player player;
     private Region region;
     private Inventory inv;
@@ -66,25 +66,24 @@ public class RPGui implements Listener {
 
         if (MaxSlot <= 9) {
             this.size = 9;
-            this.guiItens = new ItemStack[this.size];
-        } else if (MaxSlot >= 10 && MaxSlot <= 18) {
+            this.guiItems = new ItemStack[this.size];
+        } else if (MaxSlot <= 18) {
             this.size = 18;
-            this.guiItens = new ItemStack[this.size];
-        } else if (MaxSlot >= 19 && MaxSlot <= 27) {
+            this.guiItems = new ItemStack[this.size];
+        } else if (MaxSlot <= 27) {
             this.size = 27;
-            this.guiItens = new ItemStack[this.size];
-        }
-        if (MaxSlot >= 28 && MaxSlot <= 36) {
+            this.guiItems = new ItemStack[this.size];
+        } else if (MaxSlot <= 36) {
             this.size = 36;
-            this.guiItens = new ItemStack[this.size];
-        }
-        if (MaxSlot >= 37 && MaxSlot <= 45) {
+            this.guiItems = new ItemStack[this.size];
+        } else if (MaxSlot <= 45) {
             this.size = 45;
-            this.guiItens = new ItemStack[this.size];
-        }
-        if (MaxSlot >= 46 && MaxSlot <= 54) {
+            this.guiItems = new ItemStack[this.size];
+        } else if (MaxSlot <= 54) {
             this.size = 54;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
+        } else {
+            throw new IllegalArgumentException("Parameter size is exceeding size limit (54)");
         }
 
         allowEnchant = RedProtect.get().version >= 181;
@@ -120,14 +119,14 @@ public class RPGui implements Listener {
                     fvalue = RPConfig.getGuiString(region.getFlags().get(flag).toString());
                 }
 
-                this.guiItens[i] = RPConfig.getGuiItemStack(flag);
+                this.guiItems[i] = RPConfig.getGuiItemStack(flag);
 				/*
 				if (RedProtect.get().PLib && allowEnchant){
-					this.guiItens[i] = RPProtocolLib.removeAttributes(RPConfig.getGuiItemStack(flag));
+					this.guiItems[i] = RPProtocolLib.removeAttributes(RPConfig.getGuiItemStack(flag));
 				} else {
-					this.guiItens[i] = RPConfig.getGuiItemStack(flag);					
+					this.guiItems[i] = RPConfig.getGuiItemStack(flag);
 				}*/
-                ItemMeta guiMeta = this.guiItens[i].getItemMeta();
+                ItemMeta guiMeta = this.guiItems[i].getItemMeta();
                 guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag, "name"));
                 guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + fvalue, "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
                 if (allowEnchant) {
@@ -138,14 +137,14 @@ public class RPGui implements Listener {
                     }
                     guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 }
-                this.guiItens[i].setType(Material.getMaterial(RPConfig.getGuiFlagString(flag, "material")));
-                this.guiItens[i].setItemMeta(guiMeta);
+                this.guiItems[i].setType(Material.getMaterial(RPConfig.getGuiFlagString(flag, "material")));
+                this.guiItems[i].setItemMeta(guiMeta);
             }
         }
 
         for (int slotc = 0; slotc < this.size; slotc++) {
-            if (this.guiItens[slotc] == null) {
-                this.guiItens[slotc] = RPConfig.getGuiSeparator();
+            if (this.guiItems[slotc] == null) {
+                this.guiItems[slotc] = RPConfig.getGuiSeparator();
             }
         }
 
@@ -264,7 +263,7 @@ public class RPGui implements Listener {
         }
         itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + RPConfig.getGuiString(String.valueOf(flagv)), "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
         event.getCurrentItem().setItemMeta(itemMeta);
-        RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + String.valueOf(flagv));
+        RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
     }
 
     public void close() {
@@ -272,7 +271,7 @@ public class RPGui implements Listener {
         this.player.updateInventory();
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
 
-        this.guiItens = null;
+        this.guiItems = null;
         this.name = null;
         RedProtect.get().openGuis.remove(this.region.getID());
         this.region = null;
@@ -294,7 +293,7 @@ public class RPGui implements Listener {
             return;
         }
         Inventory inv = Bukkit.createInventory(player, this.size, this.name);
-        inv.setContents(this.guiItens);
+        inv.setContents(this.guiItems);
         player.openInventory(inv);
         this.inv = inv;
         RedProtect.get().openGuis.add(this.region.getID());

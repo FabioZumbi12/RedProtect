@@ -91,7 +91,7 @@ public final class Reflection {
         }
 
         String fullName = "net.minecraft.server." + getVersion() + className;
-        Class<?> clazz = null;
+        Class<?> clazz;
         try {
             clazz = Class.forName(fullName);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public final class Reflection {
         }
 
         String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
-        Class<?> clazz = null;
+        Class<?> clazz;
         try {
             clazz = Class.forName(fullName);
         } catch (Exception e) {

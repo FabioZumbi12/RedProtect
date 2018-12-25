@@ -71,7 +71,6 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
@@ -79,6 +78,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 return;
             }
         }
+        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
         if (regionName.length() < 3) {
@@ -110,7 +110,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
             for (int bi = 0; bi < block.length; ++bi) {
 
-                boolean validBlock = false;
+                boolean validBlock;
 
                 validBlock = (block[bi].getType().name().contains(RPConfig.getString("region-settings.block-id")));
                 if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {

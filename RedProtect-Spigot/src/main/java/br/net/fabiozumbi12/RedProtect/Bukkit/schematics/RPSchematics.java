@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 
-@SuppressWarnings("deprecation")
 public class RPSchematics {
 
     public static void pasteSchematic(Player p) throws IOException {
@@ -166,10 +165,10 @@ public class RPSchematics {
             return;
         }
 
-        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), Collections.singletonList(pName), new int[]{pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX()}, new int[]{pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ()}, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
+        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), Collections.singleton(pName), new int[]{pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX()}, new int[]{pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ()}, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
 
         List<String> othersName = new ArrayList<>();
-        Region otherrg = null;
+        Region otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
@@ -217,7 +216,7 @@ public class RPSchematics {
 
         //check cost per block
         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
-            Double peco = RedProtect.get().econ.getBalance(p);
+            double peco = RedProtect.get().econ.getBalance(p);
             long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")) {

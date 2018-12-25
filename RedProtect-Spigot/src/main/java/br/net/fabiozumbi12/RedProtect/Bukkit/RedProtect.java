@@ -340,7 +340,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     private boolean CheckUpdate() {
-        Updater updater = null;
+        Updater updater;
         if (RPConfig.getBool("update-check.auto-update")) {
             updater = new Updater(this, 87463, JarFile, Updater.UpdateType.DEFAULT, true); // Start Updater but just do a version check
         } else {

@@ -250,7 +250,7 @@ public class RPUtil {
         File logfile = new File(Path + date + "-" + count + ".zip");
         File[] files = new File(Path).listFiles();
         HashMap<Long, File> keyFiles = new HashMap<>();
-        if (files.length >= RPConfig.getInt("flat-file.max-backups") && isBackup) {
+        if (files != null && files.length >= RPConfig.getInt("flat-file.max-backups") && isBackup) {
             for (File key : files) {
                 keyFiles.put(key.lastModified(), key);
             }
@@ -346,7 +346,7 @@ public class RPUtil {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     e.printStackTrace();
                 }
-                Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RPConfig.getStringList("purge.ignore-regions-from-players")) {
@@ -831,9 +831,11 @@ public class RPUtil {
                     File wfolder = new File(pathData + world.getName());
                     if (wfolder.exists()) {
                         File[] listOfFiles = new File(pathData + world.getName()).listFiles();
-                        for (File region : listOfFiles) {
-                            if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))) {
-                                region.delete();
+                        if (listOfFiles != null) {
+                            for (File region : listOfFiles) {
+                                if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))) {
+                                    region.delete();
+                                }
                             }
                         }
                     }

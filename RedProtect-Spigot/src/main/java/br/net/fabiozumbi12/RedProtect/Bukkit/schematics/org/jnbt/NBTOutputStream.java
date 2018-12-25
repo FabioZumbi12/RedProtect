@@ -73,9 +73,8 @@ public final class NBTOutputStream implements Closeable {
      * specified underlying output stream.
      *
      * @param os The output stream.
-     * @throws IOException if an I/O error occurs.
      */
-    public NBTOutputStream(OutputStream os) throws IOException {
+    public NBTOutputStream(OutputStream os) {
         this.os = new DataOutputStream(os);
     }
 

@@ -33,6 +33,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -81,7 +82,7 @@ public class RPLang {
         BaseLang.clear();
         try {
             InputStream fileInput = RedProtect.get().getResource("assets/redprotect/langEN-US.properties");
-            Reader reader = new InputStreamReader(fileInput, "UTF-8");
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             BaseLang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +94,7 @@ public class RPLang {
         Lang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
-            Reader reader = new InputStreamReader(fileInput, "UTF-8");
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             Lang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +124,7 @@ public class RPLang {
             Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
         }
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
+            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -158,9 +159,7 @@ public class RPLang {
 
         DelayedMessage.put(p, key);
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            if (DelayedMessage.containsKey(p)) {
-                DelayedMessage.remove(p);
-            }
+            DelayedMessage.remove(p);
         }, 20);
     }
 
@@ -181,9 +180,7 @@ public class RPLang {
             final Player p = (Player) sender;
             DelayedMessage.put(p, key);
             Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-                if (DelayedMessage.containsKey(p)) {
-                    DelayedMessage.remove(p);
-                }
+                DelayedMessage.remove(p);
             }, 20);
         }
 
