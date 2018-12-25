@@ -206,7 +206,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                        for (Region r : RedProtect.get().rm.getRegionsInChunks(region.getOccupiedChunks())) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
