@@ -3267,6 +3267,36 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                 }
             }
         }
+
+        //rp dynmap [cmd]
+        if (checkCmd(args[0], "dynmap")) {
+            //rp dynmap
+            if (args.length == 1) {
+                return onCommand(sender, command, commandLabel, new String[] {"info"});
+            }
+            //rp dynmap <cmd>
+            if (args.length == 2) {
+                //rp dynmap show
+                if (checkCmd(args[1], "show")) {
+                    return onCommand(sender, command, commandLabel, new String[] {"flag", "dynmap", "true"});
+                }
+                //rp dynmap hide
+                if (checkCmd(args[1], "hide")) {
+                    return onCommand(sender, command, commandLabel, new String[] {"flag", "dynmap", "false"});
+                }
+                if (checkCmd(args[1], "set")) {
+                    return onCommand(sender, command, commandLabel, new String[] {"info"});
+                }
+            }
+            //rp dynmap set [setname]
+            if (args.length == 3) {
+                if (checkCmd(args[1], "set")) {
+                    sender.sendMessage(RPLang.get("general.color") + "Dynmap set [setname]");
+                    return true;
+                }
+            }
+        }
+
         RPLang.sendMessage(player, RPLang.get("correct.command") + " " + ChatColor.DARK_AQUA + "/rp " + getCmd("help"));
         return true;
     }
