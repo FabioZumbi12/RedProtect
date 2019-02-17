@@ -1939,6 +1939,36 @@ public class RPCommands implements CommandCallable {
                 }
             }
         }
+
+        //rp dynmap [cmd]
+        if (checkCmd(args[0], "dynmap")) {
+            //rp dynmap
+            if (args.length == 1) {
+                return process(sender, "info");
+            }
+            //rp dynmap <cmd>
+            if (args.length == 2) {
+                //rp dynmap show
+                if (checkCmd(args[1], "show")) {
+                    return process(sender, "flag dynmap true");
+                }
+                //rp dynmap hide
+                if (checkCmd(args[1], "hide")) {
+                    return process(sender, "flag dynmap false");
+                }
+                if (checkCmd(args[1], "set")) {
+                    return process(sender, "info");
+                }
+            }
+            //rp dynmap set [setname]
+            if (args.length == 3) {
+                if (checkCmd(args[1], "set")) {
+                    RPLang.sendMessage(player, RPLang.get("general.color") + "Dynmap set [setname]");
+                    return cmdr;
+                }
+            }
+        }
+
         RPLang.sendMessage(player, RPLang.get("correct.command") + " &e/rp " + getCmd("help"));
         return cmdr;
     }
