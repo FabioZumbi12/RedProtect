@@ -341,9 +341,8 @@ public class RPPlayerListener implements Listener {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
-                } else if (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
+                } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
                         RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(b.getType().name()::matches)) {
-
                     if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
@@ -1170,10 +1169,16 @@ public class RPPlayerListener implements Listener {
         Player p = e.getPlayer();
         stopTaskPlayer(p);
         RedProtect.get().tpWait.remove(p.getName());
+        RedProtect.get().openGuis.remove(p.getName());
+        RedProtect.get().alWait.remove(p);
         String worldneeded = RPConfig.getString("server-protection.teleport-player.on-leave.need-world-to-teleport");
         if (RPConfig.getBool("server-protection.teleport-player.on-leave.enable") &&
                 (worldneeded.equals("none") || worldneeded.equals(p.getWorld().getName()))) {
             String[] loc = RPConfig.getString("server-protection.teleport-player.on-leave.location").split(",");
+            World w = Bukkit.getWorld(loc[1]);
+            if (w != null) {
+                p.teleport(new Location(w, Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3])));
+            }
         }
     }
 
@@ -1390,10 +1395,8 @@ public class RPPlayerListener implements Listener {
             String wel = ChatColor.translateAlternateColorCodes('&',
                     r.getWelcome().replace("{r}", r.getName())
                             .replace("{p}", p.getName()));
-            if (RPConfig.getBool("notify.welcome-region-name"))
-                SendWelcomeMsg(p, ChatColor.GOLD + r.getName() + ": " + wel);
-            else
-                SendWelcomeMsg(p, wel);
+            SendWelcomeMsg(p, RPLang.get("playerlistener.region.welcome")
+                    .replace("{region}", r.getName()).replace("{message}", wel));
         }
     }
 

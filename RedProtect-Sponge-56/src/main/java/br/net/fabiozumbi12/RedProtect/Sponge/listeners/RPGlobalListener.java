@@ -230,7 +230,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlace(ChangeBlockEvent.Place e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + false);
 
         BlockSnapshot b = e.getTransactions().get(0).getFinal();
         ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
@@ -269,7 +269,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerInteract(InteractEvent e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is InteractEvent event! Cancelled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is InteractEvent event! Cancelled? " + false);
         if (!e.getInteractionPoint().isPresent()) {
             return;
         }
@@ -347,7 +347,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockBreakGlobal(ChangeBlockEvent.Break e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + false);
 
         BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
         Region r = RedProtect.get().rm.getTopRegion(bt.getLocation().get(), this.getClass().getName());

@@ -40,6 +40,6 @@ interface JsonRepresentedObject {
      * @param writer The JSON writer which will receive the object.
      * @throws IOException If an error occurs writing to the stream.
      */
-    public void writeJson(JsonWriter writer) throws IOException;
+    void writeJson(JsonWriter writer) throws IOException;
 
 }

@@ -55,8 +55,8 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -248,7 +248,7 @@ public class RPUtil {
         int count = 1;
         String date = DateNow().replace("/", "-");
         File logfile = new File(Path + date + "-" + count + ".zip");
-        File files[] = new File(Path).listFiles();
+        File[] files = new File(Path).listFiles();
         HashMap<Long, File> keyFiles = new HashMap<>();
         if (files.length >= RPConfig.getInt("flat-file.max-backups") && isBackup) {
             for (File key : files) {
@@ -758,7 +758,7 @@ public class RPUtil {
 
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                        String tpstring[] = rs.getString("tppoint").split(",");
+                        String[] tpstring = rs.getString("tppoint").split(",");
                         tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                                 Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                     }
@@ -1020,13 +1020,11 @@ public class RPUtil {
 
     public static void startFlagChanger(final String r, final String flag, final Player p) {
         RedProtect.get().changeWait.add(r + flag);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get().get(), () -> {
-            if (RedProtect.get().changeWait.contains(r + flag)) {
-                /*if (p != null && p.isOnline()){
+        Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
+            /*if (p != null && p.isOnline()){
                     RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
                 }*/
-                RedProtect.get().changeWait.remove(r + flag);
-            }
+            RedProtect.get().changeWait.remove(r + flag);
         }, RPConfig.getInt("flags-configuration.change-flag-delay.seconds") * 20);
     }
 
@@ -1090,14 +1088,12 @@ public class RPUtil {
                 RPLang.sendMessage(p, "cmdmanager.addingborder");
             }
             pBorders.put(p.getName(), borderBlocks);
-            int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get().get(), () -> {
+            int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                 if (pBorders.containsKey(p.getName())) {
                     for (Location loc : pBorders.get(p.getName()).keySet()) {
                         w.getBlockAt(loc).setType(pBorders.get(p.getName()).get(loc));
                     }
-                    if (borderIds.containsKey(p.getName())) {
-                        borderIds.remove(p.getName());
-                    }
+                    borderIds.remove(p.getName());
                     pBorders.remove(p.getName());
                     RPLang.sendMessage(p, "cmdmanager.removingborder");
                 }
@@ -1202,7 +1198,7 @@ public class RPUtil {
 
         Location tppoint = null;
         if (!fileDB.getString(rname + ".tppoint", "").equalsIgnoreCase("")) {
-            String tpstring[] = fileDB.getString(rname + ".tppoint").split(",");
+            String[] tpstring = fileDB.getString(rname + ".tppoint").split(",");
             tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                     Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
         }
@@ -1215,9 +1211,7 @@ public class RPUtil {
         }
         if (fileDB.contains(rname + ".owners")) {
             admins.addAll(fileDB.getStringList(rname + ".owners"));
-            if (admins.contains(fileDB.getString(rname + ".creator"))) {
-                admins.remove(fileDB.getString(rname + ".creator"));
-            }
+            admins.remove(fileDB.getString(rname + ".creator"));
         }
         //compatibility <------
         fileDB = RPUtil.fixdbFlags(fileDB, rname);

@@ -254,7 +254,6 @@ public class RPCommands implements CommandCallable {
         return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd)) || arg.equalsIgnoreCase(cmd);
     }
 
-    @SuppressWarnings("deprecation")
     public CommandResult process(CommandSource sender, String arguments) throws CommandException {
         CommandResult cmdr = CommandResult.success();
 
@@ -2898,12 +2897,12 @@ public class RPCommands implements CommandCallable {
             if (args.length == 1) {
                 if (checkCmd(args[0], "flag")) {
                     for (String flag : RedProtect.get().cfgs.getDefFlags()) {
-                        if (RedProtect.get().ph.hasAdminFlagPerm((Player) source, flag) && !tab.contains(flag)) {
+                        if (RedProtect.get().ph.hasAdminFlagPerm((Player) source, flag)) {
                             tab.add(flag);
                         }
                     }
                     for (String flag : RedProtect.get().cfgs.AdminFlags) {
-                        if (RedProtect.get().ph.hasAdminFlagPerm((Player) source, flag) && !tab.contains(flag)) {
+                        if (RedProtect.get().ph.hasAdminFlagPerm((Player) source, flag)) {
                             tab.add(flag);
                         }
                     }

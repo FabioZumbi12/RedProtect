@@ -80,9 +80,7 @@ public class RPAddProtection implements Listener {
             if (!msgSpam.containsKey(msg)) {
                 msgSpam.put(msg, 1);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-                    if (msgSpam.containsKey(msg)) {
-                        msgSpam.remove(msg);
-                    }
+                    msgSpam.remove(msg);
                 }, RPConfig.getProtInt("chat-protection.antispam.time-beteween-same-messages") * 20);
             } else {
                 msgSpam.put(msg, msgSpam.get(msg) + 1);

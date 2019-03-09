@@ -264,7 +264,7 @@ public class RPGui implements Listener {
         }
         itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + RPConfig.getGuiString(String.valueOf(flagv)), "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
         event.getCurrentItem().setItemMeta(itemMeta);
-        RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + String.valueOf(flagv));
+        RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
     }
 
     public void close() {

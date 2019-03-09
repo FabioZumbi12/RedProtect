@@ -29,7 +29,7 @@ import org.bukkit.block.Block;
 
 public interface RPVHelper {
 
-    public void toggleDoor(Block b);
+    void toggleDoor(Block b);
 
-    public boolean isOpenable(Block b);
+    boolean isOpenable(Block b);
 }

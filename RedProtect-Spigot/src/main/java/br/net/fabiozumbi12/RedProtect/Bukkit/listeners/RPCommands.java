@@ -1063,7 +1063,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
             for (LiteChunk c : allchunks) {
                 List<String> leaders = new ArrayList<>();
                 String admin = RPUtil.PlayerToUUID(c.getOwner());
-                leaders.add(admin.toString());
+                leaders.add(admin);
                 World w = RedProtect.get().serv.getWorld(c.getWorldName());
                 Chunk chunk = w.getChunkAt(c.getX(), c.getZ());
                 int x = chunk.getBlock(7, 50, 7).getX();

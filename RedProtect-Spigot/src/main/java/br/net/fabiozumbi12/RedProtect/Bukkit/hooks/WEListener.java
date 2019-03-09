@@ -46,7 +46,6 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
-@SuppressWarnings("deprecation")
 public class WEListener {
 
     private static final HashMap<String, EditSession> eSessions = new HashMap<>();
@@ -98,7 +97,7 @@ public class WEListener {
 
             try {
                 CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
-                cc.paste(es, new com.sk89q.worldedit.Vector(loc.getX(), loc.getY(), loc.getZ()), false);
+                cc.paste(es, BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()), false);
             } catch (DataException | IOException | MaxChangedBlocksException e) {
                 e.printStackTrace();
             }

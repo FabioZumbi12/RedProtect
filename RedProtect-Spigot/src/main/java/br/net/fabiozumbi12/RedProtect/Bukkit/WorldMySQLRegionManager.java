@@ -296,7 +296,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
 
                 Location tppoint = null;
                 if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                    String tpstring[] = rs.getString("tppoint").split(",");
+                    String[] tpstring = rs.getString("tppoint").split(",");
                     tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                             Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                 }
@@ -426,7 +426,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                     boolean candel = rs.getBoolean("candelete");
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                        String tpstring[] = rs.getString("tppoint").split(",");
+                        String[] tpstring = rs.getString("tppoint").split(",");
                         tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                                 Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                     }

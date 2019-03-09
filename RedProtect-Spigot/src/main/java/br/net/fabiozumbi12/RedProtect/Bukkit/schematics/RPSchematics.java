@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 
-@SuppressWarnings("deprecation")
 public class RPSchematics {
 
     public static void pasteSchematic(Player p) throws IOException {

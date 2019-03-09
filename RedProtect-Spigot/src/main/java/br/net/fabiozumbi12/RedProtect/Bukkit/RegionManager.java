@@ -173,9 +173,7 @@ public class RegionManager {
             int maxChunkZ = (int) Math.floor(region.getMaxMbrZ() / 16f);
 
             if (chunk.getX() >= minChunkX && chunk.getX() <= maxChunkX && chunk.getZ() >= minChunkZ && chunk.getZ() <= maxChunkZ) {
-                if (!regions.contains(region)) {
-                    regions.add(region);
-                }
+                regions.add(region);
             }
         }
         return regions;

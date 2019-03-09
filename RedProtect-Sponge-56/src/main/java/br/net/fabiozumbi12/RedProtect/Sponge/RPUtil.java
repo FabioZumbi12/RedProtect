@@ -57,8 +57,8 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -220,7 +220,7 @@ public class RPUtil {
         int count = 1;
         String date = DateNow().replace("/", "-");
         File logfile = new File(f, date + "-" + count + ".zip");
-        File files[] = f.listFiles();
+        File[] files = f.listFiles();
         HashMap<Long, File> keyFiles = new HashMap<>();
         if (files.length >= RedProtect.get().cfgs.root().flat_file.max_backups && isBackup) {
             for (File key : files) {
@@ -730,7 +730,7 @@ public class RPUtil {
 
                     Location<World> tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                        String tpstring[] = rs.getString("tppoint").split(",");
+                        String[] tpstring = rs.getString("tppoint").split(",");
                         tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]))/*,
                         		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]))*/;
                     }
@@ -1000,12 +1000,10 @@ public class RPUtil {
     public static void startFlagChanger(final String r, final String flag, final Player p) {
         RedProtect.get().changeWait.add(r + flag);
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-            if (RedProtect.get().changeWait.contains(r + flag)) {
-                /*if (p != null && p.isOnline()){
+            /*if (p != null && p.isOnline()){
                     RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
                 }*/
-                RedProtect.get().changeWait.remove(r + flag);
-            }
+            RedProtect.get().changeWait.remove(r + flag);
         }, RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds, TimeUnit.SECONDS);
     }
 
@@ -1160,7 +1158,7 @@ public class RPUtil {
 
         Location<World> tppoint = null;
         if (!region.getNode(rname, "tppoint").getString().equalsIgnoreCase("")) {
-            String tpstring[] = region.getNode(rname, "tppoint").getString().split(",");
+            String[] tpstring = region.getNode(rname, "tppoint").getString().split(",");
             tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
         }
 

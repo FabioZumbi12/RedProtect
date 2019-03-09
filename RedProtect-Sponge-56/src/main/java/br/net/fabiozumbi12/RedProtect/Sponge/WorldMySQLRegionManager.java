@@ -307,7 +307,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
 
                 Location<World> tppoint = null;
                 if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                    String tpstring[] = rs.getString("tppoint").split(",");
+                    String[] tpstring = rs.getString("tppoint").split(",");
                     tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*,
                     		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
                 }
@@ -438,7 +438,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                     boolean candel = rs.getBoolean("candelete");
                     Location<World> tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                        String tpstring[] = rs.getString("tppoint").split(",");
+                        String[] tpstring = rs.getString("tppoint").split(",");
                         tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*,
                         		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
                     }

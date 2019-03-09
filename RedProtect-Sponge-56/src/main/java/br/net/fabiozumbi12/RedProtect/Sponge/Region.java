@@ -232,7 +232,7 @@ public class Region implements Serializable {
         this.world = world;
         this.wMessage = "";
         this.date = RPUtil.DateNow();
-        this.name = conformName(name);
+        this.name = name == null ? "" : conformName(name);
         checkParticle();
     }
 
@@ -776,12 +776,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.admins.remove(pinfo);
         if (!this.leaders.contains(pinfo)) {
             this.leaders.add(pinfo);
         }
@@ -801,12 +797,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.admins.remove(pinfo);
+        this.leaders.remove(pinfo);
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);
         }
@@ -826,12 +818,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.leaders.remove(pinfo);
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);
         }
@@ -851,15 +839,9 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.admins.remove(pinfo);
+        this.leaders.remove(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
@@ -876,12 +858,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
+        this.leaders.remove(pinfo);
+        this.admins.remove(pinfo);
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);
         }
@@ -901,12 +879,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.leaders.remove(pinfo);
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);
         }
