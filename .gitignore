@@ -74,3 +74,5 @@ buildNumber.properties
 # CUSTOM
 
 .idea/*
+*.iml
+*.gitignore
