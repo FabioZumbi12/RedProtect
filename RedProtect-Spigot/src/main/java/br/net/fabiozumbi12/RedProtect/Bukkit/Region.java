@@ -72,6 +72,7 @@ public class Region implements Serializable {
     private boolean tosave = true;
     private boolean canDelete;
     private int particleID = 0;
+    private String dynmapSet = RPConfig.getString("hooks.dynmap.marks-groupname");
 
     /**
      * Represents the region created by player.
@@ -279,7 +280,7 @@ public class Region implements Serializable {
         this.world = world;
         this.wMessage = "";
         this.date = RPUtil.DateNow();
-        this.name = name;
+        this.name = name == null ? "" : conformName(name);
         checkParticle();
     }
 
@@ -561,6 +562,8 @@ public class Region implements Serializable {
         return this.name;
     }
 
+    public String getDynmapSet() { return this.dynmapSet; }
+
     /**
      * Use this method to get raw admins. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
      * <p>
@@ -656,6 +659,7 @@ public class Region implements Serializable {
         String today;
         String wName = this.world;
         String colorChar = "";
+        String dynmapInfo = "";
 
         if (RPConfig.getString("region-settings.world-colors." + this.world) != null) {
             colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + this.world));
@@ -715,6 +719,10 @@ public class Region implements Serializable {
             }
         }
 
+        if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+            dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
+        }
+
         return RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
                 RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + "\n" +
                 RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
@@ -722,6 +730,7 @@ public class Region implements Serializable {
                 RPLang.get("region.leaders") + " " + leaderString + "\n" +
                 RPLang.get("region.admins") + " " + adminString + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberString + "\n" +
                 RPLang.get("region.date") + " " + today + "\n" +
+                dynmapInfo +
                 RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
     }
 

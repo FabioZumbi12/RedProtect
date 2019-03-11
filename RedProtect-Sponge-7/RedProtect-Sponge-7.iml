@@ -45,7 +45,6 @@
     <orderEntry type="module" module-name="RedProtect-Spigot" />
     <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:javadoc:1.12.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="module-library">
@@ -87,13 +86,13 @@
     <orderEntry type="module-library">
       <library name="Maven: dynmap-2.5:dynmap-2.5:v1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/dynmap-2.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../RedProtect-Spigot/libs/Dynmap-3.0-beta-3-spigot.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Maven: com.github.TechFortress:GriefPrevention:16.11.4" level="project" />
+    <orderEntry type="library" name="Maven: com.github.TechFortress:GriefPrevention:16.11.6" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: MagicCarpet:MagicCarpet:v1">
         <CLASSES>
@@ -139,6 +138,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: com.sk89q.worldedit:worldedit-bukkit:7.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q:dummypermscompat:1.10" level="project" />
+    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.13.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:1.4" level="project" />
+    <orderEntry type="library" name="Maven: io.papermc:paperlib:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: net.ess3:EssentialsX:2.15.0" level="project" />
     <orderEntry type="library" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.4.0" level="project" />
     <orderEntry type="library" name="Maven: cglib:cglib-nodep:3.2.5" level="project" />
@@ -146,13 +150,14 @@
     <orderEntry type="library" name="Maven: de.keyle:mypet:3.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="RedProtect-Sponge-56" />
     <orderEntry type="library" name="Maven: com.github.webbukkit:DynmapCoreAPI:v2.5" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
+    <orderEntry type="library" name="Maven: rhino:js:1.7R2" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.9" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:jchronic:0.2.4a" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q:jchronic:0.2.4a" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.8.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.thoughtworks.paranamer:paranamer:2.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q.lib:jlibnoise:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q.lib:jlibnoise:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
   </component>
 </module>

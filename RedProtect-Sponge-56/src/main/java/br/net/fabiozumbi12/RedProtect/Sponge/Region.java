@@ -79,6 +79,7 @@ public class Region implements Serializable {
     private boolean canDelete;
     private boolean tosave = true;
     private Task task;
+    private String dynmapSet = RedProtect.get().cfgs.root().hooks.dynmap.marks_groupname;
 
     /**
      * Represents the region created by player.
@@ -231,7 +232,7 @@ public class Region implements Serializable {
         this.world = world;
         this.wMessage = "";
         this.date = RPUtil.DateNow();
-        this.name = conformName(name);
+        this.name = name == null ? "" : conformName(name);
         checkParticle();
     }
 
@@ -496,6 +497,8 @@ public class Region implements Serializable {
         return this.name;
     }
 
+    public String getDynmapSet() { return this.dynmapSet; }
+
     /**
      * Use this method to get raw admins. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
      * <p>
@@ -602,6 +605,7 @@ public class Region implements Serializable {
         String today;
         String wName = this.world;
         String colorChar = "";
+        String dynmapInfo = "";
 
         if (RedProtect.get().cfgs.root().region_settings.world_colors.containsKey(this.world)) {
             colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(this.world);
@@ -682,6 +686,10 @@ public class Region implements Serializable {
             }
         }
 
+        if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable) {
+            dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
+        }
+
         return RPUtil.toText(RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
                 RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPEconomy.getFormatted(this.value) + "\n" +
                 RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
@@ -689,6 +697,7 @@ public class Region implements Serializable {
                 RPLang.get("region.leaders") + " " + leadersstring + "\n" +
                 RPLang.get("region.admins") + " " + adminstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
                 RPLang.get("region.date") + " " + today + "\n" +
+                dynmapInfo +
                 RPLang.get("region.welcome.msg") + " " + wMsgTemp);
     }
 
@@ -767,12 +776,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.admins.remove(pinfo);
         if (!this.leaders.contains(pinfo)) {
             this.leaders.add(pinfo);
         }
@@ -792,12 +797,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.admins.remove(pinfo);
+        this.leaders.remove(pinfo);
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);
         }
@@ -817,12 +818,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.leaders.remove(pinfo);
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);
         }
@@ -842,15 +839,9 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.admins.remove(pinfo);
+        this.leaders.remove(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
@@ -867,12 +858,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
-        if (this.admins.contains(pinfo)) {
-            this.admins.remove(pinfo);
-        }
+        this.leaders.remove(pinfo);
+        this.admins.remove(pinfo);
         if (!this.members.contains(pinfo)) {
             this.members.add(pinfo);
         }
@@ -892,12 +879,8 @@ public class Region implements Serializable {
         if (!RedProtect.get().OnlineMode) {
             pinfo = uuid.toLowerCase();
         }
-        if (this.members.contains(pinfo)) {
-            this.members.remove(pinfo);
-        }
-        if (this.leaders.contains(pinfo)) {
-            this.leaders.remove(pinfo);
-        }
+        this.members.remove(pinfo);
+        this.leaders.remove(pinfo);
         if (!this.admins.contains(pinfo)) {
             this.admins.add(pinfo);
         }

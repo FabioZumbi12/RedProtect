@@ -87,7 +87,7 @@
             <artifactId>dynmap-2.5</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/dynmap-2.5.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-3-spigot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.TechFortress</groupId>
@@ -139,7 +139,6 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- end of local repos -->
@@ -154,6 +153,24 @@
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.15.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>BOSEconomy</groupId>
+                    <artifactId>BOSEconomy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>iConomy</groupId>
+                    <artifactId>iConomy5</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>iConomy</groupId>
+                    <artifactId>iConomy6</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>MultiCurrency</groupId>
+                    <artifactId>MultiCurrency</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

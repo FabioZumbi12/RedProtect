@@ -351,7 +351,6 @@ public class RPBlockListener implements Listener {
             }
         } catch (Throwable ignored) {
         }
-
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

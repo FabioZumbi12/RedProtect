@@ -140,10 +140,10 @@ public class RPCommentedConfig {
                         "NOTE_BLOCK",
                         "BED_BLOCK",
                         "CHEST",
-                        "WORKBENCH",
+                        "CRAFTING_TABLE",
                         "FURNACE",
                         "JUKEBOX",
-                        "ENCHANTMENT_TABLE",
+                        "ENCHANTING_TABLE",
                         "BREWING_STAND",
                         "CAULDRON",
                         "ENDER_CHEST",
@@ -151,7 +151,8 @@ public class RPCommentedConfig {
                         "TRAPPED_CHEST",
                         "HOPPER",
                         "DROPPER",
-                        "[A-Z_]+_SHULKER_BOX"), "Blocks allowed to be locked with private signs.");
+                        "[A-Z_]+_SHULKER_BOX"), "Blocks allowed to be locked with private signs or to be used with the flag \"chest\".\n" +
+                        "Block names may change between minecraft 1.12 and 1.13!!");
 
         setDefault("notify", null, "Notifications configs.\nYour players can use this placeholders on Welcome Message: {r} and {p}");
         setDefault("notify.region-exit", true, "Show region info(or wilderness message) when exit a region.");

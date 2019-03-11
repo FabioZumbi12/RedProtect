@@ -46,8 +46,6 @@ import org.spongepowered.api.world.World;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-//import com.sk89q.worldedit.world.registry.WorldData;
-
 public class WEListener {
 
     private static final HashMap<String, EditSession> eSessions = new HashMap<>();
@@ -103,19 +101,18 @@ public class WEListener {
                 BufferedInputStream bis = closer.register(new BufferedInputStream(fis));
                 ClipboardReader reader = format.getReader(bis);
 
-                WorldData worldData = ws.getWorldData();
-                Clipboard clipboard = reader.read(ws.getWorldData());
-                session.setClipboard(new ClipboardHolder(clipboard, worldData));
+                Clipboard clipboard = reader.read();
+                session.setClipboard(new ClipboardHolder(clipboard));
 
                 ClipboardHolder holder = session.getClipboard();
 
-                Operation op = holder.createPaste(session.createEditSession(sp), ws.getWorldData()).to(session.getPlacementPosition(sp)).build();
+                Operation op = holder.createPaste(ws).to(session.getPlacementPosition(sp)).build();
                 Operations.completeLegacy(op);
             } catch (IOException | MaxChangedBlocksException | EmptyClipboardException | IncompleteRegionException e) {
                 e.printStackTrace();
             }
         }
-        */
+    */
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Sponge.Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             if (RPUtil.stopRegen) {

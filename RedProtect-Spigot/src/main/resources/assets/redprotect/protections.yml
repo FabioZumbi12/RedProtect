@@ -13,7 +13,7 @@ chat-protection:
     anti-flood:
       enable: true
       whitelist-flood-characs:
-      - k
+        - k
 
   # Anti-Spam system.
   antispam:
@@ -45,7 +45,7 @@ chat-protection:
     replace-partial-word: false
     # List of words (case insensitive).
     replace-words:
-    - word1
+      - word1
     # Actions. Add a command to execute when a player write some of this words. Default is ''.
     cmd-action: ''
 
@@ -58,12 +58,12 @@ chat-protection:
     custom-url-regex: ((http:\/\/|https:\/\/)?(www.)?(([a-zA-Z0-9-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z-_\/\.0-9#:?=&;,]*)?)?)
     # Check for additional words or entire websites/ips on player message. If unique word add a dot stating the word. This will check for '.net', '. net' or '.     net' using 'net' as exmaple.
     check-for-words:
-    - www.google.com
+      - www.google.com
     # Whitelist words to ignore. Partial or complete URLs/IPs.
     whitelist-words:
-    - www.myserver.com
-    - prntscr.com
-    - gyazo.com
+      - www.myserver.com
+      - prntscr.com
+      - gyazo.com
 
     # Cancel the chat message and show an alert or only replace the link by a word. Use 'replace' or 'cancel'.
     cancel-or-replace: cancel

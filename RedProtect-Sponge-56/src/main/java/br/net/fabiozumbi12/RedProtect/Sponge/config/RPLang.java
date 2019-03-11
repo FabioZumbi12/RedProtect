@@ -32,6 +32,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -96,7 +97,7 @@ public class RPLang {
         Lang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
-            Reader reader = new InputStreamReader(fileInput, "UTF-8");
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             Lang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +124,7 @@ public class RPLang {
             Lang.put("_lang.version", RedProtect.get().container.getVersion().get());
         }
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), "UTF-8"), null);
+            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,9 +157,7 @@ public class RPLang {
         if (p instanceof Player) {
             DelayedMessage.put((Player) p, key);
             Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                if (DelayedMessage.containsKey(p)) {
-                    DelayedMessage.remove(p);
-                }
+                DelayedMessage.remove(p);
             }, 1, TimeUnit.SECONDS);
         }
     }

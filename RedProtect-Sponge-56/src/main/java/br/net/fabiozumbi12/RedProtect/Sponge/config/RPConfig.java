@@ -56,6 +56,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.google.common.reflect.TypeToken.*;
+
 public class RPConfig {
 
     public final List<String> AdminFlags = Arrays.asList(
@@ -155,7 +157,7 @@ public class RPConfig {
 
             cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();
             configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
-            this.root = configRoot.getValue(TypeToken.of(MainCategory.class), new MainCategory());
+            this.root = configRoot.getValue(of(MainCategory.class), new MainCategory());
 
             /*--------------------- end config.conf ---------------------------*/
 
@@ -184,7 +186,7 @@ public class RPConfig {
                 RedProtect.get().logger.warning("File \"globalflags.conf\" updated with new configurations!");
             }
 
-            this.gflags = gflagsRoot.getValue(TypeToken.of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
+            this.gflags = gflagsRoot.getValue(of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
 
             /*--------------------- end globalflags.conf ---------------------------*/
 
@@ -204,7 +206,7 @@ public class RPConfig {
 
             guiLoader = HoconConfigurationLoader.builder().setFile(guiConfig).build();
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
-            this.guiRoot = guiCfgRoot.getValue(TypeToken.of(FlagGuiCategory.class), new FlagGuiCategory());
+            this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
             for (String key : getDefFlagsValues().keySet()) {
                 if (!guiRoot.gui_flags.containsKey(key)) {
@@ -242,7 +244,7 @@ public class RPConfig {
 
             protCfgs.getNode("chat-protection", "anti-flood", "enable").setValue(protCfgs.getNode("chat-protection", "anti-flood", "enable").getBoolean(true));
             protCfgs.getNode("chat-protection", "anti-flood", "whitelist-flood-characs")
-                    .setValue(protCfgs.getNode("chat-protection", "anti-flood", "whitelist-flood-characs").getList(TypeToken.of(String.class), Collections.singletonList("k")));
+                    .setValue(protCfgs.getNode("chat-protection", "anti-flood", "whitelist-flood-characs").getList(of(String.class), Collections.singletonList("k")));
 
             protCfgs.getNode("chat-protection", "caps-filter", "enable").setValue(protCfgs.getNode("chat-protection", "caps-filter", "enable").getBoolean(true));
             protCfgs.getNode("chat-protection", "caps-filter", "minimum-lenght").setValue(protCfgs.getNode("chat-protection", "caps-filter", "minimum-lenght").getInt(3));
@@ -263,15 +265,15 @@ public class RPConfig {
             protCfgs.getNode("chat-protection", "censor", "action", "cmd").setValue(protCfgs.getNode("chat-protection", "censor", "action", "cmd").getString(""));
             protCfgs.getNode("chat-protection", "censor", "action", "partial-words").setValue(protCfgs.getNode("chat-protection", "censor", "action", "partial-words").getBoolean(false));
             protCfgs.getNode("chat-protection", "censor", "replace-words")
-                    .setValue(protCfgs.getNode("chat-protection", "censor", "replace-words").getList(TypeToken.of(String.class), Collections.singletonList("word")));
+                    .setValue(protCfgs.getNode("chat-protection", "censor", "replace-words").getList(of(String.class), Collections.singletonList("word")));
 
             protCfgs.getNode("chat-protection", "anti-ip", "enable").setValue(protCfgs.getNode("chat-protection", "anti-ip", "enable").getBoolean(true));
             protCfgs.getNode("chat-protection", "anti-ip", "custom-ip-regex").setValue(protCfgs.getNode("chat-protection", "anti-ip", "custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
             protCfgs.getNode("chat-protection", "anti-ip", "custom-url-regex").setValue(protCfgs.getNode("chat-protection", "anti-ip", "custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
             protCfgs.getNode("chat-protection", "anti-ip", "check-for-words")
-                    .setValue(protCfgs.getNode("chat-protection", "anti-ip", "check-for-words").getList(TypeToken.of(String.class), Collections.singletonList("www.google.com")));
+                    .setValue(protCfgs.getNode("chat-protection", "anti-ip", "check-for-words").getList(of(String.class), Collections.singletonList("www.google.com")));
             protCfgs.getNode("chat-protection", "anti-ip", "whitelist-words")
-                    .setValue(protCfgs.getNode("chat-protection", "anti-ip", "whitelist-words").getList(TypeToken.of(String.class), Arrays.asList("www.myserver.com", "prntscr.com", "gyazo.com", "www.youtube.com")));
+                    .setValue(protCfgs.getNode("chat-protection", "anti-ip", "whitelist-words").getList(of(String.class), Arrays.asList("www.myserver.com", "prntscr.com", "gyazo.com", "www.youtube.com")));
             protCfgs.getNode("chat-protection", "anti-ip", "cancel-or-replace").setValue(protCfgs.getNode("chat-protection", "anti-ip", "cancel-or-replace").getString("cancel"));
             protCfgs.getNode("chat-protection", "anti-ip", "cancel-msg").setValue(protCfgs.getNode("chat-protection", "anti-ip", "cancel-msg").getString("&cYou cant send websites or ips on chat"));
             protCfgs.getNode("chat-protection", "anti-ip", "replace-by-word").setValue(protCfgs.getNode("chat-protection", "anti-ip", "replace-by-word").getString("-removed-"));
@@ -469,6 +471,7 @@ public class RPConfig {
     public void loadPerWorlds(World w) {
         if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
             root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
+            saveConfig();
         }
 
         if (!root.region_settings.world_colors.containsKey(w.getName())) {
@@ -478,12 +481,16 @@ public class RPConfig {
                 root.region_settings.world_colors.put(w.getName(), "&c&l");
             } else if (w.getDimension().getType().equals(DimensionTypes.THE_END)) {
                 root.region_settings.world_colors.put(w.getName(), "&5&l");
+            } else {
+                root.region_settings.world_colors.put(w.getName(), "&a&l");
             }
             RedProtect.get().logger.warning("Added world to color list " + w.getName());
+            saveConfig();
         }
 
         if (!gflags.worlds.containsKey(w.getName())) {
             gflags.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
+            saveGFlags();
         }
     }
 
@@ -548,8 +555,17 @@ public class RPConfig {
 
     private void saveConfig() {
         try {
-            configRoot.setValue(TypeToken.of(MainCategory.class), root);
+            configRoot.setValue(of(MainCategory.class), root);
             cfgLoader.save(configRoot);
+        } catch (IOException | ObjectMappingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveGFlags() {
+        try {
+            gflagsRoot.setValue(of(GlobalFlagsCategory.class), gflags);
+            gFlagsLoader.save(gflagsRoot);
         } catch (IOException | ObjectMappingException e) {
             e.printStackTrace();
         }
@@ -558,9 +574,7 @@ public class RPConfig {
     public void save() {
         try {
             saveConfig();
-
-            gflagsRoot.setValue(TypeToken.of(GlobalFlagsCategory.class), gflags);
-            gFlagsLoader.save(gflagsRoot);
+            saveGFlags();
 
             ecoManager.save(ecoCfgs);
             protManager.save(protCfgs);
@@ -569,14 +583,12 @@ public class RPConfig {
         } catch (IOException e) {
             RedProtect.get().logger.severe("Problems during save file:");
             e.printStackTrace();
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
         }
     }
 
     public void saveGui() {
         try {
-            guiCfgRoot.setValue(TypeToken.of(FlagGuiCategory.class), guiRoot);
+            guiCfgRoot.setValue(of(FlagGuiCategory.class), guiRoot);
             guiLoader.save(guiCfgRoot);
         } catch (IOException | ObjectMappingException e) {
             RedProtect.get().logger.severe("Problems during save gui file:");
@@ -666,7 +678,7 @@ public class RPConfig {
 
     public List<String> getProtStringList(Object... key) {
         try {
-            return protCfgs.getNode(key).getList(TypeToken.of(String.class), new ArrayList<>());
+            return protCfgs.getNode(key).getList(of(String.class), new ArrayList<>());
         } catch (ObjectMappingException e) {
             e.printStackTrace();
         }
@@ -689,7 +701,7 @@ public class RPConfig {
     public List<Location> getSigns(String rid) {
         List<Location> locs = new ArrayList<>();
         try {
-            for (String s : signCfgs.getNode(rid).getList(TypeToken.of(String.class))) {
+            for (String s : signCfgs.getNode(rid).getList(of(String.class))) {
                 String[] val = s.split(",");
                 if (!Sponge.getServer().getWorld(val[0]).isPresent()) {
                     continue;
@@ -704,7 +716,7 @@ public class RPConfig {
 
     public void putSign(String rid, Location<World> loc) {
         try {
-            List<String> lsigns = signCfgs.getNode(rid).getList(TypeToken.of(String.class));
+            List<String> lsigns = signCfgs.getNode(rid).getList(of(String.class));
             String locs = loc.getExtent().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
             if (!lsigns.contains(locs)) {
                 lsigns.add(locs);
@@ -717,7 +729,7 @@ public class RPConfig {
 
     public void removeSign(String rid, Location<World> loc) {
         try {
-            List<String> lsigns = signCfgs.getNode(rid).getList(TypeToken.of(String.class));
+            List<String> lsigns = signCfgs.getNode(rid).getList(of(String.class));
             String locs = loc.getExtent().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
             if (lsigns.contains(locs)) {
                 lsigns.remove(locs);

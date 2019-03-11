@@ -101,9 +101,7 @@ public class RPAddProtection {
             if (!chatSpam.containsKey(p)) {
                 chatSpam.put(p, msg);
                 Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                    if (chatSpam.containsKey(p)) {
-                        chatSpam.remove(p);
-                    }
+                    chatSpam.remove(p);
                 }, RedProtect.get().cfgs.getProtInt("chat-protection", "antispam", "time-beteween-messages"), TimeUnit.SECONDS);
             } else if (!chatSpam.get(p).equalsIgnoreCase(msg)) {
                 p.sendMessage(RedProtect.get().cfgs.getProtMsg("chat-protection", "antispam", "colldown-msg"));
@@ -116,9 +114,7 @@ public class RPAddProtection {
                 msgSpam.put(msg, 1);
                 final String nmsg = msg;
                 Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                    if (msgSpam.containsKey(nmsg)) {
-                        msgSpam.remove(nmsg);
-                    }
+                    msgSpam.remove(nmsg);
                 }, RedProtect.get().cfgs.getProtInt("chat-protection", "antispam", "time-beteween-same-messages"), TimeUnit.SECONDS);
             } else {
                 msgSpam.put(msg, msgSpam.get(msg) + 1);

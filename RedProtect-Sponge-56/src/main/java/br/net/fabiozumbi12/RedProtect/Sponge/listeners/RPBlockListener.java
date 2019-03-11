@@ -176,10 +176,7 @@ public class RPBlockListener {
 
         //whitelist
         List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)) {
-            return false;
-        }
-        return true;
+        return wlt.isEmpty() || wlt.stream().anyMatch(type::matches);
     }
 
     private boolean canBreakList(World w, String type) {
@@ -189,10 +186,7 @@ public class RPBlockListener {
 
         //whitelist
         List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
-        if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)) {
-            return false;
-        }
-        return true;
+        return wlt.isEmpty() || wlt.stream().anyMatch(type::matches);
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)

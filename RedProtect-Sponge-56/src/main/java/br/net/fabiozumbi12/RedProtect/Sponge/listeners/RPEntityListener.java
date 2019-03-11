@@ -96,7 +96,7 @@ public class RPEntityListener {
             if (e instanceof Wither && cause.isPresent() && cause.get().equals(SpawnTypes.PLACEMENT)) {
                 Region r = RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName());
                 if (r != null && !r.canSpawnWhiter()) {
-                    event.isCancelled();
+                    event.setCancelled(true);
                     return;
                 }
             }

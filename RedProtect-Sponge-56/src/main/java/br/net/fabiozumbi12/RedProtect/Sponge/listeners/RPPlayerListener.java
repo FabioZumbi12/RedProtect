@@ -254,10 +254,8 @@ public class RPPlayerListener {
     }
 
     //listen all
-    @Listener(order = Order.FIRST, beforeModifications = true)
+    @Listener(order = Order.FIRST)
     public void onInteractBlock(InteractBlockEvent event, @First Player p) {
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - InteractBlockEvent canceled? " + event.isCancelled());
-
         BlockSnapshot b = event.getTargetBlock();
         BlockState bstate = b.getState();
         Location<World> l;
@@ -1014,9 +1012,7 @@ public class RPPlayerListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerLogout(ClientConnectionEvent.Disconnect e) {
         stopTaskPlayer(e.getTargetEntity());
-        if (RedProtect.get().tpWait.contains(e.getTargetEntity().getName())) {
-            RedProtect.get().tpWait.remove(e.getTargetEntity().getName());
-        }
+        RedProtect.get().tpWait.remove(e.getTargetEntity().getName());
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -1185,10 +1181,8 @@ public class RPPlayerListener {
         } else {
             String wel = r.getWelcome().replace("{r}", r.getName())
                     .replace("{p}", p.getName());
-            if (RedProtect.get().cfgs.root().notify.welcome_region_name)
-                SendWelcomeMsg(p, "&6" + r.getName() + ": &r" + wel);
-            else
-                SendWelcomeMsg(p, wel);
+            SendWelcomeMsg(p, RPLang.get("playerlistener.region.welcome")
+                    .replace("{region}", r.getName()).replace("{message}", wel));
         }
     }
 
