@@ -62,7 +62,7 @@ public class RPMine19 implements Listener {
         Block b = event.getClickedBlock();
         ItemStack itemInHand = event.getItem();
 
-        Location l = null;
+        Location l;
 
         if (b != null) {
             l = b.getLocation();
@@ -122,7 +122,7 @@ public class RPMine19 implements Listener {
         Entity proj = e.getProjectile();
         List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
 
-        if (proj != null && (proj instanceof TippedArrow)) {
+        if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;
             if (Pots.contains(arr.getBasePotionData().getType().name())) {
                 RPLang.sendMessage(p, "playerlistener.denypotion");

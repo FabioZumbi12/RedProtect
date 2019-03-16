@@ -44,7 +44,7 @@ public class RPEconomy {
         int minX = r.getMinMbrX();
         int maxZ = r.getMaxMbrZ();
         int minZ = r.getMinMbrZ();
-        int factor = 0;
+        int factor;
         for (int x = minX; x < maxX; x++) {
             for (int y = 0; y < 256; y++) {
                 for (int z = minZ; z < maxZ; z++) {

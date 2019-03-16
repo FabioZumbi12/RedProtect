@@ -106,7 +106,7 @@ public class Updater {
     // The provided callback (if any)
     private final UpdateCallback callback;
     // Project's Curse ID
-    private int id = -1;
+    private int id;
     // BukkitDev ServerMods API key
     private String apiKey = null;
 

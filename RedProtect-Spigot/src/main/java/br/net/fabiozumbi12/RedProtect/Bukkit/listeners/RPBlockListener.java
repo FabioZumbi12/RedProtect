@@ -336,7 +336,7 @@ public class RPBlockListener implements Listener {
         }
 
         try {
-            for (Block block : p.getLineOfSight(new HashSet<Material>(), 8)) {
+            for (Block block : p.getLineOfSight(new HashSet<>(), 8)) {
                 if (block == null) {
                     continue;
                 }

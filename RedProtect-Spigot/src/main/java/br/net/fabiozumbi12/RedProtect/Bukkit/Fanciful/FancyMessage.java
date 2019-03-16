@@ -511,7 +511,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * @param lines The lines of text which will be displayed to the client upon hovering.
      * @return This builder instance.
      */
-    public void tooltip(final String... lines) {
+    public FancyMessage tooltip(final String... lines) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
             builder.append(lines[i]);
@@ -520,6 +520,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             }
         }
         tooltip(builder.toString());
+        return this;
     }
 
     /**
@@ -613,9 +614,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * @return This builder instance.
      */
     public FancyMessage translationReplacements(final FancyMessage... replacements) {
-        for (FancyMessage str : replacements) {
-            latest().translationReplacements.add(str);
-        }
+        Collections.addAll(latest().translationReplacements, replacements);
 
         dirty = true;
 
@@ -639,8 +638,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * @param text The text which will populate the new message component.
      * @return This builder instance.
      */
-    public void then(final String text) {
-        then(rawText(text));
+    public FancyMessage then(final String text) {
+        return then(rawText(text));
     }
 
     /**
@@ -650,12 +649,13 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * @param text The text which will populate the new message component.
      * @return This builder instance.
      */
-    public void then(final TextualComponent text) {
+    public FancyMessage then(final TextualComponent text) {
         if (!latest().hasText()) {
             throw new IllegalStateException("previous message part has no text");
         }
         messageParts.add(new MessagePart(text));
         dirty = true;
+        return this;
     }
 
     /**

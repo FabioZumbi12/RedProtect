@@ -41,10 +41,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class EncompassRegionBuilder extends RegionBuilder {
 
@@ -74,7 +71,6 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
@@ -82,6 +78,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 return;
             }
         }
+        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
         if (regionName.length() < 3) {
@@ -113,7 +110,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
             for (int bi = 0; bi < block.length; ++bi) {
 
-                boolean validBlock = false;
+                boolean validBlock;
 
                 validBlock = (block[bi].getType().name().contains(RPConfig.getString("region-settings.block-id")));
                 if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {
@@ -143,7 +140,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     }
 
                     if (current.equals(first)) {
-                        List<String> leaders = new LinkedList<>();
+                        Set<String> leaders = new HashSet<>();
                         leaders.add(pName);
                         if (owner1 == null) {
                             e.setLine(2, "--");
@@ -194,7 +191,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
 
                         List<String> othersName = new ArrayList<>();
                         Region otherrg;
@@ -209,7 +206,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                        for (Region r : RedProtect.get().rm.getRegionsInChunks(region.getOccupiedChunks())) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));

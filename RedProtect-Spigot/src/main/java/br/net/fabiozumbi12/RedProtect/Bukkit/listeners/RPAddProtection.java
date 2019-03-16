@@ -67,9 +67,7 @@ public class RPAddProtection implements Listener {
             //check spam messages
             if (!chatSpam.containsKey(p)) {
                 chatSpam.put(p, msg);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-                    chatSpam.remove(p);
-                }, RPConfig.getProtInt("chat-protection.antispam.time-beteween-messages") * 20);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> chatSpam.remove(p), RPConfig.getProtInt("chat-protection.antispam.time-beteween-messages") * 20);
             } else if (!chatSpam.get(p).equalsIgnoreCase(msg)) {
                 p.sendMessage(RPConfig.getProtMsg("chat-protection.antispam.colldown-msg"));
                 e.setCancelled(true);

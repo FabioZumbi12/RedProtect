@@ -27,6 +27,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandException;
@@ -44,13 +45,14 @@ class WorldMySQLRegionManager implements WorldRegionManager {
     private final String dbname = RPConfig.getString("mysql.db-name");
     private final boolean tblexists = false;
     private final String tableName;
-    private final ConcurrentHashMap<String, Region> regions;
+    private final ConcurrentHashMap<String, Region> regions = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Chunk, Set<Region>> chunksMap = new ConcurrentHashMap<>();
+
     private final World world;
     private Connection dbcon;
 
     public WorldMySQLRegionManager(World world) throws SQLException {
         super();
-        this.regions = new ConcurrentHashMap<>();
         this.world = world;
         this.tableName = RPConfig.getString("mysql.table-prefix") + world.getName();
 
@@ -275,9 +277,9 @@ class WorldMySQLRegionManager implements WorldRegionManager {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 RedProtect.get().logger.debug("Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
-                List<String> leaders = new ArrayList<>();
-                List<String> admins = new ArrayList<>();
-                List<String> members = new ArrayList<>();
+                Set<String> leaders = new HashSet<>();
+                Set<String> admins = new HashSet<>();
+                Set<String> members = new HashSet<>();
                 HashMap<String, Object> flags = new HashMap<>();
 
                 int maxMbrX = rs.getInt("maxMbrX");
@@ -344,13 +346,24 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                     }
                 }
                 Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
-                regions.put(rname, newr);
+                register(newr);
             }
             st.close();
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void register(Region region) {
+        // Add to name-region map
+        regions.put(region.getName(), region);
+
+        // Add to chunk-set<regions> map
+        region.getOccupiedChunks().forEach(chunk -> chunksMap
+                .computeIfAbsent(chunk, k -> new HashSet<>())
+                .add(region)
+        );
     }
 
     /*---------------------------------------------------------------------------------*/
@@ -407,9 +420,9 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    List<String> leaders = new ArrayList<>();
-                    List<String> admins = new ArrayList<>();
-                    List<String> members = new ArrayList<>();
+                    Set<String> leaders = new HashSet<>();
+                    Set<String> admins = new HashSet<>();
+                    Set<String> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -510,6 +523,10 @@ class WorldMySQLRegionManager implements WorldRegionManager {
         return ret;
     }
 
+    @Override
+    public Set<Region> getRegionsInChunk(Chunk chunk) {
+        return chunksMap.getOrDefault(chunk, new HashSet<>());
+    }
     private boolean regionExists(String name) {
         int total = 0;
         try {

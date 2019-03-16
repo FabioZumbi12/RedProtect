@@ -347,7 +347,7 @@ public class RPGlobalListener implements Listener {
         Player p = e.getPlayer();
         Block b = e.getClickedBlock();
         ItemStack itemInHand = e.getItem();
-        Location l = null;
+        Location l;
 
         if (b != null) {
             l = b.getLocation();

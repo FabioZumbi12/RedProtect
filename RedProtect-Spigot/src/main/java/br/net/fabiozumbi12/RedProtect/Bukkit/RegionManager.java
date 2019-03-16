@@ -165,23 +165,18 @@ public class RegionManager {
         return ret;
     }
 
-    public Set<Region> getRegionsForChunk(Chunk chunk) {
-        Set<Region> regions = new HashSet<>();
-        for (Region region : RedProtect.get().rm.getRegionsByWorld(chunk.getWorld())) {
-            int minChunkX = (int) Math.floor(region.getMinMbrX() / 16f);
-            int maxChunkX = (int) Math.floor(region.getMaxMbrX() / 16f);
-            int minChunkZ = (int) Math.floor(region.getMinMbrZ() / 16f);
-            int maxChunkZ = (int) Math.floor(region.getMaxMbrZ() / 16f);
-
-            if (chunk.getX() >= minChunkX && chunk.getX() <= maxChunkX && chunk.getZ() >= minChunkZ && chunk.getZ() <= maxChunkZ) {
-                regions.add(region);
-            }
-        }
-        return regions;
+    public Set<Region> getRegionsInChunk(Chunk chunk) {
+        return regionManagers.get(chunk.getWorld()).getRegionsInChunk(chunk);
     }
 
-    public Set<Region> getRegionsNear(Player player, int i, World w) {
-        return this.regionManagers.get(w).getRegionsNear(player, i);
+    public Set<Region> getRegionsInChunks(Iterable<Chunk> chunks) {
+        Set<Region> set = new HashSet<>();
+        chunks.forEach(chunk -> set.addAll(getRegionsInChunk(chunk)));
+        return set;
+    }
+
+    public Set<Region> getRegionsNear(Player player, int i) {
+        return regionManagers.get(player.getWorld()).getRegionsNear(player, i);
     }
 
     public Set<Region> getRegions(String player, World w) {
@@ -197,7 +192,7 @@ public class RegionManager {
 
     public int getPlayerRegions(String player, World w) {
         player = RPUtil.PlayerToUUID(player);
-        int size = 0;
+        int size;
         if (RPConfig.getBool("region-settings.claimlimit-per-world")) {
             size = getRegions(player, w).size();
         } else {

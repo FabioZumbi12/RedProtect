@@ -165,10 +165,10 @@ public class RPSchematics {
             return;
         }
 
-        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), Collections.singletonList(pName), new int[]{pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX()}, new int[]{pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ()}, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
+        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), Collections.singleton(pName), new int[]{pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX()}, new int[]{pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ()}, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
 
         List<String> othersName = new ArrayList<>();
-        Region otherrg = null;
+        Region otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
@@ -178,7 +178,7 @@ public class RPSchematics {
         }
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+        for (Region r : RedProtect.get().rm.getRegionsInChunks(region.getOccupiedChunks())) {
             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
@@ -216,7 +216,7 @@ public class RPSchematics {
 
         //check cost per block
         if (RPConfig.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
-            Double peco = RedProtect.get().econ.getBalance(p);
+            double peco = RedProtect.get().econ.getBalance(p);
             long reco = region.getArea() * RPConfig.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RPConfig.getEcoBool("claim-cost-per-block.y-is-free")) {
