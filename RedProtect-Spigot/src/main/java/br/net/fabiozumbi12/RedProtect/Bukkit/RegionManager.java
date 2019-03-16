@@ -33,6 +33,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -96,17 +97,17 @@ public class RegionManager {
         return saved;
     }
 
-    public Region getRegion(String rname, World w) {
+    public @Nullable Region getRegion(String rname, World w) {
         return this.regionManagers.get(w).getRegion(rname);
     }
 
-    public Region getRegionById(String rid) {
+    public @Nullable Region getRegionById(String rid) {
         if (rid == null) return null;
         World w = Bukkit.getWorld(rid.split("@")[1]);
         return this.regionManagers.get(w).getRegion(rid.split("@")[0]);
     }
 
-    public Region getRegion(String rname, String w) {
+    public @Nullable Region getRegion(String rname, String w) {
         return this.regionManagers.get(Bukkit.getWorld(w)).getRegion(rname);
     }
 
@@ -287,7 +288,7 @@ public class RegionManager {
      * @param loc Location
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public Region getTopRegion(Location loc) {
+    public @Nullable Region getTopRegion(Location loc) {
         if (bLoc.containsKey(loc.getBlock().getLocation())) {
             RedProtect.get().logger.debug("Get from cache");
             return bLoc.get(loc.getBlock().getLocation());
@@ -320,7 +321,7 @@ public class RegionManager {
      * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public Region getTopRegion(World w, int x, int y, int z) {
+    public @Nullable Region getTopRegion(World w, int x, int y, int z) {
         return getTopRegion(new Location(w, x, y, z));
     }
 
@@ -333,7 +334,7 @@ public class RegionManager {
      * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public Region getLowRegion(World w, int x, int y, int z) {
+    public @Nullable Region getLowRegion(World w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -346,7 +347,7 @@ public class RegionManager {
      *
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public Region getLowRegion(Location loc) {
+    public @Nullable Region getLowRegion(Location loc) {
         if (!this.regionManagers.containsKey(loc.getWorld())) {
             return null;
         }

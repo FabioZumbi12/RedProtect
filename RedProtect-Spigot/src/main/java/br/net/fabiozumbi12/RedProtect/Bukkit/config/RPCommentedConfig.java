@@ -272,8 +272,6 @@ public class RPCommentedConfig {
         setDefault("performance", null, null);
         setDefault("performance.disable-onPlayerMoveEvent-handler", false, "Disable player move event to improve performance? Note: Disabling this will make some flags do not work, like deny enter, execute commands and effects.");
         setDefault("performance.piston.disable-PistonEvent-handler", false, "Disable piston listener? Disabling this will allow players to get blocks from protected regions to unprotected using pistons.");
-        setDefault("performance.piston.use-piston-restricter", false, null);
-        setDefault("performance.piston.restrict-piston-event", 10, "Fire the piston extract/retract every x ticks. Server default is 1 tick/event. Value in ticks (20 ticks = 1 sec)");
 
         setDefault("schematics", null, "This is the schematics configs for RedProtect.\n");
         setDefault("schematics.first-house-file", "house1.schematic", "Schematic file name to use with /rp start.");
