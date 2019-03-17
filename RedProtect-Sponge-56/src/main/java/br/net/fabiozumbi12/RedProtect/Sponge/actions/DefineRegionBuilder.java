@@ -36,11 +36,13 @@ import org.spongepowered.api.world.World;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DefineRegionBuilder extends RegionBuilder {
 
-    public DefineRegionBuilder(Player p, Location<World> loc1, Location<World> loc2, String regionName, String leader, List<String> leaders, boolean admin) {
+    public DefineRegionBuilder(Player p, Location<World> loc1, Location<World> loc2, String regionName, String leader, Set<String> leaders, boolean admin) {
         if (!RedProtect.get().cfgs.isAllowedWorld(p)) {
             this.setError(p, RPLang.get("regionbuilder.region.worldnotallowed"));
             return;
@@ -54,7 +56,7 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         //filter region name
         regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
-        if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
+        if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 RPLang.sendMessage(p, "regionbuilder.autoname.error");
@@ -104,7 +106,7 @@ public class DefineRegionBuilder extends RegionBuilder {
                 maxy = RedProtect.get().cfgs.root().region_settings.claim.maxy;
         }
 
-        Region region = new Region(regionName, new ArrayList<>(), new ArrayList<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), wmsg, 0, null, true);
+        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), wmsg, 0, null, true);
 
         region.setPrior(RPUtil.getUpdatedPrior(region));
 

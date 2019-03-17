@@ -1158,15 +1158,17 @@ public class RPPlayerListener {
             return;
         }
 
-        String leaderstring = "";
+        String leaderstring;
         String m = "";
         //Enter-Exit notifications
         if (r.getWelcome().equals("")) {
             if (RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("CHAT") ||
                     RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
-                for (int i = 0; i < r.getLeaders().size(); ++i) {
-                    leaderstring = leaderstring + ", " + RPUtil.UUIDtoPlayer(r.getLeaders().get(i));
+                StringBuilder leaderstringBuilder = new StringBuilder();
+                for (String leader : r.getLeaders()) {
+                    leaderstringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(leader));
                 }
+                leaderstring = leaderstringBuilder.toString();
 
                 if (r.getLeaders().size() > 0) {
                     leaderstring = leaderstring.substring(2);

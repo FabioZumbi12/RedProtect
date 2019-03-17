@@ -946,7 +946,7 @@ public class RPCommands implements CommandCallable {
                 String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                 String name = RPUtil.nameGen(serverName, player.getWorld().getName());
 
-                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new LinkedList<>(), true);
+                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
@@ -971,7 +971,7 @@ public class RPCommands implements CommandCallable {
                 if (!RedProtect.get().OnlineMode) {
                     leader = player.getName().toLowerCase();
                 }
-                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new LinkedList<>(), false);
+                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
@@ -1138,7 +1138,7 @@ public class RPCommands implements CommandCallable {
                 String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                 String name = args[1].replace("/", "|");
 
-                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new LinkedList<>(), true);
+                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
@@ -1164,7 +1164,7 @@ public class RPCommands implements CommandCallable {
                 if (!RedProtect.get().OnlineMode) {
                     leader = player.getName().toLowerCase();
                 }
-                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new LinkedList<>(), false);
+                RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
@@ -1285,7 +1285,7 @@ public class RPCommands implements CommandCallable {
                 }
                 String name = args[1].replace("/", "|");
                 String leader = player.getUniqueId().toString();
-                List<String> addedAdmins = new ArrayList<>();
+                Set<String> addedAdmins = new HashSet<>();
                 addedAdmins.add(RPUtil.PlayerToUUID(args[2]));
                 if (!RedProtect.get().OnlineMode) {
                     leader = player.getName().toLowerCase();
@@ -1352,17 +1352,16 @@ public class RPCommands implements CommandCallable {
                 String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                 String name = args[1].replace("/", "|");
 
-                Region r2;
+                Region r2 = RedProtect.get().rm.getRegion(name, w.get());
 
-                if (RedProtect.get().rm.getRegion(name, w.get()) != null) {
-                    r2 = RedProtect.get().rm.getRegion(name, w.get());
+                if (r2 != null) {
                     RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));
                     RPLang.sendMessage(player, "cmdmanager.region.portalhint");
                     r2.setFlag(RedProtect.get().getPVHelper().getCause(sender), "set-portal", args[2] + " " + w.get().getName());
 
                     RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " CREATED A PORTAL " + r2.getName() + " to " + args[2] + " world " + w.get().getName());
                 } else {
-                    RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new ArrayList<>(), true);
+                    RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
                     if (rb2.ready()) {
                         r2 = rb2.build();
                         RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.get().getName()));

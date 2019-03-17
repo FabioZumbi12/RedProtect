@@ -111,7 +111,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                         fileDB = regionManager.createEmptyNode();
                     }
 
-                    fileDB = RPUtil.addProps(fileDB, r);
+                    RPUtil.addProps(fileDB, r);
                     saved++;
 
                     if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
@@ -199,7 +199,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     private void load(String path) {
-        String world = this.getWorld().getName();
+        World world = this.getWorld();
 
         if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: conf");

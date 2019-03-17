@@ -123,7 +123,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                         datf = new File(pathData, world + File.separator + r.getName() + ".yml");
                     }
 
-                    fileDB = RPUtil.addProps(fileDB, r);
+                    RPUtil.addProps(fileDB, r);
                     saved++;
 
                     if (RPConfig.getBool("flat-file.region-per-file")) {

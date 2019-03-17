@@ -286,9 +286,9 @@ class WorldMySQLRegionManager implements WorldRegionManager {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
-                List<String> leaders = new ArrayList<>();
-                List<String> admins = new ArrayList<>();
-                List<String> members = new ArrayList<>();
+                Set<String> leaders = new HashSet<>();
+                Set<String> admins = new HashSet<>();
+                Set<String> members = new HashSet<>();
                 HashMap<String, Object> flags = new HashMap<>();
 
                 int maxMbrX = rs.getInt("maxMbrX");
@@ -332,14 +332,14 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                 try {
                     if (rs.getString("owners") != null) {
                         for (String owner : rs.getString("owners").split(", ")) {
-                            if (owner.length() > 0 && !leaders.contains(owner)) {
+                            if (owner.length() > 0) {
                                 leaders.add(owner);
                             }
                         }
                     }
                     if (rs.getString("creator") != null) {
                         String creator = rs.getString("creator");
-                        if (creator.length() > 0 && !leaders.contains(creator)) {
+                        if (creator.length() > 0) {
                             leaders.add(creator);
                         }
                     }
@@ -419,9 +419,9 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    List<String> leaders = new ArrayList<>();
-                    List<String> admins = new ArrayList<>();
-                    List<String> members = new ArrayList<>();
+                    Set<String> leaders = new HashSet<>();
+                    Set<String> admins = new HashSet<>();
+                    Set<String> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");

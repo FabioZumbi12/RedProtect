@@ -47,10 +47,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class EncompassRegionBuilder extends RegionBuilder {
 
@@ -149,7 +146,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     }
 
                     if (current.equals(first)) {
-                        LinkedList<String> leaders = new LinkedList<>();
+                        Set<String> leaders = new HashSet<>();
                         leaders.add(pName);
                         if (owner1 == null) {
                             sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(2, RPUtil.toText("--"))));
@@ -200,7 +197,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new LinkedList<>(), new LinkedList<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
 
                         List<String> othersName = new ArrayList<>();
                         Region otherrg;

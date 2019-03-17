@@ -2673,10 +2673,9 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                 String serverName = RPConfig.getString("region-settings.default-leader");
                 String name = args[1].replace("/", "|");
 
-                Region r2;
+                Region r2 = RedProtect.get().rm.getRegion(name, w);
 
-                if (RedProtect.get().rm.getRegion(name, w) != null) {
-                    r2 = RedProtect.get().rm.getRegion(name, w);
+                if (r2 != null) {
                     RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[2], w.getName()));
                     RPLang.sendMessage(player, "cmdmanager.region.portalhint");
                     r2.setFlag(sender, "set-portal", args[2] + " " + w.getName());

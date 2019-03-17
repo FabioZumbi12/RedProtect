@@ -307,13 +307,12 @@ public class RPUtil {
 
     //TODO read all db
     static void ReadAllDB(Set<Region> regions) {
-        int i = 0;
+        //int i = 0;
         int pls = 0;
         int origupdt = 0;
         int namesupdt = 0;
         int purged = 0;
         int sell = 0;
-        int dateint = 0;
         int cfm = 0;
         int delay = 0;
         int skipped = 0;
@@ -597,36 +596,22 @@ public class RPUtil {
             RedProtect.get().logger.sucess("[" + cfm + "] Region names conformed!");
         }
 
-        if (dateint > 0) {
-            RedProtect.get().logger.info("Updated " + dateint + " last visit users!");
-            RedProtect.get().rm.saveAll();
-        }
-
-        if (i > 0 || pls > 0) {
-            if (i > pls) {
-                RedProtect.get().logger.sucess("Updated a total of &6&l" + (i - pls) + "&a&l regions!");
-            } else {
-                RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls - i) + "&a&l regions!");
-            }
+        if (pls > 0) {
+            RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls) + "&a&l regions!");
             RedProtect.get().rm.saveAll();
             RedProtect.get().logger.sucess("Regions saved!");
-            pls = 0;
-            i = 0;
         }
 
         if (skipped > 0) {
             RedProtect.get().logger.sucess(skipped + " regions skipped due to max size limit to regen!");
-            skipped = 0;
         }
 
         if (purged > 0) {
             RedProtect.get().logger.sucess("Purged a total of &6" + purged + "&a regions!");
-            purged = 0;
         }
 
         if (sell > 0) {
             RedProtect.get().logger.sucess("Put to sell a total of &6" + sell + "&a regions!");
-            sell = 0;
         }
         regions.clear();
     }
@@ -813,7 +798,7 @@ public class RPUtil {
                         datf = new File(pathData, world.getName() + File.separator + r.getName() + ".yml");
                     }
 
-                    fileDB = RPUtil.addProps(fileDB, r);
+                    RPUtil.addProps(fileDB, r);
                     saved++;
 
                     if (RPConfig.getBool("flat-file.region-per-file")) {
@@ -1208,6 +1193,7 @@ public class RPUtil {
             tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                     Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
         }
+
         //compatibility ------>                
         if (fileDB.contains(rname + ".creator")) {
             String creator = fileDB.getString(rname + ".creator");
@@ -1218,6 +1204,7 @@ public class RPUtil {
             admins.remove(fileDB.getString(rname + ".creator"));
         }
         //compatibility <------
+
         RPUtil.fixdbFlags(fileDB, rname);
         Region newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
         for (String flag : RPConfig.getDefFlags()) {
@@ -1235,7 +1222,7 @@ public class RPUtil {
         return newr;
     }
 
-    public static YamlConfiguration addProps(YamlConfiguration fileDB, Region r) {
+    public static void addProps(YamlConfiguration fileDB, Region r) {
         RedProtect.get().logger.debug("Region ID: " + r.getID());
         RedProtect.get().logger.debug("Region: " + r.getName());
         String rname = r.getName();
@@ -1269,7 +1256,6 @@ public class RPUtil {
         } else {
             fileDB.set(rname + ".tppoint", "");
         }
-        return fileDB;
     }
 
     public static int SingleToFiles() {
@@ -1286,7 +1272,8 @@ public class RPUtil {
                 File wf = new File(pathData, w.getName() + File.separator + r.getName() + ".yml");
 
                 saved++;
-                saveYaml(addProps(fileDB, r), wf);
+                addProps(fileDB, r);
+                saveYaml(fileDB, wf);
             }
 
             File oldf = new File(pathData + "data_" + w.getName() + ".yml");

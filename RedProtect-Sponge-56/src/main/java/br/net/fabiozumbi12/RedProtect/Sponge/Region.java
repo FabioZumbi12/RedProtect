@@ -67,9 +67,9 @@ public class Region implements Serializable {
     private int maxY;
     private int prior;
     private String name;
-    private List<String> leaders;
-    private List<String> admins;
-    private List<String> members;
+    private Set<String> leaders;
+    private Set<String> admins;
+    private Set<String> members;
     private String wMessage;
     private String world;
     private String date;
@@ -99,7 +99,7 @@ public class Region implements Serializable {
      * @param date      Date of latest visit of an admin or leader.
      * @param value     Last value of this region.
      */
-    public Region(String name, List<String> admins, List<String> members, List<String> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
+    public Region(String name, Set<String> admins, Set<String> members, Set<String> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
         super();
         this.x = new int[]{minMbrX, minMbrX, maxMbrX, maxMbrX};
         this.z = new int[]{minMbrZ, minMbrZ, maxMbrZ, maxMbrZ};
@@ -155,7 +155,7 @@ public class Region implements Serializable {
      * @param welcome   Set a welcome message.
      * @param value     A value in server economy.
      */
-    public Region(String name, List<String> admins, List<String> members, List<String> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location<World> tppoint, boolean candel) {
+    public Region(String name, Set<String> admins, Set<String> members, Set<String> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location<World> tppoint, boolean candel) {
         super();
         this.prior = prior;
         this.world = worldName;
@@ -224,9 +224,9 @@ public class Region implements Serializable {
         this.minMbrZ = min.getBlockZ();
         this.maxY = max.getBlockY();
         this.minY = min.getBlockY();
-        this.admins = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.leaders = Arrays.asList(RedProtect.get().cfgs.root().region_settings.default_leader);
+        this.admins = new HashSet<>();
+        this.members = new HashSet<>();
+        this.leaders = Collections.singleton(RedProtect.get().cfgs.root().region_settings.default_leader);
         this.flags = RedProtect.get().cfgs.getDefFlagsValues();
         this.canDelete = true;
         this.world = world;
@@ -507,11 +507,11 @@ public class Region implements Serializable {
      * @return {@code List<String>}
      */
     @Deprecated()
-    public List<String> getAdmins() {
+    public Set<String> getAdmins() {
         return this.admins;
     }
 
-    public void setAdmins(List<String> admins) {
+    public void setAdmins(Set<String> admins) {
         setToSave(true);
         this.admins = admins;
         RedProtect.get().rm.updateLiveRegion(this, "admins", admins.toString().replace("[", "").replace("]", ""));
@@ -525,11 +525,11 @@ public class Region implements Serializable {
      * @return {@code List<String>}
      */
     @Deprecated
-    public List<String> getMembers() {
+    public Set<String> getMembers() {
         return this.members;
     }
 
-    public void setMembers(List<String> members) {
+    public void setMembers(Set<String> members) {
         setToSave(true);
         this.members = members;
         RedProtect.get().rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
@@ -543,11 +543,11 @@ public class Region implements Serializable {
      * @return {@code List<String>}
      */
     @Deprecated
-    public List<String> getLeaders() {
+    public Set<String> getLeaders() {
         return this.leaders;
     }
 
-    public void setLeaders(List<String> leaders) {
+    public void setLeaders(Set<String> leaders) {
         setToSave(true);
         this.leaders = leaders;
         RedProtect.get().rm.updateLiveRegion(this, "leaders", leaders.toString().replace("[", "").replace("]", ""));
@@ -597,9 +597,13 @@ public class Region implements Serializable {
     }
 
     public Text info() {
-        String leadersstring = "";
-        String adminstring = "";
-        String memberstring = "";
+        final StringBuilder leaderStringBuilder = new StringBuilder();
+        final StringBuilder adminStringBuilder = new StringBuilder();
+        final StringBuilder memberStringBuilder = new StringBuilder();
+        String leaderString = "None";
+        String adminString = "None";
+        String memberString = "None";
+
         String wMsgTemp;
         String IsTops = RPLang.translBool(isOnTop());
         String today;
@@ -611,38 +615,23 @@ public class Region implements Serializable {
             colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(this.world);
         }
 
-        for (int i = 0; i < this.leaders.size(); ++i) {
-            if (this.leaders.get(i) == null) {
-                this.leaders.remove(i);
-            }
-            leadersstring = leadersstring + ", " + RPUtil.UUIDtoPlayer(this.leaders.get(i));
-        }
-        for (int i = 0; i < this.admins.size(); ++i) {
-            if (this.admins.get(i) == null) {
-                this.admins.remove(i);
-            }
-            adminstring = adminstring + ", " + RPUtil.UUIDtoPlayer(this.admins.get(i));
-        }
-        for (int i = 0; i < this.members.size(); ++i) {
-            if (this.members.get(i) == null) {
-                this.members.remove(i);
-            }
-            memberstring = memberstring + ", " + RPUtil.UUIDtoPlayer(this.members.get(i));
-        }
+        leaders.removeIf(Objects::isNull);
+        leaders.forEach(leader -> leaderStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(leader)));
+
+        admins.removeIf(Objects::isNull);
+        admins.forEach(admin -> adminStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(admin)));
+
+        members.removeIf(Objects::isNull);
+        members.forEach(member -> adminStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(member)));
+
         if (this.leaders.size() > 0) {
-            leadersstring = leadersstring.substring(2);
-        } else {
-            leadersstring = "None";
+            leaderString = leaderStringBuilder.delete(0, 2).toString();
         }
         if (this.admins.size() > 0) {
-            adminstring = adminstring.substring(2);
-        } else {
-            adminstring = "None";
+            adminString = adminStringBuilder.delete(0, 2).toString();
         }
         if (this.members.size() > 0) {
-            memberstring = memberstring.substring(2);
-        } else {
-            memberstring = "None";
+            memberString = memberStringBuilder.delete(0, 2).toString();
         }
         if (this.wMessage == null || this.wMessage.equals("")) {
             wMsgTemp = RPLang.get("region.welcome.notset");
@@ -694,8 +683,8 @@ public class Region implements Serializable {
                 RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPEconomy.getFormatted(this.value) + "\n" +
                 RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
                 RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
-                RPLang.get("region.leaders") + " " + leadersstring + "\n" +
-                RPLang.get("region.admins") + " " + adminstring + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberstring + "\n" +
+                RPLang.get("region.leaders") + " " + leaderString + "\n" +
+                RPLang.get("region.admins") + " " + adminString + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberString + "\n" +
                 RPLang.get("region.date") + " " + today + "\n" +
                 dynmapInfo +
                 RPLang.get("region.welcome.msg") + " " + wMsgTemp);
@@ -1529,15 +1518,14 @@ public class Region implements Serializable {
     }
 
     public String getLeadersDesc() {
-        if (this.leaders.isEmpty()) {
+        if (this.leaders.size() == 0) {
             addLeader(RedProtect.get().cfgs.root().region_settings.default_leader);
-            return this.leaders.get(0);
         }
         StringBuilder leaderList = new StringBuilder();
         for (String leader : this.leaders) {
             leaderList.append(", ").append(RPUtil.UUIDtoPlayer(leader));
         }
-        return "[" + leaderList.toString().substring(2) + "]";
+        return "[" + leaderList.delete(0, 2).toString() + "]";
     }
 
     public boolean sameLeaders(Region r) {
