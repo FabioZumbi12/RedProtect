@@ -95,10 +95,9 @@ public class RPPlayerListener {
     public RPPlayerListener() {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Loaded RPPlayerListener...");
     }
-/*
+
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPressPlateChange(CollideBlockEvent e, @First Player p) {
-
         if (e.getTargetBlock().getName().contains("pressure_plate")) {
             Location<World> loc = e.getTargetLocation();
             Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
@@ -108,7 +107,7 @@ public class RPPlayerListener {
             }
         }
     }
-*/
+
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onConsume(UseItemStackEvent.Start e, @First Player p) {
         ItemStack stack = e.getItemStackInUse().createStack();
