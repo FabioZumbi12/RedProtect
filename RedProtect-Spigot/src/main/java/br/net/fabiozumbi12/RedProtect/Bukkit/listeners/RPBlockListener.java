@@ -508,11 +508,11 @@ public class RPBlockListener implements Listener {
             e.setCancelled(true);
             return;
         }
-
         if (rto != null && !bto.isEmpty() && !rto.FlowDamage()) {
             e.setCancelled(true);
             return;
         }
+        RedProtect.get().logger.severe("RPBlockListener - Is BlockFromToEvent event is to " + bto.getType().name() + " from " + bfrom.getType().name());
 
         //deny blocks spread in/out regions
         if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)) {

@@ -120,12 +120,6 @@ public class RPGui implements Listener {
                 }
 
                 this.guiItems[i] = RPConfig.getGuiItemStack(flag);
-				/*
-				if (RedProtect.get().PLib && allowEnchant){
-					this.guiItems[i] = RPProtocolLib.removeAttributes(RPConfig.getGuiItemStack(flag));
-				} else {
-					this.guiItems[i] = RPConfig.getGuiItemStack(flag);
-				}*/
                 ItemMeta guiMeta = this.guiItems[i].getItemMeta();
                 guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag, "name"));
                 guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + fvalue, "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));

@@ -1169,7 +1169,8 @@ public class RPPlayerListener implements Listener {
         Player p = e.getPlayer();
         stopTaskPlayer(p);
         RedProtect.get().tpWait.remove(p.getName());
-        RedProtect.get().openGuis.remove(p.getName());
+        Region out = RedProtect.get().rm.getTopRegion(p.getLocation());
+        if (out != null) RedProtect.get().openGuis.remove(out.getID());
         RedProtect.get().alWait.remove(p);
         String worldneeded = RPConfig.getString("server-protection.teleport-player.on-leave.need-world-to-teleport");
         if (RPConfig.getBool("server-protection.teleport-player.on-leave.enable") &&

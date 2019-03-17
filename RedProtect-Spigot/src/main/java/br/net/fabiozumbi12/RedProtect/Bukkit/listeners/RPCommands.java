@@ -471,10 +471,6 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                     }
                 }
 
-                if (r.flagExists("for-sale") && flag.equalsIgnoreCase("for-sale")) {
-                    RPLang.sendMessage(p, "cmdmanager.eco.changeflag");
-                    return;
-                }
             	/*
             	if (RPConfig.getDefFlagsValues().containsKey("clan") && !RedProtect.get().ph.hasPerm(p, "RedProtect.get().admin.flag.clan")){
             		RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
