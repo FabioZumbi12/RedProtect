@@ -158,9 +158,7 @@ public class RPLang {
         }
 
         DelayedMessage.put(p, key);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            DelayedMessage.remove(p);
-        }, 20);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> DelayedMessage.remove(p), 20);
     }
 
     public static void sendMessage(CommandSender sender, String key) {

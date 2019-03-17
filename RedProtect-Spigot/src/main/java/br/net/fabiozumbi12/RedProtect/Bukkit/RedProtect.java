@@ -281,7 +281,7 @@ public class RedProtect extends JavaPlugin {
         openGuis.clear();
         Bukkit.getScheduler().cancelTasks(this);
         logger.SaveLogs();
-        logger.severe(pdf.getFullName() + " turn off...");
+        logger.info(pdf.getFullName() + " turn off...");
     }
 
     private void startLoad() {

@@ -59,6 +59,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.PressurePlate;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
@@ -105,20 +106,6 @@ public class RPPlayerListener implements Listener {
         } catch (IllegalStateException ignored) {
         }
         return null;
-    }
-
-    @EventHandler
-    public void onPressPlateChange(PlayerInteractEvent e) {
-        if (e.getAction() == Action.PHYSICAL) {
-            if (e.getClickedBlock().getType().name().contains("_PLATE")) {
-                Location loc = e.getClickedBlock().getLocation();
-                Region r = RedProtect.get().rm.getTopRegion(loc);
-                if (r != null && !r.allowPressPlate(e.getPlayer())) {
-                    e.setCancelled(true);
-                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantpressplate");
-                }
-            }
-        }
     }
 
     @EventHandler
@@ -298,7 +285,12 @@ public class RPPlayerListener implements Listener {
 
             //if (r != null) && (b != null) >>
             if (b != null) {
-                if (b.getType().equals(Material.DRAGON_EGG) ||
+                if (b.getState().getData() instanceof PressurePlate) {
+                    if (!r.allowPressPlate(p)){
+                        RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
+                        event.setCancelled(true);
+                    }
+                } else if (b.getType().equals(Material.DRAGON_EGG) ||
                         b.getType().name().equalsIgnoreCase("BED") ||
                         b.getType().name().contains("NOTE_BLOCK") ||
                         b.getType().name().contains("CAKE")) {
@@ -426,6 +418,7 @@ public class RPPlayerListener implements Listener {
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
                 } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
+                    RedProtect.get().logger.severe("Passou aqui!");
                     RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                     event.setUseInteractedBlock(Event.Result.DENY);

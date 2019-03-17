@@ -95,7 +95,7 @@ public class RPPlayerListener {
     public RPPlayerListener() {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Loaded RPPlayerListener...");
     }
-
+/*
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPressPlateChange(CollideBlockEvent e, @First Player p) {
 
@@ -108,7 +108,7 @@ public class RPPlayerListener {
             }
         }
     }
-
+*/
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onConsume(UseItemStackEvent.Start e, @First Player p) {
         ItemStack stack = e.getItemStackInUse().createStack();
@@ -324,7 +324,12 @@ public class RPPlayerListener {
         } else { //if r != null >>       	
 
             //if (r != null) && (b != null) >>
-            if (bstate.getType().equals(BlockTypes.DRAGON_EGG) ||
+            if (b.getState().getType().getName().contains("_pressure_plate")){
+                if (!r.allowPressPlate(p)){
+                    event.setCancelled(true);
+                    RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
+                }
+            } else if (bstate.getType().equals(BlockTypes.DRAGON_EGG) ||
                     bstate.getType().equals(BlockTypes.BED) ||
                     bstate.getType().equals(BlockTypes.NOTEBLOCK) ||
                     bstate.getType().getName().contains("repeater") ||
