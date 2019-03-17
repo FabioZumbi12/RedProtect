@@ -720,7 +720,7 @@ public class RPUtil {
         return obj;
     }
 
-    private static YamlConfiguration fixdbFlags(YamlConfiguration db, String rname) {
+    private static void fixdbFlags(YamlConfiguration db, String rname) {
         if (db.contains(rname + ".flags.mobs")) {
             db.set("spawn-monsters", db.get(rname + ".flags.mobs"));
             db.set(rname + ".flags.mobs", null);
@@ -729,7 +729,6 @@ public class RPUtil {
             db.set("spawn-animals", db.get(rname + ".flags.spawnpassives"));
             db.set(rname + ".flags.spawnpassives", null);
         }
-        return db;
     }
 
     public static boolean mysqlToYml() {
@@ -1219,7 +1218,7 @@ public class RPUtil {
             admins.remove(fileDB.getString(rname + ".creator"));
         }
         //compatibility <------
-        fileDB = RPUtil.fixdbFlags(fileDB, rname);
+        RPUtil.fixdbFlags(fileDB, rname);
         Region newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
         for (String flag : RPConfig.getDefFlags()) {
             if (fileDB.get(rname + ".flags." + flag) != null) {
@@ -1243,9 +1242,9 @@ public class RPUtil {
         fileDB.createSection(rname);
         fileDB.set(rname + ".name", rname);
         fileDB.set(rname + ".lastvisit", r.getDate());
-        fileDB.set(rname + ".admins", r.getAdmins());
-        fileDB.set(rname + ".members", r.getMembers());
-        fileDB.set(rname + ".leaders", r.getLeaders());
+        fileDB.set(rname + ".admins", new ArrayList<>(r.getAdmins()));
+        fileDB.set(rname + ".members", new ArrayList<>(r.getMembers()));
+        fileDB.set(rname + ".leaders", new ArrayList<>(r.getLeaders()));
         fileDB.set(rname + ".priority", r.getPrior());
         fileDB.set(rname + ".welcome", r.getWelcome());
         fileDB.set(rname + ".world", r.getWorld());

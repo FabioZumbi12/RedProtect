@@ -129,9 +129,9 @@ public class RegionManager {
         return size;
     }
 
-    public Set<Region> getWorldRegions(String player, World w) {
+    /*public Set<Region> getWorldRegions(String player, World w) {
         return this.regionManagers.get(w).getRegions(player);
-    }
+    }*/
 
     /**
      * Return a {@code set<region>} of regions by player UUID or Name;
