@@ -39,7 +39,7 @@ public class RPLogger {
     }
 
     public void info(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] " + s ));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] " + s));
     }
 
     public void warning(String s) {
@@ -51,7 +51,7 @@ public class RPLogger {
     }
 
     public void log(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] " + s ));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] " + s));
     }
 
     public void clear(String s) {

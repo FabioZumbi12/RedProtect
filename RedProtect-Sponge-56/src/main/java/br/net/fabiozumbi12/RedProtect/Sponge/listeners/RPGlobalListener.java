@@ -390,7 +390,8 @@ public class RPGlobalListener {
 
         BlockState sourceState = locatable.getBlockState();
 
-        if (sourceState.getType() == BlockTypes.FIRE || sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA) {
+        if (e.getTransactions().get(0).getFinal().getState().getType().equals(BlockTypes.FIRE) &&
+                (sourceState.getType() == BlockTypes.FIRE || sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA)) {
             boolean fireDamage = RedProtect.get().cfgs.gFlags().worlds.get(locatable.getLocation().getExtent().getName()).fire_spread;
             if (!fireDamage) {
                 Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());

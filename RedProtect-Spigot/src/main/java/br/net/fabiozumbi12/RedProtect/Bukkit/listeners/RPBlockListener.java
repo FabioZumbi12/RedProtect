@@ -55,6 +55,7 @@ import java.util.List;
 public class RPBlockListener implements Listener {
 
     private static final RPContainer cont = new RPContainer();
+
     public RPBlockListener() {
         RedProtect.get().logger.debug("Loaded RPBlockListener...");
     }
@@ -513,7 +514,7 @@ public class RPBlockListener implements Listener {
             e.setCancelled(true);
             return;
         }
-        
+
         //deny blocks spread in/out regions
         if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)) {
             e.setCancelled(true);

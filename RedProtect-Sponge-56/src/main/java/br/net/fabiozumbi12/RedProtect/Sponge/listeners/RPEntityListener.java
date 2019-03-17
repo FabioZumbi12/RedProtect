@@ -54,6 +54,7 @@ import org.spongepowered.api.entity.weather.Lightning;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnType;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
@@ -73,7 +74,7 @@ import java.util.Optional;
 
 public class RPEntityListener {
 
-    static final RPContainer cont = new RPContainer();
+    private static final RPContainer cont = new RPContainer();
 
     public RPEntityListener() {
         RedProtect.get().logger.debug(LogLevel.ENTITY, "Loaded RPEntityListener...");
@@ -84,14 +85,14 @@ public class RPEntityListener {
     public void onCreatureSpawn(SpawnEntityEvent event) {
 
         for (Entity e : event.getEntities()) {
-            if (e == null || e.getType() == null) {
+            if (e == null) {
                 continue;
             }
             if (!(e instanceof Living)) {
                 continue;
             }
 
-            Optional<SpawnTypes> cause = event.getCause().first(SpawnTypes.class);
+            Optional<SpawnType> cause = event.getCause().first(SpawnType.class);
             RedProtect.get().logger.debug(LogLevel.ENTITY, "SpawnCause: " + (cause.map(Object::toString).orElse(" null")));
             if (e instanceof Wither && cause.isPresent() && cause.get().equals(SpawnTypes.PLACEMENT)) {
                 Region r = RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName());
@@ -231,7 +232,7 @@ public class RPEntityListener {
                 RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled ItemFrame drop Item");
                 e.setCancelled(true);
             }
-        } else if ((e1 instanceof Explosive)) {
+        } else if (e1 instanceof Explosive && !(e1 instanceof Living)) {
             if ((r1 != null && !r1.canFire()) || (r2 != null && !r2.canFire())) {
                 e.setCancelled(true);
             }
@@ -250,18 +251,17 @@ public class RPEntityListener {
             List<PotionEffect> pottypes = potion.get(Keys.POTION_EFFECTS).get();
             for (PotionEffect t : pottypes) {
                 if (!t.getType().equals(PotionEffectTypes.BLINDNESS) &&
-                        !t.equals(PotionEffectTypes.WEAKNESS) &&
-                        !t.equals(PotionEffectTypes.NAUSEA) &&
-                        !t.equals(PotionEffectTypes.HUNGER) &&
-                        !t.equals(PotionEffectTypes.POISON) &&
-                        !t.equals(PotionEffectTypes.MINING_FATIGUE) &&
-                        !t.equals(PotionEffectTypes.HASTE) &&
-                        !t.equals(PotionEffectTypes.SLOWNESS) &&
-                        !t.equals(PotionEffectTypes.WITHER)) {
+                        !t.getType().equals(PotionEffectTypes.WEAKNESS) &&
+                        !t.getType().equals(PotionEffectTypes.NAUSEA) &&
+                        !t.getType().equals(PotionEffectTypes.HUNGER) &&
+                        !t.getType().equals(PotionEffectTypes.POISON) &&
+                        !t.getType().equals(PotionEffectTypes.MINING_FATIGUE) &&
+                        !t.getType().equals(PotionEffectTypes.HASTE) &&
+                        !t.getType().equals(PotionEffectTypes.SLOWNESS) &&
+                        !t.getType().equals(PotionEffectTypes.WITHER)) {
                     return;
                 }
             }
-
 
             Player shooter;
             if (thrower instanceof Player) {

@@ -125,7 +125,7 @@ public class RPMine18 {
         }
 
         if (e1 instanceof ArmorStand) {
-            if (r1 != null && !r1.canBuild(damager)) {
+            if (!r1.canBuild(damager)) {
                 e.setCancelled(true);
                 RPLang.sendMessage(damager, "blocklistener.region.cantbreak");
             }

@@ -323,8 +323,8 @@ public class RPPlayerListener {
         } else { //if r != null >>       	
 
             //if (r != null) && (b != null) >>
-            if (b.getState().getType().getName().contains("_pressure_plate")){
-                if (!r.allowPressPlate(p)){
+            if (b.getState().getType().getName().contains("_pressure_plate")) {
+                if (!r.allowPressPlate(p)) {
                     event.setCancelled(true);
                     RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
                 }

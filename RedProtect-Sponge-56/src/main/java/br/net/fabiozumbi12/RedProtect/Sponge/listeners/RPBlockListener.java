@@ -75,8 +75,6 @@ public class RPBlockListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onSignPlace(ChangeSignEvent e, @First Player p) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is SignChangeEvent event! Cancelled? " + e.isCancelled());
-
         Sign s = e.getTargetTile();
         List<Text> lines = e.getText().asList();
         Location<World> loc = s.getLocation();
@@ -348,7 +346,7 @@ public class RPBlockListener {
         Entity b = e.getTargetEntity();
         Cause ignit = e.getCause();
 
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockIgniteEvent event.");
 
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation(), this.getClass().getName());
         if (r != null && !r.canFire()) {

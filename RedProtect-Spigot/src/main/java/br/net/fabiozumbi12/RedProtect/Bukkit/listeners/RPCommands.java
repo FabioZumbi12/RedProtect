@@ -3268,20 +3268,20 @@ public class RPCommands implements CommandExecutor, TabCompleter {
         if (checkCmd(args[0], "dynmap")) {
             //rp dynmap
             if (args.length == 1) {
-                return onCommand(sender, command, commandLabel, new String[] {"info"});
+                return onCommand(sender, command, commandLabel, new String[]{"info"});
             }
             //rp dynmap <cmd>
             if (args.length == 2) {
                 //rp dynmap show
                 if (checkCmd(args[1], "show")) {
-                    return onCommand(sender, command, commandLabel, new String[] {"flag", "dynmap", "true"});
+                    return onCommand(sender, command, commandLabel, new String[]{"flag", "dynmap", "true"});
                 }
                 //rp dynmap hide
                 if (checkCmd(args[1], "hide")) {
-                    return onCommand(sender, command, commandLabel, new String[] {"flag", "dynmap", "false"});
+                    return onCommand(sender, command, commandLabel, new String[]{"flag", "dynmap", "false"});
                 }
                 if (checkCmd(args[1], "set")) {
-                    return onCommand(sender, command, commandLabel, new String[] {"info"});
+                    return onCommand(sender, command, commandLabel, new String[]{"info"});
                 }
             }
             //rp dynmap set [setname]

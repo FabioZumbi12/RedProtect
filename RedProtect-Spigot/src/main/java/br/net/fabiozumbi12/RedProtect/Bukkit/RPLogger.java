@@ -45,7 +45,7 @@ public class RPLogger {
     }
 
     public void info(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] " + s ));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] " + s));
     }
 
     public void warning(String s) {
@@ -57,7 +57,7 @@ public class RPLogger {
     }
 
     public void log(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] " + s ));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] " + s));
     }
 
     public void debug(String s) {

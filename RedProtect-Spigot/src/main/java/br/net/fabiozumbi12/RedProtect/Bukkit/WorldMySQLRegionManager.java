@@ -46,9 +46,8 @@ class WorldMySQLRegionManager implements WorldRegionManager {
     private final boolean tblexists = false;
     private final String tableName;
     private final ConcurrentHashMap<String, Region> regions = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<Chunk, Set<Region>> chunksMap = new ConcurrentHashMap<>();
-
     private final World world;
+    private ConcurrentHashMap<Chunk, Set<Region>> chunksMap = new ConcurrentHashMap<>();
     private Connection dbcon;
 
     public WorldMySQLRegionManager(World world) throws SQLException {
@@ -527,6 +526,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
     public Set<Region> getRegionsInChunk(Chunk chunk) {
         return chunksMap.getOrDefault(chunk, new HashSet<>());
     }
+
     private boolean regionExists(String name) {
         int total = 0;
         try {

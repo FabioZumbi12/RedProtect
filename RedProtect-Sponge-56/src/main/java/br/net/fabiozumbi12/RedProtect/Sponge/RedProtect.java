@@ -223,7 +223,7 @@ public class RedProtect {
         rm.unloadAll();
         for (Task task : Sponge.getScheduler().getScheduledTasks(this)) task.cancel();
         logger.SaveLogs();
-        logger.severe(container.getName() + " turn off...");
+        logger.info(container.getName() + " turn off...");
     }
 
     private void startLoad() throws Exception {

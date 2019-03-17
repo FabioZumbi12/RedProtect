@@ -497,7 +497,9 @@ public class Region implements Serializable {
         return this.name;
     }
 
-    public String getDynmapSet() { return this.dynmapSet; }
+    public String getDynmapSet() {
+        return this.dynmapSet;
+    }
 
     /**
      * Use this method to get raw admins. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.

@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.MainCategory;
-import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -56,7 +55,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static com.google.common.reflect.TypeToken.*;
+import static com.google.common.reflect.TypeToken.of;
 
 public class RPConfig {
 

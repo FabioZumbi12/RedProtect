@@ -222,7 +222,7 @@ public class RPUtil {
         File logfile = new File(f, date + "-" + count + ".zip");
         File[] files = f.listFiles();
         HashMap<Long, File> keyFiles = new HashMap<>();
-        if (files.length >= RedProtect.get().cfgs.root().flat_file.max_backups && isBackup) {
+        if (files != null && files.length >= RedProtect.get().cfgs.root().flat_file.max_backups && isBackup) {
             for (File key : files) {
                 keyFiles.put(key.lastModified(), key);
             }
