@@ -199,7 +199,7 @@ public class RPCommentedGlobalFlags {
             StringBuilder spaces = new StringBuilder();
             for (int i = 0; i < key.length; i++) {
                 if (i == 0) continue;
-                spaces.append(" ");
+                spaces.append("  ");
             }
             if (comments.containsKey(line)) {
                 if (spaces.length() == 0) {

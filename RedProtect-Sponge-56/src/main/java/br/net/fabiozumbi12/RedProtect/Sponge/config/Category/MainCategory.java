@@ -180,6 +180,10 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class mysqlOptions {
+        /*@Setting(comment = "Dynamic SQL connection! Use one of this options:\n" +
+                "Mysql: \"jdbc:mysql://{host}/\" - Basic Mysql connection\n" +
+                "H2: \"jdbc:h2://{host}/\" - Basic h2 connection")
+        public String uri = "jdbc:mysql://{host}/";*/
         @Setting(value = "db-name")
         public String db_name = "redprotect";
         @Setting

@@ -35,23 +35,23 @@ public class RPLogger {
     private final SortedMap<Integer, String> MainLog = new TreeMap<>();
 
     public void sucess(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&a&l" + s + "&r]"));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] &a&l" + s + "&r"));
     }
 
     public void info(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [" + s + "]"));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] " + s ));
     }
 
     public void warning(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&6" + s + "&r]"));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] &6" + s + "&r"));
     }
 
     public void severe(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&c&l" + s + "&r]"));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] &c&l" + s + "&r"));
     }
 
     public void log(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [" + s + "]"));
+        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] " + s ));
     }
 
     public void clear(String s) {
@@ -60,7 +60,7 @@ public class RPLogger {
 
     public void debug(LogLevel level, String s) {
         if (RedProtect.get().cfgs.root().debug_messages.get(level.name().toLowerCase())) {
-            Sponge.getServer().getConsole().sendMessage(RPUtil.toText("Redprotect: [&b" + s + "&r]"));
+            Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[Redprotect] &b" + s + "&r]"));
         }
     }
 

@@ -662,7 +662,7 @@ public class RPConfig {
             if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") &&
                     (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
                             getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))) {
-                boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) || b.getType().name().contains("SIGN") ||
+                boolean blocks = b.getType().name().contains(getString("region-settings.block-id")) ||
                         getStringList("needed-claim-to-build.allow-break-blocks").stream().anyMatch(str -> str.equalsIgnoreCase(b.getType().name()));
                 if (!blocks) {
                     RPLang.sendMessage(p, "need.claim.blockids");
@@ -673,12 +673,6 @@ public class RPConfig {
             RPLang.sendMessage(p, "need.claim.tobuild");
         }
         return bool;
-    }
-
-    public static SortedSet<String> getAllFlags() {
-        SortedSet<String> values = new TreeSet<>(getDefFlagsValues().keySet());
-        values.addAll(new TreeSet<>(AdminFlags));
-        return values;
     }
 
     public static boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {

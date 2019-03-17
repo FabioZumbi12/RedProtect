@@ -654,7 +654,7 @@ public class RPConfig {
             if (b != null && root.needed_claim_to_build.allow_only_protections_blocks &&
                     (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
                             getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))) {
-                boolean blocks = b.getState().getName().contains(root.region_settings.block_id) || b.getState().getName().contains("SIGN") ||
+                boolean blocks = b.getState().getName().contains(root.region_settings.block_id) ||
                         root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getState().getId()));
                 if (!blocks) {
                     RPLang.sendMessage(p, "need.claim.blockids");
