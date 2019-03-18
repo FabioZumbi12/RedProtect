@@ -33,5 +33,5 @@ Se aplicável, adicione capturas de tela para ajudar a explicar seu problema. En
  - Versão do plug-in: [por exemplo RedProtect-7.5.6-b151-Universal.jar]
  - Versão do Java: [por exemplo Java 1.8]
 
-** Contexto adicional **
+**Contexto adicional**
 Adicione qualquer outro contexto sobre o problema aqui.
