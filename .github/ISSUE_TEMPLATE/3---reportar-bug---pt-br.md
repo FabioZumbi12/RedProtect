@@ -1,5 +1,5 @@
 ---
-name: "[BUG] Reportar BUG - PT-BR"
+name: 3 - Reportar BUG - PT-BR
 about: Crie um relatório para nos ajudar a melhorar
 title: "[Problema] "
 labels: New Issue

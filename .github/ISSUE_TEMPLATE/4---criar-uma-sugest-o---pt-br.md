@@ -1,5 +1,5 @@
 ---
-name: Criar uma sugestão [PT-BR]
+name: 4 - Criar uma sugestão - PT-BR
 about: Sugira uma ideia para este projeto
 title: "[Sugestão] "
 labels: Enhancement
