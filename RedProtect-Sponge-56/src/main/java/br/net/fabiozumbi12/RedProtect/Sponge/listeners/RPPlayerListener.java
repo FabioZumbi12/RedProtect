@@ -50,6 +50,8 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.entity.projectile.ThrownPotion;
 import org.spongepowered.api.entity.projectile.source.ProjectileSource;
+import org.spongepowered.api.entity.vehicle.Boat;
+import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.CollideBlockEvent;
@@ -248,6 +250,10 @@ public class RPPlayerListener {
                 RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setUseItemResult(Tristate.FALSE);
                 event.setCancelled(true);
+            } else if ((itemInHand.equals(ItemTypes.BOAT) || itemInHand.getType().getName().contains("_minecart")) && !r.canMinecart(p)) {
+                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                event.setUseItemResult(Tristate.FALSE);
+                event.setCancelled(true);
             }
         }
     }
@@ -427,6 +433,7 @@ public class RPPlayerListener {
                     itemInHand.equals(ItemTypes.BUCKET) ||
                     itemInHand.equals(ItemTypes.LAVA_BUCKET) ||
                     itemInHand.equals(ItemTypes.ITEM_FRAME) ||
+                    itemInHand.equals(ItemTypes.END_CRYSTAL) ||
                     itemInHand.equals(ItemTypes.PAINTING)) && !r.canBuild(p)) {
                 RPLang.sendMessage(p, RPLang.get("playerlistener.region.cantuse"));
                 event.setCancelled(true);
@@ -453,14 +460,16 @@ public class RPPlayerListener {
             RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
-        if (ent instanceof Hanging || ent.getType().equals(EntityTypes.ARMOR_STAND)) {
+        if (ent instanceof Hanging || ent.getType().equals(EntityTypes.ARMOR_STAND) || ent.getType().equals(EntityTypes.ENDER_CRYSTAL)) {
             if (!r.canBuild(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantedit");
+                RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 e.setCancelled(true);
             }
-        } else if ((ent.getType().getName().contains("minecart") || ent.getType().getName().contains("boat")) && !r.canMinecart(p)) {
-            RPLang.sendMessage(p, "blocklistener.region.cantenter");
-            e.setCancelled(true);
+        } else if (ent instanceof Minecart || ent instanceof Boat) {
+            if (!r.canMinecart(p)){
+                RPLang.sendMessage(p, "blocklistener.region.cantenter");
+                e.setCancelled(true);
+            }
         } else if (!r.allowMod(p) && !RPUtil.isBukkitEntity(ent) && (!(ent instanceof Player))) {
             RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerInteractEntityEvent - Block is " + ent.getType().getName());
             RPLang.sendMessage(p, "playerlistener.region.cantinteract");
@@ -500,9 +509,14 @@ public class RPPlayerListener {
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "RPLayerListener: Is DamageEntityEvent event. Victim " + e1.getType().getName());
 
-        if (damager instanceof Player) {
+        if (damager != null) {
             if (e1 instanceof Hanging && !r.canBuild(damager)) {
                 RPLang.sendMessage(damager, "entitylistener.region.cantinteract");
+                e.setCancelled(true);
+                return;
+            }
+            if ((e1 instanceof Boat || e1 instanceof Minecart) && !r.canMinecart(damager)) {
+                RPLang.sendMessage(damager, "entitylistener.region.cantbreak");
                 e.setCancelled(true);
                 return;
             }
@@ -551,13 +565,8 @@ public class RPPlayerListener {
             if (e.getCause().containsType(BlockDamageSource.class)) {
                 damagec = e.getCause().first(BlockDamageSource.class).get().getType();
             }
-            if (damagec != null) {
-                for (String cause : Causes) {
-                    if (damagec.getName().equalsIgnoreCase(cause)) {
-                        e.setCancelled(true);
-                        break;
-                    }
-                }
+            if (damagec != null && Causes.contains(damagec.getName())) {
+                e.setCancelled(true);
             }
         }
 
@@ -640,7 +649,7 @@ public class RPPlayerListener {
         int NetherY = RedProtect.get().cfgs.root().nether_protection.maxYsize;
         if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")) {
             for (String cmd : RedProtect.get().cfgs.root().nether_protection.execute_cmd) {
-                RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
             }
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
         }
@@ -1206,7 +1215,7 @@ public class RPPlayerListener {
                         if (cmd.startsWith("/")) {
                             cmd = cmd.substring(1);
                         }
-                        RedProtect.get().game.getCommandManager().process(p, cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+                        RedProtect.get().getGame().getCommandManager().process(p, cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
                     }
                 }
 
@@ -1217,7 +1226,7 @@ public class RPPlayerListener {
                         if (cmd.startsWith("/")) {
                             cmd = cmd.substring(1);
                         }
-                        RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+                        RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
                     }
                 }
             }
@@ -1230,7 +1239,7 @@ public class RPPlayerListener {
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
                 String[] cmds = r.getFlagString("set-portal").split(" ");
-                RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), "rp teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), "rp teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
             }
         }
 
@@ -1311,7 +1320,7 @@ public class RPPlayerListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().game.getCommandManager().process(p, cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
+                    RedProtect.get().getGame().getCommandManager().process(p, cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
                 }
             }
 
@@ -1322,7 +1331,7 @@ public class RPPlayerListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
+                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
                 }
             }
         }
@@ -1456,7 +1465,7 @@ public class RPPlayerListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().game.getCommandManager().process(p, cmd.replace("{player}", p.getName()));
+                    RedProtect.get().getGame().getCommandManager().process(p, cmd.replace("{player}", p.getName()));
                 }
             }
 
@@ -1467,7 +1476,7 @@ public class RPPlayerListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
+                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
                 }
             }
         }

@@ -36,6 +36,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
@@ -999,7 +1000,7 @@ public class Region implements Serializable {
                 cmd = cmd.substring(1);
             }
             if (p.get(Keys.HEALTH).get() <= health && !waiting) {
-                RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
     			/*waiting = true;
     			Bukkit.getScheduler().runTaskLater(RedProtect.get().plugin, new Runnable(){
 					@Override
@@ -1132,6 +1133,20 @@ public class Region implements Serializable {
         return false;
     }
 
+    public boolean canPlace(EntityType ent) {
+        if (!flagExists("allow-place")) {
+            return false;
+        }
+
+        String[] blocks = getFlagString("allow-place").replace(" ", "").split(",");
+        for (String block : blocks) {
+            if (block.equalsIgnoreCase(ent.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean canBreak(BlockSnapshot b) {
         if (!flagExists("allow-break")) {
             return false;
@@ -1139,6 +1154,19 @@ public class Region implements Serializable {
         String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
         for (String block : blocks) {
             if (block.equalsIgnoreCase(b.getState().getType().getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canBreak(EntityType ent) {
+        if (!flagExists("allow-break")) {
+            return false;
+        }
+        String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
+        for (String block : blocks) {
+            if (block.equalsIgnoreCase(ent.getName())) {
                 return true;
             }
         }
@@ -1155,10 +1183,6 @@ public class Region implements Serializable {
 
     public boolean canBack(Player p) {
         return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p);
-    }
-
-    public boolean isForSale() {
-        return flagExists("for-sale") && getFlagBool("for-sale");
     }
 
     public boolean isPvPArena() {

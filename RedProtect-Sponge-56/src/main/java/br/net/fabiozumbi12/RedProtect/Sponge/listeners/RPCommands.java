@@ -345,7 +345,7 @@ public class RPCommands implements CommandCallable {
 
 
                 if (checkCmd(args[0], "reload")) {
-                    for (Player p : RedProtect.get().game.getServer().getOnlinePlayers()) {
+                    for (Player p : RedProtect.get().getGame().getServer().getOnlinePlayers()) {
                         RedProtect.get().getPVHelper().closeInventory(p);
                     }
                     RedProtect.get().reload();
@@ -986,7 +986,7 @@ public class RPCommands implements CommandCallable {
             }
 
             if (checkCmd(args[0], "reload") && RedProtect.get().ph.hasGenPerm(player, "reload")) {
-                for (Player p : RedProtect.get().game.getServer().getOnlinePlayers()) {
+                for (Player p : RedProtect.get().getGame().getServer().getOnlinePlayers()) {
                     RedProtect.get().getPVHelper().closeInventory(p);
                 }
                 RedProtect.get().reload();
@@ -2077,7 +2077,7 @@ public class RPCommands implements CommandCallable {
             return;
         }
         Map<Integer, Region> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
-        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r) || r.isForSale()) {
+        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "--------------- [&e" + r.getName() + RPLang.get("general.color") + "] ---------------"));
             p.sendMessage(r.info());
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "----------------------------------"));
@@ -2105,7 +2105,7 @@ public class RPCommands implements CommandCallable {
                 return;
             }
         }
-        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r) || r.isForSale()) {
+        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             if (r == null) {
                 sendNotInRegionMessage(p);
                 return;

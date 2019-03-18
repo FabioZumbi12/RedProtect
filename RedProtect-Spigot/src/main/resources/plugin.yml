@@ -40,6 +40,7 @@ permissions:
       redprotect.own.near: true
       redprotect.own.kick: true
       redprotect.infowand: true
+      redprotect.own.teleport: true
   redprotect.flag.all:
     description: "Access to edit all flags."
     default: true

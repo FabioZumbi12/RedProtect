@@ -42,6 +42,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
@@ -85,7 +86,10 @@ public class RedProtect {
     @ConfigDir(sharedRoot = false)
     public File configDir;
     @Inject
-    public Game game;
+    private Game game;
+    public Game getGame(){
+        return this.game;
+    }
     @Inject
     public PluginContainer container;
     @Inject
@@ -119,14 +123,6 @@ public class RedProtect {
 
             instance = this;
 
-            if (v.startsWith("7")) {
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
-            } else if (v.startsWith("8")) {
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
-            } else {
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
-            }
-
             container = Sponge.getPluginManager().getPlugin("redprotect").get();
             serv = Sponge.getServer();
             cmdService = game.getCommandManager();
@@ -139,11 +135,14 @@ public class RedProtect {
             startLoad();
 
             if (v.startsWith("7")) {
+                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener7").newInstance());
             } else if (v.startsWith("8")) {
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener8").newInstance());
+                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
             } else {
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
+                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
             }
 
             cmdService.register(container, new RPCommands(), Arrays.asList("redprotect", "rp", "regionp", "regp"));

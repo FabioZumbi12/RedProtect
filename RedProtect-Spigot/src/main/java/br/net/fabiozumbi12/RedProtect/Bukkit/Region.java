@@ -1219,10 +1219,6 @@ public class Region implements Serializable {
         return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p);
     }
 
-    public boolean isForSale() {
-        return flagExists("for-sale") && getFlagBool("for-sale");
-    }
-
     public boolean isPvPArena() {
         return flagExists("pvparena") && getFlagBool("pvparena");
     }

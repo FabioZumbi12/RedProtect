@@ -474,15 +474,17 @@ public class RPPlayerListener implements Listener {
                 RPLang.sendMessage(p, "playerlistener.region.cantedit");
                 event.setCancelled(true);
             }
-        } else if ((e instanceof Minecart || e instanceof Boat)) {
+        } else if (e instanceof Minecart || e instanceof Boat) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canMinecart(p)) {
                 RPLang.sendMessage(p, "blocklistener.region.cantenter");
                 event.setCancelled(true);
             }
         } else if (RedProtect.get().MyPet && e instanceof MyPetBukkitEntity) {
-            if (((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
-
+            Region r = RedProtect.get().rm.getTopRegion(l);
+            if (r != null && !((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
+                RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                event.setCancelled(true);
             }
         } else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
             Region r = RedProtect.get().rm.getTopRegion(l);

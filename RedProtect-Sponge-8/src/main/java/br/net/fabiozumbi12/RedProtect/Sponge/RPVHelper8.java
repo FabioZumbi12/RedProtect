@@ -51,16 +51,48 @@ import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
+import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RPVHelper8 implements RPVHelper {
+    private final PermissionService permissionService;
 
     RPVHelper8() {
+        this.permissionService = RedProtect.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.border", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.addmember", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.delete", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.info", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.addleader", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.addadmin", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.removemember", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.removeleader", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.removeadmin", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.rename", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.welcome", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.limit", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.claimlimit", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.priority", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.flaggui", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.near", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.infowand", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.list", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.teleport", Tristate.TRUE);
+        for (String flag:RedProtect.get().cfgs.getDefFlags()){
+            this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag." + flag, Tristate.TRUE);
+        }
+        for (String ench : Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList())) {
+            if (RedProtect.get().cfgs.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
+                RedProtect.get().cfgs.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
+            }
+        }
     }
 
     @Override
@@ -103,7 +135,7 @@ public class RPVHelper8 implements RPVHelper {
 
     @Override
     public boolean checkCause(Cause cause, String toCompare) {
-        return RedProtect.get().game.getRegistry().getType(EventContextKey.class, toCompare).isPresent() && cause.contains(RedProtect.get().game.getRegistry().getType(EventContextKey.class, toCompare).get());
+        return RedProtect.get().getGame().getRegistry().getType(EventContextKey.class, toCompare).isPresent() && cause.contains(RedProtect.get().getGame().getRegistry().getType(EventContextKey.class, toCompare).get());
     }
 
     @Override
@@ -114,11 +146,6 @@ public class RPVHelper8 implements RPVHelper {
             return owner.getName().equals(p.getName());
         }
         return false;
-    }
-
-    @Override
-    public List<String> getAllEnchants() {
-        return Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList());
     }
 
     @Override

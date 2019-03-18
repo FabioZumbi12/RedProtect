@@ -138,7 +138,7 @@ public class RPGui {
             RedProtect.get().getPVHelper().query(inv, slot, line).set(this.guiItens[slotc]);
         }
 
-        RedProtect.get().game.getEventManager().registerListeners(RedProtect.get().container, this);
+        RedProtect.get().getGame().getEventManager().registerListeners(RedProtect.get().container, this);
     }
 
     @Listener
@@ -273,7 +273,7 @@ public class RPGui {
 
     public void close(boolean close) {
         RedProtect.get().getPVHelper().removeGuiItem(this.player);
-        RedProtect.get().game.getEventManager().unregisterListeners(this);
+        RedProtect.get().getGame().getEventManager().unregisterListeners(this);
         this.guiItens = null;
         if (close) RedProtect.get().getPVHelper().closeInventory(this.player);
         this.player = null;

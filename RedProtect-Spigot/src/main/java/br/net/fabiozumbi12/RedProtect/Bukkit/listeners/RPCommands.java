@@ -190,7 +190,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
             return;
         }
         Map<Integer, Region> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
-        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r) || r.isForSale()) {
+        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
             p.sendMessage(r.info());
             p.sendMessage(RPLang.get("general.color") + "----------------------------------");
@@ -218,7 +218,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                 return;
             }
         }
-        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r) || r.isForSale()) {
+        if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             if (r == null) {
                 sendNotInRegionMessage(p);
                 return;

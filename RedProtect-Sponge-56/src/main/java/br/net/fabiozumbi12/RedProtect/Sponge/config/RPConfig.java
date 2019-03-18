@@ -116,7 +116,7 @@ public class RPConfig {
     private ConfigurationLoader<CommentedConfigurationNode> protManager;
     private CommentedConfigurationNode protCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
-    private CommentedConfigurationNode ecoCfgs;
+    public CommentedConfigurationNode ecoCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> signManager;
     private CommentedConfigurationNode signCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> guiLoader;
@@ -290,7 +290,7 @@ public class RPConfig {
             e1.printStackTrace();
         }
 
-        RedProtect.get().logger.info("Server version: " + RedProtect.get().game.getPlatform().getMinecraftVersion().getName());
+        RedProtect.get().logger.info("Server version: " + RedProtect.get().getGame().getPlatform().getMinecraftVersion().getName());
 
         //add allowed claim worlds to config
         if (root.allowed_claim_worlds.isEmpty()) {
@@ -429,14 +429,6 @@ public class RPConfig {
             for (String mat : names) {
                 if (ecoCfgs.getNode("items", "values", mat).getValue() == null) {
                     ecoCfgs.getNode("items", "values", mat).setValue(0.0);
-                }
-            }
-        }
-
-        if (RedProtect.get().getPVHelper().getAllEnchants().size() != ecoCfgs.getNode("enchantments", "values").getChildrenList().size()) {
-            for (String ench : RedProtect.get().getPVHelper().getAllEnchants()) {
-                if (ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
-                    ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
                 }
             }
         }
@@ -628,7 +620,7 @@ public class RPConfig {
     }
 
     public int getEnchantCost(String enchantment) {
-        return ecoCfgs.getNode("enchantments", "values", enchantment).getInt();
+        return ecoCfgs.getNode("enchantments", "values", enchantment).getInt(-1);
     }
 
     public String getEcoString(String key) {

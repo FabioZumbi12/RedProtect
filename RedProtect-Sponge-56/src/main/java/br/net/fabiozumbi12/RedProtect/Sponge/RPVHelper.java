@@ -58,8 +58,6 @@ public interface RPVHelper {
 
     boolean checkHorseOwner(Entity ent, Player owner);
 
-    List<String> getAllEnchants();
-
     ItemStack offerEnchantment(ItemStack item);
 
     long getInvValue(Iterable<Inventory> inv);

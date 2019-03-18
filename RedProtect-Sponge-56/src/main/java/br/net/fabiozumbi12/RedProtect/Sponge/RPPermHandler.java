@@ -172,10 +172,10 @@ public class RPPermHandler {
     }
 
     public boolean hasFlagPerm(Player player, String string) {
-        return this.hasPerm(player, "redprotect.flag.all") || this.hasUserPerm(player, string);
+        return this.hasPerm(player, "redprotect.flag." + string) || this.hasUserPerm(player, string);
     }
 
     public boolean hasAdminFlagPerm(Player player, String string) {
-        return this.hasPerm(player, "redprotect.flag.special") || this.GeneralPermHandler(player, string);
+        return this.hasPerm(player, "redprotect.flag.admin." + string) || this.GeneralPermHandler(player, string);
     }
 }

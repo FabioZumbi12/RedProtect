@@ -724,7 +724,7 @@ public class RPGlobalListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(),
+                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(),
                             cmd.replace("{world-from}", e.getFromTransform().getExtent().getName())
                                     .replace("{world-to}", e.getToTransform().getExtent().getName())
                                     .replace("{player}", player.getName()));
@@ -736,7 +736,7 @@ public class RPGlobalListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().game.getCommandManager().process(RedProtect.get().serv.getConsole(),
+                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(),
                             cmd.replace("{world-from}", e.getFromTransform().getExtent().getName())
                                     .replace("{world-to}", e.getToTransform().getExtent().getName())
                                     .replace("{player}", player.getName()));
