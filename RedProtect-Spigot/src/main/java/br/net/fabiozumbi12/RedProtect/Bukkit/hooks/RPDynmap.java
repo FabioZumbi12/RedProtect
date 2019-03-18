@@ -54,7 +54,7 @@ public class RPDynmap implements Listener {
         MSet.setHideByDefault(RPConfig.getBool("hooks.dynmap.hide-by-default"));
         MSet.setLayerPriority(RPConfig.getInt("hooks.dynmap.layer-priority"));
         MSet.setLabelShow(RPConfig.getBool("hooks.dynmap.show-label"));
-        MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon.player")));
+        MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.player.marker-icon")));
         int minzoom = RPConfig.getInt("hooks.dynmap.min-zoom");
         if (minzoom > 0) {
             MSet.setMinZoom(minzoom);
@@ -136,17 +136,26 @@ public class RPDynmap implements Listener {
             am.setRangeY(center, center);
         }
 
+        String type = "player";
+        if (r.getLeaders().contains(RPConfig.getString("region-settings.default-leader")))
+            type = "server";
+
+        am.setLineStyle(
+                RPConfig.getInt("hooks.dynmap." + type + ".border.weight"),
+                RPConfig.getDouble("hooks.dynmap." + type + ".border.opacity"),
+                Integer.decode(RPConfig.getString("hooks.dynmap." + type + ".border.color").replace("#","0x")));
+        am.setFillStyle(
+                RPConfig.getDouble("hooks.dynmap." + type + ".fill.opacity"),
+                Integer.decode(RPConfig.getString("hooks.dynmap." + type + ".fill.color").replace("#","0x")));
+
 
         if (RPConfig.getBool("hooks.dynmap.show-icon")) {
             Marker m = MSet.findMarker(r.getID());
             if (center == -1) {
                 center = r.getCenterY();
             }
-            MarkerIcon icon;
-            if (r.getLeaders().contains(RPConfig.getString("region-settings.default-leader")))
-                icon = MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon.server"));
-            else
-                icon = MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap.marker-icon.player"));
+
+            MarkerIcon icon = MApi.getMarkerIcon(RPConfig.getString("hooks.dynmap." + type + ".marker-icon"));
 
             if (m == null) {
                 MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), icon, true);

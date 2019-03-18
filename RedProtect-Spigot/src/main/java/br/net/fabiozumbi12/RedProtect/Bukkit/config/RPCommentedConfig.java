@@ -286,9 +286,21 @@ public class RPCommentedConfig {
         setDefault("hooks.dynmap.layer-priority", 10, "If you use another region mark plugin.");
         setDefault("hooks.dynmap.show-label", true, "Show names under regions.");
         setDefault("hooks.dynmap.show-icon", true, "Show icons under regions.");
-        setDefault("hooks.dynmap.marker-icon", null, "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
-        setDefault("hooks.dynmap.marker-icon.player", "shield", null);
-        setDefault("hooks.dynmap.marker-icon.server", "star", null);
+
+        setDefault("hooks.dynmap.player.marker-icon", "house", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
+        setDefault("hooks.dynmap.player.fill.opacity", 0.35, null);
+        setDefault("hooks.dynmap.player.fill.color", "#00ff00", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        setDefault("hooks.dynmap.player.border.opacity", 0.8, null);
+        setDefault("hooks.dynmap.player.border.color", "#00ff00", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        setDefault("hooks.dynmap.player.border.weight", 1, null);
+
+        setDefault("hooks.dynmap.server.marker-icon", "star", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
+        setDefault("hooks.dynmap.server.fill.opacity", 0.35, null);
+        setDefault("hooks.dynmap.server.fill.color", "#ff0000", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        setDefault("hooks.dynmap.server.border.opacity", 0.8, null);
+        setDefault("hooks.dynmap.server.border.color", "#ff0000", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        setDefault("hooks.dynmap.server.border.weight", 1, null);
+
         setDefault("hooks.dynmap.show-leaders-admins", false, "Show leaders and admins on hover?");
         setDefault("hooks.dynmap.cuboid-region.enable", true, "Cuboid region config.");
         setDefault("hooks.dynmap.cuboid-region.if-disable-set-center", 60, null);

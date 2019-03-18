@@ -470,22 +470,50 @@ public class MainCategory {
             @Setting(value = "show-icon", comment = "Show icons under regions.")
             public boolean show_icon = true;
 
-            @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
-            public markiconCat marker_icon = new markiconCat();
+            @Setting
+            public Map<String, iconCat> marker = createMap();
+
+            private Map<String, iconCat> createMap() {
+                Map<String, iconCat> myMap = new HashMap<>();
+                myMap.put("player", new iconCat("house", 0.35, "#00ff00", 0.8, "#00ff00", 1));
+                myMap.put("server", new iconCat("star", 0.35, "#ff0000", 0.8, "#ff0000", 1));
+                return myMap;
+            }
+
+            @ConfigSerializable
+            public static class iconCat {
+                public iconCat(){}
+
+                public iconCat(String marker, double fill_op, String fill_col, double bord_op, String bord_col, int bord_weight){
+                    marker_icon = marker;
+                    fill_color = fill_col;
+                    fill_opacity = fill_op;
+                    border_opacity = bord_op;
+                    border_color = bord_col;
+                    border_weight = bord_weight;
+                }
+
+                @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
+                public String marker_icon;
+                @Setting(value = "fill-opacity")
+                public double fill_opacity;
+                @Setting(value = "fill-color", comment = "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
+                public String fill_color;
+
+                @Setting(value = "border-opacity")
+                public double border_opacity;
+                @Setting(value = "border-color", comment = "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
+                public String border_color;
+                @Setting(value = "border-weight")
+                public int border_weight;
+            }
+
             @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
             public boolean show_leaders_admins = true;
             @Setting(value = "cuboid-region")
             public cuboidCat cuboid_region = new cuboidCat();
             @Setting(value = "min-zoom")
             public int min_zoom = 0;
-
-            @ConfigSerializable
-            public static class markiconCat {
-                @Setting
-                public String server = "star";
-                @Setting
-                public String player = "shield";
-            }
 
             @ConfigSerializable
             public static class cuboidCat {

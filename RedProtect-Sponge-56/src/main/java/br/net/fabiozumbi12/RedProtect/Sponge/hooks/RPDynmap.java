@@ -56,7 +56,7 @@ public class RPDynmap {
                 MSet.setHideByDefault(RedProtect.get().cfgs.root().hooks.dynmap.hide_by_default);
                 MSet.setLayerPriority(RedProtect.get().cfgs.root().hooks.dynmap.layer_priority);
                 MSet.setLabelShow(RedProtect.get().cfgs.root().hooks.dynmap.show_label);
-                MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.player));
+                MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker.get("player").marker_icon));
                 int minzoom = RedProtect.get().cfgs.root().hooks.dynmap.min_zoom;
                 if (minzoom > 0) {
                     MSet.setMinZoom(minzoom);
@@ -140,17 +140,25 @@ public class RPDynmap {
             am.setRangeY(center, center);
         }
 
+        String type = "player";
+        if (r.getLeaders().contains(RedProtect.get().cfgs.root().region_settings.default_leader))
+            type = "server";
+
+        am.setLineStyle(
+                RedProtect.get().cfgs.root().hooks.dynmap.marker.get(type).border_weight,
+                RedProtect.get().cfgs.root().hooks.dynmap.marker.get(type).border_opacity,
+                Integer.decode(RedProtect.get().cfgs.root().hooks.dynmap.marker.get(type).border_color.replace("#","0x")));
+        am.setFillStyle(
+                RedProtect.get().cfgs.root().hooks.dynmap.marker.get(type).fill_opacity,
+                Integer.decode(RedProtect.get().cfgs.root().hooks.dynmap.marker.get(type).fill_color.replace("#","0x")));
 
         if (RedProtect.get().cfgs.root().hooks.dynmap.show_icon) {
             Marker m = MSet.findMarker(r.getID());
             if (center == -1) {
                 center = r.getCenterY();
             }
-            MarkerIcon icon;
-            if (r.getLeaders().contains(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.server))
-                icon = MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.server);
-            else
-                icon = MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker_icon.player);
+
+            MarkerIcon icon = MApi.getMarkerIcon(RedProtect.get().cfgs.root().hooks.dynmap.marker.get(type).marker_icon);
 
             if (m == null) {
                 MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), icon, true);

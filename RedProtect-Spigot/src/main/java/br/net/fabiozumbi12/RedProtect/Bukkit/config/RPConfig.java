@@ -600,6 +600,10 @@ public class RPConfig {
         return RedProtect.get().getConfig().getString(key, "");
     }
 
+    public static Double getDouble(String key) {
+        return RedProtect.get().getConfig().getDouble(key);
+    }
+
     public static Integer getInt(String key) {
         return RedProtect.get().getConfig().getInt(key);
     }
