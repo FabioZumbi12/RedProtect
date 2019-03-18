@@ -137,12 +137,10 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onFlow(BlockFromToEvent e) {
         RedProtect.get().logger.debug("RPGlobalListener - Is BlockFromToEvent event");
-        if (e.isCancelled()) {
-            return;
-        }
+
         Block b = e.getToBlock();
         Block bfrom = e.getBlock();
         RedProtect.get().logger.debug("RPGlobalListener - Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
@@ -284,10 +282,10 @@ public class RPGlobalListener implements Listener {
         RedProtect.get().logger.debug("TeleportCause: " + e.getCause().name());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST,ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent e) {
-        RedProtect.get().logger.debug("RPGlobalListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
-        if (e.isCancelled() || e.getItemInHand() == null) {
+        RedProtect.get().logger.debug("RPGlobalListener - Is BlockPlaceEvent event!");
+        if (e.getItemInHand() == null) {
             return;
         }
 
@@ -317,13 +315,9 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent e) {
-        RedProtect.get().logger.debug("RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + e.isCancelled());
-        if (e.isCancelled()) {
-            return;
-        }
-
+        RedProtect.get().logger.debug("RPGlobalListener - Is BlockBreakEvent event!");
         Block b = e.getBlock();
         Player p = e.getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
@@ -341,12 +335,10 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent e) {
-        RedProtect.get().logger.debug("RPGlobalListener - Is PlayerInteractEvent event! Cancelled? " + e.isCancelled());
-        if (e.isCancelled()) {
-            return;
-        }
+        RedProtect.get().logger.debug("RPGlobalListener - Is PlayerInteractEvent event!");
+
         Player p = e.getPlayer();
         Block b = e.getClickedBlock();
         ItemStack itemInHand = e.getItem();
@@ -449,12 +441,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEntityEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Player p = e.getPlayer();
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
@@ -485,12 +473,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onHangingDamaged(HangingBreakByEntityEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(loc);
@@ -506,12 +490,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBucketUse(PlayerBucketEmptyEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Location l = e.getBlockClicked().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
@@ -528,12 +508,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Location l = e.getBlockClicked().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
@@ -550,12 +526,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamageEntity(EntityDamageByEntityEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Entity e1 = e.getEntity();
         Entity e2 = e.getDamager();
 
@@ -657,30 +629,23 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onFrameBrake(HangingBreakEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Location l = e.getEntity().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
             return;
         }
 
-        if (e.getCause().toString().equals("EXPLOSION") || e.getCause().toString().equals("ENTITY")) {
+        if (e.getCause().toString().equals("EXPLOSION")) {
             if (!RPConfig.getGlobalFlagBool(l.getWorld().getName() + ".entity-block-damage")) {
                 e.setCancelled(true);
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
         List<Block> toRemove = new ArrayList<>();
         for (Block b : e.blockList()) {
             Location l = b.getLocation();
@@ -694,11 +659,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
         Block b = e.getBlock();
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
@@ -710,11 +672,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onFireSpread(BlockSpreadEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
         Block b = e.getSource();
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
@@ -773,11 +732,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onVehicleBreak(VehicleDestroyEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
         if (!(e.getAttacker() instanceof Player)) {
             return;
         }
@@ -794,12 +750,8 @@ public class RPGlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockStartBurn(BlockIgniteEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
         Block b = e.getBlock();
         Block bignit = e.getIgnitingBlock();
         if (b == null || bignit == null) {
