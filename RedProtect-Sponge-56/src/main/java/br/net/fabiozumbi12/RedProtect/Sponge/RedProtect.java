@@ -218,7 +218,7 @@ public class RedProtect {
     }
 
     private void shutDown() {
-        rm.saveAll();
+        rm.saveAll(true);
         rm.unloadAll();
         for (Task task : Sponge.getScheduler().getScheduledTasks(this)) task.cancel();
         logger.SaveLogs();
@@ -273,9 +273,9 @@ public class RedProtect {
         if (cfgs.root().flat_file.auto_save_interval_seconds != 0) {
             logger.info("Auto-save Scheduler: Saving " + cfgs.root().file_type + " database every " + cfgs.root().flat_file.auto_save_interval_seconds / 60 + " minutes!");
 
-            taskid = Sponge.getScheduler().createSyncExecutor(container).scheduleWithFixedDelay(() -> {
+            taskid = Sponge.getScheduler().createAsyncExecutor(container).scheduleWithFixedDelay(() -> {
                 logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + cfgs.root().file_type + " database!");
-                rm.saveAll();
+                rm.saveAll(cfgs.root().flat_file.backup_on_save);
             }, cfgs.root().flat_file.auto_save_interval_seconds, cfgs.root().flat_file.auto_save_interval_seconds, TimeUnit.SECONDS).getTask().getUniqueId();
 
         } else {

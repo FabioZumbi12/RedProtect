@@ -34,7 +34,7 @@ public interface WorldRegionManager {
 
     void load();
 
-    int save();
+    int save(boolean force);
 
     Region getRegion(String rname);
 

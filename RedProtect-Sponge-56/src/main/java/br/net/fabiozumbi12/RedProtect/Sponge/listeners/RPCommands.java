@@ -325,12 +325,6 @@ public class RPCommands implements CommandCallable {
                     RedProtect.get().logger.sucess(total + " regions for " + Sponge.getServer().getWorlds().size() + " worlds.");
                     return cmdr;
                 }
-
-                if (args[0].equalsIgnoreCase("save-all")) {
-                    RedProtect.get().logger.SaveLogs();
-                    RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll() + " regions saved with success!");
-                    return cmdr;
-                }
                 if (args[0].equalsIgnoreCase("load-all")) {
                     RedProtect.get().rm.clearDB();
                     try {
@@ -676,6 +670,13 @@ public class RPCommands implements CommandCallable {
                     }
                 }
             }
+
+            if (args[0].equalsIgnoreCase("save-all")) {
+                RedProtect.get().logger.SaveLogs();
+                RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
+                return cmdr;
+            }
+
             HandleHelPage(sender, 1);
             return cmdr;
         }
@@ -914,14 +915,6 @@ public class RPCommands implements CommandCallable {
                     }
                 } else {
                     RPLang.sendMessage(player, "cmdmanager.region.todo.that");
-                    return cmdr;
-                }
-            }
-
-            if (args[0].equalsIgnoreCase("save-all")) {
-                if (RedProtect.get().ph.hasGenPerm(player, "save-all")) {
-                    RedProtect.get().logger.SaveLogs();
-                    RPLang.sendMessage(player, "&a" + RedProtect.get().rm.saveAll() + " regions saved with success!");
                     return cmdr;
                 }
             }
@@ -1380,6 +1373,13 @@ public class RPCommands implements CommandCallable {
             }
         }
 
+        if (args[0].equalsIgnoreCase("save-all")) {
+            if (RedProtect.get().ph.hasGenPerm(player, "save-all")) {
+                RedProtect.get().logger.SaveLogs();
+                RPLang.sendMessage(player, "&a" + RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
+                return cmdr;
+            }
+        }
 
         //rp kick <player> [region] [world]
         if (checkCmd(args[0], "kick")) {

@@ -155,7 +155,7 @@ public class RPSchematics {
             return;
         }
 
-        String regionName = RPUtil.regionNameConfiorm("", p);
+        String regionName = RPUtil.regionNameConform("", p);
         String pName = RPUtil.PlayerToUUID(p.getName());
 
         //check if player already have claims
@@ -167,7 +167,7 @@ public class RPSchematics {
 
         Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), Collections.singleton(pName), new int[]{pos1.getBlockX(), pos1.getBlockX(), pos2.getBlockX(), pos2.getBlockX()}, new int[]{pos1.getBlockZ(), pos1.getBlockZ(), pos2.getBlockZ(), pos2.getBlockZ()}, 0, p.getWorld().getMaxHeight(), 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, false);
 
-        List<String> othersName = new ArrayList<>();
+        Set<String> othersName = new HashSet<>();
         Region otherrg;
 
         //check if same area
@@ -178,28 +178,19 @@ public class RPSchematics {
         }
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsInChunks(region.getOccupiedChunks())) {
+        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     p.sendMessage(RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                     return;
                 }
-                if (!othersName.contains(r.getName())) {
-                    othersName.add(r.getName());
-                }
+                othersName.add(r.getName());
             }
         }
 
         //check borders for other regions
-        List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
+        Set<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
         for (Location locr : limitlocs) {
-        	
-        	/*
-        	//check regions near
-        	if (!RPUtil.canBuildNear(p, loc)){
-            	return;    	
-            }*/
-
             otherrg = RedProtect.get().rm.getTopRegion(locr);
             RedProtect.get().logger.debug("protection Block is: " + locr.getBlock().getType().name());
 

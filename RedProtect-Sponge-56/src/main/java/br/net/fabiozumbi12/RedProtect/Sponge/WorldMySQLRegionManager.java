@@ -486,7 +486,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public int save() {
+    public int save(boolean force) {
         return 0;
     }
 

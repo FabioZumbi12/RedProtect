@@ -133,7 +133,7 @@ public class DefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        List<String> othersName = new ArrayList<>();
+        Set<String> othersName = new HashSet<>();
         Region otherrg;
 
         //check if same area
@@ -144,28 +144,19 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsInChunks(newRegion.getOccupiedChunks())) {
+        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
             if (r.getMaxMbrX() <= newRegion.getMaxMbrX() && r.getMaxY() <= newRegion.getMaxY() && r.getMaxMbrZ() <= newRegion.getMaxMbrZ() && r.getMinMbrX() >= newRegion.getMinMbrX() && r.getMinY() >= newRegion.getMinY() && r.getMinMbrZ() >= newRegion.getMinMbrZ()) {
                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                     return;
                 }
-                if (!othersName.contains(r.getName())) {
-                    othersName.add(r.getName());
-                }
+                othersName.add(r.getName());
             }
         }
 
         //check borders for other regions
-        List<Location> limitlocs = newRegion.getLimitLocs(newRegion.getMinY(), newRegion.getMaxY(), true);
+        Set<Location> limitlocs = newRegion.getLimitLocs(newRegion.getMinY(), newRegion.getMaxY(), true);
         for (Location loc : limitlocs) {
-        	
-        	/*
-        	//check regions near
-        	if (!RPUtil.canBuildNear(p, loc)){
-            	return;    	
-            }*/
-
             otherrg = RedProtect.get().rm.getTopRegion(loc);
             RedProtect.get().logger.debug("protection Block is: " + loc.getBlock().getType().name());
 
@@ -174,9 +165,7 @@ public class DefineRegionBuilder extends RegionBuilder {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                     return;
                 }
-                if (!othersName.contains(otherrg.getName())) {
-                    othersName.add(otherrg.getName());
-                }
+                othersName.add(otherrg.getName());
             }
         }
 

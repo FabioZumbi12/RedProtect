@@ -193,9 +193,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
 
-                        List<String> othersName = new ArrayList<>();
+                        Set<String> othersName = new HashSet<>();
                         Region otherrg;
-                        List<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
+                        Set<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
 
                         //check retangular region
                         for (Block bkloc : blocks) {
@@ -206,15 +206,13 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (Region r : RedProtect.get().rm.getRegionsInChunks(region.getOccupiedChunks())) {
+                        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                                     return;
                                 }
-                                if (!othersName.contains(r.getName())) {
-                                    othersName.add(r.getName());
-                                }
+                                othersName.add(r.getName());
                             }
                         }
 

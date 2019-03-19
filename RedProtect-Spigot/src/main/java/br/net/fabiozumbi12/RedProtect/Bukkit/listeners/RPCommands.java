@@ -1319,7 +1319,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                         RedProtect.get().logger.severe("No region converted from GriefPrevention.");
                         return true;
                     } else {
-                        RedProtect.get().rm.saveAll();
+                        RedProtect.get().rm.saveAll(false);
                         RedProtect.get().logger.info(ChatColor.AQUA + "[" + RPUtil.convertFromGP() + "] regions converted from GriefPrevention with success");
                         RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                         RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
@@ -1350,7 +1350,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
 
                 if (args[0].equalsIgnoreCase("mychunktorp")) {
                     if (handleMyChunk()) {
-                        RedProtect.get().rm.saveAll();
+                        RedProtect.get().rm.saveAll(false);
                         RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                         RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
                         RedProtect.get().logger.sucess("...converting MyChunk database");
@@ -1360,11 +1360,6 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                         RedProtect.get().logger.sucess("The plugin MyChunk is not installed or no regions found");
                         return true;
                     }
-                }
-                if (args[0].equalsIgnoreCase("save-all")) {
-                    RedProtect.get().logger.SaveLogs();
-                    RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll() + " regions saved with success!");
-                    return true;
                 }
                 if (args[0].equalsIgnoreCase("load-all")) {
                     RedProtect.get().rm.clearDB();
@@ -1831,6 +1826,13 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                     }
                 }
             }
+
+            if (args[0].equalsIgnoreCase("save-all")) {
+                RedProtect.get().logger.SaveLogs();
+                RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
+                return true;
+            }
+
             HandleHelPage(sender, 1);
             return true;
         }
@@ -2183,13 +2185,6 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                 }
             }
 
-            if (args[0].equalsIgnoreCase("save-all")) {
-                if (player.hasPermission("redprotect.admin.save-all")) {
-                    RedProtect.get().logger.SaveLogs();
-                    RPLang.sendMessage(player, ChatColor.GREEN + "" + RedProtect.get().rm.saveAll() + " regions saved with success!");
-                    return true;
-                }
-            }
             if (args[0].equalsIgnoreCase("load-all")) {
                 if (player.hasPermission("redprotect.admin.load-all")) {
                     RedProtect.get().rm.clearDB();
@@ -2697,6 +2692,14 @@ public class RPCommands implements CommandExecutor, TabCompleter {
                         RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " CREATED A PORTAL " + r2.getName() + " to " + args[2] + " world " + w.getName());
                     }
                 }
+                return true;
+            }
+        }
+
+        if (args[0].equalsIgnoreCase("save-all")) {
+            if (player.hasPermission("redprotect.admin.save-all")) {
+                RedProtect.get().logger.SaveLogs();
+                RPLang.sendMessage(player, ChatColor.GREEN + "" + RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
                 return true;
             }
         }

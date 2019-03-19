@@ -85,7 +85,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public int save() {
+    public int save(boolean force) {
         int saved = 0;
         try {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().cfgs.root().file_type);
@@ -96,14 +96,14 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                 File datf = new File(RedProtect.get().configDir + File.separator + "data", "data_" + world + ".conf");
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
                 CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
-
+                Set<CommentedConfigurationNode> dbs = new HashSet<>();
                 for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
 
                     if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
-                        if (!r.toSave()) {
+                        if (!r.toSave() && !force) {
                             continue;
                         }
                         datf = new File(RedProtect.get().configDir + File.separator + "data", world + File.separator + r.getName() + ".conf");
@@ -115,24 +115,35 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                     saved++;
 
                     if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                        dbs.add(fileDB);
                         saveConf(fileDB, regionManager);
                         r.setToSave(false);
                     }
                 }
 
                 if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
-                    RPUtil.backupRegions(fileDB, world);
                     saveConf(fileDB, regionManager);
                 } else {
                     //remove deleted regions
                     File wfolder = new File(RedProtect.get().configDir + File.separator + "data", world);
                     if (wfolder.exists()) {
                         File[] listOfFiles = wfolder.listFiles();
-                        for (File region : listOfFiles) {
-                            if (region.isFile() && !regions.containsKey(region.getName().replace(".conf", ""))) {
-                                region.delete();
+                        if (listOfFiles != null) {
+                            for (File region : listOfFiles) {
+                                if (region.isFile() && !regions.containsKey(region.getName().replace(".conf", ""))) {
+                                    region.delete();
+                                }
                             }
                         }
+                    }
+                }
+
+                //try backup
+                if (force){
+                    if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                        RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
+                    } else {
+                        RPUtil.backupRegions(dbs, world, null);
                     }
                 }
             }

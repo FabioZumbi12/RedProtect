@@ -187,7 +187,7 @@ public class RedProtectAPI {
      * @return {@code Set<Region>} with all regions on provided chunk.
      */
     public Set<Region> getChunkRegions(Chunk chunk) {
-        return RedProtect.get().rm.getRegionsInChunk(chunk);
+        return RedProtect.get().rm.getRegionsForChunk(chunk);
     }
 
     /**

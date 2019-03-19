@@ -345,24 +345,13 @@ class WorldMySQLRegionManager implements WorldRegionManager {
                     }
                 }
                 Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
-                register(newr);
+                regions.put(newr.getName(), newr);
             }
             st.close();
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private void register(Region region) {
-        // Add to name-region map
-        regions.put(region.getName(), region);
-
-        // Add to chunk-set<regions> map
-        region.getOccupiedChunks().forEach(chunk -> chunksMap
-                .computeIfAbsent(chunk, k -> new HashSet<>())
-                .add(region)
-        );
     }
 
     /*---------------------------------------------------------------------------------*/
@@ -485,7 +474,7 @@ class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public int save() {
+    public int save(boolean force) {
         return 0;
     }
 
@@ -521,11 +510,11 @@ class WorldMySQLRegionManager implements WorldRegionManager {
         }
         return ret;
     }
-
+/*
     @Override
     public Set<Region> getRegionsInChunk(Chunk chunk) {
         return chunksMap.getOrDefault(chunk, new HashSet<>());
-    }
+    }*/
 
     private boolean regionExists(String name) {
         int total = 0;

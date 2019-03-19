@@ -35,7 +35,7 @@ public interface WorldRegionManager {
 
     void load();
 
-    int save();
+    int save(boolean force);
 
     Region getRegion(String rname);
 
@@ -51,7 +51,7 @@ public interface WorldRegionManager {
 
     Set<Region> getRegionsNear(Player p0, int p1);
 
-    Set<Region> getRegionsInChunk(Chunk chunk);
+    //Set<Region> getRegionsInChunk(Chunk chunk);
 
     void add(Region p0);
 

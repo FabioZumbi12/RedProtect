@@ -571,7 +571,7 @@ public class Region implements Serializable {
      * <p>
      * To check if a player can build on this region use {@code canBuild(p)} instead this method.
      *
-     * @return {@code List<String>}
+     * @return {@code Set<String>}
      */
     @Deprecated()
     public Set<String> getAdmins() {
@@ -589,7 +589,7 @@ public class Region implements Serializable {
      * <p>
      * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
      *
-     * @return {@code List<String>}
+     * @return {@code Set<String>}
      */
     @Deprecated
     public Set<String> getMembers() {
@@ -607,7 +607,7 @@ public class Region implements Serializable {
      * <p>
      * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
      *
-     * @return {@code List<String>}
+     * @return {@code Set<String>}
      */
     @Deprecated
     public Set<String> getLeaders() {
@@ -1558,8 +1558,8 @@ public class Region implements Serializable {
         return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
     }
 
-    public List<Location> getLimitLocs(int locy) {
-        final List<Location> locBlocks = new ArrayList<>();
+    public Set<Location> getLimitLocs(int locy) {
+        final Set<Location> locBlocks = new HashSet<>();
         Location loc1 = this.getMinLocation();
         Location loc2 = this.getMaxLocation();
         World w = Bukkit.getWorld(this.getWorld());
@@ -1577,8 +1577,8 @@ public class Region implements Serializable {
         return locBlocks;
     }
 
-    public List<Location> getLimitLocs(int miny, int maxy, boolean define) {
-        final List<Location> locBlocks = new ArrayList<>();
+    public Set<Location> getLimitLocs(int miny, int maxy, boolean define) {
+        final Set<Location> locBlocks = new HashSet<>();
         Location loc1 = this.getMinLocation();
         Location loc2 = this.getMaxLocation();
         World w = Bukkit.getWorld(this.getWorld());
@@ -1597,40 +1597,13 @@ public class Region implements Serializable {
         return locBlocks;
     }
 
-    public List<Location> get4Points(int y) {
-        List<Location> locs = new ArrayList<>();
+    public Set<Location> get4Points(int y) {
+        Set<Location> locs = new HashSet<>();
         locs.add(this.getMinLocation());
         locs.add(new Location(this.getMinLocation().getWorld(), this.minMbrX, y, this.minMbrZ + (this.maxMbrZ - this.minMbrZ)));
         locs.add(this.getMaxLocation());
         locs.add(new Location(this.getMinLocation().getWorld(), this.minMbrX + (this.maxMbrX - this.minMbrX), y, this.minMbrZ));
         return locs;
-    }
-
-    public Set<Chunk> getOccupiedChunks() {
-        // Calculate 4 points chunks
-        List<Chunk> fChunks = get4Points(0).stream()
-                .map(Location::getChunk)
-                .collect(Collectors.toList());
-        // Calculate inner chunks
-        int minX = fChunks.get(0).getX();
-        int minZ = fChunks.get(0).getZ();
-        int maxX = fChunks.get(0).getX();
-        int maxZ = fChunks.get(0).getZ();
-
-        for (Chunk chunk : fChunks) {
-            minX = chunk.getX() < minX ? chunk.getX() : minX;
-            minZ = chunk.getZ() < minZ ? chunk.getZ() : minZ;
-            maxX = chunk.getX() > maxX ? chunk.getX() : maxX;
-            maxZ = chunk.getZ() > maxZ ? chunk.getZ() : maxZ;
-        }
-
-        Set<Chunk> regionChunks = new HashSet<>(fChunks);
-        for (int x = minX; x < maxX; x++) {
-            for (int z = minZ; z < maxZ; z++) {
-                regionChunks.add(Bukkit.getWorld(getWorld()).getChunkAt(x, z));
-            }
-        }
-        return regionChunks;
     }
 
     public Location getCenterLoc() {

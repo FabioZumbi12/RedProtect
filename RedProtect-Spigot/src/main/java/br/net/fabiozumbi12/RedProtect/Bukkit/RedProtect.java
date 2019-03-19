@@ -276,7 +276,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void shutDown() {
-        rm.saveAll();
+        rm.saveAll(true);
         rm.unloadAll();
         openGuis.clear();
         Bukkit.getScheduler().cancelTasks(this);
@@ -358,10 +358,10 @@ public class RedProtect extends JavaPlugin {
         if (RPConfig.getInt("flat-file.auto-save-interval-seconds") != 0) {
             logger.info("Auto-save Scheduler: Saving " + RPConfig.getString("file-type") + " database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
 
-            taskid = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            taskid = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                 logger.debug("Auto-save Scheduler: Saving " + RPConfig.getString("file-type") + " database!");
-                rm.saveAll();
-            }, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20);
+                rm.saveAll(RPConfig.getBool("flat-file.backup-on-save"));
+            }, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");

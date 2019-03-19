@@ -84,8 +84,8 @@ public class RPUtil {
         }
     }
 
-    public static List<Location> get4Points(Location min, Location max, int y) {
-        List<Location> locs = new ArrayList<>();
+    public static Set<Location> get4Points(Location min, Location max, int y) {
+        Set<Location> locs = new HashSet<>();
         min.setY(y);
         max.setY(y);
         locs.add(min);
@@ -213,16 +213,32 @@ public class RPUtil {
         }
     }
 
-    private static void SaveToZipYML(File file, String ZippedFile, YamlConfiguration yml) {
+    private static void SaveToZipYML(File file, String ZippedFile, Set<YamlConfiguration> yml) {
         try {
-            final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-            ZipEntry e = new ZipEntry(ZippedFile);
-            out.putNextEntry(e);
-
-            byte[] data = yml.saveToString().getBytes();
-            out.write(data, 0, data.length);
-            out.closeEntry();
-            out.close();
+            FileOutputStream fos = new FileOutputStream(file);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            if (ZippedFile == null){
+                for (YamlConfiguration y:yml){
+                    try {
+                        ZipEntry e = new ZipEntry(y.getKeys(false).stream().findFirst().get() + ".yml");
+                        zos.putNextEntry(e);
+                        byte[] data = y.saveToString().getBytes();
+                        zos.write(data, 0, data.length);
+                        zos.closeEntry();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            } else {
+                ZipEntry e = new ZipEntry(ZippedFile);
+                zos.putNextEntry(e);
+                for (YamlConfiguration y:yml){
+                    byte[] data = y.saveToString().getBytes();
+                    zos.write(data, 0, data.length);
+                }
+                zos.closeEntry();
+            }
+            zos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -397,7 +413,7 @@ public class RPUtil {
                     RedProtect.get().logger.warning("Selling " + region.getName() + " - Days: " + days);
                     RPEconomy.putToSell(region, RPConfig.getString("region-settings.default-leader"), RPEconomy.getRegionValue(region));
                     sell++;
-                    RedProtect.get().rm.saveAll();
+                    RedProtect.get().rm.saveAll(false);
                     continue;
                 }
             }
@@ -598,7 +614,7 @@ public class RPUtil {
 
         if (pls > 0) {
             RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls) + "&a&l regions!");
-            RedProtect.get().rm.saveAll();
+            RedProtect.get().rm.saveAll(false);
             RedProtect.get().logger.sucess("Regions saved!");
         }
 
@@ -784,7 +800,7 @@ public class RPUtil {
                 //write to yml
                 YamlConfiguration fileDB = new YamlConfiguration();
                 File datf = new File(pathData, "data_" + world.getName() + ".yml");
-
+                Set<YamlConfiguration> yamls = new HashSet<>();
                 for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
@@ -802,13 +818,13 @@ public class RPUtil {
                     saved++;
 
                     if (RPConfig.getBool("flat-file.region-per-file")) {
+                        yamls.add(fileDB);
                         saveYaml(fileDB, datf);
                         r.setToSave(false);
                     }
                 }
 
                 if (!RPConfig.getBool("flat-file.region-per-file")) {
-                    backupRegions(fileDB, world.getName());
                     saveYaml(fileDB, datf);
                 } else {
                     //remove deleted regions
@@ -824,6 +840,13 @@ public class RPUtil {
                         }
                     }
                 }
+
+                //try backup
+                if (!RPConfig.getBool("flat-file.region-per-file")) {
+                    backupRegions(Collections.singleton(fileDB), world.getName(), "data_" + world + ".yml");
+                } else {
+                    backupRegions(yamls, world.getName(), null);
+                }
             }
             dbcon.close();
 
@@ -837,8 +860,8 @@ public class RPUtil {
         return true;
     }
 
-    public static void backupRegions(YamlConfiguration fileDB, String world) {
-        if (!RPConfig.getBool("flat-file.backup") || fileDB.getKeys(true).isEmpty()) {
+    static void backupRegions(Set<YamlConfiguration> fileDB, String world, String saveFile) {
+        if (!RPConfig.getBool("flat-file.backup") || fileDB.isEmpty()) {
             return;
         }
 
@@ -855,7 +878,7 @@ public class RPUtil {
 
         //Save backup
         if (RPUtil.genFileName(folder.getPath() + File.separator, true) != null) {
-            RPUtil.SaveToZipYML(RPUtil.genFileName(folder.getPath() + File.separator, true), "data_" + world + ".yml", fileDB);
+            RPUtil.SaveToZipYML(RPUtil.genFileName(folder.getPath() + File.separator, true), saveFile, fileDB);
         }
     }
 
@@ -863,7 +886,7 @@ public class RPUtil {
         if (!RPConfig.getString("file-type").equalsIgnoreCase("yml")) {
             return false;
         }
-        RedProtect.get().rm.saveAll();
+        RedProtect.get().rm.saveAll(false);
 
         initMysql();//Create tables
         int counter = 1;
@@ -913,7 +936,7 @@ public class RPUtil {
             dbcon.close();
         }
         if (counter > 0) {
-            RedProtect.get().logger.sucess((counter - 1) + " regions converted to Mysql with sucess!");
+            RedProtect.get().logger.sucess((counter - 1) + " regions converted to Mysql with success!");
         }
         return true;
     }
@@ -1048,7 +1071,7 @@ public class RPUtil {
      * @param p    Player.
      * @param locs {@code List<Location>}.
      */
-    public static void addBorder(final Player p, List<Location> locs) {
+    public static void addBorder(final Player p, Set<Location> locs) {
         final World w = p.getWorld();
         boolean msg = true;
         if (pBorders.containsKey(p.getName())) {
@@ -1143,20 +1166,6 @@ public class RPUtil {
         return name;
     }
 
-    /*
-    public static boolean RemoveGuiItem(ItemStack item) {
-        if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()){
-            try{
-                String lore = item.getItemMeta().getLore().get(1);
-                if (RPConfig.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RPConfig.getGuiString("separator"))){
-                    return true;
-                }
-            } catch (IndexOutOfBoundsException ignored){
-            }
-        }
-        return false;
-    }
-*/
     private static void saveYaml(YamlConfiguration fileDB, File file) {
         try {
             fileDB.save(file);
@@ -1365,7 +1374,7 @@ public class RPUtil {
         return total;
     }
 
-    public static String regionNameConfiorm(String regionName, Player p) {
+    public static String regionNameConform(String regionName, Player p) {
         String pRName = RPUtil.UUIDtoPlayer(p.getName());
         if (regionName.equals("")) {
             int i = 0;

@@ -63,6 +63,7 @@ public class RPCommentedConfig {
         setDefault("flat-file.region-per-file", false, "Want to save the regions in your ow files?");
         setDefault("flat-file.auto-save-interval-seconds", 3600, null);
         setDefault("flat-file.backup", true, null);
+        setDefault("flat-file.backup-on-save", false, null);
         setDefault("flat-file.max-backups", 10, null);
 
         setDefault("mysql", null, "If file-type: mysql, configuration:");

@@ -84,15 +84,15 @@ public class RegionManager {
             return;
         }
         WorldRegionManager mgr = this.regionManagers.get(w);
-        mgr.save();
+        mgr.save(false);
         mgr.closeConn();
         this.regionManagers.remove(w);
     }
 
-    public int saveAll() {
+    public int saveAll(boolean force) {
         int saved = 0;
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
-            saved = worldRegionManager.save() + saved;
+            saved = worldRegionManager.save(force) + saved;
         }
         return saved;
     }
@@ -168,14 +168,18 @@ public class RegionManager {
         return ret;
     }
 
-    public Set<Region> getRegionsInChunk(Chunk chunk) {
-        return regionManagers.get(chunk.getWorld()).getRegionsInChunk(chunk);
-    }
-
-    public Set<Region> getRegionsInChunks(Iterable<Chunk> chunks) {
-        Set<Region> set = new HashSet<>();
-        chunks.forEach(chunk -> set.addAll(getRegionsInChunk(chunk)));
-        return set;
+    public Set<Region> getRegionsForChunk(Chunk chunk) {
+        Set<Region> regions = new HashSet<>();
+        for (Region region : RedProtect.get().rm.getRegionsByWorld(chunk.getWorld())) {
+            int minChunkX = (int) Math.floor(region.getMinMbrX() / 16f);
+            int maxChunkX = (int) Math.floor(region.getMaxMbrX() / 16f);
+            int minChunkZ = (int) Math.floor(region.getMinMbrZ() / 16f);
+            int maxChunkZ = (int) Math.floor(region.getMaxMbrZ() / 16f);
+            if (chunk.getX() >= minChunkX && chunk.getX() <= maxChunkX && chunk.getZ() >= minChunkZ && chunk.getZ() <= maxChunkZ) {
+                regions.add(region);
+            }
+        }
+        return regions;
     }
 
     public Set<Region> getRegionsNear(Player player, int i) {
@@ -217,7 +221,7 @@ public class RegionManager {
     }
 
     public void save(World w) {
-        this.regionManagers.get(w).save();
+        this.regionManagers.get(w).save(false);
     }
 
     public void remove(Region r, World w) {

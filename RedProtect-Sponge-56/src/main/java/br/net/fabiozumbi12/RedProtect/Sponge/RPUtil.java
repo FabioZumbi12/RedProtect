@@ -144,28 +144,32 @@ public class RPUtil {
         return locs;
     }
 
-    /*
-        public static long getNowMillis(){
-            SimpleDateFormat sdf = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
-            Calendar cal = Calendar.getInstance();
-            try {
-                cal.setTime(sdf.parse(sdf.format(cal.getTime())));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return cal.getTimeInMillis();
-        }
-        */
-    private static void saveToZipFile(File file, String ZippedFile, CommentedConfigurationNode conf) {
+    private static void saveToZipFile(File file, String ZippedFile, Set<CommentedConfigurationNode> conf) {
         try {
-            final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-            ZipEntry e = new ZipEntry(ZippedFile);
-            out.putNextEntry(e);
-
-            byte[] data = conf.toString().getBytes();
-            out.write(data, 0, data.length);
-            out.closeEntry();
-            out.close();
+            FileOutputStream fos = new FileOutputStream(file);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            if (ZippedFile == null){
+                for (CommentedConfigurationNode c:conf){
+                    try {
+                        ZipEntry e = new ZipEntry(c.getAppendedNode().getNode("name").getString() + ".conf");
+                        zos.putNextEntry(e);
+                        byte[] data = c.toString().getBytes();
+                        zos.write(data, 0, data.length);
+                        zos.closeEntry();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            } else {
+                ZipEntry e = new ZipEntry(ZippedFile);
+                zos.putNextEntry(e);
+                for (CommentedConfigurationNode c:conf){
+                    byte[] data = c.toString().getBytes();
+                    zos.write(data, 0, data.length);
+                }
+                zos.closeEntry();
+            }
+            zos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -264,24 +268,6 @@ public class RPUtil {
         return rname;
     }
 
-    /*
-    static String formatName(String name) {
-        String s = name.substring(1).toLowerCase();
-        String fs = name.substring(0, 1).toUpperCase();
-        String ret = String.valueOf(fs) + s;
-        ret = ret.replace("_", " ");
-        return ret;
-    }
-    
-    static int[] toIntArray(List<Integer> list) {
-        int[] ret = new int[list.size()];
-        int i = 0;
-        for (Integer e : list) {
-            ret[i++] = e;
-        }
-        return ret;
-    }
-    */
     public static String DateNow() {
         DateFormat df = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
         Date today = Calendar.getInstance().getTime();
@@ -295,16 +281,6 @@ public class RPUtil {
         return "[" + hour + ":" + min + ":" + sec + "]";
     }
 
-    /*
-    static void fixWorld(String regionname){
-    	for (World w:RedProtect.get().serv.getWorlds()){
-    		Region r = RedProtect.get().rm.getRegion(regionname, w);
-    		if (r != null){
-    			r.setWorld(w.getName());
-    		}
-    	}
-    }
-    */
     //TODO read all db
     static void ReadAllDB(Set<Region> regions) {
         int i = 0;
@@ -313,7 +289,6 @@ public class RPUtil {
         int namesupdt = 0;
         int purged = 0;
         int sell = 0;
-        int dateint = 0;
         int cfm = 0;
         int delay = 0;
         int skipped = 0;
@@ -403,7 +378,7 @@ public class RPUtil {
                     RedProtect.get().logger.warning("Selling " + r.getName() + " - Days: " + days);
                     RPEconomy.putToSell(r, RedProtect.get().cfgs.root().region_settings.default_leader, RPEconomy.getRegionValue(r));
                     sell++;
-                    RedProtect.get().rm.saveAll();
+                    RedProtect.get().rm.saveAll(false);
                     continue;
                 }
             }
@@ -559,7 +534,7 @@ public class RPUtil {
 
         if (pls > 0) {
             RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls) + "&a&l regions!");
-            RedProtect.get().rm.saveAll();
+            RedProtect.get().rm.saveAll(false);
             RedProtect.get().logger.sucess("Regions saved!");
         }
 
@@ -672,17 +647,6 @@ public class RPUtil {
         }
     }
 
-    /*
-    static void addRegion(List<Region> regions, World w){    	
-    	for (int i = 0; i < regions.size(); i++){
-    		if (!RedProtect.get().rm.getRegionsByWorld(w).contains(regions.get(i))){
-    			RedProtect.get().logger.warning("["+(i+1)+"/"+regions.size()+"]Adding regions to database! This may take some time...");
-        		RedProtect.get().rm.add(regions.get(i), w);       		                		
-    		}
-		}	 
-    	regions.clear();
-    }
-    */
     public static Object parseObject(String value) {
         Object obj = value;
         try {
@@ -764,7 +728,7 @@ public class RPUtil {
                 File datf = new File(RedProtect.get().configDir + File.separator + "data", "data_" + world.getName() + ".conf");
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
                 CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
-
+                Set<CommentedConfigurationNode> dbs = new HashSet<>();
                 for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
@@ -783,25 +747,34 @@ public class RPUtil {
                     saved++;
 
                     if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                        dbs.add(fileDB);
                         saveConf(fileDB, regionManager);
                         r.setToSave(false);
                     }
                 }
 
                 if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
-                    backupRegions(fileDB, world.getName());
                     saveConf(fileDB, regionManager);
                 } else {
                     //remove deleted regions
                     File wfolder = new File(RedProtect.get().configDir + File.separator + "data", world.getName());
                     if (wfolder.exists()) {
                         File[] listOfFiles = wfolder.listFiles();
-                        for (File region : listOfFiles) {
-                            if (region.isFile() && !regions.containsKey(region.getName().replace(".conf", ""))) {
-                                region.delete();
+                        if (listOfFiles != null) {
+                            for (File region : listOfFiles) {
+                                if (region.isFile() && !regions.containsKey(region.getName().replace(".conf", ""))) {
+                                    region.delete();
+                                }
                             }
                         }
                     }
+                }
+
+                //try backup
+                if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                    backupRegions(Collections.singleton(fileDB), world.getName(), "data_" + world + ".conf");
+                } else {
+                    backupRegions(dbs, world.getName(), null);
                 }
             }
             dbcon.close();
@@ -820,7 +793,7 @@ public class RPUtil {
         if (!RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
             return false;
         }
-        RedProtect.get().rm.saveAll();
+        RedProtect.get().rm.saveAll(false);
 
         initMysql();//Create tables
         int counter = 1;
@@ -935,8 +908,8 @@ public class RPUtil {
         }
     }
 
-    static void backupRegions(CommentedConfigurationNode fileDB, String world) {
-        if (!RedProtect.get().cfgs.root().flat_file.backup) {
+    static void backupRegions(Set<CommentedConfigurationNode> fileDB, String world, String savedFile) {
+        if (!RedProtect.get().cfgs.root().flat_file.backup || fileDB.isEmpty()) {
             return;
         }
 
@@ -953,7 +926,7 @@ public class RPUtil {
 
         //Save backup
         if (RPUtil.genFileName(folder.getPath() + File.separator, true) != null) {
-            RPUtil.saveToZipFile(RPUtil.genFileName(folder.getPath() + File.separator, true), "data_" + world + ".conf", fileDB);
+            RPUtil.saveToZipFile(RPUtil.genFileName(folder.getPath() + File.separator, true), savedFile, fileDB);
         }
 
     }

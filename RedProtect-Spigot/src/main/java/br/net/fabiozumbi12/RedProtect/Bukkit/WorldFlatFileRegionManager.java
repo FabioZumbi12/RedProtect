@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 class WorldFlatFileRegionManager implements WorldRegionManager {
 
     private final HashMap<String, Region> regionsMap = new HashMap<>();
-    private final Map<Chunk, Set<Region>> chunksMap = new HashMap<>();
+    //private final Map<Chunk, Set<Region>> chunksMap = new HashMap<>();
     private final World world;
     private final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
 
@@ -53,23 +53,23 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     public void add(Region region) {
         // Add to name-region map
         regionsMap.put(region.getName(), region);
-
+/*
         // Add to chunk-set<region> map
         region.getOccupiedChunks().forEach(chunk -> chunksMap
                 .computeIfAbsent(chunk, k -> new HashSet<>())
                 .add(region)
-        );
+        );*/
     }
 
     @Override
     public void remove(Region region) {
         if (regionsMap.containsValue(region)) {
             regionsMap.remove(region.getName());
-        }
+        }/*
         region.getOccupiedChunks().forEach(chunk -> chunksMap
                 .computeIfAbsent(chunk, k -> new HashSet<>())
                 .remove(region)
-        );
+        );*/
     }
 
     @Override
@@ -100,7 +100,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public int save() {
+    public int save(boolean force) {
         int saved = 0;
         try {
             RedProtect.get().logger.debug("RegionManager.Save(): File type is " + RPConfig.getString("file-type"));
@@ -110,7 +110,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
             if (RPConfig.getString("file-type").equals("yml")) {
                 datf = new File(pathData, "data_" + world + ".yml");
                 YamlConfiguration fileDB = new YamlConfiguration();
-
+                Set<YamlConfiguration> yamls = new HashSet<>();
                 for (Region r : regionsMap.values()) {
                     if (r.getName() == null) {
                         continue;
@@ -128,19 +128,19 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                     saved++;
 
                     if (RPConfig.getBool("flat-file.region-per-file")) {
+                        yamls.add(fileDB);
                         saveYaml(fileDB, datf);
                         r.setToSave(false);
                     }
                 }
 
                 if (!RPConfig.getBool("flat-file.region-per-file")) {
-                    RPUtil.backupRegions(fileDB, world);
                     saveYaml(fileDB, datf);
                 } else {
                     //remove deleted regions
                     File wfolder = new File(pathData + world);
                     if (wfolder.exists()) {
-                        File[] listOfFiles = new File(pathData + world).listFiles();
+                        File[] listOfFiles = new File(pathData, world).listFiles();
                         if (listOfFiles != null) {
                             for (File region : listOfFiles) {
                                 if (region.isFile() && !regionsMap.containsKey(region.getName().replace(".yml", ""))) {
@@ -148,6 +148,15 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                                 }
                             }
                         }
+                    }
+                }
+
+                //try backup
+                if (force){
+                    if (!RPConfig.getBool("flat-file.region-per-file")) {
+                        RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
+                    } else {
+                        RPUtil.backupRegions(yamls, world, null);
                     }
                 }
             }
@@ -261,13 +270,12 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         return ret;
     }
-
+/*
     @Override
     public Set<Region> getRegionsInChunk(Chunk chunk) {
         return chunksMap.getOrDefault(chunk, new HashSet<>());
     }
-    
-    /*
+
     @Override
     public boolean regionExists(Region region) {
     	if (regionsMap.containsValue(region)){
@@ -284,32 +292,32 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getInnerRegions(Region region) {
         Set<Region> regionl = new HashSet<>();
-        region.getOccupiedChunks()
-                .stream()
-                .map(chunksMap::get)
-                .filter(Objects::nonNull)
-                .flatMap(Set::stream)
-                .forEach(r -> {
-                    if (r.getMaxMbrX() <= region.getMaxMbrX()
-                            && r.getMaxY() <= region.getMaxY()
-                            && r.getMaxMbrZ() <= region.getMaxMbrZ()
-                            && r.getMinMbrX() >= region.getMinMbrX()
-                            && r.getMinY() >= region.getMinY()
-                            && r.getMinMbrZ() >= region.getMinMbrZ()) {
-                        regionl.add(r);
-                    }
-                });
+        regionsMap.values().forEach(r -> {
+            if (r.getMaxMbrX() <= region.getMaxMbrX() &&
+                        r.getMaxY() <= region.getMaxY() &&
+                        r.getMaxMbrZ() <= region.getMaxMbrZ() &&
+                        r.getMinMbrX() >= region.getMinMbrX() &&
+                        r.getMinY() >= region.getMinY() &&
+                        r.getMinMbrZ() >= region.getMinMbrZ()) {
+                    regionl.add(r);
+            }
+        });
         return regionl;
     }
 
     @Override
     public Set<Region> getRegions(int x, int y, int z) {
         Set<Region> regionl = new HashSet<>();
-        for (Region r : regionsMap.values()) {
-            if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
+        regionsMap.values().forEach(r -> {
+            if (x <= r.getMaxMbrX() &&
+                    x >= r.getMinMbrX() &&
+                    y <= r.getMaxY() &&
+                    y >= r.getMinY() &&
+                    z <= r.getMaxMbrZ() &&
+                    z >= r.getMinMbrZ()) {
                 regionl.add(r);
             }
-        }
+        });
         return regionl;
     }
 

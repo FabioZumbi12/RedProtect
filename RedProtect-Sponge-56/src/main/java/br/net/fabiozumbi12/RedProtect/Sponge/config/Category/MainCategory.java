@@ -172,6 +172,8 @@ public class MainCategory {
         public int auto_save_interval_seconds = 3600;
         @Setting
         public boolean backup = true;
+        @Setting(value = "backup-on-save")
+        public boolean backup_on_save = false;
         @Setting(value = "max-backups")
         public int max_backups = 10;
         @Setting(value = "region-per-file", comment = "Save every region in your own file? More safer way to save regions, \nbut will create multiple files (where is not a problem).")

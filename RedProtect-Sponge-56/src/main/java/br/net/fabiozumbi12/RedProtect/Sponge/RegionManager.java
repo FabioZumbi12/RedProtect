@@ -83,15 +83,15 @@ public class RegionManager {
             return;
         }
         WorldRegionManager mgr = this.regionManagers.get(w);
-        mgr.save();
+        mgr.save(false);
         mgr.closeConn();
         this.regionManagers.remove(w);
     }
 
-    public int saveAll() {
+    public int saveAll(boolean force) {
         int saved = 0;
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
-            saved = worldRegionManager.save() + saved;
+            saved = worldRegionManager.save(force) + saved;
         }
         return saved;
     }
@@ -204,7 +204,7 @@ public class RegionManager {
     }
 
     public void save(World w) {
-        this.regionManagers.get(w).save();
+        this.regionManagers.get(w).save(false);
     }
 
     public void remove(Region r, World w) {

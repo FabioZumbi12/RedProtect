@@ -47,7 +47,7 @@ public class RPFactions implements Listener {
         }
         for (PS chunk : event.getChunks()) {
             Player p = event.getMPlayer().getPlayer();
-            Set<Region> regs = RedProtect.get().rm.getRegionsInChunk(chunk.asBukkitChunk());
+            Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(chunk.asBukkitChunk());
             if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
                 event.setCancelled(true);
                 RPLang.sendMessage(p, "rpfactions.cantclaim");
@@ -61,7 +61,7 @@ public class RPFactions implements Listener {
             return;
         }
         Player p = event.getMPlayer().getPlayer();
-        Set<Region> regs = RedProtect.get().rm.getRegionsInChunk(p.getLocation().getChunk());
+        Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(p.getLocation().getChunk());
         if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
             RPLang.sendMessage(p, "rpfactions.cantclaim");
             event.setCancelled(true);

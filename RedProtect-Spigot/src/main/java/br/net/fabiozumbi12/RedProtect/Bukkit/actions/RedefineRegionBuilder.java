@@ -37,7 +37,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RedefineRegionBuilder extends RegionBuilder {
 
@@ -90,7 +92,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        List<String> othersName = new ArrayList<>();
+        Set<String> othersName = new HashSet<>();
         Region otherrg;
 
         //check if same area
@@ -112,21 +114,12 @@ public class RedefineRegionBuilder extends RegionBuilder {
                 hasAny = true;
                 continue;
             }
-            if (!othersName.contains(r.getName())) {
-                othersName.add(r.getName());
-            }
+            othersName.add(r.getName());
         }
 
         //check borders for other regions
-        List<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
+        Set<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
         for (Location loc : limitlocs) {
-
-        	/*
-        	//check regions near
-        	if (!RPUtil.canBuildNear(p, loc)){
-            	return;
-            }*/
-
             otherrg = RedProtect.get().rm.getTopRegion(loc);
             RedProtect.get().logger.debug("protection Block is: " + loc.getBlock().getType().name());
 
@@ -140,9 +133,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                     return;
                 }
-                if (!othersName.contains(otherrg.getName())) {
-                    othersName.add(otherrg.getName());
-                }
+                othersName.add(otherrg.getName());
             }
         }
 
