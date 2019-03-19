@@ -674,7 +674,7 @@ public class Region implements Serializable {
         admins.forEach(admin -> adminStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(admin)));
 
         members.removeIf(Objects::isNull);
-        members.forEach(member -> adminStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(member)));
+        members.forEach(member -> memberStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(member)));
 
         if (this.leaders.size() > 0) {
             leaderString = leaderStringBuilder.delete(0, 2).toString();
