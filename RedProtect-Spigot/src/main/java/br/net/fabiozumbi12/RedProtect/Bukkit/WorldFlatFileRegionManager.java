@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 
 class WorldFlatFileRegionManager implements WorldRegionManager {
 
@@ -286,6 +287,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
         region.getOccupiedChunks()
                 .stream()
                 .map(chunksMap::get)
+                .filter(Objects::nonNull)
                 .flatMap(Set::stream)
                 .forEach(r -> {
                     if (r.getMaxMbrX() <= region.getMaxMbrX()
@@ -297,7 +299,6 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                         regionl.add(r);
                     }
                 });
-
         return regionl;
     }
 
