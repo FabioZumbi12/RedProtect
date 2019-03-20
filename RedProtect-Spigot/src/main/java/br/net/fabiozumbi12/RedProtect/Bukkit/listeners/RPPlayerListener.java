@@ -418,7 +418,6 @@ public class RPPlayerListener implements Listener {
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
                 } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
-                    RedProtect.get().logger.severe("Passou aqui!");
                     RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                     event.setUseInteractedBlock(Event.Result.DENY);

@@ -1597,8 +1597,8 @@ public class Region implements Serializable {
         return locBlocks;
     }
 
-    public Set<Location> get4Points(int y) {
-        Set<Location> locs = new HashSet<>();
+    public List<Location> get4Points(int y) {
+        List<Location> locs = new ArrayList<>();
         locs.add(this.getMinLocation());
         locs.add(new Location(this.getMinLocation().getWorld(), this.minMbrX, y, this.minMbrZ + (this.maxMbrZ - this.minMbrZ)));
         locs.add(this.getMaxLocation());
