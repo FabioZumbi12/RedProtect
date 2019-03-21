@@ -85,7 +85,7 @@ public class RPGlobalListener {
      * @return Boolean - Can build or not.
      */
     private boolean bypassBuild(Player p, BlockSnapshot b, int fat) {
-	if (p.hasPermission("redprotect.bypass.world")
+	if (p.hasPermission("redprotect.bypass.world"))
 	    return true;
 	    
         if (RedProtect.get().cfgs.needClaimToBuild(p, b))
