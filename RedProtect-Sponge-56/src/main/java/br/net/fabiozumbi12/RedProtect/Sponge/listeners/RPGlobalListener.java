@@ -85,12 +85,15 @@ public class RPGlobalListener {
      * @return Boolean - Can build or not.
      */
     private boolean bypassBuild(Player p, BlockSnapshot b, int fat) {
+	if (p.hasPermission("redprotect.bypass.world")
+	    return true;
+	    
         if (RedProtect.get().cfgs.needClaimToBuild(p, b))
             return false;
 
         return (fat == 1 && canPlaceList(p.getWorld(), b.getState().getType().getName())) ||
                 (fat == 2 && canBreakList(p.getWorld(), b.getState().getType().getName())) ||
-                p.hasPermission("redprotect.bypass.world") || RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).build;
+                RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).build;
     }
 
     private boolean canPlaceList(World w, String type) {
