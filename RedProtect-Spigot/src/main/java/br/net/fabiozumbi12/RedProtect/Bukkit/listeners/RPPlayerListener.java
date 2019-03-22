@@ -285,7 +285,7 @@ public class RPPlayerListener implements Listener {
 
             //if (r != null) && (b != null) >>
             if (b != null) {
-                if (b.getState().getData() instanceof PressurePlate) {
+                if (b.getType().name().endsWith("PRESSURE_PLATE")) {
                     if (!r.allowPressPlate(p)) {
                         RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
                         event.setCancelled(true);

@@ -348,29 +348,29 @@ public class RPConfig {
             }
             configUp++;
         }
-        if (RedProtect.get().getConfig().getDouble("config-version") < 7.10D) {
-            RedProtect.get().getConfig().set("config-version", 7.10D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 8D) {
+            RedProtect.get().getConfig().set("config-version", 8D);
 
             RedProtect.get().getConfig().set("language", RedProtect.get().getConfig().getString("language").toUpperCase());
             configUp++;
         }
-        if (RedProtect.get().getConfig().getDouble("config-version") < 7.11D) {
-            RedProtect.get().getConfig().set("config-version", 7.11D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 8.1D) {
+            RedProtect.get().getConfig().set("config-version", 8.1D);
 
             RedProtect.get().getConfig().set("wands.adminWandID", "GLASS_BOTTLE");
             RedProtect.get().getConfig().set("wands.infoWandID", "PAPER");
             configUp++;
         }
-        if (RedProtect.get().getConfig().getDouble("config-version") < 7.12D) {
-            RedProtect.get().getConfig().set("config-version", 7.12D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 8.2D) {
+            RedProtect.get().getConfig().set("config-version", 8.2D);
 
             List<String> blocks = RedProtect.get().getConfig().getStringList("private.allowed-blocks");
             blocks.add("[A-Z_]+_SHULKER_BOX");
             RedProtect.get().getConfig().set("private.allowed-blocks", blocks);
             configUp++;
         }
-        if (RedProtect.get().getConfig().getDouble("config-version") < 7.13D) {
-            RedProtect.get().getConfig().set("config-version", 7.13D);
+        if (RedProtect.get().getConfig().getDouble("config-version") < 8.3D) {
+            RedProtect.get().getConfig().set("config-version", 8.3D);
 
             if (!flags.contains("press-plate")) {
                 flags.add("press-plate");
@@ -380,6 +380,7 @@ public class RPConfig {
             }
             configUp++;
         }
+
         if (configUp > 0) {
             RedProtect.get().getConfig().set("flags-configuration.enabled-flags", flags);
             RedProtect.get().logger.warning("Configuration UPDATE! We added new flags or new options, or just updated some other config. See change log for details.");

@@ -53,7 +53,7 @@ public class RPCommentedConfig {
             }
         }
 
-        setDefault("config-version", 7.13, "Dont touch <3");
+        setDefault("config-version", 8.3D, "Dont touch <3");
         setDefault("debug-messages", false, "Enable debug messages");
         setDefault("log-actions", true, "Log all commands used by players");
         setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR");
