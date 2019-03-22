@@ -37,8 +37,6 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.List;
-
 public interface RPVHelper {
     Cause getCause(CommandSource p);
 

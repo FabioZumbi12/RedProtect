@@ -41,7 +41,6 @@ import org.bukkit.util.Vector;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Represents a 3D region created by players.

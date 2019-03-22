@@ -26,7 +26,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -35,7 +34,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 class WorldFlatFileRegionManager implements WorldRegionManager {
 

@@ -25,7 +25,6 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
-import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
