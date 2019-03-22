@@ -238,7 +238,7 @@ public class RPCommands implements CommandCallable {
             sender.sendMessage(RPUtil.toText("&6rp files-to-single &3- Convert regions files to single world files"));
             sender.sendMessage(RPUtil.toText("&6rp fileTomysql &3- Convert from File to Mysql"));
             sender.sendMessage(RPUtil.toText("&6rp mysqlToFile &3- Convert from Mysql to File"));
-            sender.sendMessage(RPUtil.toText("&6rp save-all &3- Save all regions to database"));
+            sender.sendMessage(RPUtil.toText("&6rp save-all [-f] &3- Save all regions to database"));
             sender.sendMessage(RPUtil.toText("&6rp load-all &3- Load all regions from database"));
             sender.sendMessage(RPUtil.toText("&6rp reload-config &3- Reload only the config"));
             sender.sendMessage(RPUtil.toText("&6rp reload &3- Reload the plugin"));
@@ -254,7 +254,7 @@ public class RPCommands implements CommandCallable {
         return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd)) || arg.equalsIgnoreCase(cmd);
     }
 
-    public CommandResult process(CommandSource sender, String arguments) throws CommandException {
+    public CommandResult process(CommandSource sender, String arguments) {
         CommandResult cmdr = CommandResult.success();
 
         String[] args = arguments.split(" ");

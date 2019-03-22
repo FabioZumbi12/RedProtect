@@ -1139,7 +1139,7 @@ public class RPCommands implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.GOLD + "rp single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
             sender.sendMessage(ChatColor.GOLD + "rp files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single world files");
             sender.sendMessage(ChatColor.GOLD + "rp gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
-            sender.sendMessage(ChatColor.GOLD + "rp save-all " + ChatColor.DARK_AQUA + "- Save all regions to database");
+            sender.sendMessage(ChatColor.GOLD + "rp save-all [-f]" + ChatColor.DARK_AQUA + "- Save all regions to database");
             sender.sendMessage(ChatColor.GOLD + "rp load-all " + ChatColor.DARK_AQUA + "- Load all regions from database");
             sender.sendMessage(ChatColor.GOLD + "rp reload-config " + ChatColor.DARK_AQUA + "- Reload only the config");
             sender.sendMessage(ChatColor.GOLD + "rp reload " + ChatColor.DARK_AQUA + "- Reload the plugin");

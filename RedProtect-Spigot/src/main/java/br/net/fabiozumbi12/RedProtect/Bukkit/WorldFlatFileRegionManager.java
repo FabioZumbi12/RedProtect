@@ -115,7 +115,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
 
                     if (RPConfig.getBool("flat-file.region-per-file")) {
-                        if (!r.toSave()) {
+                        if (!r.toSave() && !force) {
                             continue;
                         }
                         fileDB = new YamlConfiguration();
