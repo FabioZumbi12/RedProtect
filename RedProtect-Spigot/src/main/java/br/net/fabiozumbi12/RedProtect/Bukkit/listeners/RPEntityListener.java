@@ -154,10 +154,11 @@ public class RPEntityListener implements Listener {
                     RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                 }
             }
-        } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
+        } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem || e1 instanceof WaterMob) {
             if (r1 != null && e2 instanceof Player) {
                 Player p2 = (Player) e2;
-                if ((!r1.canInteractPassives(p2) && (e1 instanceof WaterMob && !r1.allowFishing(p2))) || !r1.canInteractPassives(p2)) {
+                if (e1 instanceof WaterMob && r1.allowFishing(p2)) return;
+                if (!r1.canInteractPassives(p2)) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
                 }
@@ -279,10 +280,11 @@ public class RPEntityListener implements Listener {
                         RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
                     }
                 }
-            } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
+            } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem || e1 instanceof WaterMob) {
                 if (r1 != null && e2 instanceof Player) {
                     Player p2 = (Player) e2;
-                    if ((!r1.canInteractPassives(p2) && (e1 instanceof WaterMob && !r1.allowFishing(p2))) || !r1.canInteractPassives(p2)) {
+                    if (e1 instanceof WaterMob && r1.allowFishing(p2)) return;
+                    if (!r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
                     }
