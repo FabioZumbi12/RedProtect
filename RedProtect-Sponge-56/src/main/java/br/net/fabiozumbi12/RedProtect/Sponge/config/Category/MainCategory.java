@@ -339,8 +339,6 @@ public class MainCategory {
         public int max_scan = 600;
         @Setting(value = "record-player-visit-method", comment = "Method to record the player visit on regions. Available: \"ON-LOGIN\" or \"ON-REGION-ENTER\"")
         public String record_player_visit_method = "ON-LOGIN";
-        @Setting(value = "region-list")
-        public regionListing region_list = new regionListing();
         @Setting(value = "teleport-time", comment = "Delay to teleport command.")
         public int teleport_time = 3;
         @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
@@ -388,12 +386,6 @@ public class MainCategory {
                 @Setting(value = "use-perm", comment = "If \"allow-player-decide\" is true, player need to have the permission \"redprotect.use-claim-modes\" to use modes on signs.")
                 public boolean use_perm = false;
             }
-        }
-
-        @ConfigSerializable
-        public static class regionListing {
-            @Setting(value = "simple-listing", comment = "Recommended to use true. Its a legacy option.")
-            public boolean simple_listing = true;
         }
     }
 

@@ -1920,10 +1920,16 @@ public class RPCommands implements CommandCallable {
                 handleList(player, RPUtil.PlayerToUUID(player.getName()), 1);
                 return cmdr;
             }
-            //rp list [player]
+            //rp list [player|page]
             if (args.length == 2) {
-                handleList(player, RPUtil.PlayerToUUID(args[1]), 1);
-                return cmdr;
+                try {
+                    int Page = Integer.parseInt(args[1]);
+                    handleList(player, RPUtil.PlayerToUUID(player.getName()), Page);
+                    return cmdr;
+                } catch (NumberFormatException e) {
+                    handleList(player, RPUtil.PlayerToUUID(args[1]), 1);
+                    return cmdr;
+                }
             }
             //rp list [player] [page]
             if (args.length == 3) {
@@ -2806,87 +2812,84 @@ public class RPCommands implements CommandCallable {
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.created.list") + " " + pname);
             p.sendMessage(RPUtil.toText("-----"));
-            if (RedProtect.get().cfgs.root().region_settings.region_list.simple_listing) {
-                for (World w : Sponge.getServer().getWorlds()) {
-                    String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
-                    Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
-                    if (wregions.size() > 0) {
-                        Iterator<Region> it = wregions.iterator();
-                        Builder worldregions = Text.builder();
+
+            boolean first = true;
+
+            if (Page == 0) {
+                Page = 1;
+            }
+            int max = (200 * Page);
+            int min = max - 200;
+            int count = 0;
+            int last = 0;
+            int total = 0;
+
+            for (World w : Sponge.getServer().getWorlds()) {
+                String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
+                Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
+                total += wregions.size();
+
+                if (wregions.size() > 0) {
+                    List<Region> it = new ArrayList<>(wregions);
+                    if (min > total) {
+                        int diff = (total / 200);
+                        min = 200 * diff;
+                        max = (200 * diff) + 200;
+                    }
+                    if (max > it.size()) max = (it.size() - 1);
+
+                    Builder worldregions = Text.builder();
+                    for (int i = min; i <= max; i++){
+                        count = i;
+                        Region r = it.get(i);
+                        String area = "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")";
 
                         if (RedProtect.get().ph.hasRegionPermAdmin(p, "teleport", null)) {
-                            boolean first = true;
-                            while (it.hasNext()) {
-                                Region r = it.next();
-                                if (first) {
-                                    first = false;
-                                    worldregions.append(Text.builder()
-                                            .append(RPUtil.toText("&8" + r.getName()))
-                                            .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
-                                            .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
-                                } else {
-                                    worldregions.append(Text.builder()
-                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName()))
-                                            .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
-                                            .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
-                                }
+                            if (first) {
+                                first = false;
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText("&8" + r.getName() + area))
+                                        .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                        .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
+                            } else {
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName()))
+                                        .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                        .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                             }
                         } else {
-                            boolean first = true;
-                            while (it.hasNext()) {
-                                Region r = it.next();
-                                if (first) {
-                                    first = false;
-                                    worldregions.append(Text.builder()
-                                            .append(RPUtil.toText("&8" + r.getName())).build());
-                                } else {
-                                    worldregions.append(Text.builder()
-                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName())).build());
-                                }
+                            if (first) {
+                                first = false;
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText("&8" + r.getName() + area)).build());
+                            } else {
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName())).build());
                             }
                         }
-                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + wregions.size() + "]&r: "));
-                        p.sendMessages(worldregions.build());
-                        p.sendMessage(RPUtil.toText("-----"));
-                    }
-                }
-            } else {
-                Iterator<Region> i = regions.iterator();
-                if (Page == 0) {
-                    Page = 1;
-                }
-                int max = (10 * Page);
-                int min = max - 10;
-                int count = 0;
-                int last = 0;
-                while (i.hasNext()) {
-                    String info = i.next().info().toPlain();
-                    if (count >= min && count <= max) {
-                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
-                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "[" + (count + 1) + "] " + info));
                         last = count;
+                    }
+                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + wregions.size() + "]&r: "));
+                    p.sendMessages(worldregions.build());
+                }
+            }
 
-                    }
-                    count++;
-                }
-                if (max > count) {
-                    min = 0;
-                }
-                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------- " + (min + 1) + "-" + (last + 1) + "/" + count + " --------------"));
-                if (count > max) {
-                    p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
-                } else {
-                    if (Page != 1) {
-                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
-                    }
+            if (max > count) {
+                min = 0;
+            }
+            p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + (min + 1) + "-" + (last + 1) + "/" + (count+1) + " -----------------"));
+            if ((count+1) < total) {
+                p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
+            } else {
+                if (Page != 1) {
+                    p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
                 }
             }
         }
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> loc)
-            throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> loc) {
 
         List<String> SotTab = new ArrayList<>();
         SortedSet<String> tab = new TreeSet<>();
