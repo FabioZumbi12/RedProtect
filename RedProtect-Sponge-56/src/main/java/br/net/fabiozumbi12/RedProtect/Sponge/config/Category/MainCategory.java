@@ -343,6 +343,8 @@ public class MainCategory {
         public int teleport_time = 3;
         @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
         public Map<String, String> world_colors = new HashMap<>();
+        @Setting(value = "regions-per-page")
+        public int region_per_page = 50;
 
         @ConfigSerializable
         public static class borderCat {

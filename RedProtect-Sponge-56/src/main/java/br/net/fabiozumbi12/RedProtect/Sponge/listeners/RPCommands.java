@@ -2811,33 +2811,37 @@ public class RPCommands implements CommandCallable {
         } else {
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.created.list") + " " + pname);
-            p.sendMessage(RPUtil.toText("-----"));
 
-            boolean first = true;
-
-            if (Page == 0) {
-                Page = 1;
-            }
-            int max = (200 * Page);
-            int min = max - 200;
-            int count = 0;
-            int last = 0;
+            int regionsPage = RedProtect.get().cfgs.root().region_settings.region_per_page;
             int total = 0;
+            int last = 0;
 
             for (World w : Sponge.getServer().getWorlds()) {
+                boolean first = true;
+
+                if (Page == 0) {
+                    Page = 1;
+                }
+                int max = (regionsPage * Page);
+                int min = max - regionsPage;
+                int count;
+
                 String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
                 Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
-                total += wregions.size();
+                int totalLocal = wregions.size();
+                total += totalLocal;
+
+                int lastLocal = 0;
 
                 if (wregions.size() > 0) {
                     List<Region> it = new ArrayList<>(wregions);
-                    if (min > total) {
-                        int diff = (total / 200);
-                        min = 200 * diff;
-                        max = (200 * diff) + 200;
+                    if (min > totalLocal) {
+                        int diff = (totalLocal / regionsPage);
+                        min = regionsPage * diff;
+                        max = (regionsPage * diff) + regionsPage;
                     }
                     if (max > it.size()) max = (it.size() - 1);
-
+                    //-----------
                     Builder worldregions = Text.builder();
                     for (int i = min; i <= max; i++){
                         count = i;
@@ -2867,22 +2871,21 @@ public class RPCommands implements CommandCallable {
                                         .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName())).build());
                             }
                         }
-                        last = count;
+                        lastLocal = count;
                     }
-                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + wregions.size() + "]&r: "));
+                    //-----------
+                    last += lastLocal+1;
+                    p.sendMessage(RPUtil.toText("-----"));
+                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]&r: "));
                     p.sendMessages(worldregions.build());
                 }
-            }
-
-            if (max > count) {
-                min = 0;
-            }
-            p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + (min + 1) + "-" + (last + 1) + "/" + (count+1) + " -----------------"));
-            if ((count+1) < total) {
-                p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
-            } else {
-                if (Page != 1) {
-                    p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
+                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
+                if (last < total) {
+                    p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
+                } else {
+                    if (Page != 1) {
+                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
+                    }
                 }
             }
         }

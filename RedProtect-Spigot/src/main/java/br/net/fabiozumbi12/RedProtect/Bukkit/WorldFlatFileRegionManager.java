@@ -150,7 +150,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                 }
 
                 //try backup
-                if (force){
+                if (force && RPConfig.getBool("flat-file.backup")){
                     if (!RPConfig.getBool("flat-file.region-per-file")) {
                         RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
                     } else {

@@ -139,7 +139,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                 }
 
                 //try backup
-                if (force){
+                if (force && RedProtect.get().cfgs.root().flat_file.backup){
                     if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
                         RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
                     } else {
