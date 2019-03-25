@@ -2859,7 +2859,7 @@ public class RPCommands implements CommandCallable {
                                             .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                                 } else {
                                     worldregions.append(Text.builder()
-                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName()))
+                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName() + area))
                                             .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                             .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                                 }
@@ -2870,24 +2870,25 @@ public class RPCommands implements CommandCallable {
                                             .append(RPUtil.toText("&8" + r.getName() + area)).build());
                                 } else {
                                     worldregions.append(Text.builder()
-                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName())).build());
+                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName() + area)).build());
                                 }
                             }
                             lastLocal = count;
                         }
                         //-----------
+
                         last += lastLocal+1;
                         p.sendMessage(RPUtil.toText("-----"));
                         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]&r: "));
-                        p.sendMessages(worldregions.build());
+                        p.sendMessages(worldregions.append(RPUtil.toText(RPLang.get("general.color")+".")).build());
                     }
-                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
-                    if (last < total) {
-                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
-                    } else {
-                        if (Page != 1) {
-                            p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
-                        }
+                }
+                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
+                if (last < total) {
+                    p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
+                } else {
+                    if (Page != 1) {
+                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
                     }
                 }
             }
