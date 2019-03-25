@@ -83,11 +83,13 @@ public class RPGlobalListener implements Listener {
         if (!RPConfig.getGlobalFlagBool(w.getName() + ".build")) {
             //blacklist
             List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
@@ -96,11 +98,13 @@ public class RPGlobalListener implements Listener {
         if (!RPConfig.getGlobalFlagBool(w.getName() + ".build")) {
             //blacklist
             List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
@@ -109,11 +113,13 @@ public class RPGlobalListener implements Listener {
         if (!RPConfig.getGlobalFlagBool(w.getName() + ".interact")) {
             //blacklist
             List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.blacklist");
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-blocks.whitelist");
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
@@ -122,11 +128,13 @@ public class RPGlobalListener implements Listener {
         if (!RPConfig.getGlobalFlagBool(w.getName() + ".interact")) {
             //blacklist
             List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.blacklist");
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-interact-false.interact-entities.whitelist");
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }

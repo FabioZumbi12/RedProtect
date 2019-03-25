@@ -100,11 +100,13 @@ public class RPGlobalListener {
         if (!RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).build) {
             //blacklist
             List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
@@ -113,11 +115,13 @@ public class RPGlobalListener {
         if (!RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).build) {
             //blacklist
             List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
@@ -126,11 +130,13 @@ public class RPGlobalListener {
         if (!RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).interact) {
             //blacklist
             List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_blocks.blacklist;
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_blocks.whitelist;
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
@@ -139,11 +145,13 @@ public class RPGlobalListener {
         if (!RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).interact) {
             //blacklist
             List<String> blt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_entities.blacklist;
-            if (blt.stream().anyMatch(type::matches)) return false;
+            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
 
             //whitelist
             List<String> wlt = RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).if_interact_false.interact_entities.whitelist;
-            return !wlt.isEmpty() && wlt.stream().anyMatch(type::matches);
+            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+
+            return false;
         }
         return true;
     }
