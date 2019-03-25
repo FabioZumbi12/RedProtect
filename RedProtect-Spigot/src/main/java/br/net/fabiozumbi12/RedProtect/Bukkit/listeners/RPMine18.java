@@ -35,6 +35,7 @@ import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Fence;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -42,10 +43,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -58,23 +58,20 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class RPMine18 implements Listener {
 
-    static final RPContainer cont = new RPContainer();
-    static HashMap<Player, String> Ownerslist = new HashMap<>();
+    private static final RPContainer cont = new RPContainer();
 
     public RPMine18() {
         RedProtect.get().logger.debug("Loaded RPMine18...");
     }
 
     @EventHandler
-    public void onPressPlateChange(PlayerInteractEvent e) {
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-            Block b = e.getPlayer().getTargetBlock(null, 5);
-            if (b.getType() == Material.FIRE) {
-                Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
-                if (r != null && !r.canBuild(e.getPlayer())) {
-                    e.setCancelled(true);
-                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
-                }
+    public void onInteractFire(PlayerInteractEvent e) {
+        Block b = e.getPlayer().getTargetBlock(null, 5);
+        if (b.getType() == Material.FIRE || b.getType().name().contains("_FENCE")) {//tem fix for interact with fire
+            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            if (r != null && !r.canBuild(e.getPlayer())) {
+                e.setCancelled(true);
+                RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
             }
         }
     }
