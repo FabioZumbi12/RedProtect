@@ -846,97 +846,100 @@ public class RPCommands implements CommandExecutor, TabCompleter {
         RPLang.sendMessage(p, "no.permission");
     }
 
-    private static void getRegionforList(CommandSender sender, String uuid, int Page) {
-        Set<Region> regions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid));
-        String pname = RPUtil.UUIDtoPlayer(uuid);
-        int length = regions.size();
-        if (pname == null || length == 0) {
-            RPLang.sendMessage(sender, "cmdmanager.player.noregions");
-        } else {
-            sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
-            RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.list") + " " + pname);
-
-            int regionsPage = RPConfig.getInt("region-settings.region-list.regions-per-page");
-            int total = 0;
-            int last = 0;
-
-            for (World w : Bukkit.getWorlds()) {
-                boolean first = true;
-
-                if (Page == 0) {
-                    Page = 1;
-                }
-                int max = (regionsPage * Page);
-                int min = max - regionsPage;
-                int count;
-
-                String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));
-                Set<Region> wregions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
-                int totalLocal = wregions.size();
-                total += totalLocal;
-
-                int lastLocal = 0;
-
-                if (wregions.size() > 0) {
-                    List<Region> it = new ArrayList<>(wregions);
-                    if (min > totalLocal) {
-                        int diff = (totalLocal / regionsPage);
-                        min = regionsPage * diff;
-                        max = (regionsPage * diff) + regionsPage;
-                    }
-                    if (max > it.size()) max = (it.size() - 1);
-                    //-------------
-                    if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
-                        FancyMessage fancy = new FancyMessage();
-                        for (int i = min; i <= max; i++){
-                            count = i;
-                            Region r = it.get(i);
-                            String area = RPConfig.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
-
-                            String rname = RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
-                            if (first) {
-                                rname = rname.substring(3);
-                                first = false;
-                            }
-                            if (count == max) {
-                                rname = rname + RPLang.get("general.color") + ".";
-                            }
-                            fancy.text(rname).color(ChatColor.DARK_GRAY)
-                                    .tooltip(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
-                                    .command("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
-                                    .then(" ");
-                            lastLocal = count;
-                        }
-                        last += lastLocal+1;
-                        sender.sendMessage("-----");
-                        sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
-                        fancy.send(sender);
-                    } else {
-                        StringBuilder worldregions = new StringBuilder();
-                        for (int i = min; i <= max; i++){
-                            count = i;
-                            Region r = it.get(i);
-                            String area = RPConfig.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
-                            worldregions.append(RPLang.get("general.color")).append(", ").append(ChatColor.GRAY).append(r.getName()).append(area);
-                            lastLocal = count;
-                        }
-                        last += lastLocal+1;
-                        sender.sendMessage("-----");
-                        sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
-                        sender.sendMessage(worldregions.substring(3) + RPLang.get("general.color") + ".");
-                    }
-                    //-----------
-                }
-            }
-            sender.sendMessage(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------");
-            if (last < total) {
-                sender.sendMessage(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1)));
+    private static void getRegionforList(CommandSender sender, String uuid, int nPage) {
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), ()->{
+            int Page = nPage;
+            Set<Region> regions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid));
+            String pname = RPUtil.UUIDtoPlayer(uuid);
+            int length = regions.size();
+            if (pname == null || length == 0) {
+                RPLang.sendMessage(sender, "cmdmanager.player.noregions");
             } else {
-                if (Page != 1) {
-                    sender.sendMessage(RPLang.get("cmdmanager.region.listpage.nomore"));
+                sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
+                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.list") + " " + pname);
+
+                int regionsPage = RPConfig.getInt("region-settings.region-list.regions-per-page");
+                int total = 0;
+                int last = 0;
+
+                for (World w : Bukkit.getWorlds()) {
+                    boolean first = true;
+
+                    if (Page == 0) {
+                        Page = 1;
+                    }
+                    int max = (regionsPage * Page);
+                    int min = max - regionsPage;
+                    int count;
+
+                    String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));
+                    Set<Region> wregions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
+                    int totalLocal = wregions.size();
+                    total += totalLocal;
+
+                    int lastLocal = 0;
+
+                    if (wregions.size() > 0) {
+                        List<Region> it = new ArrayList<>(wregions);
+                        if (min > totalLocal) {
+                            int diff = (totalLocal / regionsPage);
+                            min = regionsPage * diff;
+                            max = (regionsPage * diff) + regionsPage;
+                        }
+                        if (max > it.size()) max = (it.size() - 1);
+                        //-------------
+                        if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                            FancyMessage fancy = new FancyMessage();
+                            for (int i = min; i <= max; i++){
+                                count = i;
+                                Region r = it.get(i);
+                                String area = RPConfig.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
+
+                                String rname = RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
+                                if (first) {
+                                    rname = rname.substring(3);
+                                    first = false;
+                                }
+                                if (count == max) {
+                                    rname = rname + RPLang.get("general.color") + ".";
+                                }
+                                fancy.text(rname).color(ChatColor.DARK_GRAY)
+                                        .tooltip(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
+                                        .command("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
+                                        .then(" ");
+                                lastLocal = count;
+                            }
+                            last += lastLocal+1;
+                            sender.sendMessage("-----");
+                            sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
+                            fancy.send(sender);
+                        } else {
+                            StringBuilder worldregions = new StringBuilder();
+                            for (int i = min; i <= max; i++){
+                                count = i;
+                                Region r = it.get(i);
+                                String area = RPConfig.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
+                                worldregions.append(RPLang.get("general.color")).append(", ").append(ChatColor.GRAY).append(r.getName()).append(area);
+                                lastLocal = count;
+                            }
+                            last += lastLocal+1;
+                            sender.sendMessage("-----");
+                            sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
+                            sender.sendMessage(worldregions.substring(3) + RPLang.get("general.color") + ".");
+                        }
+                        //-----------
+                    }
+                }
+                sender.sendMessage(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------");
+                if (last < total) {
+                    sender.sendMessage(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1)));
+                } else {
+                    if (Page != 1) {
+                        sender.sendMessage(RPLang.get("cmdmanager.region.listpage.nomore"));
+                    }
                 }
             }
-        }
+        });
     }
 
     private static void handleWelcome(Player p, String wMessage) {

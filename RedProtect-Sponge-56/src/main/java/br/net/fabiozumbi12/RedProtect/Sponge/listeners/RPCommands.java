@@ -2802,93 +2802,96 @@ public class RPCommands implements CommandCallable {
         RPLang.sendMessage(p, "no.permission");
     }
 
-    private void getRegionforList(CommandSource p, String uuid, int Page) {
-        Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
-        String pname = RPUtil.UUIDtoPlayer(uuid);
-        int length = regions.size();
-        if (pname == null || length == 0) {
-            RPLang.sendMessage(p, "cmdmanager.player.noregions");
-        } else {
-            p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
-            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.created.list") + " " + pname);
+    private void getRegionforList(CommandSource p, String uuid, int nPage) {
+        Sponge.getScheduler().createAsyncExecutor(RedProtect.get()).execute(()->{
+            int Page = nPage;
+            Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
+            String pname = RPUtil.UUIDtoPlayer(uuid);
+            int length = regions.size();
+            if (pname == null || length == 0) {
+                RPLang.sendMessage(p, "cmdmanager.player.noregions");
+            } else {
+                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
+                RPLang.sendMessage(p, RPLang.get("cmdmanager.region.created.list") + " " + pname);
 
-            int regionsPage = RedProtect.get().cfgs.root().region_settings.region_per_page;
-            int total = 0;
-            int last = 0;
+                int regionsPage = RedProtect.get().cfgs.root().region_settings.region_per_page;
+                int total = 0;
+                int last = 0;
 
-            for (World w : Sponge.getServer().getWorlds()) {
-                boolean first = true;
+                for (World w : Sponge.getServer().getWorlds()) {
+                    boolean first = true;
 
-                if (Page == 0) {
-                    Page = 1;
-                }
-                int max = (regionsPage * Page);
-                int min = max - regionsPage;
-                int count;
-
-                String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
-                Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
-                int totalLocal = wregions.size();
-                total += totalLocal;
-
-                int lastLocal = 0;
-
-                if (wregions.size() > 0) {
-                    List<Region> it = new ArrayList<>(wregions);
-                    if (min > totalLocal) {
-                        int diff = (totalLocal / regionsPage);
-                        min = regionsPage * diff;
-                        max = (regionsPage * diff) + regionsPage;
+                    if (Page == 0) {
+                        Page = 1;
                     }
-                    if (max > it.size()) max = (it.size() - 1);
-                    //-----------
-                    Builder worldregions = Text.builder();
-                    for (int i = min; i <= max; i++){
-                        count = i;
-                        Region r = it.get(i);
-                        String area = "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")";
+                    int max = (regionsPage * Page);
+                    int min = max - regionsPage;
+                    int count;
 
-                        if (RedProtect.get().ph.hasRegionPermAdmin(p, "teleport", null)) {
-                            if (first) {
-                                first = false;
-                                worldregions.append(Text.builder()
-                                        .append(RPUtil.toText("&8" + r.getName() + area))
-                                        .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
-                                        .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
-                            } else {
-                                worldregions.append(Text.builder()
-                                        .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName()))
-                                        .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
-                                        .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
-                            }
-                        } else {
-                            if (first) {
-                                first = false;
-                                worldregions.append(Text.builder()
-                                        .append(RPUtil.toText("&8" + r.getName() + area)).build());
-                            } else {
-                                worldregions.append(Text.builder()
-                                        .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName())).build());
-                            }
+                    String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
+                    Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
+                    int totalLocal = wregions.size();
+                    total += totalLocal;
+
+                    int lastLocal = 0;
+
+                    if (wregions.size() > 0) {
+                        List<Region> it = new ArrayList<>(wregions);
+                        if (min > totalLocal) {
+                            int diff = (totalLocal / regionsPage);
+                            min = regionsPage * diff;
+                            max = (regionsPage * diff) + regionsPage;
                         }
-                        lastLocal = count;
+                        if (max > it.size()) max = (it.size() - 1);
+                        //-----------
+                        Builder worldregions = Text.builder();
+                        for (int i = min; i <= max; i++){
+                            count = i;
+                            Region r = it.get(i);
+                            String area = "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")";
+
+                            if (RedProtect.get().ph.hasRegionPermAdmin(p, "teleport", null)) {
+                                if (first) {
+                                    first = false;
+                                    worldregions.append(Text.builder()
+                                            .append(RPUtil.toText("&8" + r.getName() + area))
+                                            .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                            .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
+                                } else {
+                                    worldregions.append(Text.builder()
+                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName()))
+                                            .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                            .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
+                                }
+                            } else {
+                                if (first) {
+                                    first = false;
+                                    worldregions.append(Text.builder()
+                                            .append(RPUtil.toText("&8" + r.getName() + area)).build());
+                                } else {
+                                    worldregions.append(Text.builder()
+                                            .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName())).build());
+                                }
+                            }
+                            lastLocal = count;
+                        }
+                        //-----------
+                        last += lastLocal+1;
+                        p.sendMessage(RPUtil.toText("-----"));
+                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]&r: "));
+                        p.sendMessages(worldregions.build());
                     }
-                    //-----------
-                    last += lastLocal+1;
-                    p.sendMessage(RPUtil.toText("-----"));
-                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]&r: "));
-                    p.sendMessages(worldregions.build());
-                }
-                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
-                if (last < total) {
-                    p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
-                } else {
-                    if (Page != 1) {
-                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
+                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
+                    if (last < total) {
+                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", pname + " " + (Page + 1))));
+                    } else {
+                        if (Page != 1) {
+                            p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     @Override
