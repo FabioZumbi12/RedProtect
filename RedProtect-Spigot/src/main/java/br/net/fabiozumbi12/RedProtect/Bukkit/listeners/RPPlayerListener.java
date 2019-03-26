@@ -161,6 +161,21 @@ public class RPPlayerListener implements Listener {
         }
     }
 
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInteractFire(PlayerInteractEvent e) {
+        if (e.getClickedBlock() != null){
+            Block b = e.getClickedBlock().getRelative(e.getBlockFace());
+            if (b.getType().equals(Material.FIRE)) {
+                Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+                if (r != null && !r.canBuild(e.getPlayer())) {
+                    e.setCancelled(true);
+                    RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
+                }
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
         RedProtect.get().logger.debug("RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());

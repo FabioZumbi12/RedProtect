@@ -65,18 +65,6 @@ public class RPMine18 implements Listener {
     }
 
     @EventHandler
-    public void onInteractFire(PlayerInteractEvent e) {
-        Block b = e.getPlayer().getTargetBlock(null, 5);
-        if (b.getType() == Material.FIRE || b.getType().name().contains("_FENCE")) {//tem fix for interact with fire
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
-            if (r != null && !r.canBuild(e.getPlayer())) {
-                e.setCancelled(true);
-                RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
-            }
-        }
-    }
-
-    @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         if (event.isCancelled()) {
             return;
