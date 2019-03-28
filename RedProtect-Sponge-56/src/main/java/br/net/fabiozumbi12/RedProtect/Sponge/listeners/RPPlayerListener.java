@@ -293,19 +293,18 @@ public class RPPlayerListener {
 
         if (itemInHand.getId().equalsIgnoreCase(RedProtect.get().cfgs.root().wands.infoWandID)) {
             r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
-            if (RedProtect.get().ph.hasUserPerm(p, "redprotect.infowand")) {
-                if (r == null) {
-                    RPLang.sendMessage(p, "playerlistener.noregion.atblock");
-                } else if (r.canBuild(p)) {
-                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "--------------- [&e" + r.getName() + RPLang.get("general.color") + "] ---------------"));
-                    p.sendMessage(r.info());
-                    p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-----------------------------------------"));
-                } else {
-                    p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", RPUtil.UUIDtoPlayer(r.getLeadersDesc()))));
-                }
-                event.setCancelled(true);
-                return;
+            if (r == null) {
+                RPLang.sendMessage(p, "playerlistener.noregion.atblock");
+            } else
+            if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
+                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "--------------- [&e" + r.getName() + RPLang.get("general.color") + "] ---------------"));
+                p.sendMessage(r.info());
+                p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-----------------------------------------"));
+            } else {
+                p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", RPUtil.UUIDtoPlayer(r.getLeadersDesc()))));
             }
+            event.setCancelled(true);
+            return;
         }
 
         //start player checks

@@ -15,207 +15,96 @@ permissions:
     description: "All redprotect commands."
     default: op
     children:
-      redprotect.user: true
-      redprotect.admin: true
-  redprotect.user:
+      redprotect.command.user: true
+      redprotect.command.admin: true
+  redprotect.command.user:
     description: "Recommended User permissions."
     default: true
     children:
-      redprotect.own.border: true
-      redprotect.own.addmember: true
-      redprotect.own.delete: true
-      redprotect.own.info: true
-      redprotect.own.addleader: true
-      redprotect.own.addadmin: true
-      redprotect.own.removemember: true
-      redprotect.own.removeadmin: true
-      redprotect.own.removeleader: true
-      redprotect.own.rename: true
-      redprotect.own.welcome: true
-      redprotect.own.limit: true
-      redprotect.own.claimlimit: true
-      redprotect.own.list: true
-      redprotect.own.priority: true
-      redprotect.own.flaggui: true
-      redprotect.own.near: true
-      redprotect.own.kick: true
-      redprotect.infowand: true
-      redprotect.own.teleport: true
-  redprotect.flag.all:
-    description: "Access to edit all flags."
-    default: true
-    children:
-      redprotect.flag.build: true
-      redprotect.flag.pvp: true
-      redprotect.flag.chest: true
-      redprotect.flag.lever: true
-      redprotect.flag.button: true
-      redprotect.flag.door: true
-      redprotect.flag.spawn-monsters: true
-      redprotect.flag.passives: true
-      redprotect.flag.flow: true
-      redprotect.flag.fire: true
-      redprotect.flag.spawn-animals: true
-      redprotect.flag.minecart: true
-      redprotect.flag.allow-home: true
-      redprotect.flag.allow-magiccarpet: true
-      redprotect.flag.smart-door: true
-      redprotect.flag.allow-potions: true
-      redprotect.flag.mob-loot: true
-      redprotect.flag.flow-damage: true
-      redprotect.flag.iceform-player: true
-      redprotect.flag.iceform-world: true
-      redprotect.flag.allow-fly: true
-      redprotect.flag.teleport: true
-      redprotect.flag.clan: true
-      redprotect.flag.ender-chest: true
-      redprotect.flag.use-potions: true
-      redprotect.flag.allow-effects: true
-      redprotect.flag.allow-spawner: true
-      redprotect.flag.can-grow: true
-      redprotect.flag.leaves-decay: true
-  redprotect.vip:
-    description: "Recommended Vip permissions."
-    default: false
-    children:
-      redprotect.own.teleport: true
-      redprotect.limit.claim.unlimited: true
-      redprotect.limit.blocks.unlimited: true
-  redprotect.ranked:
-    description: "Recommended Ranked permissions."
-    default: false
-    children:
-      redprotect.limit.blocks.10000: true
-      redprotect.limit.claim.200: true
-  redprotect.flag.special:
-    description: "Access to edit all admin flags."
-    default: op
-    children:
-      redprotect.admin.flag.player-enter-command: true
-      redprotect.admin.flag.server-enter-command: true
-      redprotect.admin.flag.player-exit-command: true
-      redprotect.admin.flag.server-exit-command: true
-      redprotect.admin.flag.invincible: true
-      redprotect.admin.flag.effects: true
-      redprotect.admin.flag.minefarm: true
-      redprotect.admin.flag.treefarm: true
-      redprotect.admin.flag.sign: true
-      redprotect.admin.flag.enter: true
-      redprotect.admin.flag.up-skills: true
-      redprotect.admin.flag.can-back: true
-      redprotect.admin.flag.allow-mod: true
-      redprotect.admin.flag.deny-exit-itens: true
-      redprotect.admin.flag.enter-with-itens: true
-      redprotect.admin.flag.deny-with-itens: true
-      redprotect.admin.flag.allow-create-portal: true
-      redprotect.admin.flag.portal-exit: true
-      redprotect.admin.flag.portal-enter: true
-      redprotect.admin.flag.allow-cmds: true
-      redprotect.admin.flag.allow-break: true
-      redprotect.admin.flag.allow-place: true
-      redprotect.admin.flag.deny-cmds: true
-      redprotect.admin.flag.can-pet: true
-      redprotect.admin.flag.can-projectiles: true
-      redprotect.admin.flag.can-hunger: true
-      redprotect.admin.flag.player-damage: true
-      redprotect.admin.flag.forcefly: true
-      redprotect.admin.flag.gamemode: true
-      redprotect.admin.flag.pvparena: true
-      redprotect.admin.flag.forcepvp: true
-      redprotect.admin.flag.clan: true
-      redprotect.admin.flag.can-pickup: true
-      redprotect.admin.flag.can-drop: true
-      redprotect.admin.flag.keep-inventory: true
-      redprotect.admin.flag.keep-levels: true
-      redprotect.admin.flag.cmd-onhealth: true
-      redprotect.admin.flag.can-death: true
-      redprotect.admin.flag.max-players: true
-      redprotect.admin.flag.cropsfarm: true
-      redprotect.admin.flag.spawn-wither: true
-      redprotect.admin.flag.set-portal: true
-      redprotect.admin.flag.dynmap: true
-      redprotect.admin.flag.particles: true
-  redprotect.admin:
+      redprotect.command.help: true
+      redprotect.command.border: true
+      redprotect.command.ldeny: true
+      redprotect.command.laccept: true
+      redprotect.command.claim: true
+      redprotect.command.expand-vert: true
+      redprotect.command.delete: true
+      redprotect.command.info: true
+      redprotect.command.addmember: true
+      redprotect.command.addleader: true
+      redprotect.command.addadmin: true
+      redprotect.command.removemember: true
+      redprotect.command.removeadmin: true
+      redprotect.command.removeleader: true
+      redprotect.command.rename: true
+      redprotect.command.welcome: true
+      redprotect.command.blocklimit: true
+      redprotect.command.claimlimit: true
+      redprotect.command.list: true
+      redprotect.command.priority: true
+      redprotect.command.flag: true
+      redprotect.command.near: true
+      redprotect.command.kick: true
+      redprotect.command.teleport: true
+      redprotect.command.settp: true
+      redprotect.command.deltp: true
+      redprotect.command.infowand: true
+  redprotect.command.admin:
     description: "Recommended Admin permsisions."
     default: op
     children:
-      redprotect.admin.claim: true
-      redprotect.magicwand: true
-      redprotect.admin.create: true
-      redprotect.flag.special: true
-      redprotect.admin.delete: true
-      redprotect.admin.removeadmin: true
-      redprotect.admin.addadmin: true
-      redprotect.admin.removeleader: true
-      redprotect.admin.addleader: true
-      redprotect.admin.addmember: true
-      redprotect.admin.removemember: true
-      redprotect.admin.info: true
-      redprotect.admin.priority: true
-      redprotect.admin.rename: true
-      redprotect.admin.welcome: true
-      redprotect.admin.define: true
-      redprotect.admin.createportal: true
-      redprotect.admin.reload: true
-      redprotect.admin.save-all: true
-      redprotect.admin.load-all: true
-      redprotect.admin.teleport: true
-      redprotect.admin.copyflag: true
-      redprotect.admin.setconfig: true
-      redprotect.admin.settp: true
-      redprotect.admin.deltp: true
-      redprotect.admin.flaggui: true
-      redprotect.admin.flag: true
-      redprotect.admin.value: true
-      redprotect.admin.expandvert: true
-      redprotect.admin.setmaxy: true
-      redprotect.admin.setminy: true
-      redprotect.admin.border: true
-      redprotect.admin.redefine: true
-      redprotect.teleport.other: true
-      redprotect.other.limit: true
-      redprotect.other.claimlimit: true
-      redprotect.limit.claim.unlimited: true
-      redprotect.limit.blocks.unlimited: true
+      redprotect.command.admin.claim: true
+      redprotect.command.admin.wand: true
+      redprotect.command.admin.create: true
+      redprotect.command.admin.delete: true
+      redprotect.command.admin.removeadmin: true
+      redprotect.command.admin.addadmin: true
+      redprotect.command.admin.removeleader: true
+      redprotect.command.admin.addleader: true
+      redprotect.command.admin.addmember: true
+      redprotect.command.admin.removemember: true
+      redprotect.command.admin.info: true
+      redprotect.command.admin.priority: true
+      redprotect.command.admin.rename: true
+      redprotect.command.admin.welcome: true
+      redprotect.command.admin.define: true
+      redprotect.command.admin.createportal: true
+      redprotect.command.admin.reload: true
+      redprotect.command.admin.save-all: true
+      redprotect.command.admin.load-all: true
+      redprotect.command.admin.teleport: true
+      redprotect.command.admin.copyflag: true
+      redprotect.command.admin.setconfig: true
+      redprotect.command.admin.settp: true
+      redprotect.command.admin.deltp: true
+      redprotect.command.admin.value: true
+      redprotect.command.admin.expandvert: true
+      redprotect.command.admin.setmaxy: true
+      redprotect.command.admin.setminy: true
+      redprotect.command.admin.border: true
+      redprotect.command.admin.redefine: true
+      redprotect.command.admin.gui-edit: true
+      redprotect.command.teleport.other: true
+      redprotect.command.blocklimit.other: true
+      redprotect.command.claimlimit.other: true
+      redprotect.command.removeall: true
+      redprotect.command.regenall: true
+      redprotect.command.start: true
+      redprotect.command.list-areas: true
+      redprotect.command.select-we: true
+      redprotect.command.addleader.bypass: true
+      redprotect.command.regen: true
+      redprotect.limits.claim.unlimited: true
+      redprotect.limits.blocks.unlimited: true
+      redprotect.command-range-bypass: true
       redprotect.bypass: true
       redprotect.bypass.world: true
       redprotect.bypass.nether-roof: true
-      redprotect.bypass.addleader: true
       redprotect.bypass.velocity: true
       redprotect.bypass.define-max-distance: true
-      redprotect.update: true
-      redprotect.regen: true
       redprotect.signspy: true
       redprotect.eco.use: true
       redprotect.eco.admin: true
       redprotect.eco.setvalue: true
       redprotect.eco.others: true
       redprotect.eco.bypass: true
-      redprotect.gui.edit: true
       redprotect.use-claim-modes: true
-      redprotect.removeall: true
-      redprotect.regenall: true
-      redprotect.command-range-bypass: true
-      redprotect.add-rent: true
-      redprotect.del-rent: true
-      redprotect.edit-rent: true
-      redprotect.renew-rent: true
-      redprotect.rent.others: true
-      redprotect.start: true
-      redprotect.list-areas: true
-      redprotect.select-we: true
-  redprotect.bypass-chat:
-    description: "Permissions to bypass chat checks."
-    default: false
-    children:
-      redprotect.chat.bypass-spam: true
-      redprotect.chat.bypass-censor: true
-      redprotect.chat.bypass-anti-ip: true
-      redprotect.chat.bypass-enhancement: true
-  redprotect.eco.use:
-    description: "Economy permissions."
-    default: false
-    children:
-      redprotect.eco.buy: true
-      redprotect.eco.sell: true
-      redprotect.eco.cancelbuy: true

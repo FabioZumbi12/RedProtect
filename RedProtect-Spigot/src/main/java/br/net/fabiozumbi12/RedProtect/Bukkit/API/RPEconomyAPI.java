@@ -25,8 +25,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPEconomy;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
 
 public class RPEconomyAPI {
 

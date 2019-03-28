@@ -25,7 +25,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,14 +40,15 @@ import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmd;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmdAlias;
+
 public class RPLang {
 
-    public static final Properties Lang = new Properties();
-    static final Properties BaseLang = new Properties();
+    private static final Properties Lang = new Properties();
+    private static final Properties BaseLang = new Properties();
     private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
-    //static List<String> langString = new ArrayList<String>();
     private static String pathLang;
-    private static String resLang;
 
     public static SortedSet<String> helpStrings() {
         SortedSet<String> values = new TreeSet<>();
@@ -60,7 +61,7 @@ public class RPLang {
     }
 
     public static void init() {
-        resLang = "lang" + RPConfig.getString("language") + ".properties";
+        String resLang = "lang" + RPConfig.getString("language") + ".properties";
         pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 
         File lang = new File(pathLang);
@@ -78,7 +79,7 @@ public class RPLang {
         RedProtect.get().logger.info("Language file loaded - Using: " + RPConfig.getString("language"));
     }
 
-    static void loadBaseLang() {
+    private static void loadBaseLang() {
         BaseLang.clear();
         try {
             InputStream fileInput = RedProtect.get().getResource("assets/redprotect/langEN-US.properties");
@@ -90,7 +91,7 @@ public class RPLang {
         updateLang();
     }
 
-    static void loadLang() {
+    private static void loadLang() {
         Lang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
@@ -114,12 +115,16 @@ public class RPLang {
         }
     }
 
-    static void updateLang() {
-        for (Entry<Object, Object> linha : BaseLang.entrySet()) {
-            if (!Lang.containsKey(linha.getKey())) {
-                Lang.put(linha.getKey(), linha.getValue());
+    private static void updateLang() {
+        BaseLang.forEach((key, value) -> {
+            if (!Lang.containsKey(key)) {
+                Lang.put(key, value);
             }
-        }
+        });
+
+        //remove invalid entries
+        Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey()));
+
         if (!Lang.containsKey("_lang.version")) {
             Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
         }
@@ -182,6 +187,11 @@ public class RPLang {
             }, 20);
         }
 
+    }
+
+    public static void sendCommandHelp(CommandSender sender, String cmd, boolean usage) {
+        if (usage) sendMessage(sender, "correct.usage");
+        sender.sendMessage(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd)));
     }
 
     public static String translBool(String bool) {

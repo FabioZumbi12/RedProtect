@@ -1467,7 +1467,7 @@ public class RPCommands implements CommandCallable {
                             return cmdr;
                         }
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.help.expandvert").replace("{cmd}", getCmd("expandvert")).replace("{alias}", getCmdAlias("expandvert")));
+                        RPLang.sendMessage(player, RPLang.get("cmdmanager.help.expand-vert").replace("{cmd}", getCmd("expand-vert")).replace("{alias}", getCmdAlias("expand-vert")));
                         return cmdr;
                     }
 

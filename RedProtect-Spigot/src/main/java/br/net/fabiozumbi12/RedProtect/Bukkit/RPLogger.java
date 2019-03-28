@@ -26,6 +26,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -41,28 +42,28 @@ public class RPLogger {
     }
 
     public void sucess(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] &a&l" + s + "&r"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &a&l" + s + "&r"));
     }
 
     public void info(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] " + s));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
     public void warning(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] &6" + s + "&r"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &6" + s + "&r"));
     }
 
     public void severe(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] &c&l" + s + "&r"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &c&l" + s + "&r"));
     }
 
     public void log(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] " + s));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
     public void debug(String s) {
         if (RPConfig.getBool("debug-messages")) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[Redprotect] &b" + s + "&r"));
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
         }
     }
 

@@ -43,10 +43,9 @@ import java.util.concurrent.TimeUnit;
 public class RPLang {
 
     public static final Properties Lang = new Properties();
-    static final Properties BaseLang = new Properties();
+    private static final Properties BaseLang = new Properties();
     private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
-    static String pathLang;
-    static String resLang;
+    private static String pathLang;
 
     public static SortedSet<String> helpStrings() {
         SortedSet<String> values = new TreeSet<>();
@@ -59,7 +58,7 @@ public class RPLang {
     }
 
     public static void init() {
-        resLang = "lang" + RedProtect.get().cfgs.root().language + ".properties";
+        String resLang = "lang" + RedProtect.get().cfgs.root().language + ".properties";
         pathLang = RedProtect.get().configDir + File.separator + resLang;
 
         File lang = new File(pathLang);
@@ -115,14 +114,15 @@ public class RPLang {
     }
 
     static void updateLang() {
-        for (Entry<Object, Object> linha : BaseLang.entrySet()) {
-            if (!Lang.containsKey(linha.getKey())) {
-                Lang.put(linha.getKey(), linha.getValue());
+        BaseLang.forEach((key, value) -> {
+            if (!Lang.containsKey(key)) {
+                Lang.put(key, value);
             }
-        }
-        if (!Lang.containsKey("_lang.version")) {
-            Lang.put("_lang.version", RedProtect.get().container.getVersion().get());
-        }
+        });
+
+        //remove invalid entries
+        Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey()));
+
         try {
             Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (Exception e) {

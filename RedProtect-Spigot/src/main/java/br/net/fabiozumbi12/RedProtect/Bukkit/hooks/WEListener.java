@@ -25,26 +25,37 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class WEListener {
 
@@ -88,22 +99,56 @@ public class WEListener {
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
-    /*
-        public static void pasteWithWE(Player p, File file) {
-            World world = p.getWorld();
-            Location loc = p.getLocation();
+    public static br.net.fabiozumbi12.RedProtect.Bukkit.region.Region pasteWithWE(Player p, File file) {
+        World world = p.getWorld();
+        Location loc = p.getLocation();
+        br.net.fabiozumbi12.RedProtect.Bukkit.region.Region r = null;
 
-            EditSession es = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1);
+        if (!p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
+            RPLang.sendMessage(p, "playerlistener.region.needground");
+            return null;
+        }
 
-            try {
-                CuboidClipboard cc = CuboidClipboard.loadSchematic(file);
-                cc.paste(es, BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()), false);
-            } catch (DataException | IOException | MaxChangedBlocksException e) {
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+            Clipboard clipboard = reader.read();
+
+            BlockVector3 bmin = clipboard.getMinimumPoint();
+            BlockVector3 bmax = clipboard.getMaximumPoint();
+
+            Location min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
+            Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
+
+            String leader = p.getUniqueId().toString();
+            if (!RedProtect.get().OnlineMode) {
+                leader = p.getName().toLowerCase();
+            }
+
+            String regionName = RPUtil.regionNameConform("", p);
+            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
+            if (rb2.ready()) {
+                r = rb2.build();
+                RedProtect.get().rm.add(r, p.getWorld());
+            }
+
+            try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+                Operation operation = new ClipboardHolder(clipboard)
+                        .createPaste(editSession)
+                        .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
+                        .ignoreAirBlocks(false)
+                        .build();
+                Operations.complete(operation);
+            } catch (WorldEditException e) {
                 e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    */
-    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
+
+        return r;
+    }
+
+    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.region.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (RPUtil.stopRegen) {

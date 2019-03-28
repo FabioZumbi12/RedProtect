@@ -230,8 +230,10 @@ public class RedProtect {
 
         rm = new RegionManager();
         rm.loadAll();
+
+        RPUtil.ReadAllDB(rm.getAllRegions());
+
         if (cfgs.root().file_type.equalsIgnoreCase("file")) {
-            RPUtil.ReadAllDB(rm.getAllRegions());
             AutoSaveHandler();
         }
         logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");

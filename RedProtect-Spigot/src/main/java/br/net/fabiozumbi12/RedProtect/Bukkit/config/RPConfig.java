@@ -25,7 +25,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import org.bukkit.*;
 import org.bukkit.World.Environment;

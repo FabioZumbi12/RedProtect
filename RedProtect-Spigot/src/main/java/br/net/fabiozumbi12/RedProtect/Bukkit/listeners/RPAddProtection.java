@@ -25,7 +25,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.apache.commons.lang.StringUtils;

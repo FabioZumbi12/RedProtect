@@ -25,9 +25,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Location;
 import org.bukkit.Material;

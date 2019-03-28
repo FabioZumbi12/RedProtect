@@ -28,8 +28,12 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 import br.net.fabiozumbi12.RedProtect.Bukkit.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.events.EnterExitRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.EnterExitRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPDoor;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
 import com.earth2me.essentials.User;
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
@@ -59,7 +63,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.PressurePlate;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
@@ -237,21 +240,20 @@ public class RPPlayerListener implements Listener {
                 }
                 return;
             }
+
             if (itemInHand.getType().name().equalsIgnoreCase(RPConfig.getString("wands.infoWandID"))) {
                 Region r = RedProtect.get().rm.getTopRegion(l);
-                if (p.hasPermission("redprotect.infowand")) {
-                    if (r == null) {
-                        RPLang.sendMessage(p, "playerlistener.noregion.atblock");
-                    } else if (r.canBuild(p)) {
-                        p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
-                        p.sendMessage(r.info());
-                        p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
-                    } else {
-                        p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc()));
-                    }
-                    event.setCancelled(true);
-                    return;
+                if (r == null) {
+                    RPLang.sendMessage(p, "playerlistener.noregion.atblock");
+                } else if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
+                    p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
+                    p.sendMessage(r.info());
+                    p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
+                } else {
+                    p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc()));
                 }
+                event.setCancelled(true);
+                return;
             }
         }
 
