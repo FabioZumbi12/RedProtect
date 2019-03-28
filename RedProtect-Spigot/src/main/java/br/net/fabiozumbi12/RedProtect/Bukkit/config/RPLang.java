@@ -34,19 +34,26 @@ import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmdAlias;
 
 public class RPLang {
 
-    private static final Properties Lang = new Properties();
-    private static final Properties BaseLang = new Properties();
+    private static final Properties Lang = new Properties(){
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
+    private static final Properties BaseLang = new Properties(){
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
     private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
     private static String pathLang;
 
@@ -123,7 +130,8 @@ public class RPLang {
         });
 
         //remove invalid entries
-        Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey()));
+        if (Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey())))
+            RedProtect.get().logger.warning("- Removed invalid entries from language files");
 
         if (!Lang.containsKey("_lang.version")) {
             Lang.put("_lang.version", RedProtect.get().pdf.getVersion());

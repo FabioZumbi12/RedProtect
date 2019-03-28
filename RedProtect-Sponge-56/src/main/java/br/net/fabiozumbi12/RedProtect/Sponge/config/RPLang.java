@@ -33,17 +33,24 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 public class RPLang {
 
-    public static final Properties Lang = new Properties();
-    private static final Properties BaseLang = new Properties();
+    public static final Properties Lang = new Properties(){
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
+    private static final Properties BaseLang = new Properties(){
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+    };
     private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
     private static String pathLang;
 
@@ -121,7 +128,8 @@ public class RPLang {
         });
 
         //remove invalid entries
-        Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey()));
+        if (Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey())))
+            RedProtect.get().logger.warning("- Removed invalid entries from language files");
 
         try {
             Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
