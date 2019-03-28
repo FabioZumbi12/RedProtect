@@ -131,6 +131,9 @@ public class RPLang {
         if (Lang.entrySet().removeIf(k->!BaseLang.containsKey(k.getKey())))
             RedProtect.get().logger.warning("- Removed invalid entries from language files");
 
+        if (!Lang.containsKey("_lang.version"))
+            Lang.put("_lang.version", RedProtect.get().container.getVersion().get());
+
         try {
             Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (Exception e) {
@@ -139,7 +142,7 @@ public class RPLang {
     }
 
     public static String get(String key) {
-        String FMsg = "";
+        String FMsg;
 
         if (Lang.get(key) == null) {
             FMsg = "&c&oMissing language string for &4" + key;

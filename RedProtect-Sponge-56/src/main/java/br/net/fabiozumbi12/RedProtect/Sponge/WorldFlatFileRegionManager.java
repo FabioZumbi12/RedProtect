@@ -138,6 +138,8 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
                 }
 
+                if (force) RedProtect.get().logger.info("Saving " + this.world.getName() + "'s regions...");
+
                 //try backup
                 if (force && RedProtect.get().cfgs.root().flat_file.backup){
                     if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
@@ -182,6 +184,7 @@ class WorldFlatFileRegionManager implements WorldRegionManager {
 
         try {
             String world = this.getWorld().getName();
+            RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
             if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
                 if (RedProtect.get().cfgs.root().flat_file.region_per_file) {

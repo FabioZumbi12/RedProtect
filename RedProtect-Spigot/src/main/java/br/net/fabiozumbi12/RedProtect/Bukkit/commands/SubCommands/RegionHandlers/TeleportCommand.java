@@ -23,11 +23,6 @@ public class TeleportCommand implements SubCommand {
 
         Player player = (Player) sender;
 
-        if (args.length == 0) {
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.help.teleport").replace("{cmd}", getCmd("teleport")).replace("{alias}", getCmdAlias("teleport")));
-            return true;
-        }
-
         if (args.length == 1) {
             handletp(player, args[0], player.getWorld().getName(), null);
             return true;
@@ -46,7 +41,6 @@ public class TeleportCommand implements SubCommand {
                 return true;
             } else {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.help.teleport").replace("{cmd}", getCmd("teleport")).replace("{alias}", getCmdAlias("teleport")));
                 return true;
             }
         }

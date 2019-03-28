@@ -197,7 +197,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public void load() {
         try {
             String world = this.getWorld().getName();
-            RedProtect.get().logger.info("Loading " + world + "'s regions...");
+            RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
             if (RPConfig.getString("file-type").equals("yml")) {
                 if (RPConfig.getBool("flat-file.region-per-file")) {

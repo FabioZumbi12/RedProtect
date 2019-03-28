@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmd;
 
 public class StartCommand implements SubCommand {
     @Override
@@ -39,7 +40,7 @@ public class StartCommand implements SubCommand {
             }
 
             RedProtect.get().confiemStart.add(player.getName());
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.confirm").replace("{cmd}", RPLang.get("cmdmanager.translation.confirm.alias")));
+            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.confirm").replace("{cmd}", getCmd("start")));
 
             Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().confiemStart.remove(player.getName()), 600);
             return true;
@@ -47,7 +48,7 @@ public class StartCommand implements SubCommand {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("ok")) {
             if (!RedProtect.get().confiemStart.contains(player.getName())) {
-                player.sendMessage(RPLang.get("cmdmanager.region.noconfirm").replace("{cmd}", RPLang.get("cmdmanager.translation.start")));
+                player.sendMessage(RPLang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
                 return true;
             }
             RPSchematics.pasteSchematic(player);

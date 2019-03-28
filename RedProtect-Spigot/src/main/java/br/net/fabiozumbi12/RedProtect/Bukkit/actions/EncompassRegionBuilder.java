@@ -233,9 +233,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                                     return;
                                 }
-                                if (!othersName.contains(otherrg.getName())) {
-                                    othersName.add(otherrg.getName());
-                                }
+                                othersName.add(otherrg.getName());
                             }
                         }
 

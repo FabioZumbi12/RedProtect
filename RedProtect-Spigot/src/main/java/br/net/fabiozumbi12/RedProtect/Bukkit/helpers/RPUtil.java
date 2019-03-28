@@ -25,9 +25,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.RPBukkitBlocks;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.RPBukkitEntities;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Ents.TaskChain;
+import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
+import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
+import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;

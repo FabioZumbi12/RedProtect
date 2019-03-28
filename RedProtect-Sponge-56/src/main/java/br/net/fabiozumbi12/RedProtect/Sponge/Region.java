@@ -770,9 +770,7 @@ public class Region implements Serializable {
         }
         this.members.remove(pinfo);
         this.admins.remove(pinfo);
-        if (!this.leaders.contains(pinfo)) {
-            this.leaders.add(pinfo);
-        }
+        this.leaders.add(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
@@ -791,9 +789,7 @@ public class Region implements Serializable {
         }
         this.admins.remove(pinfo);
         this.leaders.remove(pinfo);
-        if (!this.members.contains(pinfo)) {
-            this.members.add(pinfo);
-        }
+        this.members.add(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
@@ -812,9 +808,7 @@ public class Region implements Serializable {
         }
         this.members.remove(pinfo);
         this.leaders.remove(pinfo);
-        if (!this.admins.contains(pinfo)) {
-            this.admins.add(pinfo);
-        }
+        this.admins.add(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
@@ -852,9 +846,7 @@ public class Region implements Serializable {
         }
         this.leaders.remove(pinfo);
         this.admins.remove(pinfo);
-        if (!this.members.contains(pinfo)) {
-            this.members.add(pinfo);
-        }
+        this.members.add(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
@@ -873,9 +865,7 @@ public class Region implements Serializable {
         }
         this.members.remove(pinfo);
         this.leaders.remove(pinfo);
-        if (!this.admins.contains(pinfo)) {
-            this.admins.add(pinfo);
-        }
+        this.admins.add(pinfo);
         RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
         RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));

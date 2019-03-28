@@ -1,0 +1,205 @@
+gui-strings:
+  'false': '&cDenegado'
+  'true': '&aPermitido'
+  value: '&bEstado: '
+  separator: '&7|'
+gui-separator:
+  material: THIN_GLASS
+  data: 0
+gui-flags:
+  door:
+    slot: 0
+    material: WOOD_DOOR
+    name: '&e=> Permitir usar puertas'
+    description: '&6Descripción: &aAbrir y cerrar'
+    description1: '&alas puertas.'
+    description2: ''
+  smart-door:
+    slot: 1
+    material: IRON_DOOR
+    name: '&e=> Permitir usar puertas de Iron'
+    description: '&6Descripción: &aAbrir y cerrar'
+    description1: '&alas puertas de iron.'
+    description2: ''
+  pvp:
+    slot: 20
+    material: STONE_SWORD
+    name: '&e=> PVP'
+    description: '&6Descripción: &aPermitir pegarse'
+    description1: '&amiembros y no miembros.'
+    description2: ''
+  allow-home:
+    slot: 2
+    material: BED
+    name: '&e=> Establecer Hogar'
+    description: '&6Descripción: &aNo permita que ningún miembro use el'
+    description1: '&acomando / sethome o / home para configurar o venir a'
+    description2: '&aesta región.'
+  chest:
+    slot: 3
+    material: TRAPPED_CHEST
+    name: '&e=> &6Acceso a cofres'
+    description: '&6Permite el uso de los'
+    description1: '&6cofres de tu propiedad'
+    description2: '&6para que los puedan usar'
+  lever:
+    slot: 5
+    material: LEVER
+    name: '&e=> Use Lever'
+    description: '&6Descripción: &aNo permitir que ningún miembro use'
+    description1: '&apalancas en esta región.'
+    description2: ''
+  button:
+    slot: 6
+    material: WOOD_BUTTON
+    name: '&e=> Utilizar botones'
+    description: '&6Descripción: &aNo permitir que ningún miembro use'
+    description1: '&abotones en esta región.'
+    description2: ''
+  passives:
+    slot: 33
+    material: SADDLE
+    name: '&e=> Pasivos heridos'
+    description: '&6Descripción: &aNo permita que ningún miembro haga daño.,'
+    description1: '&amatar o interactuar con mafiosos pasivos en'
+    description2: '&aesta región.'
+  allow-magiccarpet:
+    slot: 7
+    material: GLASS
+    name: '&e=> Permitir la alfombra mágica'
+    description: '&6Descripción: &aPermitir que los jugadores caminen con'
+    description1: '&aAlfombra mágica en tu región'
+    description2: ''
+  minecart:
+    slot: 25
+    material: MINECART
+    name: '&e=> Permitir colocar Minecarts'
+    description: '&6Descripción: &aNo permita que ningún miembro coloque,'
+    description1: '&aEntra y rompe Minecarts en esta región.'
+    description2: ''
+  fire:
+    slot: 28
+    material: BLAZE_POWDER
+    name: '&e=> Diseminación de fuego y bloques de daño'
+    description: '&6Descripción: &aPermitir daños en bloques por fuego.'
+    description1: '&ay la explosión, y la propagación del fuego.'
+    description2: ''
+  flow:
+    slot: 29
+    material: WATER_BUCKET
+    name: '&e=> Agua y flujo de lava'
+    description: '&6Descripción: &aHabilitar el flujo de agua y lava.'
+    description1: '&aen esta región.'
+    description2: ''
+  spawn-animals:
+    slot: 34
+    material: EGG
+    name: '&e=> Spawnear Animales con huevo'
+    description: '&6Descripción: &aPermitir el spawn natural de'
+    description1: '&aMobs pasivos en esta región.'
+    description2: ''
+  spawn-monsters:
+    slot: 35
+    material: PUMPKIN
+    name: '&e=> Spawnear Animales'
+    description: '&6Descripción: &aPermitir el spawn natural de'
+    description1: '&amonstruos en esta region'
+    description2: ''
+  use-potions:
+    slot: 15
+    material: GLASS_BOTTLE
+    name: '&e=> Permitir el uso de pociones'
+    description: '&6Descripción: &aPermitir el uso o tirar'
+    description1: '&aCualquier tipo de pociones para no miembros'
+    description2: '&ade la región.'
+  allow-effects:
+    slot: 16
+    material: BLAZE_ROD
+    name: '&e=> Permitir efectos'
+    description: '&6Descripción: &aPermitir o cancelar todo'
+    description1: '&aTipo de efectos para no miembros.'
+    description2: '&ade esta región.'
+  mob-loot:
+    slot: 32
+    material: GRASS
+    name: '&e=> Permitir ataque de Mobs'
+    description: '&6Descripción: &aPermitir ataque de Mobs,'
+    description1: '&aexplotar o romper bloques en esta'
+    description2: '&aregion.'
+  flow-damage:
+    slot: 30
+    material: LAVA_BUCKET
+    name: '&e=> Permitir daño de lava'
+    description: '&6Descripción: &aPermitir que la lava'
+    description1: '&aelimine los bloques.'
+    description2: ''
+  iceform-world:
+    slot: 31
+    material: ICE
+    name: '&e=> Permitir spawnear entidades de Hielo'
+    description: '&6Descripción: &aPermitir spawnear'
+    description1: '&aentidades como SnowMan y manejar'
+    description2: '&ael tiempo como la nieve.'
+  iceform-player:
+    slot: 4
+    material: PACKED_ICE
+    name: '&e=> Permitir spawnear entidades de Hielos'
+    description: '&6Descripción: &aPermitir spawnear'
+    description1: '&apor los jugadores una helada'
+    description2: '&aenchantada.'
+  allow-fly:
+    slot: 8
+    material: FEATHER
+    name: '&e=> Permitir volar'
+    description: '&6Descripción: &aPermitir a los jugadores'
+    description1: '&avolar habilitado para volar en esta región.'
+    description2: ''
+  teleport:
+    slot: 19
+    material: ENDER_PEARL
+    name: '&e=> Permitir Teleport'
+    description: '&6Descripción: &aPermitir que los jugadores'
+    description1: '&ateletransportarse en esta región utilizando'
+    description2: '&alas perlas de Ender y demás.'
+  clan:
+    slot: 14
+    material: BOW
+    name: '&e=> Establecer región de clan'
+    description: '&bDescripción: &aEstablecer esta región como'
+    description1: '&atu hogar de clan, agregando todos los miembros del clan'
+    description2: '&aal mismo tiempo con el clic.'
+  ender-chest:
+    slot: 22
+    material: ENDER_CHEST
+    name: '&e=> Permitir el acceso a EnderChest'
+    description: '&bDescripción: &aPermitir que los jugadores'
+    description1: '&ausar cofres de Ender en esta región.'
+    description2: ''
+  can-grow:
+    slot: 27
+    material: WHEAT
+    name: '&e=> Permitir que las granjas crezcan'
+    description: '&bDescripción: &aChoose if farms'
+    description1: '&ain this region will grow or not.'
+    description2: ''
+  allow-spawner:
+    slot: 10
+    material: MOB_SPAWNER
+    name: '&e=> Permitir lugar a los demás'
+    description: '&bDescripción: &aPermitir no miembros'
+    description1: '&aen esta región'
+    description2: ''
+  leaves-decay:
+    slot: 11
+    material: LEAVES
+    name: '&e=> Permitir hojas en descomposición o no'
+    description: '&bDescripción: &aPermitir la caída de las hojas'
+    description1: '&anaturalmente o no'
+    description2: ''
+  build:
+    slot: 13
+    material: COBBLESTONE
+    name: '&e=> Permitir construir'
+    description: '&bDescripción: &aPermitir que los no miembros'
+    description1: '&aconstruir en la región. Esto significa romper y'
+    description2: '&acolocar bloques'

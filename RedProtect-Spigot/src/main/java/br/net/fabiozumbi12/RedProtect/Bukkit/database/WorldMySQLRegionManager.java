@@ -325,14 +325,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 try {
                     if (rs.getString("owners") != null) {
                         for (String owner : rs.getString("owners").split(", ")) {
-                            if (owner.length() > 0 && !leaders.contains(owner)) {
+                            if (owner.length() > 0) {
                                 leaders.add(owner);
                             }
                         }
                     }
                     if (rs.getString("creator") != null) {
                         String creator = rs.getString("creator");
-                        if (creator.length() > 0 && !leaders.contains(creator)) {
+                        if (creator.length() > 0) {
                             leaders.add(creator);
                         }
                     }
