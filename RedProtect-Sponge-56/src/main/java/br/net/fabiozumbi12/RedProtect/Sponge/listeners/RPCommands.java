@@ -1,7 +1,6 @@
 /*
  Copyright @FabioZumbi12
 
- This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   damages arising from the use of this class.
 
  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
@@ -1434,7 +1433,7 @@ public class RPCommands implements CommandCallable {
 
         //rp expand-vert [region] [world]
         if (checkCmd(args[0], "expand-vert")) {
-            if (!RedProtect.get().ph.hasGenPerm(player, "expandvert")) {
+            if (!RedProtect.get().ph.hasGenPerm(player, "expand-vert")) {
                 RPLang.sendMessage(player, "no.permission");
                 return cmdr;
             }
@@ -1467,7 +1466,7 @@ public class RPCommands implements CommandCallable {
                             return cmdr;
                         }
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.help.expandvert").replace("{cmd}", getCmd("expandvert")).replace("{alias}", getCmdAlias("expandvert")));
+                        RPLang.sendMessage(player, RPLang.get("cmdmanager.help.expand-vert").replace("{cmd}", getCmd("expand-vert")).replace("{alias}", getCmdAlias("expand-vert")));
                         return cmdr;
                     }
 
