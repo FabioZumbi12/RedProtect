@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 19:54
+ * Last Modified: 29/03/19 03:36
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -28,8 +28,10 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -60,7 +62,6 @@ import java.util.concurrent.TimeUnit;
 public class Region implements Serializable {
 
     private static final long serialVersionUID = 2861198224185302015L;
-    private final boolean waiting = false;
     private int[] x;
     private int[] z;
     private int minMbrX;
@@ -739,11 +740,6 @@ public class Region implements Serializable {
         return this.leaders.contains(RPUtil.PlayerToUUID(player.getName()));
     }
 
-    /*
-    public boolean isLeader(User player) {
-        return this.leaders.contains(RPUtil.PlayerToUUID(player.getName()));
-    }
-    */
     public boolean isAdmin(Player player) {
         return this.admins.contains(RPUtil.PlayerToUUID(player.getName()));
     }
@@ -992,6 +988,7 @@ public class Region implements Serializable {
             if (cmd.startsWith("/")) {
                 cmd = cmd.substring(1);
             }
+            boolean waiting = false;
             if (p.get(Keys.HEALTH).get() <= health && !waiting) {
                 RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
     			/*waiting = true;

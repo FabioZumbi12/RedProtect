@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.API;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPEconomy;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 
 public class RPEconomyAPI {

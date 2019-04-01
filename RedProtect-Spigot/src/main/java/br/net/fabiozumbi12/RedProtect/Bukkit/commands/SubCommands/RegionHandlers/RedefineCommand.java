@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.RedefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -40,7 +40,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class RedefineCommand implements SubCommand {
 
@@ -61,7 +61,7 @@ public class RedefineCommand implements SubCommand {
             }
 
             if (!RedProtect.get().ph.hasRegionPermLeader(player, "redefine", oldRect)) {
-                RPLang.sendMessage(player, "no.permission");
+                RPLang.sendMessage(player, "playerlistener.region.cantuse");
                 return true;
             }
 

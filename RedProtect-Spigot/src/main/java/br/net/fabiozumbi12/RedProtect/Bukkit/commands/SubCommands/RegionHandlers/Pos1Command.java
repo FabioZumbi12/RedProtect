@@ -43,7 +43,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class Pos1Command implements SubCommand {
     @Override
@@ -74,8 +74,8 @@ public class Pos1Command implements SubCommand {
                 }
 
                 if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance")) {
-                    Double dist = loc1.distanceSquared(loc2);
-                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+                    double dist = loc1.distanceSquared(loc2);
+                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), (int) dist));
                 } else {
                     RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                 }

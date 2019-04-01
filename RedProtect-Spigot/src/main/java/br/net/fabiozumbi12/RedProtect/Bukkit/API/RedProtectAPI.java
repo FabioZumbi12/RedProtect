@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -179,7 +179,7 @@ public class RedProtectAPI {
      * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
      */
     public Map<Integer, Region> getGroupRegions(Location loc) {
-        return RedProtect.get().rm.getGroupRegion(loc);
+         return RedProtect.get().rm.getGroupRegion(loc);
     }
 
     /**

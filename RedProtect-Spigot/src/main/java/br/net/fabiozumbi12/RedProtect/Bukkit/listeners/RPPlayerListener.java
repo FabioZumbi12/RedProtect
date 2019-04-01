@@ -36,7 +36,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import com.earth2me.essentials.User;
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;

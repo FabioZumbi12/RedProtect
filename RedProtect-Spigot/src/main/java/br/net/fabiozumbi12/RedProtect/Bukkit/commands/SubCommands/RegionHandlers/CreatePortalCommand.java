@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
@@ -41,11 +41,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class CreatePortalCommand implements SubCommand {
     @Override
@@ -70,11 +69,15 @@ public class CreatePortalCommand implements SubCommand {
             }
 
             String serverName = RPConfig.getString("region-settings.default-leader");
-            String name = args[0].replace("/", "|");
+            String name = args[0].replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
 
             Region r2 = RedProtect.get().rm.getRegion(name, w);
 
             if (r2 != null) {
+                if (!r2.isLeader(player) || !r2.isAdmin(player)){
+                    RPLang.sendMessage(player, "no.permission");
+                    return true;
+                }
                 RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, args[1], w.getName()));
                 RPLang.sendMessage(player, "cmdmanager.region.portalhint");
                 r2.setFlag(sender, "set-portal", args[1] + " " + w.getName());

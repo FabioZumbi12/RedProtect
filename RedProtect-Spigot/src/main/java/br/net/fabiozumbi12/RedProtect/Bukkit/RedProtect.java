@@ -67,7 +67,6 @@ public class RedProtect extends JavaPlugin {
     public PluginDescriptionFile pdf;
     public boolean Update;
     public String UptVersion;
-    public String UptLink;
     public RegionManager rm;
     public List<String> changeWait = new ArrayList<>();
     public List<String> tpWait = new ArrayList<>();
@@ -100,7 +99,7 @@ public class RedProtect extends JavaPlugin {
     private boolean PlaceHolderAPI;
     private boolean Fac;
     private RedProtectAPI rpAPI;
-    private CommandHandler cmdHandler;
+    public CommandHandler cmdHandler;
 
     public static RedProtect get() {
         return plugin;
@@ -164,9 +163,6 @@ public class RedProtect extends JavaPlugin {
             if (version >= 1130) {
                 rpvhelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper113").newInstance();
             }
-
-            //-- hooks
-            registerHooks();
 
             logger.info("Loading API...");
             this.rpAPI = new RedProtectAPI();
@@ -261,13 +257,45 @@ public class RedProtect extends JavaPlugin {
         }
     }
 
-    public void FullReload() {
+    public void reload() {
         try {
             //shutdown
             shutDown();
 
             //start
             startLoad();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startLoad() {
+        RPConfig.init();
+        RPLang.init();
+
+        logger.info("Registering commands...");
+        cmdHandler = new CommandHandler(this);
+
+        logger.info("Registering listeners...");
+        serv.getPluginManager().registerEvents(new RPGlobalListener(), this);
+        serv.getPluginManager().registerEvents(new RPBlockListener(), this);
+        serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
+        serv.getPluginManager().registerEvents(new RPEntityListener(), this);
+        serv.getPluginManager().registerEvents(new RPWorldListener(), this);
+
+        //-- hooks
+        registerHooks();
+
+        try {
+            rm = new RegionManager();
+            rm.loadAll();
+
+            RPUtil.ReadAllDB(rm.getAllRegions());
+
+            if (RPConfig.getString("file-type").equalsIgnoreCase("yml")) {
+                AutoSaveHandler();
+            }
+            logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -288,36 +316,6 @@ public class RedProtect extends JavaPlugin {
         HandlerList.unregisterAll(this);
 
         logger.info(pdf.getFullName() + " turn off...");
-    }
-
-    private void startLoad() {
-        RPConfig.init();
-        RPLang.init();
-
-        logger.info("Registering commands...");
-        cmdHandler = new CommandHandler(this);
-
-        logger.info("Registering listeners...");
-        serv.getPluginManager().registerEvents(new RPGlobalListener(), this);
-        serv.getPluginManager().registerEvents(new RPBlockListener(), this);
-        serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
-        serv.getPluginManager().registerEvents(new RPEntityListener(), this);
-        serv.getPluginManager().registerEvents(new RPWorldListener(), this);
-        serv.getPluginManager().registerEvents(new RPAddProtection(), this);
-
-        try {
-            rm = new RegionManager();
-            rm.loadAll();
-            
-            RPUtil.ReadAllDB(rm.getAllRegions());
-
-            if (RPConfig.getString("file-type").equalsIgnoreCase("yml")) {
-                AutoSaveHandler();
-            }
-            logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean denyEnterRegion(String rid, String player) {

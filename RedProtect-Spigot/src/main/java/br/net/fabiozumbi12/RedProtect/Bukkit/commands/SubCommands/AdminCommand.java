@@ -28,15 +28,16 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
+import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import javafx.util.Pair;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
 import org.bukkit.*;
@@ -44,10 +45,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.*;
 
 public class AdminCommand implements SubCommand {
 
@@ -109,6 +112,77 @@ public class AdminCommand implements SubCommand {
         }
 
         if (args.length == 1) {
+
+            if (args[0].equalsIgnoreCase("list-areas")) {
+                sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
+                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.area-list"));
+                sender.sendMessage("-----");
+                for (World w : Bukkit.getWorlds()) {
+                    Set<Region> wregions = new HashSet<>();
+                    for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                        SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
+                        Date now = null;
+                        try {
+                            now = dateformat.parse(RPUtil.DateNow());
+                        } catch (ParseException e1) {
+                            RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
+                        }
+                        Date regiondate = null;
+                        try {
+                            regiondate = dateformat.parse(r.getDate());
+                        } catch (ParseException e) {
+                            RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
+                            e.printStackTrace();
+                        }
+                        long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                        for (String play : RPConfig.getStringList("purge.ignore-regions-from-players")) {
+                            if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                                break;
+                            }
+                        }
+                        if (!r.isLeader(RPConfig.getString("region-settings.default-leader")) && days > RPConfig.getInt("purge.remove-oldest") && r.getArea() >= RPConfig.getInt("purge.regen.max-area-regen")) {
+                            wregions.add(r);
+                        }
+                    }
+                    if (wregions.size() == 0) {
+                        continue;
+                    }
+                    Iterator<Region> it = wregions.iterator();
+                    String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.database-colors." + w.getName(), "&a"));
+                    if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                        boolean first = true;
+                        FancyMessage fancy = new FancyMessage();
+                        while (it.hasNext()) {
+                            Region r = it.next();
+                            String rname = RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + "(" + r.getArea() + ")";
+                            if (first) {
+                                rname = rname.substring(3);
+                                first = false;
+                            }
+                            if (!it.hasNext()) {
+                                rname = rname + RPLang.get("general.color") + ".";
+                            }
+                            fancy.text(rname).color(ChatColor.DARK_GRAY)
+                                    .tooltip(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
+                                    .command("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
+                                    .then(" ");
+                        }
+                        sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + wregions.size() + "]" + ChatColor.RESET + ": ");
+                        fancy.send(sender);
+                        sender.sendMessage("-----");
+                    } else {
+                        String worldregions = "";
+                        while (it.hasNext()) {
+                            Region r = it.next();
+                            worldregions = worldregions + RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + "(" + r.getArea() + ")";
+                        }
+                        sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + wregions.size() + "]" + ChatColor.RESET + ": ");
+                        sender.sendMessage(worldregions.substring(3) + RPLang.get("general.color") + ".");
+                        sender.sendMessage("-----");
+                    }
+                }
+                return true;
+            }
 
             if (args[0].equalsIgnoreCase("clear-kicks")) {
                 RedProtect.get().denyEnter.clear();
@@ -204,6 +278,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
             }
+
             if (args[0].equalsIgnoreCase("load-all")) {
                 RedProtect.get().rm.clearDB();
                 try {
@@ -217,15 +292,21 @@ public class AdminCommand implements SubCommand {
             }
 
             if (checkCmd(args[0], "reload")) {
-                RedProtect.get().FullReload();
+                RedProtect.get().reload();
                 RPLang.sendMessage(sender, "RedProtect Plus reloaded!");
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("reload-config")) {
+                RedProtect.get().cmdHandler.unregisterAll();
+
                 RPConfig.init();
                 RPLang.init();
-                RPLang.sendMessage(sender, "RedProtect Plus configs reloaded!");
+
+                RedProtect.get().logger.info("Re-registering commands...");
+                RedProtect.get().cmdHandler = new CommandHandler(RedProtect.get());
+
+                RPLang.sendMessage(sender, "RedProtect configs reloaded!");
                 return true;
             }
         }
@@ -296,7 +377,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
                 int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
-                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limit.claim.unlimited")) {
+                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.nolimit"));
                     return true;
                 }
@@ -315,7 +396,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
                 int limit = RedProtect.get().ph.getPlayerBlockLimit(offp);
-                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limit.blocks.unlimited")) {
+                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.nolimit"));
                     return true;
                 }
@@ -382,7 +463,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
                 int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
-                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limit.claim.unlimited")) {
+                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.nolimit"));
                     return true;
                 }
@@ -441,6 +522,7 @@ public class AdminCommand implements SubCommand {
         }
 
         if (args.length == 4) {
+
             //rp addmember <player> <region> <database>
             if (checkCmd(args[0], "addmember")) {
                 World w = RedProtect.get().serv.getWorld(args[3]);
@@ -697,10 +779,15 @@ public class AdminCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> consolecmds = Arrays.asList("list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+
+        if (args.length == 0) {
+            return consolecmds;
+        }
+
         if (args.length == 1){
             SortedSet<String> tab = new TreeSet<>();
-            List<String> consolecmds = Arrays.asList("files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
-            for (String cmd : consolecmds) {
+           for (String cmd : consolecmds) {
                 if (cmd.startsWith(args[0])) {
                     tab.add(cmd);
                 }

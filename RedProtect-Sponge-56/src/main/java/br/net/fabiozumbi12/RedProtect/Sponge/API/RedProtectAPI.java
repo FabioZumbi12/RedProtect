@@ -253,7 +253,7 @@ public class RedProtectAPI {
      * <p>
      *
      * @param flag Player Flag to add
-     * @param flag Player Flag value to add
+     * @param defValue Player Flag value to add
      */
     public void addPlayerFlag(String flag, Object defValue) {
         if (defValue instanceof Boolean)

@@ -40,7 +40,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class BlockLimitCommand implements SubCommand {
     @Override
@@ -68,12 +68,7 @@ public class BlockLimitCommand implements SubCommand {
             return true;
         }
 
-        if (!RedProtect.get().ph.hasCommandPerm(player, "blocklimit.other")) {
-            RPLang.sendMessage(player, "no.permission");
-            return true;
-        }
-
-        if (args.length == 1) {
+        if (args.length == 1 && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.blocklimit")) {
             Player offp = RedProtect.get().serv.getOfflinePlayer(args[0]).getPlayer();
             if (offp == null) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));

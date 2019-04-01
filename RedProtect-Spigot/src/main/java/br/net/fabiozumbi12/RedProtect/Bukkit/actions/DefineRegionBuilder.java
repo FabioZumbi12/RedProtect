@@ -30,7 +30,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -58,7 +58,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
+        regionName = regionName.replaceAll("[^\\p{L}_0-9]", "");
         if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {

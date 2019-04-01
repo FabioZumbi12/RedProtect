@@ -29,6 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.command.Command;
@@ -38,14 +39,13 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.*;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handletp;
 
 public class TeleportCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
+            CommandHandlers.HandleHelpPage(sender, 1);
             return true;
         }
 
@@ -62,10 +62,10 @@ public class TeleportCommand implements SubCommand {
         }
 
         if (args.length == 3) {
-            // /rp teleport <player> <region> <database>
-            Player play = RedProtect.get().serv.getPlayer(args[0]);
+            // /rp teleport <region> <world> <player>
+            Player play = RedProtect.get().serv.getPlayer(args[2]);
             if (play != null) {
-                handletp(player, args[1], args[2], play);
+                handletp(player, args[0], args[1], play);
                 return true;
             } else {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));

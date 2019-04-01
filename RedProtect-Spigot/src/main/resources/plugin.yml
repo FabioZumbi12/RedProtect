@@ -7,9 +7,9 @@ description: Allows players to define fields to protect their houses.
 softdepend: [AsyncWorldEdit, WorldEdit, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, MagicCarpet, PvPManager, Essentials, dynmap, SimpleClans, Factions, PlaceholderAPI, ProtocolLib, GriefPrevention]
 commands:
   RedProtect:
-    description: "Main command for redprotect."
+    description: "Main command for RedProtect."
     usage: "Error, use '/rp ?' to see the commands."
-    aliases: [rp, redp, rprotect, regionprotect, regionp]
+    aliases: [rp]
 permissions:
   redprotect.*:
     description: "All redprotect commands."
@@ -48,6 +48,7 @@ permissions:
       redprotect.command.settp: true
       redprotect.command.deltp: true
       redprotect.command.infowand: true
+      redprotect.command.wand: true
   redprotect.command.admin:
     description: "Recommended Admin permsisions."
     default: op
@@ -84,8 +85,8 @@ permissions:
       redprotect.command.admin.redefine: true
       redprotect.command.admin.gui-edit: true
       redprotect.command.teleport.other: true
-      redprotect.command.blocklimit.other: true
-      redprotect.command.claimlimit.other: true
+      redprotect.command.admin.blocklimit: true
+      redprotect.command.admin.claimlimit: true
       redprotect.command.removeall: true
       redprotect.command.regenall: true
       redprotect.command.start: true

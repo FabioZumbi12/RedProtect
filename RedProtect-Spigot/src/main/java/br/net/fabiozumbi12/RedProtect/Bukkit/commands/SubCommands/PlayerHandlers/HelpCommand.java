@@ -36,7 +36,7 @@ import org.bukkit.command.ConsoleCommandSender;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class HelpCommand implements SubCommand {
     @Override

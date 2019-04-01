@@ -28,25 +28,39 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
+import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
+import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.sponge.SpongeAdapter;
 import com.sk89q.worldedit.sponge.SpongeWorld;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 public class WEListener {
@@ -90,32 +104,56 @@ public class WEListener {
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
-    /*
-        public static void pasteWithWE(Player p, File f) throws DataException {
-            SpongePlayer sp = SpongeWorldEdit.inst().wrapPlayer(p);
-            SpongeWorld ws = SpongeWorldEdit.inst().getWorld(p.getWorld());
+    public static br.net.fabiozumbi12.RedProtect.Sponge.Region pasteWithWE(Player p, File file) {
+        World world = p.getWorld();
+        Location loc = p.getLocation();
+        br.net.fabiozumbi12.RedProtect.Sponge.Region r = null;
 
-            LocalSession session = SpongeWorldEdit.inst().getSession(p);
+        if (p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.WATER) ||
+                p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.FLOWING_WATER)) {
+            RPLang.sendMessage(p, "playerlistener.region.needground");
+            return null;
+        }
 
-            Closer closer = Closer.create();
-            try {
-                ClipboardFormat format = ClipboardFormat.findByAlias("schematic");
-                FileInputStream fis = closer.register(new FileInputStream(f));
-                BufferedInputStream bis = closer.register(new BufferedInputStream(fis));
-                ClipboardReader reader = format.getReader(bis);
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+            Clipboard clipboard = reader.read();
 
-                Clipboard clipboard = reader.read();
-                session.setClipboard(new ClipboardHolder(clipboard));
+            BlockVector3 bmin = clipboard.getMinimumPoint();
+            BlockVector3 bmax = clipboard.getMaximumPoint();
 
-                ClipboardHolder holder = session.getClipboard();
+            Location min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
+            Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
-                Operation op = holder.createPaste(ws).to(session.getPlacementPosition(sp)).build();
-                Operations.completeLegacy(op);
-            } catch (IOException | MaxChangedBlocksException | EmptyClipboardException | IncompleteRegionException e) {
+            String leader = p.getUniqueId().toString();
+            if (!RedProtect.get().OnlineMode) {
+                leader = p.getName().toLowerCase();
+            }
+
+            String regionName = RPUtil.regionNameConform("", p);
+            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
+            if (rb2.ready()) {
+                r = rb2.build();
+                RedProtect.get().rm.add(r, p.getWorld());
+            }
+
+            try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(SpongeAdapter.checkWorld(world), -1)) {
+                Operation operation = new ClipboardHolder(clipboard)
+                        .createPaste(editSession)
+                        .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
+                        .ignoreAirBlocks(false)
+                        .build();
+                Operations.complete(operation);
+            } catch (WorldEditException e) {
                 e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    */
+
+        return r;
+    }
+
     public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Sponge.Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             if (RPUtil.stopRegen) {
@@ -155,6 +193,22 @@ public class WEListener {
             if (remove) {
                 r.notifyRemove();
                 RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()).get());
+            }
+
+            if (delayCount % 50 == 0){
+                RedProtect.get().rm.saveAll(true);
+            }
+
+            if (delayCount == RPUtil.getDelay() && RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen){
+                Sponge.getServer().setHasWhitelist(false);
+                RedProtect.get().logger.sucess("Whitelist disabled!");
+            }
+
+            if (RedProtect.get().cfgs.root().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().cfgs.root().purge.regen.stop_server_every){
+                Sponge.getScheduler().getScheduledTasks(RedProtect.get().container).forEach(Task::cancel);
+                RedProtect.get().rm.saveAll(false);
+
+                Sponge.getServer().shutdown();
             }
 
         }, delay, TimeUnit.MILLISECONDS);

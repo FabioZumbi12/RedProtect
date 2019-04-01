@@ -28,6 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.region;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;

@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Bukkit;
@@ -40,7 +40,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class SetMinYCommand implements SubCommand {
     @Override
@@ -94,6 +94,12 @@ public class SetMinYCommand implements SubCommand {
                 RPLang.sendMessage(player, "cmdmanager.region.ysiszesmatch");
                 return true;
             }
+
+            if (!r.isLeader(player) && !r.isAdmin(player)){
+                RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                return true;
+            }
+
             r.setMinY(size);
             RPLang.sendMessage(player, RPLang.get("cmdmanager.region.setminy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " SETMINY of region " + r.getName() + " to " + args[1]);

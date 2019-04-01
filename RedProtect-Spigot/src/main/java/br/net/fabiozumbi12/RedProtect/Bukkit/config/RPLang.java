@@ -38,10 +38,9 @@ import org.bukkit.entity.Player;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.Map.Entry;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmd;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmdAlias;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
 
 public class RPLang {
 

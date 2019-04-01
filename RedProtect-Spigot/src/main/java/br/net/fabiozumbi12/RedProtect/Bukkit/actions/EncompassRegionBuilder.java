@@ -30,7 +30,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -81,7 +81,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 return;
             }
         }
-        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9]", "");
+        regionName = regionName.replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
         if (regionName.length() < 3) {

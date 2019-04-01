@@ -29,11 +29,15 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
+import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.RPDynmap;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.spongepowered.api.Game;
@@ -71,6 +75,8 @@ public class RedProtect {
     public final List<String> changeWait = new ArrayList<>();
     public final List<String> tpWait = new ArrayList<>();
     public final RPLogger logger = new RPLogger();
+    public final List<String> openGuis = new ArrayList<>();
+    public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<Player, Location<World>> firstLocationSelections = new HashMap<>();
     public final HashMap<Player, Location<World>> secondLocationSelections = new HashMap<>();
     public final HashMap<Player, String> alWait = new HashMap<>();
@@ -97,9 +103,10 @@ public class RedProtect {
     @Inject
     public GuiceObjectMapperFactory factory;
     private UUID taskid;
-    private CommandManager cmdService;
+    public CommandManager cmdService;
     private RPVHelper pvhelp;
     private RedProtectAPI rpAPI;
+    public CommandHandler cmdHandler;
 
     public static RedProtect get() {
         return instance;
@@ -134,6 +141,7 @@ public class RedProtect {
 
             OnlineMode = serv.getOnlineMode();
 
+            //--- Init config, lang, listeners and flags
             startLoad();
 
             if (v.startsWith("7")) {
@@ -144,21 +152,8 @@ public class RedProtect {
                 pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
             } else {
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper56").newInstance();
+                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper56").newInstance();
             }
-
-            cmdService.register(container, new RPCommands(), Arrays.asList("redprotect", "rp", "regionp", "regp"));
-
-            game.getEventManager().registerListeners(container, new RPBlockListener());
-            game.getEventManager().registerListeners(container, new RPGlobalListener());
-            game.getEventManager().registerListeners(container, new RPPlayerListener());
-            game.getEventManager().registerListeners(container, new RPEntityListener());
-            game.getEventManager().registerListeners(container, new RPWorldListener());
-            game.getEventManager().registerListeners(container, new RPMine18());
-            game.getEventManager().registerListeners(container, new RPAddProtection());
-
-            WE = checkWE();
-            Dyn = checkDM();
 
             if (Dyn) {
                 logger.info("Dynmap found. Hooked.");
@@ -220,10 +215,19 @@ public class RedProtect {
     }
 
     private void shutDown() {
+        cmdHandler.unregisterAll();
+
         rm.saveAll(true);
         rm.unloadAll();
+
+        openGuis.clear();
+
         for (Task task : Sponge.getScheduler().getScheduledTasks(this)) task.cancel();
         logger.SaveLogs();
+
+        logger.info("Unregistering listeners...");
+        Sponge.getEventManager().unregisterPluginListeners(this.container);
+
         logger.info(container.getName() + " turn off...");
     }
 
@@ -231,15 +235,35 @@ public class RedProtect {
         cfgs = new RPConfig(this.factory);
         RPLang.init();
 
-        rm = new RegionManager();
-        rm.loadAll();
+        logger.info("Registering commands...");
+        cmdHandler = new CommandHandler(this);
 
-        RPUtil.ReadAllDB(rm.getAllRegions());
+        logger.info("Registering listeners...");
+        game.getEventManager().registerListeners(container, new RPBlockListener());
+        game.getEventManager().registerListeners(container, new RPGlobalListener());
+        game.getEventManager().registerListeners(container, new RPPlayerListener());
+        game.getEventManager().registerListeners(container, new RPEntityListener());
+        game.getEventManager().registerListeners(container, new RPWorldListener());
+        game.getEventManager().registerListeners(container, new RPMine18());
+        game.getEventManager().registerListeners(container, new RPAddProtection());
 
-        if (cfgs.root().file_type.equalsIgnoreCase("file")) {
-            AutoSaveHandler();
+        //-- hooks
+        WE = checkWE();
+        Dyn = checkDM();
+
+        try{
+            rm = new RegionManager();
+            rm.loadAll();
+
+            RPUtil.ReadAllDB(rm.getAllRegions());
+
+            if (cfgs.root().file_type.equalsIgnoreCase("file")) {
+                AutoSaveHandler();
+            }
+            logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
     }
 
     public void reload() {

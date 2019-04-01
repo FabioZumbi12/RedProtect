@@ -82,6 +82,15 @@ public class MainCategory {
     @Setting
     public hooksCat hooks = new hooksCat();
 
+    @Setting
+    public schematicsCat schematics = new schematicsCat();
+
+    @ConfigSerializable
+    public class schematicsCat{
+        @Setting(value = "first-house-file", comment = "Schematic file name to use with /rp start.")
+        public String first_house_file = "house1.schematic";
+    }
+
     public MainCategory() {
     }
 
@@ -185,10 +194,6 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class mysqlOptions {
-        /*@Setting(comment = "Dynamic SQL connection! Use one of this options:\n" +
-                "Mysql: \"jdbc:mysql://{host}/\" - Basic Mysql connection\n" +
-                "H2: \"jdbc:h2://{host}/\" - Basic h2 connection")
-        public String uri = "jdbc:mysql://{host}/";*/
         @Setting(value = "db-name")
         public String db_name = "redprotect";
         @Setting
@@ -294,6 +299,10 @@ public class MainCategory {
             public boolean enable = false;
             @Setting(value = "max-area-regen", comment = "Regions with an area greater than this will be ignored.")
             public int max_area_regen = 500;
+            @Setting(value = "stop-server-every", comment = "Stop server on every x regions regenerated (if you is using a script to reboot your server)")
+            public int stop_server_every = -1;
+            @Setting(value = "whitelist-server-regen", comment = "Enable whitelist when regenerating regions?")
+            public boolean enable_whitelist_regen = true;
         }
     }
 

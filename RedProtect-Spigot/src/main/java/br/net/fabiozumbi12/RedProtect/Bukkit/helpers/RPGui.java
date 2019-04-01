@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -106,7 +106,7 @@ public class RPGui implements Listener {
                     continue;
                 }
             }
-            if (RedProtect.get().ph.hasPerm(player, "redprotect.flag." + flag) && Material.getMaterial(RPConfig.getGuiFlagString(flag, "material")) != null && RPConfig.isFlagEnabled(flag)) {
+            if ((RPConfig.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && Material.getMaterial(RPConfig.getGuiFlagString(flag, "material")) != null && RPConfig.isFlagEnabled(flag)) {
                 if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")) {
                     continue;
                 }

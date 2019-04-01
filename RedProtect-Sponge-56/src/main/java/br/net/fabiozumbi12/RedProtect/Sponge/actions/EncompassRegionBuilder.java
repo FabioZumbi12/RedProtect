@@ -31,7 +31,10 @@ package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -81,8 +84,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
-        if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
+        regionName = regionName.replaceAll("[^\\p{L}_0-9 ]", "");
+        if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
@@ -217,7 +220,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         //check regions inside region
                         for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
-                                if (!r.isLeader(p) && !RedProtect.get().ph.hasGenPerm(p, "redprotect.bypass")) {
+                                if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                                     return;
                                 }
@@ -234,7 +237,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             RedProtect.get().logger.debug(LogLevel.DEFAULT, "protection Block is: " + loc.getBlock().getType().getName());
 
                             if (otherrg != null) {
-                                if (!otherrg.isLeader(p) && !RedProtect.get().ph.hasGenPerm(p, "redprotect.admin")) {
+                                if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.admin")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                                     return;
                                 }
@@ -255,14 +258,14 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
                         int claimused = RedProtect.get().rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), w);
-                        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.claim.unlimited");
+                        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
                         if (claimused >= claimLimit && claimLimit != -1) {
                             this.setErrorSign(e, RPLang.get("regionbuilder.claim.limit"));
                             return;
                         }
 
                         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
-                        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
+                        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
                         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
                         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
                         int actualArea = 0;
@@ -274,7 +277,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             return;
                         }
 
-                        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && !RedProtect.get().ph.hasGenPerm(p, "redprotect.eco.bypass")) {
+                        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
                             UniqueAccount acc = RedProtect.get().econ.getOrCreateAccount(p.getUniqueId()).get();
                             Double peco = acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue();
                             long reco = region.getArea() * RedProtect.get().cfgs.getEcoInt("claim-cost-per-block.cost-per-block");

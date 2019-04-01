@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import org.bukkit.entity.Player;
 
 import java.util.Map;

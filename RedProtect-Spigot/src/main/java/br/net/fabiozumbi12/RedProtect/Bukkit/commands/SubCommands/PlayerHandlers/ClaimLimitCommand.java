@@ -40,7 +40,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class ClaimLimitCommand implements SubCommand {
     @Override
@@ -65,12 +65,7 @@ public class ClaimLimitCommand implements SubCommand {
             return true;
         }
 
-        if (!RedProtect.get().ph.hasCommandPerm(player, "claimlimit.other")) {
-            RPLang.sendMessage(player, "no.permission");
-            return true;
-        }
-
-        if (args.length == 1) {
+        if (args.length == 1 && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.claimlimit")) {
             Player offp = RedProtect.get().serv.getOfflinePlayer(args[0]).getPlayer();
             if (offp == null) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));

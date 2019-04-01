@@ -28,6 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
@@ -68,28 +70,35 @@ public class RPVHelper8 implements RPVHelper {
 
     RPVHelper8() {
         this.permissionService = RedProtect.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.border", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.addmember", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.delete", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.info", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.addleader", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.addadmin", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.removemember", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.removeleader", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.removeadmin", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.rename", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.welcome", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.limit", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.claimlimit", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.priority", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.flaggui", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.near", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.infowand", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.list", Tristate.TRUE);
-        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.own.teleport", Tristate.TRUE);
-        for (String flag:RedProtect.get().cfgs.getDefFlags()){
-            this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag." + flag, Tristate.TRUE);
-        }
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.help", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.border", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.ldeny", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.laccept", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.claim", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.expand-vert", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.delete", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.info", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.addmember", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.addleader", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.addadmin", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.removemember", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.removeadmin", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.removeleader", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.rename", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.welcome", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.blocklimit", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.claimlimit", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.list", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.priority", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.flag", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.near", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.kick", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.teleport", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.settp", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.deltp", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.infowand", Tristate.TRUE);
+        this.permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.wand", Tristate.TRUE);
+
         for (String ench : Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList())) {
             if (RedProtect.get().cfgs.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
                 RedProtect.get().cfgs.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);

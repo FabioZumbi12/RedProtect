@@ -102,10 +102,10 @@ public class WEListener {
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
-    public static br.net.fabiozumbi12.RedProtect.Bukkit.region.Region pasteWithWE(Player p, File file) {
+    public static br.net.fabiozumbi12.RedProtect.Bukkit.Region pasteWithWE(Player p, File file) {
         World world = p.getWorld();
         Location loc = p.getLocation();
-        br.net.fabiozumbi12.RedProtect.Bukkit.region.Region r = null;
+        br.net.fabiozumbi12.RedProtect.Bukkit.Region r = null;
 
         if (!p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
             RPLang.sendMessage(p, "playerlistener.region.needground");
@@ -151,8 +151,7 @@ public class WEListener {
         return r;
     }
 
-    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.region.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
-
+    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (RPUtil.stopRegen) {
                 return;
@@ -189,7 +188,17 @@ public class WEListener {
             }
 
             if (remove) {
+                r.notifyRemove();
                 RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
+            }
+
+            if (delayCount % 50 == 0){
+                RedProtect.get().rm.saveAll(true);
+            }
+
+            if (delayCount == RPUtil.getDelay() && RPConfig.getBool("purge.regen.whitelist-server-regen")){
+                Bukkit.getServer().setWhitelist(false);
+                RedProtect.get().logger.sucess("Whitelist disabled!");
             }
 
             if (RPConfig.getInt("purge.regen.stop-server-every") > 0 && delayCount > RPConfig.getInt("purge.regen.stop-server-every")) {

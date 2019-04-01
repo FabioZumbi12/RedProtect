@@ -29,7 +29,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -44,6 +43,12 @@ public class RPPermissionHandler {
     public boolean hasCommandPerm(CommandSender p, String s) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
+        return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
+    }
+
+    public boolean hasFlagPerm(Player p, String flag){
+        String adminperm = "redprotect.flag.admin." + flag;
+        String userperm = "redprotect.flag." + flag;
         return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
     }
 

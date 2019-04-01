@@ -43,8 +43,8 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Array;
 import java.util.*;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmd;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.getCmdAlias;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
 
@@ -102,11 +102,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
         //general commands
         registerCommand(getCmdKeys("admin"), new AdminCommand());
-        registerCommand(getCmdKeys("list-areas"), new ListAreasCommand());
-        registerCommand(getCmdKeys("load-all"), new LoadAllCommand());
-        registerCommand(getCmdKeys("reload"), new ReloadCommand());
-        registerCommand(getCmdKeys("reload-config"), new ReloadConfigCommand());
-        registerCommand(getCmdKeys("save-all"), new SaveAllCommand());
 
         plugin.getCommand("redprotect").setExecutor(this);
         plugin.getCommand("redprotect").setTabCompleter(this);
@@ -129,7 +124,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private List<String> getCmdKeys(String cmd) {
-        return Arrays.asList(getCmd(cmd), getCmdAlias(cmd));
+        if (getCmd(cmd).equalsIgnoreCase(cmd))
+            return Arrays.asList(getCmd(cmd), getCmdAlias(cmd));
+        return Arrays.asList(cmd, getCmd(cmd), getCmdAlias(cmd));
     }
 
     private void registerCommand(List<String> command, SubCommand commandExecutor) {

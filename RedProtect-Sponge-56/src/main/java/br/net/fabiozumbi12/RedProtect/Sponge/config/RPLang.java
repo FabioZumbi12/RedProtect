@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -37,8 +37,10 @@ import org.spongepowered.api.entity.living.player.Player;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmd;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmdAlias;
 
 public class RPLang {
 
@@ -174,6 +176,11 @@ public class RPLang {
                 DelayedMessage.remove(p);
             }, 1, TimeUnit.SECONDS);
         }
+    }
+
+    public static void sendCommandHelp(CommandSource sender, String cmd, boolean usage) {
+        if (usage) sendMessage(sender, "correct.usage");
+        sender.sendMessage(RPUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
     }
 
     public static String translBool(String bool) {

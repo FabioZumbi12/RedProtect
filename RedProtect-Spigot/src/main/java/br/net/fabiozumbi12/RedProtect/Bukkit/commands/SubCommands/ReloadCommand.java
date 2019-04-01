@@ -38,7 +38,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class ReloadCommand implements SubCommand {
     @Override
@@ -51,7 +51,7 @@ public class ReloadCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            RedProtect.get().FullReload();
+            RedProtect.get().reload();
             RPLang.sendMessage(player, "cmdmanager.reloaded");
             return true;
         }

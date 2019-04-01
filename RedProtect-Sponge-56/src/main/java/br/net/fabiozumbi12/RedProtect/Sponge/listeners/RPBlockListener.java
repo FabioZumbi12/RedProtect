@@ -31,6 +31,10 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -106,7 +110,7 @@ public class RPBlockListener {
             Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
             if (!RedProtect.get().cfgs.root().server_protection.sign_spy.only_console) {
                 for (Player play : Sponge.getServer().getOnlinePlayers()) {
-                    if (RedProtect.get().ph.hasGenPerm(play, "redprotect.signspy")/* && !play.equals(p)*/) {
+                    if (play.hasPermission( "redprotect.signspy")/* && !play.equals(p)*/) {
                         play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
                         play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
                         play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));

@@ -30,6 +30,9 @@ package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.world.Location;
@@ -79,7 +82,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
-        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "RedProtect.get().limit.blocks.unlimited");
+        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
         int actualArea = 0;
         if (regionarea > 0) {
@@ -105,7 +108,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check regions inside region
         for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
-                if (!r.isLeader(p) && !RedProtect.get().ph.hasGenPerm(p, "RedProtect.get().bypass")) {
+                if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                     return;
                 }
@@ -137,7 +140,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                     hasAny = true;
                     continue;
                 }
-                if (!otherrg.isLeader(p) && !RedProtect.get().ph.hasGenPerm(p, "RedProtect.get().bypass")) {
+                if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                     return;
                 }
@@ -152,7 +155,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && !RedProtect.get().ph.hasGenPerm(p, "RedProtect.get().eco.bypass")) {
+        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission( "redprotect.eco.bypass")) {
             UniqueAccount acc = RedProtect.get().econ.getOrCreateAccount(p.getUniqueId()).get();
             Double peco = acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue();
             long reco = (region.getArea() <= old.getArea() ? 0 : region.getArea() - old.getArea()) * RedProtect.get().cfgs.getEcoInt("claim-cost-per-block.cost-per-block");
@@ -174,7 +177,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
         int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), w);
-        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "RedProtect.get().limit.claim.unlimited");
+        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
 
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
         p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.claim.left") + (claimused + 1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit)));

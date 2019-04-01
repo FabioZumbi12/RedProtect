@@ -32,7 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
@@ -44,7 +44,6 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandException;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -73,79 +72,6 @@ public class RPUtil {
     private static final HashMap<String, Integer> borderIds = new HashMap<>();
     private static final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
     public static boolean stopRegen = false;
-
-    public static String getCmd(String cmd) {
-        return RPLang.get("cmdmanager.translation." + cmd);
-    }
-
-    public static String getCmdAlias(String cmd) {
-        return RPLang.get("cmdmanager.translation." + cmd + ".alias");
-    }
-
-    public static boolean checkCmd(String arg, String cmd) {
-        return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd)) || arg.equalsIgnoreCase(cmd);
-    }
-
-    public static void HandleHelpPage(CommandSender sender, int page) {
-        sender.sendMessage(RPLang.get("_redprotect.prefix") + " " + RPLang.get("cmdmanager.available.cmds"));
-        sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        sender.sendMessage(RPLang.get("cmdmanager.helpheader.alias"));
-
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            int i = 0;
-            for (String key : RPLang.helpStrings()) {
-                if (RedProtect.get().ph.hasCommandPerm(player, key) || ((key.equals("pos1") || key.equals("pos2")) && RedProtect.get().ph.hasCommandPerm(player, "redefine"))) {
-                    if (key.equalsIgnoreCase("flaggui")) {
-                        continue;
-                    }
-                    i++;
-
-                    if (i > (page * 5) - 5 && i <= page * 5) {
-                        player.sendMessage(RPLang.get("cmdmanager.help." + key).replace("{cmd}", getCmd(key)).replace("{alias}", getCmdAlias(key)));
-                    }
-                    if (i > page * 5) {
-                        player.sendMessage(RPLang.get("general.color") + "------------------------------------");
-                        player.sendMessage(RPLang.get("cmdmanager.page").replace("{page}", "" + (page + 1)));
-                        break;
-                    }
-                }
-            }
-        } else {
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "info <region> <database> " + ChatColor.DARK_AQUA + "- Info about a region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "flag <regionName> <Flag> <Value> <World> " + ChatColor.DARK_AQUA + "- Set a flag on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "flag info <region> <database> " + ChatColor.DARK_AQUA + "- Flag info for region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "addmember <player> <region> <database> " + ChatColor.DARK_AQUA + "- Add player as member on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "addadmin <player> <region> <database> " + ChatColor.DARK_AQUA + "- Add player as admin on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "addleader <player> <region> <database> " + ChatColor.DARK_AQUA + "- Add player as leader on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "removemember <player> <region> <database> " + ChatColor.DARK_AQUA + "- Remove a player as member on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "removeadmin <player> <region> <database> " + ChatColor.DARK_AQUA + "- Remove a player as admin on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "removeleader <player> <region> <database> " + ChatColor.DARK_AQUA + "- Remove a player as leader on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "teleport <playerName> <regionName> <World> " + ChatColor.DARK_AQUA + "- Teleport player to a region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "limit <playerName> " + ChatColor.DARK_AQUA + "- Area limit for player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "claimlimit <playerName> [database] " + ChatColor.DARK_AQUA + "- Claim limit for player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "list-all " + ChatColor.DARK_AQUA + "- List All regions");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "list <player> [page] " + ChatColor.DARK_AQUA + "- List All regions from player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "ymlTomysql " + ChatColor.DARK_AQUA + "- Convert from Yml to Mysql");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "mychunktorp " + ChatColor.DARK_AQUA + "- Convert from MyChunk to RedProtect");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "single-to-files " + ChatColor.DARK_AQUA + "- Convert single database files to regions files");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single database files");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "save-all [-f]" + ChatColor.DARK_AQUA + "- Save all regions to database");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "load-all " + ChatColor.DARK_AQUA + "- Load all regions from database");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "reload-config " + ChatColor.DARK_AQUA + "- Reload only the config");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
-        }
-        sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        if (RedProtect.get().ph.hasPerm(sender, "admin")) {
-            String jarversion = new java.io.File(RedProtect.class.getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .getPath())
-                    .getName();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8&o- UChat full version: " + jarversion));
-        }
-    }
 
     public static void saveResource(String nameVersioned, String nameOri, File saveTo) {
         try {
@@ -401,15 +327,17 @@ public class RPUtil {
     }
 
     //TODO read all db
+    private static int delay = 0;
+    public static int getDelay() {
+        return delay;
+    }
     public static void ReadAllDB(Set<Region> regions) {
-        //int i = 0;
         int pls = 0;
         int origupdt = 0;
         int namesupdt = 0;
         int purged = 0;
         int sell = 0;
         int cfm = 0;
-        int delay = 0;
         int skipped = 0;
         Date now = null;
         SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
@@ -461,7 +389,6 @@ public class RPUtil {
                         }
                     } else {
                         RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()));
-                        //r.delete();
                         purged++;
                         RedProtect.get().logger.warning("Purging " + region.getName() + " - Days: " + days);
                     }
@@ -684,7 +611,10 @@ public class RPUtil {
 
         if (delay > 0) {
             RedProtect.get().logger.warning("&c> There's " + delay / 10 + " regions to be regenerated at 2 regions/second.");
-            RedProtect.get().logger.severe("&cRegen can take long time, but your players can join and play normally!");
+            if (RPConfig.getBool("purge.regen.whitelist-server-regen")){
+                Bukkit.getServer().setWhitelist(true);
+                RedProtect.get().logger.warning("&eEnabled whitelist until regen!");
+            }
         }
 
         if (cfm > 0) {

@@ -39,7 +39,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getRegionforList;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleList;
 
 public class ListCommand implements SubCommand {
