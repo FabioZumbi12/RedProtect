@@ -91,7 +91,7 @@ public class StartCommand {
                                 schematics.RPSchematics.pasteSchematic(player);
                             }
                             return CommandResult.success();
-                        }).build(), "ok")
+                        }).build(), getCmd("confirm"))
                 .build();
     }
 

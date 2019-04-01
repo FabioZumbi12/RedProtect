@@ -129,9 +129,8 @@ public class WEListener {
 
             String regionName = RPUtil.regionNameConform("", p);
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
-            if (rb2.ready()) {
+            if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
-                RedProtect.get().rm.add(r, p.getWorld());
             }
 
             try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {

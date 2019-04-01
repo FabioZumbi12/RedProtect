@@ -88,7 +88,7 @@ public class MainCategory {
     @ConfigSerializable
     public class schematicsCat{
         @Setting(value = "first-house-file", comment = "Schematic file name to use with /rp start.")
-        public String first_house_file = "house1.schematic";
+        public String first_house_file = "house1.schem";
     }
 
     public MainCategory() {

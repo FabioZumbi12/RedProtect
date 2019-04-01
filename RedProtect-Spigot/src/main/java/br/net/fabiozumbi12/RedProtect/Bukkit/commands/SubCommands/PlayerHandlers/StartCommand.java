@@ -42,8 +42,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 
 public class StartCommand implements SubCommand {
     @Override
@@ -74,7 +73,7 @@ public class StartCommand implements SubCommand {
             return true;
         }
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("ok")) {
+        if (args.length == 1 && checkCmd(args[0], "confirm")) {
             if (!RedProtect.get().confiemStart.contains(player.getName())) {
                 player.sendMessage(RPLang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
                 return true;

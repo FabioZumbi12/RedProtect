@@ -279,7 +279,7 @@ public class RPCommentedConfig {
         setDefault("performance.piston.disable-PistonEvent-handler", false, "Disable piston listener? Disabling this will allow players to get blocks from protected regions to unprotected using pistons.");
 
         setDefault("schematics", null, "This is the schematics configs for RedProtect.\n");
-        setDefault("schematics.first-house-file", "house1.schematic", "Schematic file name to use with /rp start.");
+        setDefault("schematics.first-house-file", "house1.schem", "Schematic file name to use with /rp start.");
 
         setDefault("hooks", null, null);
         setDefault("hooks.check-uuid-names-onstart", false, "Convert/check names if need to update to/from UUID/names on server start? Disable for Bungeecoord.");
