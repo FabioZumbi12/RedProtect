@@ -687,7 +687,7 @@ public class Region implements Serializable {
         }
 
         return RPUtil.toText(RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
-                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + RPEconomy.getFormatted(this.value) + "\n" +
+                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + " " + RPEconomy.getFormatted(this.value) + "\n" +
                 RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
                 RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
                 RPLang.get("region.leaders") + " " + leaderString + "\n" +

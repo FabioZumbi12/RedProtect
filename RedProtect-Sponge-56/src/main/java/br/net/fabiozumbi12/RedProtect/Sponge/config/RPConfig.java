@@ -111,11 +111,6 @@ public class RPConfig {
             "deny-exit-items");
 
 
-    private final File protFile = new File(RedProtect.get().configDir, "protections.conf");
-    private final File ecoFile = new File(RedProtect.get().configDir, "economy.conf");
-    private final File signFile = new File(RedProtect.get().configDir, "signs.conf");
-    private final File guiConfig = new File(RedProtect.get().configDir, "guiconfig.conf");
-    private final File gFlagsConfig = new File(RedProtect.get().configDir, "globalflags.conf");
     private ConfigurationLoader<CommentedConfigurationNode> protManager;
     private CommentedConfigurationNode protCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
@@ -128,13 +123,13 @@ public class RPConfig {
     private ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
     private CommentedConfigurationNode gflagsRoot;
     private GlobalFlagsCategory gflags;
-    private File defConfig = new File(RedProtect.get().configDir, "config.conf");
     private CommentedConfigurationNode configRoot;
     private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
     private MainCategory root;
 
     //init
     public RPConfig(GuiceObjectMapperFactory factory) throws ObjectMappingException {
+        File ecoFile = new File(RedProtect.get().configDir, "economy.conf");
         try {
             if (!RedProtect.get().configDir.exists()) {
                 RedProtect.get().configDir.mkdir();
@@ -157,6 +152,7 @@ public class RPConfig {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
+            File defConfig = new File(RedProtect.get().configDir, "config.conf");
             cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();
             configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory());
@@ -177,6 +173,7 @@ public class RPConfig {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
+            File gFlagsConfig = new File(RedProtect.get().configDir, "globalflags.conf");
             gFlagsLoader = HoconConfigurationLoader.builder().setFile(gFlagsConfig).build();
             gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerg));
 
@@ -206,6 +203,7 @@ public class RPConfig {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
+            File guiConfig = new File(RedProtect.get().configDir, "guiconfig.conf");
             guiLoader = HoconConfigurationLoader.builder().setFile(guiConfig).build();
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
@@ -233,10 +231,12 @@ public class RPConfig {
             ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
             ecoCfgs = ecoManager.load();
 
+            File signFile = new File(RedProtect.get().configDir, "signs.conf");
             signManager = HoconConfigurationLoader.builder().setPath(signFile.toPath()).build();
             signCfgs = signManager.load();
 
             /*--------------------- protections.conf ---------------------------*/
+            File protFile = new File(RedProtect.get().configDir, "protections.conf");
             protManager = HoconConfigurationLoader.builder().setFile(protFile).build();
             protCfgs = protManager.load();
 

@@ -31,6 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
 import org.bukkit.*;
@@ -728,7 +729,7 @@ public class Region implements Serializable {
         }
 
         return RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
-                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + "\n" +
+                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + " " + RPEconomy.getFormatted(this.value) + "\n" +
                 RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
                 RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
                 RPLang.get("region.leaders") + " " + leaderString + "\n" +

@@ -34,13 +34,16 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPGui;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.*;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleFlag;
+import javax.annotation.Nullable;
+import java.util.*;
+
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
 
 public class FlagCommand {
 
@@ -48,7 +51,7 @@ public class FlagCommand {
         return CommandSpec.builder()
                 .description(Text.of("Command to handle region flags."))
                 .arguments(
-                        GenericArguments.optional(GenericArguments.string(Text.of("flag"))),
+                        GenericArguments.optional(new FlagCommandElement(Text.of("flag"))),
                         GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("value")))
                 )
                 .permission("redprotect.command.flag")
@@ -95,5 +98,35 @@ public class FlagCommand {
                     }
                     return CommandResult.success();
                 }).build();
+    }
+}
+
+class FlagCommandElement extends CommandElement {
+
+    public FlagCommandElement(Text key){
+        super(key);
+    }
+
+    @Nullable
+    @Override
+    protected Object parseValue(CommandSource sender, CommandArgs args) throws ArgumentParseException {
+        return args.next();
+    }
+
+    @Override
+    public List<String> complete(CommandSource sender, CommandArgs argss, CommandContext context) {
+        if (!argss.hasNext()) return null;
+
+        String[] args = argss.getRaw().split(" ");
+        if (args.length == 1){
+            SortedSet<String> tab = new TreeSet<>(RedProtect.get().cfgs.getDefFlags());
+            for (String flag : RedProtect.get().cfgs.AdminFlags) {
+                if (RedProtect.get().ph.hasFlagPerm((Player)sender, flag)) {
+                    tab.add(flag);
+                }
+            }
+            return new ArrayList<>(tab);
+        }
+        return null;
     }
 }
