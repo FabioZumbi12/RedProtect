@@ -29,6 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.AdminCommand;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
@@ -108,6 +109,8 @@ public class CommandHandler {
                 .child(new TeleportCommand().register(), getCmdKeys("teleport"))
                 .child(new ValueCommand().register(), getCmdKeys("value"))
                 .child(new WelcomeCommand().register(), getCmdKeys("welcome"))
+
+                .child(new AdminCommand(), getCmdKeys("admin"))
 
                 .build();
 
