@@ -39,6 +39,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
+import com.google.common.collect.Lists;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
@@ -63,6 +65,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -108,7 +112,7 @@ public class RPUtil {
                 PotionMeta pot = (PotionMeta) result.getItemMeta();
                 potname = pot.getBasePotionData().getType().name();
             }
-            if (RedProtect.get().version < 190 && Potion.fromItemStack(result) != null && Potion.fromItemStack(result).getType() != null) {
+            if (RedProtect.get().version < 190) {
                 potname = Potion.fromItemStack(result).getType().name();
             }
             return Pots.contains(potname);
@@ -436,8 +440,9 @@ public class RPUtil {
 
             if (!serverRegion && checkNames) {
                 if (RedProtect.get().OnlineMode) {
-                    for (String pname : leadersl) {
-                        pname = pname.replace("[", "").replace("]", "");
+                    Iterator<String> leaderslIt = leadersl.iterator();
+                    while (leaderslIt.hasNext()) {
+                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
                         if (!isUUIDs(pname) && !isDefaultServer(pname)) {
                             String uuid = MojangUUIDs.getUUID(pname);
                             if (uuid == null) {
@@ -450,8 +455,9 @@ public class RPUtil {
                             origupdt++;
                         }
                     }
-                    for (String pname : adminsl) {
-                        pname = pname.replace("[", "").replace("]", "");
+                    Iterator<String> adminslIt = adminsl.iterator();
+                    while (adminslIt.hasNext()) {
+                        String pname = adminslIt.next().replace("[", "").replace("]", "");
                         if (!isUUIDs(pname) && !isDefaultServer(pname)) {
                             String uuid = MojangUUIDs.getUUID(pname);
                             if (uuid == null) {
@@ -464,8 +470,9 @@ public class RPUtil {
                             origupdt++;
                         }
                     }
-                    for (String pname : membersl) {
-                        pname = pname.replace("[", "").replace("]", "");
+                    Iterator<String> memberslIt = membersl.iterator();
+                    while (memberslIt.hasNext()) {
+                        String pname = memberslIt.next().replace("[", "").replace("]", "");
                         if (!isUUIDs(pname) && !isDefaultServer(pname)) {
                             String uuid = MojangUUIDs.getUUID(pname);
                             if (uuid == null) {
@@ -478,16 +485,15 @@ public class RPUtil {
                             origupdt++;
                         }
                     }
-                    region.setLeaders(leadersl);
-                    region.setAdmins(adminsl);
-                    region.setMembers(membersl);
                     if (origupdt > 0) {
                         pls++;
                     }
                 }
                 //if Offline Mode
                 else {
-                    for (String pname : leadersl) {
+                    Iterator<String> leaderslIt = leadersl.iterator();
+                    while (leaderslIt.hasNext()) {
+                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
                         if (isUUIDs(pname) && !isDefaultServer(pname)) {
                             try {
                                 String name = MojangUUIDs.getName(pname);
@@ -505,7 +511,9 @@ public class RPUtil {
                         }
                     }
 
-                    for (String pname : adminsl) {
+                    Iterator<String> adminslIt = adminsl.iterator();
+                    while (adminslIt.hasNext()) {
+                        String pname = adminslIt.next().replace("[", "").replace("]", "");
                         if (isUUIDs(pname) && !isDefaultServer(pname)) {
                             try {
                                 String name = MojangUUIDs.getName(pname);
@@ -523,7 +531,9 @@ public class RPUtil {
                         }
                     }
 
-                    for (String pname : membersl) {
+                    Iterator<String> memberslIt = membersl.iterator();
+                    while (memberslIt.hasNext()) {
+                        String pname = memberslIt.next().replace("[", "").replace("]", "");
                         if (isUUIDs(pname) && !isDefaultServer(pname)) {
                             try {
                                 String name = MojangUUIDs.getName(pname);
@@ -540,20 +550,21 @@ public class RPUtil {
                             }
                         }
                     }
-                    region.setLeaders(leadersl);
-                    region.setAdmins(adminsl);
-                    region.setMembers(membersl);
                     if (namesupdt > 0) {
                         pls++;
                     }
                 }
+                region.setLeaders(leadersl);
+                region.setAdmins(adminsl);
+                region.setMembers(membersl);
 
                 //import essentials last visit for player dates
                 if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.get().Ess) {
                     Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
                     List<Long> dates = new ArrayList<>();
 
-                    for (String pname : adminsl) {
+                    for (String pname: leadersl) {
+                        pname = pname.replace("[", "").replace("]", "");
                         User essp;
                         if (RedProtect.get().OnlineMode) {
                             essp = ess.getUser(UUID.fromString(pname));
@@ -565,7 +576,8 @@ public class RPUtil {
                             RedProtect.get().logger.info("Updated user date: " + pname + " - " + dateformat.format(essp.getLastLogout()));
                         }
                     }
-                    for (String pname : leadersl) {
+                    for (String pname: adminsl) {
+                        pname = pname.replace("[", "").replace("]", "");
                         User essp;
                         if (RedProtect.get().OnlineMode) {
                             essp = ess.getUser(UUID.fromString(pname));
@@ -588,12 +600,13 @@ public class RPUtil {
             }
 
             if (pls > 0) {
-                RedProtect.get().logger.sucess("[" + pls + "] Region updated &6&l" + region.getName() + "&a&l. Leaders &6&l" + region.getLeadersDesc());
+                if (pls % 50 == 0) RedProtect.get().rm.saveAll(false);
+                RedProtect.get().logger.sucess("[" + pls + "] Region updated &6&l" + region.getName());
             }
 
             //conform region names
-            if (region.getName().contains("/")) {
-                String rname = region.getName().replace("/", "|");
+            if (Pattern.matches("[^\\p{L}_0-9 ]", region.getName())) {
+                String rname = region.getName().replaceAll("[^\\p{L}_0-9 ]", "");
                 RedProtect.get().rm.renameRegion(rname, region);
                 cfm++;
             }
@@ -694,6 +707,9 @@ public class RPUtil {
             if (onp != null) {
                 PlayerName = onp.getName();
             }
+        }
+        if (PlayerName == null){
+            PlayerName = MojangUUIDs.getName(uuid);
         }
         return PlayerName;
     }

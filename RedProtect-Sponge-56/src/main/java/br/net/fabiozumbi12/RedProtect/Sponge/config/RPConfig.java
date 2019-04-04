@@ -28,10 +28,10 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.FlagGuiCategory;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.MainCategory;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;

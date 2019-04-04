@@ -28,6 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -84,7 +85,7 @@ public class MojangUUIDs {
             String name = (String) jsonProfile.get("id");
             return toUUID(name);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            RedProtect.get().logger.warning("Mojang response: "+ex.getMessage());
         }
         return null;
     }

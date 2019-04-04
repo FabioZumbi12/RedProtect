@@ -233,7 +233,7 @@ public class RedProtect {
         cfgs = new RPConfig(this.factory);
         RPLang.init();
 
-        if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen){
+        if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()){
             Sponge.getServer().setHasWhitelist(false);
             RedProtect.get().logger.sucess("Whitelist disabled!");
         }

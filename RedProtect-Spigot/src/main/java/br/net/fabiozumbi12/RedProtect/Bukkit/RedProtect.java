@@ -271,7 +271,7 @@ public class RedProtect extends JavaPlugin {
         RPConfig.init();
         RPLang.init();
 
-        if (RPConfig.getBool("purge.regen.whitelist-server-regen")){
+        if (RPConfig.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()){
             Bukkit.getServer().setWhitelist(false);
             RedProtect.get().logger.sucess("Whitelist disabled!");
         }

@@ -28,6 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -84,7 +85,7 @@ public class MojangUUIDs {
             String name = jsonProfile.get("id").getAsString();
             return toUUID(name);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            RedProtect.get().logger.warning("Mojang response: "+ex.getMessage());
         }
         return null;
     }

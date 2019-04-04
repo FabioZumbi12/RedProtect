@@ -44,7 +44,6 @@ import java.util.*;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleFlag;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.checkCmd;
 
 public class FlagCommand implements SubCommand {
     @Override

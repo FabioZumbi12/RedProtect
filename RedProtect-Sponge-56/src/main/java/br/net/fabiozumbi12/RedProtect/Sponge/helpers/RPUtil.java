@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -65,6 +66,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -396,9 +398,10 @@ public class RPUtil {
 
             if (!serverRegion && checkNames) {
                 if (RedProtect.get().OnlineMode) {
-                    for (String pname : leadersl) {
-                        pname = pname.replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !RPUtil.isDefaultServer(pname)) {
+                    Iterator<String> leaderslIt = leadersl.iterator();
+                    while (leaderslIt.hasNext()) {
+                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
+                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
                             String uuid = MojangUUIDs.getUUID(pname);
                             if (uuid == null) {
                                 uuid = PlayerToUUID(pname);
@@ -410,9 +413,10 @@ public class RPUtil {
                             origupdt++;
                         }
                     }
-                    for (String pname : adminsl) {
-                        pname = pname.replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !RPUtil.isDefaultServer(pname)) {
+                    Iterator<String> adminslIt = adminsl.iterator();
+                    while (adminslIt.hasNext()) {
+                        String pname = adminslIt.next().replace("[", "").replace("]", "");
+                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
                             String uuid = MojangUUIDs.getUUID(pname);
                             if (uuid == null) {
                                 uuid = PlayerToUUID(pname);
@@ -424,9 +428,10 @@ public class RPUtil {
                             origupdt++;
                         }
                     }
-                    for (String pname : membersl) {
-                        pname = pname.replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !RPUtil.isDefaultServer(pname)) {
+                    Iterator<String> memberslIt = membersl.iterator();
+                    while (memberslIt.hasNext()) {
+                        String pname = memberslIt.next().replace("[", "").replace("]", "");
+                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
                             String uuid = MojangUUIDs.getUUID(pname);
                             if (uuid == null) {
                                 uuid = PlayerToUUID(pname);
@@ -438,17 +443,16 @@ public class RPUtil {
                             origupdt++;
                         }
                     }
-                    r.setLeaders(leadersl);
-                    r.setAdmins(adminsl);
-                    r.setMembers(membersl);
                     if (origupdt > 0) {
                         pls++;
                     }
                 }
                 //if Offline Mode
                 else {
-                    for (String pname : leadersl) {
-                        if (isUUIDs(pname) && !RPUtil.isDefaultServer(pname)) {
+                    Iterator<String> leaderslIt = leadersl.iterator();
+                    while (leaderslIt.hasNext()) {
+                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
+                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
                             try {
                                 String name = MojangUUIDs.getName(pname);
                                 if (name == null) {
@@ -465,8 +469,10 @@ public class RPUtil {
                         }
                     }
 
-                    for (String pname : adminsl) {
-                        if (isUUIDs(pname) && !RPUtil.isDefaultServer(pname)) {
+                    Iterator<String> adminslIt = adminsl.iterator();
+                    while (adminslIt.hasNext()) {
+                        String pname = adminslIt.next().replace("[", "").replace("]", "");
+                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
                             try {
                                 String name = MojangUUIDs.getName(pname);
                                 if (name == null) {
@@ -483,8 +489,10 @@ public class RPUtil {
                         }
                     }
 
-                    for (String pname : membersl) {
-                        if (isUUIDs(pname) && !RPUtil.isDefaultServer(pname)) {
+                    Iterator<String> memberslIt = membersl.iterator();
+                    while (memberslIt.hasNext()) {
+                        String pname = memberslIt.next().replace("[", "").replace("]", "");
+                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
                             try {
                                 String name = MojangUUIDs.getName(pname);
                                 if (name == null) {
@@ -500,22 +508,23 @@ public class RPUtil {
                             }
                         }
                     }
-                    r.setLeaders(leadersl);
-                    r.setAdmins(adminsl);
-                    r.setMembers(membersl);
                     if (namesupdt > 0) {
                         pls++;
                     }
                 }
+                r.setLeaders(leadersl);
+                r.setAdmins(adminsl);
+                r.setMembers(membersl);
             }
 
             if (pls > 0) {
-                RedProtect.get().logger.sucess("[" + pls + "]Region updated &6&l" + r.getName() + "&a&l. Leaders &6&l" + r.getLeadersDesc());
+                if (pls % 50 == 0) RedProtect.get().rm.saveAll(false);
+                RedProtect.get().logger.sucess("[" + pls + "]Region updated &6&l" + r.getName());
             }
 
             //conform region names
-            if (r.getName().contains("/")) {
-                String rname = r.getName().replace("/", "|");
+            if (Pattern.matches("[^\\p{L}_0-9 ]", r.getName())) {
+                String rname = r.getName().replaceAll("[^\\p{L}_0-9 ]", "");
                 RedProtect.get().rm.renameRegion(rname, r);
                 cfm++;
             }
@@ -600,24 +609,23 @@ public class RPUtil {
             return uuid;
         }
 
-        String PlayerName = "UnknowPlayer";
-        UUID uuids = UUID.fromString(uuid);
+        String PlayerName = uuid;
+        UUID uuids;
 
         if (!RedProtect.get().OnlineMode) {
             return uuid.toLowerCase();
         }
-
-        UserStorageService uss = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
-    	/*
-		Optional<GameProfile> ogpName = uss.getAll().stream().filter(f -> f.getUniqueId().equals(uuids)).findFirst();
-		if (ogpName.isPresent()){
-			return ogpName.get().getName().get();
-		}
-		*/
-        if (uss.get(uuids).isPresent()) {
-            return uss.get(uuids).get().getName();
+        try{
+            uuids = UUID.fromString(uuid);
+            UserStorageService uss = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
+            if (uss.get(uuids).isPresent()) {
+                PlayerName = uss.get(uuids).get().getName();
+            }
+        } catch (IllegalArgumentException e){
+            if (PlayerName.isEmpty()){
+                PlayerName = MojangUUIDs.getName(uuid);
+            }
         }
-
         return PlayerName;
     }
 
