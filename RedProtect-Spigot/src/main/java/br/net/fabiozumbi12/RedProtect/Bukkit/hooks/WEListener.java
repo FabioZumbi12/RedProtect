@@ -195,11 +195,6 @@ public class WEListener {
                 RedProtect.get().rm.saveAll(true);
             }
 
-            if (delayCount == RPUtil.getDelay() && RPConfig.getBool("purge.regen.whitelist-server-regen")){
-                Bukkit.getServer().setWhitelist(false);
-                RedProtect.get().logger.sucess("Whitelist disabled!");
-            }
-
             if (RPConfig.getInt("purge.regen.stop-server-every") > 0 && delayCount > RPConfig.getInt("purge.regen.stop-server-every")) {
 
                 Bukkit.getScheduler().cancelTasks(RedProtect.get());

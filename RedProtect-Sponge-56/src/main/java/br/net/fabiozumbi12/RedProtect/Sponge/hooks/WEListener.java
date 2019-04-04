@@ -198,11 +198,6 @@ public class WEListener {
                 RedProtect.get().rm.saveAll(true);
             }
 
-            if (delayCount == RPUtil.getDelay() && RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen){
-                Sponge.getServer().setHasWhitelist(false);
-                RedProtect.get().logger.sucess("Whitelist disabled!");
-            }
-
             if (RedProtect.get().cfgs.root().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().cfgs.root().purge.regen.stop_server_every){
                 Sponge.getScheduler().getScheduledTasks(RedProtect.get().container).forEach(Task::cancel);
                 RedProtect.get().rm.saveAll(false);

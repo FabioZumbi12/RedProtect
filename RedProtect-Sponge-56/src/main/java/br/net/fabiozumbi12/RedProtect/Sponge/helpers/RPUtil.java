@@ -287,10 +287,6 @@ public class RPUtil {
     }
 
     //TODO read all db
-    private static int delay = 0;
-    public static int getDelay() {
-        return delay;
-    }
     public static void ReadAllDB(Set<Region> regions) {
         int pls = 0;
         int origupdt = 0;
@@ -299,6 +295,7 @@ public class RPUtil {
         int sell = 0;
         int cfm = 0;
         int skipped = 0;
+        int delay = 0;
         Date now = null;
         SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
 

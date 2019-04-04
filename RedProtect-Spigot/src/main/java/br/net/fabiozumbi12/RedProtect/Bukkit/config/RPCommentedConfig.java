@@ -31,6 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 
@@ -57,6 +58,9 @@ public class RPCommentedConfig {
         }
 
         setDefault("config-version", 8.3D, "Dont touch <3");
+        setDefault("online-mode", Bukkit.getServer().getOnlineMode(), "This option will define if RedProtect will work with UUIDs or player names.\n" +
+                "Use with caution because offline player has no uuids and maybe some offline player is using online nicknames.\n" +
+                "Make a backup of your DATABASE before change this setting in a production server.");
         setDefault("debug-messages", false, "Enable debug messages");
         setDefault("log-actions", true, "Log all commands used by players");
         setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR");

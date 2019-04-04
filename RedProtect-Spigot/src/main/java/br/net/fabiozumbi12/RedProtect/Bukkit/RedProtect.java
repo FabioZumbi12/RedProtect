@@ -142,8 +142,6 @@ public class RedProtect extends JavaPlugin {
             ph = new RPPermissionHandler();
             rm = new RegionManager();
 
-            OnlineMode = serv.getOnlineMode();
-
             //--- Init config, lang, listeners and flags
             startLoad();
 
@@ -272,6 +270,14 @@ public class RedProtect extends JavaPlugin {
     private void startLoad() {
         RPConfig.init();
         RPLang.init();
+
+        if (RPConfig.getBool("purge.regen.whitelist-server-regen")){
+            Bukkit.getServer().setWhitelist(false);
+            RedProtect.get().logger.sucess("Whitelist disabled!");
+        }
+
+        //set online mode
+        OnlineMode = RPConfig.getBool("online-mode");
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);

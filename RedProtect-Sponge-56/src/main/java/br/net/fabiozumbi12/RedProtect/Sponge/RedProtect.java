@@ -139,8 +139,6 @@ public class RedProtect {
             ph = new RPPermHandler();
             rm = new RegionManager();
 
-            OnlineMode = serv.getOnlineMode();
-
             //--- Init config, lang, listeners and flags
             startLoad();
 
@@ -234,6 +232,14 @@ public class RedProtect {
     private void startLoad() throws Exception {
         cfgs = new RPConfig(this.factory);
         RPLang.init();
+
+        if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen){
+            Sponge.getServer().setHasWhitelist(false);
+            RedProtect.get().logger.sucess("Whitelist disabled!");
+        }
+
+        //set online mode
+        OnlineMode = cfgs.root().online_mode;
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);
