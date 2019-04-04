@@ -57,11 +57,11 @@ public class RPPermissionHandler {
     }
 
     public boolean hasPerm(Player p, String perm) {
-        return p != null && (p.hasPermission(perm) || p.isOp());
+        return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.command.admin"));
     }
 
     public boolean hasPerm(CommandSender p, String perm) {
-        return p != null && (p.hasPermission(perm) || p.isOp());
+        return p != null && (p.hasPermission(perm)  || p.hasPermission("redprotect.command.admin"));
     }
 
     public boolean hasRegionPermMember(Player p, String s, Region poly) {

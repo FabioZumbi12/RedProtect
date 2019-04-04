@@ -1184,7 +1184,7 @@ public class CommandHandlers {
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
         }
         sender.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        if (RedProtect.get().ph.hasPerm(sender, "admin")) {
+        if (RedProtect.get().ph.hasPerm(sender, "")) {
             String jarversion = new java.io.File(RedProtect.class.getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
