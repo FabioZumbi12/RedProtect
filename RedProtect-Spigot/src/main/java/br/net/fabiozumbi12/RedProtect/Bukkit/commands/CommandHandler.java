@@ -170,12 +170,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length > 0 && hasCommand(args[0])) {
-            TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
-            return tabCompleter.onTabComplete(sender, command, alias, Arrays_copyOfRange(args, args.length));
-        } else {
-            SortedSet<String> tab = new TreeSet<>();
-            if (sender instanceof Player) {
+        if (sender instanceof Player) {
+            if (args.length > 0 && hasCommand(args[0])) {
+                TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
+                return tabCompleter.onTabComplete(sender, command, alias, Arrays_copyOfRange(args, args.length));
+            } else {
+                SortedSet<String> tab = new TreeSet<>();
                 for (List<String> cmds : commandMap.keySet()) {
                     String key = cmds.get(0);
                     String cmdtrans = RPLang.get("cmdmanager.translation." + key);
@@ -183,10 +183,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                         tab.add(cmdtrans);
                     }
                 }
-            } else {
-                tab.add("admin");
+                return new ArrayList<>(tab);
             }
-            return new ArrayList<>(tab);
+        } else {
+            if (args.length > 0 && hasCommand(args[0])) {
+                TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
+                return tabCompleter.onTabComplete(sender, command, alias, Arrays_copyOfRange(args, args.length));
+            } else {
+                return Collections.singletonList("admin");
+            }
         }
     }
 }

@@ -84,7 +84,7 @@ public class RedProtect {
     public boolean WE;
     public boolean Dyn;
     public RegionManager rm;
-    public RPPermHandler ph;
+    public RPPermissionHandler ph;
     public Server serv;
     public boolean OnlineMode;
     public RPConfig cfgs;
@@ -136,7 +136,7 @@ public class RedProtect {
             serv = Sponge.getServer();
             cmdService = game.getCommandManager();
 
-            ph = new RPPermHandler();
+            ph = new RPPermissionHandler();
             rm = new RegionManager();
 
             //--- Init config, lang, listeners and flags

@@ -1134,7 +1134,7 @@ public class CommandHandlers {
             sender.sendMessage(RPUtil.toText("&6rp &cadmin &6reload &3- Reload the plugin"));
         }
         sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
-        if (RedProtect.get().ph.hasPerm(sender, "admin")) {
+        if (RedProtect.get().ph.hasPerm(sender, "")) {
             String jarversion = RedProtect.get().container.getSource().get().toFile().getName();
             sender.sendMessage(RPUtil.toText("&8&o- Full version: " + jarversion));
         }
