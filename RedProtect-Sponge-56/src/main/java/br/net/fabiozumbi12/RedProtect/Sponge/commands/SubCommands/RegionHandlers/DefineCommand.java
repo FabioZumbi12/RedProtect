@@ -62,7 +62,7 @@ public class DefineCommand {
                         String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                         String name = RPUtil.nameGen(serverName, player.getWorld().getName());
                         if (args.hasAny("regionName")){
-                            name = args.<String>getOne("regionName").get().replaceAll("[^\\p{L}_0-9 ]", "");;
+                            name = args.<String>getOne("regionName").get().replaceAll("[^\\p{L}_0-9 ]", "");
                         }
 
                         RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);

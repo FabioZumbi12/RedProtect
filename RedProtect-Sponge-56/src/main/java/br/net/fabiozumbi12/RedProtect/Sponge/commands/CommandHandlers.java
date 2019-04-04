@@ -1136,7 +1136,7 @@ public class CommandHandlers {
         sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
         if (RedProtect.get().ph.hasPerm(sender, "admin")) {
             String jarversion = RedProtect.get().container.getSource().get().toFile().getName();
-            sender.sendMessage(RPUtil.toText("&8&o- UChat full version: " + jarversion));
+            sender.sendMessage(RPUtil.toText("&8&o- Full version: " + jarversion));
         }
     }
 }

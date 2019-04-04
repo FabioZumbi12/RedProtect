@@ -1190,7 +1190,7 @@ public class CommandHandlers {
                     .getLocation()
                     .getPath())
                     .getName();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8&o- UChat full version: " + jarversion));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8&o- Full version: " + jarversion));
         }
     }
 
