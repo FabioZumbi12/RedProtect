@@ -67,7 +67,7 @@ public class FlagCommand {
                             return CommandResult.success();
                         }
 
-                        if (!r.isLeader(player) && !r.isAdmin(player)){
+                        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.flag")){
                             RPLang.sendMessage(player, "no.permission");
                             return CommandResult.success();
                         }
@@ -115,13 +115,30 @@ class FlagCommandElement extends CommandElement {
 
     @Override
     public List<String> complete(CommandSource sender, CommandArgs argss, CommandContext context) {
+        RedProtect.get().logger.severe("args1: " + argss.getRaw());
         if (!argss.hasNext()) return null;
 
         String[] args = argss.getRaw().split(" ");
-        if (args.length == 1){
+        if (args.length == 1) {
+            RedProtect.get().logger.severe("args2: " + Arrays.asList(args));
             SortedSet<String> tab = new TreeSet<>(RedProtect.get().cfgs.getDefFlags());
             for (String flag : RedProtect.get().cfgs.AdminFlags) {
                 if (RedProtect.get().ph.hasFlagPerm((Player)sender, flag)) {
+                    tab.add(flag);
+                }
+            }
+            return new ArrayList<>(tab);
+        }
+        if (args.length == 2) {
+            RedProtect.get().logger.severe("args3: " + Arrays.asList(args));
+            SortedSet<String> tab = new TreeSet<>();
+            for (String flag : RedProtect.get().cfgs.getDefFlags()) {
+                if (flag.startsWith(args[1])) {
+                    tab.add(flag);
+                }
+            }
+            for (String flag : RedProtect.get().cfgs.AdminFlags) {
+                if (flag.startsWith(args[1]) && RedProtect.get().ph.hasFlagPerm((Player)sender, flag)) {
                     tab.add(flag);
                 }
             }

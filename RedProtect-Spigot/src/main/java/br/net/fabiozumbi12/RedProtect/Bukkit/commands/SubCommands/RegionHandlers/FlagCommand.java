@@ -59,7 +59,7 @@ public class FlagCommand implements SubCommand {
         if (args.length == 0) {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
-                if (r.isLeader(player) || r.isAdmin(player)){
+                if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")){
                     RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, false, RPConfig.getGuiMaxSlot());
                     gui.open();
                 } else {
@@ -155,42 +155,28 @@ public class FlagCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> SotTab = new ArrayList<>();
-        SortedSet<String> tab = new TreeSet<>();
-        if (args.length == 1 || args.length == 2) {
-            //rp flag <flag>
-            if (checkCmd(args[0], "flag")) {
-                for (String flag : RPConfig.getDefFlags()) {
-                    if (!tab.contains(flag)) {
-                        if (flag.equalsIgnoreCase(args[0])) {
-                            Region r = RedProtect.get().rm.getTopRegion(((Player) sender).getLocation());
-                            if (r != null && r.canBuild(((Player) sender)) && r.getFlags().containsKey(flag)) {
-                                return Collections.singletonList(r.getFlags().get(flag).toString());
-                            }
-                            return SotTab;
-                        }
-                        if (flag.startsWith(args[0])) {
-                            tab.add(flag);
-                        }
-                    }
+        if (args.length == 0) {
+            SortedSet<String> tab = new TreeSet<>(RPConfig.getDefFlags());
+            for (String flag : RPConfig.AdminFlags) {
+                if (RedProtect.get().ph.hasFlagPerm((Player)sender, flag)) {
+                    tab.add(flag);
                 }
-                for (String flag : RPConfig.AdminFlags) {
-                    if (RedProtect.get().ph.hasFlagPerm((Player)sender, flag) && !tab.contains(flag)) {
-                        if (flag.equalsIgnoreCase(args[0])) {
-                            Region r = RedProtect.get().rm.getTopRegion(((Player) sender).getLocation());
-                            if (r != null && r.canBuild(((Player) sender)) && r.getFlags().containsKey(flag)) {
-                                return Collections.singletonList(r.getFlags().get(flag).toString());
-                            }
-                            return SotTab;
-                        }
-                        if (flag.startsWith(args[0])) {
-                            tab.add(flag);
-                        }
-                    }
-                }
-                SotTab.addAll(tab);
-                return SotTab;
             }
+            return new ArrayList<>(tab);
+        }
+        if (args.length == 1) {
+            SortedSet<String> tab = new TreeSet<>();
+            for (String flag : RPConfig.getDefFlags()) {
+                if (flag.startsWith(args[0])) {
+                    tab.add(flag);
+                }
+            }
+            for (String flag : RPConfig.AdminFlags) {
+                if (flag.startsWith(args[0]) && RedProtect.get().ph.hasFlagPerm((Player)sender, flag)) {
+                    tab.add(flag);
+                }
+            }
+            return new ArrayList<>(tab);
         }
         return null;
     }
