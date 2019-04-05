@@ -1043,11 +1043,12 @@ public class RPUtil {
         int maxY = fileDB.getInt(rname + ".maxY", world.getMaxHeight());
         int minY = fileDB.getInt(rname + ".minY", 0);
         String name = fileDB.getString(rname + ".name");
+        String serverName = RPConfig.getString("region-settings.default-leader");
 
         Set<Pair<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s->{
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0])){
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
@@ -1058,7 +1059,7 @@ public class RPUtil {
         Set<Pair<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s->{
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0])){
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
@@ -1069,7 +1070,7 @@ public class RPUtil {
         Set<Pair<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s->{
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0])){
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
