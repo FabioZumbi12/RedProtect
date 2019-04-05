@@ -91,7 +91,8 @@ public class AdminCommand implements SubCommand {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().rm.add(r, w);
                 RedProtect.get().logger.warning("Region converted and named to " + r.getName());

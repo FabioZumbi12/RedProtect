@@ -58,7 +58,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replaceAll("[^\\p{L}_0-9]", "");
+        regionName = RPUtil.nameNormalizer(regionName);
         if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
@@ -109,8 +109,9 @@ public class DefineRegionBuilder extends RegionBuilder {
                 maxy = RPConfig.getInt("region-settings.claim.maxy");
         }
 
-        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
+        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
 
+        leaders.forEach(newRegion::addLeader);
         newRegion.setPrior(RPUtil.getUpdatedPrior(newRegion));
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);

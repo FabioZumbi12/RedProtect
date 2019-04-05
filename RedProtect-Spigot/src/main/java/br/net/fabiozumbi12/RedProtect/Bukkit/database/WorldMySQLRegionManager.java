@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -282,9 +283,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 RedProtect.get().logger.debug("Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
-                Set<String> leaders = new HashSet<>();
-                Set<String> admins = new HashSet<>();
-                Set<String> members = new HashSet<>();
+                Set<Pair<String, String>> leaders = new HashSet<>();
+                Set<Pair<String, String>> admins = new HashSet<>();
+                Set<Pair<String, String>> members = new HashSet<>();
                 HashMap<String, Object> flags = new HashMap<>();
 
                 int maxMbrX = rs.getInt("maxMbrX");
@@ -310,38 +311,22 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                 for (String member : rs.getString("members").split(", ")) {
                     if (member.length() > 0) {
-                        members.add(member);
+                        String[] p = member.split("@");
+                        members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String admin : rs.getString("admins").split(", ")) {
                     if (admin.length() > 0) {
-                        admins.add(admin);
+                        String[] p = admin.split("@");
+                        admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String leader : rs.getString("leaders").split(", ")) {
                     if (leader.length() > 0) {
-                        leaders.add(leader);
+                        String[] p = leader.split("@");
+                        leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
-
-                //compatibility ------------>
-                try {
-                    if (rs.getString("owners") != null) {
-                        for (String owner : rs.getString("owners").split(", ")) {
-                            if (owner.length() > 0) {
-                                leaders.add(owner);
-                            }
-                        }
-                    }
-                    if (rs.getString("creator") != null) {
-                        String creator = rs.getString("creator");
-                        if (creator.length() > 0) {
-                            leaders.add(creator);
-                        }
-                    }
-                } catch (Exception ignored) {
-                }
-                //<------------ compatibility
 
                 for (String flag : rs.getString("flags").split(",")) {
                     String key = flag.split(":")[0];
@@ -414,9 +399,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    Set<String> leaders = new HashSet<>();
-                    Set<String> admins = new HashSet<>();
-                    Set<String> members = new HashSet<>();
+                    Set<Pair<String, String>> leaders = new HashSet<>();
+                    Set<Pair<String, String>> admins = new HashSet<>();
+                    Set<Pair<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -440,17 +425,20 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
-                            members.add(member);
+                            String[] p = member.split("@");
+                            members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
-                            admins.add(admin);
+                            String[] p = admin.split("@");
+                            admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
-                            leaders.add(leader);
+                            String[] p = leader.split("@");
+                            leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String flag : rs.getString("flags").split(",")) {

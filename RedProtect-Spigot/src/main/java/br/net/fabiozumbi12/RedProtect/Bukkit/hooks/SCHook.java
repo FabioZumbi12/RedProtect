@@ -40,12 +40,11 @@ public class SCHook {
         return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
     }
 
-    @SuppressWarnings("deprecation")
     public static boolean inWar(Region r, Player attack, Player defend) {
         if (!RPConfig.getBool("hooks.simpleclans.use-war")) {
             return false;
         }
-        if (!RPConfig.getBool("hooks.simpleclans.war-on-server-regions") && r.getLeaders().contains(RPConfig.getString("region-settings.default-leader"))) {
+        if (!RPConfig.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RPConfig.getString("region-settings.default-leader"))) {
             return false;
         }
         ClanPlayer atClan = RedProtect.get().clanManager.getClanPlayer(attack);

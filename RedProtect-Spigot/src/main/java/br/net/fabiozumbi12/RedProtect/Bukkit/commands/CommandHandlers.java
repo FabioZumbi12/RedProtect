@@ -399,7 +399,7 @@ public class CommandHandlers {
             }
 
             //filter region name
-            newName = newName.replaceAll("[^\\p{L}_0-9 ]", "");
+            newName = RPUtil.nameNormalizer(newName);
             if (newName.isEmpty() || newName.length() < 3) {
                 newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
                 if (newName.length() > 16) {

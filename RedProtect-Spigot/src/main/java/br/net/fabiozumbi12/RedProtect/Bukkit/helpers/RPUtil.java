@@ -40,6 +40,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.google.common.collect.Lists;
+import javafx.util.Pair;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -60,6 +61,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -67,6 +69,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -76,6 +79,10 @@ public class RPUtil {
     private static final HashMap<String, Integer> borderIds = new HashMap<>();
     private static final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
     public static boolean stopRegen = false;
+
+    public static String nameNormalizer(String name){
+        return Normalizer.normalize(name, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+","").replaceAll("[^\\p{L}_0-9 ]", "");
+    }
 
     public static void saveResource(String nameVersioned, String nameOri, File saveTo) {
         try {
@@ -308,7 +315,7 @@ public class RPUtil {
             } else {
                 rname = p + "_" + i;
             }
-            rname = rname.replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
+            rname = nameNormalizer(rname);
             if (RedProtect.get().rm.getRegion(rname, w) == null) {
                 break;
             }
@@ -333,8 +340,6 @@ public class RPUtil {
     //TODO read all db
     public static void ReadAllDB(Set<Region> regions) {
         int pls = 0;
-        int origupdt = 0;
-        int namesupdt = 0;
         int purged = 0;
         int sell = 0;
         int cfm = 0;
@@ -342,8 +347,6 @@ public class RPUtil {
         int delay = 0;
         Date now = null;
         SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
-
-        boolean checkNames = RPConfig.getBool("hooks.check-uuid-names-onstart");
 
         try {
             now = dateformat.parse(DateNow());
@@ -425,188 +428,9 @@ public class RPUtil {
                 }
             }
 
-            //Update player names
-            Set<String> leadersl = region.getLeaders();
-            Set<String> adminsl = region.getAdmins();
-            Set<String> membersl = region.getMembers();
-
-            if (origupdt >= 90 || namesupdt >= 90) {
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (!serverRegion && checkNames) {
-                if (RedProtect.get().OnlineMode) {
-                    Iterator<String> leaderslIt = leadersl.iterator();
-                    while (leaderslIt.hasNext()) {
-                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
-                            String uuid = MojangUUIDs.getUUID(pname);
-                            if (uuid == null) {
-                                uuid = PlayerToUUID(pname);
-                            }
-                            RedProtect.get().logger.warning("Leader from: " + pname);
-                            leadersl.remove(pname);
-                            leadersl.add(uuid);
-                            RedProtect.get().logger.warning("To UUID: " + uuid);
-                            origupdt++;
-                        }
-                    }
-                    Iterator<String> adminslIt = adminsl.iterator();
-                    while (adminslIt.hasNext()) {
-                        String pname = adminslIt.next().replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
-                            String uuid = MojangUUIDs.getUUID(pname);
-                            if (uuid == null) {
-                                uuid = PlayerToUUID(pname);
-                            }
-                            RedProtect.get().logger.warning("Admin from: " + pname);
-                            adminsl.remove(pname);
-                            adminsl.add(uuid);
-                            RedProtect.get().logger.warning("To UUID: " + uuid);
-                            origupdt++;
-                        }
-                    }
-                    Iterator<String> memberslIt = membersl.iterator();
-                    while (memberslIt.hasNext()) {
-                        String pname = memberslIt.next().replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
-                            String uuid = MojangUUIDs.getUUID(pname);
-                            if (uuid == null) {
-                                uuid = PlayerToUUID(pname);
-                            }
-                            RedProtect.get().logger.warning("Member from: " + pname);
-                            membersl.remove(pname);
-                            membersl.add(uuid);
-                            RedProtect.get().logger.warning("To UUID: " + uuid);
-                            origupdt++;
-                        }
-                    }
-                    if (origupdt > 0) {
-                        pls++;
-                    }
-                }
-                //if Offline Mode
-                else {
-                    Iterator<String> leaderslIt = leadersl.iterator();
-                    while (leaderslIt.hasNext()) {
-                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
-                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
-                            try {
-                                String name = MojangUUIDs.getName(pname);
-                                if (name == null) {
-                                    name = UUIDtoPlayer(pname);
-                                }
-                                RedProtect.get().logger.warning("Leader from: " + pname);
-                                leadersl.remove(pname);
-                                leadersl.add(name.toLowerCase());
-                                RedProtect.get().logger.warning("To UUID: " + name);
-                                namesupdt++;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    Iterator<String> adminslIt = adminsl.iterator();
-                    while (adminslIt.hasNext()) {
-                        String pname = adminslIt.next().replace("[", "").replace("]", "");
-                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
-                            try {
-                                String name = MojangUUIDs.getName(pname);
-                                if (name == null) {
-                                    name = UUIDtoPlayer(pname);
-                                }
-                                RedProtect.get().logger.warning("Admin from: " + pname);
-                                adminsl.remove(pname);
-                                adminsl.add(name.toLowerCase());
-                                RedProtect.get().logger.warning("To UUID: " + name);
-                                namesupdt++;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    Iterator<String> memberslIt = membersl.iterator();
-                    while (memberslIt.hasNext()) {
-                        String pname = memberslIt.next().replace("[", "").replace("]", "");
-                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
-                            try {
-                                String name = MojangUUIDs.getName(pname);
-                                if (name == null) {
-                                    name = UUIDtoPlayer(pname);
-                                }
-                                RedProtect.get().logger.warning("Member from: " + pname);
-                                membersl.remove(pname);
-                                membersl.add(name.toLowerCase());
-                                RedProtect.get().logger.warning("To UUID: " + name);
-                                namesupdt++;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    if (namesupdt > 0) {
-                        pls++;
-                    }
-                }
-                region.setLeaders(leadersl);
-                region.setAdmins(adminsl);
-                region.setMembers(membersl);
-
-                //import essentials last visit for player dates
-                if (RPConfig.getBool("hooks.essentials.import-lastvisits") && RedProtect.get().Ess) {
-                    Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-                    List<Long> dates = new ArrayList<>();
-
-                    for (String pname: leadersl) {
-                        pname = pname.replace("[", "").replace("]", "");
-                        User essp;
-                        if (RedProtect.get().OnlineMode) {
-                            essp = ess.getUser(UUID.fromString(pname));
-                        } else {
-                            essp = ess.getOfflineUser(pname);
-                        }
-                        if (essp != null) {
-                            dates.add(essp.getLastLogout());
-                            RedProtect.get().logger.info("Updated user date: " + pname + " - " + dateformat.format(essp.getLastLogout()));
-                        }
-                    }
-                    for (String pname: adminsl) {
-                        pname = pname.replace("[", "").replace("]", "");
-                        User essp;
-                        if (RedProtect.get().OnlineMode) {
-                            essp = ess.getUser(UUID.fromString(pname));
-                        } else {
-                            essp = ess.getOfflineUser(pname);
-                        }
-                        if (essp != null) {
-                            dates.add(essp.getLastLogout());
-                            RedProtect.get().logger.info("Updated user date: " + pname + " - " + dateformat.format(essp.getLastLogout()));
-                        }
-                    }
-
-                    if (dates.size() > 0) {
-                        Date lastvisit = new Date(Collections.max(dates));
-                        region.setDate(dateformat.format(lastvisit));
-                        RedProtect.get().logger.info("Updated " + dates.size() + " last visit users (" + dateformat.format(lastvisit) + ")");
-                        dates.clear();
-                    }
-                }
-            }
-
-            if (pls > 0) {
-                if (pls % 50 == 0) RedProtect.get().rm.saveAll(false);
-                RedProtect.get().logger.sucess("[" + pls + "] Region updated &6&l" + region.getName());
-            }
-
             //conform region names
-            if (Pattern.matches("[^\\p{L}_0-9 ]", region.getName())) {
-                String rname = region.getName().replaceAll("[^\\p{L}_0-9 ]", "");
+            if (Pattern.matches("[^\\p{L}_0-9 ]", region.getName()) || Pattern.matches("\\p{InCombiningDiacriticalMarks}+", region.getName())) {
+                String rname = nameNormalizer(region.getName());
                 RedProtect.get().rm.renameRegion(rname, region);
                 cfm++;
             }
@@ -631,12 +455,6 @@ public class RPUtil {
             RedProtect.get().logger.sucess("[" + cfm + "] Region names conformed!");
         }
 
-        if (pls > 0) {
-            RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls) + "&a&l regions!");
-            RedProtect.get().rm.saveAll(false);
-            RedProtect.get().logger.sucess("Regions saved!");
-        }
-
         if (skipped > 0) {
             RedProtect.get().logger.sucess(skipped + " regions skipped due to max size limit to regen!");
         }
@@ -651,9 +469,14 @@ public class RPUtil {
         regions.clear();
     }
 
+    private static HashMap<String, String> cachedUUIDs = new HashMap<>();
     public static String PlayerToUUID(String PlayerName) {
         if (PlayerName == null || PlayerName.equals("")) {
             return null;
+        }
+
+        if (cachedUUIDs.containsValue(PlayerName)) {
+            return cachedUUIDs.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(PlayerName)).findFirst().get().getKey();
         }
 
         //check if is already UUID
@@ -677,12 +500,18 @@ public class RPUtil {
                 uuid = onp.getUniqueId().toString();
             }
         }
+
+        cachedUUIDs.put(uuid, PlayerName);
         return uuid;
     }
 
     public static String UUIDtoPlayer(String uuid) {
         if (uuid == null) {
             return null;
+        }
+
+        if (cachedUUIDs.containsKey(uuid)){
+            return cachedUUIDs.get(uuid);
         }
 
         //check if is UUID
@@ -711,6 +540,8 @@ public class RPUtil {
         if (PlayerName == null){
             PlayerName = MojangUUIDs.getName(uuid);
         }
+
+        cachedUUIDs.put(uuid, PlayerName);
         return PlayerName;
     }
 
@@ -767,9 +598,9 @@ public class RPUtil {
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
-                    Set<String> leaders = new HashSet<>();
-                    Set<String> admins = new HashSet<>();
-                    Set<String> members = new HashSet<>();
+                    Set<Pair<String, String>> leaders = new HashSet<>();
+                    Set<Pair<String, String>> admins = new HashSet<>();
+                    Set<Pair<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -793,19 +624,23 @@ public class RPUtil {
 
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
-                            members.add(member);
+                            String[] p = member.split("@");
+                            members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
-                            admins.add(admin);
+                            String[] p = admin.split("@");
+                            admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
-                            leaders.add(leader);
+                            String[] p = leader.split("@");
+                            leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
+
                     for (String flag : rs.getString("flags").split(",")) {
                         String key = flag.split(":")[0];
                         String replace = key + ":";
@@ -1149,8 +984,8 @@ public class RPUtil {
                 if (RedProtect.get().OnlineMode && claim.ownerID != null) {
                     pname = claim.ownerID.toString();
                 }
-                Set<String> leaders = new HashSet<>();
-                leaders.add(pname);
+                Set<Pair<String, String>> leaders = new HashSet<>();
+                leaders.add(new Pair<>(claim.ownerID != null ? claim.ownerID.toString() : pname , pname));
                 Location newmin = claim.getGreaterBoundaryCorner();
                 Location newmax = claim.getLesserBoundaryCorner();
                 newmin.setY(0);
@@ -1208,10 +1043,40 @@ public class RPUtil {
         int maxY = fileDB.getInt(rname + ".maxY", world.getMaxHeight());
         int minY = fileDB.getInt(rname + ".minY", 0);
         String name = fileDB.getString(rname + ".name");
-        Set<String> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders"));
-        Set<String> admins = new HashSet<>(fileDB.getStringList(rname + ".admins"));
-        Set<String> members = new HashSet<>(fileDB.getStringList(rname + ".members"));
-        //String creator = fileDB.getString(rname+".creator");
+
+        Set<Pair<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s->{
+            String[] pi = s.split("@");
+            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0])){
+                String before = p[0];
+                p[0] = RPUtil.PlayerToUUID(p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+            }
+            return new Pair<>(p[0], p[1]);
+        }).collect(Collectors.toSet());
+
+        Set<Pair<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s->{
+            String[] pi = s.split("@");
+            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0])){
+                String before = p[0];
+                p[0] = RPUtil.PlayerToUUID(p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+            }
+            return new Pair<>(p[0], p[1]);
+        }).collect(Collectors.toSet());
+
+        Set<Pair<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s->{
+            String[] pi = s.split("@");
+            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0])){
+                String before = p[0];
+                p[0] = RPUtil.PlayerToUUID(p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+            }
+            return new Pair<>(p[0], p[1]);
+        }).collect(Collectors.toSet());
+
         String welcome = fileDB.getString(rname + ".welcome", "");
         int prior = fileDB.getInt(rname + ".priority", 0);
         String date = fileDB.getString(rname + ".lastvisit", "");
@@ -1224,17 +1089,6 @@ public class RPUtil {
             tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                     Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
         }
-
-        //compatibility ------>                
-        if (fileDB.contains(rname + ".creator")) {
-            String creator = fileDB.getString(rname + ".creator");
-            leaders.add(creator);
-        }
-        if (fileDB.contains(rname + ".owners")) {
-            admins.addAll(fileDB.getStringList(rname + ".owners"));
-            admins.remove(fileDB.getString(rname + ".creator"));
-        }
-        //compatibility <------
 
         fixdbFlags(fileDB, rname);
         Region newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
@@ -1260,9 +1114,9 @@ public class RPUtil {
         fileDB.createSection(rname);
         fileDB.set(rname + ".name", rname);
         fileDB.set(rname + ".lastvisit", r.getDate());
-        fileDB.set(rname + ".admins", new ArrayList<>(r.getAdmins()));
-        fileDB.set(rname + ".members", new ArrayList<>(r.getMembers()));
-        fileDB.set(rname + ".leaders", new ArrayList<>(r.getLeaders()));
+        fileDB.set(rname + ".admins", r.getAdmins().stream().map(t->t.getKey()+"@"+t.getValue()).collect(Collectors.toList()));
+        fileDB.set(rname + ".members", r.getMembers().stream().map(t->t.getKey()+"@"+t.getValue()).collect(Collectors.toList()));
+        fileDB.set(rname + ".leaders", r.getLeaders().stream().map(t->t.getKey()+"@"+t.getValue()).collect(Collectors.toList()));
         fileDB.set(rname + ".priority", r.getPrior());
         fileDB.set(rname + ".welcome", r.getWelcome());
         fileDB.set(rname + ".world", r.getWorld());

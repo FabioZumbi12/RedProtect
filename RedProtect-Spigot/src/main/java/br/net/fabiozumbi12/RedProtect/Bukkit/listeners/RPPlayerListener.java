@@ -42,6 +42,7 @@ import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
 import de.Keyle.MyPet.api.player.MyPetPlayer;
+import javafx.util.Pair;
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.*;
@@ -399,18 +400,18 @@ public class RPPlayerListener implements Listener {
 
                         //check if tag is owners or members names
                         if (tag.equalsIgnoreCase("{membername}")) {
-                            for (String leader : r.getLeaders()) {
-                                if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))) {
+                            for (Pair<String, String> leader : r.getLeaders()) {
+                                if (sign.getLine(0).equalsIgnoreCase(leader.getValue())) {
                                     return;
                                 }
                             }
-                            for (String admin : r.getAdmins()) {
-                                if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))) {
+                            for (Pair<String, String> admin : r.getAdmins()) {
+                                if (sign.getLine(0).equalsIgnoreCase(admin.getValue())) {
                                     return;
                                 }
                             }
-                            for (String member : r.getMembers()) {
-                                if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(member))) {
+                            for (Pair<String, String> member : r.getMembers()) {
+                                if (sign.getLine(0).equalsIgnoreCase(member.getValue())) {
                                     return;
                                 }
                             }
@@ -1201,22 +1202,20 @@ public class RPPlayerListener implements Listener {
     public void PlayerLogin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        if (p.hasPermission("redprotect.update") && RedProtect.get().Update && !RPConfig.getBool("update-check.auto-update")) {
-            RPLang.sendMessage(p, ChatColor.AQUA + "An update is available for RedProtect: " + RedProtect.get().UptVersion);
-            RPLang.sendMessage(p, ChatColor.AQUA + "Use /rp update to download and automatically install this update.");
-        }
-
-        if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")) {
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), ()->{
             String uuid = p.getUniqueId().toString();
             if (!RedProtect.get().OnlineMode) {
                 uuid = p.getName().toLowerCase();
             }
-            for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
-                if (r.getDate() == null || !r.getDate().equals(RPUtil.DateNow())) {
-                    r.setDate(RPUtil.DateNow());
+            if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")) {
+                for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
+                    if (r.getDate() == null || !r.getDate().equals(RPUtil.DateNow())) {
+                        r.setDate(RPUtil.DateNow());
+                    }
                 }
             }
-        }
+        });
+
         String worldneeded = RPConfig.getString("server-protection.teleport-player.on-join.need-world-to-teleport");
         if (RPConfig.getBool("server-protection.teleport-player.on-join.enable") &&
                 (worldneeded.equals("none") || worldneeded.equals(p.getWorld().getName()))) {
@@ -1389,8 +1388,8 @@ public class RPPlayerListener implements Listener {
             if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")
                     || RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")) {
                 StringBuilder leaderstringBuilder = new StringBuilder();
-                for (String leader : r.getLeaders()) {
-                    leaderstringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(leader));
+                for (Pair<String, String> leader : r.getLeaders()) {
+                    leaderstringBuilder.append(", ").append(leader.getValue());
                 }
                 leaderstring = leaderstringBuilder.toString();
 

@@ -55,25 +55,14 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public void add(Region region) {
-        // Add to name-region map
         regionsMap.put(region.getName(), region);
-/*
-        // Add to chunk-set<region> map
-        region.getOccupiedChunks().forEach(chunk -> chunksMap
-                .computeIfAbsent(chunk, k -> new HashSet<>())
-                .add(region)
-        );*/
     }
 
     @Override
     public void remove(Region region) {
         if (regionsMap.containsValue(region)) {
             regionsMap.remove(region.getName());
-        }/*
-        region.getOccupiedChunks().forEach(chunk -> chunksMap
-                .computeIfAbsent(chunk, k -> new HashSet<>())
-                .remove(region)
-        );*/
+        }
     }
 
     @Override
