@@ -349,6 +349,11 @@ public class RPPlayerListener implements Listener {
                         }
                         RPLang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
                     }
+                } else if (b.getType().name().contains("LEAVES") || b.getType().name().contains("LOG") || b.getType().name().contains("_WOOD")) {
+                    if (!r.canTree(b)) {
+                        RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                        event.setCancelled(true);
+                    }
                 } else if (b.getType().equals(Material.ENDER_CHEST)) {
                     if (!r.canEnderChest(p)) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
@@ -1311,7 +1316,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    public void SendNotifyMsg(Player p, String notify, String color) {
+    private void SendNotifyMsg(Player p, String notify, String color) {
         if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")) {
             return;
         }
@@ -1333,7 +1338,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    public void SendWelcomeMsg(final Player p, String wel) {
+    private void SendWelcomeMsg(final Player p, String wel) {
         if (RPConfig.getString("notify.welcome-mode").equalsIgnoreCase("OFF")) {
             return;
         }
@@ -1462,7 +1467,7 @@ public class RPPlayerListener implements Listener {
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
                 String[] cmds = r.getFlagString("set-portal").split(" ");
-                RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), "rp teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
             }
 
             //Enter MagicCarpet

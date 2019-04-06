@@ -335,7 +335,13 @@ public class RPPlayerListener {
         } else { //if r != null >>       	
 
             //if (r != null) && (b != null) >>
-            if (b.getState().getType().getName().contains("_pressure_plate")) {
+            if (b.getState().getType().equals(BlockTypes.LOG) || b.getState().getType().equals(BlockTypes.LOG2) ||
+                    b.getState().getType().equals(BlockTypes.LEAVES) || b.getState().getType().equals(BlockTypes.LEAVES2)) {
+                if (!r.canTree(b)) {
+                    event.setCancelled(true);
+                    RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                }
+            } else if (b.getState().getType().getName().contains("_pressure_plate")) {
                 if (!r.allowPressPlate(p)) {
                     event.setCancelled(true);
                     RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
@@ -1245,7 +1251,7 @@ public class RPPlayerListener {
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
                 String[] cmds = r.getFlagString("set-portal").split(" ");
-                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), "rp teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
             }
         }
 
