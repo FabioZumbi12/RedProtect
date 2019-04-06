@@ -430,24 +430,40 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
                     }
 
+                    String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
+
                     for (String member : rs.getString("members").split(", ")) {
-                        if (member.length() > 0) {
-                            String[] p = member.split("@");
-                            members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        String[] pi = member.split("@");
+                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                            String before = p[0];
+                            p[0] = RPUtil.PlayerToUUID(p[0]);
+                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
                         }
+                        members.add(new Pair<>(p[0], p[1]));
                     }
+
                     for (String admin : rs.getString("admins").split(", ")) {
-                        if (admin.length() > 0) {
-                            String[] p = admin.split("@");
-                            admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        String[] pi = admin.split("@");
+                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                            String before = p[0];
+                            p[0] = RPUtil.PlayerToUUID(p[0]);
+                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
                         }
+                        admins.add(new Pair<>(p[0], p[1]));
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
-                        if (leader.length() > 0) {
-                            String[] p = leader.split("@");
-                            leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        String[] pi = leader.split("@");
+                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                            String before = p[0];
+                            p[0] = RPUtil.PlayerToUUID(p[0]);
+                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
                         }
+                        leaders.add(new Pair<>(p[0], p[1]));
                     }
+
                     for (String flag : rs.getString("flags").split(",")) {
                         String key = flag.split(":")[0];
                         flags.put(key, RPUtil.parseObject(flag.substring((key + ":").length())));

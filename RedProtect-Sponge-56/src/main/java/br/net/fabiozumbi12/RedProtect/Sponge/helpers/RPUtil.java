@@ -500,7 +500,7 @@ public class RPUtil {
         return null;
     }
 
-    private static boolean isUUIDs(String uuid) {
+    public static boolean isUUIDs(String uuid) {
         if (uuid == null) {
             return false;
         }
