@@ -350,7 +350,7 @@ public class RPPlayerListener implements Listener {
                         RPLang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
                     }
                 } else if (b.getType().name().contains("LEAVES") || b.getType().name().contains("LOG") || b.getType().name().contains("_WOOD")) {
-                    if (!r.canTree(b)) {
+                    if (!r.canTree(b) && !r.canBuild(p)) {
                         RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setCancelled(true);
                     }

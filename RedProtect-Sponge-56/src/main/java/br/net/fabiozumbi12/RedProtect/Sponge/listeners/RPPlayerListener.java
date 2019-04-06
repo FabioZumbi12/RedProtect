@@ -338,7 +338,7 @@ public class RPPlayerListener {
             //if (r != null) && (b != null) >>
             if (b.getState().getType().equals(BlockTypes.LOG) || b.getState().getType().equals(BlockTypes.LOG2) ||
                     b.getState().getType().equals(BlockTypes.LEAVES) || b.getState().getType().equals(BlockTypes.LEAVES2)) {
-                if (!r.canTree(b)) {
+                if (!r.canTree(b) && !r.canBuild(p)) {
                     event.setCancelled(true);
                     RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 }
