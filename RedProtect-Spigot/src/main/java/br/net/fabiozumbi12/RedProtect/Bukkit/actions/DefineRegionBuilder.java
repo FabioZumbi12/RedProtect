@@ -115,7 +115,7 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
         int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld());
-        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.claim.unlimited");
+        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
         if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
             this.setError(p, RPLang.get("regionbuilder.claim.limit"));
             return;
@@ -123,7 +123,7 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
-        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
+        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), newRegion);
         int actualArea = 0;
         if (regionarea > 0) {

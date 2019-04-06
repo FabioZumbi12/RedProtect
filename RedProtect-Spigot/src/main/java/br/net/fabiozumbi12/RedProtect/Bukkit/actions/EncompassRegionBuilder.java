@@ -251,14 +251,14 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
                         int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), w);
-                        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.claim.unlimited");
+                        boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
                         if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
                             this.setErrorSign(e, RPLang.get("regionbuilder.claim.limit"));
                             return;
                         }
 
                         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
-                        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limit.blocks.unlimited");
+                        boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
                         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
                         int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
                         int actualArea = 0;
