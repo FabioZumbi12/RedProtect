@@ -40,56 +40,83 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
-    private final HashMap<String, Region> regionsMap = new HashMap<>();
-    //private final Map<Chunk, Set<Region>> chunksMap = new HashMap<>();
+    private final HashMap<String, Region> regions;
     private final World world;
-    private final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
 
     public WorldFlatFileRegionManager(World world) {
         super();
+        this.regions = new HashMap<>();
         this.world = world;
     }
 
     @Override
-    public void add(Region region) {
-        regionsMap.put(region.getName(), region);
-    }
+    public void load() {
+        try {
+            String world = this.getWorld().getName();
+            RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
-    @Override
-    public void remove(Region region) {
-        if (regionsMap.containsValue(region)) {
-            regionsMap.remove(region.getName());
+            if (RPConfig.getString("file-type").equals("yml")) {
+                if (RPConfig.getBool("flat-file.region-per-file")) {
+                    File f = new File(RedProtect.get().getDataFolder(),"data" + File.separator + world);
+                    if (!f.exists()) {
+                        f.mkdir();
+                    }
+                    File[] listOfFiles = f.listFiles();
+                    for (File region : listOfFiles) {
+                        if (region.getName().endsWith(".yml")) {
+                            this.load(region.getPath());
+                        }
+                    }
+                } else {
+                    File oldf = new File(RedProtect.get().getDataFolder(),"data" + File.separator + world + ".yml");
+                    File newf = new File(RedProtect.get().getDataFolder(),"data" + File.separator + "data_" + world + ".yml");
+                    if (oldf.exists()) {
+                        oldf.renameTo(newf);
+                    }
+                    this.load(RedProtect.get().getDataFolder() + File.separator + "data" + File.separator + "data_" + world + ".yml");
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public Set<Region> getRegions(String pname) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regionsMap.values()) {
-            if (r.isLeader(pname)) {
-                regionsp.add(r);
+    private void load(String path) {
+        File f = new File(path);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        return regionsp;
-    }
 
-    @Override
-    public Set<Region> getMemberRegions(String uuid) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regionsMap.values()) {
-            if (r.isLeader(uuid) || r.isAdmin(uuid)) {
-                regionsp.add(r);
+        if (RPConfig.getString("file-type").equals("yml")) {
+            YamlConfiguration fileDB = new YamlConfiguration();
+            RedProtect.get().logger.debug("Load world " + this.world.getName() + ". File type: yml");
+            try {
+                fileDB.load(f);
+            } catch (FileNotFoundException e) {
+                RedProtect.get().logger.severe("DB file not found!");
+                RedProtect.get().logger.severe("File:" + f.getName());
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            for (String rname : fileDB.getKeys(false)) {
+                Region newr = RPUtil.loadRegion(fileDB, rname, this.world);
+                if (newr == null) return;
+
+                newr.setToSave(false);
+                add(newr);
             }
         }
-        return regionsp;
-    }
-
-    @Override
-    public Region getRegion(String rname) {
-        return regionsMap.get(rname);
     }
 
     @Override
@@ -101,10 +128,10 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             File datf;
 
             if (RPConfig.getString("file-type").equals("yml")) {
-                datf = new File(pathData, "data_" + world + ".yml");
+                datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + world + ".yml");
                 YamlConfiguration fileDB = new YamlConfiguration();
                 Set<YamlConfiguration> yamls = new HashSet<>();
-                for (Region r : regionsMap.values()) {
+                for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
@@ -114,7 +141,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                             continue;
                         }
                         fileDB = new YamlConfiguration();
-                        datf = new File(pathData, world + File.separator + r.getName() + ".yml");
+                        datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", world + File.separator + r.getName() + ".yml");
                     }
 
                     RPUtil.addProps(fileDB, r);
@@ -131,12 +158,12 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     saveYaml(fileDB, datf);
                 } else {
                     //remove deleted regions
-                    File wfolder = new File(pathData + world);
+                    File wfolder = new File(RedProtect.get().getDataFolder() + File.separator + "data", world);
                     if (wfolder.exists()) {
-                        File[] listOfFiles = new File(pathData, world).listFiles();
+                        File[] listOfFiles = wfolder.listFiles();
                         if (listOfFiles != null) {
                             for (File region : listOfFiles) {
-                                if (region.isFile() && !regionsMap.containsKey(region.getName().replace(".yml", ""))) {
+                                if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))) {
                                     region.delete();
                                 }
                             }
@@ -171,9 +198,48 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
+    public void add(Region region) {
+        regions.put(region.getName(), region);
+    }
+
+    @Override
+    public void remove(Region region) {
+        if (regions.containsValue(region)) {
+            regions.remove(region.getName());
+        }
+    }
+
+    @Override
+    public Set<Region> getRegions(String pname) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(pname)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
+    }
+
+    @Override
+    public Set<Region> getMemberRegions(String uuid) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid) || r.isAdmin(uuid)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
+    }
+
+    @Override
+    public Region getRegion(String rname) {
+        return regions.get(rname);
+    }
+
+    @Override
     public int getTotalRegionSize(String uuid) {
         Set<Region> regionslist = new HashSet<>();
-        for (Region r : regionsMap.values()) {
+        for (Region r : regions.values()) {
             if (r.isLeader(uuid)) {
                 regionslist.add(r);
             }
@@ -186,78 +252,12 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void load() {
-        try {
-            String world = this.getWorld().getName();
-            RedProtect.get().logger.info("- Loading " + world + "'s regions...");
-
-            if (RPConfig.getString("file-type").equals("yml")) {
-                if (RPConfig.getBool("flat-file.region-per-file")) {
-                    File f = new File(pathData + world);
-                    if (!f.exists()) {
-                        f.mkdir();
-                    }
-                    File[] listOfFiles = f.listFiles();
-                    for (File region : listOfFiles) {
-                        if (region.getName().endsWith(".yml")) {
-                            this.load(region.getPath());
-                        }
-                    }
-                } else {
-                    File oldf = new File(pathData + world + ".yml");
-                    File newf = new File(pathData + "data_" + world + ".yml");
-                    if (oldf.exists()) {
-                        oldf.renameTo(newf);
-                    }
-                    this.load(pathData + "data_" + world + ".yml");
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void load(String path) {
-        File f = new File(path);
-        if (!f.exists()) {
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (RPConfig.getString("file-type").equals("yml")) {
-            YamlConfiguration fileDB = new YamlConfiguration();
-            RedProtect.get().logger.debug("Load world " + this.world.getName() + ". File type: yml");
-            try {
-                fileDB.load(f);
-            } catch (FileNotFoundException e) {
-                RedProtect.get().logger.severe("DB file not found!");
-                RedProtect.get().logger.severe("File:" + f.getName());
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            for (String rname : fileDB.getKeys(false)) {
-                Region newr = RPUtil.loadProps(fileDB, rname, this.world);
-                if (newr == null) return;
-
-                newr.setToSave(false);
-                add(newr);
-            }
-        }
-    }
-
-    @Override
     public Set<Region> getRegionsNear(Player player, int radius) {
         int px = player.getLocation().getBlockX();
         int pz = player.getLocation().getBlockZ();
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
 
-        for (Region r : regionsMap.values()) {
+        for (Region r : regions.values()) {
             RedProtect.get().logger.debug("Radius: " + radius);
             RedProtect.get().logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
             if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
@@ -266,20 +266,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         return ret;
     }
-/*
-    @Override
-    public Set<Region> getRegionsInChunk(Chunk chunk) {
-        return chunksMap.getOrDefault(chunk, new HashSet<>());
-    }
-
-    @Override
-    public boolean regionExists(Region region) {
-    	if (regionsMap.containsValue(region)){
-			return true;
-		}
-		return false;
-    }
-    */
 
     public World getWorld() {
         return this.world;
@@ -288,7 +274,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getInnerRegions(Region region) {
         Set<Region> regionl = new HashSet<>();
-        regionsMap.values().forEach(r -> {
+        regions.values().forEach(r -> {
             if (r.getMaxMbrX() <= region.getMaxMbrX() &&
                         r.getMaxY() <= region.getMaxY() &&
                         r.getMaxMbrZ() <= region.getMaxMbrZ() &&
@@ -304,7 +290,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getRegions(int x, int y, int z) {
         Set<Region> regionl = new HashSet<>();
-        regionsMap.values().forEach(r -> {
+        regions.values().forEach(r -> {
             if (x <= r.getMaxMbrX() &&
                     x >= r.getMinMbrX() &&
                     y <= r.getMaxY() &&
@@ -321,7 +307,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public Region getTopRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
         int max = 0;
-        for (Region r : regionsMap.values()) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -345,7 +331,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public Region getLowRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
         int min = 0;
-        for (Region r : regionsMap.values()) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -368,7 +354,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
-        for (Region r : regionsMap.values()) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -388,13 +374,13 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getAllRegions() {
         SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
-        allregions.addAll(regionsMap.values());
+        allregions.addAll(regions.values());
         return allregions;
     }
 
     @Override
     public void clearRegions() {
-        regionsMap.clear();
+        regions.clear();
     }
 
     @Override
@@ -407,7 +393,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public int getTotalRegionNum() {
-        return regionsMap.size();
+        return regions.size();
     }
 
     @Override

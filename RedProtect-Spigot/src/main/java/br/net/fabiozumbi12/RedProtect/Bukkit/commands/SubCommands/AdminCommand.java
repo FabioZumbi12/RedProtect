@@ -220,9 +220,9 @@ public class AdminCommand implements SubCommand {
                 }
             }
 
-            if (args[0].equalsIgnoreCase("mysqlToYml")) {
+            if (args[0].equalsIgnoreCase("mysqlToFile")) {
                 try {
-                    if (!RPUtil.mysqlToYml()) {
+                    if (!RPUtil.mysqlToFile()) {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to Yml.");
                         return true;
                     } else {

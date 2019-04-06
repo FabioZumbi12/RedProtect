@@ -84,7 +84,6 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter region name
-        regionName = regionName.replaceAll("[^\\p{L}_0-9 ]", "");
         if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
@@ -92,6 +91,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 return;
             }
         }
+        regionName = RPUtil.nameNormalizer(regionName);
 
         //region name conform
         if (regionName.length() < 3) {
@@ -203,8 +203,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
-
+                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
+                        leaders.forEach(region::addLeader);
                         List<String> othersName = new ArrayList<>();
                         Region otherrg;
                         List<Location<World>> limitlocs = region.getLimitLocs(minby, maxby, false);

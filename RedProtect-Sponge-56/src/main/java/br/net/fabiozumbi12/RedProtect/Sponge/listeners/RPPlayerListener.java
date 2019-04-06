@@ -36,6 +36,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import javafx.util.Pair;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -413,18 +414,18 @@ public class RPPlayerListener {
 
                         //check if tag is leaders or members names
                         if (tag.equalsIgnoreCase("{membername}")) {
-                            for (String leader : r.getLeaders()) {
-                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(leader))) {
+                            for (Pair<String, String> leader : r.getLeaders()) {
+                                if (sign.get(0).toPlain().equalsIgnoreCase(leader.getValue())) {
                                     return;
                                 }
                             }
-                            for (String member : r.getMembers()) {
-                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(member))) {
+                            for (Pair<String, String> member : r.getMembers()) {
+                                if (sign.get(0).toPlain().equalsIgnoreCase(member.getValue())) {
                                     return;
                                 }
                             }
-                            for (String admin : r.getAdmins()) {
-                                if (sign.get(0).toPlain().equalsIgnoreCase(RPUtil.UUIDtoPlayer(admin))) {
+                            for (Pair<String, String> admin : r.getAdmins()) {
+                                if (sign.get(0).toPlain().equalsIgnoreCase(admin.getValue())) {
                                     return;
                                 }
                             }
@@ -1190,8 +1191,8 @@ public class RPPlayerListener {
             if (RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("CHAT") ||
                     RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 StringBuilder leaderstringBuilder = new StringBuilder();
-                for (String leader : r.getLeaders()) {
-                    leaderstringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(leader));
+                for (Pair<String, String> leader : r.getLeaders()) {
+                    leaderstringBuilder.append(", ").append(leader.getValue());
                 }
                 leaderstring = leaderstringBuilder.toString();
 

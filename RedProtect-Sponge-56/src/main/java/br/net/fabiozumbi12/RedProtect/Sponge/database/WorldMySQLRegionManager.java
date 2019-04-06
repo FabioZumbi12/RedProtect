@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import javafx.util.Pair;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
@@ -39,6 +40,7 @@ import org.spongepowered.api.world.World;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("deprecation")
@@ -47,7 +49,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private final String url = "jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/";
     private final String reconnect = "?autoReconnect=true";
     private final String dbname = RedProtect.get().cfgs.root().mysql.db_name;
-    private final boolean tblexists = false;
     private final String tableName;
     private final HashMap<String, Region> regions;
     private final World world;
@@ -96,9 +97,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     private boolean checkTableExists() {
-        if (this.tblexists) {
-            return true;
-        }
         try {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
             Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
@@ -293,9 +291,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
-                Set<String> leaders = new HashSet<>();
-                Set<String> admins = new HashSet<>();
-                Set<String> members = new HashSet<>();
+                Set<Pair<String, String>> leaders = new HashSet<>();
+                Set<Pair<String, String>> admins = new HashSet<>();
+                Set<Pair<String, String>> members = new HashSet<>();
                 HashMap<String, Object> flags = new HashMap<>();
 
                 int maxMbrX = rs.getInt("maxMbrX");
@@ -315,44 +313,27 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 Location<World> tppoint = null;
                 if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
                     String[] tpstring = rs.getString("tppoint").split(",");
-                    tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2])/*,
-                    		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
+                    tppoint = new Location<>(Sponge.getServer().getWorld(world).get(), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
                 }
 
                 for (String member : rs.getString("members").split(", ")) {
                     if (member.length() > 0) {
-                        members.add(member);
+                        String[] p = member.split("@");
+                        members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String admin : rs.getString("admins").split(", ")) {
                     if (admin.length() > 0) {
-                        admins.add(admin);
+                        String[] p = admin.split("@");
+                        admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String leader : rs.getString("leaders").split(", ")) {
                     if (leader.length() > 0) {
-                        leaders.add(leader);
+                        String[] p = leader.split("@");
+                        leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
-
-                //compatibility ------------>
-                try {
-                    if (rs.getString("owners") != null) {
-                        for (String owner : rs.getString("owners").split(", ")) {
-                            if (owner.length() > 0) {
-                                leaders.add(owner);
-                            }
-                        }
-                    }
-                    if (rs.getString("creator") != null) {
-                        String creator = rs.getString("creator");
-                        if (creator.length() > 0) {
-                            leaders.add(creator);
-                        }
-                    }
-                } catch (Exception ignored) {
-                }
-                //<------------ compatibility
 
                 for (String flag : rs.getString("flags").split(",")) {
                     String key = flag.split(":")[0];
@@ -362,7 +343,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     }
                 }
                 Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
-
                 regions.put(rname, newr);
             }
             st.close();
@@ -426,9 +406,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    Set<String> leaders = new HashSet<>();
-                    Set<String> admins = new HashSet<>();
-                    Set<String> members = new HashSet<>();
+                    Set<Pair<String, String>> leaders = new HashSet<>();
+                    Set<Pair<String, String>> admins = new HashSet<>();
+                    Set<Pair<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -452,17 +432,20 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
-                            members.add(member);
+                            String[] p = member.split("@");
+                            members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
-                            admins.add(admin);
+                            String[] p = admin.split("@");
+                            admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
-                            leaders.add(leader);
+                            String[] p = leader.split("@");
+                            leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String flag : rs.getString("flags").split(",")) {
@@ -471,7 +454,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     }
 
                     Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
-
                     regions.put(rname, reg);
                 } else {
                     return null;

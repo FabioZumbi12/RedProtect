@@ -50,15 +50,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private final String url = "jdbc:mysql://" + RPConfig.getString("mysql.host") + "/";
     private final String reconnect = "?autoReconnect=true";
     private final String dbname = RPConfig.getString("mysql.db-name");
-    private final boolean tblexists = false;
     private final String tableName;
-    private final ConcurrentHashMap<String, Region> regions = new ConcurrentHashMap<>();
+    private final HashMap<String, Region> regions;
     private final World world;
-    private ConcurrentHashMap<Chunk, Set<Region>> chunksMap = new ConcurrentHashMap<>();
     private Connection dbcon;
 
     public WorldMySQLRegionManager(World world) throws SQLException {
         super();
+        this.regions = new HashMap<>();
         this.world = world;
         this.tableName = RPConfig.getString("mysql.table-prefix") + world.getName();
 
@@ -99,9 +98,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     private boolean checkTableExists() {
-        if (this.tblexists) {
-            return true;
-        }
         try {
             RedProtect.get().logger.debug("Checking if table exists... " + tableName);
             Connection con = DriverManager.getConnection(this.url + this.dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));

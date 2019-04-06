@@ -759,11 +759,6 @@ public class Region implements Serializable {
         RedProtect.get().rm.updateLiveRegion(this, "members", "");
     }
 
-    /*
-    public void delete() {
-        RedProtect.get().rm.remove(this);
-    }
-    */
     public int getArea() {
         return Math.abs((this.maxMbrX - this.minMbrX) + 1) * Math.abs((this.maxMbrZ - this.minMbrZ) + 1);
     }
@@ -1699,7 +1694,7 @@ public class Region implements Serializable {
 
     public String getAdminDesc() {
         if (this.admins.size() == 0) {
-            return "[none]";
+            return RPLang.get("region.none");
         }
         StringBuilder adminsList = new StringBuilder();
         for (Pair<String, String> admin : this.admins) {

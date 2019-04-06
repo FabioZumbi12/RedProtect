@@ -28,20 +28,16 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
-import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
-import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
+import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
+import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-import com.google.common.collect.Lists;
 import javafx.util.Pair;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
@@ -67,7 +63,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -339,7 +334,6 @@ public class RPUtil {
 
     //TODO read all db
     public static void ReadAllDB(Set<Region> regions) {
-        int pls = 0;
         int purged = 0;
         int sell = 0;
         int cfm = 0;
@@ -585,7 +579,7 @@ public class RPUtil {
         }
     }
 
-    public static boolean mysqlToYml() {
+    public static boolean mysqlToFile() {
         HashMap<String, Region> regions = new HashMap<>();
         int saved = 1;
 
@@ -1032,7 +1026,7 @@ public class RPUtil {
         }
     }
 
-    public static Region loadProps(YamlConfiguration fileDB, String rname, World world) {
+    public static Region loadRegion(YamlConfiguration fileDB, String rname, World world) {
         if (fileDB.getString(rname + ".name") == null) {
             return null;
         }

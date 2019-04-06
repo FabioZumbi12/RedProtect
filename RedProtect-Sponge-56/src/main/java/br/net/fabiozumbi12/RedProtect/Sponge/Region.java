@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import com.flowpowered.math.vector.Vector3d;
+import javafx.util.Pair;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -72,9 +73,9 @@ public class Region implements Serializable {
     private int maxY;
     private int prior;
     private String name;
-    private Set<String> leaders;
-    private Set<String> admins;
-    private Set<String> members;
+    private Set<Pair<String, String>> leaders;
+    private Set<Pair<String, String>> admins;
+    private Set<Pair<String, String>> members;
     private String wMessage;
     private String world;
     private String date;
@@ -104,7 +105,7 @@ public class Region implements Serializable {
      * @param date      Date of latest visit of an admin or leader.
      * @param value     Last value of this region.
      */
-    public Region(String name, Set<String> admins, Set<String> members, Set<String> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
+    public Region(String name,Set<Pair<String, String>> admins, Set<Pair<String, String>> members, Set<Pair<String, String>> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
         super();
         this.x = new int[]{minMbrX, minMbrX, maxMbrX, maxMbrX};
         this.z = new int[]{minMbrZ, minMbrZ, maxMbrZ, maxMbrZ};
@@ -160,7 +161,7 @@ public class Region implements Serializable {
      * @param welcome   Set a welcome message.
      * @param value     A value in server economy.
      */
-    public Region(String name, Set<String> admins, Set<String> members, Set<String> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location<World> tppoint, boolean candel) {
+    public Region(String name, Set<Pair<String, String>> admins, Set<Pair<String, String>> members, Set<Pair<String, String>> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location<World> tppoint, boolean candel) {
         super();
         this.prior = prior;
         this.world = worldName;
@@ -231,7 +232,7 @@ public class Region implements Serializable {
         this.minY = min.getBlockY();
         this.admins = new HashSet<>();
         this.members = new HashSet<>();
-        this.leaders = Collections.singleton(RedProtect.get().cfgs.root().region_settings.default_leader);
+        this.leaders = Collections.singleton(new Pair<>(RedProtect.get().cfgs.root().region_settings.default_leader,RedProtect.get().cfgs.root().region_settings.default_leader));
         this.flags = RedProtect.get().cfgs.getDefFlagsValues();
         this.canDelete = true;
         this.world = world;
@@ -390,6 +391,14 @@ public class Region implements Serializable {
         }
     }
 
+    public String getFlagStrings() {
+        StringBuilder flags = new StringBuilder();
+        for (String flag : this.flags.keySet()) {
+            flags.append(",").append(flag).append(":").append(this.flags.get(flag).toString());
+        }
+        return flags.toString().substring(1);
+    }
+
     public Location<World> getTPPoint() {
         return this.tppoint;
     }
@@ -407,6 +416,14 @@ public class Region implements Serializable {
             RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
         }
 
+    }
+
+
+    public String getTPPointString() {
+        if (tppoint == null) {
+            return "";
+        }
+        return this.tppoint.getX() + "," + this.tppoint.getY() + "," + this.tppoint.getZ()/*+","+this.tppoint.getYaw()+","+this.tppoint.getPitch()*/;
     }
 
     public String getDate() {
@@ -514,14 +531,14 @@ public class Region implements Serializable {
      * @return {@code List<String>}
      */
     @Deprecated()
-    public Set<String> getAdmins() {
+    public Set<Pair<String, String>>  getAdmins() {
         return this.admins;
     }
 
-    public void setAdmins(Set<String> admins) {
+    public void setAdmins(Set<Pair<String, String>>  admins) {
         setToSave(true);
         this.admins = admins;
-        RedProtect.get().rm.updateLiveRegion(this, "admins", admins.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
     }
 
     /**
@@ -532,14 +549,14 @@ public class Region implements Serializable {
      * @return {@code List<String>}
      */
     @Deprecated
-    public Set<String> getMembers() {
+    public Set<Pair<String, String>> getMembers() {
         return this.members;
     }
 
-    public void setMembers(Set<String> members) {
+    public void setMembers(Set<Pair<String, String>> members) {
         setToSave(true);
         this.members = members;
-        RedProtect.get().rm.updateLiveRegion(this, "members", members.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -550,29 +567,20 @@ public class Region implements Serializable {
      * @return {@code List<String>}
      */
     @Deprecated
-    public Set<String> getLeaders() {
+    public Set<Pair<String, String>> getLeaders() {
         return this.leaders;
     }
 
-    public void setLeaders(Set<String> leaders) {
+    public void setLeaders(Set<Pair<String, String>> leaders) {
         setToSave(true);
         this.leaders = leaders;
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", leaders.toString().replace("[", "").replace("]", ""));
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
     }
 
-    public String getFlagStrings() {
-        StringBuilder flags = new StringBuilder();
-        for (String flag : this.flags.keySet()) {
-            flags.append("," + flag + ":" + this.flags.get(flag).toString());
-        }
-        return flags.toString().substring(1);
-    }
-
-    public String getTPPointString() {
-        if (tppoint == null) {
-            return "";
-        }
-        return this.tppoint.getX() + "," + this.tppoint.getY() + "," + this.tppoint.getZ()/*+","+this.tppoint.getYaw()+","+this.tppoint.getPitch()*/;
+    private String serializeMembers(Set<Pair<String, String>> pairs){
+        StringBuilder list = new StringBuilder();
+        pairs.forEach(l->list.append(",").append(l.getKey()).append("@").append(l.getValue()));
+        return list.length() > 0 ? list.toString().substring(1):"";
     }
 
     public int getCenterX() {
@@ -623,13 +631,13 @@ public class Region implements Serializable {
         }
 
         leaders.removeIf(Objects::isNull);
-        leaders.forEach(leader -> leaderStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(leader)));
+        leaders.forEach(leader -> leaderStringBuilder.append(", ").append(leader.getValue()));
 
         admins.removeIf(Objects::isNull);
-        admins.forEach(admin -> adminStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(admin)));
+        admins.forEach(admin -> adminStringBuilder.append(", ").append(admin.getValue()));
 
         members.removeIf(Objects::isNull);
-        members.forEach(member -> adminStringBuilder.append(", ").append(RPUtil.UUIDtoPlayer(member)));
+        members.forEach(member -> memberStringBuilder.append(", ").append(member.getValue()));
 
         if (this.leaders.size() > 0) {
             leaderString = leaderStringBuilder.delete(0, 2).toString();
@@ -651,32 +659,16 @@ public class Region implements Serializable {
         } else {
             today = this.date;
         }
-        for (String pname : this.leaders) {
-            if (RedProtect.get().OnlineMode) {
-                User play = null;
-                if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
-                    play = RPUtil.getUser(pname);
-                }
-                if (pname != null && play != null && play.isOnline()) {
-                    today = "&aOnline!";
-                    break;
-                }
-            } else if (RedProtect.get().serv.getPlayer(pname).isPresent()) {
+        for (Pair<String, String> pname : this.leaders) {
+            Optional<Player> play = Sponge.getServer().getPlayer(pname.getValue());
+            if (play.isPresent() && !pname.getValue().equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
                 today = "&aOnline!";
                 break;
             }
         }
-        for (String pname : this.admins) {
-            if (RedProtect.get().OnlineMode) {
-                User play = null;
-                if (pname != null && !pname.equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
-                    play = RPUtil.getUser(pname);
-                }
-                if (pname != null && play != null && play.isOnline()) {
-                    today = "&aOnline!";
-                    break;
-                }
-            } else if (RedProtect.get().serv.getPlayer(pname).isPresent()) {
+        for (Pair<String, String> pname : this.admins) {
+            Optional<Player> play = Sponge.getServer().getPlayer(pname.getValue());
+            if (play.isPresent() && !pname.getValue().equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
                 today = "&aOnline!";
                 break;
             }
@@ -732,28 +724,94 @@ public class Region implements Serializable {
         return other.maxMbrX >= this.minMbrX && other.minMbrZ >= this.minMbrZ && other.minMbrX <= this.maxMbrX && other.minMbrZ <= this.maxMbrZ;
     }
 
-    public boolean isLeader(String player) {
-        return this.leaders.contains(RPUtil.PlayerToUUID(player));
+    public boolean isLeader(Player player) {
+        if (RedProtect.get().OnlineMode){
+            return this.leaders.stream().anyMatch(l->{
+                try {
+                    UUID uuid = UUID.fromString(l.getKey());
+                    return uuid.equals(player.getUniqueId());
+                } catch (Exception ignored){
+                    return l.getKey().equalsIgnoreCase(player.getName());
+                }
+            });
+        } else {
+            return this.leaders.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
+        }
     }
 
-    public boolean isLeader(Player player) {
-        return this.leaders.contains(RPUtil.PlayerToUUID(player.getName()));
+    public boolean isLeader(String player) {
+        if (RedProtect.get().OnlineMode){
+            return this.leaders.stream().anyMatch(l->{
+                try {
+                    UUID uuid = UUID.fromString(l.getKey());
+                    return uuid.toString().equalsIgnoreCase(player);
+                } catch (Exception ignored){
+                    return l.getKey().equalsIgnoreCase(player);
+                }
+            });
+        } else {
+            return this.leaders.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
+        }
     }
 
     public boolean isAdmin(Player player) {
-        return this.admins.contains(RPUtil.PlayerToUUID(player.getName()));
+        if (RedProtect.get().OnlineMode){
+            return this.admins.stream().anyMatch(l->{
+                try {
+                    UUID uuid = UUID.fromString(l.getKey());
+                    return uuid.equals(player.getUniqueId());
+                } catch (Exception ignored){
+                    return l.getKey().equalsIgnoreCase(player.getName());
+                }
+            });
+        } else {
+            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
+        }
     }
 
     public boolean isAdmin(String player) {
-        return this.admins.contains(RPUtil.PlayerToUUID(player));
+        if (RedProtect.get().OnlineMode){
+            return this.admins.stream().anyMatch(l->{
+                try {
+                    UUID uuid = UUID.fromString(l.getKey());
+                    return uuid.toString().equalsIgnoreCase(player);
+                } catch (Exception ignored){
+                    return l.getKey().equalsIgnoreCase(player);
+                }
+            });
+        } else {
+            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
+        }
     }
 
     public boolean isMember(Player player) {
-        return this.members.contains(RPUtil.PlayerToUUID(player.getName()));
+        if (RedProtect.get().OnlineMode){
+            return this.members.stream().anyMatch(l->{
+                try {
+                    UUID uuid = UUID.fromString(l.getKey());
+                    return uuid.equals(player.getUniqueId());
+                } catch (Exception ignored){
+                    return l.getKey().equalsIgnoreCase(player.getName());
+                }
+            });
+        } else {
+            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
+        }
     }
 
     public boolean isMember(String player) {
-        return this.members.contains(RPUtil.PlayerToUUID(player));
+        if (RedProtect.get().OnlineMode){
+            return this.members.stream().anyMatch(l->{
+                try {
+                    UUID uuid = UUID.fromString(l.getKey());
+                    return uuid.toString().equalsIgnoreCase(player);
+                } catch (Exception ignored){
+                    return l.getKey().equalsIgnoreCase(player);
+                }
+            });
+        } else {
+            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
+        }
     }
 
     /**
@@ -763,16 +821,20 @@ public class Region implements Serializable {
      */
     public void addLeader(String uuid) {
         setToSave(true);
-        String pinfo = uuid;
-        if (!RedProtect.get().OnlineMode) {
-            pinfo = uuid.toLowerCase();
+
+        String name = uuid;
+        if (RedProtect.get().OnlineMode) {
+            name = RPUtil.UUIDtoPlayer(uuid);
         }
-        this.members.remove(pinfo);
-        this.admins.remove(pinfo);
+        Pair<String, String> pinfo = new Pair<>(uuid,name);
+
+        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
         this.leaders.add(pinfo);
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -782,16 +844,20 @@ public class Region implements Serializable {
      */
     public void addMember(String uuid) {
         setToSave(true);
-        String pinfo = uuid;
-        if (!RedProtect.get().OnlineMode) {
-            pinfo = uuid.toLowerCase();
+
+        String name = uuid;
+        if (RedProtect.get().OnlineMode) {
+            name = RPUtil.UUIDtoPlayer(uuid);
         }
-        this.admins.remove(pinfo);
-        this.leaders.remove(pinfo);
+        Pair<String, String> pinfo = new Pair<>(uuid,name);
+
+        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
         this.members.add(pinfo);
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -801,16 +867,20 @@ public class Region implements Serializable {
      */
     public void addAdmin(String uuid) {
         setToSave(true);
-        String pinfo = uuid;
-        if (!RedProtect.get().OnlineMode) {
-            pinfo = uuid.toLowerCase();
+
+        String name = uuid;
+        if (RedProtect.get().OnlineMode) {
+            name = RPUtil.UUIDtoPlayer(uuid);
         }
-        this.members.remove(pinfo);
-        this.leaders.remove(pinfo);
+        Pair<String, String> pinfo = new Pair<>(uuid,name);
+
+        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
         this.admins.add(pinfo);
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
+
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -820,16 +890,14 @@ public class Region implements Serializable {
      */
     public void removeMember(String uuid) {
         setToSave(true);
-        String pinfo = uuid;
-        if (!RedProtect.get().OnlineMode) {
-            pinfo = uuid.toLowerCase();
-        }
-        this.members.remove(pinfo);
-        this.admins.remove(pinfo);
-        this.leaders.remove(pinfo);
-        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+
+        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -839,16 +907,20 @@ public class Region implements Serializable {
      */
     public void removeAdmin(String uuid) {
         setToSave(true);
-        String pinfo = uuid;
-        if (!RedProtect.get().OnlineMode) {
-            pinfo = uuid.toLowerCase();
+
+        String name = uuid;
+        if (RedProtect.get().OnlineMode) {
+            name = RPUtil.UUIDtoPlayer(uuid);
         }
-        this.leaders.remove(pinfo);
-        this.admins.remove(pinfo);
+        Pair<String, String> pinfo = new Pair<>(uuid,name);
+
+        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
         this.members.add(pinfo);
-        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -858,16 +930,20 @@ public class Region implements Serializable {
      */
     public void removeLeader(String uuid) {
         setToSave(true);
-        String pinfo = uuid;
-        if (!RedProtect.get().OnlineMode) {
-            pinfo = uuid.toLowerCase();
+
+        String name = uuid;
+        if (RedProtect.get().OnlineMode) {
+            name = RPUtil.UUIDtoPlayer(uuid);
         }
-        this.members.remove(pinfo);
-        this.leaders.remove(pinfo);
+        Pair<String, String> pinfo = new Pair<>(uuid,name);
+
+        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
         this.admins.add(pinfo);
-        RedProtect.get().rm.updateLiveRegion(this, "admins", this.admins.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "members", this.members.toString().replace("[", "").replace("]", ""));
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", this.leaders.toString().replace("[", "").replace("]", ""));
+
+        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     public boolean getFlagBool(String key) {
@@ -965,6 +1041,10 @@ public class Region implements Serializable {
 
     public boolean canDeath() {
         return !flagExists("can-death") || getFlagBool("can-death");
+    }
+
+    public boolean allowDynmap() {
+        return !flagExists("dynmap") || getFlagBool("dynmap");
     }
 
     public boolean keepInventory() {
@@ -1524,11 +1604,11 @@ public class Region implements Serializable {
 
     public String getAdminDesc() {
         if (this.admins.size() == 0) {
-            return "[none]";
+            return RPLang.get("region.none");
         }
         StringBuilder adminsList = new StringBuilder();
-        for (String admin : this.admins) {
-            adminsList.append(", ").append(RPUtil.UUIDtoPlayer(admin));
+        for (Pair<String, String> admin : this.admins) {
+            adminsList.append(", ").append(admin.getValue());
         }
         return "[" + adminsList.toString().substring(2) + "]";
     }
@@ -1538,22 +1618,18 @@ public class Region implements Serializable {
             addLeader(RedProtect.get().cfgs.root().region_settings.default_leader);
         }
         StringBuilder leaderList = new StringBuilder();
-        for (String leader : this.leaders) {
-            leaderList.append(", ").append(RPUtil.UUIDtoPlayer(leader));
+        for (Pair<String, String> leader : this.leaders) {
+            leaderList.append(", ").append(leader.getValue());
         }
         return "[" + leaderList.delete(0, 2).toString() + "]";
     }
 
     public boolean sameLeaders(Region r) {
-        for (String l : this.leaders) {
-            if (r.getLeaders().contains(l)) {
+        for (Pair<String, String> l : this.leaders) {
+            if (r.leaders.contains(l)) {
                 return true;
             }
         }
         return false;
-    }
-
-    public boolean allowDynmap() {
-        return !flagExists("dynmap") || getFlagBool("dynmap");
     }
 }

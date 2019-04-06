@@ -45,8 +45,8 @@ import java.util.*;
 
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
-    final HashMap<String, Region> regions;
-    final World world;
+    private final HashMap<String, Region> regions;
+    private final World world;
 
     public WorldFlatFileRegionManager(World world) {
         super();
@@ -55,40 +55,66 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void add(Region r) {
-        this.regions.put(r.getName(), r);
+    public void load() {
+
+        try {
+            String world = this.getWorld().getName();
+            RedProtect.get().logger.info("- Loading " + world + "'s regions...");
+
+            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
+                if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                    File f = new File(RedProtect.get().configDir, "data" + File.separator + world);
+                    if (!f.exists()) {
+                        f.mkdir();
+                    }
+                    File[] listOfFiles = f.listFiles();
+                    for (File region : listOfFiles) {
+                        if (region.getName().endsWith(".conf")) {
+                            this.load(region.getPath());
+                        }
+                    }
+                } else {
+                    File oldf = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + world + ".conf");
+                    File newf = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + "data_" + world + ".conf");
+                    if (oldf.exists()) {
+                        oldf.renameTo(newf);
+                    }
+                    this.load(RedProtect.get().configDir + File.separator + "data" + File.separator + "data_" + world + ".conf");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void remove(Region r) {
-        this.regions.remove(r.getName());
-    }
+    private void load(String path) {
+        World world = this.getWorld();
 
-    @Override
-    public Set<Region> getRegions(String pname) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regions.values()) {
-            if (r.isLeader(pname)) {
-                regionsp.add(r);
+        if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: conf");
+
+            try {
+                File tempRegionFile = new File(path);
+                if (!tempRegionFile.exists()) {
+                    tempRegionFile.createNewFile();
+                }
+
+                ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(tempRegionFile.toPath()).build();
+                CommentedConfigurationNode region = regionManager.load();
+
+                for (Object key : region.getChildrenMap().keySet()) {
+                    String rname = key.toString();
+                    if (!region.getNode(rname).hasMapChildren()) {
+                        continue;
+                    }
+                    Region newr = RPUtil.loadRegion(region, rname, world);
+                    newr.setToSave(false);
+                    regions.put(rname, newr);
+                }
+            } catch (IOException | ObjectMappingException e) {
+                e.printStackTrace();
             }
         }
-        return regionsp;
-    }
-
-    @Override
-    public Set<Region> getMemberRegions(String uuid) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regions.values()) {
-            if (r.isLeader(uuid) || r.isAdmin(uuid)) {
-                regionsp.add(r);
-            }
-        }
-        return regionsp;
-    }
-
-    @Override
-    public Region getRegion(String rname) {
-        return regions.get(rname);
     }
 
     @Override
@@ -172,6 +198,43 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
+    public void add(Region r) {
+        this.regions.put(r.getName(), r);
+    }
+
+    @Override
+    public void remove(Region r) {
+        this.regions.remove(r.getName());
+    }
+
+    @Override
+    public Set<Region> getRegions(String pname) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(pname)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
+    }
+
+    @Override
+    public Set<Region> getMemberRegions(String uuid) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid) || r.isAdmin(uuid)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
+    }
+
+    @Override
+    public Region getRegion(String rname) {
+        return regions.get(rname);
+    }
+
+    @Override
     public int getTotalRegionSize(String uuid) {
         Set<Region> regionslist = new HashSet<>();
         for (Region r : regions.values()) {
@@ -184,69 +247,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
-    }
-
-    @Override
-    public void load() {
-
-        try {
-            String world = this.getWorld().getName();
-            RedProtect.get().logger.info("- Loading " + world + "'s regions...");
-
-            if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
-                if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
-                    File f = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + world);
-                    if (!f.exists()) {
-                        f.mkdir();
-                    }
-                    File[] listOfFiles = f.listFiles();
-                    for (File region : listOfFiles) {
-                        if (region.getName().endsWith(".conf")) {
-                            this.load(region.getPath());
-                        }
-                    }
-                } else {
-                    File oldf = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + world + ".conf");
-                    File newf = new File(RedProtect.get().configDir + File.separator + "data" + File.separator + "data_" + world + ".conf");
-                    if (oldf.exists()) {
-                        oldf.renameTo(newf);
-                    }
-                    this.load(RedProtect.get().configDir + File.separator + "data" + File.separator + "data_" + world + ".conf");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void load(String path) {
-        World world = this.getWorld();
-
-        if (RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: conf");
-
-            try {
-                File tempRegionFile = new File(path);
-                if (!tempRegionFile.exists()) {
-                    tempRegionFile.createNewFile();
-                }
-
-                ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(tempRegionFile.toPath()).build();
-                CommentedConfigurationNode region = regionManager.load();
-
-                for (Object key : region.getChildrenMap().keySet()) {
-                    String rname = key.toString();
-                    if (!region.getNode(rname).hasMapChildren()) {
-                        continue;
-                    }
-                    Region newr = RPUtil.loadRegion(region, rname, world);
-                    newr.setToSave(false);
-                    regions.put(rname, newr);
-                }
-            } catch (IOException | ObjectMappingException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
@@ -264,16 +264,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         return ret;
     }
-    
-    /*
-    @Override
-    public boolean regionExists(Region region) {
-    	if (regions.containsValue(region)){
-			return true;
-		}
-		return false;
-    }
-    */
 
     public World getWorld() {
         return this.world;

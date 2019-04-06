@@ -458,10 +458,6 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class hooksCat {
-        @Setting(value = "check-uuid-names-onstart", comment = "This will try to convert your player UUIDs to Player Names" +
-                "\nif you recently changed your server from Online mode to Offline, and from the other way too.")
-        public boolean check_uuid_names_onstart = false;
-
         @Setting(comment = "Use worldeditCUI to visualize the region limits. (Need WorldEdit on server and WECUI on client)")
         public boolean useWECUI = true;
 

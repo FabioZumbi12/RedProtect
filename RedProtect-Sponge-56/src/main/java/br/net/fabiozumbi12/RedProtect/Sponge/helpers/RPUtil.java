@@ -34,6 +34,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import javafx.util.Pair;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -61,12 +62,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -74,6 +77,9 @@ import java.util.zip.ZipOutputStream;
 public class RPUtil {
     public static boolean stopRegen;
 
+    public static String nameNormalizer(String name){
+        return Normalizer.normalize(name, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+","").replaceAll("[^\\p{L}_0-9 ]", "");
+    }
     public static Text toText(String str) {
         return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
@@ -266,7 +272,7 @@ public class RPUtil {
             } else {
                 rname = p + "_" + i;
             }
-            rname = rname.replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
+            rname = nameNormalizer(rname);
             if (RedProtect.get().rm.getRegion(rname, w) == null) {
                 break;
             }
@@ -290,9 +296,6 @@ public class RPUtil {
 
     //TODO read all db
     public static void ReadAllDB(Set<Region> regions) {
-        int pls = 0;
-        int origupdt = 0;
-        int namesupdt = 0;
         int purged = 0;
         int sell = 0;
         int cfm = 0;
@@ -301,27 +304,25 @@ public class RPUtil {
         Date now = null;
         SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
 
-        boolean checkNames = RedProtect.get().cfgs.root().hooks.check_uuid_names_onstart;
-
         try {
             now = dateformat.parse(DateNow());
         } catch (ParseException e1) {
             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
         }
 
-        for (Region r : regions) {
+        for (Region region : regions) {
             boolean serverRegion = false;
 
-            if (r.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader)) {
+            if (region.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader)) {
                 serverRegion = true;
-                r.setDate(DateNow());
+                region.setDate(DateNow());
             }
 
             //purge regions
             if (RedProtect.get().cfgs.root().purge.enabled && !serverRegion) {
                 Date regiondate = null;
                 try {
-                    regiondate = dateformat.parse(r.getDate());
+                    regiondate = dateformat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     e.printStackTrace();
@@ -330,7 +331,7 @@ public class RPUtil {
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().cfgs.root().purge.ignore_regions_from_players) {
-                    if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                    if (region.isLeader(RPUtil.PlayerToUUID(play)) || region.isAdmin(RPUtil.PlayerToUUID(play))) {
                         ignore = true;
                         break;
                     }
@@ -338,17 +339,17 @@ public class RPUtil {
 
                 if (!ignore && days > RedProtect.get().cfgs.root().purge.remove_oldest) {
                     if (RedProtect.get().WE && RedProtect.get().cfgs.root().purge.regen.enable) {
-                        if (r.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
-                            WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+                        if (region.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
+                            WEListener.regenRegion(region, Sponge.getServer().getWorld(region.getWorld()).get(), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
                         } else {
                             skipped++;
                             continue;
                         }
                     } else {
-                        RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()).get());
+                        RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()).get());
                         purged++;
-                        RedProtect.get().logger.warning("Purging " + r.getName() + " - Days: " + days);
+                        RedProtect.get().logger.warning("Purging " + region.getName() + " - Days: " + days);
                     }
                     continue;
                 }
@@ -359,7 +360,7 @@ public class RPUtil {
             if (RedProtect.get().cfgs.root().sell.enabled && !serverRegion) {
                 Date regiondate = null;
                 try {
-                    regiondate = dateformat.parse(r.getDate());
+                    regiondate = dateformat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     e.printStackTrace();
@@ -368,164 +369,25 @@ public class RPUtil {
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().cfgs.root().sell.ignore_regions_from_players) {
-                    if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                    if (region.isLeader(RPUtil.PlayerToUUID(play)) || region.isAdmin(RPUtil.PlayerToUUID(play))) {
                         ignore = true;
                         break;
                     }
                 }
 
                 if (!ignore && days > RedProtect.get().cfgs.root().sell.sell_oldest) {
-                    RedProtect.get().logger.warning("Selling " + r.getName() + " - Days: " + days);
-                    RPEconomy.putToSell(r, RedProtect.get().cfgs.root().region_settings.default_leader, RPEconomy.getRegionValue(r));
+                    RedProtect.get().logger.warning("Selling " + region.getName() + " - Days: " + days);
+                    RPEconomy.putToSell(region, RedProtect.get().cfgs.root().region_settings.default_leader, RPEconomy.getRegionValue(region));
                     sell++;
                     RedProtect.get().rm.saveAll(false);
                     continue;
                 }
             }
 
-            //Update player names
-            Set<String> leadersl = r.getLeaders();
-            Set<String> adminsl = r.getAdmins();
-            Set<String> membersl = r.getMembers();
-
-            if (origupdt >= 90 || namesupdt >= 90) {
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (!serverRegion && checkNames) {
-                if (RedProtect.get().OnlineMode) {
-                    Iterator<String> leaderslIt = leadersl.iterator();
-                    while (leaderslIt.hasNext()) {
-                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
-                            String uuid = MojangUUIDs.getUUID(pname);
-                            if (uuid == null) {
-                                uuid = PlayerToUUID(pname);
-                            }
-                            RedProtect.get().logger.warning("Leader from: " + pname);
-                            leadersl.remove(pname);
-                            leadersl.add(uuid);
-                            RedProtect.get().logger.warning("To UUID: " + uuid);
-                            origupdt++;
-                        }
-                    }
-                    Iterator<String> adminslIt = adminsl.iterator();
-                    while (adminslIt.hasNext()) {
-                        String pname = adminslIt.next().replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
-                            String uuid = MojangUUIDs.getUUID(pname);
-                            if (uuid == null) {
-                                uuid = PlayerToUUID(pname);
-                            }
-                            RedProtect.get().logger.warning("Admin from: " + pname);
-                            adminsl.remove(pname);
-                            adminsl.add(uuid);
-                            RedProtect.get().logger.warning("To UUID: " + uuid);
-                            origupdt++;
-                        }
-                    }
-                    Iterator<String> memberslIt = membersl.iterator();
-                    while (memberslIt.hasNext()) {
-                        String pname = memberslIt.next().replace("[", "").replace("]", "");
-                        if (!isUUIDs(pname) && !isDefaultServer(pname)) {
-                            String uuid = MojangUUIDs.getUUID(pname);
-                            if (uuid == null) {
-                                uuid = PlayerToUUID(pname);
-                            }
-                            RedProtect.get().logger.warning("Member from: " + pname);
-                            membersl.remove(pname);
-                            membersl.add(uuid);
-                            RedProtect.get().logger.warning("To UUID: " + uuid);
-                            origupdt++;
-                        }
-                    }
-                    if (origupdt > 0) {
-                        pls++;
-                    }
-                }
-                //if Offline Mode
-                else {
-                    Iterator<String> leaderslIt = leadersl.iterator();
-                    while (leaderslIt.hasNext()) {
-                        String pname = leaderslIt.next().replace("[", "").replace("]", "");
-                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
-                            try {
-                                String name = MojangUUIDs.getName(pname);
-                                if (name == null) {
-                                    name = UUIDtoPlayer(pname);
-                                }
-                                RedProtect.get().logger.warning("Leader from: " + pname);
-                                leadersl.remove(pname);
-                                leadersl.add(name.toLowerCase());
-                                RedProtect.get().logger.warning("To UUID: " + name);
-                                namesupdt++;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    Iterator<String> adminslIt = adminsl.iterator();
-                    while (adminslIt.hasNext()) {
-                        String pname = adminslIt.next().replace("[", "").replace("]", "");
-                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
-                            try {
-                                String name = MojangUUIDs.getName(pname);
-                                if (name == null) {
-                                    name = UUIDtoPlayer(pname);
-                                }
-                                RedProtect.get().logger.warning("Admin from: " + pname);
-                                adminsl.remove(pname);
-                                adminsl.add(name.toLowerCase());
-                                RedProtect.get().logger.warning("To UUID: " + name);
-                                namesupdt++;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    Iterator<String> memberslIt = membersl.iterator();
-                    while (memberslIt.hasNext()) {
-                        String pname = memberslIt.next().replace("[", "").replace("]", "");
-                        if (isUUIDs(pname) && !isDefaultServer(pname)) {
-                            try {
-                                String name = MojangUUIDs.getName(pname);
-                                if (name == null) {
-                                    name = UUIDtoPlayer(pname);
-                                }
-                                RedProtect.get().logger.warning("Member from: " + pname);
-                                membersl.remove(pname);
-                                membersl.add(name.toLowerCase());
-                                RedProtect.get().logger.warning("To UUID: " + name);
-                                namesupdt++;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    if (namesupdt > 0) {
-                        pls++;
-                    }
-                }
-                r.setLeaders(leadersl);
-                r.setAdmins(adminsl);
-                r.setMembers(membersl);
-            }
-
-            if (pls > 0) {
-                if (pls % 50 == 0) RedProtect.get().rm.saveAll(false);
-                RedProtect.get().logger.sucess("[" + pls + "]Region updated &6&l" + r.getName());
-            }
-
             //conform region names
-            if (Pattern.matches("[^\\p{L}_0-9 ]", r.getName())) {
-                String rname = r.getName().replaceAll("[^\\p{L}_0-9 ]", "");
-                RedProtect.get().rm.renameRegion(rname, r);
+            if (Pattern.matches("[^\\p{L}_0-9 ]", region.getName()) || Pattern.matches("\\p{InCombiningDiacriticalMarks}+", region.getName())) {
+                String rname = nameNormalizer(region.getName());
+                RedProtect.get().rm.renameRegion(rname, region);
                 cfm++;
             }
         }
@@ -540,12 +402,6 @@ public class RPUtil {
 
         if (cfm > 0) {
             RedProtect.get().logger.sucess("[" + cfm + "] Region names conformed!");
-        }
-
-        if (pls > 0) {
-            RedProtect.get().logger.sucess("Updated a total of &6&l" + (pls) + "&a&l regions!");
-            RedProtect.get().rm.saveAll(false);
-            RedProtect.get().logger.sucess("Regions saved!");
         }
 
         if (skipped > 0) {
@@ -681,9 +537,9 @@ public class RPUtil {
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
-                    Set<String> leaders = new HashSet<>();
-                    Set<String> admins = new HashSet<>();
-                    Set<String> members = new HashSet<>();
+                    Set<Pair<String, String>> leaders = new HashSet<>();
+                    Set<Pair<String, String>> admins = new HashSet<>();
+                    Set<Pair<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -707,19 +563,23 @@ public class RPUtil {
 
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
-                            members.add(member);
+                            String[] p = member.split("@");
+                            members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
-                            admins.add(admin);
+                            String[] p = admin.split("@");
+                            admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
-                            leaders.add(leader);
+                            String[] p = leader.split("@");
+                            leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
+
                     for (String flag : rs.getString("flags").split(",")) {
                         String key = flag.split(":")[0];
                         String replace = key + ":";
@@ -728,7 +588,6 @@ public class RPUtil {
                         }
                     }
                     Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
-
                     regions.put(rname, newr);
                 }
                 st.close();
@@ -1089,22 +948,40 @@ public class RPUtil {
         int minZ = region.getNode(rname, "minZ").getInt();
         int maxY = region.getNode(rname, "maxY").getInt(world.getBlockMax().getY());
         int minY = region.getNode(rname, "minY").getInt(0);
+        String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
 
-        Set<String> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class)));
-        Set<String> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class)));
-        Set<String> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class)));
-
-        //compatibility ------>
-        if (region.getNode(rname, "creator").getValue() != null) {
-            String creator = region.getNode(rname, "creator").getString();
-            if (region.getNode(rname, "owners").getValue() != null) {
-                leaders.addAll(region.getNode(rname, "owners").getList(TypeToken.of(String.class)));
+        Set<Pair<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s->{
+            String[] pi = s.split("@");
+            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                String before = p[0];
+                p[0] = RPUtil.PlayerToUUID(p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
             }
-            leaders.add(creator);
-            region.getNode(rname).removeChild("creator");
-            region.getNode(rname).removeChild("owners");
-        }
-        //compatibility <------
+            return new Pair<>(p[0], p[1]);
+        }).collect(Collectors.toSet());
+
+        Set<Pair<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s->{
+            String[] pi = s.split("@");
+            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                String before = p[0];
+                p[0] = RPUtil.PlayerToUUID(p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+            }
+            return new Pair<>(p[0], p[1]);
+        }).collect(Collectors.toSet());
+
+        Set<Pair<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s->{
+            String[] pi = s.split("@");
+            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                String before = p[0];
+                p[0] = RPUtil.PlayerToUUID(p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+            }
+            return new Pair<>(p[0], p[1]);
+        }).collect(Collectors.toSet());
 
         String welcome = region.getNode(rname, "welcome").getString();
         int prior = region.getNode(rname, "priority").getInt();
