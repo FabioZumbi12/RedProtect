@@ -57,7 +57,7 @@ public class McMMoListener implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("Mcmmo McMMOPlayerExperienceEvent event. Skill " + e.getSkill().name());
+        RedProtect.get().logger.debug("Mcmmo McMMOPlayerXpGainEvent event. Skill " + e.getSkill().name());
 
         Player p = e.getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
