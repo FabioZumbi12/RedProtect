@@ -32,14 +32,14 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import com.gmail.nossr50.datatypes.skills.AbilityType;
-import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import com.gmail.nossr50.datatypes.skills.SuperAbilityType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.events.fake.FakeEntityDamageByEntityEvent;
 import com.gmail.nossr50.events.fake.FakeEntityDamageEvent;
 import com.gmail.nossr50.events.skills.abilities.McMMOPlayerAbilityActivateEvent;
-import com.gmail.nossr50.events.skills.secondaryabilities.SecondaryAbilityEvent;
-import com.gmail.nossr50.events.skills.secondaryabilities.SecondaryAbilityWeightedActivationCheckEvent;
+import com.gmail.nossr50.events.skills.secondaryabilities.SubSkillEvent;
+import com.gmail.nossr50.events.skills.secondaryabilities.SubSkillRandomCheckEvent;
 import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
@@ -69,7 +69,7 @@ public class McMMoListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (RPConfig.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(SkillType.ACROBATICS) && (!r.canFire() || !r.canDeath())) {
+        if (RPConfig.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(PrimarySkillType.ACROBATICS) && (!r.canFire() || !r.canDeath())) {
             e.setCancelled(true);
         }
 		/*
@@ -90,7 +90,7 @@ public class McMMoListener implements Listener {
         Player p = e.getPlayer();
 
         //try to fix invisibility on bersek
-        if (RPConfig.getBool("hooks.mcmmo.fix-berserk-invisibility") && e.getAbility().equals(AbilityType.BERSERK)) {
+        if (RPConfig.getBool("hooks.mcmmo.fix-berserk-invisibility") && e.getAbility().equals(SuperAbilityType.BERSERK)) {
             p.damage(0);
             for (Entity ent : p.getNearbyEntities(10, 10, 10)) {
                 if (ent instanceof LivingEntity) {
@@ -108,14 +108,14 @@ public class McMMoListener implements Listener {
             p.sendMessage(RPLang.get("mcmmolistener.notallowed"));
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, null) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED))) {
+        if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED))) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onPlayerActivateSecAbillity(SecondaryAbilityWeightedActivationCheckEvent e) {
-        RedProtect.get().logger.debug("Mcmmo SecondaryAbilityWeightedActivationCheckEvent event.");
+    public void onPlayerActivateSecAbillity(SubSkillRandomCheckEvent e) {
+        RedProtect.get().logger.debug("Mcmmo SubSkillRandomCheckEvent event.");
 
         Player p = e.getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -126,7 +126,7 @@ public class McMMoListener implements Listener {
         if (!r.canSkill(p)) {
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, null) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))) {
+        if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
             e.setCancelled(true);
         }
     }
@@ -144,13 +144,13 @@ public class McMMoListener implements Listener {
         if (!r.canSkill(p)) {
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, e.getDefender()) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))) {
+        if (!r.canPVP(p, e.getDefender()) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onSecondaryAbilityEvent(SecondaryAbilityEvent e) {
+    public void onSecondaryAbilityEvent(SubSkillEvent e) {
         RedProtect.get().logger.debug("Mcmmo SecondaryAbilityEvent event.");
 
         Player p = e.getPlayer();
@@ -161,7 +161,7 @@ public class McMMoListener implements Listener {
         if (!r.canSkill(p)) {
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, null) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED) || e.getSkill().equals(SkillType.AXES))) {
+        if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
             e.setCancelled(true);
         }
     }
