@@ -795,7 +795,7 @@ public class Region implements Serializable {
                 }
             });
         } else {
-            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
+            return this.members.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
         }
     }
 
@@ -810,7 +810,7 @@ public class Region implements Serializable {
                 }
             });
         } else {
-            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
+            return this.members.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
         }
     }
 

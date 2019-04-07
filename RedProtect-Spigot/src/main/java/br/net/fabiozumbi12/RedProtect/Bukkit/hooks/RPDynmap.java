@@ -140,7 +140,7 @@ public class RPDynmap implements Listener {
         }
 
         String type = "player";
-        if (r.getLeaders().contains(RPConfig.getString("region-settings.default-leader")))
+        if (r.isLeader(RPConfig.getString("region-settings.default-leader")))
             type = "server";
 
         am.setLineStyle(

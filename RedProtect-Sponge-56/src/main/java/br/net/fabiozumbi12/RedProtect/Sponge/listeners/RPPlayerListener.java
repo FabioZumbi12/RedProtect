@@ -309,7 +309,7 @@ public class RPPlayerListener {
                 p.sendMessage(r.info());
                 p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-----------------------------------------"));
             } else {
-                p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", RPUtil.UUIDtoPlayer(r.getLeadersDesc()))));
+                p.sendMessage(RPUtil.toText(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc())));
             }
             event.setCancelled(true);
             return;
@@ -319,7 +319,7 @@ public class RPPlayerListener {
         if (r == null) {
             if (bstate instanceof Container ||
                     RedProtect.get().cfgs.root().private_cat.allowed_blocks.stream().anyMatch(bstate.getType().getName()::matches)) {
-                Boolean out = RedProtect.get().cfgs.root().private_cat.allow_outside;
+                boolean out = RedProtect.get().cfgs.root().private_cat.allow_outside;
                 if (out && !cont.canOpen(b, p)) {
                     if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
@@ -365,7 +365,7 @@ public class RPPlayerListener {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     } else {
-                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.opened").replace("{region}", r.getLeadersDesc()));
                     }
                 }
             } else if (bstate.getType().getName().contains("lever")) {
@@ -374,7 +374,7 @@ public class RPPlayerListener {
                         RPLang.sendMessage(p, "playerlistener.region.cantlever");
                         event.setCancelled(true);
                     } else {
-                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.levertoggled").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.levertoggled").replace("{region}", r.getLeadersDesc()));
                     }
                 }
             } else if (bstate.getType().getName().contains("button")) {
@@ -383,7 +383,7 @@ public class RPPlayerListener {
                         RPLang.sendMessage(p, "playerlistener.region.cantbutton");
                         event.setCancelled(true);
                     } else {
-                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.buttonactivated").replace("{region}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                        RPLang.sendMessage(p, RPLang.get("playerlistener.region.buttonactivated").replace("{region}", r.getLeadersDesc()));
                     }
                 }
             } else if (RPDoor.isOpenable(b)) {

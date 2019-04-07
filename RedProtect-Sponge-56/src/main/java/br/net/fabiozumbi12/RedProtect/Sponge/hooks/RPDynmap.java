@@ -144,7 +144,7 @@ public class RPDynmap {
         }
 
         String type = "player";
-        if (r.getLeaders().contains(RedProtect.get().cfgs.root().region_settings.default_leader))
+        if (r.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader))
             type = "server";
 
         am.setLineStyle(
