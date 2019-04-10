@@ -26,7 +26,7 @@
  *
  */
 
-package br.net.fabiozumbi12.RedProtect.Bukkit;
+package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;

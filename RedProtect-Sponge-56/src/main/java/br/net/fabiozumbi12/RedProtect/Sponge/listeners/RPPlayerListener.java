@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.EnterExitRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;

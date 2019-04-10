@@ -32,6 +32,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPLogger;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPPermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.*;

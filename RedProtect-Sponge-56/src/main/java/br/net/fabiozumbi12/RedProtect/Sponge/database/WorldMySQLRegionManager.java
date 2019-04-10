@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
 import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
-import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;

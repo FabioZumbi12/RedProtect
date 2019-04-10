@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;

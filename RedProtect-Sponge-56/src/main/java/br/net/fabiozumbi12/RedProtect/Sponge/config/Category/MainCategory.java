@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.Sponge;

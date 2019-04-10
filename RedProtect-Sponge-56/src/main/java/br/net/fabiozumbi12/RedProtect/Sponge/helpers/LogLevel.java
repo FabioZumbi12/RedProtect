@@ -26,7 +26,7 @@
  *
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge;
+package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 public enum LogLevel {
     BLOCKS,
