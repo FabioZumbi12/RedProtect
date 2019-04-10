@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.events;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
@@ -37,13 +37,13 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
 public class RenameRegionEvent extends AbstractEvent implements Cancellable, Event {
-    private final Region region;
+    private final SpongeRegion region;
     private final String oldName;
     private final Player player;
     private String newName;
     private boolean isCancelled = false;
 
-    public RenameRegionEvent(Region region, String newName, String oldName, Player p) {
+    public RenameRegionEvent(SpongeRegion region, String newName, String oldName, Player p) {
         this.region = region;
         this.newName = newName;
         this.oldName = oldName;
@@ -54,7 +54,7 @@ public class RenameRegionEvent extends AbstractEvent implements Cancellable, Eve
         return this.player;
     }
 
-    public Region getRegion() {
+    public SpongeRegion getRegion() {
         return this.region;
     }
 

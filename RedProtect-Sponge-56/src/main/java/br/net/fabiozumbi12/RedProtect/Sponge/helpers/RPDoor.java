@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
@@ -41,7 +41,7 @@ import org.spongepowered.api.world.World;
 
 public class RPDoor {
 
-    public static void ChangeDoor(BlockSnapshot b, Region r) {
+    public static void ChangeDoor(BlockSnapshot b, SpongeRegion r) {
         if ((!RedProtect.get().cfgs.isFlagEnabled("smart-door") && !RedProtect.get().cfgs.root().flags.get("smart-door")) || !r.getFlagBool("smart-door")) {
             return;
         }

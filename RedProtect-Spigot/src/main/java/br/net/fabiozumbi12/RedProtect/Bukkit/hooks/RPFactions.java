@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import com.massivecraft.factions.event.EventFactionsChunksChange;
@@ -50,7 +50,7 @@ public class RPFactions implements Listener {
         }
         for (PS chunk : event.getChunks()) {
             Player p = event.getMPlayer().getPlayer();
-            Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(chunk.asBukkitChunk());
+            Set<BukkitRegion> regs = RedProtect.get().rm.getRegionsForChunk(chunk.asBukkitChunk());
             if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
                 event.setCancelled(true);
                 RPLang.sendMessage(p, "rpfactions.cantclaim");
@@ -64,7 +64,7 @@ public class RPFactions implements Listener {
             return;
         }
         Player p = event.getMPlayer().getPlayer();
-        Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(p.getLocation().getChunk());
+        Set<BukkitRegion> regs = RedProtect.get().rm.getRegionsForChunk(p.getLocation().getChunk());
         if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
             RPLang.sendMessage(p, "rpfactions.cantclaim");
             event.setCancelled(true);

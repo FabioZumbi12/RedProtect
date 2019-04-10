@@ -29,15 +29,13 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.RegionCommandElement;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.world.World;
 
 import java.util.Map;
 
@@ -63,8 +61,8 @@ public class CopyFlagCommand {
                         /*String region1 = args.<String>getOne("region1").get();
                         String region2 = args.<String>getOne("region2").get();*/
 
-                        Region from = args.<Region>getOne("region1").get();
-                        Region to = args.<Region>getOne("region2").get();
+                        SpongeRegion from = args.<SpongeRegion>getOne("region1").get();
+                        SpongeRegion to = args.<SpongeRegion>getOne("region2").get();
                         /*if (from == null) {
                             RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + region1);
                             return CommandResult.success();

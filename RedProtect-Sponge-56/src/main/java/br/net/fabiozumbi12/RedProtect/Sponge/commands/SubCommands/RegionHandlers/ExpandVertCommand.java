@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -56,7 +56,7 @@ public class ExpandVertCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player)src;
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
 
                         if (args.hasAny("regionName")){
                             r = RedProtect.get().rm.getRegion(args.<String>getOne("regionName").get(), player.getWorld().getName());

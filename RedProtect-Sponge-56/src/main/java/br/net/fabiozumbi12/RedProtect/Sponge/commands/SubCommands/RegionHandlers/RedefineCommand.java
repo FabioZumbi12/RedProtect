@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.RedefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.RegionCommandElement;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
@@ -53,7 +53,7 @@ public class RedefineCommand {
                     } else {
                         Player player = (Player)src;
 
-                        Region oldRect = args.<Region>getOne("region").get();
+                        SpongeRegion oldRect = args.<SpongeRegion>getOne("region").get();
                         /*if (oldRect == null) {
                             RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + region);
                             return CommandResult.success();
@@ -66,7 +66,7 @@ public class RedefineCommand {
 
                         RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
                         if (rb.ready()) {
-                            Region r2 = rb.build();
+                            SpongeRegion r2 = rb.build();
                             RPLang.sendMessage(player, RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
                             RedProtect.get().rm.add(r2, player.getWorld());
 

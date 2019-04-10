@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,7 +61,7 @@ public class RPEntityListener implements Listener {
             return;
         }
         RedProtect.get().logger.debug("RPEntityListener - EntityBlockFormEvent canceled? " + e.isCancelled());
-        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.canIceForm()) {
             e.setCancelled(true);
         }
@@ -82,7 +82,7 @@ public class RPEntityListener implements Listener {
 
         if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)) {
             Location l = event.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnWhiter()) {
                 event.isCancelled();
                 return;
@@ -91,7 +91,7 @@ public class RPEntityListener implements Listener {
 
         if (e instanceof Monster) {
             Location l = event.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnMonsters()) {
                 RedProtect.get().logger.debug("Cancelled spawn of monster " + event.getEntityType().name());
                 event.setCancelled(true);
@@ -100,7 +100,7 @@ public class RPEntityListener implements Listener {
 
         if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().version >= 180 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
             Location l = event.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {
                 RedProtect.get().logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
@@ -131,8 +131,8 @@ public class RPEntityListener implements Listener {
             }
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
-        Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
+        BukkitRegion r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
+        BukkitRegion r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
 
         if (r1 != null && !r1.canFire() && !(e2 instanceof Player)) {
             e.setCancelled(true);
@@ -197,7 +197,7 @@ public class RPEntityListener implements Listener {
         }
 
         Entity ent = e.getEntity();
-        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation());
 
         if (ent instanceof LivingEntity && !(ent instanceof Monster)) {
             if (r != null && r.flagExists("invincible")) {
@@ -237,8 +237,8 @@ public class RPEntityListener implements Listener {
             RedProtect.get().logger.debug("EntityDamageByEntityEvent event. Damager Player: " + e2.getType().name());
             RedProtect.get().logger.debug("Cause: " + de.getCause().name());
 
-            Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
-            Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
+            BukkitRegion r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
+            BukkitRegion r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
 
             if (de.getCause().equals(DamageCause.LIGHTNING) || de.getCause().equals(DamageCause.BLOCK_EXPLOSION) || de.getCause().equals(DamageCause.FIRE) || de.getCause().equals(DamageCause.WITHER) || de.getCause().equals(DamageCause.CUSTOM) || de.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
                 if (r1 != null && !r1.canFire() && !(e2 instanceof Player)) {
@@ -336,7 +336,7 @@ public class RPEntityListener implements Listener {
             return;
         }
         for (Entity e2 : event.getAffectedEntities()) {
-            Region r = RedProtect.get().rm.getTopRegion(e2.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(e2.getLocation());
             if (event.getEntity() instanceof Player) {
                 if (r != null && r.flagExists("pvp") && !r.canPVP((Player) event.getEntity(), shooter)) {
                     event.setCancelled(true);
@@ -362,7 +362,7 @@ public class RPEntityListener implements Listener {
             return;
         }
         Location l = e.getRightClicked().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         Entity et = e.getRightClicked();
         if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager || et instanceof Golem || (et instanceof WaterMob && !r.allowFishing(p)))) {
             if (et instanceof Tameable) {
@@ -384,7 +384,7 @@ public class RPEntityListener implements Listener {
         }
         Entity e = event.getEntity();
         if (e instanceof Monster) {
-            Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
             if (!cont.canWorldBreak(event.getBlock())) {
                 event.setCancelled(true);
                 return;
@@ -405,7 +405,7 @@ public class RPEntityListener implements Listener {
     	List<Block> toRemove = new ArrayList<Block>();
         for (Block b:e.blockList()) {
         	Location l = b.getLocation();
-        	Region r = RedProtect.get().rm.getTopRegion(l);
+        	BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         	if (r != null && !r.canFire()){
         		toRemove.add(b);
         		continue;

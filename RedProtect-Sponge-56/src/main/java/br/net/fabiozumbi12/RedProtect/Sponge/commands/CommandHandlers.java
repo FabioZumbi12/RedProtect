@@ -33,7 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -55,8 +55,8 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandHandlers {
 
-    // TODO Region handlers
-    public static void handleAddLeader(CommandSource src, String sVictim, Region r) {
+    // TODO SpongeRegion handlers
+    public static void handleAddLeader(CommandSource src, String sVictim, SpongeRegion r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -121,9 +121,9 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveLeader(CommandSource src, String sVictim, Region r) {
-        Region rLow = null;
-        Map<Integer, Region> regions = new HashMap<>();
+    public static void handleRemoveLeader(CommandSource src, String sVictim, SpongeRegion r) {
+        SpongeRegion rLow = null;
+        Map<Integer, SpongeRegion> regions = new HashMap<>();
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -172,7 +172,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleAddAdmin(CommandSource src, String sVictim, Region r) {
+    public static void handleAddAdmin(CommandSource src, String sVictim, SpongeRegion r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -215,7 +215,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveAdmin(CommandSource src, String sVictim, Region r) {
+    public static void handleRemoveAdmin(CommandSource src, String sVictim, SpongeRegion r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -254,7 +254,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleAddMember(CommandSource src, String sVictim, Region r) {
+    public static void handleAddMember(CommandSource src, String sVictim, SpongeRegion r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -299,7 +299,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveMember(CommandSource src, String sVictim, Region r) {
+    public static void handleRemoveMember(CommandSource src, String sVictim, SpongeRegion r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -339,7 +339,7 @@ public class CommandHandlers {
     }
 
     public static void handleDelete(Player p) {
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "delete", r)) {
             if (r == null) {
                 RPLang.sendMessage(p, "cmdmanager.region.todo.that");
@@ -372,7 +372,7 @@ public class CommandHandlers {
     }
 
     public static void handleDeleteName(Player p, String rname, String world) {
-        Region r = RedProtect.get().rm.getRegion(rname, p.getWorld());
+        SpongeRegion r = RedProtect.get().rm.getRegion(rname, p.getWorld());
         if (!world.equals("")) {
             if (Sponge.getServer().getWorld(world).isPresent()) {
                 r = RedProtect.get().rm.getRegion(rname, Sponge.getServer().getWorld(world).get());
@@ -412,7 +412,7 @@ public class CommandHandlers {
     }
 
     public static void handleRename(Player p, String newName) {
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "rename", r)) {
             if (r == null) {
                 RPLang.sendMessage(p, "cmdmanager.region.todo.that");
@@ -458,7 +458,7 @@ public class CommandHandlers {
 
     // TODO Other Handlers
     public static void handlePrioritySingle(Player p, int prior, String region) {
-        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        SpongeRegion r = RedProtect.get().rm.getRegion(region, p.getWorld());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -471,7 +471,7 @@ public class CommandHandlers {
     }
 
     public static void handlePriority(Player p, int prior) {
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -484,19 +484,19 @@ public class CommandHandlers {
     }
 
     public static void handleInfoTop(Player p) {
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (r == null) {
             RPLang.sendMessage(p, "cmdmanager.region.todo.that");
             return;
         }
-        Map<Integer, Region> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
+        Map<Integer, SpongeRegion> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "--------------- [&e" + r.getName() + RPLang.get("general.color") + "] ---------------"));
             p.sendMessage(r.info());
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "----------------------------------"));
             if (groupr.size() > 1) {
                 p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.moreregions")));
-                for (Region regs : groupr.values()) {
+                for (SpongeRegion regs : groupr.values()) {
                     if (regs != r) {
                         p.sendMessage(RPUtil.toText(RPLang.get("region.name") + " " + regs.getName() + " " + RPLang.get("region.priority") + " " + regs.getPrior()));
                     }
@@ -508,7 +508,7 @@ public class CommandHandlers {
     }
 
     public static void handleInfo(Player p, String region, String world) {
-        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        SpongeRegion r = RedProtect.get().rm.getRegion(region, p.getWorld());
         if (!world.equals("")) {
             if (Sponge.getServer().getWorld(world).isPresent()) {
                 r = RedProtect.get().rm.getRegion(region, Sponge.getServer().getWorld(world).get());
@@ -531,7 +531,7 @@ public class CommandHandlers {
     }
 
     public static void handletp(Player p, String rname, World world, Player play) {
-        Region region = RedProtect.get().rm.getRegion(rname, world);
+        SpongeRegion region = RedProtect.get().rm.getRegion(rname, world);
         if (region == null) {
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.doesntexist") + ": " + rname);
             return;
@@ -600,7 +600,7 @@ public class CommandHandlers {
     }
 
     public static void handleWelcome(Player p, String wMessage) {
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "welcome", r)) {
             if (r != null) {
                 switch (wMessage) {
@@ -642,7 +642,7 @@ public class CommandHandlers {
     public static void getRegionforList(CommandSource p, String uuid, int nPage) {
         Sponge.getScheduler().createAsyncExecutor(RedProtect.get()).execute(()->{
             int Page = nPage;
-            Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
+            Set<SpongeRegion> regions = RedProtect.get().rm.getRegions(uuid);
             String pname = RPUtil.UUIDtoPlayer(uuid);
             int length = regions.size();
             if (pname == null || length == 0) {
@@ -666,14 +666,14 @@ public class CommandHandlers {
                     int count;
 
                     String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
-                    Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
+                    Set<SpongeRegion> wregions = RedProtect.get().rm.getRegions(uuid, w);
                     int totalLocal = wregions.size();
                     total += totalLocal;
 
                     int lastLocal = 0;
 
                     if (wregions.size() > 0) {
-                        List<Region> it = new ArrayList<>(wregions);
+                        List<SpongeRegion> it = new ArrayList<>(wregions);
                         if (min > totalLocal) {
                             int diff = (totalLocal / regionsPage);
                             min = regionsPage * diff;
@@ -684,7 +684,7 @@ public class CommandHandlers {
                         Text.Builder worldregions = Text.builder();
                         for (int i = min; i <= max; i++){
                             count = i;
-                            Region r = it.get(i);
+                            SpongeRegion r = it.get(i);
                             String area = "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")";
 
                             if (RedProtect.get().ph.hasRegionPermAdmin(p, "teleport", null)) {
@@ -732,7 +732,7 @@ public class CommandHandlers {
         });
     }
 
-    public static void handleFlag(Player p, String flag, String value, Region r) {
+    public static void handleFlag(Player p, String flag, String value, SpongeRegion r) {
         if (checkCmd(flag, "help")) {
             sendFlagHelp(p);
             return;
@@ -948,7 +948,7 @@ public class CommandHandlers {
             if (!Sponge.getServer().getWorld(valida[1]).isPresent()) {
                 return false;
             }
-            Region r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
+            SpongeRegion r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
             if (r == null) {
                 return false;
             }

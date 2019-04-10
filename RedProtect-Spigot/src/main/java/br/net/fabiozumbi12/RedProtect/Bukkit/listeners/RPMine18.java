@@ -30,7 +30,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import net.digiex.magiccarpet.Carpet;
@@ -87,7 +87,7 @@ public class RPMine18 implements Listener {
 
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         Player p = e.getPlayer();
         if (r == null) {
             //global flags
@@ -129,7 +129,7 @@ public class RPMine18 implements Listener {
             }
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(loc);
+        BukkitRegion r1 = RedProtect.get().rm.getTopRegion(loc);
 
         if (r1 == null) {
             //global flags
@@ -169,7 +169,7 @@ public class RPMine18 implements Listener {
             }
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(loc);
+        BukkitRegion r1 = RedProtect.get().rm.getTopRegion(loc);
 
         if (r1 == null) {
             //global flags
@@ -199,7 +199,7 @@ public class RPMine18 implements Listener {
         }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         Material m = p.getItemInHand().getType();
 
         if (RedProtect.get().version >= 190 && e.getItem() != null) {
@@ -219,7 +219,7 @@ public class RPMine18 implements Listener {
         RedProtect.get().logger.debug("Is BlockListener - BlockExplodeEvent event");
         List<Block> toRemove = new ArrayList<>();
         for (Block b : e.blockList()) {
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (!cont.canWorldBreak(b)) {
                 toRemove.add(b);
                 continue;

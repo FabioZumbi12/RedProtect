@@ -251,7 +251,7 @@ public class TaskChain {
      * General abstract classes to be used for various tasks in the chain.
      * <p>
      * First Tasks are for when you do not have or do not care about the return
-     * value of a previous task.
+     * playername of a previous task.
      * <p>
      * Last Tasks are for when you do not need to use a return type.
      * <p>

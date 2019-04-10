@@ -28,8 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import org.spongepowered.api.entity.living.player.Player;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,31 +39,31 @@ public interface WorldRegionManager {
 
     int save(boolean force);
 
-    Region getRegion(String rname);
+    SpongeRegion getRegion(String rname);
 
     int getTotalRegionSize(String p0);
 
-    Set<Region> getRegions(String pname);
+    Set<SpongeRegion> getRegions(String pname);
 
-    Set<Region> getRegionsNear(Player p0, int p1);
+    Set<SpongeRegion> getRegionsNear(int px, int pz, int p1);
 
-    void add(Region p0);
+    void add(SpongeRegion p0);
 
-    void remove(Region p0);
+    void remove(SpongeRegion p0);
 
-    Set<Region> getRegions(int x, int y, int z);
+    Set<SpongeRegion> getRegions(int x, int y, int z);
 
-    Region getTopRegion(int x, int y, int z);
+    SpongeRegion getTopRegion(int x, int y, int z);
 
-    Region getLowRegion(int x, int y, int z);
+    SpongeRegion getLowRegion(int x, int y, int z);
 
-    Map<Integer, Region> getGroupRegion(int x, int y, int z);
+    Map<Integer, SpongeRegion> getGroupRegion(int x, int y, int z);
 
-    Set<Region> getAllRegions();
+    Set<SpongeRegion> getAllRegions();
 
     void clearRegions();
 
-    Set<Region> getMemberRegions(String pname);
+    Set<SpongeRegion> getMemberRegions(String pname);
 
     void updateLiveRegion(String rname, String columm, Object value);
 

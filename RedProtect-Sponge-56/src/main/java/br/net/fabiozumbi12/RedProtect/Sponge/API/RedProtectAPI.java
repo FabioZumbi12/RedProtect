@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.API;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
@@ -42,25 +42,25 @@ import java.util.Set;
 public class RedProtectAPI {
 
     /**
-     * Give the Region based on given name and world.
+     * Give the SpongeRegion based on given name and world.
      * <p>
      *
-     * @param regionName Region Name.
-     * @param world      World where this Region is.
-     * @return {@code Region} matching the name or {@code null} if region not found.
+     * @param regionName SpongeRegion Name.
+     * @param world      World where this SpongeRegion is.
+     * @return {@code SpongeRegion} matching the name or {@code null} if region not found.
      */
-    public Region getRegion(String regionName, World world) {
+    public SpongeRegion getRegion(String regionName, World world) {
         return RedProtect.get().rm.getRegion(regionName, world);
     }
 
     /**
-     * Return the Region on player location.
+     * Return the SpongeRegion on player location.
      * <p>
      *
      * @param location Player location.
-     * @return {@code Region} of player location or {@code null} if no regions on player location.
+     * @return {@code SpongeRegion} of player location or {@code null} if no regions on player location.
      */
-    public Region getRegion(Location<World> location) {
+    public SpongeRegion getRegion(Location<World> location) {
         return getHighPriorityRegion(location.getExtent(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
@@ -70,9 +70,9 @@ public class RedProtectAPI {
      *
      * @param uuid The uuid of player in String format!
      *             Make a way to give player name for servers using 'offline mode'.
-     * @return {@code set<Region>} with all regions created by given player.
+     * @return {@code set<SpongeRegion>} with all regions created by given player.
      */
-    public Set<Region> getPlayerRegions(String uuid) {
+    public Set<SpongeRegion> getPlayerRegions(String uuid) {
         return RedProtect.get().rm.getRegions(uuid);
     }
 
@@ -83,9 +83,9 @@ public class RedProtectAPI {
      * @param uuid  The uuid of player in String format!
      *              Make a way to give player name for servers using 'offline mode'.
      * @param world to search for given region.
-     * @return {@code set<Region>} with all regions created by given player.
+     * @return {@code set<SpongeRegion>} with all regions created by given player.
      */
-    public Set<Region> getPlayerRegions(String uuid, World world) {
+    public Set<SpongeRegion> getPlayerRegions(String uuid, World world) {
         return RedProtect.get().rm.getRegions(uuid, world);
     }
 
@@ -94,9 +94,9 @@ public class RedProtectAPI {
      * <p>
      *
      * @param player The player.
-     * @return {@code set<Region>} with all regions created by given player.
+     * @return {@code set<SpongeRegion>} with all regions created by given player.
      */
-    public Set<Region> getPlayerRegions(Player player) {
+    public Set<SpongeRegion> getPlayerRegions(Player player) {
         return RedProtect.get().rm.getRegions(Sponge.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
     }
 
@@ -108,9 +108,9 @@ public class RedProtectAPI {
      * @param x      Coord x of a location.
      * @param y      Coord y of a location.
      * @param z      Coord z of a location.
-     * @return {@code set<Region>} with all regions created by given player.
+     * @return {@code set<SpongeRegion>} with all regions created by given player.
      */
-    public Set<Region> getPlayerRegions(Player player, int x, int y, int z) {
+    public Set<SpongeRegion> getPlayerRegions(Player player, int x, int y, int z) {
         return RedProtect.get().rm.getRegions(player, x, y, z);
     }
 
@@ -122,9 +122,9 @@ public class RedProtectAPI {
      * @param x     Coord x of a location.
      * @param y     Coord y of a location.
      * @param z     Coord z of a location.
-     * @return The high priority {@code Region} in a group of regions.
+     * @return The high priority {@code SpongeRegion} in a group of regions.
      */
-    public Region getHighPriorityRegion(World world, int x, int y, int z) {
+    public SpongeRegion getHighPriorityRegion(World world, int x, int y, int z) {
         return RedProtect.get().rm.getTopRegion(world, x, y, z, this.getClass().getName());
     }
 
@@ -136,9 +136,9 @@ public class RedProtectAPI {
      * @param x     Coord x of a location.
      * @param y     Coord y of a location.
      * @param z     Coord z of a location.
-     * @return The lower priority {@code Region} in a group of regions.
+     * @return The lower priority {@code SpongeRegion} in a group of regions.
      */
-    public Region getLowPriorytyRegion(World world, int x, int y, int z) {
+    public SpongeRegion getLowPriorytyRegion(World world, int x, int y, int z) {
         return RedProtect.get().rm.getLowRegion(world, x, y, z);
     }
 
@@ -150,40 +150,40 @@ public class RedProtectAPI {
      * @param x     Coord x of a location.
      * @param y     Coord y of a location.
      * @param z     Coord z of a location.
-     * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
+     * @return {@code Map<Integer, SpongeRegion>} with {@code Integer} as priority and the corresponding {@code SpongeRegion}.
      */
-    public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z) {
+    public Map<Integer, SpongeRegion> getGroupRegions(World world, int x, int y, int z) {
         return RedProtect.get().rm.getGroupRegion(world, x, y, z);
     }
 
     /**
-     * Set a flag for the given Region with flag name and value.
+     * Set a flag for the given SpongeRegion with flag name and value.
      * <p>
      *
-     * @param region Region to set the flag.
+     * @param region SpongeRegion to set the flag.
      * @param flag   String with flag name.
      * @param value  Object to define the flag. This Object need to be a {@code Boolean}, {@code String} or {@code Integer}.
      *               <p>Use cast to convert the non Object to Object:
      *               <p>{@code Object value = (String)MyValue;}
      * @see #equals(Object)
      */
-    public void setRegionFlag(Region region, String flag, Object value) {
+    public void setRegionFlag(SpongeRegion region, String flag, Object value) {
         setRegionFlag(null, region, flag, value);
     }
 
     /**
-     * Set a flag for the given Region with flag name and value.
+     * Set a flag for the given SpongeRegion with flag name and value.
      * <p>
      *
      * @param cause  Who changes this flag.
-     * @param region Region to set the flag.
+     * @param region SpongeRegion to set the flag.
      * @param flag   String with flag name.
      * @param value  Object to define the flag. This Object need to be a {@code Boolean}, {@code String} or {@code Integer}.
      *               <p>Use cast to convert the non Object to Object:
      *               <p>{@code Object value = (String)MyValue;}
      * @see #equals(Object)
      */
-    public void setRegionFlag(Cause cause, Region region, String flag, Object value) {
+    public void setRegionFlag(Cause cause, SpongeRegion region, String flag, Object value) {
         region.setFlag(cause, flag, value);
     }
 
@@ -191,11 +191,11 @@ public class RedProtectAPI {
      * Get a boolean value from given region of booleans flags.
      * <p>
      *
-     * @param region Region to get flags.
+     * @param region SpongeRegion to get flags.
      * @param flag   Flag name.
      * @return {@code Boolean} value of flag. Return {@code false} if flag not found.
      */
-    public boolean getBoolFlag(Region region, String flag) {
+    public boolean getBoolFlag(SpongeRegion region, String flag) {
         return region.getFlagBool(flag);
     }
 
@@ -203,11 +203,11 @@ public class RedProtectAPI {
      * Get a String value from given region of strings flags.
      * <p>
      *
-     * @param region Region to get flags.
+     * @param region SpongeRegion to get flags.
      * @param flag   Flag name.
      * @return {@code String} value of flag. Return {@code null} if flag not found.
      */
-    public String getStringFlag(Region region, String flag) {
+    public String getStringFlag(SpongeRegion region, String flag) {
         return region.getFlagString(flag);
     }
 
@@ -215,10 +215,10 @@ public class RedProtectAPI {
      * Add a region.
      * <p>
      *
-     * @param region {@code Region} to add.
-     * @param world  {@code World} of {@code Region} to add.
+     * @param region {@code SpongeRegion} to add.
+     * @param world  {@code World} of {@code SpongeRegion} to add.
      */
-    public void addRegion(Region region, World world) {
+    public void addRegion(SpongeRegion region, World world) {
         RedProtect.get().rm.add(region, world);
     }
 
@@ -226,9 +226,9 @@ public class RedProtectAPI {
      * Remove a region.
      * <p>
      *
-     * @param region {@code Region} to remove.
+     * @param region {@code SpongeRegion} to remove.
      */
-    public void removeRegion(Region region) {
+    public void removeRegion(SpongeRegion region) {
         RedProtect.get().rm.remove(region, Sponge.getServer().getWorld(region.getWorld()).get());
     }
 
@@ -264,10 +264,10 @@ public class RedProtectAPI {
      * Rename a region;
      * <p>
      *
-     * @param region  Region to rename.
+     * @param region  SpongeRegion to rename.
      * @param newName New name of region;
      */
-    public void renameRegion(Region region, String newName) {
+    public void renameRegion(SpongeRegion region, String newName) {
         RedProtect.get().rm.renameRegion(newName, region);
     }
 

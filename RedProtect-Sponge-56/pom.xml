@@ -55,6 +55,13 @@
             <classifier>javadoc</classifier>
         </dependency>
 
+        <!-- RedProtect Core -->
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-sponge</artifactId>

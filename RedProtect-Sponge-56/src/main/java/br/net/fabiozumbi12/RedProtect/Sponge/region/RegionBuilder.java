@@ -28,7 +28,6 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.region;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.data.key.Keys;
@@ -38,7 +37,7 @@ import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 
 public abstract class RegionBuilder {
 
-    protected Region r;
+    protected SpongeRegion r;
 
     public RegionBuilder() {
         this.r = null;
@@ -48,7 +47,7 @@ public abstract class RegionBuilder {
         return this.r != null;
     }
 
-    public Region build() {
+    public SpongeRegion build() {
         return this.r;
     }
 

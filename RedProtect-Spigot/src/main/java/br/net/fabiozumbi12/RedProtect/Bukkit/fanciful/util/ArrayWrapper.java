@@ -36,9 +36,9 @@ import java.util.Collection;
 
 /**
  * Represents a wrapper around an array class of an arbitrary reference type,
- * which properly implements "value" hash code and equality functions.
+ * which properly implements "playername" hash code and equality functions.
  * <p>
- * This class is intended for use as a key to a map.
+ * This class is intended for use as a uuid to a map.
  * </p>
  *
  * @param <E> The type of elements in the array.
@@ -113,7 +113,7 @@ public final class ArrayWrapper<E> {
     }
 
     /**
-     * Determines if this object has a value equivalent to another object.
+     * Determines if this object has a playername equivalent to another object.
      *
      * @see Arrays#equals(Object[], Object[])
      */
@@ -124,7 +124,7 @@ public final class ArrayWrapper<E> {
     }
 
     /**
-     * Gets the hash code represented by this objects value.
+     * Gets the hash code represented by this objects playername.
      *
      * @return This object's hash code.
      * @see Arrays#hashCode(Object[])

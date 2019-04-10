@@ -32,7 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -59,7 +59,7 @@ public class RegenCommand {
                             return CommandResult.success();
                         }
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r == null) {
                             RPLang.sendMessage(player, "cmdmanager.region.doesexists");
                             return CommandResult.success();
@@ -108,7 +108,7 @@ public class RegenCommand {
                                     return CommandResult.success();
                                 }
 
-                                Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<World>getOne("world").get().getName());
+                                SpongeRegion r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<World>getOne("world").get().getName());
                                 if (r == null) {
                                     RPLang.sendMessage(player, RPLang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
                                     return CommandResult.success();

@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Bukkit;
@@ -42,7 +42,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class RPEconomy {
 
-    public static long getRegionValue(Region r) {
+    public static long getRegionValue(BukkitRegion r) {
         long regionCost = 0;
         World w = RedProtect.get().serv.getWorld(r.getWorld());
         int maxX = r.getMaxMbrX();
@@ -88,7 +88,7 @@ public class RPEconomy {
         return regionCost;
     }
 
-    public static String getCostMessage(Region r) {
+    public static String getCostMessage(BukkitRegion r) {
         return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RPConfig.getEcoString("economy-name");
     }
 
@@ -96,7 +96,7 @@ public class RPEconomy {
         return RPConfig.getEcoString("economy-symbol") + value;
     }
 
-    public static boolean putToSell(Region r, String uuid, long value) {
+    public static boolean putToSell(BukkitRegion r, String uuid, long value) {
         try {
             r.clearMembers();
             r.clearAdmins();
@@ -112,7 +112,7 @@ public class RPEconomy {
         }
     }
 
-    public static boolean BuyRegion(Region r, String uuid) {
+    public static boolean BuyRegion(BukkitRegion r, String uuid) {
         try {
             r.clearMembers();
             r.clearAdmins();

@@ -31,7 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.schematics.schematics;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -61,7 +61,7 @@ public class StartCommand {
                             return CommandResult.success();
                         }
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), player.getWorld().getName());
+                        SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), player.getWorld().getName());
                         if (r != null && r.isMember(player)) {
                             RPLang.sendMessage(player, "playerlistener.region.claimlimit.start");
                             return CommandResult.success();

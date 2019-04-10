@@ -28,8 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import org.bukkit.entity.Player;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,41 +39,33 @@ public interface WorldRegionManager {
 
     int save(boolean force);
 
-    Region getRegion(String rname);
+    BukkitRegion getRegion(String rname);
 
     int getTotalRegionSize(String p0);
 
-    /**
-     * Get the player regions. If running in Online mode need UUID, and if Offline mode give playername.
-     *
-     * @param p0 - UUID as String or playername.
-     * @return Set of regions
-     */
-    Set<Region> getRegions(String p0);
+    Set<BukkitRegion> getRegions(String p0);
 
-    Set<Region> getRegionsNear(Player p0, int p1);
+    Set<BukkitRegion> getRegionsNear(int px, int pz, int p1);
 
-    //Set<Region> getRegionsInChunk(Chunk chunk);
+    void add(BukkitRegion p0);
 
-    void add(Region p0);
+    void remove(BukkitRegion p0);
 
-    void remove(Region p0);
+    Set<BukkitRegion> getRegions(int x, int y, int z);
 
-    Set<Region> getRegions(int x, int y, int z);
+    Set<BukkitRegion> getInnerRegions(BukkitRegion region);
 
-    Set<Region> getInnerRegions(Region region);
+    BukkitRegion getTopRegion(int x, int y, int z);
 
-    Region getTopRegion(int x, int y, int z);
+    BukkitRegion getLowRegion(int x, int y, int z);
 
-    Region getLowRegion(int x, int y, int z);
+    Map<Integer, BukkitRegion> getGroupRegion(int x, int y, int z);
 
-    Map<Integer, Region> getGroupRegion(int x, int y, int z);
-
-    Set<Region> getAllRegions();
+    Set<BukkitRegion> getAllRegions();
 
     void clearRegions();
 
-    Set<Region> getMemberRegions(String pname);
+    Set<BukkitRegion> getMemberRegions(String pname);
 
     void updateLiveRegion(String rname, String columm, Object value);
 

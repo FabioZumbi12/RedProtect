@@ -31,12 +31,11 @@ package br.net.fabiozumbi12.RedProtect.Sponge.database;
 import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
 
 import java.io.File;
@@ -45,7 +44,7 @@ import java.util.*;
 
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
-    private final HashMap<String, Region> regions;
+    private final HashMap<String, SpongeRegion> regions;
     private final World world;
 
     public WorldFlatFileRegionManager(World world) {
@@ -107,7 +106,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     if (!region.getNode(rname).hasMapChildren()) {
                         continue;
                     }
-                    Region newr = RPUtil.loadRegion(region, rname, world);
+                    SpongeRegion newr = RPUtil.loadRegion(region, rname, world);
                     newr.setToSave(false);
                     regions.put(rname, newr);
                 }
@@ -130,7 +129,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
                 CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
                 Set<CommentedConfigurationNode> dbs = new HashSet<>();
-                for (Region r : regions.values()) {
+                for (SpongeRegion r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
@@ -198,19 +197,19 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void add(Region r) {
+    public void add(SpongeRegion r) {
         this.regions.put(r.getName(), r);
     }
 
     @Override
-    public void remove(Region r) {
+    public void remove(SpongeRegion r) {
         this.regions.remove(r.getName());
     }
 
     @Override
-    public Set<Region> getRegions(String pname) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regions.values()) {
+    public Set<SpongeRegion> getRegions(String pname) {
+        SortedSet<SpongeRegion> regionsp = new TreeSet<>(Comparator.comparing(SpongeRegion::getName));
+        for (SpongeRegion r : regions.values()) {
             if (r.isLeader(pname)) {
                 regionsp.add(r);
             }
@@ -219,9 +218,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getMemberRegions(String uuid) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        for (Region r : regions.values()) {
+    public Set<SpongeRegion> getMemberRegions(String uuid) {
+        SortedSet<SpongeRegion> regionsp = new TreeSet<>(Comparator.comparing(SpongeRegion::getName));
+        for (SpongeRegion r : regions.values()) {
             if (r.isLeader(uuid) || r.isAdmin(uuid)) {
                 regionsp.add(r);
             }
@@ -230,32 +229,30 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Region getRegion(String rname) {
+    public SpongeRegion getRegion(String rname) {
         return regions.get(rname);
     }
 
     @Override
     public int getTotalRegionSize(String uuid) {
-        Set<Region> regionslist = new HashSet<>();
-        for (Region r : regions.values()) {
+        Set<SpongeRegion> regionslist = new HashSet<>();
+        for (SpongeRegion r : regions.values()) {
             if (r.isLeader(uuid)) {
                 regionslist.add(r);
             }
         }
         int total = 0;
-        for (Region r2 : regionslist) {
+        for (SpongeRegion r2 : regionslist) {
             total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }
 
     @Override
-    public Set<Region> getRegionsNear(Player player, int radius) {
-        int px = player.getLocation().getBlockX();
-        int pz = player.getLocation().getBlockZ();
-        SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
+    public Set<SpongeRegion> getRegionsNear(int px, int pz, int radius) {
+        SortedSet<SpongeRegion> ret = new TreeSet<>(Comparator.comparing(SpongeRegion::getName));
 
-        for (Region r : regions.values()) {
+        for (SpongeRegion r : regions.values()) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Radius: " + radius);
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
             if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
@@ -270,9 +267,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getRegions(int x, int y, int z) {
-        Set<Region> regionl = new HashSet<>();
-        for (Region r : regions.values()) {
+    public Set<SpongeRegion> getRegions(int x, int y, int z) {
+        Set<SpongeRegion> regionl = new HashSet<>();
+        for (SpongeRegion r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 regionl.add(r);
             }
@@ -281,13 +278,13 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Region getTopRegion(int x, int y, int z) {
-        Map<Integer, Region> regionlist = new HashMap<>();
+    public SpongeRegion getTopRegion(int x, int y, int z) {
+        Map<Integer, SpongeRegion> regionlist = new HashMap<>();
         int max = 0;
-        for (Region r : regions.values()) {
+        for (SpongeRegion r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    Region reg1 = regionlist.get(r.getPrior());
+                    SpongeRegion reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -305,13 +302,13 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Region getLowRegion(int x, int y, int z) {
-        Map<Integer, Region> regionlist = new HashMap<>();
+    public SpongeRegion getLowRegion(int x, int y, int z) {
+        Map<Integer, SpongeRegion> regionlist = new HashMap<>();
         int min = 0;
-        for (Region r : regions.values()) {
+        for (SpongeRegion r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    Region reg1 = regionlist.get(r.getPrior());
+                    SpongeRegion reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -329,12 +326,12 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
-        Map<Integer, Region> regionlist = new HashMap<>();
-        for (Region r : regions.values()) {
+    public Map<Integer, SpongeRegion> getGroupRegion(int x, int y, int z) {
+        Map<Integer, SpongeRegion> regionlist = new HashMap<>();
+        for (SpongeRegion r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    Region reg1 = regionlist.get(r.getPrior());
+                    SpongeRegion reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -349,8 +346,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getAllRegions() {
-        SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
+    public Set<SpongeRegion> getAllRegions() {
+        SortedSet<SpongeRegion> allregions = new TreeSet<>(Comparator.comparing(SpongeRegion::getName));
         allregions.addAll(regions.values());
         return allregions;
     }

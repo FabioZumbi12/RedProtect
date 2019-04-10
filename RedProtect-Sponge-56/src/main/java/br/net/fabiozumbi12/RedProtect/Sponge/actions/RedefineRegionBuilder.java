@@ -31,7 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 import br.net.fabiozumbi12.RedProtect.Sponge.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -45,15 +45,15 @@ import java.util.List;
 public class RedefineRegionBuilder extends RegionBuilder {
 
     @SuppressWarnings("deprecation")
-    public RedefineRegionBuilder(Player p, Region old, Location<World> loc1, Location<World> loc2) {
+    public RedefineRegionBuilder(Player p, SpongeRegion old, Location<World> loc1, Location<World> loc2) {
         if (loc1 == null || loc2 == null) {
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
         }
 
         //check if distance allowed
-        if (new Region(null, loc1, loc2, null).getArea() > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-            double dist = new Region(null, loc1, loc2, null).getArea();
+        if (new SpongeRegion(null, loc1, loc2, null).getArea() > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+            double dist = new SpongeRegion(null, loc1, loc2, null).getArea();
             RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist));
             return;
         }
@@ -71,7 +71,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                 maxy = RedProtect.get().cfgs.root().region_settings.claim.maxy;
         }
 
-        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+        SpongeRegion region = new SpongeRegion(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
         region.setPrior(RPUtil.getUpdatedPrior(region));
 
@@ -94,7 +94,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         List<String> othersName = new ArrayList<>();
-        Region otherrg;
+        SpongeRegion otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());
@@ -106,7 +106,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         boolean hasAny = false;
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+        for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
@@ -195,7 +195,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " REDEFINED region " + region.getName());
     }
 
-    private boolean checkID(Region newr, Region oldr) {
+    private boolean checkID(SpongeRegion newr, SpongeRegion oldr) {
         return newr.getID().equals(oldr.getID());
     }
 }

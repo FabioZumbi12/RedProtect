@@ -30,7 +30,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
 import org.spongepowered.api.command.CommandResult;
@@ -52,12 +52,12 @@ public class ValueCommand {
                     } else {
                         Player player = (Player)src;
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r != null) {
                             if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
                                 if (r.getArea() < RedProtect.get().cfgs.getEcoInt("max-area-toget-value")) {
                                     RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(RPEconomy.getRegionValue(r)) + " " + RedProtect.get().cfgs.getEcoString("economy-name")));
-                                    RedProtect.get().logger.debug(LogLevel.PLAYER, "Region Value: " + RPEconomy.getRegionValue(r));
+                                    RedProtect.get().logger.debug(LogLevel.PLAYER, "SpongeRegion Value: " + RPEconomy.getRegionValue(r));
                                 } else {
                                     RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().cfgs.getEcoInt("max-area-toget-value").toString()));
                                 }

@@ -803,7 +803,7 @@ public class RPConfig {
 
         YamlConfiguration GuiBase = inputLoader(RedProtect.get().getResource("assets/redprotect/guiconfig.yml"));
 
-        GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));
+        GuiItems.set("gui-strings.playername", GuiItems.getString("gui-strings.playername", "&bValue: "));
         GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue"));
         GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse"));
         GuiItems.set("gui-strings.separator", GuiItems.getString("gui-strings.separator", "&7|"));
@@ -1104,8 +1104,8 @@ public class RPConfig {
         return Prots.getStringList(key);
     }
 	
-    /*public static boolean containsProtKey(String key){
-		return Prots.contains(key);
+    /*public static boolean containsProtKey(String uuid){
+		return Prots.contains(uuid);
 	}*/
 
     public static String getProtString(String key) {

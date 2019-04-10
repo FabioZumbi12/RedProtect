@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.World;
@@ -55,8 +55,8 @@ public class CopyFlagCommand implements SubCommand {
 
         if (args.length == 2) {
             World w = player.getWorld();
-            Region from = RedProtect.get().rm.getRegion(args[0], w);
-            Region to = RedProtect.get().rm.getRegion(args[1], w);
+            BukkitRegion from = RedProtect.get().rm.getRegion(args[0], w);
+            BukkitRegion to = RedProtect.get().rm.getRegion(args[1], w);
             if (from == null || !from.isLeader(player)) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;

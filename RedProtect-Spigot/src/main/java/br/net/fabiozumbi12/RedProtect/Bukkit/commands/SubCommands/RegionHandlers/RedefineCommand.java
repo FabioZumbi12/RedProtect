@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.RedefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -54,7 +54,7 @@ public class RedefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            Region oldRect = RedProtect.get().rm.getRegion(args[0], player.getWorld());
+            BukkitRegion oldRect = RedProtect.get().rm.getRegion(args[0], player.getWorld());
             if (oldRect == null) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;
@@ -67,7 +67,7 @@ public class RedefineCommand implements SubCommand {
 
             RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
             if (rb.ready()) {
-                Region r2 = rb.build();
+                BukkitRegion r2 = rb.build();
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 

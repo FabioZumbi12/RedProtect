@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
@@ -79,8 +79,8 @@ public class AdminCommand implements CommandCallable {
                 RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.area-list"));
                 sender.sendMessage(RPUtil.toText("-----"));
                 for (World w : Sponge.getServer().getWorlds()) {
-                    Set<Region> wregions = new HashSet<>();
-                    for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                    Set<SpongeRegion> wregions = new HashSet<>();
+                    for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
                         SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
                         Date now = null;
                         try {
@@ -108,13 +108,13 @@ public class AdminCommand implements CommandCallable {
                     if (wregions.size() == 0) {
                         continue;
                     }
-                    Iterator<Region> it = wregions.iterator();
+                    Iterator<SpongeRegion> it = wregions.iterator();
                     String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
 
                     boolean first = true;
                     Text.Builder fancy = Text.builder();
                     while (it.hasNext()) {
-                        Region r = it.next();
+                        SpongeRegion r = it.next();
                         String rname = RPLang.get("general.color") + ", &7(" + r.getArea() + ")";
                         if (first) {
                             rname = rname.substring(3);
@@ -197,8 +197,8 @@ public class AdminCommand implements CommandCallable {
 
             if (args[0].equalsIgnoreCase("list-all")) {
                 int total = 0;
-                for (Region r : RedProtect.get().rm.getAllRegions()) {
-                    RedProtect.get().logger.info("&a[" + total + "]" + "Region: " + r.getName() + "&r | &3World: " + r.getWorld() + "&r");
+                for (SpongeRegion r : RedProtect.get().rm.getAllRegions()) {
+                    RedProtect.get().logger.info("&a[" + total + "]" + "SpongeRegion: " + r.getName() + "&r | &3World: " + r.getWorld() + "&r");
                     total++;
                 }
                 RedProtect.get().logger.sucess(total + " regions for " + Sponge.getServer().getWorlds().size() + " worlds.");
@@ -332,7 +332,7 @@ public class AdminCommand implements CommandCallable {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[1], w.get());
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[1], w.get());
                 if (r == null) {
                     RPLang.sendMessage(sender, RPLang.get("correct.usage") + " &eInvalid region: " + args[1]);
                     return cmdr;
@@ -352,7 +352,7 @@ public class AdminCommand implements CommandCallable {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[1], w.get());
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[1], w.get());
                 if (r == null) {
                     RPLang.sendMessage(sender, RPLang.get("correct.usage") + " &eInvalid region: " + args[1]);
                     return cmdr;
@@ -393,7 +393,7 @@ public class AdminCommand implements CommandCallable {
             //rp info <region> <world>
             if (checkCmd(args[0], "info")) {
                 if (Sponge.getServer().getWorld(args[2]).isPresent()) {
-                    Region r = RedProtect.get().rm.getRegion(args[1], Sponge.getServer().getWorld(args[2]).get());
+                    SpongeRegion r = RedProtect.get().rm.getRegion(args[1], Sponge.getServer().getWorld(args[2]).get());
                     if (r != null) {
                         sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-----------------------------------------"));
                         sender.sendMessage(r.info());
@@ -416,7 +416,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
@@ -431,7 +431,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
@@ -446,7 +446,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
@@ -461,7 +461,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
@@ -476,7 +476,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
@@ -491,7 +491,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
@@ -507,7 +507,7 @@ public class AdminCommand implements CommandCallable {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[2], w.get());
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[2], w.get());
                 if (r == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]);
                     return cmdr;
@@ -523,7 +523,7 @@ public class AdminCommand implements CommandCallable {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.cantkick.member"));
                     return cmdr;
                 }
-                Region rv = RedProtect.get().rm.getTopRegion(visit.get().getLocation(), this.getClass().getName());
+                SpongeRegion rv = RedProtect.get().rm.getTopRegion(visit.get().getLocation(), this.getClass().getName());
                 if (rv == null || !rv.getID().equals(r.getID())) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.notonregion"));
                     return cmdr;
@@ -556,7 +556,7 @@ public class AdminCommand implements CommandCallable {
                         sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                         return cmdr;
                     }
-                    Region region = RedProtect.get().rm.getRegion(args[2], w);
+                    SpongeRegion region = RedProtect.get().rm.getRegion(args[2], w);
                     if (region == null) {
                         sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                         return cmdr;
@@ -595,7 +595,7 @@ public class AdminCommand implements CommandCallable {
             //rp flag info <region> <world>
             if (checkCmd(args[0], "flag") && checkCmd(args[1], "info")) {
                 if (Sponge.getServer().getWorld(args[3]).isPresent()) {
-                    Region r = RedProtect.get().rm.getRegion(args[2], Sponge.getServer().getWorld(args[3]).get());
+                    SpongeRegion r = RedProtect.get().rm.getRegion(args[2], Sponge.getServer().getWorld(args[3]).get());
                     if (r != null) {
                         sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------[" + RPLang.get("cmdmanager.region.flag.values") + "]------------"));
                         sender.sendMessage(r.getFlagInfo());
@@ -622,7 +622,7 @@ public class AdminCommand implements CommandCallable {
                     sender.sendMessage(RPUtil.toText(RPLang.get("correct.usage") + "&e rp flag <regionName> <flag> <value> <world>"));
                     return cmdr;
                 }
-                Region r = RedProtect.get().rm.getRegion(args[1], w);
+                SpongeRegion r = RedProtect.get().rm.getRegion(args[1], w);
                 if (r != null && (RedProtect.get().cfgs.getDefFlags().contains(args[2]) || RedProtect.get().cfgs.AdminFlags.contains(args[2]))) {
                     Object objflag = RPUtil.parseObject(args[3]);
                     if (r.setFlag(RedProtect.get().getPVHelper().getCause(sender), args[2], objflag)) {

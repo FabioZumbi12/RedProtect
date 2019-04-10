@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.*;
@@ -145,7 +145,7 @@ public class RPGlobalListener implements Listener {
     @EventHandler
     public void onLeafDecay(LeavesDecayEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is LeavesDecayEvent event");
-        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r == null && !RPConfig.getGlobalFlagBool(e.getBlock().getWorld().getName() + ".allow-changes-of.leaves-decay")) {
             e.setCancelled(true);
         }
@@ -158,7 +158,7 @@ public class RPGlobalListener implements Listener {
         Block b = e.getToBlock();
         Block bfrom = e.getBlock();
         RedProtect.get().logger.debug("RPGlobalListener - Is BlockFromToEvent event is to " + b.getType().name() + " from " + bfrom.getType().name());
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
             return;
         }
@@ -186,7 +186,7 @@ public class RPGlobalListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent e) {
-        Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
         if (r != null) {
             return;
         }
@@ -205,7 +205,7 @@ public class RPGlobalListener implements Listener {
     public void PlayerDropItem(PlayerDropItemEvent e) {
         Location l = e.getItemDrop().getLocation();
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".player-candrop")) {
             e.setCancelled(true);
@@ -216,7 +216,7 @@ public class RPGlobalListener implements Listener {
     public void PlayerPickup(PlayerPickupItemEvent e) {
         Location l = e.getItem().getLocation();
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r == null && !RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".player-canpickup")) {
             e.setCancelled(true);
@@ -225,7 +225,7 @@ public class RPGlobalListener implements Listener {
 
     @EventHandler
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {
-        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null) {
             return;
         }
@@ -306,7 +306,7 @@ public class RPGlobalListener implements Listener {
         Block b = e.getBlock();
         Player p = e.getPlayer();
         Material item = e.getItemInHand().getType();
-        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null) {
             return;
         }
@@ -334,7 +334,7 @@ public class RPGlobalListener implements Listener {
         RedProtect.get().logger.debug("RPGlobalListener - Is BlockBreakEvent event!");
         Block b = e.getBlock();
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
             return;
         }
@@ -376,7 +376,7 @@ public class RPGlobalListener implements Listener {
             }
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         //deny item usage
         List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName() + ".deny-item-usage.items");
@@ -460,7 +460,7 @@ public class RPGlobalListener implements Listener {
         Player p = e.getPlayer();
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
             return;
         }
@@ -491,7 +491,7 @@ public class RPGlobalListener implements Listener {
     public void onHangingDamaged(HangingBreakByEntityEvent e) {
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(loc);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(loc);
         if (r != null) {
             return;
         }
@@ -507,7 +507,7 @@ public class RPGlobalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBucketUse(PlayerBucketEmptyEvent e) {
         Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
             return;
         }
@@ -525,7 +525,7 @@ public class RPGlobalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent e) {
         Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
             return;
         }
@@ -546,7 +546,7 @@ public class RPGlobalListener implements Listener {
         Entity e2 = e.getDamager();
 
         Location loc = e1.getLocation();
-        Region r1 = RedProtect.get().rm.getTopRegion(loc);
+        BukkitRegion r1 = RedProtect.get().rm.getTopRegion(loc);
         if (r1 != null) {
             return;
         }
@@ -646,7 +646,7 @@ public class RPGlobalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onFrameBrake(HangingBreakEvent e) {
         Location l = e.getEntity().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         if (r != null) {
             return;
         }
@@ -663,7 +663,7 @@ public class RPGlobalListener implements Listener {
         List<Block> toRemove = new ArrayList<>();
         for (Block b : e.blockList()) {
             Location l = b.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r == null && !RPConfig.getGlobalFlagBool(l.getWorld().getName() + ".entity-block-damage")) {
                 toRemove.add(b);
             }
@@ -676,7 +676,7 @@ public class RPGlobalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent e) {
         Block b = e.getBlock();
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
             return;
         }
@@ -689,7 +689,7 @@ public class RPGlobalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onFireSpread(BlockSpreadEvent e) {
         Block b = e.getSource();
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
             return;
         }
@@ -709,7 +709,7 @@ public class RPGlobalListener implements Listener {
         }
 
         Location l = event.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         if (r != null && RPConfig.getGlobalFlagBool(e.getWorld().getName() + ".spawn-allow-on-regions")) {
             return;
         }
@@ -754,7 +754,7 @@ public class RPGlobalListener implements Listener {
 
         Vehicle cart = e.getVehicle();
         Player p = (Player) e.getAttacker();
-        Region r = RedProtect.get().rm.getTopRegion(cart.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(cart.getLocation());
         if (r != null) {
             return;
         }
@@ -772,7 +772,7 @@ public class RPGlobalListener implements Listener {
             return;
         }
         RedProtect.get().logger.debug("Is BlockIgniteEvent event from global-listener");
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null) {
             return;
         }
@@ -785,7 +785,7 @@ public class RPGlobalListener implements Listener {
     public void MonsterBlockBreak(EntityChangeBlockEvent event) {
         Entity e = event.getEntity();
         Block b = event.getBlock();
-        Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
         if (r != null) {
             return;
         }
@@ -816,7 +816,7 @@ public class RPGlobalListener implements Listener {
         Player p = e.getPlayer();
         Location l = p.getLocation();
 
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         //deny item usage
         List<String> items = RPConfig.getGlobalFlagList(p.getWorld().getName() + ".deny-item-usage.items");

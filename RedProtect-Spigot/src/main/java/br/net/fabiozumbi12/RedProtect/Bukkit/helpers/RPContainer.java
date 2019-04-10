@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.World;
@@ -107,7 +107,7 @@ public class RPContainer {
         if (!RPConfig.getBool("private.use") || p.hasPermission("redprotect.bypass")) {
             return true;
         }
-        Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion reg = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (reg == null && !RPConfig.getBool("private.allow-outside")) {
             return true;
         }
@@ -184,7 +184,7 @@ public class RPContainer {
         if (!RPConfig.getBool("private.use")) {
             return true;
         }
-        Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
+        BukkitRegion reg = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (reg == null && !RPConfig.getBool("private.allow-outside")) {
             return true;
         }

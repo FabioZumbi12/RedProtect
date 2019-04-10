@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -87,8 +87,8 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-            double dist = new Region(null, loc1, loc2, null).getArea();
+        if (loc1.getWorld().equals(loc2.getWorld()) && new BukkitRegion(null, loc1, loc2, null).getArea() > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+            double dist = new BukkitRegion(null, loc1, loc2, null).getArea();
             RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist));
             return;
         }
@@ -109,7 +109,7 @@ public class DefineRegionBuilder extends RegionBuilder {
                 maxy = RPConfig.getInt("region-settings.claim.maxy");
         }
 
-        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
+        BukkitRegion newRegion = new BukkitRegion(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), wmsg, 0, null, true);
         leaders.forEach(newRegion::addLeader);
         newRegion.setPrior(RPUtil.getUpdatedPrior(newRegion));
 
@@ -135,7 +135,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         Set<String> othersName = new HashSet<>();
-        Region otherrg;
+        BukkitRegion otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc());
@@ -145,7 +145,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+        for (BukkitRegion r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
             if (r.getMaxMbrX() <= newRegion.getMaxMbrX() && r.getMaxY() <= newRegion.getMaxY() && r.getMaxMbrZ() <= newRegion.getMaxMbrZ() && r.getMinMbrX() >= newRegion.getMinMbrX() && r.getMinY() >= newRegion.getMinY() && r.getMinMbrZ() >= newRegion.getMinMbrZ()) {
                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));

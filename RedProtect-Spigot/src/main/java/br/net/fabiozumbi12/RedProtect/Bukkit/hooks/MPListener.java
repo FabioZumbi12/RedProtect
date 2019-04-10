@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
 import de.Keyle.MyPet.api.entity.skill.ranged.CraftMyPetProjectile;
@@ -51,7 +51,7 @@ public class MPListener implements Listener {
 
         Entity ent = e.getEntity();
         if (ent instanceof MyPetBukkitEntity) {
-            Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation());
             if (r != null && r.flagExists("invincible")) {
                 if (r.getFlagBool("invincible")) {
                     e.setCancelled(true);
@@ -66,7 +66,7 @@ public class MPListener implements Listener {
             Entity e2 = de.getDamager();
 
             Location loc = e1.getLocation();
-            Region r1 = RedProtect.get().rm.getTopRegion(loc);
+            BukkitRegion r1 = RedProtect.get().rm.getTopRegion(loc);
             if (r1 == null) {
                 return;
             }

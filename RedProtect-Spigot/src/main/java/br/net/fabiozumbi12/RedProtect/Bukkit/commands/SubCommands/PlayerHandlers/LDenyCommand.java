@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Bukkit;
@@ -58,7 +58,7 @@ public class LDenyCommand implements SubCommand {
                 String info = RedProtect.get().alWait.get(player);
 
                 Player lsender = Bukkit.getPlayer(info.split("@")[2]);
-                Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
+                BukkitRegion r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
                 if (r != null) {
                     RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));

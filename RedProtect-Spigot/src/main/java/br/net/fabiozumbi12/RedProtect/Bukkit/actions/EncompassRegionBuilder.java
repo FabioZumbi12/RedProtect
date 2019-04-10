@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -194,10 +194,10 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                        BukkitRegion region = new BukkitRegion(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
                         leaders.forEach(region::addLeader);
                         Set<String> othersName = new HashSet<>();
-                        Region otherrg;
+                        BukkitRegion otherrg;
                         Set<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
 
                         //check retangular region
@@ -209,10 +209,10 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+                        for (BukkitRegion r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
                                     return;
                                 }
                                 othersName.add(r.getName());
@@ -233,7 +233,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                             if (otherrg != null) {
                                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                                     return;
                                 }
                                 othersName.add(otherrg.getName());
@@ -243,7 +243,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         //check if same area
                         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
                         if (otherrg != null && otherrg.get4Points(current.getY()).equals(region.get4Points(current.getY())) && !p.hasPermission("redprotect.bypass")) {
-                            this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                            this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                             return;
                         }
 
@@ -350,7 +350,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 }
             } else if (i == 1 && nearbyCount == 2) {
                 //check other regions on blocks
-                Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation());
+                BukkitRegion rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation());
                 if (rcurrent != null && !rcurrent.canBuild(p)) {
                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
                     return;

@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.events;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
@@ -37,11 +37,11 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
 public class DeleteRegionEvent extends AbstractEvent implements Cancellable, Event {
-    private final Region region;
+    private final SpongeRegion region;
     private final Player player;
     private boolean isCancelled = false;
 
-    public DeleteRegionEvent(Region region, Player p) {
+    public DeleteRegionEvent(SpongeRegion region, Player p) {
         this.region = region;
         this.player = p;
     }
@@ -50,7 +50,7 @@ public class DeleteRegionEvent extends AbstractEvent implements Cancellable, Eve
         return this.player;
     }
 
-    public Region getRegion() {
+    public SpongeRegion getRegion() {
         return this.region;
     }
 

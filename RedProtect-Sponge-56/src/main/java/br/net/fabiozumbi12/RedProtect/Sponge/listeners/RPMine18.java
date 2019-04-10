@@ -31,7 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
@@ -62,7 +62,7 @@ public class RPMine18 {
 
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 
         if (r == null) {
             //global flags
@@ -112,7 +112,7 @@ public class RPMine18 {
             damager = (Player) e2;
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+        SpongeRegion r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
 
         if (r1 == null) {
             //global flags
@@ -140,7 +140,7 @@ public class RPMine18 {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - BlockExplodeEvent event");
 
         for (Location<World> bex : e.getAffectedLocations()) {
-            Region r = RedProtect.get().rm.getTopRegion(bex, this.getClass().getName());
+            SpongeRegion r = RedProtect.get().rm.getTopRegion(bex, this.getClass().getName());
             if (!cont.canWorldBreak(bex.createSnapshot())) {
                 e.setCancelled(true);
                 return;

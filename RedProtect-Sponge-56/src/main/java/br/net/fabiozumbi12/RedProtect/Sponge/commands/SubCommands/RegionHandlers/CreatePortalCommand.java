@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
@@ -65,7 +65,7 @@ public class CreatePortalCommand {
                         String regionFrom = args.<String>getOne("regionNameFrom").get();
                         String regionTo = args.<String>getOne("regionNameTo").get();
 
-                        Region r = RedProtect.get().rm.getRegion(regionTo, w);
+                        SpongeRegion r = RedProtect.get().rm.getRegion(regionTo, w);
                         if (r == null) {
                             RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", regionTo));
                         }
@@ -73,7 +73,7 @@ public class CreatePortalCommand {
                         String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
                         String name = regionFrom.replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
 
-                        Region r2 = RedProtect.get().rm.getRegion(name, w);
+                        SpongeRegion r2 = RedProtect.get().rm.getRegion(name, w);
 
                         if (r2 != null) {
                             if (!r2.isLeader(player) || !r2.isAdmin(player)){

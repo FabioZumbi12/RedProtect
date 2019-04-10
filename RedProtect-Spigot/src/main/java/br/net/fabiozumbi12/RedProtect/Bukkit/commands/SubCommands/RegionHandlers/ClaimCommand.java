@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
@@ -71,7 +71,7 @@ public class ClaimCommand implements SubCommand {
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
             if (rb2.ready()) {
-                Region r2 = rb2.build();
+                BukkitRegion r2 = rb2.build();
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
@@ -91,7 +91,7 @@ public class ClaimCommand implements SubCommand {
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
             if (rb2.ready()) {
-                Region r2 = rb2.build();
+                BukkitRegion r2 = rb2.build();
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
@@ -113,7 +113,7 @@ public class ClaimCommand implements SubCommand {
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, addedAdmins, false);
             if (rb2.ready()) {
-                Region r2 = rb2.build();
+                BukkitRegion r2 = rb2.build();
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 

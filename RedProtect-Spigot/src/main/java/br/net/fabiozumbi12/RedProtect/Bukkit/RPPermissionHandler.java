@@ -29,6 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -64,23 +65,23 @@ public class RPPermissionHandler {
         return p != null && (p.hasPermission(perm)  || p.hasPermission("redprotect.command.admin"));
     }
 
-    public boolean hasRegionPermMember(Player p, String s, Region poly) {
+    public boolean hasRegionPermMember(Player p, String s, BukkitRegion poly) {
         return regionPermMember(p, s, poly);
     }
 
-    public boolean hasRegionPermAdmin(Player p, String s, Region poly) {
+    public boolean hasRegionPermAdmin(Player p, String s, BukkitRegion poly) {
         return regionPermAdmin(p, s, poly);
     }
 
-    public boolean hasRegionPermAdmin(CommandSender sender, String s, Region poly) {
+    public boolean hasRegionPermAdmin(CommandSender sender, String s, BukkitRegion poly) {
         return !(sender instanceof Player) || regionPermAdmin((Player) sender, s, poly);
     }
 
-    public boolean hasRegionPermLeader(Player p, String s, Region poly) {
+    public boolean hasRegionPermLeader(Player p, String s, BukkitRegion poly) {
         return regionPermLeader(p, s, poly);
     }
 
-    public boolean hasRegionPermLeader(CommandSender sender, String s, Region poly) {
+    public boolean hasRegionPermLeader(CommandSender sender, String s, BukkitRegion poly) {
         return !(sender instanceof Player) || regionPermLeader((Player) sender, s, poly);
     }
 
@@ -92,7 +93,7 @@ public class RPPermissionHandler {
         return ClaimLimitHandler(p);
     }
 
-    private boolean regionPermLeader(Player p, String s, Region poly) {
+    private boolean regionPermLeader(Player p, String s, BukkitRegion poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {
@@ -101,7 +102,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && poly.isLeader(p));
     }
 
-    private boolean regionPermAdmin(Player p, String s, Region poly) {
+    private boolean regionPermAdmin(Player p, String s, BukkitRegion poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {
@@ -110,7 +111,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p)));
     }
 
-    private boolean regionPermMember(Player p, String s, Region poly) {
+    private boolean regionPermMember(Player p, String s, BukkitRegion poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {

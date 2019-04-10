@@ -28,6 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -66,23 +67,23 @@ public class RPPermissionHandler {
         return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.command.admin"));
     }
 
-    public boolean hasRegionPermMember(Player p, String s, Region poly) {
+    public boolean hasRegionPermMember(Player p, String s, SpongeRegion poly) {
         return regionPermMember(p, s, poly);
     }
 
-    public boolean hasRegionPermAdmin(Player p, String s, Region poly) {
+    public boolean hasRegionPermAdmin(Player p, String s, SpongeRegion poly) {
         return regionPermAdmin(p, s, poly);
     }
 
-    public boolean hasRegionPermAdmin(CommandSource sender, String s, Region poly) {
+    public boolean hasRegionPermAdmin(CommandSource sender, String s, SpongeRegion poly) {
         return !(sender instanceof Player) || regionPermAdmin((Player) sender, s, poly);
     }
 
-    public boolean hasRegionPermLeader(Player p, String s, Region poly) {
+    public boolean hasRegionPermLeader(Player p, String s, SpongeRegion poly) {
         return regionPermLeader(p, s, poly);
     }
 
-    public boolean hasRegionPermLeader(CommandSource sender, String s, Region poly) {
+    public boolean hasRegionPermLeader(CommandSource sender, String s, SpongeRegion poly) {
         return !(sender instanceof Player) || regionPermLeader((Player) sender, s, poly);
     }
 
@@ -94,7 +95,7 @@ public class RPPermissionHandler {
         return ClaimLimitHandler(p);
     }
 
-    private boolean regionPermLeader(Player p, String s, Region poly) {
+    private boolean regionPermLeader(Player p, String s, SpongeRegion poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {
@@ -103,7 +104,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && poly.isLeader(p));
     }
 
-    private boolean regionPermAdmin(Player p, String s, Region poly) {
+    private boolean regionPermAdmin(Player p, String s, SpongeRegion poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {
@@ -112,7 +113,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p)));
     }
 
-    private boolean regionPermMember(Player p, String s, Region poly) {
+    private boolean regionPermMember(Player p, String s, SpongeRegion poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {

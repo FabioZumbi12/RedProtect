@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import org.dynmap.DynmapCommonAPI;
@@ -69,7 +69,7 @@ public class RPDynmap {
 
                 //start set markers
                 for (World w : RedProtect.get().serv.getWorlds()) {
-                    for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                    for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
                         if (!r.allowDynmap()) continue;
                         addMark(r);
                     }
@@ -91,12 +91,12 @@ public class RPDynmap {
     }
 
     public void removeAll(World w) {
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+        for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
             removeMark(r);
         }
     }
 
-    public void removeMark(Region r) {
+    public void removeMark(SpongeRegion r) {
         AreaMarker am = MSet.findAreaMarker(r.getID());
         if (am != null) {
             am.deleteMarker();
@@ -107,7 +107,7 @@ public class RPDynmap {
         }
     }
 
-    public void addMark(Region r) {
+    public void addMark(SpongeRegion r) {
         AreaMarker am = MSet.findAreaMarker(r.getID());
 
         double[] x = new double[4];

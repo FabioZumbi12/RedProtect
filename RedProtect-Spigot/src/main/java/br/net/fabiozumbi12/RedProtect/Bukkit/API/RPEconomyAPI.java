@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 
 public class RPEconomyAPI {
 
@@ -37,12 +37,12 @@ public class RPEconomyAPI {
      * Put a region to sell.
      * <p>
      *
-     * @param region - Region to sell.
+     * @param region - BukkitRegion to sell.
      * @param owner  - Owner of the region;
      * @param value  - Value to sell this region;
      * @return {@code true} if successfull sell flag. {@code false} if theres an error on sell the region and the money will return to player.
      */
-    public static boolean SellRegion(Region region, String owner, long value) {
+    public static boolean SellRegion(BukkitRegion region, String owner, long value) {
         return RPEconomy.putToSell(region, owner, value);
     }
 
@@ -50,22 +50,22 @@ public class RPEconomyAPI {
      * Buy a region.
      * <p>
      *
-     * @param region - Region to buy.
+     * @param region - BukkitRegion to buy.
      * @param owner  - Owner of the region;
      * @return {@code true} if successfull buy. {@code false} if theres an error on buy the region and the money will return to player.
      */
-    public static boolean BuyRegion(Region region, String owner) {
+    public static boolean BuyRegion(BukkitRegion region, String owner) {
         return RPEconomy.BuyRegion(region, owner);
     }
 
     /**
-     * Get the region value based on blocks, chests, itens inside chests and item enchantements inside chests too.
+     * Get the region playername based on blocks, chests, itens inside chests and item enchantements inside chests too.
      * <p>
      *
-     * @param region - Region to get value.
-     * @return {@code Long} value of the region.
+     * @param region - BukkitRegion to get playername.
+     * @return {@code Long} playername of the region.
      */
-    public static long getRegionValue(Region region) {
+    public static long getRegionValue(BukkitRegion region) {
         return RPEconomy.getRegionValue(region);
     }
 }

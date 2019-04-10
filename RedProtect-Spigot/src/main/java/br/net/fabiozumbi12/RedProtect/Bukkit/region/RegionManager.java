@@ -29,7 +29,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.region;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldFlatFileRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldMySQLRegionManager;
@@ -51,7 +50,7 @@ import java.util.*;
 public class RegionManager {
 
     private final HashMap<World, WorldRegionManager> regionManagers;
-    private final HashMap<Location, Region> bLoc = new HashMap<>();
+    private final HashMap<Location, BukkitRegion> bLoc = new HashMap<>();
 
     public RegionManager() {
         this.regionManagers = new HashMap<>();
@@ -107,19 +106,19 @@ public class RegionManager {
     }
 
     public @Nullable
-    Region getRegion(String rname, World w) {
+    BukkitRegion getRegion(String rname, World w) {
         return this.regionManagers.get(w).getRegion(rname);
     }
 
     public @Nullable
-    Region getRegionById(String rid) {
+    BukkitRegion getRegionById(String rid) {
         if (rid == null) return null;
         World w = Bukkit.getWorld(rid.split("@")[1]);
         return this.regionManagers.get(w).getRegion(rid.split("@")[0]);
     }
 
     public @Nullable
-    Region getRegion(String rname, String w) {
+    BukkitRegion getRegion(String rname, String w) {
         return this.regionManagers.get(Bukkit.getWorld(w)).getRegion(rname);
     }
 
@@ -141,7 +140,7 @@ public class RegionManager {
         return size;
     }
 
-    /*public Set<Region> getWorldRegions(String player, World w) {
+    /*public Set<BukkitRegion> getWorldRegions(String player, World w) {
         return this.regionManagers.get(w).getRegions(player);
     }*/
 
@@ -153,8 +152,8 @@ public class RegionManager {
      * @param uuid
      * @return {@code set<region>}
      */
-    public Set<Region> getRegions(String uuid) {
-        Set<Region> ret = new HashSet<>();
+    public Set<BukkitRegion> getRegions(String uuid) {
+        Set<BukkitRegion> ret = new HashSet<>();
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
             ret.addAll(worldRegionManager.getRegions(uuid));
         }
@@ -169,17 +168,17 @@ public class RegionManager {
      * @param uuid
      * @return {@code set<region>}
      */
-    public Set<Region> getMemberRegions(String uuid) {
-        Set<Region> ret = new HashSet<>();
+    public Set<BukkitRegion> getMemberRegions(String uuid) {
+        Set<BukkitRegion> ret = new HashSet<>();
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
             ret.addAll(worldRegionManager.getMemberRegions(uuid));
         }
         return ret;
     }
 
-    public Set<Region> getRegionsForChunk(Chunk chunk) {
-        Set<Region> regions = new HashSet<>();
-        for (Region region : RedProtect.get().rm.getRegionsByWorld(chunk.getWorld())) {
+    public Set<BukkitRegion> getRegionsForChunk(Chunk chunk) {
+        Set<BukkitRegion> regions = new HashSet<>();
+        for (BukkitRegion region : RedProtect.get().rm.getRegionsByWorld(chunk.getWorld())) {
             int minChunkX = (int) Math.floor(region.getMinMbrX() / 16f);
             int maxChunkX = (int) Math.floor(region.getMaxMbrX() / 16f);
             int minChunkZ = (int) Math.floor(region.getMinMbrZ() / 16f);
@@ -191,16 +190,16 @@ public class RegionManager {
         return regions;
     }
 
-    public Set<Region> getRegionsNear(Player player, int i) {
-        return regionManagers.get(player.getWorld()).getRegionsNear(player, i);
+    public Set<BukkitRegion> getRegionsNear(Player player, int i) {
+        return regionManagers.get(player.getWorld()).getRegionsNear(player.getLocation().getBlockX(), player.getLocation().getBlockZ(), i);
     }
 
-    public Set<Region> getRegions(String player, World w) {
+    public Set<BukkitRegion> getRegions(String player, World w) {
         player = RPUtil.PlayerToUUID(player);
         return this.regionManagers.get(w).getRegions(player);
     }
 
-    public Set<Region> getRegions(String player, String w) {
+    public Set<BukkitRegion> getRegions(String player, String w) {
         player = RPUtil.PlayerToUUID(player);
         World world = Bukkit.getWorld(w);
         return this.regionManagers.get(world).getRegions(player);
@@ -217,7 +216,7 @@ public class RegionManager {
         return size;
     }
 
-    public void add(Region r, World w) {
+    public void add(BukkitRegion r, World w) {
         this.regionManagers.get(w).add(r);
         if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
             try {
@@ -233,7 +232,7 @@ public class RegionManager {
         this.regionManagers.get(w).save(false);
     }
 
-    public void remove(Region r, World w) {
+    public void remove(BukkitRegion r, World w) {
         r.notifyRemove();
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
@@ -248,15 +247,15 @@ public class RegionManager {
         }
     }
 
-    public Set<Region> getRegions(Player p, int x, int y, int z) {
+    public Set<BukkitRegion> getRegions(Player p, int x, int y, int z) {
         return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);
     }
 
-    public Set<Region> getInnerRegions(Region region, World w) {
+    public Set<BukkitRegion> getInnerRegions(BukkitRegion region, World w) {
         return this.regionManagers.get(w).getInnerRegions(region);
     }
 
-    private void removeCache(Region r) {
+    private void removeCache(BukkitRegion r) {
         Set<Location> itloc = bLoc.keySet();
         List<Location> toRemove = new ArrayList<>();
         for (Location loc : itloc) {
@@ -272,7 +271,7 @@ public class RegionManager {
     public int removeAll(String player) {
         int qtd = 0;
         for (WorldRegionManager wrm : this.regionManagers.values()) {
-            for (Region r : wrm.getRegions(player)) {
+            for (BukkitRegion r : wrm.getRegions(player)) {
                 r.notifyRemove();
                 wrm.remove(r);
                 removeCache(r);
@@ -284,7 +283,7 @@ public class RegionManager {
 
     public int regenAll(String player) {
         int delay = 0;
-        for (Region r : getRegions(player)) {
+        for (BukkitRegion r : getRegions(player)) {
             if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")) {
                 WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
@@ -297,10 +296,10 @@ public class RegionManager {
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      *
      * @param loc Location
-     * @return {@code Region} - Or null if no regions on this location.
+     * @return {@code BukkitRegion} - Or null if no regions on this location.
      */
     public @Nullable
-    Region getTopRegion(Location loc) {
+    BukkitRegion getTopRegion(Location loc) {
         if (bLoc.containsKey(loc.getBlock().getLocation())) {
             RedProtect.get().logger.debug("Get from cache");
             return bLoc.get(loc.getBlock().getLocation());
@@ -310,7 +309,7 @@ public class RegionManager {
             }
 
             WorldRegionManager rm = this.regionManagers.get(loc.getWorld());
-            Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            BukkitRegion r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
             try {
                 bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
 
@@ -331,10 +330,10 @@ public class RegionManager {
      * @param x Location x
      * @param y Location y
      * @param z Location z
-     * @return {@code Region} - Or null if no regions on this location.
+     * @return {@code BukkitRegion} - Or null if no regions on this location.
      */
     public @Nullable
-    Region getTopRegion(World w, int x, int y, int z) {
+    BukkitRegion getTopRegion(World w, int x, int y, int z) {
         return getTopRegion(new Location(w, x, y, z));
     }
 
@@ -345,10 +344,10 @@ public class RegionManager {
      * @param x Location x
      * @param y Location y
      * @param z Location z
-     * @return {@code Region} - Or null if no regions on this location.
+     * @return {@code BukkitRegion} - Or null if no regions on this location.
      */
     public @Nullable
-    Region getLowRegion(World w, int x, int y, int z) {
+    BukkitRegion getLowRegion(World w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -359,10 +358,10 @@ public class RegionManager {
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code Region} - Or null if no regions on this location.
+     * @return {@code BukkitRegion} - Or null if no regions on this location.
      */
     public @Nullable
-    Region getLowRegion(Location loc) {
+    BukkitRegion getLowRegion(Location loc) {
         if (!this.regionManagers.containsKey(loc.getWorld())) {
             return null;
         }
@@ -377,9 +376,9 @@ public class RegionManager {
      * @param x Location x
      * @param y Location y
      * @param z Location z
-     * @return {@code Map<Integer,Region>} - Indexed by priority
+     * @return {@code Map<Integer,BukkitRegion>} - Indexed by priority
      */
-    public Map<Integer, Region> getGroupRegion(World w, int x, int y, int z) {
+    public Map<Integer, BukkitRegion> getGroupRegion(World w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -390,9 +389,9 @@ public class RegionManager {
     /**
      * Get regions in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code Map<Integer,Region>} - Indexed by priority
+     * @return {@code Map<Integer,BukkitRegion>} - Indexed by priority
      */
-    public Map<Integer, Region> getGroupRegion(Location loc) {
+    public Map<Integer, BukkitRegion> getGroupRegion(Location loc) {
         if (!this.regionManagers.containsKey(loc.getWorld())) {
             return null;
         }
@@ -400,8 +399,8 @@ public class RegionManager {
         return rm.getGroupRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
 
-    public Set<Region> getAllRegions() {
-        Set<Region> regions = new HashSet<>();
+    public Set<BukkitRegion> getAllRegions() {
+        Set<BukkitRegion> regions = new HashSet<>();
         for (World w : RedProtect.get().serv.getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             regions.addAll(rm.getAllRegions());
@@ -409,7 +408,7 @@ public class RegionManager {
         return regions;
     }
 
-    public Set<Region> getRegionsByWorld(World w) {
+    public Set<BukkitRegion> getRegionsByWorld(World w) {
         WorldRegionManager rm = this.regionManagers.get(w);
         return rm.getAllRegions();
     }
@@ -422,17 +421,17 @@ public class RegionManager {
         this.regionManagers.clear();
     }
 
-    public void updateLiveRegion(Region r, String columm, Object value) {
+    public void updateLiveRegion(BukkitRegion r, String columm, Object value) {
         WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));
         rm.updateLiveRegion(r.getName(), columm, value);
     }
 
-    public void updateLiveFlags(Region r, String flag, String value) {
+    public void updateLiveFlags(BukkitRegion r, String flag, String value) {
         WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));
         rm.updateLiveFlags(r.getName(), flag, value);
     }
 
-    public void removeLiveFlags(Region r, String flag) {
+    public void removeLiveFlags(BukkitRegion r, String flag) {
         WorldRegionManager rm = this.regionManagers.get(Bukkit.getWorld(r.getWorld()));
         rm.removeLiveFlags(r.getName(), flag);
     }
@@ -447,8 +446,8 @@ public class RegionManager {
     }
 
     @SuppressWarnings("deprecation")
-    public void renameRegion(String newName, Region old) {
-        Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
+    public void renameRegion(String newName, BukkitRegion old) {
+        BukkitRegion newr = new BukkitRegion(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
                 new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
         this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()));

@@ -176,7 +176,7 @@ public final class Reflection {
             loaded = _loadedFields.get(clazz);
         }
         if (loaded.containsKey(name)) {
-            // If the field is loaded (or cached as not existing), return the relevant value, which might be null
+            // If the field is loaded (or cached as not existing), return the relevant playername, which might be null
             return loaded.get(name);
         }
         try {

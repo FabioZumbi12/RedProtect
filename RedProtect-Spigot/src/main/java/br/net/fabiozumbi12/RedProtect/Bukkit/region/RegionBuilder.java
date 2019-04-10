@@ -28,14 +28,13 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.region;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
 public abstract class RegionBuilder {
 
-    protected Region r;
+    protected BukkitRegion r;
 
     public RegionBuilder() {
         this.r = null;
@@ -45,7 +44,7 @@ public abstract class RegionBuilder {
         return this.r != null;
     }
 
-    public Region build() {
+    public BukkitRegion build() {
         return this.r;
     }
 

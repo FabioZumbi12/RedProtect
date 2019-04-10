@@ -97,7 +97,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         registerCommand(getCmdKeys("setminy"), new SetMinYCommand());
         registerCommand(getCmdKeys("settp"), new SetTpCommand());
         registerCommand(getCmdKeys("teleport"), new TeleportCommand());
-        registerCommand(getCmdKeys("value"), new ValueCommand());
+        registerCommand(getCmdKeys("playername"), new ValueCommand());
         registerCommand(getCmdKeys("welcome"), new WelcomeCommand());
 
         //general commands

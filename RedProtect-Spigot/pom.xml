@@ -52,6 +52,13 @@
             <classifier>javadoc</classifier>
         </dependency>
 
+        <!-- RedProtect Core -->
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
         <!-- start of local repos -->
 
         <dependency>

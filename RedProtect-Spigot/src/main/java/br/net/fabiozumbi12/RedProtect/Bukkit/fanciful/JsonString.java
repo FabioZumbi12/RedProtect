@@ -36,9 +36,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents a JSON string value.
+ * Represents a JSON string playername.
  * Writes by this object will not write name values nor begin/end objects in the JSON stream.
- * All writes merely write the represented string value.
+ * All writes merely write the represented string playername.
  */
 final class JsonString implements JsonRepresentedObject, ConfigurationSerializable {
 

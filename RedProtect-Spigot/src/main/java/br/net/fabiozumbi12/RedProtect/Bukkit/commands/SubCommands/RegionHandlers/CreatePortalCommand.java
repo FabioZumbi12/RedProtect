@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
@@ -63,7 +63,7 @@ public class CreatePortalCommand implements SubCommand {
                 sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[1], w);
+            BukkitRegion r = RedProtect.get().rm.getRegion(args[1], w);
             if (r == null) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", args[1]));
             }
@@ -71,7 +71,7 @@ public class CreatePortalCommand implements SubCommand {
             String serverName = RPConfig.getString("region-settings.default-leader");
             String name = args[0].replace(" ", "_").replaceAll("[^\\p{L}_0-9 ]", "");
 
-            Region r2 = RedProtect.get().rm.getRegion(name, w);
+            BukkitRegion r2 = RedProtect.get().rm.getRegion(name, w);
 
             if (r2 != null) {
                 if (!r2.isLeader(player) || !r2.isAdmin(player)){

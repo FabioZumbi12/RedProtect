@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.API.events;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -36,13 +36,13 @@ import org.bukkit.event.HandlerList;
 
 public class RenameRegionEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private final Region region;
+    private final BukkitRegion region;
     private final String oldName;
     private final Player player;
     private String newName;
     private boolean isCancelled = false;
 
-    public RenameRegionEvent(Region region, String newName, String oldName, Player p) {
+    public RenameRegionEvent(BukkitRegion region, String newName, String oldName, Player p) {
         this.region = region;
         this.newName = newName;
         this.oldName = oldName;
@@ -57,7 +57,7 @@ public class RenameRegionEvent extends Event implements Cancellable {
         return this.player;
     }
 
-    public Region getRegion() {
+    public BukkitRegion getRegion() {
         return this.region;
     }
 

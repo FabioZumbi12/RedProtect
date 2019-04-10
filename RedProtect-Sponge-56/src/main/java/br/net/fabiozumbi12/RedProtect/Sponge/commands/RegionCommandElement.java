@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
@@ -59,7 +59,7 @@ public class RegionCommandElement extends CommandElement {
     @Override
     public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
         if (src instanceof Player)
-            return RedProtect.get().rm.getMemberRegions(src.getName()).stream().map(Region::getName).collect(Collectors.toList());
+            return RedProtect.get().rm.getMemberRegions(src.getName()).stream().map(SpongeRegion::getName).collect(Collectors.toList());
         return null;
     }
 }

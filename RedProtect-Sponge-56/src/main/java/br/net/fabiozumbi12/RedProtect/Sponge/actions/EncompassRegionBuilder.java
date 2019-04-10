@@ -33,7 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -203,10 +203,11 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
+                        SpongeRegion region = new SpongeRegion(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
+
                         leaders.forEach(region::addLeader);
                         List<String> othersName = new ArrayList<>();
-                        Region otherrg;
+                        SpongeRegion otherrg;
                         List<Location<World>> limitlocs = region.getLimitLocs(minby, maxby, false);
 
                         //check retangular region
@@ -218,7 +219,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                        for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
@@ -356,7 +357,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 }
             } else if (i == 1 && nearbyCount == 2) {
                 //check other regions on blocks
-                Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
+                SpongeRegion rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
                 if (rcurrent != null && !rcurrent.canBuild(p)) {
                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
                     return;

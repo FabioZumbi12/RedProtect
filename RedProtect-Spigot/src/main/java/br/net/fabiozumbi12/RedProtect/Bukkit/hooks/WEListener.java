@@ -28,6 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
@@ -102,10 +103,10 @@ public class WEListener {
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
-    public static br.net.fabiozumbi12.RedProtect.Bukkit.Region pasteWithWE(Player p, File file) {
+    public static BukkitRegion pasteWithWE(Player p, File file) {
         World world = p.getWorld();
         Location loc = p.getLocation();
-        br.net.fabiozumbi12.RedProtect.Bukkit.Region r = null;
+        BukkitRegion r = null;
 
         if (!p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
             RPLang.sendMessage(p, "playerlistener.region.needground");
@@ -150,7 +151,7 @@ public class WEListener {
         return r;
     }
 
-    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Bukkit.Region r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
+    public static void regenRegion(final BukkitRegion r, final World w, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             if (RPUtil.stopRegen) {
                 return;

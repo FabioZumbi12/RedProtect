@@ -31,7 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -58,7 +58,7 @@ public class KickCommand {
                     } else {
                         Player player = (Player) src;
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
 
                         if (r == null) {
                             RPLang.sendMessage(player, "cmdmanager.region.todo.that");
@@ -85,7 +85,7 @@ public class KickCommand {
                             return CommandResult.success();
                         }
 
-                        Region rv = RedProtect.get().rm.getTopRegion(visit.getLocation(), this.getClass().getName());
+                        SpongeRegion rv = RedProtect.get().rm.getTopRegion(visit.getLocation(), this.getClass().getName());
                         if (rv == null || !rv.getID().equals(r.getID())) {
                             RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
                             return CommandResult.success();

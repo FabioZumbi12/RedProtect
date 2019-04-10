@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
@@ -60,7 +60,7 @@ public class McMMoListener implements Listener {
         RedProtect.get().logger.debug("Mcmmo McMMOPlayerXpGainEvent event. Skill " + e.getSkill().name());
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r == null) {
             return;
         }
@@ -99,7 +99,7 @@ public class McMMoListener implements Listener {
             }
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r == null) {
             return;
         }
@@ -118,7 +118,7 @@ public class McMMoListener implements Listener {
         RedProtect.get().logger.debug("Mcmmo SubSkillRandomCheckEvent event.");
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r == null) {
             return;
         }
@@ -136,7 +136,7 @@ public class McMMoListener implements Listener {
         RedProtect.get().logger.debug("Mcmmo McMMOPlayerDisarmEvent event.");
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(e.getDefender().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getDefender().getLocation());
         if (r == null) {
             return;
         }
@@ -154,7 +154,7 @@ public class McMMoListener implements Listener {
         RedProtect.get().logger.debug("Mcmmo SecondaryAbilityEvent event.");
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(e.getPlayer().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getPlayer().getLocation());
         if (r == null) {
             return;
         }
@@ -172,7 +172,7 @@ public class McMMoListener implements Listener {
 
         if (e.getDamager() instanceof Player) {
             Player p = (Player) e.getDamager();
-            Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
 
             if (e.getEntity() instanceof Animals) {
                 if (r != null && !r.canInteractPassives(p)) {
@@ -194,7 +194,7 @@ public class McMMoListener implements Listener {
     public void onFakeEntityDamageEvent(FakeEntityDamageEvent e) {
         RedProtect.get().logger.debug("Mcmmo FakeEntityDamageEvent event.");
 
-        Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
 
         if (e.getEntity() instanceof Animals) {
             if (r != null && !r.getFlagBool("passives")) {

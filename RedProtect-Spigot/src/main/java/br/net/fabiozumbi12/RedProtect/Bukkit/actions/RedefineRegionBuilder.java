@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -45,15 +45,15 @@ import java.util.Set;
 public class RedefineRegionBuilder extends RegionBuilder {
 
     @SuppressWarnings("deprecation")
-    public RedefineRegionBuilder(Player p, Region old, Location loc1, Location loc2) {
+    public RedefineRegionBuilder(Player p, BukkitRegion old, Location loc1, Location loc2) {
         if (loc1 == null || loc2 == null) {
             this.setError(p, RPLang.get("regionbuilder.selection.notset"));
             return;
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-            double dist = new Region(null, loc1, loc2, null).getArea();
+        if (loc1.getWorld().equals(loc2.getWorld()) && new BukkitRegion(null, loc1, loc2, null).getArea() > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+            double dist = new BukkitRegion(null, loc1, loc2, null).getArea();
             RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist));
             return;
         }
@@ -71,7 +71,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                 maxy = RPConfig.getInt("region-settings.claim.maxy");
         }
 
-        Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+        BukkitRegion region = new BukkitRegion(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
         region.setPrior(RPUtil.getUpdatedPrior(region));
 
@@ -94,7 +94,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         Set<String> othersName = new HashSet<>();
-        Region otherrg;
+        BukkitRegion otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
@@ -106,7 +106,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         boolean hasAny = false;
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getInnerRegions(region, p.getWorld())) {
+        for (BukkitRegion r : RedProtect.get().rm.getInnerRegions(region, p.getWorld())) {
             if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                 this.setError(p, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                 return;
@@ -182,7 +182,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " REDEFINED region " + region.getName());
     }
 
-    private boolean checkID(Region newr, Region oldr) {
+    private boolean checkID(BukkitRegion newr, BukkitRegion oldr) {
         return newr.getID().equals(oldr.getID());
     }
 }

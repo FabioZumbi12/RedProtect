@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
@@ -37,7 +37,7 @@ import org.bukkit.block.BlockFace;
 
 public class RPDoor {
 
-    public static void ChangeDoor(Block b, Region r) {
+    public static void ChangeDoor(Block b, BukkitRegion r) {
         if ((!RPConfig.isFlagEnabled("smart-door") && !RPConfig.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")) {
             return;
         }

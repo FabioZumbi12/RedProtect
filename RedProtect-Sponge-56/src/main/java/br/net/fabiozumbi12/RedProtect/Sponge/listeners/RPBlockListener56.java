@@ -31,7 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -89,8 +89,8 @@ public class RPBlockListener56 {
 
         //process
         if (piston != null && block != null) {
-            Region rPi = RedProtect.get().rm.getTopRegion(piston, this.getClass().getName());
-            Region rB = RedProtect.get().rm.getTopRegion(block, this.getClass().getName());
+            SpongeRegion rPi = RedProtect.get().rm.getTopRegion(piston, this.getClass().getName());
+            SpongeRegion rB = RedProtect.get().rm.getTopRegion(block, this.getClass().getName());
             if (rPi == null && rB != null || (rPi != null && rB != null && rPi != rB && !rPi.sameLeaders(rB))) {
                 e.setCancelled(true);
                 return;

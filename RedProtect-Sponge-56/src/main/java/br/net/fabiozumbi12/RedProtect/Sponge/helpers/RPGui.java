@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Transaction;
@@ -50,7 +50,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Color;
 
 import java.util.Arrays;
-import java.util.Map;
 
 
 public class RPGui {
@@ -58,12 +57,12 @@ public class RPGui {
     private int size;
     private ItemStack[] guiItens;
     private Player player;
-    private Region region;
+    private SpongeRegion region;
     private Inventory inv;
     private String name;
     private boolean edit;
 
-    public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot) {
+    public RPGui(String name, Player player, SpongeRegion region, boolean edit, int MaxSlot) {
         this.edit = edit;
         this.name = name;
         this.player = player;

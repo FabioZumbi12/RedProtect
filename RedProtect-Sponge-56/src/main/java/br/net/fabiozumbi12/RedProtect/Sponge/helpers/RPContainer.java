@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -86,7 +86,7 @@ public class RPContainer {
             return true;
         }
 
-        Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+        SpongeRegion reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
         if (reg == null && !RedProtect.get().cfgs.root().private_cat.allow_outside) {
             return true;
         }
@@ -136,7 +136,7 @@ public class RPContainer {
             return true;
         }
 
-        Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+        SpongeRegion reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
         if (reg == null && !RedProtect.get().cfgs.root().private_cat.allow_outside) {
             return true;
         }

@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
@@ -37,7 +37,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import javafx.util.Pair;
+import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
@@ -146,9 +146,9 @@ public class RPUtil {
         return (!b.isLiquid() && !b.isEmpty()) || b.getType().name().contains("LAVA");
     }
 
-    public static Location DenyExitPlayer(Player p, Location from, Location to, Region r) {
+    public static Location DenyExitPlayer(Player p, Location from, Location to, BukkitRegion r) {
         Location setTo = to;
-        Region rto = RedProtect.get().rm.getTopRegion(to);
+        BukkitRegion rto = RedProtect.get().rm.getTopRegion(to);
         if (rto != r) {
             setTo = from;
             RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
@@ -156,15 +156,15 @@ public class RPUtil {
         return setTo;
     }
 
-    public static Location DenyEnterPlayer(World wFrom, Location from, Location to, Region r, boolean checkSec) {
+    public static Location DenyEnterPlayer(World wFrom, Location from, Location to, BukkitRegion r, boolean checkSec) {
         Location setTo = to;
         for (int i = 0; i < r.getArea() + 10; i++) {
-            Region r1 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() + i, from.getBlockY(), from.getBlockZ());
-            Region r2 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() - i, from.getBlockY(), from.getBlockZ());
-            Region r3 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ() + i);
-            Region r4 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ() - i);
-            Region r5 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() + i, from.getBlockY(), from.getBlockZ() + i);
-            Region r6 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() - i, from.getBlockY(), from.getBlockZ() - i);
+            BukkitRegion r1 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() + i, from.getBlockY(), from.getBlockZ());
+            BukkitRegion r2 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() - i, from.getBlockY(), from.getBlockZ());
+            BukkitRegion r3 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ() + i);
+            BukkitRegion r4 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ() - i);
+            BukkitRegion r5 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() + i, from.getBlockY(), from.getBlockZ() + i);
+            BukkitRegion r6 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() - i, from.getBlockY(), from.getBlockZ() - i);
             if (r1 != r) {
                 setTo = from.add(+i, 0, 0);
                 break;
@@ -333,7 +333,7 @@ public class RPUtil {
     }
 
     //TODO read all db
-    public static void ReadAllDB(Set<Region> regions) {
+    public static void ReadAllDB(Set<BukkitRegion> regions) {
         int purged = 0;
         int sell = 0;
         int cfm = 0;
@@ -348,7 +348,7 @@ public class RPUtil {
             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
         }
 
-        for (Region region : regions) {
+        for (BukkitRegion region : regions) {
             region.updateSigns();
             boolean serverRegion = false;
 
@@ -446,7 +446,7 @@ public class RPUtil {
         }
 
         if (cfm > 0) {
-            RedProtect.get().logger.sucess("[" + cfm + "] Region names conformed!");
+            RedProtect.get().logger.sucess("[" + cfm + "] BukkitRegion names conformed!");
         }
 
         if (skipped > 0) {
@@ -580,7 +580,7 @@ public class RPUtil {
     }
 
     public static boolean mysqlToFile() {
-        HashMap<String, Region> regions = new HashMap<>();
+        HashMap<String, BukkitRegion> regions = new HashMap<>();
         int saved = 1;
 
         try {
@@ -592,9 +592,9 @@ public class RPUtil {
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
-                    Set<Pair<String, String>> leaders = new HashSet<>();
-                    Set<Pair<String, String>> admins = new HashSet<>();
-                    Set<Pair<String, String>> members = new HashSet<>();
+                    Set<RegionPlayer<String, String>> leaders = new HashSet<>();
+                    Set<RegionPlayer<String, String>> admins = new HashSet<>();
+                    Set<RegionPlayer<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -619,19 +619,19 @@ public class RPUtil {
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
                             String[] p = member.split("@");
-                            members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            members.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
                             String[] p = admin.split("@");
-                            admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            admins.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
                             String[] p = leader.split("@");
-                            leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            leaders.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
 
@@ -642,7 +642,7 @@ public class RPUtil {
                             flags.put(key, parseObject(flag.substring(replace.length())));
                         }
                     }
-                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
+                    BukkitRegion newr = new BukkitRegion(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
                     regions.put(rname, newr);
                 }
                 st.close();
@@ -652,7 +652,7 @@ public class RPUtil {
                 YamlConfiguration fileDB = new YamlConfiguration();
                 File datf = new File(pathData, "data_" + world.getName() + ".yml");
                 Set<YamlConfiguration> yamls = new HashSet<>();
-                for (Region r : regions.values()) {
+                for (BukkitRegion r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
@@ -750,7 +750,7 @@ public class RPUtil {
 
             Connection dbcon = DriverManager.getConnection(url + dbname, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 
-            for (Region r : RedProtect.get().rm.getRegionsByWorld(world)) {
+            for (BukkitRegion r : RedProtect.get().rm.getRegionsByWorld(world)) {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
                     try {
                         PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
@@ -894,11 +894,11 @@ public class RPUtil {
         }, RPConfig.getInt("flags-configuration.change-flag-delay.seconds") * 20);
     }
 
-    public static int getUpdatedPrior(Region region) {
+    public static int getUpdatedPrior(BukkitRegion region) {
         int regionarea = region.getArea();
         int prior = region.getPrior();
-        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
-        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        BukkitRegion topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        BukkitRegion lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
 
         if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))) {
             return prior;
@@ -978,20 +978,20 @@ public class RPUtil {
                 if (RedProtect.get().OnlineMode && claim.ownerID != null) {
                     pname = claim.ownerID.toString();
                 }
-                Set<Pair<String, String>> leaders = new HashSet<>();
-                leaders.add(new Pair<>(claim.ownerID != null ? claim.ownerID.toString() : pname , pname));
+                Set<RegionPlayer<String, String>> leaders = new HashSet<>();
+                leaders.add(new RegionPlayer<>(claim.ownerID != null ? claim.ownerID.toString() : pname , pname));
                 Location newmin = claim.getGreaterBoundaryCorner();
                 Location newmax = claim.getLesserBoundaryCorner();
                 newmin.setY(0);
                 newmax.setY(w.getMaxHeight());
 
-                Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
+                BukkitRegion r = new BukkitRegion(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
                         newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null, true);
 
-                Region other = RedProtect.get().rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
+                BukkitRegion other = RedProtect.get().rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
                 if (other == null || !r.getWelcome().equals(other.getWelcome())) {
                     RedProtect.get().rm.add(r, w);
-                    RedProtect.get().logger.debug("Region: " + r.getName());
+                    RedProtect.get().logger.debug("BukkitRegion: " + r.getName());
                     claimed++;
                 }
             }
@@ -1009,7 +1009,7 @@ public class RPUtil {
         return regionName;
     }
 
-    public static String getTitleName(Region r) {
+    public static String getTitleName(BukkitRegion r) {
         String name = RPLang.get("gui.invflag").replace("{region}", r.getName());
         if (name.length() > 16) {
             name = name.substring(0, 16);
@@ -1026,7 +1026,7 @@ public class RPUtil {
         }
     }
 
-    public static Region loadRegion(YamlConfiguration fileDB, String rname, World world) {
+    public static BukkitRegion loadRegion(YamlConfiguration fileDB, String rname, World world) {
         if (fileDB.getString(rname + ".name") == null) {
             return null;
         }
@@ -1039,7 +1039,7 @@ public class RPUtil {
         String name = fileDB.getString(rname + ".name");
         String serverName = RPConfig.getString("region-settings.default-leader");
 
-        Set<Pair<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s->{
+        Set<RegionPlayer<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s->{
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
             if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
@@ -1047,10 +1047,10 @@ public class RPUtil {
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
             }
-            return new Pair<>(p[0], p[1]);
+            return new RegionPlayer<>(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        Set<Pair<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s->{
+        Set<RegionPlayer<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s->{
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
             if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
@@ -1058,10 +1058,10 @@ public class RPUtil {
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
             }
-            return new Pair<>(p[0], p[1]);
+            return new RegionPlayer<>(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        Set<Pair<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s->{
+        Set<RegionPlayer<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s->{
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
             if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
@@ -1069,7 +1069,7 @@ public class RPUtil {
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
             }
-            return new Pair<>(p[0], p[1]);
+            return new RegionPlayer<>(p[0], p[1]);
         }).collect(Collectors.toSet());
 
         String welcome = fileDB.getString(rname + ".welcome", "");
@@ -1086,7 +1086,7 @@ public class RPUtil {
         }
 
         fixdbFlags(fileDB, rname);
-        Region newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
+        BukkitRegion newr = new BukkitRegion(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RPConfig.getDefFlagsValues(), welcome, value, tppoint, candel);
         for (String flag : RPConfig.getDefFlags()) {
             if (fileDB.get(rname + ".flags." + flag) != null) {
                 newr.getFlags().put(flag, fileDB.get(rname + ".flags." + flag));
@@ -1102,16 +1102,16 @@ public class RPUtil {
         return newr;
     }
 
-    public static void addProps(YamlConfiguration fileDB, Region r) {
-        RedProtect.get().logger.debug("Region ID: " + r.getID());
-        RedProtect.get().logger.debug("Region: " + r.getName());
+    public static void addProps(YamlConfiguration fileDB, BukkitRegion r) {
+        RedProtect.get().logger.debug("BukkitRegion ID: " + r.getID());
+        RedProtect.get().logger.debug("BukkitRegion: " + r.getName());
         String rname = r.getName();
         fileDB.createSection(rname);
         fileDB.set(rname + ".name", rname);
         fileDB.set(rname + ".lastvisit", r.getDate());
-        fileDB.set(rname + ".admins", r.getAdmins().stream().map(t->t.getKey()+"@"+t.getValue()).collect(Collectors.toList()));
-        fileDB.set(rname + ".members", r.getMembers().stream().map(t->t.getKey()+"@"+t.getValue()).collect(Collectors.toList()));
-        fileDB.set(rname + ".leaders", r.getLeaders().stream().map(t->t.getKey()+"@"+t.getValue()).collect(Collectors.toList()));
+        fileDB.set(rname + ".admins", r.getAdmins().stream().map(t->t.getUUID()+"@"+t.getPlayerName()).collect(Collectors.toList()));
+        fileDB.set(rname + ".members", r.getMembers().stream().map(t->t.getUUID()+"@"+t.getPlayerName()).collect(Collectors.toList()));
+        fileDB.set(rname + ".leaders", r.getLeaders().stream().map(t->t.getUUID()+"@"+t.getPlayerName()).collect(Collectors.toList()));
         fileDB.set(rname + ".priority", r.getPrior());
         fileDB.set(rname + ".welcome", r.getWelcome());
         fileDB.set(rname + ".world", r.getWorld());
@@ -1141,8 +1141,8 @@ public class RPUtil {
     public static int SingleToFiles() {
         int saved = 0;
         for (World w : Bukkit.getWorlds()) {
-            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w);
-            for (Region r : regions) {
+            Set<BukkitRegion> regions = RedProtect.get().rm.getRegionsByWorld(w);
+            for (BukkitRegion r : regions) {
                 YamlConfiguration fileDB = new YamlConfiguration();
 
                 File f = new File(pathData + w.getName());
@@ -1173,9 +1173,9 @@ public class RPUtil {
         int saved = 0;
         for (World w : Bukkit.getWorlds()) {
             File f = new File(pathData, "data_" + w.getName() + ".yml");
-            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w);
+            Set<BukkitRegion> regions = RedProtect.get().rm.getRegionsByWorld(w);
             YamlConfiguration fileDB = new YamlConfiguration();
-            for (Region r : regions) {
+            for (BukkitRegion r : regions) {
                 addProps(fileDB, r);
                 saved++;
                 File oldf = new File(pathData, w.getName() + File.separator + r.getName() + ".yml");
@@ -1208,7 +1208,7 @@ public class RPUtil {
         for (int ix = x - radius; ix <= x + radius; ++ix) {
             for (int iy = y - radius; iy <= y + radius; ++iy) {
                 for (int iz = z - radius; iz <= z + radius; ++iz) {
-                    Region reg = RedProtect.get().rm.getTopRegion(new Location(p.getWorld(), ix, iy, iz));
+                    BukkitRegion reg = RedProtect.get().rm.getTopRegion(new Location(p.getWorld(), ix, iy, iz));
                     if (reg != null && !reg.canBuild(p)) {
                         RPLang.sendMessage(p, RPLang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
                         return false;
@@ -1219,13 +1219,13 @@ public class RPUtil {
         return true;
     }
 
-    public static int simuleTotalRegionSize(String player, Region r2) {
+    public static int simuleTotalRegionSize(String player, BukkitRegion r2) {
         int total = 0;
         int regs = 0;
         for (Location loc : r2.get4Points(r2.getCenterY())) {
-            Map<Integer, Region> pregs = RedProtect.get().rm.getGroupRegion(loc);
+            Map<Integer, BukkitRegion> pregs = RedProtect.get().rm.getGroupRegion(loc);
             pregs.remove(r2.getPrior());
-            Region other;
+            BukkitRegion other;
             if (pregs.size() > 0) {
                 other = pregs.get(Collections.max(pregs.keySet()));
             } else {

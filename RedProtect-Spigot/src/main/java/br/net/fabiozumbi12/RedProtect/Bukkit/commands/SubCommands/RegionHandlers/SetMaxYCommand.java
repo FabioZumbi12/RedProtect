@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Bukkit;
@@ -52,7 +52,7 @@ public class SetMaxYCommand implements SubCommand {
 
         Player player = (Player) sender;
 
-        Region r;
+        BukkitRegion r;
         //rp setmaxy <size>
         switch (args.length) {
             case 1:

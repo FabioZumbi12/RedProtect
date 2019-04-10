@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
@@ -54,7 +54,7 @@ public class SelectWECommand implements SubCommand {
 
         if (args.length == 0) {
             if (RedProtect.get().WE) {
-                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r == null) {
                     RPLang.sendMessage(player, "cmdmanager.region.doesexists");
                     return true;

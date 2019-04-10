@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -56,7 +56,7 @@ public class KickCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1 || args.length == 3) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
 
             if (r == null) {
                 RPLang.sendMessage(player, "cmdmanager.region.todo.that");
@@ -87,7 +87,7 @@ public class KickCommand implements SubCommand {
                 return true;
             }
 
-            Region rv = RedProtect.get().rm.getTopRegion(visit.getLocation());
+            BukkitRegion rv = RedProtect.get().rm.getTopRegion(visit.getLocation());
             if (rv == null || !rv.getID().equals(r.getID())) {
                 RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
                 return true;

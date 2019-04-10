@@ -36,13 +36,13 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
+import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
 import com.earth2me.essentials.User;
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
 import de.Keyle.MyPet.api.player.MyPetPlayer;
-import javafx.util.Pair;
 import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.*;
@@ -145,7 +145,7 @@ public class RPPlayerListener implements Listener {
         }
         RedProtect.get().logger.debug("RPPlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
         Player p = (Player) e.getEntity();
-        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && e.getNewState().getType().name().contains("FROSTED_ICE") && !r.canIceForm(p)) {
             e.setCancelled(true);
         }
@@ -174,7 +174,7 @@ public class RPPlayerListener implements Listener {
         if (e.getClickedBlock() != null){
             Block b = e.getClickedBlock().getRelative(e.getBlockFace());
             if (b.getType().equals(Material.FIRE)) {
-                Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+                BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
                 if (r != null && !r.canBuild(e.getPlayer())) {
                     e.setCancelled(true);
                     RPLang.sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
@@ -246,7 +246,7 @@ public class RPPlayerListener implements Listener {
             }
 
             if (itemInHand.getType().name().equalsIgnoreCase(RPConfig.getString("wands.infoWandID"))) {
-                Region r = RedProtect.get().rm.getTopRegion(l);
+                BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
                 if (r == null) {
                     RPLang.sendMessage(p, "playerlistener.noregion.atblock");
                 } else if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
@@ -265,7 +265,7 @@ public class RPPlayerListener implements Listener {
             return;
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         //start player checks
         if (r == null) {
             if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
@@ -405,18 +405,18 @@ public class RPPlayerListener implements Listener {
 
                         //check if tag is owners or members names
                         if (tag.equalsIgnoreCase("{membername}")) {
-                            for (Pair<String, String> leader : r.getLeaders()) {
-                                if (sign.getLine(0).equalsIgnoreCase(leader.getValue())) {
+                            for (RegionPlayer<String, String> leader : r.getLeaders()) {
+                                if (sign.getLine(0).equalsIgnoreCase(leader.getPlayerName())) {
                                     return;
                                 }
                             }
-                            for (Pair<String, String> admin : r.getAdmins()) {
-                                if (sign.getLine(0).equalsIgnoreCase(admin.getValue())) {
+                            for (RegionPlayer<String, String> admin : r.getAdmins()) {
+                                if (sign.getLine(0).equalsIgnoreCase(admin.getPlayerName())) {
                                     return;
                                 }
                             }
-                            for (Pair<String, String> member : r.getMembers()) {
-                                if (sign.getLine(0).equalsIgnoreCase(member.getValue())) {
+                            for (RegionPlayer<String, String> member : r.getMembers()) {
+                                if (sign.getLine(0).equalsIgnoreCase(member.getPlayerName())) {
                                     return;
                                 }
                             }
@@ -452,7 +452,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    private void changeFlag(Region r, String flag, Player p, Sign s) {
+    private void changeFlag(BukkitRegion r, String flag, Player p, Sign s) {
         if (r.setFlag(p, flag, !r.getFlagBool(flag))) {
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RPLang.translBool(r.getFlagString(flag)));
@@ -470,7 +470,7 @@ public class RPPlayerListener implements Listener {
             return;
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(e.getWhoClicked().getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getWhoClicked().getLocation());
         if (r != null && e.getInventory().getTitle() != null) {
             if (e.getInventory().getTitle().equals(RPUtil.getTitleName(r)) || e.getInventory().getTitle().equals(RPLang.get("gui.editflag"))) {
                 return;
@@ -494,25 +494,25 @@ public class RPPlayerListener implements Listener {
         Location l = e.getLocation();
 
         if (e instanceof ItemFrame || e instanceof Painting) {
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canBuild(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantedit");
                 event.setCancelled(true);
             }
         } else if (e instanceof Minecart || e instanceof Boat) {
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canMinecart(p)) {
                 RPLang.sendMessage(p, "blocklistener.region.cantenter");
                 event.setCancelled(true);
             }
         } else if (RedProtect.get().MyPet && e instanceof MyPetBukkitEntity) {
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
         } else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.allowMod(p)) {
                 RedProtect.get().logger.debug("PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
                 RPLang.sendMessage(p, "playerlistener.region.cantinteract");
@@ -549,7 +549,7 @@ public class RPPlayerListener implements Listener {
             }
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(play.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(play.getLocation());
         if (r != null) {
             if (!r.canPlayerDamage()) {
                 e.setCancelled(true);
@@ -608,7 +608,7 @@ public class RPPlayerListener implements Listener {
         }
 
         Location l = e.getEntity().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
         if (r == null) {
             return;
         }
@@ -649,8 +649,8 @@ public class RPPlayerListener implements Listener {
 
         Location lfrom = e.getFrom();
         Location lto = e.getTo();
-        final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
-        final Region rto = RedProtect.get().rm.getTopRegion(lto);
+        final BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(lfrom);
+        final BukkitRegion rto = RedProtect.get().rm.getTopRegion(lto);
 
         RedProtect.get().logger.debug("RPPlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
 
@@ -809,7 +809,7 @@ public class RPPlayerListener implements Listener {
             PlayerCmd.put(p.getName(), msg);
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null) {
 
             if ((cmd.equalsIgnoreCase("/petc") || cmd.equalsIgnoreCase("/petcall")) && RedProtect.get().MyPet && !r.canPet(p)) {
@@ -880,7 +880,7 @@ public class RPPlayerListener implements Listener {
         }
 
         Location loc = p.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(loc);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(loc);
 
         if (r != null) {
             if (r.keepInventory()) {
@@ -970,7 +970,7 @@ public class RPPlayerListener implements Listener {
         Location lfrom = e.getFrom();
         Location lto = e.getTo();
 
-        Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
+        BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(lfrom);
         //Exit flag
         if (rfrom != null && !rfrom.canExit(p)) {
             e.setTo(RPUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
@@ -992,7 +992,7 @@ public class RPPlayerListener implements Listener {
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(lto);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(lto);
 
         World w = lfrom.getWorld();
 
@@ -1065,7 +1065,7 @@ public class RPPlayerListener implements Listener {
             }
 
             if (!Ownerslist.containsKey(p.getName()) || !Ownerslist.get(p.getName()).equals(r.getID())) {
-                Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p.getName()));
+                BukkitRegion er = RedProtect.get().rm.getRegionById(Ownerslist.get(p.getName()));
                 Ownerslist.put(p.getName(), r.getID());
 
                 //Execute listener:
@@ -1086,7 +1086,7 @@ public class RPPlayerListener implements Listener {
         } else {
             //if (r == null) >>
             if (Ownerslist.get(p.getName()) != null) {
-                Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p.getName()));
+                BukkitRegion er = RedProtect.get().rm.getRegionById(Ownerslist.get(p.getName()));
                 Ownerslist.remove(p.getName());
 
                 //Execute listener:
@@ -1130,7 +1130,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    private boolean checkMaxPlayer(Player p, Region r) {
+    private boolean checkMaxPlayer(Player p, BukkitRegion r) {
         if (r.canBuild(p)) {
             return true;
         }
@@ -1139,7 +1139,7 @@ public class RPPlayerListener implements Listener {
             if (onp == p) {
                 continue;
             }
-            Region reg = RedProtect.get().rm.getTopRegion(onp.getLocation());
+            BukkitRegion reg = RedProtect.get().rm.getTopRegion(onp.getLocation());
             if (reg != null && reg == r) {
                 ttl++;
             }
@@ -1151,8 +1151,8 @@ public class RPPlayerListener implements Listener {
     public void onPlayerEnterPortal(PlayerPortalEvent e) {
         Player p = e.getPlayer();
 
-        Region rto = null;
-        Region from = null;
+        BukkitRegion rto = null;
+        BukkitRegion from = null;
         if (e.getTo() != null) {
             rto = RedProtect.get().rm.getTopRegion(e.getTo());
         }
@@ -1176,7 +1176,7 @@ public class RPPlayerListener implements Listener {
     public void onPortalCreate(PortalCreateEvent e) {
         List<Block> blocks = e.getBlocks();
         for (Block b : blocks) {
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (r != null && !r.canCreatePortal()) {
                 e.setCancelled(true);
                 break;
@@ -1189,7 +1189,7 @@ public class RPPlayerListener implements Listener {
         Player p = e.getPlayer();
         stopTaskPlayer(p);
         RedProtect.get().tpWait.remove(p.getName());
-        Region out = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion out = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (out != null) RedProtect.get().openGuis.remove(out.getID());
         RedProtect.get().alWait.remove(p);
         String worldneeded = RPConfig.getString("server-protection.teleport-player.on-leave.need-world-to-teleport");
@@ -1213,7 +1213,7 @@ public class RPPlayerListener implements Listener {
                 uuid = p.getName().toLowerCase();
             }
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")) {
-                for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
+                for (BukkitRegion r : RedProtect.get().rm.getMemberRegions(uuid)) {
                     if (r.getDate() == null || !r.getDate().equals(RPUtil.DateNow())) {
                         r.setDate(RPUtil.DateNow());
                     }
@@ -1228,7 +1228,7 @@ public class RPPlayerListener implements Listener {
             e.getPlayer().teleport(new Location(Bukkit.getWorld(loc[0]), Double.parseDouble(loc[1]) + 0.500, Double.parseDouble(loc[2]), Double.parseDouble(loc[3]) + 0.500));
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null) {
             RegionFlags(r, null, p, true);
         }
@@ -1238,7 +1238,7 @@ public class RPPlayerListener implements Listener {
     public void PlayerTrownEgg(PlayerEggThrowEvent e) {
         Location l = e.getEgg().getLocation();
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r != null && !r.canBuild(p)) {
             e.setHatching(false);
@@ -1256,7 +1256,7 @@ public class RPPlayerListener implements Listener {
 
         Location l = e.getEntity().getLocation();
         Player p = (Player) e.getEntity().getShooter();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r != null && !r.canProtectiles(p)) {
             e.setCancelled(true);
@@ -1270,7 +1270,7 @@ public class RPPlayerListener implements Listener {
 
         Location l = e.getItemDrop().getLocation();
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r != null && ((!r.canExit(p) && !r.canDrop(p)) || !r.canDrop(p))) {
             e.setCancelled(true);
@@ -1284,7 +1284,7 @@ public class RPPlayerListener implements Listener {
 
         Location l = e.getItem().getLocation();
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r != null && ((!r.canEnter(p) && !r.canPickup(p) || !r.canPickup(p)))) {
             e.setCancelled(true);
@@ -1303,7 +1303,7 @@ public class RPPlayerListener implements Listener {
 
         RedProtect.get().logger.debug("Is PotionSplashEvent event.");
 
-        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.usePotions(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
@@ -1377,7 +1377,7 @@ public class RPPlayerListener implements Listener {
         toremove.clear();
     }
 
-    private void EnterExitNotify(Region r, Player p) {
+    private void EnterExitNotify(BukkitRegion r, Player p) {
         if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("OFF")) {
             return;
         }
@@ -1393,8 +1393,8 @@ public class RPPlayerListener implements Listener {
             if (RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("BOSSBAR")
                     || RPConfig.getString("notify.region-enter-mode").equalsIgnoreCase("CHAT")) {
                 StringBuilder leaderstringBuilder = new StringBuilder();
-                for (Pair<String, String> leader : r.getLeaders()) {
-                    leaderstringBuilder.append(", ").append(leader.getValue());
+                for (RegionPlayer<String, String> leader : r.getLeaders()) {
+                    leaderstringBuilder.append(", ").append(leader.getPlayerName());
                 }
                 leaderstring = leaderstringBuilder.toString();
 
@@ -1421,7 +1421,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    private void RegionFlags(final Region r, Region er, final Player p, boolean join) {
+    private void RegionFlags(final BukkitRegion r, BukkitRegion er, final Player p, boolean join) {
 
         if (r.canEnter(p)) {
 
@@ -1640,7 +1640,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-    private void noRegionFlags(Region er, Player p) {
+    private void noRegionFlags(BukkitRegion er, Player p) {
 
         if (er != null && er.canExit(p)) {
 
@@ -1758,7 +1758,7 @@ public class RPPlayerListener implements Listener {
         RedProtect.get().logger.debug("Is RPPlayerListener - HangingBreakByEntityEvent event");
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(loc);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(loc);
 
         if (ent instanceof Player) {
             Player player = (Player) ent;
@@ -1781,7 +1781,7 @@ public class RPPlayerListener implements Listener {
         }
         Player p = e.getPlayer();
         Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
             e.setCancelled(true);
@@ -1795,7 +1795,7 @@ public class RPPlayerListener implements Listener {
         }
         Player p = e.getPlayer();
         Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
 
         if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
             e.setCancelled(true);
@@ -1809,7 +1809,7 @@ public class RPPlayerListener implements Listener {
         }
 
         Player p = (Player) e.getEntity();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null && !r.canHunger()) {
             e.setCancelled(true);
         }

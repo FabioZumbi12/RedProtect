@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
     public String onPlaceholderRequest(Player p, String arg) {
         String text = "";
         if (arg.equals("player_in_region")) {
-            Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
             text = r == null ? RPLang.get("region.wilderness") : r.getName();
         }
         if (arg.equals("player_used_claims")) {
@@ -63,7 +63,7 @@ public class RPPlaceHoldersAPI extends EZPlaceholderHook {
             text = l == -1 ? RPLang.get("regionbuilder.area.unlimited") : String.valueOf(l);
         }
         if (arg.startsWith("region_flag_value_")) {
-            Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
             if (r != null) {
                 String value = r.getFlagString(arg.replace("region_flag_value_", ""));
                 if (value == null) {

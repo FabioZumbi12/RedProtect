@@ -30,7 +30,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.TileEntity;
@@ -41,7 +41,7 @@ import org.spongepowered.api.world.World;
 public class RPEconomy {
 
 
-    public static long getRegionValue(Region r) {
+    public static long getRegionValue(SpongeRegion r) {
         long regionCost = 0;
         World w = RedProtect.get().serv.getWorld(r.getWorld()).get();
         int maxX = r.getMaxMbrX();
@@ -87,7 +87,7 @@ public class RPEconomy {
         return RedProtect.get().getPVHelper().getInvValue(inv);
     }
 
-    public static String getCostMessage(Region r) {
+    public static String getCostMessage(SpongeRegion r) {
         return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().cfgs.getEcoString("economy-name");
     }
 
@@ -95,7 +95,7 @@ public class RPEconomy {
         return RedProtect.get().cfgs.getEcoString("economy-symbol") + value;
     }
 
-    public static boolean putToSell(Region r, String uuid, long value) {
+    public static boolean putToSell(SpongeRegion r, String uuid, long value) {
         try {
             r.clearMembers();
             r.clearAdmins();
@@ -111,7 +111,7 @@ public class RPEconomy {
         }
     }
 
-    public static boolean BuyRegion(Region r, String uuid) {
+    public static boolean BuyRegion(SpongeRegion r, String uuid) {
         try {
             r.clearMembers();
             r.clearAdmins();

@@ -116,11 +116,11 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Deserializes a JSON-represented message from a mapping of key-value pairs.
+     * Deserializes a JSON-represented message from a mapping of uuid-playername pairs.
      * This is called by the Bukkit serialization API.
      * It is not intended for direct public API consumption.
      *
-     * @param serialized The key-value mapping which represents a fancy message.
+     * @param serialized The uuid-playername mapping which represents a fancy message.
      */
     @SuppressWarnings("unchecked")
     public static FancyMessage deserialize(Map<String, Object> serialized) {
@@ -149,16 +149,16 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             for (Map.Entry<String, JsonElement> entry : messagePart.entrySet()) {
                 // Deserialize text
                 if (TextualComponent.isTextKey(entry.getKey())) {
-                    // The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
+                    // The map mimics the YAML serialization, which has a "uuid" field and one or more "playername" fields
                     Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
-                    serializedMapForm.put("key", entry.getKey());
+                    serializedMapForm.put("uuid", entry.getKey());
                     if (entry.getValue().isJsonPrimitive()) {
                         // Assume string
-                        serializedMapForm.put("value", entry.getValue().getAsString());
+                        serializedMapForm.put("playername", entry.getValue().getAsString());
                     } else {
                         // Composite object, but we assume each element is a string
                         for (Map.Entry<String, JsonElement> compositeNestedElement : entry.getValue().getAsJsonObject().entrySet()) {
-                            serializedMapForm.put("value." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
+                            serializedMapForm.put("playername." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
                         }
                     }
                     component.text = TextualComponent.deserialize(serializedMapForm);
@@ -171,18 +171,18 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
                 } else if (entry.getKey().equals("clickEvent")) {
                     JsonObject object = entry.getValue().getAsJsonObject();
                     component.clickActionName = object.get("action").getAsString();
-                    component.clickActionData = object.get("value").getAsString();
+                    component.clickActionData = object.get("playername").getAsString();
                 } else if (entry.getKey().equals("hoverEvent")) {
                     JsonObject object = entry.getValue().getAsJsonObject();
                     component.hoverActionName = object.get("action").getAsString();
-                    if (object.get("value").isJsonPrimitive()) {
+                    if (object.get("playername").isJsonPrimitive()) {
                         // Assume string
-                        component.hoverActionData = new JsonString(object.get("value").getAsString());
+                        component.hoverActionData = new JsonString(object.get("playername").getAsString());
                     } else {
                         // Assume composite type
                         // The only composite type we currently store is another FancyMessage
                         // Therefore, recursion time!
-                        component.hoverActionData = deserialize(object.get("value").toString() /* This should properly serialize the JSON object as a JSON string */);
+                        component.hoverActionData = deserialize(object.get("playername").toString() /* This should properly serialize the JSON object as a JSON string */);
                     }
                 } else if (entry.getKey().equals("insertion")) {
                     component.insertionData = entry.getValue().getAsString();
@@ -216,7 +216,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Sets the text of the current editing component to a value.
+     * Sets the text of the current editing component to a playername.
      *
      * @param text The new text of the current editing component.
      * @return This builder instance.
@@ -229,7 +229,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Sets the text of the current editing component to a value.
+     * Sets the text of the current editing component to a playername.
      *
      * @param text The new text of the current editing component.
      * @return This builder instance.
@@ -242,11 +242,11 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Sets the color of the current editing component to a value.
+     * Sets the color of the current editing component to a playername.
      *
      * @param color The new color of the current editing component.
      * @return This builder instance.
-     * @throws IllegalArgumentException If the specified {@code ChatColor} enumeration value is not a color (but a format value).
+     * @throws IllegalArgumentException If the specified {@code ChatColor} enumeration playername is not a color (but a format playername).
      */
     public FancyMessage color(final ChatColor color) {
         if (!color.isColor()) {
@@ -299,7 +299,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
     /**
      * Set the behavior of the current editing component to instruct the client to replace the chat input box content with the specified string when the currently edited part of the {@code FancyMessage} is clicked.
-     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter key.
+     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter uuid.
      *
      * @param command The text to display in the chat bar of the client.
      * @return This builder instance.
@@ -311,7 +311,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
     /**
      * Set the behavior of the current editing component to instruct the client to append the chat input box content with the specified string when the currently edited part of the {@code FancyMessage} is SHIFT-CLICKED.
-     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter key.
+     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter uuid.
      *
      * @param command The text to append to the chat bar of the client.
      * @return This builder instance.
@@ -493,7 +493,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	/*
 	
 	/**
-	 * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+	 * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
 	 * @param replacements The replacements, in order, that will be used in the language-specific message.
 	 * @return This builder instance.
 	 */   /* ------------
@@ -596,7 +596,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+     * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
      *
      * @param replacements The replacements, in order, that will be used in the language-specific message.
      * @return This builder instance.
@@ -611,7 +611,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+     * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
      *
      * @param replacements The replacements, in order, that will be used in the language-specific message.
      * @return This builder instance.
@@ -625,7 +625,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+     * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
      *
      * @param replacements The replacements, in order, that will be used in the language-specific message.
      * @return This builder instance.
@@ -751,7 +751,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
     private Object createChatPacket(String json) throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         if (nmsChatSerializerGsonInstance == null) {
-            // Find the field and its value, completely bypassing obfuscation
+            // Find the field and its playername, completely bypassing obfuscation
             Class<?> chatSerializerClazz;
 
             String[] version = Reflection.getVersion().replace('_', '.').split("\\.");

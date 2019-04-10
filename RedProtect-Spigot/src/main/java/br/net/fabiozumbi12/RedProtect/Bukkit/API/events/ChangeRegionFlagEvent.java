@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.API.events;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -36,13 +36,13 @@ import org.bukkit.event.HandlerList;
 
 public class ChangeRegionFlagEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private final Region region;
+    private final BukkitRegion region;
     private String flag;
     private Object value;
     private CommandSender cause;
     private boolean isCancelled = false;
 
-    public ChangeRegionFlagEvent(CommandSender cause, Region region, String flag, Object value) {
+    public ChangeRegionFlagEvent(CommandSender cause, BukkitRegion region, String flag, Object value) {
         this.region = region;
         this.flag = flag;
         this.value = value;
@@ -53,7 +53,7 @@ public class ChangeRegionFlagEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    public Region getRegion() {
+    public BukkitRegion getRegion() {
         return this.region;
     }
 

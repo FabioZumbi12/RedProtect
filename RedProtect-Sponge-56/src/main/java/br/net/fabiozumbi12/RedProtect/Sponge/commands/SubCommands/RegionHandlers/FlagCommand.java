@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPGui;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
@@ -61,7 +61,7 @@ public class FlagCommand {
                     } else {
                         Player player = (Player)src;
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r == null) {
                             RPLang.sendMessage(player, "cmdmanager.region.todo.that");
                             return CommandResult.success();

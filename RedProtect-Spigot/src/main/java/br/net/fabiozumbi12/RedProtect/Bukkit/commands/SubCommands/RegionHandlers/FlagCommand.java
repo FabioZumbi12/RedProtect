@@ -28,10 +28,10 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -56,7 +56,7 @@ public class FlagCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
                 if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")){
                     RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, false, RPConfig.getGuiMaxSlot());
@@ -71,7 +71,7 @@ public class FlagCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r == null) {
                 RPLang.sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
@@ -104,7 +104,7 @@ public class FlagCommand implements SubCommand {
         }
 
 
-        Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
         if (r == null) {
             RPLang.sendMessage(player, "cmdmanager.region.todo.that");
             return true;

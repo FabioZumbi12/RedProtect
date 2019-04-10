@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
@@ -104,10 +105,10 @@ public class WEListener {
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
-    public static br.net.fabiozumbi12.RedProtect.Sponge.Region pasteWithWE(Player p, File file) {
+    public static SpongeRegion pasteWithWE(Player p, File file) {
         World world = p.getWorld();
         Location loc = p.getLocation();
-        br.net.fabiozumbi12.RedProtect.Sponge.Region r = null;
+        SpongeRegion r = null;
 
         if (p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.WATER) ||
                 p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.FLOWING_WATER)) {
@@ -153,7 +154,7 @@ public class WEListener {
         return r;
     }
 
-    public static void regenRegion(final br.net.fabiozumbi12.RedProtect.Sponge.Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
+    public static void regenRegion(final SpongeRegion r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             if (RPUtil.stopRegen) {
                 return;

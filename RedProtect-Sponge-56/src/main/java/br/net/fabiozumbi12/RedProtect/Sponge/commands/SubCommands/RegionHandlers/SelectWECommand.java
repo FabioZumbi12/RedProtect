@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import org.spongepowered.api.command.CommandResult;
@@ -52,7 +52,7 @@ public class SelectWECommand {
                         Player player = (Player)src;
 
                         if (RedProtect.get().WE) {
-                            Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                            SpongeRegion r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                             if (r == null) {
                                 RPLang.sendMessage(player, "cmdmanager.region.doesexists");
                                 return CommandResult.success();

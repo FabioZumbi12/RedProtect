@@ -28,21 +28,18 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import javafx.util.Pair;
+import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandException;
-import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("deprecation")
 public class WorldMySQLRegionManager implements WorldRegionManager {
@@ -51,7 +48,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private final String reconnect = "?autoReconnect=true";
     private final String dbname = RPConfig.getString("mysql.db-name");
     private final String tableName;
-    private final HashMap<String, Region> regions;
+    private final HashMap<String, BukkitRegion> regions;
     private final World world;
     private Connection dbcon;
 
@@ -77,7 +74,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             if (!this.checkTableExists()) {
                 Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RPConfig.getString("mysql.user-name"), RPConfig.getString("mysql.user-pass"));
 
-                st = con.prepareStatement("CREATE TABLE `" + tableName + "` (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
+                st = con.prepareStatement("CREATE TABLE `" + tableName + "` (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), playername Long not null, tppoint mediumtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
                 st.executeUpdate();
                 st.close();
                 st = null;
@@ -135,14 +132,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     /*-------------------------------------- Live Actions -------------------------------------------*/
     @Override
-    public void remove(Region r) {
+    public void remove(BukkitRegion r) {
         removeLiveRegion(r);
         if (this.regions.containsValue(r)) {
             this.regions.remove(r.getName());
         }
     }
 
-    private void removeLiveRegion(Region r) {
+    private void removeLiveRegion(BukkitRegion r) {
         if (this.regionExists(r.getName())) {
             try {
                 PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM `" + tableName + "` WHERE name = ?");
@@ -156,14 +153,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void add(Region r) {
+    public void add(BukkitRegion r) {
         addLiveRegion(r);
     }
 
-    private void addLiveRegion(Region r) {
+    private void addLiveRegion(BukkitRegion r) {
         if (!this.regionExists(r.getName())) {
             try {
-                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
+                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,playername,tppoint,candelete,flags) "
                         + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 st.setString(1, r.getName());
                 st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
@@ -278,10 +275,10 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.setString(1, this.world.getName());
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                RedProtect.get().logger.debug("Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
-                Set<Pair<String, String>> leaders = new HashSet<>();
-                Set<Pair<String, String>> admins = new HashSet<>();
-                Set<Pair<String, String>> members = new HashSet<>();
+                RedProtect.get().logger.debug("Load BukkitRegion: " + rs.getString("name") + ", World: " + this.world.getName());
+                Set<RegionPlayer<String, String>> leaders = new HashSet<>();
+                Set<RegionPlayer<String, String>> admins = new HashSet<>();
+                Set<RegionPlayer<String, String>> members = new HashSet<>();
                 HashMap<String, Object> flags = new HashMap<>();
 
                 int maxMbrX = rs.getInt("maxMbrX");
@@ -295,7 +292,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 String world = rs.getString("world");
                 String date = rs.getString("date");
                 String wel = rs.getString("wel");
-                long value = rs.getLong("value");
+                long value = rs.getLong("playername");
                 boolean candel = rs.getBoolean("candelete");
 
                 Location tppoint = null;
@@ -308,19 +305,19 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 for (String member : rs.getString("members").split(", ")) {
                     if (member.length() > 0) {
                         String[] p = member.split("@");
-                        members.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        members.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String admin : rs.getString("admins").split(", ")) {
                     if (admin.length() > 0) {
                         String[] p = admin.split("@");
-                        admins.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        admins.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String leader : rs.getString("leaders").split(", ")) {
                     if (leader.length() > 0) {
                         String[] p = leader.split("@");
-                        leaders.add(new Pair<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        leaders.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
 
@@ -331,7 +328,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));
                     }
                 }
-                Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                BukkitRegion newr = new BukkitRegion(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
                 regions.put(newr.getName(), newr);
             }
             st.close();
@@ -344,8 +341,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     /*---------------------------------------------------------------------------------*/
 
     @Override
-    public Set<Region> getRegions(String uuid) {
-        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+    public Set<BukkitRegion> getRegions(String uuid) {
+        SortedSet<BukkitRegion> regionsp = new TreeSet<>(Comparator.comparing(BukkitRegion::getName));
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders = ?");
             st.setString(1, "%" + uuid + "%");
@@ -362,8 +359,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getMemberRegions(String uuid) {
-        Set<Region> regionsp = new HashSet<>();
+    public Set<BukkitRegion> getMemberRegions(String uuid) {
+        Set<BukkitRegion> regionsp = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders = ? OR admins = ?");
             st.setString(1, "%" + uuid + "%");
@@ -381,7 +378,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Region getRegion(final String rname) {
+    public BukkitRegion getRegion(final String rname) {
         if (this.dbcon == null) {
             ConnectDB();
         }
@@ -395,9 +392,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    Set<Pair<String, String>> leaders = new HashSet<>();
-                    Set<Pair<String, String>> admins = new HashSet<>();
-                    Set<Pair<String, String>> members = new HashSet<>();
+                    Set<RegionPlayer<String, String>> leaders = new HashSet<>();
+                    Set<RegionPlayer<String, String>> admins = new HashSet<>();
+                    Set<RegionPlayer<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -410,7 +407,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     String world = rs.getString("world");
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
-                    long value = rs.getLong("value");
+                    long value = rs.getLong("playername");
                     boolean candel = rs.getBoolean("candelete");
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
@@ -429,7 +426,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                             p[0] = RPUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
                         }
-                        members.add(new Pair<>(p[0], p[1]));
+                        members.add(new RegionPlayer<>(p[0], p[1]));
                     }
 
                     for (String admin : rs.getString("admins").split(", ")) {
@@ -440,7 +437,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                             p[0] = RPUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
                         }
-                        admins.add(new Pair<>(p[0], p[1]));
+                        admins.add(new RegionPlayer<>(p[0], p[1]));
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         String[] pi = leader.split("@");
@@ -450,7 +447,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                             p[0] = RPUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
                         }
-                        leaders.add(new Pair<>(p[0], p[1]));
+                        leaders.add(new RegionPlayer<>(p[0], p[1]));
                     }
 
                     for (String flag : rs.getString("flags").split(",")) {
@@ -458,7 +455,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         flags.put(key, RPUtil.parseObject(flag.substring((key + ":").length())));
                     }
 
-                    Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                    BukkitRegion reg = new BukkitRegion(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
                     regions.put(rname, reg);
                 } else {
                     return null;
@@ -487,18 +484,15 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public int getTotalRegionSize(String uuid) {
         int total = 0;
-        for (Region r2 : this.getRegions(uuid)) {
+        for (BukkitRegion r2 : this.getRegions(uuid)) {
             total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }
 
     @Override
-    public Set<Region> getRegionsNear(Player player, int radius) {
-        int px = player.getLocation().getBlockX();
-        int pz = player.getLocation().getBlockZ();
-        Set<Region> ret = new HashSet<>();
-
+    public Set<BukkitRegion> getRegionsNear(int px, int pz, int radius) {
+        SortedSet<BukkitRegion> ret = new TreeSet<>(Comparator.comparing(BukkitRegion::getName));
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE ABS(centerX-?)<=? AND ABS(centerZ-?)<=?");
             st.setInt(1, px);
@@ -518,7 +512,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 /*
     @Override
-    public Set<Region> getRegionsInChunk(Chunk chunk) {
+    public Set<BukkitRegion> getRegionsInChunk(Chunk chunk) {
         return chunksMap.getOrDefault(chunk, new HashSet<>());
     }*/
 
@@ -544,8 +538,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getInnerRegions(Region region) {
-        Set<Region> regionl = new HashSet<>();
+    public Set<BukkitRegion> getInnerRegions(BukkitRegion region) {
+        Set<BukkitRegion> regionl = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE maxMbrX<=? AND maxY<=? AND maxMbrZ<=? AND minMbrX>=? AND minY>=? AND minMbrZ>=?");
             st.setInt(1, region.getMaxMbrX());
@@ -567,8 +561,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getRegions(int x, int y, int z) {
-        Set<Region> regionl = new HashSet<>();
+    public Set<BukkitRegion> getRegions(int x, int y, int z) {
+        Set<BukkitRegion> regionl = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE ?<=maxMbrX AND ?>=minMbrX AND ?<=maxMbrZ AND ?>=minMbrZ AND ?<=maxY AND ?>=minY");
             st.setInt(1, x);
@@ -590,14 +584,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Region getTopRegion(int x, int y, int z) {
-        Map<Integer, Region> regionlist = new HashMap<>();
+    public BukkitRegion getTopRegion(int x, int y, int z) {
+        Map<Integer, BukkitRegion> regionlist = new HashMap<>();
         int max = 0;
 
-        for (Region r : this.getRegions(x, y, z)) {
+        for (BukkitRegion r : this.getRegions(x, y, z)) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    Region reg1 = regionlist.get(r.getPrior());
+                    BukkitRegion reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -616,14 +610,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Region getLowRegion(int x, int y, int z) {
-        Map<Integer, Region> regionlist = new HashMap<>();
+    public BukkitRegion getLowRegion(int x, int y, int z) {
+        Map<Integer, BukkitRegion> regionlist = new HashMap<>();
         int min = 0;
 
-        for (Region r : this.getRegions(x, y, z)) {
+        for (BukkitRegion r : this.getRegions(x, y, z)) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    Region reg1 = regionlist.get(r.getPrior());
+                    BukkitRegion reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -641,13 +635,13 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         return regionlist.get(min);
     }
 
-    public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
-        Map<Integer, Region> regionlist = new HashMap<>();
+    public Map<Integer, BukkitRegion> getGroupRegion(int x, int y, int z) {
+        Map<Integer, BukkitRegion> regionlist = new HashMap<>();
 
-        for (Region r : this.getRegions(x, y, z)) {
+        for (BukkitRegion r : this.getRegions(x, y, z)) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    Region reg1 = regionlist.get(r.getPrior());
+                    BukkitRegion reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -662,8 +656,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getAllRegions() {
-        Set<Region> allregions = new HashSet<>();
+    public Set<BukkitRegion> getAllRegions() {
+        Set<BukkitRegion> allregions = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "`");
             ResultSet rs = st.executeQuery();

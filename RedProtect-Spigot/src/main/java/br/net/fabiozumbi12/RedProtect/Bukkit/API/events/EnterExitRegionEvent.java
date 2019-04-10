@@ -28,7 +28,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.API.events;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -48,12 +48,12 @@ public class EnterExitRegionEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
-    private final Region ExitedRegion;
-    private final Region EnteredRegion;
+    private final BukkitRegion ExitedRegion;
+    private final BukkitRegion EnteredRegion;
     private boolean cancelled = false;
 
 
-    public EnterExitRegionEvent(Region ExitedRegion, Region EnteredRegion, Player player) {
+    public EnterExitRegionEvent(BukkitRegion ExitedRegion, BukkitRegion EnteredRegion, Player player) {
         this.player = player;
         this.ExitedRegion = ExitedRegion;
         this.EnteredRegion = EnteredRegion;
@@ -68,11 +68,11 @@ public class EnterExitRegionEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    public Region getExitedRegion() {
+    public BukkitRegion getExitedRegion() {
         return this.ExitedRegion;
     }
 
-    public Region getEnteredRegion() {
+    public BukkitRegion getEnteredRegion() {
         return this.EnteredRegion;
     }
 

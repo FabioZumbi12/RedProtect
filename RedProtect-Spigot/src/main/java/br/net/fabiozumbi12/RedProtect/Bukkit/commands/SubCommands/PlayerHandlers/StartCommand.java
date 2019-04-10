@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -60,7 +60,7 @@ public class StartCommand implements SubCommand {
                 return true;
             }
 
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null && r.isMember(player)) {
                 RPLang.sendMessage(player, "playerlistener.region.claimlimit.start");
                 return true;

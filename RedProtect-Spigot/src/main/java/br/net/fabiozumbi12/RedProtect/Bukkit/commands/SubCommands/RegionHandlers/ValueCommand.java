@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -54,17 +54,17 @@ public class ValueCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
-                if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
-                    if (r.getArea() <= RPConfig.getEcoInt("max-area-toget-value")) {
+                if (RedProtect.get().ph.hasRegionPermLeader(player, "playername", r)) {
+                    if (r.getArea() <= RPConfig.getEcoInt("max-area-toget-playername")) {
                         r.setValue(RPEconomy.getRegionValue(r));
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RPConfig.getEcoString("economy-name")));
+                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{playername}", RPEconomy.getFormatted(r.getValue()) + " " + RPConfig.getEcoString("economy-name")));
 
-                        RedProtect.get().logger.debug("Region Value: " + r.getValue());
+                        RedProtect.get().logger.debug("BukkitRegion Value: " + r.getValue());
                         return true;
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-value").toString()));
+                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-playername").toString()));
                         return true;
                     }
                 } else {
@@ -77,7 +77,7 @@ public class ValueCommand implements SubCommand {
             }
         }
 
-        RPLang.sendCommandHelp(sender, "value", true);
+        RPLang.sendCommandHelp(sender, "playername", true);
         return true;
     }
 

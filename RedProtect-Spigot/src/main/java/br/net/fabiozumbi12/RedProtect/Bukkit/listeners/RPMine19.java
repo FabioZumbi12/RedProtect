@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.Location;
@@ -81,7 +81,7 @@ public class RPMine19 implements Listener {
 
         if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)) {
             Material hand = itemInHand.getType();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true);
@@ -101,8 +101,8 @@ public class RPMine19 implements Listener {
         Location lto = e.getTo();
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
-            final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
-            final Region rto = RedProtect.get().rm.getTopRegion(lto);
+            final BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(lfrom);
+            final BukkitRegion rto = RedProtect.get().rm.getTopRegion(lto);
 
             if (rfrom != null && !rfrom.canTeleport(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantuse");
@@ -145,7 +145,7 @@ public class RPMine19 implements Listener {
 
         RedProtect.get().logger.debug("Is LingeringPotionSplashEvent event.");
 
-        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.allowEffects(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
@@ -172,7 +172,7 @@ public class RPMine19 implements Listener {
             return;
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null && e.getItem().getType().equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
@@ -188,7 +188,7 @@ public class RPMine19 implements Listener {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
             Block b = e.getBlock();
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (r != null && !r.canBuild(p)) {
                 RPLang.sendMessage(p, "blocklistener.region.cantbreak");
                 e.setCancelled(true);

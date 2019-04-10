@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
@@ -67,7 +67,7 @@ public class RPDynmap implements Listener {
 
         //start set markers
         for (World w : RedProtect.get().serv.getWorlds()) {
-            for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+            for (BukkitRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
                 if (!r.allowDynmap()) continue;
                 addMark(r);
             }
@@ -87,12 +87,12 @@ public class RPDynmap implements Listener {
     }
 
     public void removeAll(World w) {
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+        for (BukkitRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
             removeMark(r);
         }
     }
 
-    public void removeMark(Region r) {
+    public void removeMark(BukkitRegion r) {
         AreaMarker am = MSet.findAreaMarker(r.getID());
         if (am != null) {
             am.deleteMarker();
@@ -103,7 +103,7 @@ public class RPDynmap implements Listener {
         }
     }
 
-    public void addMark(Region r) {
+    public void addMark(BukkitRegion r) {
         AreaMarker am = MSet.findAreaMarker(r.getID());
 
         double[] x = new double[4];

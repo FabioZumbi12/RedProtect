@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -107,7 +107,7 @@ public class RPWorldListener implements Listener {
         }
         Entity[] ents = e.getChunk().getEntities();
         for (Entity ent : ents) {
-            Region entr = RedProtect.get().rm.getTopRegion(ent.getLocation());
+            BukkitRegion entr = RedProtect.get().rm.getTopRegion(ent.getLocation());
             if (entr != null) {
                 if (!entr.canSpawnMonsters() && ent instanceof Monster) {
                     ent.remove();

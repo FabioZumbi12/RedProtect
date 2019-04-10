@@ -30,7 +30,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -58,7 +58,7 @@ public class LDenyCommand {
                             String info = RedProtect.get().alWait.get(player);
 
                             Optional<Player> lsender = Sponge.getServer().getPlayer(info.split("@")[2]);
-                            Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
+                            SpongeRegion r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
                             if (r != null) {
                                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", info.split("@")[2]));

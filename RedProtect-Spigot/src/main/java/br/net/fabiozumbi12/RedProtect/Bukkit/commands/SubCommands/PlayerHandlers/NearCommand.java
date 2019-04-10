@@ -28,8 +28,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import org.bukkit.ChatColor;
@@ -55,16 +55,16 @@ public class NearCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Set<Region> regions = RedProtect.get().rm.getRegionsNear(player, 60);
+            Set<BukkitRegion> regions = RedProtect.get().rm.getRegionsNear(player, 60);
             if (regions.size() == 0) {
                 RPLang.sendMessage(player, "cmdmanager.noregions.nearby");
             } else {
-                Iterator<Region> i = regions.iterator();
+                Iterator<BukkitRegion> i = regions.iterator();
                 RPLang.sendMessage(player, RPLang.get("general.color") + "------------------------------------");
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.near"));
                 RPLang.sendMessage(player, RPLang.get("general.color") + "------------------------------------");
                 while (i.hasNext()) {
-                    Region r = i.next();
+                    BukkitRegion r = i.next();
                     player.sendMessage(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + ChatColor.translateAlternateColorCodes('&', " | Center (&6X,Z" + RPLang.get("general.color") + "): &6") + r.getCenterX() + ", " + r.getCenterZ());
                 }
                 RPLang.sendMessage(player, RPLang.get("general.color") + "------------------------------------");

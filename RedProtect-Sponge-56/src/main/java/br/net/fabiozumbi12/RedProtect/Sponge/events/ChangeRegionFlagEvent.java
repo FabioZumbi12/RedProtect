@@ -28,27 +28,27 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.events;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
 public class ChangeRegionFlagEvent extends AbstractEvent implements Cancellable, Event {
-    private final Region region;
+    private final SpongeRegion region;
     private String flag;
     private Object value;
     private Cause cause;
     private boolean isCancelled = false;
 
-    public ChangeRegionFlagEvent(Cause cause, Region region, String flag, Object value) {
+    public ChangeRegionFlagEvent(Cause cause, SpongeRegion region, String flag, Object value) {
         this.region = region;
         this.flag = flag;
         this.value = value;
         this.cause = cause;
     }
 
-    public Region getRegion() {
+    public SpongeRegion getRegion() {
         return this.region;
     }
 

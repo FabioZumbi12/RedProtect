@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -60,10 +60,10 @@ public class RPGui implements Listener {
     private int size;
     private ItemStack[] guiItems;
     private Player player;
-    private Region region;
+    private BukkitRegion region;
     private Inventory inv;
 
-    public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot) {
+    public RPGui(String name, Player player, BukkitRegion region, boolean edit, int MaxSlot) {
         this.edit = edit;
         this.name = name;
         this.player = player;
@@ -127,7 +127,7 @@ public class RPGui implements Listener {
                 this.guiItems[i] = RPConfig.getGuiItemStack(flag);
                 ItemMeta guiMeta = this.guiItems[i].getItemMeta();
                 guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag, "name"));
-                guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + fvalue, "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
+                guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("playername") + fvalue, "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
                 if (allowEnchant) {
                     if (this.region.getFlagBool(flag)) {
                         guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -260,7 +260,7 @@ public class RPGui implements Listener {
             }
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + RPConfig.getGuiString(String.valueOf(flagv)), "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
+        itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("playername") + RPConfig.getGuiString(String.valueOf(flagv)), "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
         event.getCurrentItem().setItemMeta(itemMeta);
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
     }

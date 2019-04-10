@@ -31,7 +31,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -163,7 +163,7 @@ public class RPGlobalListener {
     public void PlayerDropItem(DropItemEvent.Dispense e, @Root Player p) {
         for (Entity ent : e.getEntities()) {
             Location<World> l = ent.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+            SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 
             if (r == null && !RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).player_candrop && !p.hasPermission("redprotect.world.bypass")) {
                 e.setCancelled(true);
@@ -177,7 +177,7 @@ public class RPGlobalListener {
             if (!(ent instanceof Item)) {
                 continue;
             }
-            Region r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
+            SpongeRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
             if (r == null && !RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).player_canpickup && !p.hasPermission("redprotect.world.bypass")) {
                 event.setCancelled(true);
             }
@@ -195,7 +195,7 @@ public class RPGlobalListener {
         MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
         if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID) {
             e.getLocations().forEach(loc -> {
-                Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+                SpongeRegion r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
                 if (r == null) {
                     boolean flow = RedProtect.get().cfgs.gFlags().worlds.get(locatable.getLocation().getExtent().getName()).allow_changes_of.liquid_flow;
                     boolean allowWater = RedProtect.get().cfgs.gFlags().worlds.get(locatable.getLocation().getExtent().getName()).allow_changes_of.water_flow;
@@ -225,7 +225,7 @@ public class RPGlobalListener {
             if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID) {
                 boolean allowdamage = RedProtect.get().cfgs.gFlags().worlds.get(locatable.getLocation().getExtent().getName()).allow_changes_of.flow_damage;
 
-                Region r = RedProtect.get().rm.getTopRegion(locatable.getLocation(), this.getClass().getName());
+                SpongeRegion r = RedProtect.get().rm.getTopRegion(locatable.getLocation(), this.getClass().getName());
                 if (r == null && !allowdamage && locatable.getLocation().getBlockType() != BlockTypes.AIR) {
                     e.setCancelled(true);
                 }
@@ -239,7 +239,7 @@ public class RPGlobalListener {
 
         BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
         boolean allowDecay = RedProtect.get().cfgs.gFlags().worlds.get(bfrom.getLocation().get().getExtent().getName()).allow_changes_of.leaves_decay;
-        Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get(), this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get(), this.getClass().getName());
         if (r == null && !allowDecay) {
             e.setCancelled(true);
         }
@@ -251,7 +251,7 @@ public class RPGlobalListener {
 
         BlockSnapshot b = e.getTransactions().get(0).getFinal();
         ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
-        Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
 
         if (r != null) {
             return;
@@ -291,7 +291,7 @@ public class RPGlobalListener {
             return;
         }
         Location<World> loc = new Location<>(p.getWorld(), e.getInteractionPoint().get());
-        Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
 
         if (!canUse(p, r)) {
             e.setCancelled(true);
@@ -367,7 +367,7 @@ public class RPGlobalListener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + false);
 
         BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
-        Region r = RedProtect.get().rm.getTopRegion(bt.getLocation().get(), this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(bt.getLocation().get(), this.getClass().getName());
         if (r != null) {
             return;
         }
@@ -390,7 +390,7 @@ public class RPGlobalListener {
         Transaction<BlockSnapshot> b = e.getTransactions().get(0);
 
         if (e.getCause().first(Monster.class).isPresent()) {
-            Region r = RedProtect.get().rm.getTopRegion(b.getOriginal().getLocation().get(), this.getClass().getName());
+            SpongeRegion r = RedProtect.get().rm.getTopRegion(b.getOriginal().getLocation().get(), this.getClass().getName());
             if (r == null && !RedProtect.get().cfgs.gFlags().worlds.get(b.getOriginal().getLocation().get().getExtent().getName()).use_minecart) {
                 e.setCancelled(true);
             }
@@ -408,7 +408,7 @@ public class RPGlobalListener {
                 (sourceState.getType() == BlockTypes.FIRE || sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA)) {
             boolean fireDamage = RedProtect.get().cfgs.gFlags().worlds.get(locatable.getLocation().getExtent().getName()).fire_spread;
             if (!fireDamage) {
-                Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
+                SpongeRegion r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
                 if (r == null) {
                     RedProtect.get().logger.debug(LogLevel.BLOCKS, "Tryed to PLACE FIRE!");
                     e.setCancelled(true);
@@ -427,7 +427,7 @@ public class RPGlobalListener {
             BlockSnapshot b = e.getTransactions().get(0).getOriginal();
             boolean fireDamage = RedProtect.get().cfgs.gFlags().worlds.get(locatable.getLocation().getExtent().getName()).fire_block_damage;
             if (!fireDamage && b.getState().getType() != BlockTypes.FIRE) {
-                Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+                SpongeRegion r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
                 if (r == null) {
                     RedProtect.get().logger.debug(LogLevel.BLOCKS, "Tryed to break from FIRE!");
                     e.setCancelled(true);
@@ -442,7 +442,7 @@ public class RPGlobalListener {
 
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
                 
         if (!canUse(p, r)){
         	e.setCancelled(true);
@@ -459,7 +459,7 @@ public class RPGlobalListener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onBucketUse event");
 
         Location<World> l = p.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 
         if (!canUse(p, r)) {
             e.setCancelled(true);
@@ -521,7 +521,7 @@ public class RPGlobalListener {
 
 
         if (e1 instanceof Living && !(e1 instanceof Monster)) {
-            Region r = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
+            SpongeRegion r = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
             if (r == null && RedProtect.get().cfgs.gFlags().worlds.get(e1.getWorld().getName()).invincible) {
                 e.setCancelled(true);
             }
@@ -539,7 +539,7 @@ public class RPGlobalListener {
         Location<World> loc = e1.getLocation();
 
         if (e2 instanceof Projectile) {
-            Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+            SpongeRegion r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
             if (r1 != null) {
                 return;
             }
@@ -560,7 +560,7 @@ public class RPGlobalListener {
         }
 
         if (e2 instanceof Creeper || e2 instanceof PrimedTNT || e2 instanceof TNTMinecart) {
-            Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+            SpongeRegion r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
             if (r1 != null) {
                 return;
             }
@@ -592,7 +592,7 @@ public class RPGlobalListener {
         }
 
         if (e2 instanceof Player) {
-            Region r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+            SpongeRegion r1 = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
             if (r1 != null) {
                 return;
             }
@@ -637,7 +637,7 @@ public class RPGlobalListener {
 
         World w = e.getTargetWorld();
         for (Location<World> b : e.getAffectedLocations()) {
-            Region r = RedProtect.get().rm.getTopRegion(b, this.getClass().getName());
+            SpongeRegion r = RedProtect.get().rm.getTopRegion(b, this.getClass().getName());
             if (r == null && !RedProtect.get().cfgs.gFlags().worlds.get(w.getName()).entity_block_damage) {
                 e.setCancelled(true);
                 return;
@@ -721,7 +721,7 @@ public class RPGlobalListener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is ChangeBlockEvent.Grow event");
 
         BlockSnapshot b = e.getTransactions().get(0).getOriginal();
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+        SpongeRegion r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
         if (r == null && !RedProtect.get().cfgs.gFlags().worlds.get(b.getLocation().get().getExtent().getName()).block_grow) {
             e.setCancelled(true);
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "Cancel grow " + b.getState().getName());
@@ -759,7 +759,7 @@ public class RPGlobalListener {
         }
     }
 
-    private boolean canUse(Player p, Region r) {
+    private boolean canUse(Player p, SpongeRegion r) {
         boolean claimRps = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps;
         boolean wilderness = RedProtect.get().cfgs.gFlags().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_wilderness;
 

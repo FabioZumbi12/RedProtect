@@ -227,6 +227,7 @@
         <github.global.server>github-user</github.global.server>
     </properties>
     <modules>
+        <module>RedProtect-Core</module>
         <module>RedProtect-Spigot</module>
         <module>RedProtect-Spigot-1.13</module>
         <module>RedProtect-Sponge-56</module>

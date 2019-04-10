@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.events;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
@@ -51,22 +51,22 @@ import org.spongepowered.api.event.impl.AbstractEvent;
 public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, Event {
 
     private final Player player;
-    private final Region ExitedRegion;
-    private final Region EnteredRegion;
+    private final SpongeRegion ExitedRegion;
+    private final SpongeRegion EnteredRegion;
     private boolean cancelled;
 
 
-    public EnterExitRegionEvent(Region ExitedRegion, Region EnteredRegion, Player player) {
+    public EnterExitRegionEvent(SpongeRegion ExitedRegion, SpongeRegion EnteredRegion, Player player) {
         this.player = player;
         this.ExitedRegion = ExitedRegion;
         this.EnteredRegion = EnteredRegion;
     }
 
-    public Region getExitedRegion() {
+    public SpongeRegion getExitedRegion() {
         return this.ExitedRegion;
     }
 
-    public Region getEnteredRegion() {
+    public SpongeRegion getEnteredRegion() {
         return this.EnteredRegion;
     }
 

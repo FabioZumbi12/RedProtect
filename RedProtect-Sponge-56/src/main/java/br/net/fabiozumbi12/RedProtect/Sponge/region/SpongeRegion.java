@@ -26,14 +26,16 @@
  *
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge;
+package br.net.fabiozumbi12.RedProtect.Sponge.region;
 
+import br.net.fabiozumbi12.RedProtect.Core.region.Region;
+import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import com.flowpowered.math.vector.Vector3d;
-import javafx.util.Pair;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -44,7 +46,6 @@ import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Slot;
@@ -53,94 +54,90 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Represents a 3D region created by players.
+ * Represents a 3D Sponge region created by players.
  */
-public class Region implements Serializable {
+public class SpongeRegion extends Region {
 
-    private static final long serialVersionUID = 2861198224185302015L;
-    private int[] x;
-    private int[] z;
-    private int minMbrX;
-    private int maxMbrX;
-    private int minMbrZ;
-    private int maxMbrZ;
-    private int minY;
-    private int maxY;
-    private int prior;
-    private String name;
-    private Set<Pair<String, String>> leaders;
-    private Set<Pair<String, String>> admins;
-    private Set<Pair<String, String>> members;
-    private String wMessage;
-    private String world;
-    private String date;
-    private Map<String, Object> flags;
-    private long value;
-    private Location<World> tppoint;
-    private boolean canDelete;
-    private boolean tosave = true;
-    private Task task;
     private String dynmapSet = RedProtect.get().cfgs.root().hooks.dynmap.marks_groupname;
 
     /**
      * Represents the region created by player.
      *
-     * @param name      Name of region.
-     * @param admins    List of admins.
-     * @param members   List of members.
-     * @param leaders   List of leaders.
-     * @param maxMbrX   Max coord X
-     * @param minMbrX   Min coord X
-     * @param maxMbrZ   Max coord Z
-     * @param minMbrZ   Min coord Z
-     * @param flags     Flag names and values.
-     * @param wMessage  Welcome message.
-     * @param prior     Priority of region.
-     * @param worldName Name of world for this region.
-     * @param date      Date of latest visit of an admin or leader.
-     * @param value     Last value of this region.
+     * @param name       Name of region.
+     * @param admins     List of admins.
+     * @param members    List of members.
+     * @param leaders    List of leaders.
+     * @param minLoc     Min coord.
+     * @param maxLoc     Max coord.
+     * @param flags      Flag names and values.
+     * @param wMessage   Welcome message.
+     * @param prior      Priority of region.
+     * @param worldName  Name of world for this region.
+     * @param date       Date of latest visit of an admin or leader.
+     * @param value      Last playername of this region.
+     * @param tppoint    Teleport Point
+     * @param candel     Can delete?
      */
-    public Region(String name,Set<Pair<String, String>> admins, Set<Pair<String, String>> members, Set<Pair<String, String>> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel) {
-        super();
-        this.x = new int[]{minMbrX, minMbrX, maxMbrX, maxMbrX};
-        this.z = new int[]{minMbrZ, minMbrZ, maxMbrZ, maxMbrZ};
-        this.maxMbrX = maxMbrX;
-        this.minMbrX = minMbrX;
-        this.maxMbrZ = maxMbrZ;
-        this.minMbrZ = minMbrZ;
-        this.maxY = maxY;
-        this.minY = minY;
-        this.name = conformName(name);
-        this.admins = admins;
-        this.members = members;
-        this.leaders = leaders;
-        this.flags = flags;
-        this.value = value;
-        this.tppoint = tppoint;
-        this.canDelete = candel;
+    public SpongeRegion(String name, Set<RegionPlayer<String, String>> admins, Set<RegionPlayer<String, String>> members, Set<RegionPlayer<String, String>> leaders, int[] minLoc, int[] maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel) {
+        super(name, admins, members, leaders, minLoc, maxLoc, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(),tppoint.getBlockZ()}, tppoint == null ? null : new float[]{0, 0}, candel);
+        checkParticle();
+    }
 
-        if (worldName != null) {
-            this.world = worldName;
-        } else {
-            this.world = "";
-        }
+    /**
+     * Represents the region created by player.
+     *
+     * @param name       Name of region.
+     * @param admins     List of admins.
+     * @param members    List of members.
+     * @param leaders    List of leaders.
+     * @param maxMbrX    Max coord X
+     * @param minMbrX    Min coord X
+     * @param maxMbrZ    Max coord Z
+     * @param minMbrZ    Min coord Z
+     * @param minY       Min location
+     * @param maxY       Max Location
+     * @param flags      Flag names and values.
+     * @param wMessage   Welcome message.
+     * @param prior      Priority of region.
+     * @param worldName  Name of world for this region.
+     * @param date       Date of latest visit of an admin or leader.
+     * @param value      Last playername of this region.
+     * @param tppoint    Teleport Point
+     * @param candel     Can delete?
+     */
+    public SpongeRegion(String name, Set<RegionPlayer<String, String>> admins, Set<RegionPlayer<String, String>> members, Set<RegionPlayer<String, String>> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel) {
+        super(name, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(),tppoint.getBlockZ()}, tppoint == null ? null : new float[]{0, 0}, candel);
+        checkParticle();
+    }
 
-        if (wMessage != null) {
-            this.wMessage = wMessage;
-        } else {
-            this.wMessage = "";
-        }
-
-        if (date != null) {
-            this.date = date;
-        } else {
-            this.date = RPUtil.DateNow();
-        }
+    /**
+     * Represents the region created by player.
+     *
+     * @param name       Region name.
+     * @param admins     Admins names/uuids.
+     * @param members    Members names/uuids.
+     * @param leaders    Leaders name/uuid.
+     * @param x          Locations of x coords.
+     * @param z          Locations of z coords.
+     * @param miny       Min coord y of this region.
+     * @param maxy       Max coord y of this region.
+     * @param prior      Location of x coords.
+     * @param worldName  Name of world region.
+     * @param date       Date of latest visit of an admins or leader.
+     * @param flags      Default flags.
+     * @param welcome    Set a welcome message.
+     * @param value      A playername in server economy.
+     * @param tppoint    Teleport Point
+     * @param candel     Can delete?
+     */
+    public SpongeRegion(String name, Set<RegionPlayer<String, String>> admins, Set<RegionPlayer<String, String>> members, Set<RegionPlayer<String, String>> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location tppoint, boolean candel) {
+        super(name, admins, members, leaders, x, z, miny, maxy, prior, worldName, date, flags, welcome, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(),tppoint.getBlockZ()}, tppoint == null ? null : new float[]{0, 0}, candel);
         checkParticle();
     }
 
@@ -148,165 +145,16 @@ public class Region implements Serializable {
      * Represents the region created by player.
      *
      * @param name      Region name.
-     * @param admins    Admins names/uuids.
-     * @param members   Members names/uuids.
-     * @param leaders   Leaders name/uuid.
-     * @param x         Locations of x coords.
-     * @param z         Locations of z coords.
-     * @param miny      Min coord y of this region.
-     * @param maxy      Max coord y of this region.
-     * @param prior     Location of x coords.
-     * @param worldName Name of world region.
-     * @param date      Date of latest visit of an admins or leader.
-     * @param welcome   Set a welcome message.
-     * @param value     A value in server economy.
+     * @param min       Min Location.
+     * @param max       Max Location.
+     * @param world     World name.
      */
-    public Region(String name, Set<Pair<String, String>> admins, Set<Pair<String, String>> members, Set<Pair<String, String>> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location<World> tppoint, boolean candel) {
-        super();
-        this.prior = prior;
-        this.world = worldName;
-        this.date = date;
-        this.flags = flags;
-        this.wMessage = welcome;
-        int size = x.length;
-        this.value = value;
-        this.tppoint = tppoint;
-        this.canDelete = candel;
-
-        if (size != z.length) {
-            throw new Error(RPLang.get("region.xy"));
-        }
-        this.x = x;
-        this.z = z;
-        if (size < 4) {
-            throw new Error(RPLang.get("region.polygon"));
-        }
-        if (size == 4) {
-            this.x = null;
-            this.z = null;
-        }
-        this.admins = admins;
-        this.members = members;
-        this.name = conformName(name);
-        this.leaders = leaders;
-        this.maxMbrX = x[0];
-        this.minMbrX = x[0];
-        this.maxMbrZ = z[0];
-        this.minMbrZ = z[0];
-        this.maxY = maxy;
-        this.minY = miny;
-        for (int i = 0; i < x.length; ++i) {
-            if (x[i] > this.maxMbrX) {
-                this.maxMbrX = x[i];
-            }
-            if (x[i] < this.minMbrX) {
-                this.minMbrX = x[i];
-            }
-            if (z[i] > this.maxMbrZ) {
-                this.maxMbrZ = z[i];
-            }
-            if (z[i] < this.minMbrZ) {
-                this.minMbrZ = z[i];
-            }
-        }
+    public SpongeRegion(String name, Location min, Location max, String world) {
+        super(name, new int[]{min.getBlockX(), min.getBlockY(),min.getBlockZ()}, new int[]{max.getBlockX(), max.getBlockY(),max.getBlockZ()}, world, RedProtect.get().cfgs.root().region_settings.default_leader, RedProtect.get().cfgs.getDefFlagsValues());
         checkParticle();
     }
 
-    /**
-     * Represents the region created by player.
-     *
-     * @param name  Region name.
-     * @param min   Min Location.
-     * @param max   Max Location.
-     * @param world World name.
-     */
-    public Region(String name, Location min, Location max, String world) {
-        super();
-        this.x = new int[]{min.getBlockX(), min.getBlockX(), max.getBlockX(), max.getBlockX()};
-        this.z = new int[]{min.getBlockZ(), min.getBlockZ(), max.getBlockZ(), max.getBlockZ()};
-        this.maxMbrX = max.getBlockX();
-        this.minMbrX = min.getBlockX();
-        this.maxMbrZ = max.getBlockZ();
-        this.minMbrZ = min.getBlockZ();
-        this.maxY = max.getBlockY();
-        this.minY = min.getBlockY();
-        this.admins = new HashSet<>();
-        this.members = new HashSet<>();
-        this.leaders = Collections.singleton(new Pair<>(RedProtect.get().cfgs.root().region_settings.default_leader,RedProtect.get().cfgs.root().region_settings.default_leader));
-        this.flags = RedProtect.get().cfgs.getDefFlagsValues();
-        this.canDelete = true;
-        this.world = world;
-        this.wMessage = "";
-        this.date = RPUtil.DateNow();
-        this.name = name == null ? "" : conformName(name);
-        checkParticle();
-    }
-
-    public Map<String, Object> getFlags() {
-        return flags;
-    }
-
-    public void setFlags(Map<String, Object> flags) {
-        this.flags = flags;
-    }
-
-    /**
-     * Get unique ID of region based on name of "region + @ + world".
-     *
-     * @return {@code id string}
-     */
-    @Override
-    public String toString() {
-        return this.name + "@" + this.world;
-    }
-
-    /**
-     * Get unique ID of region based on name of "region + @ + world".
-     *
-     * @return {@code id string}
-     */
-    public String getID() {
-        return this.name + "@" + this.world;
-    }
-
-    public boolean toSave() {
-        return this.tosave;
-    }
-
-    public void setToSave(boolean save) {
-        this.tosave = save;
-    }
-
-    public boolean canDelete() {
-        return this.canDelete;
-    }
-
-    public void setCanDelete(boolean canDelete) {
-        setToSave(true);
-        this.canDelete = canDelete;
-    }
-
-    public boolean setFlag(Cause cause, String fname, Object value) {
-        ChangeRegionFlagEvent event = new ChangeRegionFlagEvent(cause, this, fname, value);
-        if (Sponge.getEventManager().post(event)) return false;
-
-        setToSave(true);
-        this.flags.put(event.getFlag(), event.getFlagValue());
-        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
-        updateSigns(event.getFlag());
-        checkParticle();
-        return true;
-    }
-
-    public void removeFlag(String Name) {
-        setToSave(true);
-        if (this.flags.containsKey(Name)) {
-            this.flags.remove(Name);
-            RedProtect.get().rm.removeLiveFlags(this, Name);
-        }
-        checkParticle();
-    }
-
+    private Task task;
     private void checkParticle() {
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             if (this.flags.containsKey("particles")) {
@@ -365,6 +213,12 @@ public class Region implements Serializable {
         }
     }
 
+    public void updateSigns() {
+        for (String s : this.flags.keySet()) {
+            updateSigns(s);
+        }
+    }
+
     private void updateSigns(String fname) {
         if (!RedProtect.get().cfgs.root().region_settings.enable_flag_sign) {
             return;
@@ -391,6 +245,47 @@ public class Region implements Serializable {
         }
     }
 
+    public boolean setFlag(Cause cause, String fname, Object value) {
+        ChangeRegionFlagEvent event = new ChangeRegionFlagEvent(cause, this, fname, value);
+        if (Sponge.getEventManager().post(event)) return false;
+
+        setToSave(true);
+        this.flags.put(event.getFlag(), event.getFlagValue());
+        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
+        updateSigns(event.getFlag());
+        checkParticle();
+        return true;
+    }
+
+    public void removeFlag(String Name) {
+        setToSave(true);
+        if (this.flags.containsKey(Name)) {
+            this.flags.remove(Name);
+            RedProtect.get().rm.removeLiveFlags(this, Name);
+        }
+        checkParticle();
+    }
+
+    public Location<World> getTPPoint() {
+        if (this.tppoint == null) return null;
+        return new Location<>(Sponge.getServer().getWorld(this.world).get(), this.tppoint[0], this.tppoint[1], this.tppoint[2]);
+    }
+
+    public void setTPPoint(@Nullable Location<World> loc) {
+        setToSave(true);
+        if (loc != null) {
+            this.tppoint = new int[]{loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()};
+            double x = loc.getX();
+            double y = loc.getY();
+            double z = loc.getZ();
+            String pos = loc.getPosition().toString();
+            RedProtect.get().rm.updateLiveRegion(this, "tppoint", x + "," + y + "," + z + "," + pos);
+        } else {
+            this.tppoint = null;
+            RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
+        }
+    }
+
     public String getFlagStrings() {
         StringBuilder flags = new StringBuilder();
         for (String flag : this.flags.keySet()) {
@@ -399,55 +294,16 @@ public class Region implements Serializable {
         return flags.toString().substring(1);
     }
 
-    public Location<World> getTPPoint() {
-        return this.tppoint;
-    }
-
-    public void setTPPoint(Location<World> loc) {
-        setToSave(true);
-        this.tppoint = loc;
-        if (loc != null) {
-            double x = loc.getX();
-            double y = loc.getY();
-            double z = loc.getZ();
-            String pos = loc.getPosition().toString();
-            RedProtect.get().rm.updateLiveRegion(this, "tppoint", x + "," + y + "," + z + "," + pos);
-        } else {
-            RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
-        }
-
-    }
-
-
-    public String getTPPointString() {
-        if (tppoint == null) {
-            return "";
-        }
-        return this.tppoint.getX() + "," + this.tppoint.getY() + "," + this.tppoint.getZ()/*+","+this.tppoint.getYaw()+","+this.tppoint.getPitch()*/;
-    }
-
-    public String getDate() {
-        return this.date;
-    }
-
     public void setDate(String value) {
         setToSave(true);
         this.date = value;
         RedProtect.get().rm.updateLiveRegion(this, "date", value);
     }
 
-    public int getMaxY() {
-        return this.maxY;
-    }
-
     public void setMaxY(int y) {
         setToSave(true);
         this.maxY = y;
         RedProtect.get().rm.updateLiveRegion(this, "maxy", y);
-    }
-
-    public int getMinY() {
-        return this.minY;
     }
 
     public void setMinY(int y) {
@@ -464,18 +320,10 @@ public class Region implements Serializable {
         return new Location<>(Sponge.getServer().getWorld(this.world).get(), this.minMbrX, this.minY, this.minMbrZ);
     }
 
-    public String getWorld() {
-        return this.world;
-    }
-
     public void setWorld(String w) {
         setToSave(true);
         this.world = w;
         RedProtect.get().rm.updateLiveRegion(this, "world", w);
-    }
-
-    public int getPrior() {
-        return this.prior;
     }
 
     public void setPrior(int prior) {
@@ -484,131 +332,32 @@ public class Region implements Serializable {
         RedProtect.get().rm.updateLiveRegion(this, "prior", prior);
     }
 
-    public String getWelcome() {
-        if (wMessage == null) {
-            return "";
-        }
-        return this.wMessage;
-    }
-
     public void setWelcome(String s) {
         setToSave(true);
         this.wMessage = s;
         RedProtect.get().rm.updateLiveRegion(this, "wel", s);
     }
 
-    public int[] getX() {
-        return this.x;
-    }
-
-    public void setX(int[] x) {
-        setToSave(true);
-        this.x = x;
-    }
-
-    public int[] getZ() {
-        return this.z;
-    }
-
-    public void setZ(int[] z) {
-        setToSave(true);
-        this.z = z;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public String getDynmapSet() {
         return this.dynmapSet;
     }
 
-    /**
-     * Use this method to get raw admins. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
-     * <p>
-     * To check if a player can build on this region use {@code canBuild(p)} instead this method.
-     *
-     * @return {@code List<String>}
-     */
-    @Deprecated()
-    public Set<Pair<String, String>>  getAdmins() {
-        return this.admins;
-    }
-
-    public void setAdmins(Set<Pair<String, String>>  admins) {
+    public void setAdmins(Set<RegionPlayer<String, String>> admins) {
         setToSave(true);
         this.admins = admins;
         RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
     }
 
-    /**
-     * Use this method to get raw members. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
-     * <p>
-     * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
-     *
-     * @return {@code List<String>}
-     */
-    @Deprecated
-    public Set<Pair<String, String>> getMembers() {
-        return this.members;
-    }
-
-    public void setMembers(Set<Pair<String, String>> members) {
+    public void setMembers(Set<RegionPlayer<String, String>> members) {
         setToSave(true);
         this.members = members;
         RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
     }
 
-    /**
-     * Use this method to get raw leaders. This will return UUID if server running in Online mode. Will return player name in lowercase if Offline mode.
-     * <p>
-     * To check if a player can build on this region use {@code canBuild(Player p)} instead this method.
-     *
-     * @return {@code List<String>}
-     */
-    @Deprecated
-    public Set<Pair<String, String>> getLeaders() {
-        return this.leaders;
-    }
-
-    public void setLeaders(Set<Pair<String, String>> leaders) {
+    public void setLeaders(Set<RegionPlayer<String, String>> leaders) {
         setToSave(true);
         this.leaders = leaders;
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-    }
-
-    private String serializeMembers(Set<Pair<String, String>> pairs){
-        StringBuilder list = new StringBuilder();
-        pairs.forEach(l->list.append(",").append(l.getKey()).append("@").append(l.getValue()));
-        return list.length() > 0 ? list.toString().substring(1):"";
-    }
-
-    public int getCenterX() {
-        return (this.minMbrX + this.maxMbrX) / 2;
-    }
-
-    public int getCenterZ() {
-        return (this.minMbrZ + this.maxMbrZ) / 2;
-    }
-
-    public int getCenterY() {
-        return (this.minY + this.maxY) / 2;
-    }
-
-    public int getMaxMbrX() {
-        return this.maxMbrX;
-    }
-
-    public int getMinMbrX() {
-        return this.minMbrX;
-    }
-
-    public int getMaxMbrZ() {
-        return this.maxMbrZ;
-    }
-
-    public int getMinMbrZ() {
-        return this.minMbrZ;
     }
 
     public Text info() {
@@ -631,13 +380,13 @@ public class Region implements Serializable {
         }
 
         leaders.removeIf(Objects::isNull);
-        leaders.forEach(leader -> leaderStringBuilder.append(", ").append(leader.getValue()));
+        leaders.forEach(leader -> leaderStringBuilder.append(", ").append(leader.getPlayerName()));
 
         admins.removeIf(Objects::isNull);
-        admins.forEach(admin -> adminStringBuilder.append(", ").append(admin.getValue()));
+        admins.forEach(admin -> adminStringBuilder.append(", ").append(admin.getPlayerName()));
 
         members.removeIf(Objects::isNull);
-        members.forEach(member -> memberStringBuilder.append(", ").append(member.getValue()));
+        members.forEach(member -> memberStringBuilder.append(", ").append(member.getPlayerName()));
 
         if (this.leaders.size() > 0) {
             leaderString = leaderStringBuilder.delete(0, 2).toString();
@@ -659,16 +408,16 @@ public class Region implements Serializable {
         } else {
             today = this.date;
         }
-        for (Pair<String, String> pname : this.leaders) {
-            Optional<Player> play = Sponge.getServer().getPlayer(pname.getValue());
-            if (play.isPresent() && !pname.getValue().equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
+        for (RegionPlayer<String, String> pname : this.leaders) {
+            Optional<Player> play = Sponge.getServer().getPlayer(pname.getPlayerName());
+            if (play.isPresent() && !pname.getPlayerName().equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
                 today = "&aOnline!";
                 break;
             }
         }
-        for (Pair<String, String> pname : this.admins) {
-            Optional<Player> play = Sponge.getServer().getPlayer(pname.getValue());
-            if (play.isPresent() && !pname.getValue().equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
+        for (RegionPlayer<String, String> pname : this.admins) {
+            Optional<Player> play = Sponge.getServer().getPlayer(pname.getPlayerName());
+            if (play.isPresent() && !pname.getPlayerName().equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader)) {
                 today = "&aOnline!";
                 break;
             }
@@ -689,10 +438,6 @@ public class Region implements Serializable {
                 RPLang.get("region.welcome.msg") + " " + wMsgTemp);
     }
 
-    private String conformName(String name) {
-        return RPUtil.toText(name).toPlain();
-    }
-
     public void clearLeaders() {
         setToSave(true);
         this.leaders.clear();
@@ -711,111 +456,43 @@ public class Region implements Serializable {
         RedProtect.get().rm.updateLiveRegion(this, "members", "");
     }
 
-    /*
-    public void delete() {
-        RedProtect.get().rm.remove(this);
-    }
-    */
-    public int getArea() {
-        return Math.abs((this.maxMbrX - this.minMbrX) + 1) * Math.abs((this.maxMbrZ - this.minMbrZ) + 1);
-    }
-
-    public boolean inBoundingRect(Region other) {
-        return other.maxMbrX >= this.minMbrX && other.minMbrZ >= this.minMbrZ && other.minMbrX <= this.maxMbrX && other.minMbrZ <= this.maxMbrZ;
-    }
-
     public boolean isLeader(Player player) {
         if (RedProtect.get().OnlineMode){
-            return this.leaders.stream().anyMatch(l->{
-                try {
-                    UUID uuid = UUID.fromString(l.getKey());
-                    return uuid.equals(player.getUniqueId());
-                } catch (Exception ignored){
-                    return l.getKey().equalsIgnoreCase(player.getName());
-                }
-            });
+            return isLeader(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
         } else {
-            return this.leaders.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
-        }
-    }
-
-    public boolean isLeader(String player) {
-        if (RedProtect.get().OnlineMode){
-            return this.leaders.stream().anyMatch(l->{
-                try {
-                    UUID uuid = UUID.fromString(l.getKey());
-                    return uuid.toString().equalsIgnoreCase(player);
-                } catch (Exception ignored){
-                    return l.getKey().equalsIgnoreCase(player);
-                }
-            });
-        } else {
-            return this.leaders.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
+            return isLeader(player.getName(), RedProtect.get().OnlineMode);
         }
     }
 
     public boolean isAdmin(Player player) {
         if (RedProtect.get().OnlineMode){
-            return this.admins.stream().anyMatch(l->{
-                try {
-                    UUID uuid = UUID.fromString(l.getKey());
-                    return uuid.equals(player.getUniqueId());
-                } catch (Exception ignored){
-                    return l.getKey().equalsIgnoreCase(player.getName());
-                }
-            });
+            return isAdmin(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
         } else {
-            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
-        }
-    }
-
-    public boolean isAdmin(String player) {
-        if (RedProtect.get().OnlineMode){
-            return this.admins.stream().anyMatch(l->{
-                try {
-                    UUID uuid = UUID.fromString(l.getKey());
-                    return uuid.toString().equalsIgnoreCase(player);
-                } catch (Exception ignored){
-                    return l.getKey().equalsIgnoreCase(player);
-                }
-            });
-        } else {
-            return this.admins.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
+            return isAdmin(player.getName(), RedProtect.get().OnlineMode);
         }
     }
 
     public boolean isMember(Player player) {
         if (RedProtect.get().OnlineMode){
-            return this.members.stream().anyMatch(l->{
-                try {
-                    UUID uuid = UUID.fromString(l.getKey());
-                    return uuid.equals(player.getUniqueId());
-                } catch (Exception ignored){
-                    return l.getKey().equalsIgnoreCase(player.getName());
-                }
-            });
+            return isMember(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
         } else {
-            return this.members.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player.getName()));
+            return isMember(player.getName(), RedProtect.get().OnlineMode);
         }
+    }
+
+    public boolean isLeader(String player) {
+        return isLeader(player, RedProtect.get().OnlineMode);
+    }
+
+    public boolean isAdmin(String player) {
+        return isAdmin(player, RedProtect.get().OnlineMode);
     }
 
     public boolean isMember(String player) {
-        if (RedProtect.get().OnlineMode){
-            return this.members.stream().anyMatch(l->{
-                try {
-                    UUID uuid = UUID.fromString(l.getKey());
-                    return uuid.toString().equalsIgnoreCase(player);
-                } catch (Exception ignored){
-                    return l.getKey().equalsIgnoreCase(player);
-                }
-            });
-        } else {
-            return this.members.stream().anyMatch(l->l.getValue().equalsIgnoreCase(player));
-        }
+        return isMember(player, RedProtect.get().OnlineMode);
     }
-
     /**
-     * Add an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Add an leader to the SpongeRegion. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -826,10 +503,10 @@ public class Region implements Serializable {
         if (RedProtect.get().OnlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
-        Pair<String, String> pinfo = new Pair<>(uuid,name);
+        RegionPlayer<String, String> pinfo = new RegionPlayer<>(uuid,name);
 
-        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.members.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.add(pinfo);
 
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
@@ -838,7 +515,7 @@ public class Region implements Serializable {
     }
 
     /**
-     * Add a member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Add a member to the SpongeRegion. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -849,10 +526,10 @@ public class Region implements Serializable {
         if (RedProtect.get().OnlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
-        Pair<String, String> pinfo = new Pair<>(uuid,name);
+        RegionPlayer<String, String> pinfo = new RegionPlayer<>(uuid,name);
 
-        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.members.add(pinfo);
 
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
@@ -861,7 +538,7 @@ public class Region implements Serializable {
     }
 
     /**
-     * Add an admin to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Add an admin to the SpongeRegion. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -872,10 +549,10 @@ public class Region implements Serializable {
         if (RedProtect.get().OnlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
-        Pair<String, String> pinfo = new Pair<>(uuid,name);
+        RegionPlayer<String, String> pinfo = new RegionPlayer<>(uuid,name);
 
-        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.members.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.add(pinfo);
 
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
@@ -884,16 +561,16 @@ public class Region implements Serializable {
     }
 
     /**
-     * Remove an member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Remove an member to the SpongeRegion. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
     public void removeMember(String uuid) {
         setToSave(true);
 
-        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.members.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
 
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
         RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
@@ -901,7 +578,7 @@ public class Region implements Serializable {
     }
 
     /**
-     * Remove an admin to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Remove an admin to the SpongeRegion. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -912,10 +589,10 @@ public class Region implements Serializable {
         if (RedProtect.get().OnlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
-        Pair<String, String> pinfo = new Pair<>(uuid,name);
+        RegionPlayer<String, String> pinfo = new RegionPlayer<>(uuid,name);
 
-        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.admins.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.admins.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.members.add(pinfo);
 
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
@@ -924,7 +601,7 @@ public class Region implements Serializable {
     }
 
     /**
-     * Remove an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Remove an leader to the SpongeRegion. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -935,10 +612,10 @@ public class Region implements Serializable {
         if (RedProtect.get().OnlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
-        Pair<String, String> pinfo = new Pair<>(uuid,name);
+        RegionPlayer<String, String> pinfo = new RegionPlayer<>(uuid,name);
 
-        this.members.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
-        this.leaders.removeIf(m->m.getKey().equalsIgnoreCase(uuid) || m.getValue().equalsIgnoreCase(uuid));
+        this.members.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
+        this.leaders.removeIf(m->m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.add(pinfo);
 
         RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
@@ -966,14 +643,6 @@ public class Region implements Serializable {
             }
         }
         return this.flags.get(key).toString();
-    }
-
-    public int adminSize() {
-        return this.admins.size();
-    }
-
-    public int leaderSize() {
-        return this.leaders.size();
     }
 
     public Text getFlagInfo() {
@@ -1010,12 +679,8 @@ public class Region implements Serializable {
     }
 
     public boolean isOnTop() {
-        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
+        SpongeRegion newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
         return newr == null || newr.equals(this);
-    }
-
-    public boolean flagExists(String key) {
-        return flags.containsKey(key);
     }
 
     //---------------------- Admin Flags --------------------------//
@@ -1536,10 +1201,6 @@ public class Region implements Serializable {
     }
     //--------------------------------------------------------------//
 
-    public long getValue() {
-        return this.value;
-    }
-
     public void setValue(long value) {
         setToSave(true);
         RedProtect.get().rm.updateLiveRegion(this, "value", value);
@@ -1547,26 +1208,7 @@ public class Region implements Serializable {
     }
 
     private boolean checkAllowedPlayer(Player p) {
-        return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || RedProtect.get().ph.hasPerm(p, "redprotect.bypass");
-    }
-
-    public List<Location<World>> getLimitLocs(int locy) {
-        final List<Location<World>> locBlocks = new ArrayList<>();
-        Location<World> loc1 = this.getMinLocation();
-        Location<World> loc2 = this.getMaxLocation();
-        World w = Sponge.getServer().getWorld(this.getWorld()).get();
-
-        for (int x = (int) loc1.getX(); x <= (int) loc2.getX(); ++x) {
-            for (int z = (int) loc1.getZ(); z <= (int) loc2.getZ(); ++z) {
-                //for (int y = (int) loc1.getY(); y <= (int) loc2.getY(); ++y) {
-                if (z == loc1.getZ() || z == loc2.getZ() ||
-                        x == loc1.getX() || x == loc2.getX()) {
-                    locBlocks.add(new Location<>(w, x, locy, z));
-                }
-                //}
-            }
-        }
-        return locBlocks;
+        return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin");
     }
 
     public List<Location<World>> getLimitLocs(int miny, int maxy, boolean define) {
@@ -1607,8 +1249,8 @@ public class Region implements Serializable {
             return RPLang.get("region.none");
         }
         StringBuilder adminsList = new StringBuilder();
-        for (Pair<String, String> admin : this.admins) {
-            adminsList.append(", ").append(admin.getValue());
+        for (RegionPlayer<String, String> admin : this.admins) {
+            adminsList.append(", ").append(admin.getPlayerName());
         }
         return "[" + adminsList.toString().substring(2) + "]";
     }
@@ -1618,18 +1260,9 @@ public class Region implements Serializable {
             addLeader(RedProtect.get().cfgs.root().region_settings.default_leader);
         }
         StringBuilder leaderList = new StringBuilder();
-        for (Pair<String, String> leader : this.leaders) {
-            leaderList.append(", ").append(leader.getValue());
+        for (RegionPlayer<String, String> leader : this.leaders) {
+            leaderList.append(", ").append(leader.getPlayerName());
         }
         return "[" + leaderList.delete(0, 2).toString() + "]";
-    }
-
-    public boolean sameLeaders(Region r) {
-        for (Pair<String, String> l : this.leaders) {
-            if (r.leaders.contains(l)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

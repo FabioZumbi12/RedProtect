@@ -28,9 +28,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
@@ -62,7 +62,7 @@ public class RegenCommand implements SubCommand {
         }
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r == null) {
                 RPLang.sendMessage(player, "cmdmanager.region.doesexists");
                 return true;
@@ -73,7 +73,7 @@ public class RegenCommand implements SubCommand {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("undo")) {
-                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                BukkitRegion r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r == null) {
                     RPLang.sendMessage(player, "cmdmanager.region.doesexists");
                     return true;
@@ -100,7 +100,7 @@ public class RegenCommand implements SubCommand {
                 sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[0], w);
+            BukkitRegion r = RedProtect.get().rm.getRegion(args[0], w);
             if (r == null) {
                 sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[0]);
                 return true;

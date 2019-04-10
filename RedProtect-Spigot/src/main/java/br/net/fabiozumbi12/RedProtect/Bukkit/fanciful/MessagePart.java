@@ -140,14 +140,14 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
                 json.name("clickEvent")
                         .beginObject()
                         .name("action").value(clickActionName)
-                        .name("value").value(clickActionData)
+                        .name("playername").value(clickActionData)
                         .endObject();
             }
             if (hoverActionName != null && hoverActionData != null) {
                 json.name("hoverEvent")
                         .beginObject()
                         .name("action").value(hoverActionName)
-                        .name("value");
+                        .name("playername");
                 hoverActionData.writeJson(json);
                 json.endObject();
             }

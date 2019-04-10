@@ -29,7 +29,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.API;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 
 public class RPEconomyAPI {
 
@@ -37,14 +37,14 @@ public class RPEconomyAPI {
      * Put a region to sell.
      * <p>
      *
-     * @param region - Region to sell.
+     * @param region - SpongeRegion to sell.
      * @param owner  - Owner of the region;
      * @param value  - Value to sell this region;
      * @return {@code true} if successfull sell flag. {@code false} if theres an error on sell the region and the money will return to player.
      */
 
 
-    public static boolean SellRegion(Region region, String owner, long value) {
+    public static boolean SellRegion(SpongeRegion region, String owner, long value) {
         return RPEconomy.putToSell(region, owner, value);
     }
 
@@ -52,13 +52,13 @@ public class RPEconomyAPI {
      * Buy a region.
      * <p>
      *
-     * @param region - Region to buy.
+     * @param region - SpongeRegion to buy.
      * @param owner  - Owner of the region;
      * @return {@code true} if successfull buy. {@code false} if theres an error on buy the region and the money will return to player.
      */
 
 
-    public static boolean BuyRegion(Region region, String owner) {
+    public static boolean BuyRegion(SpongeRegion region, String owner) {
         return RPEconomy.BuyRegion(region, owner);
     }
 
@@ -66,12 +66,12 @@ public class RPEconomyAPI {
      * Get the region value based on blocks, chests, itens inside chests and item enchantements inside chests too.
      * <p>
      *
-     * @param region - Region to get value.
+     * @param region - SpongeRegion to get value.
      * @return {@code Long} value of the region.
      */
 
 
-    public static long getRegionValue(Region region) {
+    public static long getRegionValue(SpongeRegion region) {
         return RPEconomy.getRegionValue(region);
     }
 

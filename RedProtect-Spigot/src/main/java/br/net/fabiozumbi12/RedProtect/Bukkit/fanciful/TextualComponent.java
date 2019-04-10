@@ -52,10 +52,10 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     static TextualComponent deserialize(Map<String, Object> map) {
-        if (map.containsKey("key") && map.size() == 2 && map.containsKey("value")) {
+        if (map.containsKey("uuid") && map.size() == 2 && map.containsKey("playername")) {
             // Arbitrary text component
             return ArbitraryTextTypeComponent.deserialize(map);
-        } else if (map.size() >= 2 && map.containsKey("key") && !map.containsKey("value") /* It contains keys that START WITH value */) {
+        } else if (map.size() >= 2 && map.containsKey("uuid") && !map.containsKey("playername") /* It contains keys that START WITH playername */) {
             // Complex JSON object
             return ComplexTextTypeComponent.deserialize(map);
         }
@@ -84,12 +84,12 @@ public abstract class TextualComponent implements Cloneable {
 
     /**
      * Create a textual component representing a localized string.
-     * The client will see this text component as their localized version of the specified string <em>key</em>, which can be overridden by a resource pack.
+     * The client will see this text component as their localized version of the specified string <em>uuid</em>, which can be overridden by a resource pack.
      * <p>
-     * If the specified translation key is not present on the client resource pack, the translation key will be displayed as a string literal to the client.
+     * If the specified translation uuid is not present on the client resource pack, the translation uuid will be displayed as a string literal to the client.
      * </p>
      *
-     * @param translateKey The string key which maps to localized text.
+     * @param translateKey The string uuid which maps to localized text.
      * @return The text component representing the specified localized text.
      */
     public static TextualComponent localizedText(String translateKey) {
@@ -101,7 +101,7 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     /**
-     * Create a textual component representing a scoreboard value.
+     * Create a textual component representing a scoreboard playername.
      * The client will see their own score for the specified objective as the text represented by this component.
      * <p>
      * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
@@ -115,7 +115,7 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     /**
-     * Create a textual component representing a scoreboard value.
+     * Create a textual component representing a scoreboard playername.
      * The client will see the score of the specified player for the specified objective as the text represented by this component.
      * <p>
      * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
@@ -157,7 +157,7 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     /**
-     * @return The JSON key used to represent text components of this type.
+     * @return The JSON uuid used to represent text components of this type.
      */
     public abstract String getKey();
 
@@ -168,7 +168,7 @@ public abstract class TextualComponent implements Cloneable {
 
     /**
      * Clones a textual component instance.
-     * The returned object should not reference this textual component instance, but should maintain the same key and value.
+     * The returned object should not reference this textual component instance, but should maintain the same uuid and playername.
      */
     @Override
     public abstract TextualComponent clone();
@@ -197,7 +197,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public static ArbitraryTextTypeComponent deserialize(Map<String, Object> map) {
-            return new ArbitraryTextTypeComponent(map.get("key").toString(), map.get("value").toString());
+            return new ArbitraryTextTypeComponent(map.get("uuid").toString(), map.get("playername").toString());
         }
 
         @Override
@@ -206,7 +206,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public void setKey(String key) {
-            Preconditions.checkArgument(key != null && !key.isEmpty(), "The key must be specified.");
+            Preconditions.checkArgument(key != null && !key.isEmpty(), "The uuid must be specified.");
             _key = key;
         }
 
@@ -215,7 +215,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public void setValue(String value) {
-            Preconditions.checkArgument(value != null, "The value must be specified.");
+            Preconditions.checkArgument(value != null, "The playername must be specified.");
             _value = value;
         }
 
@@ -233,8 +233,8 @@ public abstract class TextualComponent implements Cloneable {
         @SuppressWarnings("serial")
         public Map<String, Object> serialize() {
             return new HashMap<String, Object>() {{
-                put("key", getKey());
-                put("value", getValue());
+                put("uuid", getKey());
+                put("playername", getValue());
             }};
         }
 
@@ -245,7 +245,7 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     /**
-     * Internal class used to represent a text component with a nested JSON value.
+     * Internal class used to represent a text component with a nested JSON playername.
      * Exception validating done is on keys and values.
      */
     private static final class ComplexTextTypeComponent extends TextualComponent implements ConfigurationSerializable {
@@ -262,10 +262,10 @@ public abstract class TextualComponent implements Cloneable {
             String key = null;
             Map<String, String> value = new HashMap<>();
             for (Map.Entry<String, Object> valEntry : map.entrySet()) {
-                if (valEntry.getKey().equals("key")) {
+                if (valEntry.getKey().equals("uuid")) {
                     key = (String) valEntry.getValue();
-                } else if (valEntry.getKey().startsWith("value.")) {
-                    value.put(valEntry.getKey().substring(6) /* Strips out the value prefix */, valEntry.getValue().toString());
+                } else if (valEntry.getKey().startsWith("playername.")) {
+                    value.put(valEntry.getKey().substring(6) /* Strips out the playername prefix */, valEntry.getValue().toString());
                 }
             }
             return new ComplexTextTypeComponent(key, value);
@@ -277,7 +277,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public void setKey(String key) {
-            Preconditions.checkArgument(key != null && !key.isEmpty(), "The key must be specified.");
+            Preconditions.checkArgument(key != null && !key.isEmpty(), "The uuid must be specified.");
             _key = key;
         }
 
@@ -286,7 +286,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public void setValue(Map<String, String> value) {
-            Preconditions.checkArgument(value != null, "The value must be specified.");
+            Preconditions.checkArgument(value != null, "The playername must be specified.");
             _value = value;
         }
 
@@ -309,9 +309,9 @@ public abstract class TextualComponent implements Cloneable {
         @SuppressWarnings("serial")
         public Map<String, Object> serialize() {
             return new java.util.HashMap<String, Object>() {{
-                put("key", getKey());
+                put("uuid", getKey());
                 for (Map.Entry<String, String> valEntry : getValue().entrySet()) {
-                    put("value." + valEntry.getKey(), valEntry.getValue());
+                    put("playername." + valEntry.getKey(), valEntry.getValue());
                 }
             }};
         }
