@@ -38,7 +38,7 @@
     <artifactId>RedProtect-Core</artifactId>
 
     <build>
-        <defaultGoal>clean,install</defaultGoal>
+        <finalName>DONT-DOWNLOAD-Core-Reference</finalName>
     </build>
 
 </project>
