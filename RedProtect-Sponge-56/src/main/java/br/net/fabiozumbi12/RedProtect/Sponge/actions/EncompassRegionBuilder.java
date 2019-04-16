@@ -1,40 +1,38 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 17/03/19 18:46
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.*;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -84,6 +82,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
             return;
         }
 
+        //filter name
+        regionName = RPUtil.setName(regionName);
+
         //filter region name
         if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
@@ -92,7 +93,6 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 return;
             }
         }
-        regionName = RPUtil.nameNormalizer(regionName);
 
         //region name conform
         if (regionName.length() < 3) {
@@ -204,11 +204,11 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        SpongeRegion region = new SpongeRegion(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RPUtil.DateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
 
                         leaders.forEach(region::addLeader);
                         List<String> othersName = new ArrayList<>();
-                        SpongeRegion otherrg;
+                        Region otherrg;
                         List<Location<World>> limitlocs = region.getLimitLocs(minby, maxby, false);
 
                         //check retangular region
@@ -220,7 +220,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                        for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
@@ -358,7 +358,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 }
             } else if (i == 1 && nearbyCount == 2) {
                 //check other regions on blocks
-                SpongeRegion rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
+                Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
                 if (rcurrent != null && !rcurrent.canBuild(p)) {
                     this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
                     return;

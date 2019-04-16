@@ -1,35 +1,33 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -101,14 +99,12 @@ public class RPConfig {
     private static CommentedConfig comGflags;
     private static YamlConfiguration signs;
     private static YamlConfiguration GuiItems;
-    private static YamlConfiguration Prots;
     private static YamlConfiguration EconomyConfig;
 
     public static void init() {
 
         signs = new YamlConfiguration();
         GuiItems = new YamlConfiguration();
-        Prots = new YamlConfiguration();
         EconomyConfig = new YamlConfiguration();
 
         File main = RedProtect.get().getDataFolder();
@@ -116,7 +112,6 @@ public class RPConfig {
         File gui = new File(main, "guiconfig.yml");
         File bvalues = new File(main, "economy.yml");
         File globalflags = new File(main, "globalflags.yml");
-        File protections = new File(main, "protections.yml");
         File logs = new File(main, "logs");
         File signsf = new File(main, "signs.yml");
         File schema = new File(main, "schematics" + File.separator + "house1.schematic");
@@ -154,7 +149,7 @@ public class RPConfig {
         comConfig.setDefault("debug-messages", false, "Enable debug messages");
         comConfig.setDefault("log-actions", true, "Log all commands used by players");
         comConfig.setDefault("language", "EN-US", "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR");
-        comConfig.setDefault("file-type", "yml", "Available: yml and mysql");
+        comConfig.setDefault("file-type", "file", "Available: file and mysql");
 
         comConfig.setDefault("flat-file", null, "If file-type: yml, configuration:");
         comConfig.setDefault("flat-file.region-per-file", false, "Want to save the regions in your ow files?");
@@ -439,14 +434,9 @@ public class RPConfig {
             RedProtect.get().logger.info("Created economy file: " + bvalues);
         }
 
-        if (!protections.exists()) {
-            RPUtil.saveResource("/assets/redprotect/protections.yml", null, protections);//create protections file
-            RedProtect.get().logger.info("Created protections file: " + protections);
-        }
-
         if (!schema.exists()) {
             new File(main, "schematics").mkdir();
-            RPUtil.saveResource("/assets/redprotect/schematics/house1.schematic", null, schema);//save schematic file
+            RPUtil.saveResource("/assets.redprotect/schematics/house1.schematic", null, schema);//save schematic file
             RedProtect.get().logger.info("Saved schematic file: house1.schematic");
         }
 
@@ -668,11 +658,6 @@ public class RPConfig {
 
         /*------------------------------------------------------------------------------------*/
 
-        //load protections file
-        Prots = updateFile(protections);
-
-        /*------------------------------------------------------------------------------------*/
-
         //load and write globalflags to global file
         String gHeader = "# +--------------------------------------------------------------------+ #\n" +
                 "# <          RedProtect Global Flags configuration File                > #\n" +
@@ -803,7 +788,7 @@ public class RPConfig {
 
         YamlConfiguration GuiBase = inputLoader(RedProtect.get().getResource("assets/redprotect/guiconfig.yml"));
 
-        GuiItems.set("gui-strings.playername", GuiItems.getString("gui-strings.playername", "&bValue: "));
+        GuiItems.set("gui-strings.value", GuiItems.getString("gui-strings.value", "&bValue: "));
         GuiItems.set("gui-strings.true", GuiItems.getString("gui-strings.true", "&atrue"));
         GuiItems.set("gui-strings.false", GuiItems.getString("gui-strings.false", "&cfalse"));
         GuiItems.set("gui-strings.separator", GuiItems.getString("gui-strings.separator", "&7|"));
@@ -934,8 +919,6 @@ public class RPConfig {
 
     public static void setGuiSlot(/*String mat, */String flag, int slot) {
         GuiItems.set("gui-flags." + flag + ".slot", slot);
-        //GuiItems.set("gui-flags."+flag+".material", mat);
-
     }
 
     public static ItemStack getGuiSeparator() {
@@ -1014,12 +997,10 @@ public class RPConfig {
         File main = RedProtect.get().getDataFolder();
         File gui = new File(main, "guiconfig.yml");
         File bvalues = new File(main, "economy.yml");
-        File protections = new File(main, "protections.yml");
         File signsf = new File(main, "signs.yml");
         try {
             GuiItems.save(gui);
             EconomyConfig.save(bvalues);
-            Prots.save(protections);
             signs.save(signsf);
             comGflags.saveConfig();
             comConfig.saveConfig();
@@ -1092,30 +1073,6 @@ public class RPConfig {
         return false;
     }
 
-    public static int getProtInt(String key) {
-        return Prots.getInt(key);
-    }
-
-    public static boolean getProtBool(String key) {
-        return Prots.getBoolean(key);
-    }
-
-    public static List<String> getProtStringList(String key) {
-        return Prots.getStringList(key);
-    }
-	
-    /*public static boolean containsProtKey(String uuid){
-		return Prots.contains(uuid);
-	}*/
-
-    public static String getProtString(String key) {
-        return Prots.getString(key);
-    }
-
-    public static String getProtMsg(String key) {
-        return ChatColor.translateAlternateColorCodes('&', Prots.getString(key));
-    }
-
     public static int getBlockCost(String itemName) {
         return EconomyConfig.getInt("items.values." + itemName);
     }
@@ -1134,25 +1091,6 @@ public class RPConfig {
 
     public static boolean getEcoBool(String key) {
         return EconomyConfig.getBoolean(key);
-    }
-
-    private static YamlConfiguration updateFile(File saved) {
-        YamlConfiguration finalyml = new YamlConfiguration();
-        try {
-            finalyml.load(saved);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        YamlConfiguration tempProts = inputLoader(RedProtect.get().getResource("assets/redprotect/protections.yml"));
-        for (String key : tempProts.getKeys(true)) {
-            Object obj = tempProts.get(key);
-            if (finalyml.get(key) != null) {
-                obj = finalyml.get(key);
-            }
-            finalyml.set(key, obj);
-        }
-        return finalyml;
     }
 
     public static List<Location> getSigns(String rid) {

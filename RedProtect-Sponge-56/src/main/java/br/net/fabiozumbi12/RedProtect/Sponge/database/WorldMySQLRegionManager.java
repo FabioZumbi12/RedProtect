@@ -1,38 +1,36 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:20
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
-import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -48,7 +46,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private final String reconnect = "?autoReconnect=true";
     private final String dbname = RedProtect.get().cfgs.root().mysql.db_name;
     private final String tableName;
-    private final HashMap<String, SpongeRegion> regions;
+    private final HashMap<String, Region> regions;
     private final World world;
     private Connection dbcon;
 
@@ -145,14 +143,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     /*-------------------------------------- Live Actions -------------------------------------------*/
     @Override
-    public void remove(SpongeRegion r) {
+    public void remove(Region r) {
         removeLiveRegion(r);
         if (this.regions.containsValue(r)) {
             this.regions.remove(r.getName());
         }
     }
 
-    private void removeLiveRegion(SpongeRegion r) {
+    private void removeLiveRegion(Region r) {
         if (this.regionExists(r.getName())) {
             try {
                 PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM `" + tableName + "` WHERE name = ?");
@@ -166,11 +164,11 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void add(SpongeRegion r) {
+    public void add(Region r) {
         addLiveRegion(r);
     }
 
-    private void addLiveRegion(SpongeRegion r) {
+    private void addLiveRegion(Region r) {
         if (!this.regionExists(r.getName())) {
             try {
                 PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
@@ -288,10 +286,10 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.setString(1, this.world.getName());
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load SpongeRegion: " + rs.getString("name") + ", World: " + this.world.getName());
-                Set<RegionPlayer<String, String>> leaders = new HashSet<>();
-                Set<RegionPlayer<String, String>> admins = new HashSet<>();
-                Set<RegionPlayer<String, String>> members = new HashSet<>();
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
+                Set<PlayerRegion<String, String>> leaders = new HashSet<>();
+                Set<PlayerRegion<String, String>> admins = new HashSet<>();
+                Set<PlayerRegion<String, String>> members = new HashSet<>();
                 HashMap<String, Object> flags = new HashMap<>();
 
                 int maxMbrX = rs.getInt("maxMbrX");
@@ -317,19 +315,19 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 for (String member : rs.getString("members").split(", ")) {
                     if (member.length() > 0) {
                         String[] p = member.split("@");
-                        members.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        members.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String admin : rs.getString("admins").split(", ")) {
                     if (admin.length() > 0) {
                         String[] p = admin.split("@");
-                        admins.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        admins.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
                 for (String leader : rs.getString("leaders").split(", ")) {
                     if (leader.length() > 0) {
                         String[] p = leader.split("@");
-                        leaders.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
+                        leaders.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
                     }
                 }
 
@@ -340,7 +338,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));
                     }
                 }
-                SpongeRegion newr = new SpongeRegion(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
                 regions.put(rname, newr);
             }
             st.close();
@@ -353,8 +351,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     /*---------------------------------------------------------------------------------*/
 
     @Override
-    public Set<SpongeRegion> getRegions(String uuid) {
-        Set<SpongeRegion> regionsp = new HashSet<>();
+    public Set<Region> getRegions(String uuid) {
+        Set<Region> regionsp = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders = ?");
             st.setString(1, "%" + uuid + "%");
@@ -371,8 +369,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<SpongeRegion> getMemberRegions(String uuid) {
-        Set<SpongeRegion> regionsp = new HashSet<>();
+    public Set<Region> getMemberRegions(String uuid) {
+        Set<Region> regionsp = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders = ? OR admins = ?");
             st.setString(1, "%" + uuid + "%");
@@ -390,7 +388,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public SpongeRegion getRegion(final String rname) {
+    public Region getRegion(final String rname) {
         if (this.dbcon == null) {
             ConnectDB();
         }
@@ -404,9 +402,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(2, this.world.getName());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
-                    Set<RegionPlayer<String, String>> leaders = new HashSet<>();
-                    Set<RegionPlayer<String, String>> admins = new HashSet<>();
-                    Set<RegionPlayer<String, String>> members = new HashSet<>();
+                    Set<PlayerRegion<String, String>> leaders = new HashSet<>();
+                    Set<PlayerRegion<String, String>> admins = new HashSet<>();
+                    Set<PlayerRegion<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -433,33 +431,33 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String member : rs.getString("members").split(", ")) {
                         String[] pi = member.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
-                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
-                        members.add(new RegionPlayer<>(p[0], p[1]));
+                        members.add(new PlayerRegion<>(p[0], p[1]));
                     }
 
                     for (String admin : rs.getString("admins").split(", ")) {
                         String[] pi = admin.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
-                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
-                        admins.add(new RegionPlayer<>(p[0], p[1]));
+                        admins.add(new PlayerRegion<>(p[0], p[1]));
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         String[] pi = leader.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+                        if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
-                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
-                        leaders.add(new RegionPlayer<>(p[0], p[1]));
+                        leaders.add(new PlayerRegion<>(p[0], p[1]));
                     }
 
                     for (String flag : rs.getString("flags").split(",")) {
@@ -467,7 +465,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         flags.put(key, RPUtil.parseObject(flag.substring((key + ":").length())));
                     }
 
-                    SpongeRegion reg = new SpongeRegion(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                    Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
                     regions.put(rname, reg);
                 } else {
                     return null;
@@ -496,15 +494,15 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public int getTotalRegionSize(String uuid) {
         int total = 0;
-        for (SpongeRegion r2 : this.getRegions(uuid)) {
+        for (Region r2 : this.getRegions(uuid)) {
             total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }
 
     @Override
-    public Set<SpongeRegion> getRegionsNear(int px, int pz, int radius) {
-        SortedSet<SpongeRegion> ret = new TreeSet<>(Comparator.comparing(SpongeRegion::getName));
+    public Set<Region> getRegionsNear(int px, int pz, int radius) {
+        SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE ABS(centerX-?)<=? AND ABS(centerZ-?)<=?");
             st.setInt(1, px);
@@ -545,8 +543,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<SpongeRegion> getRegions(int x, int y, int z) {
-        Set<SpongeRegion> regionl = new HashSet<>();
+    public Set<Region> getRegions(int x, int y, int z) {
+        Set<Region> regionl = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE ?<=maxMbrX AND ?>=minMbrX AND ?<=maxMbrZ AND ?>=minMbrZ AND ?<=maxY AND ?>=minY");
             st.setInt(1, x);
@@ -568,14 +566,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public SpongeRegion getTopRegion(int x, int y, int z) {
-        Map<Integer, SpongeRegion> regionlist = new HashMap<>();
+    public Region getTopRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
         int max = 0;
 
-        for (SpongeRegion r : this.getRegions(x, y, z)) {
+        for (Region r : this.getRegions(x, y, z)) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    SpongeRegion reg1 = regionlist.get(r.getPrior());
+                    Region reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -594,14 +592,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public SpongeRegion getLowRegion(int x, int y, int z) {
-        Map<Integer, SpongeRegion> regionlist = new HashMap<>();
+    public Region getLowRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
         int min = 0;
 
-        for (SpongeRegion r : this.getRegions(x, y, z)) {
+        for (Region r : this.getRegions(x, y, z)) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    SpongeRegion reg1 = regionlist.get(r.getPrior());
+                    Region reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -619,13 +617,13 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         return regionlist.get(min);
     }
 
-    public Map<Integer, SpongeRegion> getGroupRegion(int x, int y, int z) {
-        Map<Integer, SpongeRegion> regionlist = new HashMap<>();
+    public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
 
-        for (SpongeRegion r : this.getRegions(x, y, z)) {
+        for (Region r : this.getRegions(x, y, z)) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    SpongeRegion reg1 = regionlist.get(r.getPrior());
+                    Region reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -640,8 +638,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<SpongeRegion> getAllRegions() {
-        Set<SpongeRegion> allregions = new HashSet<>();
+    public Set<Region> getAllRegions() {
+        Set<Region> allregions = new HashSet<>();
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "`");
             ResultSet rs = st.executeQuery();

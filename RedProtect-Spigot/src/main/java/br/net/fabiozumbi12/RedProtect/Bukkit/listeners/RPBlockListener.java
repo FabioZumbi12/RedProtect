@@ -1,40 +1,38 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.*;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -89,7 +87,7 @@ public class RPBlockListener implements Listener {
             return;
         }
 
-        BukkitRegion signr = RedProtect.get().rm.getTopRegion(b.getLocation());
+        Region signr = RedProtect.get().rm.getTopRegion(b.getLocation());
 
         if (signr != null && !signr.canSign(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantinteract");
@@ -156,7 +154,7 @@ public class RPBlockListener implements Listener {
 
             RegionBuilder rb = new EncompassRegionBuilder(e);
             if (rb.ready()) {
-                BukkitRegion r = rb.build();
+                Region r = rb.build();
                 e.setLine(0, RPLang.get("blocklistener.region.signcreated"));
                 e.setLine(1, r.getName());
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
@@ -210,7 +208,7 @@ public class RPBlockListener implements Listener {
         }
 
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
                 (m.equals(Material.HOPPER) || m.name().contains("RAIL"))) {
@@ -291,7 +289,7 @@ public class RPBlockListener implements Listener {
         }
 
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
             Block ib = b.getRelative(BlockFace.UP);
@@ -326,7 +324,7 @@ public class RPBlockListener implements Listener {
 
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l);
 
         Block b = p.getLocation().getBlock();
         if (r != null &&
@@ -365,14 +363,14 @@ public class RPBlockListener implements Listener {
         if (e.getEntity() == null) {
             return;
         }
-        BukkitRegion or = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+        Region or = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
         for (Block b : e.blockList()) {
             if (b == null) {
                 continue;
             }
             RedProtect.get().logger.debug("Blocks: " + b.getType().name());
             Location l = b.getLocation();
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canFire() || !cont.canWorldBreak(b)) {
                 RedProtect.get().logger.debug("canWorldBreak Called!");
                 //e.setCancelled(true);
@@ -411,7 +409,7 @@ public class RPBlockListener implements Listener {
         Location l = e.getEntity().getLocation();
 
         if ((ent instanceof ItemFrame || ent instanceof Painting) && remover instanceof Monster) {
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canMobLoot()) {
                 e.setCancelled(true);
             }
@@ -429,7 +427,7 @@ public class RPBlockListener implements Listener {
         Location l = e.getEntity().getLocation();
 
         if ((ent instanceof ItemFrame || ent instanceof Painting) && (e.getCause().toString().equals("EXPLOSION"))) {
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canFire()) {
                 e.setCancelled(true);
             }
@@ -451,7 +449,7 @@ public class RPBlockListener implements Listener {
 
         RedProtect.get().logger.debug("Is BlockIgniteEvent event. Canceled? " + e.isCancelled());
 
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null && !r.canFire()) {
             if (e.getIgnitingEntity() != null) {
                 if (e.getIgnitingEntity() instanceof Player) {
@@ -486,7 +484,7 @@ public class RPBlockListener implements Listener {
 
         Block b = e.getBlock();
 
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
         if (r != null && !r.canFire()) {
             e.setCancelled(true);
             return;
@@ -506,8 +504,8 @@ public class RPBlockListener implements Listener {
         Block bto = e.getToBlock();
         Block bfrom = e.getBlock();
         RedProtect.get().logger.debug("RPBlockListener - Is BlockFromToEvent event is to " + bto.getType().name() + " from " + bfrom.getType().name());
-        BukkitRegion rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
-        BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
+        Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
+        Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
         boolean isLiquid = bfrom.isLiquid() || bfrom.getType().name().contains("BUBBLE_COLUMN") || bfrom.getType().name().contains("KELP");
         if (rto != null && isLiquid && !rto.canFlow()) {
             e.setCancelled(true);
@@ -536,7 +534,7 @@ public class RPBlockListener implements Listener {
     public void onLightning(LightningStrikeEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is LightningStrikeEvent event");
         Location l = e.getLightning().getLocation();
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l);
         if (r != null && !r.canFire()) {
             e.setCancelled(true);
         }
@@ -552,8 +550,8 @@ public class RPBlockListener implements Listener {
         Block bfrom = e.getSource();
         Block bto = e.getBlock();
         RedProtect.get().logger.debug("Is BlockSpreadEvent event, source is " + bfrom.getType().name());
-        BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
-        BukkitRegion rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
+        Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
+        Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
         if ((e.getNewState().getType().equals(Material.FIRE) || e.getNewState().getType().name().contains("LAVA")) && rfrom != null && !rfrom.canFire()) {
             e.setCancelled(true);
             return;
@@ -584,9 +582,9 @@ public class RPBlockListener implements Listener {
         if (!RPConfig.getBool("deny-structure-bypass-regions")) {
             return;
         }
-        BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(e.getLocation());
+        Region rfrom = RedProtect.get().rm.getTopRegion(e.getLocation());
         for (BlockState bstt : e.getBlocks()) {
-            BukkitRegion rto = RedProtect.get().rm.getTopRegion(bstt.getLocation());
+            Region rto = RedProtect.get().rm.getTopRegion(bstt.getLocation());
             Block bloc = bstt.getLocation().getBlock();
             //deny blocks spread in/out regions
             if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)) {
@@ -613,7 +611,7 @@ public class RPBlockListener implements Listener {
         }
         Vehicle cart = e.getVehicle();
         Player p = (Player) e.getAttacker();
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(cart.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(cart.getLocation());
 
         if (r != null && !r.canMinecart(p)) {
             RPLang.sendMessage(p, "blocklistener.region.cantbreak");
@@ -630,13 +628,13 @@ public class RPBlockListener implements Listener {
 
         Block piston = e.getBlock();
         List<Block> blocks = e.getBlocks();
-        BukkitRegion pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
+        Region pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
         Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
         World w = e.getBlock().getWorld();
         for (Block b : blocks) {
             RedProtect.get().logger.debug("BlockPistonExtendEvent event - Block: " + b.getType().name());
             RedProtect.get().logger.debug("BlockPistonExtendEvent event - Relative: " + b.getRelative(e.getDirection()).getType().name());
-            BukkitRegion br = RedProtect.get().rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
+            Region br = RedProtect.get().rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
             if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                 e.setCancelled(true);
                 return;
@@ -668,8 +666,8 @@ public class RPBlockListener implements Listener {
         if (!Bukkit.getBukkitVersion().startsWith("1.8.") && !Bukkit.getBukkitVersion().startsWith("1.9.")) {
             Block b = e.getRetractLocation().getBlock();
             RedProtect.get().logger.debug("BlockPistonRetractEvent not 1.8 event - Block: " + b.getType().name());
-            BukkitRegion pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
-            BukkitRegion br = RedProtect.get().rm.getTopRegion(b.getLocation());
+            Region pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
+            Region br = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                 e.setCancelled(true);
                 return;
@@ -685,10 +683,10 @@ public class RPBlockListener implements Listener {
             }
         } else {
             List<Block> blocks = e.getBlocks();
-            BukkitRegion pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
+            Region pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
             for (Block b : blocks) {
                 RedProtect.get().logger.debug("BlockPistonRetractEvent 1.8 event - Block: " + b.getType().name());
-                BukkitRegion br = RedProtect.get().rm.getTopRegion(b.getLocation());
+                Region br = RedProtect.get().rm.getTopRegion(b.getLocation());
                 if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                     e.setCancelled(true);
                     return;
@@ -713,7 +711,7 @@ public class RPBlockListener implements Listener {
         if (e.isCancelled()) {
             return;
         }
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.leavesDecay()) {
             e.setCancelled(true);
         }
@@ -725,7 +723,7 @@ public class RPBlockListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
         if (r != null && !r.canGrow()) {
             event.setCancelled(true);
         }
@@ -745,7 +743,7 @@ public class RPBlockListener implements Listener {
         RedProtect.get().logger.debug("Is Blockform event: " + b.getType().name());
 
         if (b.getType().equals(Material.SNOW) || b.getType().equals(Material.ICE)) {
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (r != null && !r.canIceForm()) {
                 event.setCancelled(true);
             }

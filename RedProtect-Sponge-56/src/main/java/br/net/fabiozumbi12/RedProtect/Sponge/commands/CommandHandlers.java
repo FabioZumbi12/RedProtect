@@ -1,39 +1,37 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 29/03/19 02:00
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -55,8 +53,8 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandHandlers {
 
-    // TODO SpongeRegion handlers
-    public static void handleAddLeader(CommandSource src, String sVictim, SpongeRegion r) {
+    // TODO Region handlers
+    public static void handleAddLeader(CommandSource src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -121,9 +119,9 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveLeader(CommandSource src, String sVictim, SpongeRegion r) {
-        SpongeRegion rLow = null;
-        Map<Integer, SpongeRegion> regions = new HashMap<>();
+    public static void handleRemoveLeader(CommandSource src, String sVictim, Region r) {
+        Region rLow = null;
+        Map<Integer, Region> regions = new HashMap<>();
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -172,7 +170,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleAddAdmin(CommandSource src, String sVictim, SpongeRegion r) {
+    public static void handleAddAdmin(CommandSource src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -215,7 +213,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveAdmin(CommandSource src, String sVictim, SpongeRegion r) {
+    public static void handleRemoveAdmin(CommandSource src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -254,7 +252,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleAddMember(CommandSource src, String sVictim, SpongeRegion r) {
+    public static void handleAddMember(CommandSource src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -299,7 +297,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveMember(CommandSource src, String sVictim, SpongeRegion r) {
+    public static void handleRemoveMember(CommandSource src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
@@ -339,7 +337,7 @@ public class CommandHandlers {
     }
 
     public static void handleDelete(Player p) {
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "delete", r)) {
             if (r == null) {
                 RPLang.sendMessage(p, "cmdmanager.region.todo.that");
@@ -372,7 +370,7 @@ public class CommandHandlers {
     }
 
     public static void handleDeleteName(Player p, String rname, String world) {
-        SpongeRegion r = RedProtect.get().rm.getRegion(rname, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(rname, p.getWorld());
         if (!world.equals("")) {
             if (Sponge.getServer().getWorld(world).isPresent()) {
                 r = RedProtect.get().rm.getRegion(rname, Sponge.getServer().getWorld(world).get());
@@ -412,16 +410,18 @@ public class CommandHandlers {
     }
 
     public static void handleRename(Player p, String newName) {
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "rename", r)) {
             if (r == null) {
                 RPLang.sendMessage(p, "cmdmanager.region.todo.that");
                 return;
             }
 
+            //filter name
+            newName = RPUtil.setName(newName);
+
             //filter region name
-            newName = newName.replaceAll("[^\\p{L}_0-9 ]", "");
-            if (newName.isEmpty() || newName.length() < 3) {
+            if (newName.isEmpty() || newName.length() < 4) {
                 newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
                 if (newName.length() > 16) {
                     RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
@@ -448,9 +448,9 @@ public class CommandHandlers {
             String oldname = event.getOldName();
             newName = event.getNewName();
 
-            RedProtect.get().rm.renameRegion(newName, r);
-            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.rename.newname") + " " + newName);
-            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " RENAMED region " + oldname + " to " + newName);
+            Region newRegion = RedProtect.get().rm.renameRegion(newName, r);
+            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.rename.newname") + " " + newRegion.getName());
+            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " RENAMED region " + oldname + " to " + newRegion.getName());
         } else {
             RPLang.sendMessage(p, "no.permission");
         }
@@ -458,7 +458,7 @@ public class CommandHandlers {
 
     // TODO Other Handlers
     public static void handlePrioritySingle(Player p, int prior, String region) {
-        SpongeRegion r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -471,7 +471,7 @@ public class CommandHandlers {
     }
 
     public static void handlePriority(Player p, int prior) {
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -484,19 +484,19 @@ public class CommandHandlers {
     }
 
     public static void handleInfoTop(Player p) {
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (r == null) {
             RPLang.sendMessage(p, "cmdmanager.region.todo.that");
             return;
         }
-        Map<Integer, SpongeRegion> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
+        Map<Integer, Region> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "--------------- [&e" + r.getName() + RPLang.get("general.color") + "] ---------------"));
             p.sendMessage(r.info());
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "----------------------------------"));
             if (groupr.size() > 1) {
                 p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.moreregions")));
-                for (SpongeRegion regs : groupr.values()) {
+                for (Region regs : groupr.values()) {
                     if (regs != r) {
                         p.sendMessage(RPUtil.toText(RPLang.get("region.name") + " " + regs.getName() + " " + RPLang.get("region.priority") + " " + regs.getPrior()));
                     }
@@ -508,7 +508,7 @@ public class CommandHandlers {
     }
 
     public static void handleInfo(Player p, String region, String world) {
-        SpongeRegion r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
         if (!world.equals("")) {
             if (Sponge.getServer().getWorld(world).isPresent()) {
                 r = RedProtect.get().rm.getRegion(region, Sponge.getServer().getWorld(world).get());
@@ -531,7 +531,7 @@ public class CommandHandlers {
     }
 
     public static void handletp(Player p, String rname, World world, Player play) {
-        SpongeRegion region = RedProtect.get().rm.getRegion(rname, world);
+        Region region = RedProtect.get().rm.getRegion(rname, world);
         if (region == null) {
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.doesntexist") + ": " + rname);
             return;
@@ -600,7 +600,7 @@ public class CommandHandlers {
     }
 
     public static void handleWelcome(Player p, String wMessage) {
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), CommandHandlers.class.getName());
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "welcome", r)) {
             if (r != null) {
                 switch (wMessage) {
@@ -640,9 +640,9 @@ public class CommandHandlers {
     }
 
     public static void getRegionforList(CommandSource p, String uuid, int nPage) {
-        Sponge.getScheduler().createAsyncExecutor(RedProtect.get()).execute(()->{
+        Sponge.getScheduler().createAsyncExecutor(RedProtect.get()).execute(() -> {
             int Page = nPage;
-            Set<SpongeRegion> regions = RedProtect.get().rm.getRegions(uuid);
+            Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
             String pname = RPUtil.UUIDtoPlayer(uuid);
             int length = regions.size();
             if (pname == null || length == 0) {
@@ -666,14 +666,14 @@ public class CommandHandlers {
                     int count;
 
                     String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
-                    Set<SpongeRegion> wregions = RedProtect.get().rm.getRegions(uuid, w);
+                    Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
                     int totalLocal = wregions.size();
                     total += totalLocal;
 
                     int lastLocal = 0;
 
                     if (wregions.size() > 0) {
-                        List<SpongeRegion> it = new ArrayList<>(wregions);
+                        List<Region> it = new ArrayList<>(wregions);
                         if (min > totalLocal) {
                             int diff = (totalLocal / regionsPage);
                             min = regionsPage * diff;
@@ -682,9 +682,9 @@ public class CommandHandlers {
                         if (max > it.size()) max = (it.size() - 1);
                         //-----------
                         Text.Builder worldregions = Text.builder();
-                        for (int i = min; i <= max; i++){
+                        for (int i = min; i <= max; i++) {
                             count = i;
-                            SpongeRegion r = it.get(i);
+                            Region r = it.get(i);
                             String area = "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")";
 
                             if (RedProtect.get().ph.hasRegionPermAdmin(p, "teleport", null)) {
@@ -714,10 +714,10 @@ public class CommandHandlers {
                         }
                         //-----------
 
-                        last += lastLocal+1;
+                        last += lastLocal + 1;
                         p.sendMessage(RPUtil.toText("-----"));
-                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]&r: "));
-                        p.sendMessages(worldregions.append(RPUtil.toText(RPLang.get("general.color")+".")).build());
+                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]&r: "));
+                        p.sendMessages(worldregions.append(RPUtil.toText(RPLang.get("general.color") + ".")).build());
                     }
                 }
                 p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
@@ -732,7 +732,7 @@ public class CommandHandlers {
         });
     }
 
-    public static void handleFlag(Player p, String flag, String value, SpongeRegion r) {
+    public static void handleFlag(Player p, String flag, String value, Region r) {
         if (checkCmd(flag, "help")) {
             sendFlagHelp(p);
             return;
@@ -746,7 +746,7 @@ public class CommandHandlers {
         Object objflag = RPUtil.parseObject(value);
 
         if ((RedProtect.get().cfgs.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) || flag.equalsIgnoreCase("info")) {
-            if (r.isAdmin(p) || r.isLeader(p) ||  RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.flag")) {
+            if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------[" + RPLang.get("cmdmanager.region.flag.values") + "]------------"));
                     p.sendMessage(r.getFlagInfo());
@@ -851,12 +851,12 @@ public class CommandHandlers {
         p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
 
         StringBuilder sb = new StringBuilder();
-        for (String flag:RedProtect.get().cfgs.AdminFlags){
+        for (String flag : RedProtect.get().cfgs.AdminFlags) {
             if (RedProtect.get().ph.hasFlagPerm(p, flag))
                 sb.append(flag).append(", ");
         }
         if (sb.length() > 1) {
-            p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.admlist") + " [" + sb.toString().substring(0,sb.length()-2) + "]"));
+            p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.admlist") + " [" + sb.toString().substring(0, sb.length() - 2) + "]"));
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
         }
     }
@@ -948,7 +948,7 @@ public class CommandHandlers {
             if (!Sponge.getServer().getWorld(valida[1]).isPresent()) {
                 return false;
             }
-            SpongeRegion r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
+            Region r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
             if (r == null) {
                 return false;
             }

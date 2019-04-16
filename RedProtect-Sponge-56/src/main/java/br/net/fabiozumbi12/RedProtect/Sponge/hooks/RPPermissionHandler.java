@@ -1,36 +1,34 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 17/03/19 22:46
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -47,7 +45,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
     }
 
-    public boolean hasFlagPerm(Player p, String flag){
+    public boolean hasFlagPerm(Player p, String flag) {
         String adminperm = "redprotect.flag.admin." + flag;
         String userperm = "redprotect.flag." + flag;
         return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
@@ -69,23 +67,23 @@ public class RPPermissionHandler {
         return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.command.admin"));
     }
 
-    public boolean hasRegionPermMember(Player p, String s, SpongeRegion poly) {
+    public boolean hasRegionPermMember(Player p, String s, Region poly) {
         return regionPermMember(p, s, poly);
     }
 
-    public boolean hasRegionPermAdmin(Player p, String s, SpongeRegion poly) {
+    public boolean hasRegionPermAdmin(Player p, String s, Region poly) {
         return regionPermAdmin(p, s, poly);
     }
 
-    public boolean hasRegionPermAdmin(CommandSource sender, String s, SpongeRegion poly) {
+    public boolean hasRegionPermAdmin(CommandSource sender, String s, Region poly) {
         return !(sender instanceof Player) || regionPermAdmin((Player) sender, s, poly);
     }
 
-    public boolean hasRegionPermLeader(Player p, String s, SpongeRegion poly) {
+    public boolean hasRegionPermLeader(Player p, String s, Region poly) {
         return regionPermLeader(p, s, poly);
     }
 
-    public boolean hasRegionPermLeader(CommandSource sender, String s, SpongeRegion poly) {
+    public boolean hasRegionPermLeader(CommandSource sender, String s, Region poly) {
         return !(sender instanceof Player) || regionPermLeader((Player) sender, s, poly);
     }
 
@@ -97,7 +95,7 @@ public class RPPermissionHandler {
         return ClaimLimitHandler(p);
     }
 
-    private boolean regionPermLeader(Player p, String s, SpongeRegion poly) {
+    private boolean regionPermLeader(Player p, String s, Region poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {
@@ -106,7 +104,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && poly.isLeader(p));
     }
 
-    private boolean regionPermAdmin(Player p, String s, SpongeRegion poly) {
+    private boolean regionPermAdmin(Player p, String s, Region poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {
@@ -115,7 +113,7 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p)));
     }
 
-    private boolean regionPermMember(Player p, String s, SpongeRegion poly) {
+    private boolean regionPermMember(Player p, String s, Region poly) {
         String adminperm = "redprotect.command.admin." + s;
         String userperm = "redprotect.command." + s;
         if (poly == null) {

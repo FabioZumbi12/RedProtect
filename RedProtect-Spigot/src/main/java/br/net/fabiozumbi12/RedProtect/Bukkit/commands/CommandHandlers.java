@@ -1,41 +1,39 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
@@ -48,8 +46,8 @@ import java.util.*;
 
 public class CommandHandlers {
 
-    // TODO BukkitRegion handlers
-    public static void handleAddLeader(CommandSender src, String sVictim, BukkitRegion r) {
+    // TODO Region handlers
+    public static void handleAddLeader(CommandSender src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -110,9 +108,9 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveLeader(CommandSender src, String sVictim, BukkitRegion r) {
-        BukkitRegion rLow = null;
-        Map<Integer, BukkitRegion> regions = new HashMap<>();
+    public static void handleRemoveLeader(CommandSender src, String sVictim, Region r) {
+        Region rLow = null;
+        Map<Integer, Region> regions = new HashMap<>();
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -158,7 +156,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleAddAdmin(CommandSender src, String sVictim, BukkitRegion r) {
+    public static void handleAddAdmin(CommandSender src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -197,7 +195,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveAdmin(CommandSender src, String sVictim, BukkitRegion r) {
+    public static void handleRemoveAdmin(CommandSender src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -232,7 +230,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleAddMember(CommandSender src, String sVictim, BukkitRegion r) {
+    public static void handleAddMember(CommandSender src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -278,7 +276,7 @@ public class CommandHandlers {
         }
     }
 
-    public static void handleRemoveMember(CommandSender src, String sVictim, BukkitRegion r) {
+    public static void handleRemoveMember(CommandSender src, String sVictim, Region r) {
         if (src instanceof Player) {
             Player p = (Player) src;
             r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -316,7 +314,7 @@ public class CommandHandlers {
     }
 
     public static void handleDelete(Player p) {
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "delete", r)) {
             if (r == null) {
                 RPLang.sendMessage(p, "cmdmanager.region.todo.that");
@@ -350,7 +348,7 @@ public class CommandHandlers {
     }
 
     public static void handleDeleteName(Player p, String rname, String world) {
-        BukkitRegion r = RedProtect.get().rm.getRegion(rname, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(rname, p.getWorld());
         if (!world.equals("")) {
             if (Bukkit.getWorld(world) != null) {
                 r = RedProtect.get().rm.getRegion(rname, Bukkit.getWorld(world));
@@ -391,16 +389,18 @@ public class CommandHandlers {
     }
 
     public static void handleRename(Player p, String newName) {
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "rename", r)) {
             if (r == null) {
                 RPLang.sendMessage(p, "cmdmanager.region.todo.that");
                 return;
             }
 
+            //filter name
+            newName = RPUtil.setName(newName);
+
             //filter region name
-            newName = RPUtil.nameNormalizer(newName);
-            if (newName.isEmpty() || newName.length() < 3) {
+            if (newName.isEmpty() || newName.length() < 4) {
                 newName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
                 if (newName.length() > 16) {
                     RPLang.sendMessage(p, "cmdmanager.region.rename.invalid");
@@ -428,9 +428,9 @@ public class CommandHandlers {
             String oldname = event.getOldName();
             newName = event.getNewName();
 
-            RedProtect.get().rm.renameRegion(newName, r);
-            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.rename.newname") + " " + newName);
-            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " RENAMED region " + oldname + " to " + newName);
+            Region newRegion = RedProtect.get().rm.renameRegion(newName, r);
+            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.rename.newname") + " " + newRegion.getName());
+            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " RENAMED region " + oldname + " to " + newRegion.getName());
         } else {
             RPLang.sendMessage(p, "no.permission");
         }
@@ -438,7 +438,7 @@ public class CommandHandlers {
 
     // TODO Other Handlers
     public static void handlePrioritySingle(Player p, int prior, String region) {
-        BukkitRegion r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -451,7 +451,7 @@ public class CommandHandlers {
     }
 
     public static void handlePriority(Player p, int prior) {
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -464,19 +464,19 @@ public class CommandHandlers {
     }
 
     public static void handleInfoTop(Player p) {
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r == null) {
             RPLang.sendMessage(p, "cmdmanager.region.todo.that");
             return;
         }
-        Map<Integer, BukkitRegion> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
+        Map<Integer, Region> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
             p.sendMessage(r.info());
             p.sendMessage(RPLang.get("general.color") + "----------------------------------");
             if (groupr.size() > 1) {
                 p.sendMessage(RPLang.get("cmdmanager.moreregions"));
-                for (BukkitRegion regs : groupr.values()) {
+                for (Region regs : groupr.values()) {
                     if (regs != r) {
                         p.sendMessage(RPLang.get("region.name") + " " + regs.getName() + " " + RPLang.get("region.priority") + " " + regs.getPrior());
                     }
@@ -488,7 +488,7 @@ public class CommandHandlers {
     }
 
     public static void handleInfo(Player p, String region, String world) {
-        BukkitRegion r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
         if (!world.equals("")) {
             if (Bukkit.getWorld(world) != null) {
                 r = RedProtect.get().rm.getRegion(region, Bukkit.getWorld(world));
@@ -516,7 +516,7 @@ public class CommandHandlers {
             RPLang.sendMessage(p, "cmdmanager.region.invalidworld");
             return;
         }
-        BukkitRegion region = RedProtect.get().rm.getRegion(rname, w);
+        Region region = RedProtect.get().rm.getRegion(rname, w);
         if (region == null) {
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.doesntexist") + ": " + rname);
             return;
@@ -593,7 +593,7 @@ public class CommandHandlers {
     }
 
     public static void handleWelcome(Player p, String wMessage) {
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "welcome", r)) {
             if (r != null) {
                 switch (wMessage) {
@@ -633,9 +633,9 @@ public class CommandHandlers {
     }
 
     public static void getRegionforList(CommandSender sender, String uuid, int nPage) {
-        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), ()->{
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
             int Page = nPage;
-            Set<BukkitRegion> regions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid));
+            Set<Region> regions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid));
             String pname = RPUtil.UUIDtoPlayer(uuid);
             int length = regions.size();
             if (pname == null || length == 0) {
@@ -659,14 +659,14 @@ public class CommandHandlers {
                     int count;
 
                     String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));
-                    Set<BukkitRegion> wregions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
+                    Set<Region> wregions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
                     int totalLocal = wregions.size();
                     total += totalLocal;
 
                     int lastLocal = 0;
 
                     if (wregions.size() > 0) {
-                        List<BukkitRegion> it = new ArrayList<>(wregions);
+                        List<Region> it = new ArrayList<>(wregions);
                         if (min > totalLocal) {
                             int diff = (totalLocal / regionsPage);
                             min = regionsPage * diff;
@@ -676,11 +676,10 @@ public class CommandHandlers {
                         //-------------
                         if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
                             FancyMessage fancy = new FancyMessage();
-                            for (int i = min; i <= max; i++){
+                            for (int i = min; i <= max; i++) {
                                 count = i;
-                                BukkitRegion r = it.get(i);
+                                Region r = it.get(i);
                                 String area = RPConfig.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
-
                                 String rname = RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
                                 if (first) {
                                     rname = rname.substring(3);
@@ -695,22 +694,22 @@ public class CommandHandlers {
                                         .then(" ");
                                 lastLocal = count;
                             }
-                            last += lastLocal+1;
+                            last += lastLocal + 1;
                             sender.sendMessage("-----");
-                            sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
+                            sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
                             fancy.send(sender);
                         } else {
                             StringBuilder worldregions = new StringBuilder();
-                            for (int i = min; i <= max; i++){
+                            for (int i = min; i <= max; i++) {
                                 count = i;
-                                BukkitRegion r = it.get(i);
+                                Region r = it.get(i);
                                 String area = RPConfig.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
                                 worldregions.append(RPLang.get("general.color")).append(", ").append(ChatColor.GRAY).append(r.getName()).append(area);
                                 lastLocal = count;
                             }
-                            last += lastLocal+1;
+                            last += lastLocal + 1;
                             sender.sendMessage("-----");
-                            sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min+1) + "-" + (max+1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
+                            sender.sendMessage(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
                             sender.sendMessage(worldregions.substring(3) + RPLang.get("general.color") + ".");
                         }
                         //-----------
@@ -728,7 +727,7 @@ public class CommandHandlers {
         });
     }
 
-    public static void handleFlag(Player p, String flag, String value, BukkitRegion r) {
+    public static void handleFlag(Player p, String flag, String value, Region r) {
         if (checkCmd(flag, "help")) {
             sendFlagHelp(p);
             return;
@@ -898,12 +897,12 @@ public class CommandHandlers {
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
 
         StringBuilder sb = new StringBuilder();
-        for (String flag:RPConfig.AdminFlags){
+        for (String flag : RPConfig.AdminFlags) {
             if (RedProtect.get().ph.hasFlagPerm(p, flag))
                 sb.append(flag).append(", ");
         }
         if (sb.length() > 1) {
-            p.sendMessage(RPLang.get("cmdmanager.region.flag.admlist") + " [" + sb.toString().substring(0,sb.length()-2) + "]");
+            p.sendMessage(RPLang.get("cmdmanager.region.flag.admlist") + " [" + sb.toString().substring(0, sb.length() - 2) + "]");
             p.sendMessage(RPLang.get("general.color") + "------------------------------------");
         }
     }
@@ -1017,7 +1016,7 @@ public class CommandHandlers {
             if (Bukkit.getWorld(valida[1]) == null) {
                 return false;
             }
-            BukkitRegion r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
+            Region r = RedProtect.get().rm.getRegion(valida[0], valida[1]);
             if (r == null) {
                 return false;
             }

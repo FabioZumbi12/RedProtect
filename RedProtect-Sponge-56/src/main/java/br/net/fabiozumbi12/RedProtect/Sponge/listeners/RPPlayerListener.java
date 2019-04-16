@@ -1,35 +1,34 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 02:54
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
-import br.net.fabiozumbi12.RedProtect.Sponge.*;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.EnterExitRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
@@ -37,7 +36,6 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -111,7 +109,7 @@ public class RPPlayerListener {
     public void onPressPlateChange(CollideBlockEvent e, @First Player p) {
         if (e.getTargetBlock().getName().contains("pressure_plate")) {
             Location<World> loc = e.getTargetLocation();
-            SpongeRegion r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+            Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
             if (r != null && !r.allowPressPlate(p)) {
                 e.setCancelled(true);
                 RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
@@ -137,7 +135,7 @@ public class RPPlayerListener {
             }
         }
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 
         if (r != null && RedProtect.get().getPVHelper().getItemType(stack).equals(ItemTypes.POTION) && !r.usePotions(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantuse");
@@ -210,7 +208,7 @@ public class RPPlayerListener {
             l = p.getLocation();
         }
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
 
         String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
@@ -281,7 +279,7 @@ public class RPPlayerListener {
             l = p.getLocation();
         }
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         ItemType itemInHand = ItemTypes.NONE;
         ItemStack stack;
         if (!RedProtect.get().getPVHelper().getItemMainHand(p).isEmpty()) {
@@ -304,8 +302,7 @@ public class RPPlayerListener {
             r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
             if (r == null) {
                 RPLang.sendMessage(p, "playerlistener.noregion.atblock");
-            } else
-            if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
+            } else if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
                 p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "--------------- [&e" + r.getName() + RPLang.get("general.color") + "] ---------------"));
                 p.sendMessage(r.info());
                 p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-----------------------------------------"));
@@ -415,17 +412,17 @@ public class RPPlayerListener {
 
                         //check if tag is leaders or members names
                         if (tag.equalsIgnoreCase("{membername}")) {
-                            for (RegionPlayer<String, String> leader : r.getLeaders()) {
+                            for (PlayerRegion<String, String> leader : r.getLeaders()) {
                                 if (sign.get(0).toPlain().equalsIgnoreCase(leader.getPlayerName())) {
                                     return;
                                 }
                             }
-                            for (RegionPlayer<String, String> member : r.getMembers()) {
+                            for (PlayerRegion<String, String> member : r.getMembers()) {
                                 if (sign.get(0).toPlain().equalsIgnoreCase(member.getPlayerName())) {
                                     return;
                                 }
                             }
-                            for (RegionPlayer<String, String> admin : r.getAdmins()) {
+                            for (PlayerRegion<String, String> admin : r.getAdmins()) {
                                 if (sign.get(0).toPlain().equalsIgnoreCase(admin.getPlayerName())) {
                                     return;
                                 }
@@ -464,7 +461,7 @@ public class RPPlayerListener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractEntityEvent event: " + ent.getType().getName());
 
         Location<World> l = ent.getLocation();
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         if (r == null) {
             return;
         }
@@ -480,7 +477,7 @@ public class RPPlayerListener {
                 e.setCancelled(true);
             }
         } else if (ent instanceof Minecart || ent instanceof Boat) {
-            if (!r.canMinecart(p)){
+            if (!r.canMinecart(p)) {
                 RPLang.sendMessage(p, "blocklistener.region.cantenter");
                 e.setCancelled(true);
             }
@@ -516,7 +513,7 @@ public class RPPlayerListener {
         }
 
         Location<World> l = e1.getLocation();
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         if (r == null) {
             return;
         }
@@ -592,7 +589,7 @@ public class RPPlayerListener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "RPLayerListener: Is EntityDamageByEntityEvent event. Victim: " + e.getTargetEntity().getType().getName());
 
         Location<World> l = e1.getLocation();
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         if (r == null || p == null) {
             return;
         }
@@ -653,7 +650,7 @@ public class RPPlayerListener {
         Location<World> lto = e.getToTransform().getLocation();
 
         //Exit flag
-        SpongeRegion rfrom = RedProtect.get().rm.getTopRegion(lfrom, this.getClass().getName());
+        Region rfrom = RedProtect.get().rm.getTopRegion(lfrom, this.getClass().getName());
         if (rfrom != null && !rfrom.canExit(p)) {
             e.setToTransform(RPUtil.DenyExitPlayer(p, lfromForm, ltoForm, rfrom));
             return;
@@ -668,7 +665,7 @@ public class RPPlayerListener {
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
         }
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(lto, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(lto, this.getClass().getName());
 
         World w = lfrom.getExtent();
 
@@ -730,7 +727,7 @@ public class RPPlayerListener {
             }
 
             if (!Ownerslist.containsKey(p) || !Ownerslist.get(p).equals(r.getID())) {
-                SpongeRegion er = RedProtect.get().rm.getRegionById(Ownerslist.get(p));
+                Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p));
                 Ownerslist.put(p, r.getID());
 
                 //Execute listener:
@@ -750,7 +747,7 @@ public class RPPlayerListener {
         } else {
             //if (r == null) >>
             if (Ownerslist.get(p) != null) {
-                SpongeRegion er = RedProtect.get().rm.getRegionById(Ownerslist.get(p));
+                Region er = RedProtect.get().rm.getRegionById(Ownerslist.get(p));
                 Ownerslist.remove(p);
 
                 //Execute listener:
@@ -797,8 +794,8 @@ public class RPPlayerListener {
 
         Location<World> lfrom = e.getFromTransform().getLocation();
         Location<World> lto = e.getToTransform().getLocation();
-        final SpongeRegion rfrom = RedProtect.get().rm.getTopRegion(lfrom, this.getClass().getName());
-        final SpongeRegion rto = RedProtect.get().rm.getTopRegion(lto, this.getClass().getName());
+        final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom, this.getClass().getName());
+        final Region rto = RedProtect.get().rm.getTopRegion(lto, this.getClass().getName());
 
         if (rfrom != null && !rfrom.canExit(p)) {
             e.setToTransform(RPUtil.DenyExitPlayer(p, e.getFromTransform(), e.getToTransform(), rfrom));
@@ -916,7 +913,7 @@ public class RPPlayerListener {
         }
     }
 
-    private boolean checkMaxPlayer(Player p, SpongeRegion r) {
+    private boolean checkMaxPlayer(Player p, Region r) {
         if (r.canBuild(p)) {
             return true;
         }
@@ -925,7 +922,7 @@ public class RPPlayerListener {
             if (onp == p) {
                 continue;
             }
-            SpongeRegion reg = RedProtect.get().rm.getTopRegion(onp.getLocation(), this.getClass().getName());
+            Region reg = RedProtect.get().rm.getTopRegion(onp.getLocation(), this.getClass().getName());
             if (reg != null && reg == r) {
                 ttl++;
             }
@@ -967,7 +964,7 @@ public class RPPlayerListener {
             PlayerCmd.put(p, cmd);
         }
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
         if (r != null) {
 
             if (!r.AllowCommands(p, cmd)) {
@@ -1000,7 +997,7 @@ public class RPPlayerListener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "RPLayerListener: Is HarvestEntityEvent");
 
         Player p = e.getTargetEntity();
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 
         if (r != null) {
             if (r.keepInventory()) {
@@ -1030,7 +1027,7 @@ public class RPPlayerListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPortalCreate(ConstructPortalEvent e) {
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(e.getPortalLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(e.getPortalLocation(), this.getClass().getName());
         if (r != null && !r.canCreatePortal()) {
             e.setCancelled(true);
         }
@@ -1055,7 +1052,7 @@ public class RPPlayerListener {
             if (!RedProtect.get().OnlineMode) {
                 uuid = p.getName().toLowerCase();
             }
-            for (SpongeRegion r : RedProtect.get().rm.getMemberRegions(uuid)) {
+            for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
                 if (r.getDate() == null || !r.getDate().equals(RPUtil.DateNow())) {
                     r.setDate(RPUtil.DateNow());
                 }
@@ -1063,7 +1060,7 @@ public class RPPlayerListener {
         }
 
         if (p.getPlayer().isPresent()) {
-            SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getPlayer().get().getLocation(), this.getClass().getName());
+            Region r = RedProtect.get().rm.getTopRegion(p.getPlayer().get().getLocation(), this.getClass().getName());
             if (r != null) {
                 RegionFlags(r, null, p.getPlayer().get(), true);
             }
@@ -1076,7 +1073,7 @@ public class RPPlayerListener {
         Entity ent = e.getTargetEntity();
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is PotionSplashEvent event.");
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
         if (ent instanceof ThrownPotion) {
 
             ThrownPotion potion = (ThrownPotion) e.getTargetEntity();
@@ -1176,7 +1173,7 @@ public class RPPlayerListener {
         toremove.clear();
     }
 
-    private void EnterExitNotify(SpongeRegion r, Player p) {
+    private void EnterExitNotify(Region r, Player p) {
         if (RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("OFF")) {
             return;
         }
@@ -1192,7 +1189,7 @@ public class RPPlayerListener {
             if (RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("CHAT") ||
                     RedProtect.get().cfgs.root().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 StringBuilder leaderstringBuilder = new StringBuilder();
-                for (RegionPlayer<String, String> leader : r.getLeaders()) {
+                for (PlayerRegion<String, String> leader : r.getLeaders()) {
                     leaderstringBuilder.append(", ").append(leader.getPlayerName());
                 }
                 leaderstring = leaderstringBuilder.toString();
@@ -1215,7 +1212,7 @@ public class RPPlayerListener {
         }
     }
 
-    private void RegionFlags(final SpongeRegion r, SpongeRegion er, final Player p, boolean join) {
+    private void RegionFlags(final Region r, Region er, final Player p, boolean join) {
 
         if (r.canEnter(p)) {
 
@@ -1273,7 +1270,7 @@ public class RPPlayerListener {
 						/*String amplifier = effect.split(" ")[1];
 						PotionEffect fulleffect = PotionEffect.builder()
 								.particles(false)
-								.potionType(RPUtil.getPotType(eff))
+								.potionType(CoreUtil.getPotType(eff))
 								.amplifier(Integer.parseInt(amplifier))
 								.build();*/
                         p.remove(Keys.POTION_EFFECTS);
@@ -1410,7 +1407,7 @@ public class RPPlayerListener {
         }
     }
 
-    private void noRegionFlags(SpongeRegion er, Player p) {
+    private void noRegionFlags(Region er, Player p) {
 
         if (er != null && er.canExit(p)) {
 
@@ -1504,7 +1501,7 @@ public class RPPlayerListener {
 
         Player p = (Player) e.getTargetEntity();
 
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
         if (r != null && !r.canHunger()) {
             e.setCancelled(true);
         }
@@ -1517,7 +1514,7 @@ public class RPPlayerListener {
             if (!(ent instanceof Item)) {
                 continue;
             }
-            SpongeRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
+            Region r = RedProtect.get().rm.getTopRegion(ent.getLocation(), this.getClass().getName());
             if (r != null && ((!r.canEnter(p) && !r.canPickup(p) || !r.canPickup(p)))) {
                 event.setCancelled(true);
                 RPLang.sendMessage(p, "playerlistener.region.cantpickup");
@@ -1542,7 +1539,7 @@ public class RPPlayerListener {
 
         for (Entity ent : e.getEntities()) {
             Location<World> l = ent.getLocation();
-            SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+            Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 
             if (r != null && ((!r.canExit(p) && !r.canDrop(p)) || !r.canDrop(p))) {
                 e.setCancelled(true);

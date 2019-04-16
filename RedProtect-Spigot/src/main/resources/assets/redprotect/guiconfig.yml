@@ -164,7 +164,7 @@ gui-flags:
   clan:
     slot: 14
     material: BOW
-    name: '&e=> Set Clan BukkitRegion'
+    name: '&e=> Set Clan Region'
     description: '&bDescription: &aSet this region as'
     description1: '&ayour clan home, adding all clan members'
     description2: '&aat same time with on click.'

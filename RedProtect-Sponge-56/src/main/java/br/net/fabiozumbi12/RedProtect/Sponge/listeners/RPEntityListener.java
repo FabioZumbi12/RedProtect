@@ -1,38 +1,36 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 17/03/19 20:19
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.potion.PotionEffect;
@@ -98,7 +96,7 @@ public class RPEntityListener {
             Optional<SpawnType> cause = event.getCause().first(SpawnType.class);
             RedProtect.get().logger.debug(LogLevel.ENTITY, "SpawnCause: " + (cause.map(Object::toString).orElse(" null")));
             if (e instanceof Wither && cause.isPresent() && cause.get().equals(SpawnTypes.PLACEMENT)) {
-                SpongeRegion r = RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName());
+                Region r = RedProtect.get().rm.getTopRegion(e.getLocation(), this.getClass().getName());
                 if (r != null && !r.canSpawnWhiter()) {
                     event.setCancelled(true);
                     return;
@@ -107,7 +105,7 @@ public class RPEntityListener {
 
             if (e instanceof Monster) {
                 Location<World> l = e.getLocation();
-                SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+                Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
                 if (r != null && !r.canSpawnMonsters()) {
                     RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of monster " + e.getType().getName());
                     event.setCancelled(true);
@@ -116,7 +114,7 @@ public class RPEntityListener {
             }
             if (e instanceof Animal || e instanceof Golem || e instanceof Ambient || e instanceof Aquatic) {
                 Location<World> l = e.getLocation();
-                SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+                Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
                 if (r != null && !r.canSpawnPassives()) {
                     RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of animal " + e.getType().getName());
                     event.setCancelled(true);
@@ -133,7 +131,7 @@ public class RPEntityListener {
         //victim
         Entity e1 = e.getTargetEntity();
         RedProtect.get().logger.debug(LogLevel.ENTITY, "RPEntityListener - DamageEntityEvent entity target " + e1.getType().getName());
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
         if (e1 instanceof Living && !(e1 instanceof Monster)) {
             if (r != null && r.flagExists("invincible")) {
                 if (r.getFlagBool("invincible")) {
@@ -167,8 +165,8 @@ public class RPEntityListener {
             }
         }
 
-        SpongeRegion r1 = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
-        SpongeRegion r2 = RedProtect.get().rm.getTopRegion(e2.getLocation(), this.getClass().getName());
+        Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation(), this.getClass().getName());
+        Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation(), this.getClass().getName());
 
         if (e.getCause().containsType(Lightning.class) ||
                 e.getCause().containsType(Explosive.class) ||
@@ -276,7 +274,7 @@ public class RPEntityListener {
             RedProtect.get().logger.debug(LogLevel.ENTITY, "RPEntityListener - LaunchProjectileEvent shooter " + shooter.getName());
 
             Entity e2 = event.getTargetEntity();
-            SpongeRegion r = RedProtect.get().rm.getTopRegion(e2.getLocation(), this.getClass().getName());
+            Region r = RedProtect.get().rm.getTopRegion(e2.getLocation(), this.getClass().getName());
             if (e2 instanceof Player) {
                 if (r != null && r.flagExists("pvp") && !r.canPVP(shooter)) {
                     event.setCancelled(true);
@@ -293,7 +291,7 @@ public class RPEntityListener {
     public void onInteractEvent(InteractEntityEvent.Secondary e, @First Player p) {
         Entity et = e.getTargetEntity();
         Location<World> l = et.getLocation();
-        SpongeRegion r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
 
         RedProtect.get().logger.debug(LogLevel.ENTITY, "RPEntityListener - InteractEntityEvent.Secondary entity " + et.getType().getName());
 
@@ -311,7 +309,7 @@ public class RPEntityListener {
         if (e instanceof Monster) {
             BlockSnapshot b = event.getTransactions().get(0).getOriginal();
             RedProtect.get().logger.debug(LogLevel.ENTITY, "RPEntityListener - Is EntityChangeBlockEvent event! Block " + b.getState().getType().getName());
-            SpongeRegion r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+            Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
             if (!cont.canWorldBreak(b)) {
                 event.setCancelled(true);
                 return;
@@ -331,7 +329,7 @@ public class RPEntityListener {
     	List<Block> toRemove = new ArrayList<Block>();
         for (Block b:e.blockList()) {
         	Location l = b.getLocation();
-        	SpongeRegion r = RedProtect.get().rm.getTopRegion(l);
+        	Region r = RedProtect.get().rm.getTopRegion(l);
         	if (r != null && !r.canFire()){
         		toRemove.add(b);
         		continue;

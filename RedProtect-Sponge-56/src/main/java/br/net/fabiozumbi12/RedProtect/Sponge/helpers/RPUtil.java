@@ -1,38 +1,37 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:20
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
-import br.net.fabiozumbi12.RedProtect.Core.region.RegionPlayer;
-import br.net.fabiozumbi12.RedProtect.Sponge.*;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
-import br.net.fabiozumbi12.RedProtect.Sponge.region.SpongeRegion;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -60,25 +59,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
-public class RPUtil {
+public class RPUtil extends CoreUtil {
     public static boolean stopRegen;
 
-    public static String nameNormalizer(String name){
-        return Normalizer.normalize(name, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+","").replaceAll("[^\\p{L}_0-9 ]", "");
-    }
     public static Text toText(String str) {
         return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
@@ -93,8 +86,8 @@ public class RPUtil {
         return Sponge.getGame().getRegistry().getType(EntityType.class, e.getType().getName()).isPresent();
     }
 
-    public static Transform<World> DenyExitPlayer(Player p, Transform<World> from, Transform<World> to, SpongeRegion r) {
-        SpongeRegion rto = RedProtect.get().rm.getTopRegion(to.getLocation(), RPUtil.class.getName());
+    public static Transform<World> DenyExitPlayer(Player p, Transform<World> from, Transform<World> to, Region r) {
+        Region rto = RedProtect.get().rm.getTopRegion(to.getLocation(), RPUtil.class.getName());
         if (rto != r) {
             to = new Transform<>(from.getLocation()).setRotation(from.getRotation());
             RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
@@ -102,15 +95,15 @@ public class RPUtil {
         return to;
     }
 
-    public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, SpongeRegion r, boolean checkSec) {
+    public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r, boolean checkSec) {
         Location<World> setFrom = from.getLocation();
         for (int i = 0; i < r.getArea() + 10; i++) {
-            SpongeRegion r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ(), RPUtil.class.getName());
-            SpongeRegion r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ(), RPUtil.class.getName());
-            SpongeRegion r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() + i, RPUtil.class.getName());
-            SpongeRegion r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() - i, RPUtil.class.getName());
-            SpongeRegion r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ() + i, RPUtil.class.getName());
-            SpongeRegion r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ() - i, RPUtil.class.getName());
+            Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ(), RPUtil.class.getName());
+            Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ(), RPUtil.class.getName());
+            Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() + i, RPUtil.class.getName());
+            Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() - i, RPUtil.class.getName());
+            Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ() + i, RPUtil.class.getName());
+            Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ() - i, RPUtil.class.getName());
             if (r1 != r) {
                 to = new Transform<>(setFrom.add(+i, 0, 0)).setRotation(from.getRotation());
                 break;
@@ -160,8 +153,8 @@ public class RPUtil {
         try {
             FileOutputStream fos = new FileOutputStream(file);
             ZipOutputStream zos = new ZipOutputStream(fos);
-            if (ZippedFile == null){
-                for (CommentedConfigurationNode c:conf){
+            if (ZippedFile == null) {
+                for (CommentedConfigurationNode c : conf) {
                     try {
                         ZipEntry e = new ZipEntry(c.getAppendedNode().getNode("name").getString() + ".conf");
                         zos.putNextEntry(e);
@@ -175,7 +168,7 @@ public class RPUtil {
             } else {
                 ZipEntry e = new ZipEntry(ZippedFile);
                 zos.putNextEntry(e);
-                for (CommentedConfigurationNode c:conf){
+                for (CommentedConfigurationNode c : conf) {
                     byte[] data = c.toString().getBytes();
                     zos.write(data, 0, data.length);
                 }
@@ -213,44 +206,12 @@ public class RPUtil {
         return false;
     }
 
-    public static void SaveToZipSB(File file, String ZippedFile, StringBuilder sb) {
-        try {
-            final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-            ZipEntry e = new ZipEntry(ZippedFile);
-            out.putNextEntry(e);
-
-            byte[] data = sb.toString().getBytes();
-            out.write(data, 0, data.length);
-            out.closeEntry();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static File genFileName(String Path, Boolean isBackup) {
+        return genFileName(Path, isBackup, RedProtect.get().cfgs.root().flat_file.max_backups, DateNow());
     }
 
-    public static File genFileName(String Path, Boolean isBackup) {
-        File f = new File(Path);
-        if (!f.exists()) {
-            f.mkdir();
-        }
-        int count = 1;
-        String date = DateNow().replace("/", "-");
-        File logfile = new File(f, date + "-" + count + ".zip");
-        File[] files = f.listFiles();
-        HashMap<Long, File> keyFiles = new HashMap<>();
-        if (files != null && files.length >= RedProtect.get().cfgs.root().flat_file.max_backups && isBackup) {
-            for (File key : files) {
-                keyFiles.put(key.lastModified(), key);
-            }
-            keyFiles.get(Collections.min(keyFiles.keySet())).delete();
-        }
-
-        while (logfile.exists()) {
-            count++;
-            logfile = new File(Path + date + "-" + count + ".zip");
-        }
-
-        return logfile;
+    public static String DateNow() {
+        return DateNow(RedProtect.get().cfgs.root().region_settings.date_format);
     }
 
     /**
@@ -271,7 +232,7 @@ public class RPUtil {
             } else {
                 rname = p + "_" + i;
             }
-            rname = nameNormalizer(rname);
+
             if (RedProtect.get().rm.getRegion(rname, w) == null) {
                 break;
             }
@@ -280,21 +241,8 @@ public class RPUtil {
         return rname;
     }
 
-    public static String DateNow() {
-        DateFormat df = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
-        Date today = Calendar.getInstance().getTime();
-        return df.format(today);
-    }
-
-    public static String HourNow() {
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        int min = Calendar.getInstance().get(Calendar.MINUTE);
-        int sec = Calendar.getInstance().get(Calendar.SECOND);
-        return "[" + hour + ":" + min + ":" + sec + "]";
-    }
-
     //TODO read all db
-    public static void ReadAllDB(Set<SpongeRegion> regions) {
+    public static void ReadAllDB(Set<Region> regions) {
         int purged = 0;
         int sell = 0;
         int cfm = 0;
@@ -309,7 +257,7 @@ public class RPUtil {
             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
         }
 
-        for (SpongeRegion region : regions) {
+        for (Region region : regions) {
             boolean serverRegion = false;
 
             if (region.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader)) {
@@ -383,9 +331,10 @@ public class RPUtil {
                 }
             }
 
-            //conform region names
-            if (Pattern.matches("[^\\p{L}_0-9 ]", region.getName()) || Pattern.matches("\\p{InCombiningDiacriticalMarks}+", region.getName())) {
-                String rname = nameNormalizer(region.getName());
+            //filter name
+            String rname = RPUtil.setName(region.getName());
+            if (rname.length() < 4) {
+                rname = RPUtil.nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
                 RedProtect.get().rm.renameRegion(rname, region);
                 cfm++;
             }
@@ -393,14 +342,14 @@ public class RPUtil {
 
         if (delay > 0) {
             RedProtect.get().logger.warning("&c> There's " + delay / 10 + " regions to be regenerated at 2 regions/second.");
-            if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen){
+            if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen) {
                 Sponge.getServer().setHasWhitelist(true);
                 RedProtect.get().logger.warning("&eEnabled whitelist until regen!");
             }
         }
 
         if (cfm > 0) {
-            RedProtect.get().logger.sucess("[" + cfm + "] SpongeRegion names conformed!");
+            RedProtect.get().logger.sucess("[" + cfm + "] Region names conformed!");
         }
 
         if (skipped > 0) {
@@ -470,14 +419,14 @@ public class RPUtil {
         if (!RedProtect.get().OnlineMode) {
             return uuid.toLowerCase();
         }
-        try{
+        try {
             uuids = UUID.fromString(uuid);
             UserStorageService uss = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
             if (uss.get(uuids).isPresent()) {
                 PlayerName = uss.get(uuids).get().getName();
             }
-        } catch (IllegalArgumentException e){
-            if (PlayerName.isEmpty()){
+        } catch (IllegalArgumentException e) {
+            if (PlayerName.isEmpty()) {
                 PlayerName = MojangUUIDs.getName(uuid);
             }
         }
@@ -499,32 +448,8 @@ public class RPUtil {
         return null;
     }
 
-    public static boolean isUUIDs(String uuid) {
-        if (uuid == null) {
-            return false;
-        }
-        try {
-            UUID.fromString(uuid);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public static Object parseObject(String value) {
-        Object obj = value;
-        try {
-            obj = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                obj = Boolean.parseBoolean(value);
-            }
-        }
-        return obj;
-    }
-
     public static boolean mysqlToFile() {
-        HashMap<String, SpongeRegion> regions = new HashMap<>();
+        HashMap<String, Region> regions = new HashMap<>();
         int saved = 1;
 
         try {
@@ -536,9 +461,9 @@ public class RPUtil {
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
-                    Set<RegionPlayer<String, String>> leaders = new HashSet<>();
-                    Set<RegionPlayer<String, String>> admins = new HashSet<>();
-                    Set<RegionPlayer<String, String>> members = new HashSet<>();
+                    Set<PlayerRegion<String, String>> leaders = new HashSet<>();
+                    Set<PlayerRegion<String, String>> admins = new HashSet<>();
+                    Set<PlayerRegion<String, String>> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -563,19 +488,19 @@ public class RPUtil {
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
                             String[] p = member.split("@");
-                            members.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            members.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
                             String[] p = admin.split("@");
-                            admins.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            admins.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
                             String[] p = leader.split("@");
-                            leaders.add(new RegionPlayer<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            leaders.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
 
@@ -586,7 +511,7 @@ public class RPUtil {
                             flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));
                         }
                     }
-                    SpongeRegion newr = new SpongeRegion(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
+                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
                     regions.put(rname, newr);
                 }
                 st.close();
@@ -596,7 +521,7 @@ public class RPUtil {
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
                 CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
                 Set<CommentedConfigurationNode> dbs = new HashSet<>();
-                for (SpongeRegion r : regions.values()) {
+                for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
@@ -673,7 +598,7 @@ public class RPUtil {
 
             Connection dbcon = DriverManager.getConnection(url + dbname, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
 
-            for (SpongeRegion r : RedProtect.get().rm.getRegionsByWorld(world)) {
+            for (Region r : RedProtect.get().rm.getRegionsByWorld(world)) {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
                     try {
                         PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
@@ -844,11 +769,11 @@ public class RPUtil {
         }, RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds, TimeUnit.SECONDS);
     }
 
-    public static int getUpdatedPrior(SpongeRegion region) {
+    public static int getUpdatedPrior(Region region) {
         int regionarea = region.getArea();
         int prior = region.getPrior();
-        SpongeRegion topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ(), RPUtil.class.getName());
-        SpongeRegion lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().serv.getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ(), RPUtil.class.getName());
+        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().serv.getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
 
         if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))) {
             return prior;
@@ -883,13 +808,13 @@ public class RPUtil {
         }
     }
 
-    public static int simuleTotalRegionSize(String player, SpongeRegion r2) {
+    public static int simuleTotalRegionSize(String player, Region r2) {
         int total = 0;
         int regs = 0;
         for (Location<World> loc : r2.get4Points(r2.getCenterY())) {
-            Map<Integer, SpongeRegion> pregs = RedProtect.get().rm.getGroupRegion(loc.getExtent(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            Map<Integer, Region> pregs = RedProtect.get().rm.getGroupRegion(loc.getExtent(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
             pregs.remove(r2.getPrior());
-            SpongeRegion other;
+            Region other;
             if (pregs.size() > 0) {
                 other = pregs.get(Collections.max(pregs.keySet()));
             } else {
@@ -899,19 +824,19 @@ public class RPUtil {
                 regs++;
             }
         }
-        if (regs == 0 || regs != 4) {
+        if (regs != 4) {
             total += r2.getArea();
         }
         return total;
     }
 
-    public static void addProps(CommentedConfigurationNode fileDB, SpongeRegion r) {
-        String rname = r.getName().replaceAll("[.+=;\\-]", "");
+    public static void addProps(CommentedConfigurationNode fileDB, Region r) {
+        String rname = r.getName();
         fileDB.getNode(rname, "name").setValue(rname);
         fileDB.getNode(rname, "lastvisit").setValue(r.getDate());
-        fileDB.getNode(rname, "leaders").setValue(r.getLeaders());
-        fileDB.getNode(rname, "admins").setValue(r.getAdmins());
-        fileDB.getNode(rname, "members").setValue(r.getMembers());
+        fileDB.getNode(rname, "leaders").setValue(r.getLeaders().stream().map(t -> t.getUUID() + "@" + t.getPlayerName()).collect(Collectors.toList()));
+        fileDB.getNode(rname, "admins").setValue(r.getAdmins().stream().map(t -> t.getUUID() + "@" + t.getPlayerName()).collect(Collectors.toList()));
+        fileDB.getNode(rname, "members").setValue(r.getMembers().stream().map(t -> t.getUUID() + "@" + t.getPlayerName()).collect(Collectors.toList()));
         fileDB.getNode(rname, "priority").setValue(r.getPrior());
         fileDB.getNode(rname, "welcome").setValue(r.getWelcome());
         fileDB.getNode(rname, "world").setValue(r.getWorld());
@@ -940,7 +865,7 @@ public class RPUtil {
         }
     }
 
-    public static SpongeRegion loadRegion(CommentedConfigurationNode region, String rname, World world) throws ObjectMappingException {
+    public static Region loadRegion(CommentedConfigurationNode region, String rname, World world) throws ObjectMappingException {
         int maxX = region.getNode(rname, "maxX").getInt();
         int maxZ = region.getNode(rname, "maxZ").getInt();
         int minX = region.getNode(rname, "minX").getInt();
@@ -949,56 +874,56 @@ public class RPUtil {
         int minY = region.getNode(rname, "minY").getInt(0);
         String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
 
-        Set<RegionPlayer<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s->{
+        Set<PlayerRegion<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
-                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
-            return new RegionPlayer<>(p[0], p[1]);
+            return new PlayerRegion<>(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        Set<RegionPlayer<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s->{
+        Set<PlayerRegion<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
-                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
-            return new RegionPlayer<>(p[0], p[1]);
+            return new PlayerRegion<>(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        Set<RegionPlayer<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s->{
+        Set<PlayerRegion<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)){
+            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
-                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before +" &ato &6"+p[0]);
+                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
-            return new RegionPlayer<>(p[0], p[1]);
+            return new PlayerRegion<>(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        String welcome = region.getNode(rname, "welcome").getString();
-        int prior = region.getNode(rname, "priority").getInt();
-        String date = region.getNode(rname, "lastvisit").getString();
-        long value = region.getNode(rname, "value").getLong();
+        String welcome = region.getNode(rname, "welcome").getString("");
+        int prior = region.getNode(rname, "priority").getInt(0);
+        String date = region.getNode(rname, "lastvisit").getString("");
+        long value = region.getNode(rname, "value").getLong(0);
         boolean candel = region.getNode(rname, "candelete").getBoolean(true);
 
         Location<World> tppoint = null;
-        if (!region.getNode(rname, "tppoint").getString().equalsIgnoreCase("")) {
+        if (!region.getNode(rname, "tppoint").getString("").equalsIgnoreCase("")) {
             String[] tpstring = region.getNode(rname, "tppoint").getString().split(",");
             tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
         }
 
-        SpongeRegion newr = new SpongeRegion(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().cfgs.getDefFlagsValues(), welcome, value, tppoint, candel);
+        Region newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().cfgs.getDefFlagsValues(), welcome, value, tppoint, candel);
 
         for (String flag : RedProtect.get().cfgs.getDefFlags()) {
             if (region.getNode(rname, "flags", flag) != null) {
-                newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getBoolean());
+                newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
             } else {
                 newr.getFlags().put(flag, RedProtect.get().cfgs.getDefFlagsValues().get(flag));
             }
@@ -1014,8 +939,8 @@ public class RPUtil {
     public static int SingleToFiles() {
         int saved = 0;
         for (World w : Sponge.getServer().getWorlds()) {
-            Set<SpongeRegion> regions = RedProtect.get().rm.getRegionsByWorld(w);
-            for (SpongeRegion r : regions) {
+            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w);
+            for (Region r : regions) {
                 File wf = new File(RedProtect.get().configDir + File.separator + "data", w.getName() + File.separator + r.getName() + ".conf");
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(wf.toPath()).build();
                 CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
@@ -1047,10 +972,10 @@ public class RPUtil {
         int saved = 0;
         for (World w : Sponge.getServer().getWorlds()) {
             File f = new File(RedProtect.get().configDir + File.separator + "data", "data_" + w.getName() + ".conf");
-            Set<SpongeRegion> regions = RedProtect.get().rm.getRegionsByWorld(w);
+            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w);
             ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(f.toPath()).build();
             CommentedConfigurationNode fileDB = regionManager.createEmptyNode();
-            for (SpongeRegion r : regions) {
+            for (Region r : regions) {
                 addProps(fileDB, r);
                 saved++;
                 File oldf = new File(RedProtect.get().configDir + File.separator + "data", w.getName() + File.separator + r.getName() + ".conf");
@@ -1091,7 +1016,7 @@ public class RPUtil {
         for (int ix = x - radius; ix <= x + radius; ++ix) {
             for (int iy = y - radius; iy <= y + radius; ++iy) {
                 for (int iz = z - radius; iz <= z + radius; ++iz) {
-                    SpongeRegion reg = RedProtect.get().rm.getTopRegion(new Location<>(p.getWorld(), ix, iy, iz), RPUtil.class.getName());
+                    Region reg = RedProtect.get().rm.getTopRegion(new Location<>(p.getWorld(), ix, iy, iz), RPUtil.class.getName());
                     if (reg != null && !reg.canBuild(p)) {
                         RPLang.sendMessage(p, RPLang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
                         return false;
@@ -1100,16 +1025,6 @@ public class RPUtil {
             }
         }
         return true;
-    }
-
-    public static String StripName(String pRName) {
-        String regionName;
-        if (pRName.length() > 13) {
-            regionName = pRName.substring(0, 13);
-        } else {
-            regionName = pRName;
-        }
-        return regionName;
     }
 
     public static String regionNameConform(String regionName, Player p) {

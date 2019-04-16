@@ -1,38 +1,37 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 23:48
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.region;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldFlatFileRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldRegionManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
 import com.flowpowered.math.vector.Vector3i;
@@ -50,7 +49,7 @@ import java.util.*;
 public class RegionManager {
 
     private final HashMap<World, WorldRegionManager> regionManagers;
-    private final HashMap<Vector3i, SpongeRegion> bLoc = new HashMap<>();
+    private final HashMap<Vector3i, Region> bLoc = new HashMap<>();
 
     public RegionManager() {
         this.regionManagers = new HashMap<>();
@@ -106,19 +105,19 @@ public class RegionManager {
     }
 
     public @Nullable
-    SpongeRegion getRegionById(String rid) {
+    Region getRegionById(String rid) {
         if (rid == null) return null;
         World w = Sponge.getServer().getWorld(rid.split("@")[1]).get();
         return this.regionManagers.get(w).getRegion(rid.split("@")[0]);
     }
 
     public @Nullable
-    SpongeRegion getRegion(String rname, String w) {
+    Region getRegion(String rname, String w) {
         return this.regionManagers.get(Sponge.getServer().getWorld(w).get()).getRegion(rname);
     }
 
     public @Nullable
-    SpongeRegion getRegion(String rname, World w) {
+    Region getRegion(String rname, World w) {
         return this.regionManagers.get(w).getRegion(rname);
     }
 
@@ -137,7 +136,7 @@ public class RegionManager {
         return size;
     }
     /*
-    public Set<SpongeRegion> getWorldRegions(String player, World w) {
+    public Set<Region> getWorldRegions(String player, World w) {
         return this.regionManagers.get(w).getRegions(player);
     }
     */
@@ -150,8 +149,8 @@ public class RegionManager {
      * @param uuid
      * @return set<region>
      */
-    public Set<SpongeRegion> getRegions(String uuid) {
-        Set<SpongeRegion> ret = new HashSet<>();
+    public Set<Region> getRegions(String uuid) {
+        Set<Region> ret = new HashSet<>();
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
             ret.addAll(worldRegionManager.getRegions(uuid));
         }
@@ -166,24 +165,24 @@ public class RegionManager {
      * @param uuid
      * @return set<region>
      */
-    public Set<SpongeRegion> getMemberRegions(String uuid) {
-        Set<SpongeRegion> ret = new HashSet<>();
+    public Set<Region> getMemberRegions(String uuid) {
+        Set<Region> ret = new HashSet<>();
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
             ret.addAll(worldRegionManager.getMemberRegions(uuid));
         }
         return ret;
     }
 
-    public Set<SpongeRegion> getRegionsNear(Player player, int i, World w) {
+    public Set<Region> getRegionsNear(Player player, int i, World w) {
         return this.regionManagers.get(w).getRegionsNear(player.getLocation().getBlockX(), player.getLocation().getBlockZ(), i);
     }
 
-    public Set<SpongeRegion> getRegions(String player, World w) {
+    public Set<Region> getRegions(String player, World w) {
         player = RPUtil.PlayerToUUID(player);
         return this.regionManagers.get(w).getRegions(player);
     }
 
-    public Set<SpongeRegion> getRegions(String player, String w) {
+    public Set<Region> getRegions(String player, String w) {
         player = RPUtil.PlayerToUUID(player);
         World world = Sponge.getServer().getWorld(w).get();
         return this.regionManagers.get(world).getRegions(player);
@@ -200,7 +199,7 @@ public class RegionManager {
         return size;
     }
 
-    public void add(SpongeRegion r, World w) {
+    public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
         if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable) {
             try {
@@ -216,7 +215,7 @@ public class RegionManager {
         this.regionManagers.get(w).save(false);
     }
 
-    public void remove(SpongeRegion r, World w) {
+    public void remove(Region r, World w) {
         r.notifyRemove();
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
@@ -231,7 +230,7 @@ public class RegionManager {
         }
     }
 
-    private void removeCache(SpongeRegion r) {
+    private void removeCache(Region r) {
         Set<Vector3i> itloc = bLoc.keySet();
         List<Vector3i> toRemove = new ArrayList<>();
         for (Vector3i loc : itloc) {
@@ -244,17 +243,17 @@ public class RegionManager {
         }
     }
 
-    public Set<SpongeRegion> getRegions(Player p, int x, int y, int z) {
+    public Set<Region> getRegions(Player p, int x, int y, int z) {
         return this.regionManagers.get(p.getWorld()).getRegions(x, y, z);
     }
 
     /**
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code SpongeRegion} - Or null if no regions on this location.
+     * @return {@code Region} - Or null if no regions on this location.
      */
     public @Nullable
-    SpongeRegion getTopRegion(Location<World> loc, String caller) {
+    Region getTopRegion(Location<World> loc, String caller) {
         if (bLoc.containsKey(loc.getBlockPosition())) {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "Get from cache: " + loc.getBlockPosition().toString() + " - [" + caller + "]");
             return bLoc.get(loc.getBlockPosition());
@@ -263,7 +262,7 @@ public class RegionManager {
                 return null;
             }
             WorldRegionManager rm = this.regionManagers.get(loc.getExtent());
-            SpongeRegion r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
             try {
                 bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
                 if (r != null) {
@@ -279,20 +278,20 @@ public class RegionManager {
     /**
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code SpongeRegion} - Or null if no regions on this location.
+     * @return {@code Region} - Or null if no regions on this location.
      */
     public @Nullable
-    SpongeRegion getTopRegion(World w, int x, int y, int z, String caller) {
+    Region getTopRegion(World w, int x, int y, int z, String caller) {
         return getTopRegion(new Location<>(w, x, y, z), caller);
     }
 
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code SpongeRegion} - Or null if no regions on this location.
+     * @return {@code Region} - Or null if no regions on this location.
      */
     public @Nullable
-    SpongeRegion getLowRegion(World w, int x, int y, int z) {
+    Region getLowRegion(World w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -303,7 +302,7 @@ public class RegionManager {
     public int removeAll(String player) {
         int qtd = 0;
         for (WorldRegionManager wrm : this.regionManagers.values()) {
-            for (SpongeRegion r : wrm.getRegions(player)) {
+            for (Region r : wrm.getRegions(player)) {
                 r.notifyRemove();
                 wrm.remove(r);
                 removeCache(r);
@@ -315,7 +314,7 @@ public class RegionManager {
 
     public int regenAll(String player) {
         int delay = 0;
-        for (SpongeRegion r : getRegions(player)) {
+        for (Region r : getRegions(player)) {
             if (r.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
                 WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
@@ -327,10 +326,10 @@ public class RegionManager {
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code SpongeRegion} - Or null if no regions on this location.
+     * @return {@code Region} - Or null if no regions on this location.
      */
     public @Nullable
-    SpongeRegion getLowRegion(Location<World> loc) {
+    Region getLowRegion(Location<World> loc) {
         if (!this.regionManagers.containsKey(loc.getExtent())) {
             return null;
         }
@@ -341,9 +340,9 @@ public class RegionManager {
     /**
      * Get regions in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code Map<Integer,SpongeRegion>} - Indexed by priority
+     * @return {@code Map<Integer,Region>} - Indexed by priority
      */
-    public Map<Integer, SpongeRegion> getGroupRegion(World w, int x, int y, int z) {
+    public Map<Integer, Region> getGroupRegion(World w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -354,9 +353,9 @@ public class RegionManager {
     /**
      * Get regions in a group region. If no other regions, return the unique region on location.
      *
-     * @return {@code Map<Integer,SpongeRegion>} - Indexed by priority
+     * @return {@code Map<Integer,Region>} - Indexed by priority
      */
-    public Map<Integer, SpongeRegion> getGroupRegion(Location<World> loc) {
+    public Map<Integer, Region> getGroupRegion(Location<World> loc) {
         if (!this.regionManagers.containsKey(loc.getExtent())) {
             return null;
         }
@@ -364,8 +363,8 @@ public class RegionManager {
         return rm.getGroupRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
 
-    public Set<SpongeRegion> getAllRegions() {
-        Set<SpongeRegion> regions = new HashSet<>();
+    public Set<Region> getAllRegions() {
+        Set<Region> regions = new HashSet<>();
         for (World w : RedProtect.get().serv.getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             regions.addAll(rm.getAllRegions());
@@ -373,9 +372,9 @@ public class RegionManager {
         return regions;
     }
 
-    public Set<SpongeRegion> getRegionsByWorld(World w) {
+    public Set<Region> getRegionsByWorld(World w) {
         WorldRegionManager rm = this.regionManagers.get(w);
-        Set<SpongeRegion> regions = new HashSet<>(rm.getAllRegions());
+        Set<Region> regions = new HashSet<>(rm.getAllRegions());
         return regions;
     }
 
@@ -387,17 +386,17 @@ public class RegionManager {
         this.regionManagers.clear();
     }
 
-    public void updateLiveRegion(SpongeRegion r, String columm, Object value) {
+    public void updateLiveRegion(Region r, String columm, Object value) {
         WorldRegionManager rm = this.regionManagers.get(Sponge.getServer().getWorld(r.getWorld()).get());
         rm.updateLiveRegion(r.getName(), columm, value);
     }
 
-    public void updateLiveFlags(SpongeRegion r, String flag, String value) {
+    public void updateLiveFlags(Region r, String flag, String value) {
         WorldRegionManager rm = this.regionManagers.get(Sponge.getServer().getWorld(r.getWorld()).get());
         rm.updateLiveFlags(r.getName(), flag, value);
     }
 
-    public void removeLiveFlags(SpongeRegion r, String flag) {
+    public void removeLiveFlags(Region r, String flag) {
         WorldRegionManager rm = this.regionManagers.get(Sponge.getServer().getWorld(r.getWorld()).get());
         rm.removeLiveFlags(r.getName(), flag);
     }
@@ -412,12 +411,13 @@ public class RegionManager {
     }
 
     @SuppressWarnings("deprecation")
-    public void renameRegion(String newName, SpongeRegion old) {
-        SpongeRegion newr = new SpongeRegion(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
+    public Region renameRegion(String newName, Region old) {
+        Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
                 new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
         this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()).get());
         this.remove(old, RedProtect.get().serv.getWorld(old.getWorld()).get());
+        return newr;
     }
 
 }

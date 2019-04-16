@@ -1,29 +1,27 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 24/03/19 13:05
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
@@ -90,12 +88,6 @@ public class MainCategory {
     @Setting
     public schematicsCat schematics = new schematicsCat();
 
-    @ConfigSerializable
-    public static class schematicsCat {
-        @Setting(value = "first-house-file", comment = "Schematic file name to use with /rp start.")
-        public String first_house_file = "house1.schem";
-    }
-
     public MainCategory() {
     }
 
@@ -135,6 +127,12 @@ public class MainCategory {
         myMap.put("teleport", false);
         myMap.put("use-potions", false);
         return myMap;
+    }
+
+    @ConfigSerializable
+    public static class schematicsCat {
+        @Setting(value = "first-house-file", comment = "Schematic file name to use with /rp start.")
+        public String first_house_file = "house1.schem";
     }
 
     @ConfigSerializable
@@ -481,6 +479,12 @@ public class MainCategory {
 
             @Setting
             public Map<String, iconCat> marker = createMap();
+            @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
+            public boolean show_leaders_admins = true;
+            @Setting(value = "cuboid-region")
+            public cuboidCat cuboid_region = new cuboidCat();
+            @Setting(value = "min-zoom")
+            public int min_zoom = 0;
 
             private Map<String, iconCat> createMap() {
                 Map<String, iconCat> myMap = new HashMap<>();
@@ -491,9 +495,21 @@ public class MainCategory {
 
             @ConfigSerializable
             public static class iconCat {
-                public iconCat(){}
-
-                public iconCat(String marker, double fill_op, String fill_col, double bord_op, String bord_col, int bord_weight){
+                @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
+                public String marker_icon;
+                @Setting(value = "fill-opacity")
+                public double fill_opacity;
+                @Setting(value = "fill-color", comment = "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
+                public String fill_color;
+                @Setting(value = "border-opacity")
+                public double border_opacity;
+                @Setting(value = "border-color", comment = "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
+                public String border_color;
+                @Setting(value = "border-weight")
+                public int border_weight;
+                public iconCat() {
+                }
+                public iconCat(String marker, double fill_op, String fill_col, double bord_op, String bord_col, int bord_weight) {
                     marker_icon = marker;
                     fill_color = fill_col;
                     fill_opacity = fill_op;
@@ -501,28 +517,7 @@ public class MainCategory {
                     border_color = bord_col;
                     border_weight = bord_weight;
                 }
-
-                @Setting(value = "marker-icon", comment = "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png")
-                public String marker_icon;
-                @Setting(value = "fill-opacity")
-                public double fill_opacity;
-                @Setting(value = "fill-color", comment = "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
-                public String fill_color;
-
-                @Setting(value = "border-opacity")
-                public double border_opacity;
-                @Setting(value = "border-color", comment = "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
-                public String border_color;
-                @Setting(value = "border-weight")
-                public int border_weight;
             }
-
-            @Setting(value = "show-leaders-admins", comment = "Show leaders and admins on hover?")
-            public boolean show_leaders_admins = true;
-            @Setting(value = "cuboid-region")
-            public cuboidCat cuboid_region = new cuboidCat();
-            @Setting(value = "min-zoom")
-            public int min_zoom = 0;
 
             @ConfigSerializable
             public static class cuboidCat {

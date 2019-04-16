@@ -1,29 +1,27 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 10/11/18 01:54
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge.API;
@@ -50,7 +48,7 @@ public class RedProtectAPI {
      * @return {@code Region} matching the name or {@code null} if region not found.
      */
     public Region getRegion(String regionName, World world) {
-        return (Region) RedProtect.get().rm.getRegion(regionName, world);
+        return RedProtect.get().rm.getRegion(regionName, world);
     }
 
     /**
@@ -73,7 +71,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(String uuid) {
-        return (Set) RedProtect.get().rm.getRegions(uuid);
+        return RedProtect.get().rm.getRegions(uuid);
     }
 
     /**
@@ -86,7 +84,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(String uuid, World world) {
-        return (Set) RedProtect.get().rm.getRegions(uuid, world);
+        return RedProtect.get().rm.getRegions(uuid, world);
     }
 
     /**
@@ -97,7 +95,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(Player player) {
-        return (Set) RedProtect.get().rm.getRegions(Sponge.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
+        return RedProtect.get().rm.getRegions(Sponge.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
     }
 
     /**
@@ -111,7 +109,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(Player player, int x, int y, int z) {
-        return (Set) RedProtect.get().rm.getRegions(player, x, y, z);
+        return RedProtect.get().rm.getRegions(player, x, y, z);
     }
 
     /**
@@ -125,7 +123,7 @@ public class RedProtectAPI {
      * @return The high priority {@code Region} in a group of regions.
      */
     public Region getHighPriorityRegion(World world, int x, int y, int z) {
-        return (Region) RedProtect.get().rm.getTopRegion(world, x, y, z, this.getClass().getName());
+        return RedProtect.get().rm.getTopRegion(world, x, y, z, this.getClass().getName());
     }
 
     /**
@@ -139,7 +137,7 @@ public class RedProtectAPI {
      * @return The lower priority {@code Region} in a group of regions.
      */
     public Region getLowPriorytyRegion(World world, int x, int y, int z) {
-        return (Region) RedProtect.get().rm.getLowRegion(world, x, y, z);
+        return RedProtect.get().rm.getLowRegion(world, x, y, z);
     }
 
     /**
@@ -153,7 +151,7 @@ public class RedProtectAPI {
      * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
      */
     public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z) {
-        return (Map) RedProtect.get().rm.getGroupRegion(world, x, y, z);
+        return RedProtect.get().rm.getGroupRegion(world, x, y, z);
     }
 
     /**
@@ -252,7 +250,7 @@ public class RedProtectAPI {
      * <p>You need to use the predefined permission {@code "RedProtect.get().flag." + YourCustomFlag} to allow player to change the values of Player flags with commands.
      * <p>
      *
-     * @param flag Player Flag to add
+     * @param flag     Player Flag to add
      * @param defValue Player Flag value to add
      */
     public void addPlayerFlag(String flag, Object defValue) {

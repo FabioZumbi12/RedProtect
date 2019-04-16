@@ -1,38 +1,36 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -81,7 +79,7 @@ public class RPMine19 implements Listener {
 
         if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)) {
             Material hand = itemInHand.getType();
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true);
@@ -101,8 +99,8 @@ public class RPMine19 implements Listener {
         Location lto = e.getTo();
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
-            final BukkitRegion rfrom = RedProtect.get().rm.getTopRegion(lfrom);
-            final BukkitRegion rto = RedProtect.get().rm.getTopRegion(lto);
+            final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
+            final Region rto = RedProtect.get().rm.getTopRegion(lto);
 
             if (rfrom != null && !rfrom.canTeleport(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantuse");
@@ -145,7 +143,7 @@ public class RPMine19 implements Listener {
 
         RedProtect.get().logger.debug("Is LingeringPotionSplashEvent event.");
 
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.allowEffects(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
@@ -172,7 +170,7 @@ public class RPMine19 implements Listener {
             return;
         }
 
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null && e.getItem().getType().equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
             RPLang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
@@ -188,7 +186,7 @@ public class RPMine19 implements Listener {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
             Block b = e.getBlock();
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (r != null && !r.canBuild(p)) {
                 RPLang.sendMessage(p, "blocklistener.region.cantbreak");
                 e.setCancelled(true);

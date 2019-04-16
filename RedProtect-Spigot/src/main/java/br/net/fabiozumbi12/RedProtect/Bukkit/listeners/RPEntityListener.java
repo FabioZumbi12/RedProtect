@@ -1,37 +1,35 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -61,7 +59,7 @@ public class RPEntityListener implements Listener {
             return;
         }
         RedProtect.get().logger.debug("RPEntityListener - EntityBlockFormEvent canceled? " + e.isCancelled());
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.canIceForm()) {
             e.setCancelled(true);
         }
@@ -82,7 +80,7 @@ public class RPEntityListener implements Listener {
 
         if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)) {
             Location l = event.getLocation();
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnWhiter()) {
                 event.isCancelled();
                 return;
@@ -91,7 +89,7 @@ public class RPEntityListener implements Listener {
 
         if (e instanceof Monster) {
             Location l = event.getLocation();
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnMonsters()) {
                 RedProtect.get().logger.debug("Cancelled spawn of monster " + event.getEntityType().name());
                 event.setCancelled(true);
@@ -100,7 +98,7 @@ public class RPEntityListener implements Listener {
 
         if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().version >= 180 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
             Location l = event.getLocation();
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {
                 RedProtect.get().logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
@@ -131,8 +129,8 @@ public class RPEntityListener implements Listener {
             }
         }
 
-        BukkitRegion r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
-        BukkitRegion r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
+        Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
+        Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
 
         if (r1 != null && !r1.canFire() && !(e2 instanceof Player)) {
             e.setCancelled(true);
@@ -197,7 +195,7 @@ public class RPEntityListener implements Listener {
         }
 
         Entity ent = e.getEntity();
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
 
         if (ent instanceof LivingEntity && !(ent instanceof Monster)) {
             if (r != null && r.flagExists("invincible")) {
@@ -237,8 +235,8 @@ public class RPEntityListener implements Listener {
             RedProtect.get().logger.debug("EntityDamageByEntityEvent event. Damager Player: " + e2.getType().name());
             RedProtect.get().logger.debug("Cause: " + de.getCause().name());
 
-            BukkitRegion r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
-            BukkitRegion r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
+            Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
+            Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
 
             if (de.getCause().equals(DamageCause.LIGHTNING) || de.getCause().equals(DamageCause.BLOCK_EXPLOSION) || de.getCause().equals(DamageCause.FIRE) || de.getCause().equals(DamageCause.WITHER) || de.getCause().equals(DamageCause.CUSTOM) || de.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
                 if (r1 != null && !r1.canFire() && !(e2 instanceof Player)) {
@@ -336,7 +334,7 @@ public class RPEntityListener implements Listener {
             return;
         }
         for (Entity e2 : event.getAffectedEntities()) {
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(e2.getLocation());
+            Region r = RedProtect.get().rm.getTopRegion(e2.getLocation());
             if (event.getEntity() instanceof Player) {
                 if (r != null && r.flagExists("pvp") && !r.canPVP((Player) event.getEntity(), shooter)) {
                     event.setCancelled(true);
@@ -362,7 +360,7 @@ public class RPEntityListener implements Listener {
             return;
         }
         Location l = e.getRightClicked().getLocation();
-        BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().rm.getTopRegion(l);
         Entity et = e.getRightClicked();
         if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager || et instanceof Golem || (et instanceof WaterMob && !r.allowFishing(p)))) {
             if (et instanceof Tameable) {
@@ -384,7 +382,7 @@ public class RPEntityListener implements Listener {
         }
         Entity e = event.getEntity();
         if (e instanceof Monster) {
-            BukkitRegion r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+            Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
             if (!cont.canWorldBreak(event.getBlock())) {
                 event.setCancelled(true);
                 return;
@@ -405,7 +403,7 @@ public class RPEntityListener implements Listener {
     	List<Block> toRemove = new ArrayList<Block>();
         for (Block b:e.blockList()) {
         	Location l = b.getLocation();
-        	BukkitRegion r = RedProtect.get().rm.getTopRegion(l);
+        	Region r = RedProtect.get().rm.getTopRegion(l);
         	if (r != null && !r.canFire()){
         		toRemove.add(b);
         		continue;

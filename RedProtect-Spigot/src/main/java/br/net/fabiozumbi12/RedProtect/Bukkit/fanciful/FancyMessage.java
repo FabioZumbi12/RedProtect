@@ -1,29 +1,27 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 04:12
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.fanciful;
@@ -116,11 +114,11 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Deserializes a JSON-represented message from a mapping of uuid-playername pairs.
+     * Deserializes a JSON-represented message from a mapping of key-value pairs.
      * This is called by the Bukkit serialization API.
      * It is not intended for direct public API consumption.
      *
-     * @param serialized The uuid-playername mapping which represents a fancy message.
+     * @param serialized The key-value mapping which represents a fancy message.
      */
     @SuppressWarnings("unchecked")
     public static FancyMessage deserialize(Map<String, Object> serialized) {
@@ -149,16 +147,16 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             for (Map.Entry<String, JsonElement> entry : messagePart.entrySet()) {
                 // Deserialize text
                 if (TextualComponent.isTextKey(entry.getKey())) {
-                    // The map mimics the YAML serialization, which has a "uuid" field and one or more "playername" fields
+                    // The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
                     Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
-                    serializedMapForm.put("uuid", entry.getKey());
+                    serializedMapForm.put("key", entry.getKey());
                     if (entry.getValue().isJsonPrimitive()) {
                         // Assume string
-                        serializedMapForm.put("playername", entry.getValue().getAsString());
+                        serializedMapForm.put("value", entry.getValue().getAsString());
                     } else {
                         // Composite object, but we assume each element is a string
                         for (Map.Entry<String, JsonElement> compositeNestedElement : entry.getValue().getAsJsonObject().entrySet()) {
-                            serializedMapForm.put("playername." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
+                            serializedMapForm.put("value." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
                         }
                     }
                     component.text = TextualComponent.deserialize(serializedMapForm);
@@ -171,18 +169,18 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
                 } else if (entry.getKey().equals("clickEvent")) {
                     JsonObject object = entry.getValue().getAsJsonObject();
                     component.clickActionName = object.get("action").getAsString();
-                    component.clickActionData = object.get("playername").getAsString();
+                    component.clickActionData = object.get("value").getAsString();
                 } else if (entry.getKey().equals("hoverEvent")) {
                     JsonObject object = entry.getValue().getAsJsonObject();
                     component.hoverActionName = object.get("action").getAsString();
-                    if (object.get("playername").isJsonPrimitive()) {
+                    if (object.get("value").isJsonPrimitive()) {
                         // Assume string
-                        component.hoverActionData = new JsonString(object.get("playername").getAsString());
+                        component.hoverActionData = new JsonString(object.get("value").getAsString());
                     } else {
                         // Assume composite type
                         // The only composite type we currently store is another FancyMessage
                         // Therefore, recursion time!
-                        component.hoverActionData = deserialize(object.get("playername").toString() /* This should properly serialize the JSON object as a JSON string */);
+                        component.hoverActionData = deserialize(object.get("value").toString() /* This should properly serialize the JSON object as a JSON string */);
                     }
                 } else if (entry.getKey().equals("insertion")) {
                     component.insertionData = entry.getValue().getAsString();
@@ -216,7 +214,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Sets the text of the current editing component to a playername.
+     * Sets the text of the current editing component to a value.
      *
      * @param text The new text of the current editing component.
      * @return This builder instance.
@@ -229,7 +227,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Sets the text of the current editing component to a playername.
+     * Sets the text of the current editing component to a value.
      *
      * @param text The new text of the current editing component.
      * @return This builder instance.
@@ -242,11 +240,11 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Sets the color of the current editing component to a playername.
+     * Sets the color of the current editing component to a value.
      *
      * @param color The new color of the current editing component.
      * @return This builder instance.
-     * @throws IllegalArgumentException If the specified {@code ChatColor} enumeration playername is not a color (but a format playername).
+     * @throws IllegalArgumentException If the specified {@code ChatColor} enumeration value is not a color (but a format value).
      */
     public FancyMessage color(final ChatColor color) {
         if (!color.isColor()) {
@@ -299,7 +297,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
     /**
      * Set the behavior of the current editing component to instruct the client to replace the chat input box content with the specified string when the currently edited part of the {@code FancyMessage} is clicked.
-     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter uuid.
+     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter key.
      *
      * @param command The text to display in the chat bar of the client.
      * @return This builder instance.
@@ -311,7 +309,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
     /**
      * Set the behavior of the current editing component to instruct the client to append the chat input box content with the specified string when the currently edited part of the {@code FancyMessage} is SHIFT-CLICKED.
-     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter uuid.
+     * The client will not immediately send the command to the server to be executed unless the client player submits the command/chat message, usually with the enter key.
      *
      * @param command The text to append to the chat bar of the client.
      * @return This builder instance.
@@ -491,9 +489,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         return this;
     }
 	/*
-	
+
 	/**
-	 * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+	 * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
 	 * @param replacements The replacements, in order, that will be used in the language-specific message.
 	 * @return This builder instance.
 	 */   /* ------------
@@ -501,10 +499,10 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		for(CharSequence str : replacements){
 			latest().translationReplacements.add(new JsonString(str));
 		}
-		
+
 		return this;
 	}
-	
+
 	*/
 
     /**
@@ -596,7 +594,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
      *
      * @param replacements The replacements, in order, that will be used in the language-specific message.
      * @return This builder instance.
@@ -611,7 +609,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
      *
      * @param replacements The replacements, in order, that will be used in the language-specific message.
      * @return This builder instance.
@@ -625,7 +623,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * If the text is a translatable uuid, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
+     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
      *
      * @param replacements The replacements, in order, that will be used in the language-specific message.
      * @return This builder instance.
@@ -751,7 +749,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 
     private Object createChatPacket(String json) throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         if (nmsChatSerializerGsonInstance == null) {
-            // Find the field and its playername, completely bypassing obfuscation
+            // Find the field and its value, completely bypassing obfuscation
             Class<?> chatSerializerClazz;
 
             String[] version = Reflection.getVersion().replace('_', '.').split("\\.");

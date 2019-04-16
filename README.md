@@ -34,9 +34,16 @@ Now you can hook with uchat using maven repository (from Github) to use in your 
 ```
 <dependencies>  
   <dependency>  
+    //Core is needed
+    <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
+    <artifactId>RedProtect-Core</artifactId>  
+    <version>LATEST</version>  
+    <scope>provided</scope>  
+  </dependency>  
+  <dependency>  
     <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
     <artifactId>RedProtect-[Check below for dependency names]</artifactId>  
-    <version>[Plugin Version]</version>  
+    <version>LATEST</version>  
     <scope>provided</scope>  
   </dependency>   
 </dependencies>  

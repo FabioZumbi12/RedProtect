@@ -1,29 +1,27 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 03:30
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
@@ -72,7 +70,9 @@ import java.util.concurrent.TimeUnit;
         version = VersionData.VERSION,
         authors = "FabioZumbi12",
         description = "Complete antigrief plugin",
-        dependencies = {@Dependency(id = "worldedit", optional = true), @Dependency(id = "dynmap", optional = true)})
+        dependencies = {
+                @Dependency(id = "worldedit", optional = true, version = "[7.0,)"),
+                @Dependency(id = "dynmap", optional = true)})
 public class RedProtect {
     private static RedProtect instance;
     public final List<String> changeWait = new ArrayList<>();
@@ -97,22 +97,23 @@ public class RedProtect {
     @ConfigDir(sharedRoot = false)
     public File configDir;
     @Inject
-    private Game game;
-    public Game getGame(){
-        return this.game;
-    }
-    @Inject
     public PluginContainer container;
     @Inject
     public GuiceObjectMapperFactory factory;
-    private UUID taskid;
     public CommandManager cmdService;
+    public CommandHandler cmdHandler;
+    @Inject
+    private Game game;
+    private UUID taskid;
     private RPVHelper pvhelp;
     private RedProtectAPI rpAPI;
-    public CommandHandler cmdHandler;
 
     public static RedProtect get() {
         return instance;
+    }
+
+    public Game getGame() {
+        return this.game;
     }
 
     public RPVHelper getPVHelper() {
@@ -236,7 +237,7 @@ public class RedProtect {
         cfgs = new RPConfig(this.factory);
         RPLang.init();
 
-        if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()){
+        if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()) {
             Sponge.getServer().setHasWhitelist(false);
             RedProtect.get().logger.sucess("Whitelist disabled!");
         }
@@ -260,17 +261,17 @@ public class RedProtect {
         WE = checkWE();
         Dyn = checkDM();
 
-        try{
+        try {
             rm = new RegionManager();
             rm.loadAll();
 
             RPUtil.ReadAllDB(rm.getAllRegions());
 
-            if (cfgs.root().file_type.equalsIgnoreCase("file")) {
+            if (!cfgs.root().file_type.equalsIgnoreCase("mysql")) {
                 AutoSaveHandler();
             }
             logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -321,10 +322,12 @@ public class RedProtect {
     }
 
     private boolean checkWE() {
+        //return this.container.getDependencies().stream().anyMatch(d->d.getId().equals("worldedit"));
         return Sponge.getPluginManager().getPlugin("worldedit").isPresent();
     }
 
     private boolean checkDM() {
+        //return this.container.getDependencies().stream().anyMatch(d->d.getId().equals("dynmap"));
         return Sponge.getPluginManager().getPlugin("dynmap").isPresent();
     }
 

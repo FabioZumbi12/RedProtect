@@ -1,35 +1,33 @@
 /*
+ *  Copyright (c) 2019 - @FabioZumbi12
+ *  Last Modified: 16/04/19 06:21
  *
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 28/03/19 20:18
+ *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *   damages arising from the use of this class.
  *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
+ *  Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ *  redistribute it freely, subject to the following restrictions:
+ *  1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ *  use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ *  2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ *  3 - This notice may not be removed or altered from any source distribution.
  *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
+ *  Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ *  responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- *
+ *  É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ *  alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ *  1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *   classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ *  2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ *  classe original.
+ *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.region.BukkitRegion;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import org.bukkit.World;
@@ -42,7 +40,7 @@ import java.util.*;
 
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
-    private final HashMap<String, BukkitRegion> regions;
+    private final HashMap<String, Region> regions;
     private final World world;
 
     public WorldFlatFileRegionManager(World world) {
@@ -57,9 +55,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String world = this.getWorld().getName();
             RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
-            if (RPConfig.getString("file-type").equals("yml")) {
+            if (!RPConfig.getString("file-type").equals("mysql")) {
                 if (RPConfig.getBool("flat-file.region-per-file")) {
-                    File f = new File(RedProtect.get().getDataFolder(),"data" + File.separator + world);
+                    File f = new File(RedProtect.get().getDataFolder(), "data" + File.separator + world);
                     if (!f.exists()) {
                         f.mkdir();
                     }
@@ -70,8 +68,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         }
                     }
                 } else {
-                    File oldf = new File(RedProtect.get().getDataFolder(),"data" + File.separator + world + ".yml");
-                    File newf = new File(RedProtect.get().getDataFolder(),"data" + File.separator + "data_" + world + ".yml");
+                    File oldf = new File(RedProtect.get().getDataFolder(), "data" + File.separator + world + ".yml");
+                    File newf = new File(RedProtect.get().getDataFolder(), "data" + File.separator + "data_" + world + ".yml");
                     if (oldf.exists()) {
                         oldf.renameTo(newf);
                     }
@@ -94,7 +92,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             }
         }
 
-        if (RPConfig.getString("file-type").equals("yml")) {
+        if (!RPConfig.getString("file-type").equals("mysql")) {
             YamlConfiguration fileDB = new YamlConfiguration();
             RedProtect.get().logger.debug("Load world " + this.world.getName() + ". File type: yml");
             try {
@@ -108,7 +106,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             }
 
             for (String rname : fileDB.getKeys(false)) {
-                BukkitRegion newr = RPUtil.loadRegion(fileDB, rname, this.world);
+                Region newr = RPUtil.loadRegion(fileDB, rname, this.world);
                 if (newr == null) return;
 
                 newr.setToSave(false);
@@ -125,11 +123,11 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String world = this.getWorld().getName();
             File datf;
 
-            if (RPConfig.getString("file-type").equals("yml")) {
+            if (!RPConfig.getString("file-type").equals("mysql")) {
                 datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + world + ".yml");
                 YamlConfiguration fileDB = new YamlConfiguration();
                 Set<YamlConfiguration> yamls = new HashSet<>();
-                for (BukkitRegion r : regions.values()) {
+                for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
                     }
@@ -172,7 +170,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 if (force) RedProtect.get().logger.info("Saving " + this.world.getName() + "'s regions...");
 
                 //try backup
-                if (force && RPConfig.getBool("flat-file.backup")){
+                if (force && RPConfig.getBool("flat-file.backup")) {
                     if (!RPConfig.getBool("flat-file.region-per-file")) {
                         RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
                     } else {
@@ -196,21 +194,21 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void add(BukkitRegion region) {
+    public void add(Region region) {
         regions.put(region.getName(), region);
     }
 
     @Override
-    public void remove(BukkitRegion region) {
+    public void remove(Region region) {
         if (regions.containsValue(region)) {
             regions.remove(region.getName());
         }
     }
 
     @Override
-    public Set<BukkitRegion> getRegions(String pname) {
-        SortedSet<BukkitRegion> regionsp = new TreeSet<>(Comparator.comparing(BukkitRegion::getName));
-        for (BukkitRegion r : regions.values()) {
+    public Set<Region> getRegions(String pname) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
             if (r.isLeader(pname)) {
                 regionsp.add(r);
             }
@@ -219,9 +217,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<BukkitRegion> getMemberRegions(String uuid) {
-        SortedSet<BukkitRegion> regionsp = new TreeSet<>(Comparator.comparing(BukkitRegion::getName));
-        for (BukkitRegion r : regions.values()) {
+    public Set<Region> getMemberRegions(String uuid) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
             if (r.isLeader(uuid) || r.isAdmin(uuid)) {
                 regionsp.add(r);
             }
@@ -230,30 +228,30 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public BukkitRegion getRegion(String rname) {
+    public Region getRegion(String rname) {
         return regions.get(rname);
     }
 
     @Override
     public int getTotalRegionSize(String uuid) {
-        Set<BukkitRegion> regionslist = new HashSet<>();
-        for (BukkitRegion r : regions.values()) {
+        Set<Region> regionslist = new HashSet<>();
+        for (Region r : regions.values()) {
             if (r.isLeader(uuid)) {
                 regionslist.add(r);
             }
         }
         int total = 0;
-        for (BukkitRegion r2 : regionslist) {
+        for (Region r2 : regionslist) {
             total += RPUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }
 
     @Override
-    public Set<BukkitRegion> getRegionsNear(int px, int pz, int radius) {
-        SortedSet<BukkitRegion> ret = new TreeSet<>(Comparator.comparing(BukkitRegion::getName));
+    public Set<Region> getRegionsNear(int px, int pz, int radius) {
+        SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
 
-        for (BukkitRegion r : regions.values()) {
+        for (Region r : regions.values()) {
             RedProtect.get().logger.debug("Radius: " + radius);
             RedProtect.get().logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
             if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
@@ -268,24 +266,24 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<BukkitRegion> getInnerRegions(BukkitRegion region) {
-        Set<BukkitRegion> regionl = new HashSet<>();
+    public Set<Region> getInnerRegions(Region region) {
+        Set<Region> regionl = new HashSet<>();
         regions.values().forEach(r -> {
             if (r.getMaxMbrX() <= region.getMaxMbrX() &&
-                        r.getMaxY() <= region.getMaxY() &&
-                        r.getMaxMbrZ() <= region.getMaxMbrZ() &&
-                        r.getMinMbrX() >= region.getMinMbrX() &&
-                        r.getMinY() >= region.getMinY() &&
-                        r.getMinMbrZ() >= region.getMinMbrZ()) {
-                    regionl.add(r);
+                    r.getMaxY() <= region.getMaxY() &&
+                    r.getMaxMbrZ() <= region.getMaxMbrZ() &&
+                    r.getMinMbrX() >= region.getMinMbrX() &&
+                    r.getMinY() >= region.getMinY() &&
+                    r.getMinMbrZ() >= region.getMinMbrZ()) {
+                regionl.add(r);
             }
         });
         return regionl;
     }
 
     @Override
-    public Set<BukkitRegion> getRegions(int x, int y, int z) {
-        Set<BukkitRegion> regionl = new HashSet<>();
+    public Set<Region> getRegions(int x, int y, int z) {
+        Set<Region> regionl = new HashSet<>();
         regions.values().forEach(r -> {
             if (x <= r.getMaxMbrX() &&
                     x >= r.getMinMbrX() &&
@@ -300,13 +298,13 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public BukkitRegion getTopRegion(int x, int y, int z) {
-        Map<Integer, BukkitRegion> regionlist = new HashMap<>();
+    public Region getTopRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
         int max = 0;
-        for (BukkitRegion r : regions.values()) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    BukkitRegion reg1 = regionlist.get(r.getPrior());
+                    Region reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -324,13 +322,13 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public BukkitRegion getLowRegion(int x, int y, int z) {
-        Map<Integer, BukkitRegion> regionlist = new HashMap<>();
+    public Region getLowRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
         int min = 0;
-        for (BukkitRegion r : regions.values()) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    BukkitRegion reg1 = regionlist.get(r.getPrior());
+                    Region reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -348,12 +346,12 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Map<Integer, BukkitRegion> getGroupRegion(int x, int y, int z) {
-        Map<Integer, BukkitRegion> regionlist = new HashMap<>();
-        for (BukkitRegion r : regions.values()) {
+    public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
+        Map<Integer, Region> regionlist = new HashMap<>();
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
-                    BukkitRegion reg1 = regionlist.get(r.getPrior());
+                    Region reg1 = regionlist.get(r.getPrior());
                     int Prior = r.getPrior();
                     if (reg1.getArea() >= r.getArea()) {
                         r.setPrior(Prior + 1);
@@ -368,8 +366,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<BukkitRegion> getAllRegions() {
-        SortedSet<BukkitRegion> allregions = new TreeSet<>(Comparator.comparing(BukkitRegion::getName));
+    public Set<Region> getAllRegions() {
+        SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
         allregions.addAll(regions.values());
         return allregions;
     }
