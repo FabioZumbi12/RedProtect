@@ -440,13 +440,13 @@ public class RPConfig {
             RedProtect.get().logger.info("Saved schematic file: house1.schematic");
         }
 
-        RedProtect.get().logger.info("Server version: " + RedProtect.get().serv.getBukkitVersion());
+        RedProtect.get().logger.info("Server version: " + RedProtect.get().getServer().getBukkitVersion());
 
         // check if can enable json support
         if (getBool("region-settings.region-list.hover-and-click-teleport")) {
             try {
                 Class.forName("com.google.gson.JsonParser");
-                if (RedProtect.get().serv.getBukkitVersion().contains("1.7")) {
+                if (RedProtect.get().getServer().getBukkitVersion().contains("1.7")) {
                     RedProtect.get().getConfig().set("region-settings.region-list.hover-and-click-teleport", false);
                     RedProtect.get().logger.warning("Your server version do not support Hover and Clicking region features, only 1.8.+");
                 }
@@ -459,7 +459,7 @@ public class RPConfig {
         //add op to ignore list fro purge
         if (RedProtect.get().getConfig().getStringList("purge.ignore-regions-from-players").size() <= 0) {
             List<String> ops = RedProtect.get().getConfig().getStringList("purge.ignore-regions-from-players");
-            for (OfflinePlayer play : RedProtect.get().serv.getOperators()) {
+            for (OfflinePlayer play : RedProtect.get().getServer().getOperators()) {
                 ops.add(play.getName());
             }
             RedProtect.get().getConfig().set("purge.ignore-regions-from-players", ops);
@@ -468,7 +468,7 @@ public class RPConfig {
         //add op to ignore list fro sell
         if (RedProtect.get().getConfig().getStringList("sell.ignore-regions-from-players").size() <= 0) {
             List<String> ops = RedProtect.get().getConfig().getStringList("sell.ignore-regions-from-players");
-            for (OfflinePlayer play : RedProtect.get().serv.getOperators()) {
+            for (OfflinePlayer play : RedProtect.get().getServer().getOperators()) {
                 ops.add(play.getName());
             }
             RedProtect.get().getConfig().set("sell.ignore-regions-from-players", ops);
@@ -477,7 +477,7 @@ public class RPConfig {
         //add allowed claim worlds to config
         if (RedProtect.get().getConfig().getStringList("allowed-claim-worlds").get(0).equals("example_world")) {
             List<String> worlds = new ArrayList<>();
-            for (World w : RedProtect.get().serv.getWorlds()) {
+            for (World w : RedProtect.get().getServer().getWorlds()) {
                 worlds.add(w.getName());
                 RedProtect.get().logger.warning("Added world to claim list " + w.getName());
             }
@@ -486,7 +486,7 @@ public class RPConfig {
         }
 
         //add worlds to color list
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             if (RedProtect.get().getConfig().getString("region-settings.claim-type.worlds." + w.getName()) == null) {
                 RedProtect.get().getConfig().set("region-settings.claim-type.worlds." + w.getName(), "BLOCK");
             }
@@ -672,7 +672,7 @@ public class RPConfig {
                 "# Strings containing the char & always need to be quoted\n";
         comGflags = new CommentedConfig(new File(main, "globalflags.yml"), new YamlConfiguration(), gHeader);
 
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             comGflags.setDefault(w.getName(), null, "Configuration section for world " + w.getName() + "");
 
             comGflags.setDefault(w.getName() + ".build", true, "Players can build in this world?");
@@ -840,7 +840,7 @@ public class RPConfig {
         //////////////////////
         /*------------------------------------------------------------------------------------*/
 
-        String v = RedProtect.get().serv.getBukkitVersion();
+        String v = RedProtect.get().getServer().getBukkitVersion();
         if (RedProtect.get().getConfig().getString("notify.region-enter-mode").equalsIgnoreCase("TITLE") && (v == null || !v.contains("1.8"))) {
             RedProtect.get().getConfig().set("notify.region-enter-mode", "CHAT");
             RedProtect.get().logger.warning("Title notifications is not suported on servers not running 1.8! Defaulting to CHAT.");

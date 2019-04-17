@@ -43,7 +43,6 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
@@ -63,7 +62,7 @@ public class RedProtect extends JavaPlugin {
     public final List<String> openGuis = new ArrayList<>();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
-    public File JarFile = null;
+    public File jarFile = null;
     public PluginDescriptionFile pdf;
     public boolean Update;
     public String UptVersion;
@@ -72,7 +71,6 @@ public class RedProtect extends JavaPlugin {
     public List<String> tpWait = new ArrayList<>();
     public HashMap<Player, String> alWait = new HashMap<>();
     public RPPermissionHandler ph;
-    public Server serv;
     public HashMap<Player, Location> firstLocationSelections = new HashMap<>();
     public HashMap<Player, Location> secondLocationSelections = new HashMap<>();
     public boolean BossBar;
@@ -116,9 +114,8 @@ public class RedProtect extends JavaPlugin {
     public void onEnable() {
         try {
             plugin = this;
-            JarFile = this.getFile();
+            jarFile = this.getFile();
 
-            serv = getServer();
             pdf = getDescription();
 
             ph = new RPPermissionHandler();
@@ -131,10 +128,10 @@ public class RedProtect extends JavaPlugin {
             logger.debug("Version String: " + version);
 
             if (version >= 180) {
-                serv.getPluginManager().registerEvents(new RPMine18(), this);
+                getServer().getPluginManager().registerEvents(new RPMine18(), this);
             }
             if (version >= 190) {
-                serv.getPluginManager().registerEvents(new RPMine19(), this);
+                getServer().getPluginManager().registerEvents(new RPMine19(), this);
             }
 
             if (version <= 1122) {
@@ -158,7 +155,7 @@ public class RedProtect extends JavaPlugin {
             e.printStackTrace();
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
                 logger.severe("Error enabling RedProtect, plugin will shut down.");
-                this.disable();
+                this.setEnabled(false);
             }
             getServer().setWhitelist(true);
             getServer().getOnlinePlayers().forEach(p -> p.kickPlayer("The server is disabled due an error on load plugins!"));
@@ -187,17 +184,17 @@ public class RedProtect extends JavaPlugin {
 
         if (Vault) {
             RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp == null) {
-                logger.warning("Vault found, but for some reason cant be used with RedProtect.");
-                Vault = false;
-            } else {
+            if (rsp != null) {
                 econ = rsp.getProvider();
                 logger.info("Vault found. Hooked.");
+            } else {
+                logger.warning("Could not initialize Vault hook.");
+                Vault = false;
             }
         }
 
         if (PLib) {
-            logger.info("ProtocolLib found. Hidding Gui Flag item stats.");
+            logger.info("ProtocolLib found. Hiding Gui Flag item stats.");
         }
         if (PvPm) {
             logger.info("PvPManager found. Hooked.");
@@ -216,15 +213,15 @@ public class RedProtect extends JavaPlugin {
             logger.info("BossbarAPI found. Hooked.");
         }
         if (MyPet) {
-            serv.getPluginManager().registerEvents(new MPListener(), this);
+            getServer().getPluginManager().registerEvents(new MPListener(), this);
             logger.info("MyPet found. Hooked.");
         }
         if (McMMo) {
-            serv.getPluginManager().registerEvents(new McMMoListener(), this);
+            getServer().getPluginManager().registerEvents(new McMMoListener(), this);
             logger.info("McMMo found. Hooked.");
         }
         if (SkillAPI) {
-            serv.getPluginManager().registerEvents(new SkillAPIListener(), this);
+            getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
             logger.info("SkillAPI found. Hooked.");
         }
         if (MyChunk) {
@@ -242,7 +239,7 @@ public class RedProtect extends JavaPlugin {
             logger.info("Dynmap found. Hooked.");
             logger.info("Loading dynmap markers...");
             dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
-            serv.getPluginManager().registerEvents(dynmap, this);
+            getServer().getPluginManager().registerEvents(dynmap, this);
             logger.info("Dynmap markers loaded!");
         }
         if (PlaceHolderAPI) {
@@ -250,7 +247,7 @@ public class RedProtect extends JavaPlugin {
             logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
         }
         if (Fac) {
-            serv.getPluginManager().registerEvents(new RPFactions(), this);
+            getServer().getPluginManager().registerEvents(new RPFactions(), this);
             logger.info("Factions found. Hooked.");
         }
     }
@@ -283,11 +280,11 @@ public class RedProtect extends JavaPlugin {
         cmdHandler = new CommandHandler(this);
 
         logger.info("Registering listeners...");
-        serv.getPluginManager().registerEvents(new RPGlobalListener(), this);
-        serv.getPluginManager().registerEvents(new RPBlockListener(), this);
-        serv.getPluginManager().registerEvents(new RPPlayerListener(), this);
-        serv.getPluginManager().registerEvents(new RPEntityListener(), this);
-        serv.getPluginManager().registerEvents(new RPWorldListener(), this);
+        getServer().getPluginManager().registerEvents(new RPGlobalListener(), this);
+        getServer().getPluginManager().registerEvents(new RPBlockListener(), this);
+        getServer().getPluginManager().registerEvents(new RPPlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new RPEntityListener(), this);
+        getServer().getPluginManager().registerEvents(new RPWorldListener(), this);
 
         //-- hooks
         registerHooks();
@@ -376,10 +373,6 @@ public class RedProtect extends JavaPlugin {
         } else {
             logger.info("Auto-save Scheduler: Disabled");
         }
-    }
-
-    public void disable() {
-        super.setEnabled(false);
     }
 
     //check if plugin GriefPrevention is installed

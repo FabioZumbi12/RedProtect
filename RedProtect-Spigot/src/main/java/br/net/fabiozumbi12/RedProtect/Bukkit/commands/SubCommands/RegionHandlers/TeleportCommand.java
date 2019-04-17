@@ -61,7 +61,7 @@ public class TeleportCommand implements SubCommand {
 
         if (args.length == 3) {
             // /rp teleport <region> <world> <player>
-            Player play = RedProtect.get().serv.getPlayer(args[2]);
+            Player play = RedProtect.get().getServer().getPlayer(args[2]);
             if (play != null) {
                 handletp(player, args[0], args[1], play);
                 return true;

@@ -58,7 +58,7 @@ public class CommandHandlers {
         }
 
         if (RedProtect.get().ph.hasRegionPermLeader(src, "addleader", r)) {
-            final Player pVictim = RedProtect.get().serv.getPlayer(sVictim);
+            final Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
             final String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if ((pVictim == null || !pVictim.isOnline()) && !src.hasPermission("redprotect.command.admin.addleader")) {
@@ -123,7 +123,7 @@ public class CommandHandlers {
         }
 
         if (RedProtect.get().ph.hasRegionPermLeader(src, "removeleader", r)) {
-            Player pVictim = RedProtect.get().serv.getPlayer(sVictim);
+            Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
             String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if (RPUtil.UUIDtoPlayer(VictimUUID) == null) {
@@ -167,7 +167,7 @@ public class CommandHandlers {
         }
 
         if (RedProtect.get().ph.hasRegionPermAdmin(src, "addadmin", r)) {
-            Player pVictim = RedProtect.get().serv.getPlayer(sVictim);
+            Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
             String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if (RPUtil.UUIDtoPlayer(VictimUUID) == null) {
@@ -206,7 +206,7 @@ public class CommandHandlers {
         }
 
         if (RedProtect.get().ph.hasRegionPermAdmin(src, "removeadmin", r)) {
-            Player pVictim = RedProtect.get().serv.getPlayer(sVictim);
+            Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
             String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if (RPUtil.UUIDtoPlayer(VictimUUID) == null) {
@@ -247,7 +247,7 @@ public class CommandHandlers {
                 return;
             }
 
-            Player pVictim = RedProtect.get().serv.getPlayer(sVictim);
+            Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
             if (r.isLeader(VictimUUID)) {
                 RPLang.sendMessage(src, ChatColor.RED + sVictim + " " + RPLang.get("cmdmanager.region.leader.already"));
@@ -288,7 +288,7 @@ public class CommandHandlers {
 
         if (RedProtect.get().ph.hasRegionPermAdmin(src, "removemember", r)) {
 
-            Player pVictim = RedProtect.get().serv.getPlayer(sVictim);
+            Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
             String VictimUUID = RPUtil.PlayerToUUID(sVictim);
             if (RPUtil.UUIDtoPlayer(VictimUUID) == null) {
@@ -339,7 +339,7 @@ public class CommandHandlers {
 
             String rname = r.getName();
             String w = r.getWorld();
-            RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(w));
+            RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(w));
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
         } else {
@@ -380,7 +380,7 @@ public class CommandHandlers {
                 return;
             }
 
-            RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
+            RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(r.getWorld()));
             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + world + ") Player " + p.getName() + " REMOVED region " + rname);
         } else {
@@ -511,7 +511,7 @@ public class CommandHandlers {
     }
 
     public static void handletp(Player p, String rname, String wname, Player play) {
-        World w = RedProtect.get().serv.getWorld(wname);
+        World w = RedProtect.get().getServer().getWorld(wname);
         if (w == null) {
             RPLang.sendMessage(p, "cmdmanager.region.invalidworld");
             return;

@@ -196,7 +196,7 @@ public class RPUtil extends CoreUtil {
     public static void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
         TaskChain.newChain().add(new TaskChain.GenericTask() {
             public void run() {
-                RedProtect.get().serv.dispatchCommand(consoleCommandSender, command);
+                RedProtect.get().getServer().dispatchCommand(consoleCommandSender, command);
             }
         }).execute();
     }
@@ -265,7 +265,7 @@ public class RPUtil extends CoreUtil {
      */
     public static String nameGen(String p, String World) {
         String rname;
-        World w = RedProtect.get().serv.getWorld(World);
+        World w = RedProtect.get().getServer().getWorld(World);
         int i = 0;
         while (true) {
             int is = String.valueOf(i).length();
@@ -336,7 +336,7 @@ public class RPUtil extends CoreUtil {
                             continue;
                         }
                     } else {
-                        RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()));
+                        RedProtect.get().rm.remove(region, RedProtect.get().getServer().getWorld(region.getWorld()));
                         purged++;
                         RedProtect.get().logger.warning("Purging " + region.getName() + " - Days: " + days);
                     }
@@ -436,10 +436,10 @@ public class RPUtil extends CoreUtil {
         }
 
         try {
-            OfflinePlayer offp = RedProtect.get().serv.getOfflinePlayer(PlayerName);
+            OfflinePlayer offp = RedProtect.get().getServer().getOfflinePlayer(PlayerName);
             uuid = offp.getUniqueId().toString();
         } catch (IllegalArgumentException e) {
-            Player onp = RedProtect.get().serv.getPlayer(PlayerName);
+            Player onp = RedProtect.get().getServer().getPlayer(PlayerName);
             if (onp != null) {
                 uuid = onp.getUniqueId().toString();
             }
@@ -473,10 +473,10 @@ public class RPUtil extends CoreUtil {
 
         try {
             uuids = UUID.fromString(uuid);
-            OfflinePlayer offp = RedProtect.get().serv.getOfflinePlayer(uuids);
+            OfflinePlayer offp = RedProtect.get().getServer().getOfflinePlayer(uuids);
             PlayerName = offp.getName();
         } catch (IllegalArgumentException e) {
-            Player onp = RedProtect.get().serv.getPlayer(uuid);
+            Player onp = RedProtect.get().getServer().getPlayer(uuid);
             if (onp != null) {
                 PlayerName = onp.getName();
             }
@@ -822,8 +822,8 @@ public class RPUtil extends CoreUtil {
     public static int getUpdatedPrior(Region region) {
         int regionarea = region.getArea();
         int prior = region.getPrior();
-        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
-        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().serv.getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().getServer().getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
 
         if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))) {
             return prior;

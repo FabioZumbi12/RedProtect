@@ -392,14 +392,14 @@ public class Region extends CoreRegion {
             today = this.date;
         }
         for (PlayerRegion<String, String> pname : this.leaders) {
-            Player play = RedProtect.get().serv.getPlayer(pname.getPlayerName());
+            Player play = RedProtect.get().getServer().getPlayer(pname.getPlayerName());
             if (play != null && play.isOnline() && pname.getPlayerName().equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))) {
                 today = ChatColor.GREEN + "Online!";
                 break;
             }
         }
         for (PlayerRegion<String, String> pname : this.admins) {
-            Player play = RedProtect.get().serv.getPlayer(pname.getPlayerName());
+            Player play = RedProtect.get().getServer().getPlayer(pname.getPlayerName());
             if (play != null && play.isOnline()) {
                 today = ChatColor.GREEN + "Online!";
                 break;
@@ -666,7 +666,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isOnTop() {
-        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()), this.getCenterX(), this.getCenterY(), this.getCenterZ());
+        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(this.getWorld()), this.getCenterX(), this.getCenterY(), this.getCenterZ());
         return newr == null || newr.equals(this);
     }
 

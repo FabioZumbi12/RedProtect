@@ -209,7 +209,7 @@ public class RedProtectAPI {
      * @param region {@code Region} to remove.
      */
     public void removeRegion(Region region) {
-        RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()));
+        RedProtect.get().rm.remove(region, RedProtect.get().getServer().getWorld(region.getWorld()));
     }
 
     /**

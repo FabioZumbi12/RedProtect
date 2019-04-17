@@ -64,7 +64,7 @@ public class ClaimLimitCommand implements SubCommand {
         }
 
         if (args.length == 1 && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.claimlimit")) {
-            Player offp = RedProtect.get().serv.getOfflinePlayer(args[0]).getPlayer();
+            Player offp = RedProtect.get().getServer().getOfflinePlayer(args[0]).getPlayer();
             if (offp == null) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));
                 return true;
