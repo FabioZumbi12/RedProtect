@@ -1207,7 +1207,7 @@ public class RPPlayerListener implements Listener {
 
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
             String uuid = p.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 uuid = p.getName().toLowerCase();
             }
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")) {

@@ -64,7 +64,7 @@ public class ClaimCommand implements SubCommand {
         if (args.length == 0) {
             String name = RPUtil.nameGen(player.getName(), player.getWorld().getName());
             String leader = player.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 leader = player.getName().toLowerCase();
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
@@ -84,7 +84,7 @@ public class ClaimCommand implements SubCommand {
         if (args.length == 1) {
             String name = args[0];
             String leader = player.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 leader = player.getName().toLowerCase();
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
@@ -106,7 +106,7 @@ public class ClaimCommand implements SubCommand {
             String leader = player.getUniqueId().toString();
             Set<String> addedAdmins = new HashSet<>();
             addedAdmins.add(RPUtil.PlayerToUUID(args[1]));
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 leader = player.getName().toLowerCase();
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, addedAdmins, false);

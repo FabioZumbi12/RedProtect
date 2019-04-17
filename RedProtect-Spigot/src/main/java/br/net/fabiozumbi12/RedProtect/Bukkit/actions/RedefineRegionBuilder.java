@@ -74,7 +74,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         region.setPrior(RPUtil.getUpdatedPrior(region));
 
         String pName = p.getUniqueId().toString();
-        if (!RedProtect.get().OnlineMode) {
+        if (!RedProtect.get().onlineMode) {
             pName = p.getName().toLowerCase();
         }
 

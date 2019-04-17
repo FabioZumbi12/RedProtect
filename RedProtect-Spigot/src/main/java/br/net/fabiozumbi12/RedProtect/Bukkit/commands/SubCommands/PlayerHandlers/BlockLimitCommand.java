@@ -57,7 +57,7 @@ public class BlockLimitCommand implements SubCommand {
                 return true;
             }
             String uuid = player.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 uuid = player.getName().toLowerCase();
             }
             int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getWorld().getName());

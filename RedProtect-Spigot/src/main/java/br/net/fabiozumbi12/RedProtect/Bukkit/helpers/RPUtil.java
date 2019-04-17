@@ -430,7 +430,7 @@ public class RPUtil extends CoreUtil {
 
         String uuid = PlayerName;
 
-        if (!RedProtect.get().OnlineMode) {
+        if (!RedProtect.get().onlineMode) {
             uuid = uuid.toLowerCase();
             return uuid;
         }
@@ -466,7 +466,7 @@ public class RPUtil extends CoreUtil {
         String PlayerName = uuid;
         UUID uuids;
 
-        if (!RedProtect.get().OnlineMode) {
+        if (!RedProtect.get().onlineMode) {
             PlayerName = uuid.toLowerCase();
             return PlayerName;
         }
@@ -900,7 +900,7 @@ public class RPUtil extends CoreUtil {
             if (Bukkit.getWorlds().contains(claim.getGreaterBoundaryCorner().getWorld())) {
                 World w = claim.getGreaterBoundaryCorner().getWorld();
                 String pname = claim.getOwnerName().replace(" ", "_").toLowerCase();
-                if (RedProtect.get().OnlineMode && claim.ownerID != null) {
+                if (RedProtect.get().onlineMode && claim.ownerID != null) {
                     pname = claim.ownerID.toString();
                 }
                 Set<PlayerRegion<String, String>> leaders = new HashSet<>();
@@ -957,7 +957,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -968,7 +968,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -979,7 +979,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);

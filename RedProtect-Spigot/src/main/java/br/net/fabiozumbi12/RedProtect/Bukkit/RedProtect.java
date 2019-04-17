@@ -76,7 +76,7 @@ public class RedProtect extends JavaPlugin {
     public boolean BossBar;
     public boolean MyChunk;
     public boolean MyPet;
-    public boolean OnlineMode;
+    public boolean onlineMode;
     public boolean Mc;
     public boolean Vault;
     public boolean PvPm;
@@ -274,8 +274,8 @@ public class RedProtect extends JavaPlugin {
             RedProtect.get().logger.sucess("Whitelist disabled!");
         }
 
-        //set online mode
-        OnlineMode = RPConfig.getBool("online-mode");
+        // Set online mode
+        onlineMode = RPConfig.getBool("online-mode");
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);
@@ -287,7 +287,7 @@ public class RedProtect extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RPEntityListener(), this);
         getServer().getPluginManager().registerEvents(new RPWorldListener(), this);
 
-        //-- hooks
+        // Register hooks
         registerHooks();
 
         try {
@@ -299,23 +299,28 @@ public class RedProtect extends JavaPlugin {
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
                 startAutoSave();
             }
-            logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
+            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void shutDown() {
+        // Unregister commands
         cmdHandler.unregisterAll();
 
+        // Save and unload all regions
         rm.saveAll(true);
         rm.unloadAll();
 
+        // Close all open inventories/GUIs
         openGuis.clear();
 
+        // Cancel tasks from bukkit scheduler and save logs
         Bukkit.getScheduler().cancelTasks(this);
         logger.SaveLogs();
 
+        // Unregister listeners
         logger.info("Unregistering listeners...");
         HandlerList.unregisterAll(this);
 

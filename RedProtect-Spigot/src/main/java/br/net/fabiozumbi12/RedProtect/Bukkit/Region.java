@@ -440,18 +440,18 @@ public class Region extends CoreRegion {
     }
 
     public boolean isLeader(Player player) {
-        if (RedProtect.get().OnlineMode) {
-            return isLeader(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
+        if (RedProtect.get().onlineMode) {
+            return isLeader(player.getUniqueId().toString(), RedProtect.get().onlineMode);
         } else {
-            return isLeader(player.getName(), RedProtect.get().OnlineMode);
+            return isLeader(player.getName(), RedProtect.get().onlineMode);
         }
     }
 
     public boolean isAdmin(Player player) {
-        if (RedProtect.get().OnlineMode) {
-            return isAdmin(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
+        if (RedProtect.get().onlineMode) {
+            return isAdmin(player.getUniqueId().toString(), RedProtect.get().onlineMode);
         } else {
-            return isAdmin(player.getName(), RedProtect.get().OnlineMode);
+            return isAdmin(player.getName(), RedProtect.get().onlineMode);
         }
     }
 
@@ -459,23 +459,23 @@ public class Region extends CoreRegion {
         boolean cs = RedProtect.get().SC && SCHook.getPlayerClan(this, player);
         if (cs) return true;
 
-        if (RedProtect.get().OnlineMode) {
-            return isMember(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
+        if (RedProtect.get().onlineMode) {
+            return isMember(player.getUniqueId().toString(), RedProtect.get().onlineMode);
         } else {
-            return isMember(player.getName(), RedProtect.get().OnlineMode);
+            return isMember(player.getName(), RedProtect.get().onlineMode);
         }
     }
 
     public boolean isLeader(String player) {
-        return isLeader(player, RedProtect.get().OnlineMode);
+        return isLeader(player, RedProtect.get().onlineMode);
     }
 
     public boolean isAdmin(String player) {
-        return isAdmin(player, RedProtect.get().OnlineMode);
+        return isAdmin(player, RedProtect.get().onlineMode);
     }
 
     public boolean isMember(String player) {
-        return isMember(player, RedProtect.get().OnlineMode);
+        return isMember(player, RedProtect.get().onlineMode);
     }
 
     /**
@@ -487,7 +487,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -510,7 +510,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -533,7 +533,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -573,7 +573,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -596,7 +596,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
