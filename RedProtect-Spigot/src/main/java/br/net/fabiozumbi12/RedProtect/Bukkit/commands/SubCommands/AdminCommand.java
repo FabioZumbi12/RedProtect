@@ -768,7 +768,7 @@ public class AdminCommand implements SubCommand {
         }
 
         if (args[0].equalsIgnoreCase("save-all")) {
-            RedProtect.get().logger.SaveLogs();
+            RedProtect.get().logger.saveLogs();
             RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
             return true;
         }

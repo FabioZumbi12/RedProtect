@@ -37,26 +37,26 @@ import java.util.zip.ZipOutputStream;
 
 public class CoreUtil {
 
-    protected static String DateNow(String format) {
+    protected static String dateNow(String format) {
         DateFormat df = new SimpleDateFormat(format);
         Date today = Calendar.getInstance().getTime();
         return df.format(today);
     }
 
-    public static String HourNow() {
+    public static String hourNow() {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         int min = Calendar.getInstance().get(Calendar.MINUTE);
         int sec = Calendar.getInstance().get(Calendar.SECOND);
         return "[" + hour + ":" + min + ":" + sec + "]";
     }
 
-    public static void SaveToZipSB(File file, StringBuilder sb) {
+    public static void saveSBToZip(File file, StringBuilder builder) {
         try {
             final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry("RedProtectLogs.txt");
             out.putNextEntry(e);
 
-            byte[] data = sb.toString().getBytes();
+            byte[] data = builder.toString().getBytes();
             out.write(data, 0, data.length);
             out.closeEntry();
             out.close();

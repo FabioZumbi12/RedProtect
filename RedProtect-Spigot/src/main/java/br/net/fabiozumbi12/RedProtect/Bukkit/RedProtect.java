@@ -318,7 +318,7 @@ public class RedProtect extends JavaPlugin {
 
         // Cancel tasks from bukkit scheduler and save logs
         Bukkit.getScheduler().cancelTasks(this);
-        logger.SaveLogs();
+        logger.saveLogs();
 
         // Unregister listeners
         logger.info("Unregistering listeners...");

@@ -73,7 +73,7 @@ public class RPUtil extends CoreUtil {
     private static HashMap<String, String> cachedUUIDs = new HashMap<>();
 
     public static String DateNow() {
-        return DateNow(RPConfig.getString("region-settings.date-format"));
+        return dateNow(RPConfig.getString("region-settings.date-format"));
     }
 
     public static void saveResource(String nameVersioned, String nameOri, File saveTo) {

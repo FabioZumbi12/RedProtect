@@ -29,69 +29,77 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static org.bukkit.ChatColor.translateAlternateColorCodes;
+
 public class RPLogger {
-    private final SortedMap<Integer, String> MainLog = new TreeMap<>();
+    private final SortedMap<Integer, String> mainLog = new TreeMap<>();
 
     public void clear(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', s));
     }
 
     public void sucess(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &a&l" + s + "&r"));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &a&l" + s + "&r"));
     }
 
     public void info(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] " + s));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
     public void warning(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &6" + s + "&r"));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &6" + s + "&r"));
     }
 
     public void severe(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &c&l" + s + "&r"));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &c&l" + s + "&r"));
     }
 
     public void log(String s) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] " + s));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
     public void debug(String s) {
         if (RPConfig.getBool("debug-messages")) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
+            Bukkit.getConsoleSender()
+                    .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
         }
     }
 
     public void addLog(String logLine) {
+        // If log is not enabled return
         if (!RPConfig.getBool("log-actions")) {
             return;
         }
-        int key = MainLog.keySet().size() + 1;
-        MainLog.put(key, key + " - " + RPUtil.HourNow() + ": " + ChatColor.translateAlternateColorCodes('&', logLine));
+        int key = mainLog.keySet().size() + 1;
+        mainLog.put(key, key + " - " + RPUtil.hourNow() + ": " + translateAlternateColorCodes('&', logLine));
         if (key == 500) {
-            SaveLogs();
-            MainLog.clear();
+            saveLogs();
+            mainLog.clear();
         }
     }
 
-    public void SaveLogs() {
+    public void saveLogs() {
+        // If log is not enabled return
         if (!RPConfig.getBool("log-actions")) {
             return;
         }
 
         final StringBuilder sb = new StringBuilder();
-        for (int key : MainLog.keySet()) {
-            sb.append(MainLog.get(key));
-            sb.append('\n');
-        }
+        mainLog.forEach((key, entry) -> sb.append(entry).append('\n'));
+
         if (RPUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false) != null) {
-            RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false), sb);
+            RPUtil.saveSBToZip(RPUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false), sb);
         }
     }
 }
