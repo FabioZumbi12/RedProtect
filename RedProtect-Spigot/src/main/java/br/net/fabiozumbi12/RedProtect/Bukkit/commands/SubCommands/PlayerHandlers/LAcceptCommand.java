@@ -59,7 +59,7 @@ public class LAcceptCommand implements SubCommand {
                 Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
                 String VictimUUID = player.getName();
-                if (RedProtect.get().OnlineMode) {
+                if (RedProtect.get().onlineMode) {
                     VictimUUID = player.getUniqueId().toString();
                 }
 

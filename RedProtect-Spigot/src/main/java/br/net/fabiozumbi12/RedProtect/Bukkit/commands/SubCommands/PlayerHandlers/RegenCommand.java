@@ -93,7 +93,7 @@ public class RegenCommand implements SubCommand {
         }
 
         if (args.length == 2) {
-            World w = RedProtect.get().serv.getWorld(args[1]);
+            World w = RedProtect.get().getServer().getWorld(args[1]);
             if (w == null) {
                 sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
                 return true;

@@ -57,7 +57,7 @@ public class BlockLimitCommand implements SubCommand {
                 return true;
             }
             String uuid = player.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 uuid = player.getName().toLowerCase();
             }
             int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getWorld().getName());
@@ -67,7 +67,7 @@ public class BlockLimitCommand implements SubCommand {
         }
 
         if (args.length == 1 && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.blocklimit")) {
-            Player offp = RedProtect.get().serv.getOfflinePlayer(args[0]).getPlayer();
+            Player offp = RedProtect.get().getServer().getOfflinePlayer(args[0]).getPlayer();
             if (offp == null) {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));
                 return true;

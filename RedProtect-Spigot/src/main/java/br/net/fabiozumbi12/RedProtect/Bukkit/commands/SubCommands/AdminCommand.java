@@ -58,7 +58,7 @@ public class AdminCommand implements SubCommand {
         }
         Set<LiteChunk> allchunks = new HashSet<>();
 
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             Set<LiteChunk> chunks = MyChunkChunk.getChunks(w);
             allchunks.addAll(chunks);
         }
@@ -69,7 +69,7 @@ public class AdminCommand implements SubCommand {
                 Set<String> leaders = new HashSet<>();
                 String admin = RPUtil.PlayerToUUID(c.getOwner());
                 leaders.add(admin);
-                World w = RedProtect.get().serv.getWorld(c.getWorldName());
+                World w = RedProtect.get().getServer().getWorld(c.getWorldName());
                 Chunk chunk = w.getChunkAt(c.getX(), c.getZ());
                 int x = chunk.getBlock(7, 50, 7).getX();
                 int z = chunk.getBlock(7, 50, 7).getZ();
@@ -371,7 +371,7 @@ public class AdminCommand implements SubCommand {
 
             //rp clamilimit player
             if (checkCmd(args[0], "claimlimit")) {
-                Player offp = RedProtect.get().serv.getOfflinePlayer(args[1]).getPlayer();
+                Player offp = RedProtect.get().getServer().getOfflinePlayer(args[1]).getPlayer();
                 if (offp == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
                     return true;
@@ -390,7 +390,7 @@ public class AdminCommand implements SubCommand {
 
             //rp limit player
             if (checkCmd(args[0], "blocklimit")) {
-                Player offp = RedProtect.get().serv.getOfflinePlayer(args[1]).getPlayer();
+                Player offp = RedProtect.get().getServer().getOfflinePlayer(args[1]).getPlayer();
                 if (offp == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
                     return true;
@@ -415,7 +415,7 @@ public class AdminCommand implements SubCommand {
                 if (!RedProtect.get().WE) {
                     return true;
                 }
-                World w = RedProtect.get().serv.getWorld(args[2]);
+                World w = RedProtect.get().getServer().getWorld(args[2]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -435,7 +435,7 @@ public class AdminCommand implements SubCommand {
                 if (!RedProtect.get().WE) {
                     return true;
                 }
-                World w = RedProtect.get().serv.getWorld(args[2]);
+                World w = RedProtect.get().getServer().getWorld(args[2]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -456,8 +456,8 @@ public class AdminCommand implements SubCommand {
 
             //rp clamilimit player database
             if (checkCmd(args[0], "claimlimit")) {
-                Player offp = RedProtect.get().serv.getOfflinePlayer(args[1]).getPlayer();
-                World w = RedProtect.get().serv.getWorld(args[2]);
+                Player offp = RedProtect.get().getServer().getOfflinePlayer(args[1]).getPlayer();
+                World w = RedProtect.get().getServer().getWorld(args[2]);
                 if (offp == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
                     return true;
@@ -525,7 +525,7 @@ public class AdminCommand implements SubCommand {
 
             //rp addmember <player> <region> <database>
             if (checkCmd(args[0], "addmember")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -541,7 +541,7 @@ public class AdminCommand implements SubCommand {
 
             //rp addadmin <player> <region> <database>
             if (checkCmd(args[0], "addadmin")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -557,7 +557,7 @@ public class AdminCommand implements SubCommand {
 
             //rp addleader <player> <region> <database>
             if (checkCmd(args[0], "addleader")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -573,7 +573,7 @@ public class AdminCommand implements SubCommand {
 
             //rp removemember <player> <region> <database>
             if (checkCmd(args[0], "removemember")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -589,7 +589,7 @@ public class AdminCommand implements SubCommand {
 
             //rp removeadmin <player> <region> <database>
             if (checkCmd(args[0], "removeadmin")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -605,7 +605,7 @@ public class AdminCommand implements SubCommand {
 
             //rp removeleader <player> <region> <database>
             if (checkCmd(args[0], "removeleader")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -621,7 +621,7 @@ public class AdminCommand implements SubCommand {
 
             //rp kick <player> [region] [database]
             if (checkCmd(args[0], "kick")) {
-                World w = RedProtect.get().serv.getWorld(args[3]);
+                World w = RedProtect.get().getServer().getWorld(args[3]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return true;
@@ -662,9 +662,9 @@ public class AdminCommand implements SubCommand {
 
             if (checkCmd(args[0], "teleport")) {
                 //rp teleport <player> <region> <database>
-                Player play = RedProtect.get().serv.getPlayer(args[1]);
+                Player play = RedProtect.get().getServer().getPlayer(args[1]);
                 if (play != null) {
-                    World w = RedProtect.get().serv.getWorld(args[3]);
+                    World w = RedProtect.get().getServer().getWorld(args[3]);
                     if (w == null) {
                         RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                         return true;
@@ -731,7 +731,7 @@ public class AdminCommand implements SubCommand {
         if (args.length == 5) {
             /*/rp flag <regionName> <flag> <value> <database>*/
             if (checkCmd(args[0], "flag")) {
-                World w = RedProtect.get().serv.getWorld(args[4]);
+                World w = RedProtect.get().getServer().getWorld(args[4]);
                 if (w == null) {
                     RPLang.sendMessage(sender, RPLang.get("correct.usage") + ChatColor.YELLOW + " rp " + getCmd("flag") + " <regionName> <flag> <value> <database>");
                     return true;
@@ -768,7 +768,7 @@ public class AdminCommand implements SubCommand {
         }
 
         if (args[0].equalsIgnoreCase("save-all")) {
-            RedProtect.get().logger.SaveLogs();
+            RedProtect.get().logger.saveLogs();
             RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
             return true;
         }

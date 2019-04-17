@@ -57,7 +57,7 @@ public class CreatePortalCommand implements SubCommand {
 
         //rp createportal <newRegionName> <regionTo> <database>
         if (args.length == 3) {
-            World w = RedProtect.get().serv.getWorld(args[2]);
+            World w = RedProtect.get().getServer().getWorld(args[2]);
             if (w == null) {
                 sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
                 return true;

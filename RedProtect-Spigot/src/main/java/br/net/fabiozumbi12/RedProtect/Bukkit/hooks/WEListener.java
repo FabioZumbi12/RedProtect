@@ -121,7 +121,7 @@ public class WEListener {
             Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
             String leader = p.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 leader = p.getName().toLowerCase();
             }
 
@@ -186,7 +186,7 @@ public class WEListener {
 
             if (remove) {
                 r.notifyRemove();
-                RedProtect.get().rm.remove(r, RedProtect.get().serv.getWorld(r.getWorld()));
+                RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(r.getWorld()));
             }
 
             if (delayCount % 50 == 0) {

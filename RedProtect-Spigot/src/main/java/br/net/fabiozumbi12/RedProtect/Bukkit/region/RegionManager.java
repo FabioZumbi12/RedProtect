@@ -400,7 +400,7 @@ public class RegionManager {
 
     public Set<Region> getAllRegions() {
         Set<Region> regions = new HashSet<>();
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             regions.addAll(rm.getAllRegions());
         }
@@ -413,7 +413,7 @@ public class RegionManager {
     }
 
     public void clearDB() {
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             rm.clearRegions();
         }
@@ -437,7 +437,7 @@ public class RegionManager {
 
     public int getTotalRegionsNum() {
         int total = 0;
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             total = total + rm.getTotalRegionNum();
         }
@@ -449,8 +449,8 @@ public class RegionManager {
         Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
                 new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
-        this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()));
-        this.remove(old, RedProtect.get().serv.getWorld(old.getWorld()));
+        this.add(newr, RedProtect.get().getServer().getWorld(newr.getWorld()));
+        this.remove(old, RedProtect.get().getServer().getWorld(old.getWorld()));
         return newr;
     }
 

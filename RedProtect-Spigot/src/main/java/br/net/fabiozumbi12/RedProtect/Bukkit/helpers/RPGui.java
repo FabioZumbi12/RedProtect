@@ -53,7 +53,7 @@ import java.util.Arrays;
 public class RPGui implements Listener {
 
     private final boolean allowEnchant;
-    private final boolean edit;
+    private final boolean editable;
     private String name;
     private int size;
     private ItemStack[] guiItems;
@@ -61,28 +61,28 @@ public class RPGui implements Listener {
     private Region region;
     private Inventory inv;
 
-    public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot) {
-        this.edit = edit;
+    public RPGui(String name, Player player, Region region, boolean editable, int maxSlots) {
+        this.editable = editable;
         this.name = name;
         this.player = player;
         this.region = region;
 
-        if (MaxSlot <= 9) {
+        if (maxSlots <= 9) {
             this.size = 9;
             this.guiItems = new ItemStack[this.size];
-        } else if (MaxSlot <= 18) {
+        } else if (maxSlots <= 18) {
             this.size = 18;
             this.guiItems = new ItemStack[this.size];
-        } else if (MaxSlot <= 27) {
+        } else if (maxSlots <= 27) {
             this.size = 27;
             this.guiItems = new ItemStack[this.size];
-        } else if (MaxSlot <= 36) {
+        } else if (maxSlots <= 36) {
             this.size = 36;
             this.guiItems = new ItemStack[this.size];
-        } else if (MaxSlot <= 45) {
+        } else if (maxSlots <= 45) {
             this.size = 45;
             this.guiItems = new ItemStack[this.size];
-        } else if (MaxSlot <= 54) {
+        } else if (maxSlots <= 54) {
             this.size = 54;
             this.guiItems = new ItemStack[this.size];
         } else {
@@ -150,25 +150,26 @@ public class RPGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)) {
-            if (this.edit) {
-                for (int i = 0; i < this.size; i++) {
-                    try {
-                        String flag = this.inv.getItem(i).getItemMeta().getLore().get(1).replace("§0", "");
-                        if (RPConfig.getDefFlags().contains(flag)) {
-                            RPConfig.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
-                        }
-                    } catch (Exception e) {
-                        RPLang.sendMessage(this.player, "gui.edit.error");
-                        close();
-                        return;
-                    }
-                }
-                RPConfig.saveGui();
-                RPLang.sendMessage(this.player, "gui.edit.ok");
-            }
-            close();
+        if (event.getInventory().getTitle() == null || !event.getInventory().getTitle().equals(this.name)) {
+            return;
         }
+        if (this.editable) {
+            for (int i = 0; i < this.size; i++) {
+                try {
+                    String flag = this.inv.getItem(i).getItemMeta().getLore().get(1).replace("§0", "");
+                    if (RPConfig.getDefFlags().contains(flag)) {
+                        RPConfig.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
+                    }
+                } catch (Exception e) {
+                    RPLang.sendMessage(this.player, "gui.edit.error");
+                    close();
+                    return;
+                }
+            }
+            RPConfig.saveGui();
+            RPLang.sendMessage(this.player, "gui.edit.ok");
+        }
+        close();
     }
 
     @EventHandler
@@ -199,7 +200,7 @@ public class RPGui implements Listener {
             return;
         }
 
-        if (this.edit) {
+        if (this.editable) {
             return;
         }
 
@@ -264,29 +265,20 @@ public class RPGui implements Listener {
     }
 
     public void close() {
-        //check for itens
+        this.player.closeInventory();
+        // Check for items
         this.player.updateInventory();
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
 
+        RedProtect.get().openGuis.remove(this.region.getID());
         this.guiItems = null;
         this.name = null;
-        RedProtect.get().openGuis.remove(this.region.getID());
         this.region = null;
-        try {
-            this.finalize();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     public void open() {
         if (RedProtect.get().openGuis.contains(this.region.getID())) {
             RPLang.sendMessage(player, "cmdmanager.region.rpgui-open");
-            try {
-                this.finalize();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
             return;
         }
         Inventory inv = Bukkit.createInventory(player, this.size, this.name);

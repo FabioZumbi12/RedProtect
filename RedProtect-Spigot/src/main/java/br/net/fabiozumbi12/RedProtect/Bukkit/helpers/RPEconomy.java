@@ -42,7 +42,7 @@ public class RPEconomy {
 
     public static long getRegionValue(Region r) {
         long regionCost = 0;
-        World w = RedProtect.get().serv.getWorld(r.getWorld());
+        World w = RedProtect.get().getServer().getWorld(r.getWorld());
         int maxX = r.getMaxMbrX();
         int minX = r.getMinMbrX();
         int maxZ = r.getMaxMbrZ();

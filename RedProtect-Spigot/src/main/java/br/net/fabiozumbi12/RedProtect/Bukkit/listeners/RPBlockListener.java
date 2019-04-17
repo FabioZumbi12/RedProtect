@@ -158,7 +158,7 @@ public class RPBlockListener implements Listener {
                 e.setLine(0, RPLang.get("blocklistener.region.signcreated"));
                 e.setLine(1, r.getName());
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
-                RedProtect.get().rm.add(r, RedProtect.get().serv.getWorld(r.getWorld()));
+                RedProtect.get().rm.add(r, RedProtect.get().getServer().getWorld(r.getWorld()));
             }
         } else if (RPConfig.getBool("region-settings.enable-flag-sign") && line1.equalsIgnoreCase("[flag]") && signr != null) {
             if (signr.getFlags().containsKey(lines[1])) {

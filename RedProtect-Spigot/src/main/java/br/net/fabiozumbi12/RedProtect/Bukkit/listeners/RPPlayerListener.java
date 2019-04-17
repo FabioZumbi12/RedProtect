@@ -847,7 +847,7 @@ public class RPPlayerListener implements Listener {
             if (cmd.equalsIgnoreCase("/pvp") && RedProtect.get().PvPm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
-                    RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
+                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
                     return;
                 }
             }
@@ -985,7 +985,7 @@ public class RPPlayerListener implements Listener {
         int NetherY = RPConfig.getInt("netherProtection.maxYsize");
         if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")) {
             for (String cmd : RPConfig.getStringList("netherProtection.execute-cmd")) {
-                RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()));
+                RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), cmd.replace("{player}", p.getName()));
             }
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
         }
@@ -1207,7 +1207,7 @@ public class RPPlayerListener implements Listener {
 
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
             String uuid = p.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 uuid = p.getName().toLowerCase();
             }
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")) {
@@ -1444,7 +1444,7 @@ public class RPPlayerListener implements Listener {
                         if (cmd.startsWith("/")) {
                             cmd = cmd.substring(1);
                         }
-                        RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+                        RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
                     }
                 }
             }
@@ -1453,7 +1453,7 @@ public class RPPlayerListener implements Listener {
             if (RedProtect.get().PvPm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
-                    RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
+                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RPConfig.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
                 }
             }
 
@@ -1465,7 +1465,7 @@ public class RPPlayerListener implements Listener {
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
                 String[] cmds = r.getFlagString("set-portal").split(" ");
-                RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
             }
 
             //Enter MagicCarpet
@@ -1557,7 +1557,7 @@ public class RPPlayerListener implements Listener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
+                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
                 }
             }
 
@@ -1715,7 +1715,7 @@ public class RPPlayerListener implements Listener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().serv.dispatchCommand(p, cmd.replace("{player}", p.getName()));
+                    RedProtect.get().getServer().dispatchCommand(p, cmd.replace("{player}", p.getName()));
                 }
             }
 
@@ -1726,7 +1726,7 @@ public class RPPlayerListener implements Listener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().serv.dispatchCommand(RedProtect.get().serv.getConsoleSender(), cmd.replace("{player}", p.getName()));
+                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), cmd.replace("{player}", p.getName()));
                 }
             }
         }

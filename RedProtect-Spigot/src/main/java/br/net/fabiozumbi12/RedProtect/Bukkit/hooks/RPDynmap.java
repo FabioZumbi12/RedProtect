@@ -64,7 +64,7 @@ public class RPDynmap implements Listener {
         }
 
         //start set markers
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                 if (!r.allowDynmap()) continue;
                 addMark(r);
