@@ -39,10 +39,10 @@ import java.util.Set;
 
 public class RPPermissionHandler {
 
-    public boolean hasCommandPerm(CommandSender p, String s) {
-        String adminperm = "redprotect.command.admin." + s;
-        String userperm = "redprotect.command." + s;
-        return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
+    public boolean hasCommandPerm(CommandSender sender, String perm) {
+        String adminPerm = "redprotect.command.admin." + perm;
+        String userPerm = "redprotect.command." + perm;
+        return this.hasPerm(sender, adminPerm) || this.hasPerm(sender, userPerm);
     }
 
     public boolean hasFlagPerm(Player p, String flag) {
@@ -55,12 +55,12 @@ public class RPPermissionHandler {
         return p.hasPermission(perm) || p.hasPermission(perm + ".bypass");
     }
 
-    public boolean hasPerm(Player p, String perm) {
-        return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.command.admin"));
+    public boolean hasPerm(Player player, String perm) {
+        return player != null && (player.hasPermission(perm) || player.hasPermission("redprotect.command.admin"));
     }
 
-    public boolean hasPerm(CommandSender p, String perm) {
-        return p != null && (p.hasPermission(perm) || p.hasPermission("redprotect.command.admin"));
+    public boolean hasPerm(CommandSender sender, String perm) {
+        return sender != null && (sender.hasPermission(perm) || sender.hasPermission("redprotect.command.admin"));
     }
 
     public boolean hasRegionPermMember(Player p, String s, Region poly) {
@@ -84,11 +84,11 @@ public class RPPermissionHandler {
     }
 
     public int getPlayerBlockLimit(Player p) {
-        return BlockLimitHandler(p);
+        return getBlockLimit(p);
     }
 
     public int getPlayerClaimLimit(Player p) {
-        return ClaimLimitHandler(p);
+        return getClaimLimit(p);
     }
 
     private boolean regionPermLeader(Player p, String s, Region poly) {
@@ -118,12 +118,12 @@ public class RPPermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p) || poly.isMember(p)));
     }
 
-    private int BlockLimitHandler(Player p) {
+    private int getBlockLimit(Player player) {
         int limit = RPConfig.getInt("region-settings.limit-amount");
         List<Integer> limits = new ArrayList<>();
-        Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
+        Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {
-            if (!p.hasPermission("redprotect.limits.blocks.unlimited")) {
+            if (!player.hasPermission("redprotect.limits.blocks.unlimited")) {
                 for (PermissionAttachmentInfo perm : perms) {
                     if (perm.getPermission().startsWith("redprotect.limits.blocks.")) {
                         String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
@@ -142,12 +142,12 @@ public class RPPermissionHandler {
         return limit;
     }
 
-    private int ClaimLimitHandler(Player p) {
+    private int getClaimLimit(Player player) {
         int limit = RPConfig.getInt("region-settings.claim-amount");
         List<Integer> limits = new ArrayList<>();
-        Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
+        Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {
-            if (!p.hasPermission("redprotect.limits.claim.unlimited")) {
+            if (!player.hasPermission("redprotect.limits.claim.unlimited")) {
                 for (PermissionAttachmentInfo perm : perms) {
                     if (perm.getPermission().startsWith("redprotect.limits.claim.")) {
                         String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
