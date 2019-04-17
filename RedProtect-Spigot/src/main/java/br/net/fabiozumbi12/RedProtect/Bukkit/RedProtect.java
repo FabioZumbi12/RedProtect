@@ -94,7 +94,7 @@ public class RedProtect extends JavaPlugin {
     public int version;
     public RPVHelper rpvhelper;
     public CommandHandler cmdHandler;
-    private int taskid;
+    private int autoSaveID;
     private boolean PlaceHolderAPI;
     private boolean Fac;
     private RedProtectAPI rpAPI;
@@ -158,8 +158,9 @@ public class RedProtect extends JavaPlugin {
                 this.setEnabled(false);
             }
             getServer().setWhitelist(true);
-            getServer().getOnlinePlayers().forEach(p -> p.kickPlayer("The server is disabled due an error on load plugins!"));
-            logger.warning("RedProtect turned the whitelist on and kicked all players to avoid players to loose your protected regions due an error on load RedProtect!");
+            getServer().getOnlinePlayers().forEach(p -> p.kickPlayer("The server has been whitelisted due to an error while loading plugins!"));
+            logger.severe("Due to an error in RedProtect loading, the whitelist has been turned on and every player has been kicked.");
+            logger.severe("DO NOT LET ANYONE ENTER before fixing the problem, otherwise you risk losing protected regions.");
         }
     }
 
@@ -296,7 +297,7 @@ public class RedProtect extends JavaPlugin {
             RPUtil.ReadAllDB(rm.getAllRegions());
 
             if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
-                AutoSaveHandler();
+                startAutoSave();
             }
             logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
         } catch (Exception e) {
@@ -318,7 +319,7 @@ public class RedProtect extends JavaPlugin {
         logger.info("Unregistering listeners...");
         HandlerList.unregisterAll(this);
 
-        logger.info(pdf.getFullName() + " turn off...");
+        logger.info(pdf.getFullName() + " turned off...");
     }
 
     public boolean denyEnterRegion(String rid, String player) {
@@ -360,12 +361,12 @@ public class RedProtect extends JavaPlugin {
         return Integer.parseInt((version[0] + version[1]).substring(1) + lesserVersion);
     }
 
-    private void AutoSaveHandler() {
-        Bukkit.getScheduler().cancelTask(taskid);
+    private void startAutoSave() {
+        Bukkit.getScheduler().cancelTask(autoSaveID);
         if (RPConfig.getInt("flat-file.auto-save-interval-seconds") != 0) {
             logger.info("Auto-save Scheduler: Saving " + RPConfig.getString("file-type") + " database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
 
-            taskid = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            autoSaveID = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                 logger.debug("Auto-save Scheduler: Saving " + RPConfig.getString("file-type") + " database!");
                 rm.saveAll(RPConfig.getBool("flat-file.backup-on-save"));
             }, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
