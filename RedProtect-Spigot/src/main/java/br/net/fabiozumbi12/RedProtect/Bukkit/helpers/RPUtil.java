@@ -72,7 +72,7 @@ public class RPUtil extends CoreUtil {
     public static boolean stopRegen = false;
     private static HashMap<String, String> cachedUUIDs = new HashMap<>();
 
-    public static String DateNow() {
+    public static String dateNow() {
         return dateNow(RPConfig.getString("region-settings.date-format"));
     }
 
@@ -253,7 +253,7 @@ public class RPUtil extends CoreUtil {
     }
 
     public static File genFileName(String Path, Boolean isBackup) {
-        return genFileName(Path, isBackup, RPConfig.getInt("flat-file.max-backups"), DateNow());
+        return genFileName(Path, isBackup, RPConfig.getInt("flat-file.max-backups"), dateNow());
     }
 
     /**
@@ -293,7 +293,7 @@ public class RPUtil extends CoreUtil {
         SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
 
         try {
-            now = dateformat.parse(DateNow());
+            now = dateformat.parse(dateNow());
         } catch (ParseException e1) {
             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
         }
@@ -304,7 +304,7 @@ public class RPUtil extends CoreUtil {
 
             if (region.isLeader(RPConfig.getString("region-settings.default-leader"))) {
                 serverRegion = true;
-                region.setDate(DateNow());
+                region.setDate(dateNow());
             }
 
             //purge regions
@@ -911,7 +911,7 @@ public class RPUtil extends CoreUtil {
                 newmax.setY(w.getMaxHeight());
 
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
-                        newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), DateNow(), 0, null, true);
+                        newmin, newmax, RPConfig.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), dateNow(), 0, null, true);
 
                 Region other = RedProtect.get().rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
                 if (other == null || !r.getWelcome().equals(other.getWelcome())) {

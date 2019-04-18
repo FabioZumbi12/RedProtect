@@ -116,7 +116,7 @@ public class RPEconomy {
             r.clearAdmins();
             r.clearLeaders();
             r.addLeader(uuid);
-            r.setDate(RPUtil.DateNow());
+            r.setDate(RPUtil.dateNow());
             r.setWelcome("");
             r.setFlags(RPConfig.getDefFlagsValues());
             if (RPConfig.getEcoBool("rename-region")) {

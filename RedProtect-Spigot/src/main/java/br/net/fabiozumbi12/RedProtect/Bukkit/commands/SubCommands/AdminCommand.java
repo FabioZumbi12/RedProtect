@@ -89,7 +89,7 @@ public class AdminCommand implements SubCommand {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.DateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.dateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().rm.add(r, w);
@@ -698,8 +698,38 @@ public class AdminCommand implements SubCommand {
                 int min = max - regionsPage;
                 int count;
 
+                Set<Region> wregions = new HashSet<>();
+                for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                    SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
+                    Date now = null;
+                    try {
+                        now = dateformat.parse(RPUtil.dateNow());
+                    } catch (ParseException e1) {
+                        RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
+                    }
+                    Date regiondate = null;
+                    try {
+                        regiondate = dateformat.parse(r.getDate());
+                    } catch (ParseException e) {
+                        RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
+                        e.printStackTrace();
+                    }
+                    long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                    for (String play : RPConfig.getStringList("purge.ignore-regions-from-players")) {
+                        if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                            break;
+                        }
+                    }
+                    if (!r.isLeader(RPConfig.getString("region-settings.default-leader")) && days > RPConfig.getInt("purge.remove-oldest") && r.getArea() >= RPConfig.getInt("purge.regen.max-area-regen")) {
+                        wregions.add(r);
+                    }
+                }
+                if (wregions.size() == 0) {
+                    continue;
+                }
+
                 String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));
-                Set<Region> wregions = RedProtect.get().rm.getRegionsByWorld(w);
+
                 int totalLocal = wregions.size();
                 total += totalLocal;
 

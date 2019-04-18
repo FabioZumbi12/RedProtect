@@ -1056,8 +1056,8 @@ public class RPPlayerListener implements Listener {
             //update region admin or leander visit
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-REGION-ENTER")) {
                 if (r.isLeader(p) || r.isAdmin(p)) {
-                    if (r.getDate() == null || (!r.getDate().equals(RPUtil.DateNow()))) {
-                        r.setDate(RPUtil.DateNow());
+                    if (r.getDate() == null || (!r.getDate().equals(RPUtil.dateNow()))) {
+                        r.setDate(RPUtil.dateNow());
                     }
                 }
             }
@@ -1212,8 +1212,8 @@ public class RPPlayerListener implements Listener {
             }
             if (RPConfig.getString("region-settings.record-player-visit-method").equalsIgnoreCase("ON-LOGIN")) {
                 for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
-                    if (r.getDate() == null || !r.getDate().equals(RPUtil.DateNow())) {
-                        r.setDate(RPUtil.DateNow());
+                    if (r.getDate() == null || !r.getDate().equals(RPUtil.dateNow())) {
+                        r.setDate(RPUtil.dateNow());
                     }
                 }
             }

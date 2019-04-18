@@ -595,8 +595,38 @@ public class AdminCommand implements CommandCallable {
                 int min = max - regionsPage;
                 int count;
 
+                Set<Region> wregions = new HashSet<>();
+                for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                    SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
+                    Date now = null;
+                    try {
+                        now = dateformat.parse(RPUtil.dateNow());
+                    } catch (ParseException e1) {
+                        RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
+                    }
+                    Date regiondate = null;
+                    try {
+                        regiondate = dateformat.parse(r.getDate());
+                    } catch (ParseException e) {
+                        RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
+                        e.printStackTrace();
+                    }
+                    long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                    for (String play : RedProtect.get().cfgs.root().purge.ignore_regions_from_players) {
+                        if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                            break;
+                        }
+                    }
+                    if (!r.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader) && days > RedProtect.get().cfgs.root().purge.remove_oldest && r.getArea() >= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
+                        wregions.add(r);
+                    }
+                }
+                if (wregions.size() == 0) {
+                    continue;
+                }
+
                 String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
-                Set<Region> wregions = RedProtect.get().rm.getRegionsByWorld(w);
+
                 int totalLocal = wregions.size();
                 total += totalLocal;
 

@@ -386,7 +386,7 @@ public class Region extends CoreRegion {
             wMsgTemp = wMessage;
         }
 
-        if (this.date.equals(RPUtil.DateNow())) {
+        if (this.date.equals(RPUtil.dateNow())) {
             today = RPLang.get("region.today");
         } else {
             today = this.date;
