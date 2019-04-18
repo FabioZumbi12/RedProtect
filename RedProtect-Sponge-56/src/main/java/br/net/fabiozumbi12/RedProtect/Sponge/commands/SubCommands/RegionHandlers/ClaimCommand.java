@@ -76,7 +76,7 @@ public class ClaimCommand {
                             addedAdmins.add(RPUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()));
                         }
 
-                        if (!RedProtect.get().OnlineMode) {
+                        if (!RedProtect.get().onlineMode) {
                             leader = player.getName().toLowerCase();
                         }
                         RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, addedAdmins, false);

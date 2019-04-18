@@ -108,11 +108,11 @@ public class CommandHandler {
 
                 .build();
 
-        plugin.cmdService.register(plugin, redProtect, Arrays.asList("redprotect", "rp"));
+        plugin.commandManager.register(plugin, redProtect, Arrays.asList("redprotect", "rp"));
     }
 
     public void unregisterAll() {
-        plugin.cmdService.getOwnedBy(plugin.container).forEach(p -> plugin.cmdService.removeMapping(p));
+        plugin.commandManager.getOwnedBy(plugin.container).forEach(p -> plugin.commandManager.removeMapping(p));
     }
 
     private String[] getCmdKeys(String cmd) {

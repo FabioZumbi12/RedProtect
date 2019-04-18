@@ -79,7 +79,7 @@ public class RegionManager {
         for (World w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
             if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable) {
-                RedProtect.get().dynmap.removeAll(w);
+                RedProtect.get().rpDynmap.removeAll(w);
             }
         }
         this.regionManagers.clear();
@@ -203,7 +203,7 @@ public class RegionManager {
         this.regionManagers.get(w).add(r);
         if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable) {
             try {
-                RedProtect.get().dynmap.addMark(r);
+                RedProtect.get().rpDynmap.addMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
@@ -222,7 +222,7 @@ public class RegionManager {
         removeCache(r);
         if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable) {
             try {
-                RedProtect.get().dynmap.removeMark(r);
+                RedProtect.get().rpDynmap.removeMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
@@ -365,7 +365,7 @@ public class RegionManager {
 
     public Set<Region> getAllRegions() {
         Set<Region> regions = new HashSet<>();
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             regions.addAll(rm.getAllRegions());
         }
@@ -379,7 +379,7 @@ public class RegionManager {
     }
 
     public void clearDB() {
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             rm.clearRegions();
         }
@@ -403,7 +403,7 @@ public class RegionManager {
 
     public int getTotalRegionsNum() {
         int total = 0;
-        for (World w : RedProtect.get().serv.getWorlds()) {
+        for (World w : RedProtect.get().getServer().getWorlds()) {
             WorldRegionManager rm = this.regionManagers.get(w);
             total = total + rm.getTotalRegionNum();
         }
@@ -415,8 +415,8 @@ public class RegionManager {
         Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
                 new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
-        this.add(newr, RedProtect.get().serv.getWorld(newr.getWorld()).get());
-        this.remove(old, RedProtect.get().serv.getWorld(old.getWorld()).get());
+        this.add(newr, RedProtect.get().getServer().getWorld(newr.getWorld()).get());
+        this.remove(old, RedProtect.get().getServer().getWorld(old.getWorld()).get());
         return newr;
     }
 

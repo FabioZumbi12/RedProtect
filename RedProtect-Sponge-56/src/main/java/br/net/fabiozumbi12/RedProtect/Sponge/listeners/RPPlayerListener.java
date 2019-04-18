@@ -660,7 +660,7 @@ public class RPPlayerListener {
         int NetherY = RedProtect.get().cfgs.root().nether_protection.maxYsize;
         if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")) {
             for (String cmd : RedProtect.get().cfgs.root().nether_protection.execute_cmd) {
-                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), cmd.replace("{player}", p.getName()));
             }
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
         }
@@ -720,8 +720,8 @@ public class RPPlayerListener {
             //update region admin or leader visit
             if (RedProtect.get().cfgs.root().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")) {
                 if (r.isLeader(p) || r.isAdmin(p)) {
-                    if (r.getDate() == null || (!r.getDate().equals(RPUtil.DateNow()))) {
-                        r.setDate(RPUtil.DateNow());
+                    if (r.getDate() == null || (!r.getDate().equals(RPUtil.dateNow()))) {
+                        r.setDate(RPUtil.dateNow());
                     }
                 }
             }
@@ -1049,12 +1049,12 @@ public class RPPlayerListener {
 
         if (RedProtect.get().cfgs.root().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
             String uuid = p.getUniqueId().toString();
-            if (!RedProtect.get().OnlineMode) {
+            if (!RedProtect.get().onlineMode) {
                 uuid = p.getName().toLowerCase();
             }
             for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
-                if (r.getDate() == null || !r.getDate().equals(RPUtil.DateNow())) {
-                    r.setDate(RPUtil.DateNow());
+                if (r.getDate() == null || !r.getDate().equals(RPUtil.dateNow())) {
+                    r.setDate(RPUtil.dateNow());
                 }
             }
         }
@@ -1237,7 +1237,7 @@ public class RPPlayerListener {
                         if (cmd.startsWith("/")) {
                             cmd = cmd.substring(1);
                         }
-                        RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+                        RedProtect.get().getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
                     }
                 }
             }
@@ -1250,7 +1250,7 @@ public class RPPlayerListener {
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
                 String[] cmds = r.getFlagString("set-portal").split(" ");
-                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
             }
         }
 
@@ -1342,7 +1342,7 @@ public class RPPlayerListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
+                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), cmd.replace("{player}", p.getName()).replace("{region}", er.getName()));
                 }
             }
         }
@@ -1487,7 +1487,7 @@ public class RPPlayerListener {
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
-                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
+                    RedProtect.get().getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), cmd.replace("{player}", p.getName()));
                 }
             }
         }

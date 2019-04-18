@@ -399,7 +399,7 @@ public class Region extends CoreRegion {
             wMsgTemp = wMessage;
         }
 
-        if (this.date.equals(RPUtil.DateNow())) {
+        if (this.date.equals(RPUtil.dateNow())) {
             today = RPLang.get("region.today");
         } else {
             today = this.date;
@@ -420,7 +420,7 @@ public class Region extends CoreRegion {
         }
 
         if (RedProtect.get().Dyn && RedProtect.get().cfgs.root().hooks.dynmap.enable) {
-            dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
+            dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("rpDynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
         return RPUtil.toText(RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
@@ -453,39 +453,39 @@ public class Region extends CoreRegion {
     }
 
     public boolean isLeader(Player player) {
-        if (RedProtect.get().OnlineMode) {
-            return isLeader(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
+        if (RedProtect.get().onlineMode) {
+            return isLeader(player.getUniqueId().toString(), RedProtect.get().onlineMode);
         } else {
-            return isLeader(player.getName(), RedProtect.get().OnlineMode);
+            return isLeader(player.getName(), RedProtect.get().onlineMode);
         }
     }
 
     public boolean isAdmin(Player player) {
-        if (RedProtect.get().OnlineMode) {
-            return isAdmin(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
+        if (RedProtect.get().onlineMode) {
+            return isAdmin(player.getUniqueId().toString(), RedProtect.get().onlineMode);
         } else {
-            return isAdmin(player.getName(), RedProtect.get().OnlineMode);
+            return isAdmin(player.getName(), RedProtect.get().onlineMode);
         }
     }
 
     public boolean isMember(Player player) {
-        if (RedProtect.get().OnlineMode) {
-            return isMember(player.getUniqueId().toString(), RedProtect.get().OnlineMode);
+        if (RedProtect.get().onlineMode) {
+            return isMember(player.getUniqueId().toString(), RedProtect.get().onlineMode);
         } else {
-            return isMember(player.getName(), RedProtect.get().OnlineMode);
+            return isMember(player.getName(), RedProtect.get().onlineMode);
         }
     }
 
     public boolean isLeader(String player) {
-        return isLeader(player, RedProtect.get().OnlineMode);
+        return isLeader(player, RedProtect.get().onlineMode);
     }
 
     public boolean isAdmin(String player) {
-        return isAdmin(player, RedProtect.get().OnlineMode);
+        return isAdmin(player, RedProtect.get().onlineMode);
     }
 
     public boolean isMember(String player) {
-        return isMember(player, RedProtect.get().OnlineMode);
+        return isMember(player, RedProtect.get().onlineMode);
     }
 
     /**
@@ -497,7 +497,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -520,7 +520,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -543,7 +543,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -583,7 +583,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -606,7 +606,7 @@ public class Region extends CoreRegion {
         setToSave(true);
 
         String name = uuid;
-        if (RedProtect.get().OnlineMode) {
+        if (RedProtect.get().onlineMode) {
             name = RPUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
@@ -676,7 +676,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isOnTop() {
-        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
+        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
         return newr == null || newr.equals(this);
     }
 
@@ -706,7 +706,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean allowDynmap() {
-        return !flagExists("dynmap") || getFlagBool("dynmap");
+        return !flagExists("rpDynmap") || getFlagBool("rpDynmap");
     }
 
     public boolean keepInventory() {
@@ -732,7 +732,7 @@ public class Region extends CoreRegion {
             }
             boolean waiting = false;
             if (p.get(Keys.HEALTH).get() <= health && !waiting) {
-                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().serv.getConsole(), cmd.replace("{player}", p.getName()));
+                RedProtect.get().getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), cmd.replace("{player}", p.getName()));
     			/*waiting = true;
     			Bukkit.getScheduler().runTaskLater(RedProtect.get().plugin, new Runnable(){
 					@Override

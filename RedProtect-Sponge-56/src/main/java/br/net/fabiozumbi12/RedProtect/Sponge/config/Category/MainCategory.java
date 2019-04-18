@@ -250,9 +250,9 @@ public class MainCategory {
     @ConfigSerializable
     public static class permLimits {
         @Setting
-        public List<String> blocks = Collections.singletonList("redprotect.limit.blocks.8000");
+        public List<String> blocks = Collections.singletonList("redprotect.limits.blocks.8000");
         @Setting
-        public List<String> claims = Collections.singletonList("redprotect.limit.claim.20");
+        public List<String> claims = Collections.singletonList("redprotect.limits.claim.20");
     }
 
     @ConfigSerializable
@@ -348,7 +348,7 @@ public class MainCategory {
         @Setting(value = "leadership-request-time", comment = "Time in seconds the request to be a leader of a region will expire.")
         public int leadership_request_time = 20;
         @Setting(value = "limit-amount", comment = "The default total of blocks a player can claim. \n" +
-                "The permission \"redprotect.limit.blocks.<amount>\" overrides this setting.")
+                "The permission \"redprotect.limits.blocks.<amount>\" overrides this setting.")
         public int limit_amount = 8000;
         @Setting(value = "max-scan", comment = "If using blocks for claim, this is the max blocks the plugin will scan before claim a region.")
         public int max_scan = 600;
@@ -375,7 +375,7 @@ public class MainCategory {
             public int maxy = -1;
             @Setting(comment = "Default vertical min size of a region on claim/define. Set -1 to set to world size.")
             public int miny = -1;
-            @Setting(value = "amount-per-player", comment = "Default claim amount per player if no claim permissions set. The permission \"redprotect.limit.claim.<limit>\" overrides this setting.")
+            @Setting(value = "amount-per-player", comment = "Default claim amount per player if no claim permissions set. The permission \"redprotect.limits.claim.<limit>\" overrides this setting.")
             public int amount_per_player = 20;
 
             @Setting
@@ -464,7 +464,7 @@ public class MainCategory {
 
         @ConfigSerializable
         public static class dynmapCat {
-            @Setting(comment = "Enable hook to show all regions on dynmap plugin?")
+            @Setting(comment = "Enable hook to show all regions on rpDynmap plugin?")
             public boolean enable = true;
             @Setting(value = "hide-by-default", comment = "Hide the Redprotect tab group by default?")
             public boolean hide_by_default = true;

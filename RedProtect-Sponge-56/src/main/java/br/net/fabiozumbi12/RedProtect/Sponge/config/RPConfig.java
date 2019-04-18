@@ -105,7 +105,7 @@ public class RPConfig {
             "set-portal",
             "exit",
             "particles",
-            "dynmap",
+            "rpDynmap",
             "deny-exit-items");
     public CommentedConfigurationNode ecoCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> protManager;
@@ -293,7 +293,7 @@ public class RPConfig {
 
         //add allowed claim worlds to config
         if (root.allowed_claim_worlds.isEmpty()) {
-            for (World w : RedProtect.get().serv.getWorlds()) {
+            for (World w : RedProtect.get().getServer().getWorlds()) {
                 root.allowed_claim_worlds.add(w.getName());
                 RedProtect.get().logger.warning("Added world to claim list " + w.getName());
             }

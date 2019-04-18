@@ -207,11 +207,11 @@ public class RPUtil extends CoreUtil {
     }
 
     public static File genFileName(String Path, Boolean isBackup) {
-        return genFileName(Path, isBackup, RedProtect.get().cfgs.root().flat_file.max_backups, DateNow());
+        return genFileName(Path, isBackup, RedProtect.get().cfgs.root().flat_file.max_backups, dateNow());
     }
 
-    public static String DateNow() {
-        return DateNow(RedProtect.get().cfgs.root().region_settings.date_format);
+    public static String dateNow() {
+        return dateNow(RedProtect.get().cfgs.root().region_settings.date_format);
     }
 
     /**
@@ -223,7 +223,7 @@ public class RPUtil extends CoreUtil {
      */
     public static String nameGen(String p, String World) {
         String rname;
-        World w = RedProtect.get().serv.getWorld(World).get();
+        World w = RedProtect.get().getServer().getWorld(World).get();
         int i = 0;
         while (true) {
             int is = String.valueOf(i).length();
@@ -252,7 +252,7 @@ public class RPUtil extends CoreUtil {
         SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
 
         try {
-            now = dateformat.parse(DateNow());
+            now = dateformat.parse(dateNow());
         } catch (ParseException e1) {
             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
         }
@@ -262,7 +262,7 @@ public class RPUtil extends CoreUtil {
 
             if (region.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader)) {
                 serverRegion = true;
-                region.setDate(DateNow());
+                region.setDate(dateNow());
             }
 
             //purge regions
@@ -294,7 +294,7 @@ public class RPUtil extends CoreUtil {
                             continue;
                         }
                     } else {
-                        RedProtect.get().rm.remove(region, RedProtect.get().serv.getWorld(region.getWorld()).get());
+                        RedProtect.get().rm.remove(region, RedProtect.get().getServer().getWorld(region.getWorld()).get());
                         purged++;
                         RedProtect.get().logger.warning("Purging " + region.getName() + " - Days: " + days);
                     }
@@ -383,7 +383,7 @@ public class RPUtil extends CoreUtil {
 
         String uuid = PlayerName;
 
-        if (!RedProtect.get().OnlineMode) {
+        if (!RedProtect.get().onlineMode) {
             uuid = uuid.toLowerCase();
             return uuid;
         }
@@ -394,7 +394,7 @@ public class RPUtil extends CoreUtil {
         if (ogpName.isPresent()) {
             return ogpName.get().getUniqueId().toString();
         } else {
-            Optional<Player> p = RedProtect.get().serv.getPlayer(PlayerName);
+            Optional<Player> p = RedProtect.get().getServer().getPlayer(PlayerName);
             if (p.isPresent()) {
                 return p.get().getUniqueId().toString();
             }
@@ -416,7 +416,7 @@ public class RPUtil extends CoreUtil {
         String PlayerName = uuid;
         UUID uuids;
 
-        if (!RedProtect.get().OnlineMode) {
+        if (!RedProtect.get().onlineMode) {
             return uuid.toLowerCase();
         }
         try {
@@ -772,8 +772,8 @@ public class RPUtil extends CoreUtil {
     public static int getUpdatedPrior(Region region) {
         int regionarea = region.getArea();
         int prior = region.getPrior();
-        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().serv.getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ(), RPUtil.class.getName());
-        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().serv.getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ(), RPUtil.class.getName());
+        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().getServer().getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
 
         if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))) {
             return prior;
@@ -877,7 +877,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -888,7 +888,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -899,7 +899,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().OnlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);

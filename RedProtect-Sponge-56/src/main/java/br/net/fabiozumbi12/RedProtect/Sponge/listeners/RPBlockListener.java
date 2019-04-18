@@ -161,7 +161,7 @@ public class RPBlockListener {
                 lines.set(1, RPUtil.toText(r.getName()));
                 e.getText().setElements(lines);
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
-                RedProtect.get().rm.add(r, RedProtect.get().serv.getWorld(r.getWorld()).get());
+                RedProtect.get().rm.add(r, RedProtect.get().getServer().getWorld(r.getWorld()).get());
             }
         }
     }

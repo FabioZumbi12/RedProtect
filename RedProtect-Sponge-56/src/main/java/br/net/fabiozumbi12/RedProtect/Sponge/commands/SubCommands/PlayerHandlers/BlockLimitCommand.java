@@ -58,7 +58,7 @@ public class BlockLimitCommand {
                                 return CommandResult.success();
                             }
                             String uuid = player.getUniqueId().toString();
-                            if (!RedProtect.get().OnlineMode) {
+                            if (!RedProtect.get().onlineMode) {
                                 uuid = player.getName().toLowerCase();
                             }
                             int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName() : null);

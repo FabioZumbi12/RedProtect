@@ -41,7 +41,7 @@ public class RPEconomy {
 
     public static long getRegionValue(Region r) {
         long regionCost = 0;
-        World w = RedProtect.get().serv.getWorld(r.getWorld()).get();
+        World w = RedProtect.get().getServer().getWorld(r.getWorld()).get();
         int maxX = r.getMaxMbrX();
         int minX = r.getMinMbrX();
         int maxZ = r.getMaxMbrZ();
@@ -115,7 +115,7 @@ public class RPEconomy {
             r.clearAdmins();
             r.clearLeaders();
             r.addLeader(uuid);
-            r.setDate(RPUtil.DateNow());
+            r.setDate(RPUtil.dateNow());
             r.setWelcome("");
             r.setFlags(RedProtect.get().cfgs.getDefFlagsValues());
             if (RedProtect.get().cfgs.getEcoBool("rename-region")) {

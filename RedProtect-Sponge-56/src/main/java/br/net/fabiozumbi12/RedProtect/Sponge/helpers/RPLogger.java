@@ -71,7 +71,7 @@ public class RPLogger {
             return;
         }
         int key = MainLog.keySet().size() + 1;
-        MainLog.put(key, key + " - " + RPUtil.HourNow() + ": " + RPUtil.toText(logLine));
+        MainLog.put(key, key + " - " + RPUtil.hourNow() + ": " + RPUtil.toText(logLine));
         if (key == 500) {
             SaveLogs();
             MainLog.clear();
@@ -89,7 +89,7 @@ public class RPLogger {
             sb.append('\n');
         }
         if (RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false) != null) {
-            RPUtil.SaveToZipSB(RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false), sb);
+            RPUtil.saveSBToZip(RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false), sb);
         }
     }
 }

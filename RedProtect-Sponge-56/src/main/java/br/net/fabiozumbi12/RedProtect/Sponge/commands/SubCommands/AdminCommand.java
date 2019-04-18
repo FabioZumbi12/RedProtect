@@ -82,7 +82,7 @@ public class AdminCommand implements CommandCallable {
                         SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
                         Date now = null;
                         try {
-                            now = dateformat.parse(RPUtil.DateNow());
+                            now = dateformat.parse(RPUtil.dateNow());
                         } catch (ParseException e1) {
                             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
                         }
@@ -228,13 +228,13 @@ public class AdminCommand implements CommandCallable {
 
             if (args[0].equalsIgnoreCase("reload-config")) {
                 try {
-                    RedProtect.get().cmdHandler.unregisterAll();
+                    RedProtect.get().commandHandler.unregisterAll();
 
                     RedProtect.get().cfgs = new RPConfig(RedProtect.get().factory);
                     RPLang.init();
 
                     RedProtect.get().logger.info("Re-registering commands...");
-                    RedProtect.get().cmdHandler = new CommandHandler(RedProtect.get());
+                    RedProtect.get().commandHandler = new CommandHandler(RedProtect.get());
 
                     RedProtect.get().logger.sucess("Redprotect Plus configs reloaded!");
                 } catch (ObjectMappingException e) {
@@ -326,7 +326,7 @@ public class AdminCommand implements CommandCallable {
                 if (!RedProtect.get().WE) {
                     return cmdr;
                 }
-                Optional<World> w = RedProtect.get().serv.getWorld(args[2]);
+                Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
                 if (!w.isPresent()) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
@@ -346,7 +346,7 @@ public class AdminCommand implements CommandCallable {
                 if (!RedProtect.get().WE) {
                     return cmdr;
                 }
-                Optional<World> w = RedProtect.get().serv.getWorld(args[2]);
+                Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
                 if (!w.isPresent()) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
@@ -369,7 +369,7 @@ public class AdminCommand implements CommandCallable {
             if (checkCmd(args[0], "claimlimit")) {
                 User offp = RPUtil.getUser(args[1]);
 
-                Optional<World> w = RedProtect.get().serv.getWorld(args[2]);
+                Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
                 if (!w.isPresent()) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
@@ -379,7 +379,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
                 int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
-                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limit.claim.unlimited")) {
+                if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.nolimit")));
                     return cmdr;
                 }
@@ -411,7 +411,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp addmember <player> <region> <world>
             if (checkCmd(args[0], "addmember")) {
-                if (!RedProtect.get().serv.getWorld(args[3]).isPresent()) {
+                if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
@@ -426,7 +426,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp addadmin <player> <region> <world>
             if (checkCmd(args[0], "addadmin")) {
-                if (!RedProtect.get().serv.getWorld(args[3]).isPresent()) {
+                if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
@@ -441,7 +441,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp addleader <player> <region> <world>
             if (checkCmd(args[0], "addleader")) {
-                if (!RedProtect.get().serv.getWorld(args[3]).isPresent()) {
+                if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
@@ -456,7 +456,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp removemember <player> <region> <world>
             if (checkCmd(args[0], "removemember")) {
-                if (!RedProtect.get().serv.getWorld(args[3]).isPresent()) {
+                if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
@@ -471,7 +471,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp removeadmin <player> <region> <world>
             if (checkCmd(args[0], "removeadmin")) {
-                if (!RedProtect.get().serv.getWorld(args[3]).isPresent()) {
+                if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
@@ -486,7 +486,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp removeleader <player> <region> <world>
             if (checkCmd(args[0], "removeleader")) {
-                if (!RedProtect.get().serv.getWorld(args[3]).isPresent()) {
+                if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
                     sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
@@ -501,7 +501,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp kick <player> [region] [database]
             if (checkCmd(args[0], "kick")) {
-                Optional<World> w = RedProtect.get().serv.getWorld(args[3]);
+                Optional<World> w = RedProtect.get().getServer().getWorld(args[3]);
                 if (!w.isPresent()) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.invalidworld"));
                     return cmdr;
@@ -543,13 +543,13 @@ public class AdminCommand implements CommandCallable {
             //rp tp <player> <region> <world>
             if (checkCmd(args[0], "teleport")) {
                 Player play = null;
-                if (RedProtect.get().serv.getPlayer(args[1]).isPresent()) {
-                    play = RedProtect.get().serv.getPlayer(args[1]).get();
+                if (RedProtect.get().getServer().getPlayer(args[1]).isPresent()) {
+                    play = RedProtect.get().getServer().getPlayer(args[1]).get();
                 }
                 if (play != null) {
                     World w = null;
-                    if (RedProtect.get().serv.getWorld(args[3]).isPresent()) {
-                        w = RedProtect.get().serv.getWorld(args[3]).get();
+                    if (RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
+                        w = RedProtect.get().getServer().getWorld(args[3]).get();
                     }
                     if (w == null) {
                         sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.invalidworld")));
@@ -613,8 +613,8 @@ public class AdminCommand implements CommandCallable {
             /*/rp flag <regionName> <flag> <value> <world>*/
             if (checkCmd(args[0], "flag")) {
                 World w = null;
-                if (RedProtect.get().serv.getWorld(args[4]).isPresent()) {
-                    w = RedProtect.get().serv.getWorld(args[4]).get();
+                if (RedProtect.get().getServer().getWorld(args[4]).isPresent()) {
+                    w = RedProtect.get().getServer().getWorld(args[4]).get();
                 }
 
                 if (w == null) {

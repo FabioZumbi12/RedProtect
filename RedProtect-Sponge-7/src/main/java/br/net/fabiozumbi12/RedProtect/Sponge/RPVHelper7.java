@@ -151,7 +151,7 @@ public class RPVHelper7 implements RPVHelper {
     public boolean checkHorseOwner(Entity ent, Player p) {
         if (ent instanceof RideableHorse && ((RideableHorse) ent).getHorseData().get(Keys.TAMED_OWNER).isPresent()) {
             RideableHorse tam = (RideableHorse) ent;
-            Player owner = RedProtect.get().serv.getPlayer(tam.getHorseData().get(Keys.TAMED_OWNER).get().get()).get();
+            Player owner = RedProtect.get().getServer().getPlayer(tam.getHorseData().get(Keys.TAMED_OWNER).get().get()).get();
             return owner.getName().equals(p.getName());
         }
         return false;

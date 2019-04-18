@@ -57,33 +57,31 @@ public class RPGui {
     private Player player;
     private Region region;
     private Inventory inv;
-    private String name;
-    private boolean edit;
+    private boolean editable;
 
-    public RPGui(String name, Player player, Region region, boolean edit, int MaxSlot) {
-        this.edit = edit;
-        this.name = name;
+    public RPGui(String name, Player player, Region region, boolean edit, int maxSlots) {
+        this.editable = edit;
         this.player = player;
         this.region = region;
-        if (MaxSlot <= 9) {
+        if (maxSlots <= 9) {
             this.size = 9;
             this.guiItens = new ItemStack[this.size];
-        } else if (MaxSlot >= 10 && MaxSlot <= 18) {
+        } else if (maxSlots >= 10 && maxSlots <= 18) {
             this.size = 18;
             this.guiItens = new ItemStack[this.size];
-        } else if (MaxSlot >= 19 && MaxSlot <= 27) {
+        } else if (maxSlots >= 19 && maxSlots <= 27) {
             this.size = 27;
             this.guiItens = new ItemStack[this.size];
         }
-        if (MaxSlot >= 28 && MaxSlot <= 36) {
+        if (maxSlots >= 28 && maxSlots <= 36) {
             this.size = 36;
             this.guiItens = new ItemStack[this.size];
         }
-        if (MaxSlot >= 37 && MaxSlot <= 45) {
+        if (maxSlots >= 37 && maxSlots <= 45) {
             this.size = 45;
             this.guiItens = new ItemStack[this.size];
         }
-        if (MaxSlot >= 46 && MaxSlot <= 54) {
+        if (maxSlots >= 46 && maxSlots <= 54) {
             this.size = 54;
             this.guiItens = new ItemStack[this.size];
         }
@@ -120,7 +118,7 @@ public class RPGui {
                     this.guiItens[i].offer(Keys.HIDE_ATTRIBUTES, true);
                 }
             } catch (Exception ex) {
-                this.player.sendMessage(Text.of(Color.RED, "Seems Redprotect have a wrong Item Gui or a problem on guiconfig. Report this to server owner."));
+                this.player.sendMessage(Text.of(Color.RED, "Seems RedProtect have a wrong Item Gui or a problem on guiconfig. Report this to server owner."));
                 return;
             }
         }
@@ -146,7 +144,7 @@ public class RPGui {
     @Listener
     public void onCloseInventory(InteractInventoryEvent.Close event) {
         if (event.getTargetInventory().getName().get().equals(this.inv.getName().get())) {
-            if (this.edit) {
+            if (this.editable) {
                 for (int i = 0; i < this.size; i++) {
                     try {
                         int line = 0;
@@ -205,7 +203,7 @@ public class RPGui {
     public void onInventoryClick(ClickInventoryEvent event) {
         if (event.getTargetInventory().getName().get().equals(this.inv.getName().get())) {
 
-            if (this.edit) {
+            if (this.editable) {
                 return;
             }
 

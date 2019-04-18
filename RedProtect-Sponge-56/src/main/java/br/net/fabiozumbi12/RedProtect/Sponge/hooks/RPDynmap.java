@@ -66,7 +66,7 @@ public class RPDynmap {
                 }
 
                 //start set markers
-                for (World w : RedProtect.get().serv.getWorlds()) {
+                for (World w : RedProtect.get().getServer().getWorlds()) {
                     for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                         if (!r.allowDynmap()) continue;
                         addMark(r);
@@ -78,7 +78,7 @@ public class RPDynmap {
 
     @Listener
     public void onChangeFlag(ChangeRegionFlagEvent event) {
-        if (event.getFlag().equalsIgnoreCase("dynmap")) {
+        if (event.getFlag().equalsIgnoreCase("rpDynmap")) {
             boolean value = (boolean) event.getFlagValue();
             if (value) {
                 addMark(event.getRegion());

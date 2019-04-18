@@ -36,7 +36,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPLogger;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.RPDynmap;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.RPPermissionHandler;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPPermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
 import com.google.inject.Inject;
@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit;
         description = "Complete antigrief plugin",
         dependencies = {
                 @Dependency(id = "worldedit", optional = true, version = "[7.0,)"),
-                @Dependency(id = "dynmap", optional = true)})
+                @Dependency(id = "rpDynmap", optional = true)})
 public class RedProtect {
     private static RedProtect instance;
     public final List<String> changeWait = new ArrayList<>();
@@ -88,11 +88,10 @@ public class RedProtect {
     public boolean Dyn;
     public RegionManager rm;
     public RPPermissionHandler ph;
-    public Server serv;
-    public boolean OnlineMode;
+    public boolean onlineMode;
     public RPConfig cfgs;
     public EconomyService econ;
-    public RPDynmap dynmap;
+    public RPDynmap rpDynmap;
     @Inject
     @ConfigDir(sharedRoot = false)
     public File configDir;
@@ -100,28 +99,31 @@ public class RedProtect {
     public PluginContainer container;
     @Inject
     public GuiceObjectMapperFactory factory;
-    public CommandManager cmdService;
-    public CommandHandler cmdHandler;
-    @Inject
-    private Game game;
-    private UUID taskid;
-    private RPVHelper pvhelp;
-    private RedProtectAPI rpAPI;
+    public CommandManager commandManager;
+    public CommandHandler commandHandler;
+    private UUID autoSaveID;
+    private RPVHelper rpvHelper;
+    private RedProtectAPI redProtectAPI;
 
     public static RedProtect get() {
         return instance;
     }
-
+    @Inject
+    private Game game;
     public Game getGame() {
         return this.game;
     }
 
     public RPVHelper getPVHelper() {
-        return pvhelp;
+        return rpvHelper;
     }
 
     public RedProtectAPI getAPI() {
-        return rpAPI;
+        return redProtectAPI;
+    }
+
+    public Server getServer(){
+        return Sponge.getServer();
     }
 
     @Listener
@@ -137,8 +139,7 @@ public class RedProtect {
             instance = this;
 
             container = Sponge.getPluginManager().getPlugin("redprotect").get();
-            serv = Sponge.getServer();
-            cmdService = game.getCommandManager();
+            commandManager = game.getCommandManager();
 
             ph = new RPPermissionHandler();
             rm = new RegionManager();
@@ -147,22 +148,22 @@ public class RedProtect {
             startLoad();
 
             if (v.startsWith("7")) {
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
+                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener7").newInstance());
             } else if (v.startsWith("8")) {
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener8").newInstance());
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
+                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
             } else {
                 game.getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
-                pvhelp = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper56").newInstance();
+                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper56").newInstance();
             }
 
             if (Dyn) {
                 logger.info("Dynmap found. Hooked.");
-                logger.info("Loading dynmap markers...");
+                logger.info("Loading rpDynmap markers...");
                 try {
-                    dynmap = new RPDynmap();
-                    game.getEventManager().registerListeners(container, dynmap);
+                    rpDynmap = new RPDynmap();
+                    game.getEventManager().registerListeners(container, rpDynmap);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -170,7 +171,7 @@ public class RedProtect {
             }
 
             logger.info("Loading API...");
-            this.rpAPI = new RedProtectAPI();
+            this.redProtectAPI = new RedProtectAPI();
             logger.info("API Loaded!");
 
             logger.info("Sponge version: " + v);
@@ -186,7 +187,8 @@ public class RedProtect {
             logger.severe("Error enabling RedProtect, plugin will shut down.");
             game.getServer().setHasWhitelist(true);
             game.getServer().getOnlinePlayers().forEach(Player::kick);
-            logger.warning("RedProtect turned the whitelist on and kicked all players to avoid players to loose your protected regions due an error on load RedProtect!");
+            logger.severe("Due to an error in RedProtect loading, the whitelist has been turned on and every player has been kicked.");
+            logger.severe("DO NOT LET ANYONE ENTER before fixing the problem, otherwise you risk losing protected regions.");
         }
     }
 
@@ -217,20 +219,25 @@ public class RedProtect {
     }
 
     private void shutDown() {
-        cmdHandler.unregisterAll();
+        // Unregister commands
+        commandHandler.unregisterAll();
 
+        // Save and unload all regions
         rm.saveAll(true);
         rm.unloadAll();
 
+        // Close all open inventories/GUIs
         openGuis.clear();
 
+        // Cancel tasks from sponge scheduler and save logs
         for (Task task : Sponge.getScheduler().getScheduledTasks(this)) task.cancel();
         logger.SaveLogs();
 
+        // Unregister listeners
         logger.info("Unregistering listeners...");
         Sponge.getEventManager().unregisterPluginListeners(this.container);
 
-        logger.info(container.getName() + " turn off...");
+        logger.info(container.getName() + " turned off...");
     }
 
     private void startLoad() throws Exception {
@@ -242,11 +249,11 @@ public class RedProtect {
             RedProtect.get().logger.sucess("Whitelist disabled!");
         }
 
-        //set online mode
-        OnlineMode = cfgs.root().online_mode;
+        // Set online mode
+        onlineMode = cfgs.root().online_mode;
 
         logger.info("Registering commands...");
-        cmdHandler = new CommandHandler(this);
+        commandHandler = new CommandHandler(this);
 
         logger.info("Registering listeners...");
         game.getEventManager().registerListeners(container, new RPBlockListener());
@@ -255,9 +262,8 @@ public class RedProtect {
         game.getEventManager().registerListeners(container, new RPEntityListener());
         game.getEventManager().registerListeners(container, new RPWorldListener());
         game.getEventManager().registerListeners(container, new RPMine18());
-        game.getEventManager().registerListeners(container, new RPAddProtection());
 
-        //-- hooks
+        // Register hooks
         WE = checkWE();
         Dyn = checkDM();
 
@@ -270,7 +276,7 @@ public class RedProtect {
             if (!cfgs.root().file_type.equalsIgnoreCase("mysql")) {
                 AutoSaveHandler();
             }
-            logger.info("Theres " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
+            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + cfgs.root().file_type + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -291,7 +297,7 @@ public class RedProtect {
     @Listener
     public void onReloadPlugins(GameReloadEvent event) {
         for (Player p : game.getServer().getOnlinePlayers()) {
-            pvhelp.closeInventory(p);
+            rpvHelper.closeInventory(p);
         }
         reload();
         logger.sucess("RedProtect reloaded with success!");
@@ -305,13 +311,13 @@ public class RedProtect {
     }
 
     private void AutoSaveHandler() {
-        if (taskid != null && Sponge.getScheduler().getTaskById(taskid).isPresent()) {
-            Sponge.getScheduler().getTaskById(taskid).get().cancel();
+        if (autoSaveID != null && Sponge.getScheduler().getTaskById(autoSaveID).isPresent()) {
+            Sponge.getScheduler().getTaskById(autoSaveID).get().cancel();
         }
         if (cfgs.root().flat_file.auto_save_interval_seconds != 0) {
             logger.info("Auto-save Scheduler: Saving " + cfgs.root().file_type + " database every " + cfgs.root().flat_file.auto_save_interval_seconds / 60 + " minutes!");
 
-            taskid = Sponge.getScheduler().createAsyncExecutor(container).scheduleWithFixedDelay(() -> {
+            autoSaveID = Sponge.getScheduler().createAsyncExecutor(container).scheduleWithFixedDelay(() -> {
                 logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + cfgs.root().file_type + " database!");
                 rm.saveAll(cfgs.root().flat_file.backup_on_save);
             }, cfgs.root().flat_file.auto_save_interval_seconds, cfgs.root().flat_file.auto_save_interval_seconds, TimeUnit.SECONDS).getTask().getUniqueId();
@@ -327,8 +333,8 @@ public class RedProtect {
     }
 
     private boolean checkDM() {
-        //return this.container.getDependencies().stream().anyMatch(d->d.getId().equals("dynmap"));
-        return Sponge.getPluginManager().getPlugin("dynmap").isPresent();
+        //return this.container.getDependencies().stream().anyMatch(d->d.getId().equals("rpDynmap"));
+        return Sponge.getPluginManager().getPlugin("rpDynmap").isPresent();
     }
 
 
