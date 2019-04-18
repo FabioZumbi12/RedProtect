@@ -72,66 +72,6 @@ public class AdminCommand implements CommandCallable {
 
         if (args.length == 1) {
 
-            if (args[0].equalsIgnoreCase("list-areas")) {
-                sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
-                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.area-list"));
-                sender.sendMessage(RPUtil.toText("-----"));
-                for (World w : Sponge.getServer().getWorlds()) {
-                    Set<Region> wregions = new HashSet<>();
-                    for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
-                        SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
-                        Date now = null;
-                        try {
-                            now = dateformat.parse(RPUtil.dateNow());
-                        } catch (ParseException e1) {
-                            RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
-                        }
-                        Date regiondate = null;
-                        try {
-                            regiondate = dateformat.parse(r.getDate());
-                        } catch (ParseException e) {
-                            RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
-                            e.printStackTrace();
-                        }
-                        long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-                        for (String play : RedProtect.get().cfgs.root().purge.ignore_regions_from_players) {
-                            if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
-                                break;
-                            }
-                        }
-                        if (!r.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader) && days > RedProtect.get().cfgs.root().purge.remove_oldest && r.getArea() >= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
-                            wregions.add(r);
-                        }
-                    }
-                    if (wregions.size() == 0) {
-                        continue;
-                    }
-                    Iterator<Region> it = wregions.iterator();
-                    String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
-
-                    boolean first = true;
-                    Text.Builder fancy = Text.builder();
-                    while (it.hasNext()) {
-                        Region r = it.next();
-                        String rname = RPLang.get("general.color") + ", &7(" + r.getArea() + ")";
-                        if (first) {
-                            rname = rname.substring(3);
-                            first = false;
-                        }
-                        if (!it.hasNext()) {
-                            rname = rname + RPLang.get("general.color") + ".";
-                        }
-                        fancy.append(RPUtil.toText(rname)).color(TextColors.GRAY)
-                                .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
-                                .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld()));
-                    }
-                    sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + wregions.size() + "]&r: "));
-                    sender.sendMessage(fancy.build());
-                    sender.sendMessage(RPUtil.toText("-----"));
-                }
-                return cmdr;
-            }
-
             if (args[0].equalsIgnoreCase("clear-kicks")) {
                 RedProtect.get().denyEnter.clear();
                 RedProtect.get().logger.sucess("All region kicks was clear");
@@ -631,6 +571,93 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
             }
+        }
+
+        if (args[0].equalsIgnoreCase("list-areas")) {
+            int Page = 1;
+            if (args.length == 2){
+                try {
+                    Page = Integer.parseInt(args[1]);
+                } catch (Exception ignored){}
+            }
+            sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
+            int regionsPage = RedProtect.get().cfgs.root().region_settings.region_per_page;
+            int total = 0;
+            int last = 0;
+
+            for (World w : Sponge.getServer().getWorlds()) {
+                boolean first = true;
+
+                if (Page == 0) {
+                    Page = 1;
+                }
+                int max = (regionsPage * Page);
+                int min = max - regionsPage;
+                int count;
+
+                String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
+                Set<Region> wregions = RedProtect.get().rm.getRegionsByWorld(w);
+                int totalLocal = wregions.size();
+                total += totalLocal;
+
+                int lastLocal = 0;
+
+                if (wregions.size() > 0) {
+                    List<Region> it = new ArrayList<>(wregions);
+                    if (min > totalLocal) {
+                        int diff = (totalLocal / regionsPage);
+                        min = regionsPage * diff;
+                        max = (regionsPage * diff) + regionsPage;
+                    }
+                    if (max > it.size()) max = (it.size() - 1);
+                    //-----------
+                    Text.Builder worldregions = Text.builder();
+                    for (int i = min; i <= max; i++) {
+                        count = i;
+                        Region r = it.get(i);
+
+                        if (RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                            if (first) {
+                                first = false;
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText("&8" + r.getName() + r.getArea()))
+                                        .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                        .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
+                            } else {
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName() + r.getArea()))
+                                        .onHover(TextActions.showText(RPUtil.toText(RPLang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                        .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
+                            }
+                        } else {
+                            if (first) {
+                                first = false;
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText("&8" + r.getName() + r.getArea())).build());
+                            } else {
+                                worldregions.append(Text.builder()
+                                        .append(RPUtil.toText(RPLang.get("general.color") + ", &8" + r.getName() + r.getArea())).build());
+                            }
+                        }
+                        lastLocal = count;
+                    }
+                    //-----------
+
+                    last += lastLocal + 1;
+                    sender.sendMessage(RPUtil.toText("-----"));
+                    sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + RPLang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]&r: "));
+                    sender.sendMessages(worldregions.append(RPUtil.toText(RPLang.get("general.color") + ".")).build());
+                }
+            }
+            sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
+            if (last < total) {
+                sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.more").replace("{player}", "" + (Page + 1))));
+            } else {
+                if (Page != 1) {
+                    sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.listpage.nomore")));
+                }
+            }
+            return cmdr;
         }
 
         //rp list <player> [page]
