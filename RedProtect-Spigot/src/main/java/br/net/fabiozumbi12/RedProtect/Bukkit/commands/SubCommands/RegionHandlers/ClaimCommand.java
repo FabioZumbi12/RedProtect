@@ -54,7 +54,7 @@ public class ClaimCommand implements SubCommand {
         }
 
         Player player = (Player) sender;
-        String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
+        String claimmode = RedProtect.get().cfgs.getWorldClaimType(player.getWorld().getName());
 
         if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH") && !RedProtect.get().ph.hasCommandPerm(player, "claim")) {
             RPLang.sendMessage(player, "blocklistener.region.blockmode");

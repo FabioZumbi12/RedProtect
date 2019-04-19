@@ -643,36 +643,36 @@ public class Region extends CoreRegion {
     }
 
     public Text getFlagInfo() {
-        String flaginfo = "";
+        StringBuilder flaginfo = new StringBuilder();
         for (String flag : this.flags.keySet()) {
             if (RedProtect.get().cfgs.getDefFlags().contains(flag)) {
                 String flagValue = this.flags.get(flag).toString();
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo = flaginfo + ", &b" + flag + ": " + RPLang.translBool(flagValue);
+                    flaginfo.append(", &b").append(flag).append(": ").append(RPLang.translBool(flagValue));
                 } else {
-                    flaginfo = flaginfo + ", &b" + flag + ": &8" + flagValue;
+                    flaginfo.append(", &b").append(flag).append(": &8").append(flagValue);
                 }
             }
 
-            if (flaginfo.contains(flag)) {
+            if (flaginfo.toString().contains(flag)) {
                 continue;
             }
 
             if (RedProtect.get().cfgs.AdminFlags.contains(flag)) {
                 String flagValue = this.flags.get(flag).toString();
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo = flaginfo + ", &b" + flag + ": " + RPLang.translBool(flagValue);
+                    flaginfo.append(", &b").append(flag).append(": ").append(RPLang.translBool(flagValue));
                 } else {
-                    flaginfo = flaginfo + ", &b" + flag + ": &8" + flagValue;
+                    flaginfo.append(", &b").append(flag).append(": &8").append(flagValue);
                 }
             }
         }
         if (this.flags.keySet().size() > 0) {
-            flaginfo = flaginfo.substring(2);
+            flaginfo = new StringBuilder(flaginfo.substring(2));
         } else {
-            flaginfo = "Default";
+            flaginfo = new StringBuilder("Default");
         }
-        return RPUtil.toText(flaginfo);
+        return RPUtil.toText(flaginfo.toString());
     }
 
     public boolean isOnTop() {

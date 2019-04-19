@@ -56,7 +56,7 @@ public class DefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            String serverName = RPConfig.getString("region-settings.default-leader");
+            String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
             String name = RPUtil.nameGen(serverName, player.getWorld().getName());
 
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
@@ -74,7 +74,7 @@ public class DefineCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            String serverName = RPConfig.getString("region-settings.default-leader");
+            String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), args[0], serverName, new HashSet<>(), true);
             if (rb2.ready()) {
                 Region r2 = rb2.build();

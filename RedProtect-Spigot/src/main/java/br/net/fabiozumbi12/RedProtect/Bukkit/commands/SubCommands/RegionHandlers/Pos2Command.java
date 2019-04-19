@@ -52,7 +52,7 @@ public class Pos2Command implements SubCommand {
         }
 
         Player player = (Player) sender;
-        String claimmode = RPConfig.getWorldClaimType(player.getWorld().getName());
+        String claimmode = RedProtect.get().cfgs.getWorldClaimType(player.getWorld().getName());
         if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH") && !RedProtect.get().ph.hasCommandPerm(player, "redefine")) {
             return true;
         }
@@ -66,13 +66,13 @@ public class Pos2Command implements SubCommand {
             if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)) {
                 Location loc1 = RedProtect.get().firstLocationSelections.get(player);
                 Location loc2 = RedProtect.get().secondLocationSelections.get(player);
-                if (RedProtect.get().WE && RPConfig.getBool("hooks.useWECUI")) {
+                if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
                     WEListener.setSelectionRP(player, loc1, loc2);
                 }
 
-                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RPConfig.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")) {
+                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")) {
                     Double dist = loc1.distanceSquared(loc2);
-                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RPConfig.getInt("region-settings.define-max-distance"), dist.intValue()));
+                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
                 } else {
                     RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                 }

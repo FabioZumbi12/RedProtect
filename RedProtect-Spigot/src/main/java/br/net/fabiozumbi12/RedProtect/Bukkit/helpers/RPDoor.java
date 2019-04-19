@@ -36,7 +36,7 @@ import org.bukkit.block.BlockFace;
 public class RPDoor {
 
     public static void ChangeDoor(Block b, Region r) {
-        if ((!RPConfig.isFlagEnabled("smart-door") && !RPConfig.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")) {
+        if ((!RedProtect.get().cfgs.isFlagEnabled("smart-door") && !RedProtect.get().cfgs.getBool("flags.smart-door")) || !r.getFlagBool("smart-door")) {
             return;
         }
 

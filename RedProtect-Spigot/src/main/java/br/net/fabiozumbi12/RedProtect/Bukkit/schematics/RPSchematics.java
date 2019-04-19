@@ -38,7 +38,7 @@ import java.io.File;
 public class RPSchematics {
 
     public static void pasteSchematic(Player p) {
-        File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RPConfig.getString("schematics.first-house-file"));
+        File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RedProtect.get().cfgs.getString("schematics.first-house-file"));
 
 
         Region region = WEListener.pasteWithWE(p, file);

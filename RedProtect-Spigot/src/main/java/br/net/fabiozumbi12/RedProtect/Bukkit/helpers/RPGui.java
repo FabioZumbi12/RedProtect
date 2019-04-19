@@ -104,28 +104,28 @@ public class RPGui implements Listener {
                     continue;
                 }
             }
-            if ((RPConfig.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && Material.getMaterial(RPConfig.getGuiFlagString(flag, "material")) != null && RPConfig.isFlagEnabled(flag)) {
+            if ((RedProtect.get().cfgs.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && Material.getMaterial(RedProtect.get().cfgs.getGuiFlagString(flag, "material")) != null && RedProtect.get().cfgs.isFlagEnabled(flag)) {
                 if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")) {
                     continue;
                 }
 
-                int i = RPConfig.getGuiSlot(flag);
+                int i = RedProtect.get().cfgs.getGuiSlot(flag);
 
                 String fvalue;
                 if (flag.equalsIgnoreCase("clan")) {
                     if (region.getFlags().get(flag).toString().equals("")) {
-                        fvalue = RPConfig.getGuiString("false");
+                        fvalue = RedProtect.get().cfgs.getGuiString("false");
                     } else {
-                        fvalue = RPConfig.getGuiString("true");
+                        fvalue = RedProtect.get().cfgs.getGuiString("true");
                     }
                 } else {
-                    fvalue = RPConfig.getGuiString(region.getFlags().get(flag).toString());
+                    fvalue = RedProtect.get().cfgs.getGuiString(region.getFlags().get(flag).toString());
                 }
 
-                this.guiItems[i] = RPConfig.getGuiItemStack(flag);
+                this.guiItems[i] = RedProtect.get().cfgs.getGuiItemStack(flag);
                 ItemMeta guiMeta = this.guiItems[i].getItemMeta();
-                guiMeta.setDisplayName(RPConfig.getGuiFlagString(flag, "name"));
-                guiMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + fvalue, "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
+                guiMeta.setDisplayName(RedProtect.get().cfgs.getGuiFlagString(flag, "name"));
+                guiMeta.setLore(Arrays.asList(RedProtect.get().cfgs.getGuiString("value") + fvalue, "§0" + flag, RedProtect.get().cfgs.getGuiFlagString(flag, "description"), RedProtect.get().cfgs.getGuiFlagString(flag, "description1"), RedProtect.get().cfgs.getGuiFlagString(flag, "description2")));
                 if (allowEnchant) {
                     if (this.region.getFlagBool(flag)) {
                         guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -134,14 +134,14 @@ public class RPGui implements Listener {
                     }
                     guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 }
-                this.guiItems[i].setType(Material.getMaterial(RPConfig.getGuiFlagString(flag, "material")));
+                this.guiItems[i].setType(Material.getMaterial(RedProtect.get().cfgs.getGuiFlagString(flag, "material")));
                 this.guiItems[i].setItemMeta(guiMeta);
             }
         }
 
         for (int slotc = 0; slotc < this.size; slotc++) {
             if (this.guiItems[slotc] == null) {
-                this.guiItems[slotc] = RPConfig.getGuiSeparator();
+                this.guiItems[slotc] = RedProtect.get().cfgs.getGuiSeparator();
             }
         }
 
@@ -157,8 +157,8 @@ public class RPGui implements Listener {
             for (int i = 0; i < this.size; i++) {
                 try {
                     String flag = this.inv.getItem(i).getItemMeta().getLore().get(1).replace("§0", "");
-                    if (RPConfig.getDefFlags().contains(flag)) {
-                        RPConfig.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
+                    if (RedProtect.get().cfgs.getDefFlags().contains(flag)) {
+                        RedProtect.get().cfgs.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
                     }
                 } catch (Exception e) {
                     RPLang.sendMessage(this.player, "gui.edit.error");
@@ -166,7 +166,7 @@ public class RPGui implements Listener {
                     return;
                 }
             }
-            RPConfig.saveGui();
+            RedProtect.get().cfgs.saveGui();
             RPLang.sendMessage(this.player, "gui.edit.ok");
         }
         close();
@@ -207,16 +207,16 @@ public class RPGui implements Listener {
         if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
-            if (item != null && !item.equals(RPConfig.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
+            if (item != null && !item.equals(RedProtect.get().cfgs.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
                 ItemMeta itemMeta = item.getItemMeta();
                 String flag = itemMeta.getLore().get(1).replace("§0", "");
-                if (RPConfig.getBool("flags-configuration.change-flag-delay.enable")) {
-                    if (RPConfig.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)) {
+                if (RedProtect.get().cfgs.getBool("flags-configuration.change-flag-delay.enable")) {
+                    if (RedProtect.get().cfgs.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)) {
                         if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                             applyFlag(flag, itemMeta, event);
                             RPUtil.startFlagChanger(this.region.getName(), flag, player);
                         } else {
-                            RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RPConfig.getString("flags-configuration.change-flag-delay.seconds")));
+                            RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.getString("flags-configuration.change-flag-delay.seconds")));
                         }
                     } else {
                         applyFlag(flag, itemMeta, event);
@@ -259,7 +259,7 @@ public class RPGui implements Listener {
             }
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        itemMeta.setLore(Arrays.asList(RPConfig.getGuiString("value") + RPConfig.getGuiString(String.valueOf(flagv)), "§0" + flag, RPConfig.getGuiFlagString(flag, "description"), RPConfig.getGuiFlagString(flag, "description1"), RPConfig.getGuiFlagString(flag, "description2")));
+        itemMeta.setLore(Arrays.asList(RedProtect.get().cfgs.getGuiString("value") + RedProtect.get().cfgs.getGuiString(String.valueOf(flagv)), "§0" + flag, RedProtect.get().cfgs.getGuiFlagString(flag, "description"), RedProtect.get().cfgs.getGuiFlagString(flag, "description1"), RedProtect.get().cfgs.getGuiFlagString(flag, "description2")));
         event.getCurrentItem().setItemMeta(itemMeta);
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
     }

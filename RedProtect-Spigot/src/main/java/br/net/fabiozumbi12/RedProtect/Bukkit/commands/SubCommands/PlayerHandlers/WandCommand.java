@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
@@ -53,7 +54,7 @@ public class WandCommand implements SubCommand {
 
         if (args.length == 0) {
             Inventory inv = player.getInventory();
-            Material mat = Material.getMaterial(RPConfig.getString("wands.adminWandID"));
+            Material mat = Material.getMaterial(RedProtect.get().cfgs.getString("wands.adminWandID"));
             ItemStack item = new ItemStack(mat);
             if (!inv.contains(mat) && inv.firstEmpty() != -1) {
                 inv.addItem(item);

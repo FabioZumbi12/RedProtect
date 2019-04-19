@@ -47,7 +47,7 @@ import java.util.*;
 
 public class RPConfig {
 
-    public static final List<String> AdminFlags = Arrays.asList(
+    public  final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
             "max-players",
@@ -95,14 +95,13 @@ public class RPConfig {
             "dynmap",
             "particles",
             "deny-exit-items");
-    private static CommentedConfig comConfig;
-    private static CommentedConfig comGflags;
-    private static YamlConfiguration signs;
-    private static YamlConfiguration GuiItems;
-    private static YamlConfiguration EconomyConfig;
+    private  CommentedConfig comConfig;
+    private  CommentedConfig comGflags;
+    private  YamlConfiguration signs;
+    private  YamlConfiguration GuiItems;
+    private  YamlConfiguration EconomyConfig;
 
-    public static void init() {
-
+    public RPConfig() {
         signs = new YamlConfiguration();
         GuiItems = new YamlConfiguration();
         EconomyConfig = new YamlConfiguration();
@@ -863,65 +862,65 @@ public class RPConfig {
         RedProtect.get().logger.info("All configurations loaded!");
     }
 
-    public static String getWorldClaimType(String w) {
+    public  String getWorldClaimType(String w) {
         return RedProtect.get().getConfig().getString("region-settings.claim-type.worlds." + w);
     }
 
-    public static boolean hasGlobalKey(String path) {
+    public  boolean hasGlobalKey(String path) {
         return comGflags.configurations.contains(path);
     }
 
-    public static String getGlobalFlagString(String string) {
+    public  String getGlobalFlagString(String string) {
         return comGflags.configurations.getString(string);
     }
 
-    public static double getGlobalFlagDouble(String key) {
+    public  double getGlobalFlagDouble(String key) {
         return comGflags.configurations.getDouble(key);
     }
 
-    public static float getGlobalFlagFloat(String key) {
+    public  float getGlobalFlagFloat(String key) {
         return Float.valueOf(comGflags.configurations.getString(key));
     }
 
-    public static int getGlobalFlagInt(String key) {
+    public  int getGlobalFlagInt(String key) {
         return comGflags.configurations.getInt(key);
     }
 
-    public static Boolean getGlobalFlagBool(String key) {
+    public  Boolean getGlobalFlagBool(String key) {
         return comGflags.configurations.getBoolean(key);
     }
 
-    public static List<String> getGlobalFlagList(String key) {
+    public  List<String> getGlobalFlagList(String key) {
         return comGflags.configurations.getStringList(key);
     }
 
-    public static ItemStack getGuiItemStack(String key) {
+    public  ItemStack getGuiItemStack(String key) {
         RedProtect.get().logger.debug("Gui Material to get: " + key);
         RedProtect.get().logger.debug("Result: " + GuiItems.getString("gui-flags." + key + ".material"));
         String item = GuiItems.getString("gui-flags." + key + ".material", "WHITE_STAINED_GLASS_PANE");
         return new ItemStack(Material.getMaterial(item));
     }
 
-    public static String getGuiFlagString(String flag, String option) {
+    public  String getGuiFlagString(String flag, String option) {
         if (GuiItems.getString("gui-flags." + flag + "." + option) == null) {
             return "";
         }
         return ChatColor.translateAlternateColorCodes('&', GuiItems.getString("gui-flags." + flag + "." + option));
     }
 
-    public static String getGuiString(String string) {
+    public  String getGuiString(String string) {
         return ChatColor.translateAlternateColorCodes('&', GuiItems.getString("gui-strings." + string));
     }
 
-    public static int getGuiSlot(String flag) {
+    public  int getGuiSlot(String flag) {
         return GuiItems.getInt("gui-flags." + flag + ".slot");
     }
 
-    public static void setGuiSlot(/*String mat, */String flag, int slot) {
+    public  void setGuiSlot(/*String mat, */String flag, int slot) {
         GuiItems.set("gui-flags." + flag + ".slot", slot);
     }
 
-    public static ItemStack getGuiSeparator() {
+    public  ItemStack getGuiSeparator() {
         ItemStack separator = new ItemStack(Material.getMaterial(GuiItems.getString("gui-separator.material", "WHITE_STAINED_GLASS_PANE")), 1, (short) GuiItems.getInt("gui-separator.data"));
         ItemMeta meta = separator.getItemMeta();
         meta.setDisplayName(getGuiString("separator"));
@@ -930,7 +929,7 @@ public class RPConfig {
         return separator;
     }
 
-    public static int getGuiMaxSlot() {
+    public  int getGuiMaxSlot() {
         SortedSet<Integer> slots = new TreeSet<>(new ArrayList<>());
         for (String key : GuiItems.getKeys(true)) {
             if (key.contains(".slot")) {
@@ -940,15 +939,15 @@ public class RPConfig {
         return Collections.max(slots);
     }
 
-    public static Boolean getBool(String key) {
+    public  Boolean getBool(String key) {
         return RedProtect.get().getConfig().getBoolean(key, false);
     }
 
-    public static void setConfig(String key, Object value) {
+    public  void setConfig(String key, Object value) {
         RedProtect.get().getConfig().set(key, value);
     }
 
-    public static HashMap<String, Object> getDefFlagsValues() {
+    public  HashMap<String, Object> getDefFlagsValues() {
         HashMap<String, Object> flags = new HashMap<>();
         for (String flag : RedProtect.get().getConfig().getValues(true).keySet()) {
             if (flag.contains("flags.") && isFlagEnabled(flag.replace("flags.", ""))) {
@@ -961,39 +960,39 @@ public class RPConfig {
         return flags;
     }
 
-    public static boolean isFlagEnabled(String flag) {
+    public  boolean isFlagEnabled(String flag) {
         return RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains(flag) || AdminFlags.contains(flag);
     }
 
-    public static SortedSet<String> getDefFlags() {
+    public  SortedSet<String> getDefFlags() {
         return new TreeSet<>(getDefFlagsValues().keySet());
     }
 
-    public static String getString(String key, String def) {
+    public  String getString(String key, String def) {
         return RedProtect.get().getConfig().getString(key, def);
     }
 
-    public static String getString(String key) {
+    public  String getString(String key) {
         return RedProtect.get().getConfig().getString(key, "");
     }
 
-    public static Double getDouble(String key) {
+    public  Double getDouble(String key) {
         return RedProtect.get().getConfig().getDouble(key);
     }
 
-    public static Integer getInt(String key) {
+    public  Integer getInt(String key) {
         return RedProtect.get().getConfig().getInt(key);
     }
 
-    public static List<String> getStringList(String key) {
+    public  List<String> getStringList(String key) {
         return RedProtect.get().getConfig().getStringList(key);
     }
 
-    public static Material getMaterial(String key) {
+    public  Material getMaterial(String key) {
         return Material.getMaterial(RedProtect.get().getConfig().getString(key));
     }
 
-    public static void save() {
+    public  void save() {
         File main = RedProtect.get().getDataFolder();
         File gui = new File(main, "guiconfig.yml");
         File bvalues = new File(main, "economy.yml");
@@ -1010,7 +1009,7 @@ public class RPConfig {
         }
     }
 
-    public static void saveGui() {
+    public  void saveGui() {
         File guiconfig = new File(RedProtect.get().getDataFolder(), "guiconfig.yml");
         try {
             GuiItems.save(guiconfig);
@@ -1020,7 +1019,7 @@ public class RPConfig {
         }
     }
 
-    private static YamlConfiguration inputLoader(InputStream inp) {
+    private  YamlConfiguration inputLoader(InputStream inp) {
         YamlConfiguration file = new YamlConfiguration();
         try {
             file.load(new InputStreamReader(inp, StandardCharsets.UTF_8));
@@ -1031,11 +1030,11 @@ public class RPConfig {
         return file;
     }
 
-    public static boolean isAllowedWorld(Player p) {
+    public  boolean isAllowedWorld(Player p) {
         return getStringList("allowed-claim-worlds").contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
     }
 
-    public static boolean needClaimToBuild(Player p, Block b) {
+    public  boolean needClaimToBuild(Player p, Block b) {
         boolean bool = RedProtect.get().getConfig().getStringList("needed-claim-to-build.worlds").contains(p.getWorld().getName());
         if (bool) {
             if (b != null && getBool("needed-claim-to-build.allow-only-protections-blocks") &&
@@ -1054,7 +1053,7 @@ public class RPConfig {
         return bool;
     }
 
-    public static boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
+    public  boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
         if (isAdmin) {
             if (!AdminFlags.contains(flag)) {
                 AdminFlags.add(flag);
@@ -1073,27 +1072,27 @@ public class RPConfig {
         return false;
     }
 
-    public static int getBlockCost(String itemName) {
+    public  int getBlockCost(String itemName) {
         return EconomyConfig.getInt("items.values." + itemName);
     }
 
-    public static int getEnchantCost(String enchantment) {
+    public  int getEnchantCost(String enchantment) {
         return EconomyConfig.getInt("enchantments.values." + enchantment);
     }
 
-    public static String getEcoString(String key) {
+    public  String getEcoString(String key) {
         return EconomyConfig.getString(key);
     }
 
-    public static Integer getEcoInt(String key) {
+    public  Integer getEcoInt(String key) {
         return EconomyConfig.getInt(key);
     }
 
-    public static boolean getEcoBool(String key) {
+    public  boolean getEcoBool(String key) {
         return EconomyConfig.getBoolean(key);
     }
 
-    public static List<Location> getSigns(String rid) {
+    public  List<Location> getSigns(String rid) {
         List<Location> locs = new ArrayList<>();
         for (String s : signs.getStringList(rid)) {
             String[] val = s.split(",");
@@ -1105,7 +1104,7 @@ public class RPConfig {
         return locs;
     }
 
-    public static void putSign(String rid, Location loc) {
+    public  void putSign(String rid, Location loc) {
         List<String> lsigns = signs.getStringList(rid);
         String locs = loc.getWorld().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
         if (!lsigns.contains(locs)) {
@@ -1114,7 +1113,7 @@ public class RPConfig {
         }
     }
 
-    public static void removeSign(String rid, Location loc) {
+    public  void removeSign(String rid, Location loc) {
         List<String> lsigns = signs.getStringList(rid);
         String locs = loc.getWorld().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
         if (lsigns.contains(locs)) {
@@ -1123,7 +1122,7 @@ public class RPConfig {
         }
     }
 
-    private static void saveSigns(String rid, List<String> locs) {
+    private  void saveSigns(String rid, List<String> locs) {
         if (locs.isEmpty()) {
             signs.set(rid, null);
         } else {

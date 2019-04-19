@@ -70,7 +70,7 @@ public class RPLogger {
     }
 
     public void debug(String s) {
-        if (RPConfig.getBool("debug-messages")) {
+        if (RedProtect.get().cfgs.getBool("debug-messages")) {
             Bukkit.getConsoleSender()
                     .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
         }
@@ -78,7 +78,7 @@ public class RPLogger {
 
     public void addLog(String logLine) {
         // If log is not enabled return
-        if (!RPConfig.getBool("log-actions")) {
+        if (!RedProtect.get().cfgs.getBool("log-actions")) {
             return;
         }
         int key = mainLog.keySet().size() + 1;
@@ -91,7 +91,7 @@ public class RPLogger {
 
     public void saveLogs() {
         // If log is not enabled return
-        if (!RPConfig.getBool("log-actions")) {
+        if (!RedProtect.get().cfgs.getBool("log-actions")) {
             return;
         }
 

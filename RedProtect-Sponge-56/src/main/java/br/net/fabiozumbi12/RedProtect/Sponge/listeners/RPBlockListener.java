@@ -195,7 +195,7 @@ public class RPBlockListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlace(ChangeBlockEvent.Place e, @First Player p) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPlaceEvent event! Cancelled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPlaceEvent event!");
 
         BlockSnapshot b = e.getTransactions().get(0).getOriginal();
         Location<World> bloc = b.getLocation().get();

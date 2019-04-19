@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.command.CommandSender;
@@ -119,7 +120,7 @@ public class RPPermissionHandler {
     }
 
     private int getBlockLimit(Player player) {
-        int limit = RPConfig.getInt("region-settings.limit-amount");
+        int limit = RedProtect.get().cfgs.getInt("region-settings.limit-amount");
         List<Integer> limits = new ArrayList<>();
         Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {
@@ -143,7 +144,7 @@ public class RPPermissionHandler {
     }
 
     private int getClaimLimit(Player player) {
-        int limit = RPConfig.getInt("region-settings.claim-amount");
+        int limit = RedProtect.get().cfgs.getInt("region-settings.claim-amount");
         List<Integer> limits = new ArrayList<>();
         Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {

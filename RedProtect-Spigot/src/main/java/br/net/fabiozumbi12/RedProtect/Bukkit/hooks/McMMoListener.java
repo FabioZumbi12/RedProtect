@@ -67,7 +67,7 @@ public class McMMoListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (RPConfig.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(PrimarySkillType.ACROBATICS) && (!r.canFire() || !r.canDeath())) {
+        if (RedProtect.get().cfgs.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && e.getSkill().equals(PrimarySkillType.ACROBATICS) && (!r.canFire() || !r.canDeath())) {
             e.setCancelled(true);
         }
 		/*
@@ -88,7 +88,7 @@ public class McMMoListener implements Listener {
         Player p = e.getPlayer();
 
         //try to fix invisibility on bersek
-        if (RPConfig.getBool("hooks.mcmmo.fix-berserk-invisibility") && e.getAbility().equals(SuperAbilityType.BERSERK)) {
+        if (RedProtect.get().cfgs.getBool("hooks.mcmmo.fix-berserk-invisibility") && e.getAbility().equals(SuperAbilityType.BERSERK)) {
             p.damage(0);
             for (Entity ent : p.getNearbyEntities(10, 10, 10)) {
                 if (ent instanceof LivingEntity) {

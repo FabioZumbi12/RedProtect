@@ -52,10 +52,10 @@ public class RPWorldListener implements Listener {
         RedProtect.get().logger.debug("Loaded RPEntityListener...");
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onWeatherChange(WeatherChangeEvent e) {
         World w = e.getWorld();
-        int trys = RPConfig.getGlobalFlagInt(w.getName() + ".rain.trys-before-rain");
+        int trys = RedProtect.get().cfgs.getGlobalFlagInt(w.getName() + ".rain.trys-before-rain");
         if (e.toWeatherState()) {
             if (!rainCounter.containsKey(w)) {
                 rainCounter.put(w, trys);
@@ -63,7 +63,7 @@ public class RPWorldListener implements Listener {
             } else {
                 int acTry = rainCounter.get(w);
                 if (acTry - 1 <= 0) {
-                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RPConfig.getGlobalFlagInt(w.getName() + ".rain.duration") * 20), 40);
+                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().cfgs.getGlobalFlagInt(w.getName() + ".rain.duration") * 20), 40);
                     rainCounter.put(w, trys);
                 } else {
                     rainCounter.put(w, acTry - 1);
@@ -78,7 +78,7 @@ public class RPWorldListener implements Listener {
         World w = e.getWorld();
         try {
             RedProtect.get().rm.load(w);
-            RPConfig.init();
+            RedProtect.get().cfgs = new RPConfig();
             RedProtect.get().logger.warning("World loaded: " + w.getName());
         } catch (Exception ex) {
             RedProtect.get().logger.severe("RedProtect problem on load world:");
@@ -100,7 +100,7 @@ public class RPWorldListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onChunkUnload(ChunkLoadEvent e) {
-        if (!RPConfig.getGlobalFlagBool("remove-entities-not-allowed-to-spawn")) {
+        if (!RedProtect.get().cfgs.getGlobalFlagBool("remove-entities-not-allowed-to-spawn")) {
             return;
         }
         Entity[] ents = e.getChunk().getEntities();
@@ -112,17 +112,16 @@ public class RPWorldListener implements Listener {
                 }
             } else {
                 if (ent instanceof Monster) {
-                    if (!RPConfig.getGlobalFlagBool("spawn-monsters")) {
+                    if (!RedProtect.get().cfgs.getGlobalFlagBool("spawn-monsters")) {
                         ent.remove();
                     }
-                } else if (!RPConfig.getGlobalFlagBool("spawn-passives")) {
+                } else if (!RedProtect.get().cfgs.getGlobalFlagBool("spawn-passives")) {
                     if (ent instanceof Tameable) {
                         return;
                     }
                     ent.remove();
                 }
             }
-
         }
     }
 }

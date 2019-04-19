@@ -67,7 +67,7 @@ public class CreatePortalCommand implements SubCommand {
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", args[1]));
             }
 
-            String serverName = RPConfig.getString("region-settings.default-leader");
+            String serverName = RedProtect.get().cfgs.getString("region-settings.default-leader");
             String name = Normalizer.normalize(args[0].replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
             Region r2 = RedProtect.get().rm.getRegion(name, w);

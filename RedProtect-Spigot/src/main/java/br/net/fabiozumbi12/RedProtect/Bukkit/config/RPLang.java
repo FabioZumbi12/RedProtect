@@ -68,7 +68,7 @@ public class RPLang {
     }
 
     public static void init() {
-        String resLang = "lang" + RPConfig.getString("language") + ".properties";
+        String resLang = "lang" + RedProtect.get().cfgs.getString("language") + ".properties";
         pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 
         File lang = new File(pathLang);
@@ -83,7 +83,7 @@ public class RPLang {
 
         loadLang();
         loadBaseLang();
-        RedProtect.get().logger.info("Language file loaded - Using: " + RPConfig.getString("language"));
+        RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().cfgs.getString("language"));
     }
 
     private static void loadBaseLang() {

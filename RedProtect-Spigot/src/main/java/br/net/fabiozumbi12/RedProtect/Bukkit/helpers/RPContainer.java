@@ -41,18 +41,18 @@ public class RPContainer {
 
     @SuppressWarnings("deprecation")
     public boolean canOpen(Block b, Player p) {
-        if (!RPConfig.getBool("private.use") || p.hasPermission("redprotect.bypass")) {
+        if (!RedProtect.get().cfgs.getBool("private.use") || p.hasPermission("redprotect.bypass")) {
             return true;
         }
 
         String blocktype;
-        if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+        if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
             blocktype = Integer.toString(b.getType().getId());
         } else {
             blocktype = b.getType().name();
         }
 
-        List<String> blocks = RPConfig.getStringList("private.allowed-blocks");
+        List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
 
         boolean deny = true;
         if (blocks.stream().anyMatch(blocktype::matches)) {
@@ -76,7 +76,7 @@ public class RPContainer {
                     int z2 = bs.getZ();
 
                     String blocktype2;
-                    if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+                    if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
                         blocktype2 = Integer.toString(b.getType().getId());
                     } else {
                         blocktype2 = b.getType().name();
@@ -102,11 +102,11 @@ public class RPContainer {
 
     @SuppressWarnings("deprecation")
     public boolean canBreak(Player p, Block b) {
-        if (!RPConfig.getBool("private.use") || p.hasPermission("redprotect.bypass")) {
+        if (!RedProtect.get().cfgs.getBool("private.use") || p.hasPermission("redprotect.bypass")) {
             return true;
         }
         Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
-        if (reg == null && !RPConfig.getBool("private.allow-outside")) {
+        if (reg == null && !RedProtect.get().cfgs.getBool("private.allow-outside")) {
             return true;
         }
         int x = b.getX();
@@ -124,13 +124,13 @@ public class RPContainer {
         }
 
         String signbtype;
-        if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+        if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
             signbtype = Integer.toString(b.getType().getId());
         } else {
             signbtype = b.getType().name();
         }
 
-        List<String> blocks = RPConfig.getStringList("private.allowed-blocks");
+        List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
 
         if (blocks.stream().anyMatch(signbtype::matches)) {
             for (int sx = -1; sx <= 1; sx++) {
@@ -145,7 +145,7 @@ public class RPContainer {
                         }
 
                         String blocktype2;
-                        if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+                        if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
                             blocktype2 = Integer.toString(b.getType().getId());
                         } else {
                             blocktype2 = b.getType().name();
@@ -179,11 +179,11 @@ public class RPContainer {
 
     @SuppressWarnings("deprecation")
     public boolean canWorldBreak(Block b) {
-        if (!RPConfig.getBool("private.use")) {
+        if (!RedProtect.get().cfgs.getBool("private.use")) {
             return true;
         }
         Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
-        if (reg == null && !RPConfig.getBool("private.allow-outside")) {
+        if (reg == null && !RedProtect.get().cfgs.getBool("private.allow-outside")) {
             return true;
         }
         int x = b.getX();
@@ -197,13 +197,13 @@ public class RPContainer {
         }
 
         String signbtype;
-        if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+        if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
             signbtype = Integer.toString(b.getType().getId());
         } else {
             signbtype = b.getType().name();
         }
 
-        List<String> blocks = RPConfig.getStringList("private.allowed-blocks");
+        List<String> blocks = RedProtect.get().cfgs.getStringList("private.allowed-blocks");
 
         if (blocks.stream().anyMatch(signbtype::matches)) {
             for (int sx = -1; sx <= 1; sx++) {
@@ -214,7 +214,7 @@ public class RPContainer {
                     }
 
                     String blocktype2;
-                    if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+                    if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
                         blocktype2 = Integer.toString(b.getType().getId());
                     } else {
                         blocktype2 = b.getType().name();
@@ -286,13 +286,13 @@ public class RPContainer {
     public boolean isContainer(Block b) {
         Block container = getBlockRelative(b);
         String signbtype;
-        if (RPConfig.getBool("private.allowed-blocks-use-ids")) {
+        if (RedProtect.get().cfgs.getBool("private.allowed-blocks-use-ids")) {
             signbtype = Integer.toString(container.getType().getId());
         } else {
             signbtype = container.getType().name();
         }
 
-        return RPConfig.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches);
+        return RedProtect.get().cfgs.getStringList("private.allowed-blocks").stream().anyMatch(signbtype::matches);
     }
 
 }

@@ -63,26 +63,20 @@ public class RPMine18 implements Listener {
         RedProtect.get().logger.debug("Loaded RPMine18...");
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
 
         Entity e = event.getEntity();
 
         //spawn arms on armor stands
-        if (e instanceof ArmorStand && RPConfig.getBool("hooks.armor-stands.spawn-arms")) {
+        if (e instanceof ArmorStand && RedProtect.get().cfgs.getBool("hooks.armor-stands.spawn-arms")) {
             ArmorStand as = (ArmorStand) e;
             as.setArms(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onAttemptInteractAS(PlayerInteractAtEntityEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
 
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
@@ -91,7 +85,7 @@ public class RPMine18 implements Listener {
         if (r == null) {
             //global flags
             if (ent instanceof ArmorStand) {
-                if (!RPConfig.getGlobalFlagBool(l.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().cfgs.getGlobalFlagBool(l.getWorld().getName() + ".build")) {
                     e.setCancelled(true);
                     return;
                 }
@@ -107,11 +101,8 @@ public class RPMine18 implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void entityFire(EntityCombustByEntityEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
 
         Entity e1 = e.getEntity();
         Entity e2 = e.getCombuster();
@@ -133,7 +124,7 @@ public class RPMine18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().cfgs.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
                     e.setCancelled(true);
                 }
             }
@@ -147,11 +138,8 @@ public class RPMine18 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamageByPet(EntityDamageByEntityEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
 
         Entity e1 = e.getEntity();
         Entity e2 = e.getDamager();
@@ -173,7 +161,7 @@ public class RPMine18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RPConfig.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().cfgs.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
                     e.setCancelled(true);
                 }
             }
@@ -187,9 +175,9 @@ public class RPMine18 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInteractAS(PlayerInteractEvent e) {
-        if (e.isCancelled() || e.getClickedBlock() == null) {
+        if (e.getClickedBlock() == null) {
             return;
         }
 
@@ -233,9 +221,9 @@ public class RPMine18 implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
-        if (RedProtect.get().Mc && RPConfig.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
+        if (RedProtect.get().Mc && RedProtect.get().cfgs.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
             List<Block> blocks = e.getBlocks();
             for (Block block : blocks) {
                 for (Carpet carpet : MagicCarpet.getCarpets().all()) {

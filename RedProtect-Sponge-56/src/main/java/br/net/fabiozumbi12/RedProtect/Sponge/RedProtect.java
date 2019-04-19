@@ -160,7 +160,7 @@ public class RedProtect {
 
             if (Dyn) {
                 logger.info("Dynmap found. Hooked.");
-                logger.info("Loading rpDynmap markers...");
+                logger.info("Loading Dynmap markers...");
                 try {
                     rpDynmap = new RPDynmap();
                     game.getEventManager().registerListeners(container, rpDynmap);

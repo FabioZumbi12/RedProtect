@@ -53,23 +53,20 @@ public class RPEntityListener implements Listener {
         RedProtect.get().logger.debug("Loaded RPEntityListener...");
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {
         if (e.getEntity() instanceof Player) {
             return;
         }
-        RedProtect.get().logger.debug("RPEntityListener - EntityBlockFormEvent canceled? " + e.isCancelled());
+        RedProtect.get().logger.debug("RPEntityListener - EntityBlockFormEvent");
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.canIceForm()) {
             e.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
 
         Entity e = event.getEntity();
         if (e == null) {
@@ -82,7 +79,7 @@ public class RPEntityListener implements Listener {
             Location l = event.getLocation();
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnWhiter()) {
-                event.isCancelled();
+                event.setCancelled(true);
                 return;
             }
         }
@@ -106,7 +103,7 @@ public class RPEntityListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void entityFire(EntityCombustByEntityEvent e) {
         Entity e1 = e.getEntity();
         Entity e2 = e.getCombuster();
@@ -123,7 +120,6 @@ public class RPEntityListener implements Listener {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
-            a = null;
             if (e2 == null) {
                 return;
             }
@@ -188,11 +184,8 @@ public class RPEntityListener implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
 
         Entity ent = e.getEntity();
         Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
@@ -314,12 +307,10 @@ public class RPEntityListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
         RedProtect.get().logger.debug("RPEntityListener - Is PotionSplashEvent");
-        if (event.isCancelled()) {
-            return;
-        }
+
         ProjectileSource thrower = event.getPotion().getShooter();
         for (PotionEffect e : event.getPotion().getEffects()) {
             PotionEffectType t = e.getType();
@@ -349,12 +340,10 @@ public class RPEntityListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInteractEvent(PlayerInteractEntityEvent e) {
         RedProtect.get().logger.debug("RPEntityListener - Is PlayerInteractEntityEvent");
-        if (e.isCancelled()) {
-            return;
-        }
+
         Player p = e.getPlayer();
         if (p == null) {
             return;
@@ -374,12 +363,10 @@ public class RPEntityListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void WitherBlockBreak(EntityChangeBlockEvent event) {
         RedProtect.get().logger.debug("RPEntityListener - Is EntityChangeBlockEvent");
-        if (event.isCancelled()) {
-            return;
-        }
+
         Entity e = event.getEntity();
         if (e instanceof Monster) {
             Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
@@ -393,34 +380,4 @@ public class RPEntityListener implements Listener {
         }
     }
 
-    /*
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onEntityExplode(EntityExplodeEvent e) {
-    	RedProtect.get().logger.debug("RPEntityListener - Is EntityExplodeEvent");
-    	if (e.isCancelled()){
-    		return;
-    	}
-    	List<Block> toRemove = new ArrayList<Block>();
-        for (Block b:e.blockList()) {
-        	Location l = b.getLocation();
-        	Region r = RedProtect.get().rm.getTopRegion(l);
-        	if (r != null && !r.canFire()){
-        		toRemove.add(b);
-        		continue;
-        	}        	
-        }
-        if (!toRemove.isEmpty()){
-        	e.blockList().removeAll(toRemove);
-        }
-    }
-    */
-    @EventHandler
-    public void onEntityEvent(EntityInteractEvent e) {
-        RedProtect.get().logger.debug("RPEntityListener - Is EntityInteractEvent");
-    }
-
-    @EventHandler
-    public void onBreakDoor(EntityBreakDoorEvent e) {
-        RedProtect.get().logger.debug("RPEntityListener - Is EntityBreakDoorEvent");
-    }
 }

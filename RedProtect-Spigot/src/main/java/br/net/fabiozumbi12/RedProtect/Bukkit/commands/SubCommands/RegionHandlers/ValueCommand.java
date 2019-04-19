@@ -55,14 +55,14 @@ public class ValueCommand implements SubCommand {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
                 if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
-                    if (r.getArea() <= RPConfig.getEcoInt("max-area-toget-value")) {
+                    if (r.getArea() <= RedProtect.get().cfgs.getEcoInt("max-area-toget-value")) {
                         r.setValue(RPEconomy.getRegionValue(r));
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RPConfig.getEcoString("economy-name")));
+                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RedProtect.get().cfgs.getEcoString("economy-name")));
 
                         RedProtect.get().logger.debug("Region Value: " + r.getValue());
                         return true;
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RPConfig.getEcoInt("max-area-toget-value").toString()));
+                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().cfgs.getEcoInt("max-area-toget-value").toString()));
                         return true;
                     }
                 } else {

@@ -43,7 +43,7 @@ public class RPFactions implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCreateFac(EventFactionsChunksChange event) {
-        if (RPConfig.getBool("hooks.factions.claim-over-rps")) {
+        if (RedProtect.get().cfgs.getBool("hooks.factions.claim-over-rps")) {
             return;
         }
         for (PS chunk : event.getChunks()) {
@@ -58,7 +58,7 @@ public class RPFactions implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onExpandFac(EventFactionsExpansions event) {
-        if (RPConfig.getBool("hooks.factions.claim-over-rps")) {
+        if (RedProtect.get().cfgs.getBool("hooks.factions.claim-over-rps")) {
             return;
         }
         Player p = event.getMPlayer().getPlayer();

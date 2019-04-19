@@ -53,7 +53,7 @@ import java.util.*;
 public class Region extends CoreRegion {
 
 
-    private String dynmapSet = RPConfig.getString("hooks.dynmap.marks-groupname");
+    private String dynmapSet = RedProtect.get().cfgs.getString("hooks.dynmap.marks-groupname");
     private int particleID = 0;
 
     /**
@@ -140,7 +140,7 @@ public class Region extends CoreRegion {
      * @param world World name.
      */
     public Region(String name, Location min, Location max, String world) {
-        super(name, new int[]{min.getBlockX(), min.getBlockY(), min.getBlockZ()}, new int[]{max.getBlockX(), max.getBlockY(), max.getBlockZ()}, world, RPConfig.getString("region-settings.default-leader"), RPConfig.getDefFlagsValues());
+        super(name, new int[]{min.getBlockX(), min.getBlockY(), min.getBlockZ()}, new int[]{max.getBlockX(), max.getBlockY(), max.getBlockZ()}, world, RedProtect.get().cfgs.getString("region-settings.default-leader"), RedProtect.get().cfgs.getDefFlagsValues());
         checkParticle();
     }
 
@@ -206,10 +206,10 @@ public class Region extends CoreRegion {
     }
 
     public void updateSigns(String fname) {
-        if (!RPConfig.getBool("region-settings.enable-flag-sign")) {
+        if (!RedProtect.get().cfgs.getBool("region-settings.enable-flag-sign")) {
             return;
         }
-        List<Location> locs = RPConfig.getSigns(this.getID());
+        List<Location> locs = RedProtect.get().cfgs.getSigns(this.getID());
         if (locs.size() > 0) {
             for (Location loc : locs) {
                 if (loc.getBlock().getState() instanceof Sign) {
@@ -219,13 +219,13 @@ public class Region extends CoreRegion {
                         if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))) {
                             s.setLine(3, RPLang.get("region.value") + " " + RPLang.translBool(getFlagString(fname)));
                             s.update();
-                            RPConfig.putSign(this.getID(), loc);
+                            RedProtect.get().cfgs.putSign(this.getID(), loc);
                         }
                     } else {
-                        RPConfig.removeSign(this.getID(), loc);
+                        RedProtect.get().cfgs.removeSign(this.getID(), loc);
                     }
                 } else {
-                    RPConfig.removeSign(this.getID(), loc);
+                    RedProtect.get().cfgs.removeSign(this.getID(), loc);
                 }
             }
         }
@@ -358,8 +358,8 @@ public class Region extends CoreRegion {
         String colorChar = "";
         String dynmapInfo = "";
 
-        if (RPConfig.getString("region-settings.world-colors." + this.world) != null) {
-            colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + this.world));
+        if (RedProtect.get().cfgs.getString("region-settings.world-colors." + this.world) != null) {
+            colorChar = ChatColor.translateAlternateColorCodes('&', RedProtect.get().cfgs.getString("region-settings.world-colors." + this.world));
         }
 
         leaders.removeIf(Objects::isNull);
@@ -393,7 +393,7 @@ public class Region extends CoreRegion {
         }
         for (PlayerRegion<String, String> pname : this.leaders) {
             Player play = RedProtect.get().getServer().getPlayer(pname.getPlayerName());
-            if (play != null && play.isOnline() && pname.getPlayerName().equalsIgnoreCase(RPConfig.getString("region-settings.default-leader"))) {
+            if (play != null && play.isOnline() && pname.getPlayerName().equalsIgnoreCase(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
                 today = ChatColor.GREEN + "Online!";
                 break;
             }
@@ -406,7 +406,7 @@ public class Region extends CoreRegion {
             }
         }
 
-        if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
             dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
@@ -611,22 +611,22 @@ public class Region extends CoreRegion {
     }
 
     public boolean getFlagBool(String key) {
-        if (!flagExists(key) || !RPConfig.isFlagEnabled(key)) {
-            if (RPConfig.getDefFlagsValues().get(key) != null) {
-                return (Boolean) RPConfig.getDefFlagsValues().get(key);
+        if (!flagExists(key) || !RedProtect.get().cfgs.isFlagEnabled(key)) {
+            if (RedProtect.get().cfgs.getDefFlagsValues().get(key) != null) {
+                return (Boolean) RedProtect.get().cfgs.getDefFlagsValues().get(key);
             } else {
-                return RPConfig.getBool("flags." + key);
+                return RedProtect.get().cfgs.getBool("flags." + key);
             }
         }
         return this.flags.get(key) instanceof Boolean && (Boolean) this.flags.get(key);
     }
 
     public String getFlagString(String key) {
-        if (!flagExists(key) || !RPConfig.isFlagEnabled(key)) {
-            if (RPConfig.getDefFlagsValues().get(key) != null) {
-                return (String) RPConfig.getDefFlagsValues().get(key);
+        if (!flagExists(key) || !RedProtect.get().cfgs.isFlagEnabled(key)) {
+            if (RedProtect.get().cfgs.getDefFlagsValues().get(key) != null) {
+                return (String) RedProtect.get().cfgs.getDefFlagsValues().get(key);
             } else {
-                return RPConfig.getString("flags." + key);
+                return RedProtect.get().cfgs.getString("flags." + key);
             }
         }
         return this.flags.get(key).toString();
@@ -635,7 +635,7 @@ public class Region extends CoreRegion {
     public String getFlagInfo() {
         StringBuilder flaginfo = new StringBuilder();
         for (String flag : this.flags.keySet()) {
-            if (RPConfig.getDefFlags().contains(flag)) {
+            if (RedProtect.get().cfgs.getDefFlags().contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RPLang.translBool(flagValue));
@@ -648,7 +648,7 @@ public class Region extends CoreRegion {
                 continue;
             }
 
-            if (RPConfig.AdminFlags.contains(flag)) {
+            if (RedProtect.get().cfgs.AdminFlags.contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RPLang.translBool(flagValue));
@@ -1024,15 +1024,15 @@ public class Region extends CoreRegion {
 
     //---------------------- Player Flags --------------------------//
     public boolean allowFishing(Player p) {
-        if (!RPConfig.isFlagEnabled("fishing")) {
-            return RPConfig.getBool("flags.fishing") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("fishing")) {
+            return RedProtect.get().cfgs.getBool("flags.fishing") || checkAllowedPlayer(p);
         }
         return getFlagBool("fishing") || checkAllowedPlayer(p);
     }
 
     public boolean allowPressPlate(Player p) {
-        if (!RPConfig.isFlagEnabled("press-plate")) {
-            return RPConfig.getBool("flags.press-plate") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("press-plate")) {
+            return RedProtect.get().cfgs.getBool("flags.press-plate") || checkAllowedPlayer(p);
         }
         return getFlagBool("press-plate") || checkAllowedPlayer(p);
     }
@@ -1041,15 +1041,15 @@ public class Region extends CoreRegion {
         if (flagExists("for-sale") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
             return false;
         }
-        if (!RPConfig.isFlagEnabled("build")) {
-            return RPConfig.getBool("flags.build") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("build")) {
+            return RedProtect.get().cfgs.getBool("flags.build") || checkAllowedPlayer(p);
         }
         return (getFlagBool("build") || checkAllowedPlayer(p));
     }
 
     public boolean leavesDecay() {
-        if (!RPConfig.isFlagEnabled("leaves-decay")) {
-            return RPConfig.getBool("flags.leaves-decay");
+        if (!RedProtect.get().cfgs.isFlagEnabled("leaves-decay")) {
+            return RedProtect.get().cfgs.getBool("flags.leaves-decay");
         }
         return getFlagBool("leaves-decay");
     }
@@ -1060,8 +1060,8 @@ public class Region extends CoreRegion {
      * @return boolean
      */
     public boolean allowSpawner(Player p) {
-        if (!RPConfig.isFlagEnabled("allow-spawner")) {
-            return RPConfig.getBool("flags.allow-spawner");
+        if (!RedProtect.get().cfgs.isFlagEnabled("allow-spawner")) {
+            return RedProtect.get().cfgs.getBool("flags.allow-spawner");
         }
         return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
     }
@@ -1072,8 +1072,8 @@ public class Region extends CoreRegion {
      * @return boolean
      */
     public boolean canFly(Player p) {
-        if (!RPConfig.isFlagEnabled("allow-fly")) {
-            return RPConfig.getBool("flags.allow-fly");
+        if (!RedProtect.get().cfgs.isFlagEnabled("allow-fly")) {
+            return RedProtect.get().cfgs.getBool("flags.allow-fly");
         }
         return getFlagBool("allow-fly") || checkAllowedPlayer(p);
     }
@@ -1084,8 +1084,8 @@ public class Region extends CoreRegion {
      * @return boolean
      */
     public boolean canIceForm(Player p) {
-        if (!RPConfig.isFlagEnabled("iceform-player")) {
-            return RPConfig.getBool("flags.iceform-player");
+        if (!RedProtect.get().cfgs.isFlagEnabled("iceform-player")) {
+            return RedProtect.get().cfgs.getBool("flags.iceform-player");
         }
         return getFlagBool("iceform-player");
     }
@@ -1096,36 +1096,36 @@ public class Region extends CoreRegion {
      * @return boolean
      */
     public boolean canIceForm() {
-        if (!RPConfig.isFlagEnabled("iceform-world")) {
-            return RPConfig.getBool("flags.iceform-world");
+        if (!RedProtect.get().cfgs.isFlagEnabled("iceform-world")) {
+            return RedProtect.get().cfgs.getBool("flags.iceform-world");
         }
         return getFlagBool("iceform-world");
     }
 
     public boolean FlowDamage() {
-        if (!RPConfig.isFlagEnabled("flow-damage")) {
-            return RPConfig.getBool("flags.flow-damage");
+        if (!RedProtect.get().cfgs.isFlagEnabled("flow-damage")) {
+            return RedProtect.get().cfgs.getBool("flags.flow-damage");
         }
         return getFlagBool("flow-damage");
     }
 
     public boolean canMobLoot() {
-        if (!RPConfig.isFlagEnabled("mob-loot")) {
-            return RPConfig.getBool("flags.mob-loot");
+        if (!RedProtect.get().cfgs.isFlagEnabled("mob-loot")) {
+            return RedProtect.get().cfgs.getBool("flags.mob-loot");
         }
         return getFlagBool("mob-loot");
     }
 
     public boolean usePotions(Player p) {
-        if (!RPConfig.isFlagEnabled("use-potions")) {
-            return RPConfig.getBool("flags.use-potions");
+        if (!RedProtect.get().cfgs.isFlagEnabled("use-potions")) {
+            return RedProtect.get().cfgs.getBool("flags.use-potions");
         }
         return getFlagBool("use-potions") || checkAllowedPlayer(p);
     }
 
     public boolean allowEffects(Player p) {
-        if (!RPConfig.isFlagEnabled("allow-effects")) {
-            return RPConfig.getBool("flags.allow-effects");
+        if (!RedProtect.get().cfgs.isFlagEnabled("allow-effects")) {
+            return RedProtect.get().cfgs.getBool("flags.allow-effects");
         }
         return getFlagBool("allow-effects") || checkAllowedPlayer(p);
     }
@@ -1134,99 +1134,99 @@ public class Region extends CoreRegion {
         if (defend != null && RedProtect.get().SC && SCHook.inWar(this, attack, defend)) {
             return true;
         }
-        if (!RPConfig.isFlagEnabled("pvp")) {
-            return RPConfig.getBool("flags.pvp") || RedProtect.get().ph.hasPerm(attack, "redprotect.bypass");
+        if (!RedProtect.get().cfgs.isFlagEnabled("pvp")) {
+            return RedProtect.get().cfgs.getBool("flags.pvp") || RedProtect.get().ph.hasPerm(attack, "redprotect.bypass");
         }
         return getFlagBool("pvp") || RedProtect.get().ph.hasPerm(attack, "redprotect.bypass");
     }
 
     public boolean canEnderChest(Player p) {
-        if (!RPConfig.isFlagEnabled("ender-chest")) {
-            return RPConfig.getBool("flags.ender-chest") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("ender-chest")) {
+            return RedProtect.get().cfgs.getBool("flags.ender-chest") || checkAllowedPlayer(p);
         }
         return getFlagBool("ender-chest") || checkAllowedPlayer(p);
     }
 
     public boolean canChest(Player p) {
-        if (!RPConfig.isFlagEnabled("chest")) {
-            return RPConfig.getBool("flags.chest") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("chest")) {
+            return RedProtect.get().cfgs.getBool("flags.chest") || checkAllowedPlayer(p);
         }
         return getFlagBool("chest") || checkAllowedPlayer(p);
     }
 
     public boolean canLever(Player p) {
-        if (!RPConfig.isFlagEnabled("lever")) {
-            return RPConfig.getBool("flags.lever") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("lever")) {
+            return RedProtect.get().cfgs.getBool("flags.lever") || checkAllowedPlayer(p);
         }
         return getFlagBool("lever") || checkAllowedPlayer(p);
     }
 
     public boolean canButton(Player p) {
-        if (!RPConfig.isFlagEnabled("button")) {
-            return RPConfig.getBool("flags.button") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("button")) {
+            return RedProtect.get().cfgs.getBool("flags.button") || checkAllowedPlayer(p);
         }
         return getFlagBool("button") || checkAllowedPlayer(p);
     }
 
     public boolean canDoor(Player p) {
-        if (!RPConfig.isFlagEnabled("door")) {
-            return RPConfig.getBool("flags.door") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("door")) {
+            return RedProtect.get().cfgs.getBool("flags.door") || checkAllowedPlayer(p);
         }
         return getFlagBool("door") || checkAllowedPlayer(p);
     }
 
     public boolean canSpawnMonsters() {
-        if (!RPConfig.isFlagEnabled("spawn-monsters")) {
-            return RPConfig.getBool("flags.spawn-monsters");
+        if (!RedProtect.get().cfgs.isFlagEnabled("spawn-monsters")) {
+            return RedProtect.get().cfgs.getBool("flags.spawn-monsters");
         }
         return getFlagBool("spawn-monsters");
     }
 
     public boolean canSpawnPassives() {
-        if (!RPConfig.isFlagEnabled("spawn-animals")) {
-            return RPConfig.getBool("flags.spawn-animals");
+        if (!RedProtect.get().cfgs.isFlagEnabled("spawn-animals")) {
+            return RedProtect.get().cfgs.getBool("flags.spawn-animals");
         }
         return getFlagBool("spawn-animals");
     }
 
     public boolean canMinecart(Player p) {
-        if (!RPConfig.isFlagEnabled("minecart")) {
-            return RPConfig.getBool("flags.minecart") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("minecart")) {
+            return RedProtect.get().cfgs.getBool("flags.minecart") || checkAllowedPlayer(p);
         }
         return getFlagBool("minecart") || checkAllowedPlayer(p);
     }
 
     public boolean canInteractPassives(Player p) {
-        if (!RPConfig.isFlagEnabled("passives")) {
-            return RPConfig.getBool("flags.passives") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("passives")) {
+            return RedProtect.get().cfgs.getBool("flags.passives") || checkAllowedPlayer(p);
         }
         return getFlagBool("passives") || checkAllowedPlayer(p);
     }
 
     public boolean canFlow() {
-        if (!RPConfig.isFlagEnabled("flow")) {
-            return RPConfig.getBool("flags.flow");
+        if (!RedProtect.get().cfgs.isFlagEnabled("flow")) {
+            return RedProtect.get().cfgs.getBool("flags.flow");
         }
         return getFlagBool("flow");
     }
 
     public boolean canFire() {
-        if (!RPConfig.isFlagEnabled("fire")) {
-            return RPConfig.getBool("flags.fire");
+        if (!RedProtect.get().cfgs.isFlagEnabled("fire")) {
+            return RedProtect.get().cfgs.getBool("flags.fire");
         }
         return getFlagBool("fire");
     }
 
     public boolean AllowHome(Player p) {
-        if (!RPConfig.isFlagEnabled("allow-home")) {
-            return RPConfig.getBool("flags.allow-home") || checkAllowedPlayer(p);
+        if (!RedProtect.get().cfgs.isFlagEnabled("allow-home")) {
+            return RedProtect.get().cfgs.getBool("flags.allow-home") || checkAllowedPlayer(p);
         }
         return getFlagBool("allow-home") || checkAllowedPlayer(p);
     }
 
     public boolean canGrow() {
-        if (!RPConfig.isFlagEnabled("can-grow")) {
-            return RPConfig.getBool("flags.can-grow");
+        if (!RedProtect.get().cfgs.isFlagEnabled("can-grow")) {
+            return RedProtect.get().cfgs.getBool("flags.can-grow");
         }
         return getFlagBool("can-grow");
     }
@@ -1253,7 +1253,7 @@ public class Region extends CoreRegion {
                 for (int y = miny; y <= maxy; ++y) {
                     if ((z == loc1.getZ() || z == loc2.getZ() ||
                             x == loc1.getX() || x == loc2.getX())
-                            && (define || new Location(w, x, y, z).getBlock().getType().name().contains(RPConfig.getString("region-settings.block-id")))) {
+                            && (define || new Location(w, x, y, z).getBlock().getType().name().contains(RedProtect.get().cfgs.getString("region-settings.block-id")))) {
                         locBlocks.add(new Location(w, x, y, z));
                     }
                 }
@@ -1288,7 +1288,7 @@ public class Region extends CoreRegion {
 
     public String getLeadersDesc() {
         if (this.leaders.size() == 0) {
-            addLeader(RPConfig.getString("region-settings.default-leader"));
+            addLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"));
         }
         StringBuilder leaderList = new StringBuilder();
         for (PlayerRegion<String, String> leader : this.leaders) {

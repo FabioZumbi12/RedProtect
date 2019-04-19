@@ -680,7 +680,7 @@ public class RPGlobalListener {
                 event.setCancelled(true);
                 return;
             }
-            if (e instanceof Living && (e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && blacklist.contains("PASSIVES")) {
+            if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && blacklist.contains("PASSIVES")) {
                 RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of BLACKLISTED Animal " + e.getType().getName());
                 event.setCancelled(true);
                 return;
@@ -699,7 +699,7 @@ public class RPGlobalListener {
                     event.setCancelled(true);
                     return;
                 }
-                if (e instanceof Living && (e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !wtl.contains("PASSIVES")) {
+                if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !wtl.contains("PASSIVES")) {
                     RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of NON WHITELISTED Animal " + e.getType().getName());
                     event.setCancelled(true);
                     return;

@@ -83,9 +83,9 @@ public class RedProtect extends JavaPlugin {
     public boolean Ess;
     public boolean GP;
     public boolean WE;
-    public boolean AWE;
+    //public boolean AWE;
     public boolean SC;
-    public boolean PLib;
+    //public boolean PLib;
     public ClanManager clanManager;
     public Essentials pless;
     public boolean Dyn;
@@ -95,9 +95,8 @@ public class RedProtect extends JavaPlugin {
     public RPVHelper rpvhelper;
     public CommandHandler cmdHandler;
     private int autoSaveID;
-    private boolean PlaceHolderAPI;
-    private boolean Fac;
     private RedProtectAPI rpAPI;
+    public RPConfig cfgs;
 
     public static RedProtect get() {
         return plugin;
@@ -153,7 +152,7 @@ public class RedProtect extends JavaPlugin {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
+            if (!cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
                 logger.severe("Error enabling RedProtect, plugin will shut down.");
                 this.setEnabled(false);
             }
@@ -177,11 +176,11 @@ public class RedProtect extends JavaPlugin {
         GP = checkGP();
         Dyn = checkDyn();
         WE = checkWe();
-        AWE = checkAWe();
+        //AWE = checkAWe();
         SC = checkSP();
-        Fac = checkFac();
-        PLib = checkPLib();
-        PlaceHolderAPI = checkPHAPI();
+        boolean fac = checkFac();
+        //PLib = checkPLib();
+        boolean placeHolderAPI = checkPHAPI();
 
         if (Vault) {
             RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
@@ -194,9 +193,9 @@ public class RedProtect extends JavaPlugin {
             }
         }
 
-        if (PLib) {
+       /* if (PLib) {
             logger.info("ProtocolLib found. Hiding Gui Flag item stats.");
-        }
+        }*/
         if (PvPm) {
             logger.info("PvPManager found. Hooked.");
         }
@@ -207,9 +206,9 @@ public class RedProtect extends JavaPlugin {
         if (WE) {
             logger.info("WorldEdit found. Hooked.");
         }
-        if (AWE) {
+        /*if (AWE) {
             logger.info("AsyncWorldEdit found. Hooked.");
-        }
+        }*/
         if (BossBar) {
             logger.info("BossbarAPI found. Hooked.");
         }
@@ -236,18 +235,18 @@ public class RedProtect extends JavaPlugin {
             clanManager = SimpleClans.getInstance().getClanManager();
             logger.info("SimpleClans found. Hooked.");
         }
-        if (Dyn && RPConfig.getBool("hooks.dynmap.enabled")) {
+        if (Dyn && cfgs.getBool("hooks.dynmap.enabled")) {
             logger.info("Dynmap found. Hooked.");
             logger.info("Loading dynmap markers...");
             dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
             getServer().getPluginManager().registerEvents(dynmap, this);
             logger.info("Dynmap markers loaded!");
         }
-        if (PlaceHolderAPI) {
+        if (placeHolderAPI) {
             new RPPlaceHoldersAPI(this).hook();
             logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
         }
-        if (Fac) {
+        if (fac) {
             getServer().getPluginManager().registerEvents(new RPFactions(), this);
             logger.info("Factions found. Hooked.");
         }
@@ -266,16 +265,16 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() {
-        RPConfig.init();
+        cfgs = new RPConfig();
         RPLang.init();
 
-        if (RPConfig.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()) {
+        if (cfgs.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
             RedProtect.get().logger.sucess("Whitelist disabled!");
         }
 
         // Set online mode
-        onlineMode = RPConfig.getBool("online-mode");
+        onlineMode = cfgs.getBool("online-mode");
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);
@@ -296,10 +295,10 @@ public class RedProtect extends JavaPlugin {
 
             RPUtil.ReadAllDB(rm.getAllRegions());
 
-            if (!RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
+            if (!cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
                 startAutoSave();
             }
-            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + RPConfig.getString("file-type") + ") database!");
+            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + cfgs.getString("file-type") + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -349,7 +348,7 @@ public class RedProtect extends JavaPlugin {
                     denyEnter.put(player, regs);
                 }
             }
-        }, RPConfig.getInt("region-settings.delay-after-kick-region") * 20);
+        }, cfgs.getInt("region-settings.delay-after-kick-region") * 20);
         return true;
     }
 
@@ -368,13 +367,13 @@ public class RedProtect extends JavaPlugin {
 
     private void startAutoSave() {
         Bukkit.getScheduler().cancelTask(autoSaveID);
-        if (RPConfig.getInt("flat-file.auto-save-interval-seconds") != 0) {
-            logger.info("Auto-save Scheduler: Saving " + RPConfig.getString("file-type") + " database every " + RPConfig.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
+        if (cfgs.getInt("flat-file.auto-save-interval-seconds") != 0) {
+            logger.info("Auto-save Scheduler: Saving " + cfgs.getString("file-type") + " database every " + cfgs.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
 
             autoSaveID = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-                logger.debug("Auto-save Scheduler: Saving " + RPConfig.getString("file-type") + " database!");
-                rm.saveAll(RPConfig.getBool("flat-file.backup-on-save"));
-            }, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20, RPConfig.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
+                logger.debug("Auto-save Scheduler: Saving " + cfgs.getString("file-type") + " database!");
+                rm.saveAll(cfgs.getBool("flat-file.backup-on-save"));
+            }, cfgs.getInt("flat-file.auto-save-interval-seconds") * 20, cfgs.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");

@@ -50,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 
+@SuppressWarnings("ALL")
 public class AdminCommand implements SubCommand {
 
     private static boolean handleMyChunk() {
@@ -89,7 +90,7 @@ public class AdminCommand implements SubCommand {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.dateNow(), RPConfig.getDefFlagsValues(), "", 0, null, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.dateNow(), RedProtect.get().cfgs.getDefFlagsValues(), "", 0, null, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().rm.add(r, w);
@@ -229,7 +230,7 @@ public class AdminCommand implements SubCommand {
             if (args[0].equalsIgnoreCase("reload-config")) {
                 RedProtect.get().cmdHandler.unregisterAll();
 
-                RPConfig.init();
+                RedProtect.get().cfgs = new RPConfig();
                 RPLang.init();
 
                 RedProtect.get().logger.info("Re-registering commands...");
@@ -424,7 +425,7 @@ public class AdminCommand implements SubCommand {
                         }
                     }
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.configset") + " " + from.toString() + " > " + args[2]);
-                    RPConfig.save();
+                    RedProtect.get().cfgs.save();
                     return true;
                 } else {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.confignotset") + " " + args[1]);
@@ -579,7 +580,7 @@ public class AdminCommand implements SubCommand {
 
                 RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
 
-                String sec = String.valueOf(RPConfig.getInt("region-settings.delay-after-kick-region"));
+                String sec = String.valueOf(RedProtect.get().cfgs.getInt("region-settings.delay-after-kick-region"));
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                     RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time", sec));
@@ -666,7 +667,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[1], w);
-                if (r != null && (RPConfig.getDefFlags().contains(args[2]) || RPConfig.AdminFlags.contains(args[2]))) {
+                if (r != null && (RedProtect.get().cfgs.getDefFlags().contains(args[2]) || RedProtect.get().cfgs.AdminFlags.contains(args[2]))) {
                     Object objflag = RPUtil.parseObject(args[3]);
                     r.setFlag(sender, args[2], objflag);
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2]));
@@ -684,7 +685,7 @@ public class AdminCommand implements SubCommand {
                 } catch (Exception ignored){}
             }
             sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
-            int regionsPage = RPConfig.getInt("region-settings.region-list.regions-per-page");
+            int regionsPage = RedProtect.get().cfgs.getInt("region-settings.region-list.regions-per-page");
             int total = 0;
             int last = 0;
 
@@ -700,7 +701,7 @@ public class AdminCommand implements SubCommand {
 
                 Set<Region> wregions = new HashSet<>();
                 for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
-                    SimpleDateFormat dateformat = new SimpleDateFormat(RPConfig.getString("region-settings.date-format"));
+                    SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.getString("region-settings.date-format"));
                     Date now = null;
                     try {
                         now = dateformat.parse(RPUtil.dateNow());
@@ -715,12 +716,12 @@ public class AdminCommand implements SubCommand {
                         e.printStackTrace();
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-                    for (String play : RPConfig.getStringList("purge.ignore-regions-from-players")) {
+                    for (String play : RedProtect.get().cfgs.getStringList("purge.ignore-regions-from-players")) {
                         if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
                             break;
                         }
                     }
-                    if (!r.isLeader(RPConfig.getString("region-settings.default-leader")) && days > RPConfig.getInt("purge.remove-oldest") && r.getArea() >= RPConfig.getInt("purge.regen.max-area-regen")) {
+                    if (!r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader")) && days > RedProtect.get().cfgs.getInt("purge.remove-oldest") && r.getArea() >= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
                         wregions.add(r);
                     }
                 }
@@ -728,7 +729,7 @@ public class AdminCommand implements SubCommand {
                     continue;
                 }
 
-                String colorChar = ChatColor.translateAlternateColorCodes('&', RPConfig.getString("region-settings.world-colors." + w.getName(), "&a"));
+                String colorChar = ChatColor.translateAlternateColorCodes('&', RedProtect.get().cfgs.getString("region-settings.world-colors." + w.getName(), "&a"));
 
                 int totalLocal = wregions.size();
                 total += totalLocal;
@@ -744,7 +745,7 @@ public class AdminCommand implements SubCommand {
                     }
                     if (max > it.size()) max = (it.size() - 1);
                     //-------------
-                    if (RPConfig.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                    if (RedProtect.get().cfgs.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
                         FancyMessage fancy = new FancyMessage();
                         for (int i = min; i <= max; i++) {
                             count = i;

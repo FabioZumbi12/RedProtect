@@ -66,7 +66,7 @@ public class RegionManager {
             return;
         }
         WorldRegionManager mgr;
-        if (RPConfig.getString("file-type").equalsIgnoreCase("mysql")) {
+        if (RedProtect.get().cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
             mgr = new WorldMySQLRegionManager(w);
         } else {
             mgr = new WorldFlatFileRegionManager(w);
@@ -78,7 +78,7 @@ public class RegionManager {
     public void unloadAll() {
         for (World w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
-            if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+            if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
                 RedProtect.get().dynmap.removeAll(w);
             }
         }
@@ -127,7 +127,7 @@ public class RegionManager {
             return 0;
         }
         int size = 0;
-        if (RPConfig.getBool("region-settings.blocklimit-per-world")) {
+        if (RedProtect.get().cfgs.getBool("region-settings.blocklimit-per-world")) {
             WorldRegionManager rms = this.regionManagers.get(w);
             size = rms.getTotalRegionSize(uuid);
         } else {
@@ -207,7 +207,7 @@ public class RegionManager {
     public int getPlayerRegions(String player, World w) {
         player = RPUtil.PlayerToUUID(player);
         int size;
-        if (RPConfig.getBool("region-settings.claimlimit-per-world")) {
+        if (RedProtect.get().cfgs.getBool("region-settings.claimlimit-per-world")) {
             size = getRegions(player, w).size();
         } else {
             size = getRegions(player).size();
@@ -217,7 +217,7 @@ public class RegionManager {
 
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
-        if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
             try {
                 RedProtect.get().dynmap.addMark(r);
             } catch (Exception ex) {
@@ -236,7 +236,7 @@ public class RegionManager {
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
         removeCache(r);
-        if (RedProtect.get().Dyn && RPConfig.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
             try {
                 RedProtect.get().dynmap.removeMark(r);
             } catch (Exception ex) {
@@ -283,7 +283,7 @@ public class RegionManager {
     public int regenAll(String player) {
         int delay = 0;
         for (Region r : getRegions(player)) {
-            if (r.getArea() <= RPConfig.getInt("purge.regen.max-area-regen")) {
+            if (r.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
                 WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
             }

@@ -57,7 +57,7 @@ public class RPMine19 implements Listener {
         RedProtect.get().logger.debug("Loaded RPMine19...");
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
@@ -88,11 +88,8 @@ public class RPMine19 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
 
         final Player p = e.getPlayer();
         Location lfrom = e.getFrom();
@@ -113,15 +110,15 @@ public class RPMine19 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onShootBow(EntityShootBowEvent e) {
-        if (e.isCancelled() || !(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player)) {
             return;
         }
 
         Player p = (Player) e.getEntity();
         Entity proj = e.getProjectile();
-        List<String> Pots = RPConfig.getStringList("server-protection.deny-potions");
+        List<String> Pots = RedProtect.get().cfgs.getStringList("server-protection.deny-potions");
 
         if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;
@@ -132,7 +129,7 @@ public class RPMine19 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onLingerPotion(LingeringPotionSplashEvent e) {
         if (!(e.getEntity().getShooter() instanceof Player)) {
             return;
@@ -158,7 +155,7 @@ public class RPMine19 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent e) {
         if (e.getItem() == null) {
             return;
@@ -177,11 +174,8 @@ public class RPMine19 implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onChangeBlock(EntityChangeBlockEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
 
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();

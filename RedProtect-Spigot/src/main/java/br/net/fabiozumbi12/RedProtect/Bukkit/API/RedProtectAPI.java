@@ -232,6 +232,6 @@ public class RedProtectAPI {
      * @return true if added or false if the flag already exists.
      */
     public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
-        return RPConfig.addFlag(flag, defaultValue, isAdmin);
+        return RedProtect.get().cfgs.addFlag(flag, defaultValue, isAdmin);
     }
 }

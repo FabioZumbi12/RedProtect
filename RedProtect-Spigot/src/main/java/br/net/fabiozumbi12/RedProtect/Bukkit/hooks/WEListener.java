@@ -193,7 +193,7 @@ public class WEListener {
                 RedProtect.get().rm.saveAll(true);
             }
 
-            if (RPConfig.getInt("purge.regen.stop-server-every") > 0 && delayCount > RPConfig.getInt("purge.regen.stop-server-every")) {
+            if (RedProtect.get().cfgs.getInt("purge.regen.stop-server-every") > 0 && delayCount > RedProtect.get().cfgs.getInt("purge.regen.stop-server-every")) {
 
                 Bukkit.getScheduler().cancelTasks(RedProtect.get());
                 RedProtect.get().rm.saveAll(false);

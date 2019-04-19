@@ -100,12 +100,12 @@ public class RPBlockListener implements Listener {
             return;
         }
 
-        if (RPConfig.getBool("server-protection.sign-spy.enabled") && !(lines[0].isEmpty() && lines[1].isEmpty() && lines[2].isEmpty() && lines[3].isEmpty())) {
+        if (RedProtect.get().cfgs.getBool("server-protection.sign-spy.enabled") && !(lines[0].isEmpty() && lines[1].isEmpty() && lines[2].isEmpty() && lines[3].isEmpty())) {
             Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", "" + b.getX()).replace("{y}", "" + b.getY()).replace("{z}", "" + b.getZ()).replace("{world}", b.getWorld().getName()));
             Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.player").replace("{player}", e.getPlayer().getName()));
             Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines[0]).replace("{line2}", lines[1]));
             Bukkit.getConsoleSender().sendMessage(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines[2]).replace("{line4}", lines[3]));
-            if (!RPConfig.getBool("server-protection.sign-spy.only-console")) {
+            if (!RedProtect.get().cfgs.getBool("server-protection.sign-spy.only-console")) {
                 for (Player play : Bukkit.getOnlinePlayers()) {
                     if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/) {
                         play.sendMessage(RPLang.get("blocklistener.signspy.location").replace("{x}", "" + b.getX()).replace("{y}", "" + b.getY()).replace("{z}", "" + b.getZ()).replace("{world}", b.getWorld().getName()));
@@ -117,8 +117,8 @@ public class RPBlockListener implements Listener {
             }
         }
 
-        if ((RPConfig.getBool("private.use") && b.getType().equals(Material.WALL_SIGN))) {
-            Boolean out = RPConfig.getBool("private.allow-outside");
+        if ((RedProtect.get().cfgs.getBool("private.use") && b.getType().equals(Material.WALL_SIGN))) {
+            Boolean out = RedProtect.get().cfgs.getBool("private.allow-outside");
             if (cont.validatePrivateSign(e.getLines())) {
                 if (out || signr != null) {
                     if (cont.isContainer(b)) {
@@ -143,7 +143,7 @@ public class RPBlockListener implements Listener {
         }
 
         if (line1.equalsIgnoreCase("[rp]")) {
-            String claimmode = RPConfig.getWorldClaimType(p.getWorld().getName());
+            String claimmode = RedProtect.get().cfgs.getWorldClaimType(p.getWorld().getName());
             if ((!claimmode.equalsIgnoreCase("BLOCK") && !claimmode.equalsIgnoreCase("BOTH")) && !p.hasPermission("redprotect.admin.create")) {
                 this.setErrorSign(e, p, RPLang.get("blocklistener.region.claimmode"));
                 return;
@@ -157,7 +157,7 @@ public class RPBlockListener implements Listener {
                 //RPLang.sendMessage(p, RPLang.get("blocklistener.region.created").replace("{region}",  r.getName()));                
                 RedProtect.get().rm.add(r, RedProtect.get().getServer().getWorld(r.getWorld()));
             }
-        } else if (RPConfig.getBool("region-settings.enable-flag-sign") && line1.equalsIgnoreCase("[flag]") && signr != null) {
+        } else if (RedProtect.get().cfgs.getBool("region-settings.enable-flag-sign") && line1.equalsIgnoreCase("[flag]") && signr != null) {
             if (signr.getFlags().containsKey(lines[1])) {
                 String flag = lines[1];
                 if (!(signr.getFlags().get(flag) instanceof Boolean)) {
@@ -171,7 +171,7 @@ public class RPBlockListener implements Listener {
                         e.setLine(2, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + signr.getName());
                         e.setLine(3, RPLang.get("region.value") + " " + RPLang.translBool(signr.getFlagString(flag)));
                         RPLang.sendMessage(p, "playerlistener.region.sign.placed");
-                        RPConfig.putSign(signr.getID(), b.getLocation());
+                        RedProtect.get().cfgs.putSign(signr.getID(), b.getLocation());
                         return;
                     }
                 }
@@ -201,7 +201,7 @@ public class RPBlockListener implements Listener {
             m = e.getItemInHand().getType();
         }
 
-        Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
+        Boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
@@ -242,28 +242,28 @@ public class RPBlockListener implements Listener {
 
     private boolean canPlaceList(World w, String type) {
         //blacklist
-        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
+        List<String> blt = RedProtect.get().cfgs.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.blacklist");
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
-        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
+        List<String> wlt = RedProtect.get().cfgs.getGlobalFlagList(w.getName() + ".if-build-false.place-blocks.whitelist");
         if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)) {
             return false;
         }
-        return RPConfig.getGlobalFlagBool(w.getName() + ".build");
+        return RedProtect.get().cfgs.getGlobalFlagBool(w.getName() + ".build");
     }
 
     private boolean canBreakList(World w, String type) {
         //blacklist
-        List<String> blt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
+        List<String> blt = RedProtect.get().cfgs.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.blacklist");
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
-        List<String> wlt = RPConfig.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
+        List<String> wlt = RedProtect.get().cfgs.getGlobalFlagList(w.getName() + ".if-build-false.break-blocks.whitelist");
         if (!wlt.isEmpty() && wlt.stream().noneMatch(type::matches)) {
             return false;
         }
-        return RPConfig.getGlobalFlagBool(w.getName() + ".build");
+        return RedProtect.get().cfgs.getGlobalFlagBool(w.getName() + ".build");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -273,13 +273,13 @@ public class RPBlockListener implements Listener {
         Player p = e.getPlayer();
         Block b = e.getBlock();
 
-        if (RPUtil.pBorders.containsKey(p.getName()) && b != null && b.getType().equals(RPConfig.getMaterial("region-settings.border.material"))) {
+        if (RPUtil.pBorders.containsKey(p.getName()) && b != null && b.getType().equals(RedProtect.get().cfgs.getMaterial("region-settings.border.material"))) {
             RPLang.sendMessage(p, "blocklistener.cantbreak.borderblock");
             e.setCancelled(true);
             return;
         }
 
-        Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
+        Boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
@@ -542,7 +542,7 @@ public class RPBlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is StructureGrowEvent event");
-        if (!RPConfig.getBool("deny-structure-bypass-regions")) {
+        if (!RedProtect.get().cfgs.getBool("deny-structure-bypass-regions")) {
             return;
         }
         Region rfrom = RedProtect.get().rm.getTopRegion(e.getLocation());
@@ -583,14 +583,14 @@ public class RPBlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is BlockPistonExtendEvent event");
-        if (RPConfig.getBool("performance.disable-PistonEvent-handler")) {
+        if (RedProtect.get().cfgs.getBool("performance.disable-PistonEvent-handler")) {
             return;
         }
 
         Block piston = e.getBlock();
         List<Block> blocks = e.getBlocks();
         Region pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
-        Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
+        Boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
         World w = e.getBlock().getWorld();
         for (Block b : blocks) {
             RedProtect.get().logger.debug("BlockPistonExtendEvent event - Block: " + b.getType().name());
@@ -617,12 +617,12 @@ public class RPBlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
         RedProtect.get().logger.debug("RPBlockListener - Is BlockPistonRetractEvent event");
-        if (RPConfig.getBool("performance.disable-PistonEvent-handler")) {
+        if (RedProtect.get().cfgs.getBool("performance.disable-PistonEvent-handler")) {
             return;
         }
 
         World w = e.getBlock().getWorld();
-        Boolean antih = RPConfig.getBool("region-settings.anti-hopper");
+        Boolean antih = RedProtect.get().cfgs.getBool("region-settings.anti-hopper");
         Block piston = e.getBlock();
         if (!Bukkit.getBukkitVersion().startsWith("1.8.") && !Bukkit.getBukkitVersion().startsWith("1.9.")) {
             Block b = e.getRetractLocation().getBlock();
