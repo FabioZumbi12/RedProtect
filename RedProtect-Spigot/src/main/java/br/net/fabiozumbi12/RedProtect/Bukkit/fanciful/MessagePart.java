@@ -81,7 +81,7 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
     String clickActionName = null, clickActionData = null,
             hoverActionName = null;
     JsonRepresentedObject hoverActionData = null;
-    TextualComponent text = null;
+    TextualComponent text;
     String insertionData = null;
     ArrayList<JsonRepresentedObject> translationReplacements = new ArrayList<>();
 
