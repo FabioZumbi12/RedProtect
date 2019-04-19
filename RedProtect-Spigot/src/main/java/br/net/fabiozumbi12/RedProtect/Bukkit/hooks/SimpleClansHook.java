@@ -28,61 +28,27 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import com.sucy.skill.api.event.PlayerExperienceGainEvent;
-import com.sucy.skill.api.event.PlayerGainSkillPointsEvent;
-import com.sucy.skill.api.event.PlayerManaGainEvent;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-public class SkillAPIListener implements Listener {
-
-
-    @EventHandler
-    public void onPlayerExperience(PlayerExperienceGainEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
-        RedProtect.get().logger.debug("SkillAPI PlayerExperienceGainEvent event.");
-
-        Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-        if (r != null && !r.canSkill(p)) {
-            e.setCancelled(true);
-        }
+public class SimpleClansHook {
+    public static boolean getPlayerClan(Region r, Player p) {
+        ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
+        return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
     }
 
-    @EventHandler
-    public void onPlayerSkillGain(PlayerGainSkillPointsEvent e) {
-        if (e.isCancelled()) {
-            return;
+    public static boolean inWar(Region r, Player attack, Player defend) {
+        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.use-war")) {
+            return false;
         }
-
-        RedProtect.get().logger.debug("SkillAPI PlayerGainSkillPointsEvent event.");
-
-        Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-
-        if (r != null && !r.canSkill(p)) {
-            e.setCancelled(true);
+        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
+            return false;
         }
+        ClanPlayer atClan = RedProtect.get().clanManager.getClanPlayer(attack);
+        if (atClan == null) {
+            return false;
+        }
+        ClanPlayer defCclan = RedProtect.get().clanManager.getClanPlayer(defend);
+        return defCclan != null && atClan.getClan().isWarring(defCclan.getClan());
     }
-
-    @EventHandler
-    public void onPlayerManaGain(PlayerManaGainEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
-        RedProtect.get().logger.debug("SkillAPI PlayerManaGainEvent event.");
-
-        Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-
-        if (r != null && !r.canSkill(p)) {
-            e.setCancelled(true);
-        }
-    }
-
 }

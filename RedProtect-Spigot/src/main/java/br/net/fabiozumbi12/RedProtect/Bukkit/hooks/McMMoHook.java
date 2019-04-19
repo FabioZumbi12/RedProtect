@@ -45,7 +45,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class McMMoListener implements Listener {
+public class McMMoHook implements Listener {
 
 
     @EventHandler

@@ -39,7 +39,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
-public class MPListener implements Listener {
+public class MyPetHook implements Listener {
 
     @EventHandler
     public void onEntityDamageByPet(EntityDamageEvent e) {

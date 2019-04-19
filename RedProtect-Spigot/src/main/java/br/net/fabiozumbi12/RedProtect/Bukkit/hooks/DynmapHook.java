@@ -38,12 +38,12 @@ import org.bukkit.event.Listener;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.*;
 
-public class RPDynmap implements Listener {
+public class DynmapHook implements Listener {
 
     private static MarkerSet MSet;
     private static MarkerAPI MApi;
 
-    public RPDynmap(DynmapAPI dyn) {
+    public DynmapHook(DynmapAPI dyn) {
         MApi = dyn.getMarkerAPI();
         MSet = MApi.getMarkerSet(RedProtect.get().cfgs.getString("hooks.dynmap.marks-groupname"));
         if (MSet == null) {

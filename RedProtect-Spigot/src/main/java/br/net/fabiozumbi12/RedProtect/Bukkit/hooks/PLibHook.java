@@ -32,7 +32,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class RPProtocolLib {
+public class PLibHook {
     public static ItemStack removeAttributes(ItemStack item) {
         if (item.getType().equals(Material.AIR)) return item;
 

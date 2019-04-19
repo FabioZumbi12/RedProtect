@@ -57,7 +57,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class WEListener {
+public class WEHook {
 
     private static final HashMap<String, EditSession> eSessions = new HashMap<>();
 

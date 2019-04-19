@@ -29,10 +29,9 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -340,7 +339,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         //wecui
                         if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
-                            WEListener.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
+                            WEHook.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
                         }
 
                         this.r = region;

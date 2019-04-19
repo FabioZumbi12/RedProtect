@@ -28,27 +28,43 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import com.massivecraft.factions.event.EventFactionsChunksChange;
+import com.massivecraft.factions.event.EventFactionsExpansions;
+import com.massivecraft.massivecore.ps.PS;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class SCHook {
-    public static boolean getPlayerClan(Region r, Player p) {
-        ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
-        return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
+import java.util.Set;
+
+public class FactionsHook implements Listener {
+
+    @EventHandler(ignoreCancelled = true)
+    public void onCreateFac(EventFactionsChunksChange event) {
+        if (RedProtect.get().cfgs.getBool("hooks.factions.claim-over-rps")) {
+            return;
+        }
+        for (PS chunk : event.getChunks()) {
+            Player p = event.getMPlayer().getPlayer();
+            Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(chunk.asBukkitChunk());
+            if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
+                event.setCancelled(true);
+                RPLang.sendMessage(p, "rpfactions.cantclaim");
+            }
+        }
     }
 
-    public static boolean inWar(Region r, Player attack, Player defend) {
-        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.use-war")) {
-            return false;
+    @EventHandler(ignoreCancelled = true)
+    public void onExpandFac(EventFactionsExpansions event) {
+        if (RedProtect.get().cfgs.getBool("hooks.factions.claim-over-rps")) {
+            return;
         }
-        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
-            return false;
+        Player p = event.getMPlayer().getPlayer();
+        Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(p.getLocation().getChunk());
+        if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
+            RPLang.sendMessage(p, "rpfactions.cantclaim");
+            event.setCancelled(true);
         }
-        ClanPlayer atClan = RedProtect.get().clanManager.getClanPlayer(attack);
-        if (atClan == null) {
-            return false;
-        }
-        ClanPlayer defCclan = RedProtect.get().clanManager.getClanPlayer(defend);
-        return defCclan != null && atClan.getClan().isWarring(defCclan.getClan());
     }
 }

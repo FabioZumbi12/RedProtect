@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.schematics;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -41,7 +40,7 @@ public class RPSchematics {
         File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RedProtect.get().cfgs.getString("schematics.first-house-file"));
 
 
-        Region region = WEListener.pasteWithWE(p, file);
+        Region region = WEHook.pasteWithWE(p, file);
         if (region == null) return;
 
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");

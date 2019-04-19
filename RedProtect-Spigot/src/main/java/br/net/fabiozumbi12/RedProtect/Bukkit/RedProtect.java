@@ -89,7 +89,7 @@ public class RedProtect extends JavaPlugin {
     public ClanManager clanManager;
     public Essentials pless;
     public boolean Dyn;
-    public RPDynmap dynmap;
+    public DynmapHook dynmap;
     public Economy econ;
     public int version;
     public RPVHelper rpvhelper;
@@ -213,15 +213,15 @@ public class RedProtect extends JavaPlugin {
             logger.info("BossbarAPI found. Hooked.");
         }
         if (MyPet) {
-            getServer().getPluginManager().registerEvents(new MPListener(), this);
+            getServer().getPluginManager().registerEvents(new MyPetHook(), this);
             logger.info("MyPet found. Hooked.");
         }
         if (McMMo) {
-            getServer().getPluginManager().registerEvents(new McMMoListener(), this);
+            getServer().getPluginManager().registerEvents(new McMMoHook(), this);
             logger.info("McMMo found. Hooked.");
         }
         if (SkillAPI) {
-            getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
+            getServer().getPluginManager().registerEvents(new SkillAPIHook(), this);
             logger.info("SkillAPI found. Hooked.");
         }
         if (MyChunk) {
@@ -238,16 +238,16 @@ public class RedProtect extends JavaPlugin {
         if (Dyn && cfgs.getBool("hooks.dynmap.enabled")) {
             logger.info("Dynmap found. Hooked.");
             logger.info("Loading dynmap markers...");
-            dynmap = new RPDynmap((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+            dynmap = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
             getServer().getPluginManager().registerEvents(dynmap, this);
             logger.info("Dynmap markers loaded!");
         }
         if (placeHolderAPI) {
-            new RPPlaceHoldersAPI().register();
+            new PAPIHook().register();
             logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
         }
         if (fac) {
-            getServer().getPluginManager().registerEvents(new RPFactions(), this);
+            getServer().getPluginManager().registerEvents(new FactionsHook(), this);
             logger.info("Factions found. Hooked.");
         }
     }

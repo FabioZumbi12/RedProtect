@@ -33,8 +33,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
-public class RPPlaceHoldersAPI extends PlaceholderExpansion {
-    public RPPlaceHoldersAPI() {
+public class PAPIHook extends PlaceholderExpansion {
+    public PAPIHook() {
     }
 
     @Override
