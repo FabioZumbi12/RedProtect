@@ -70,8 +70,8 @@ public class Pos2Command implements SubCommand {
                 }
 
                 if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")) {
-                    Double dist = loc1.distanceSquared(loc2);
-                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                    double dist = loc1.distanceSquared(loc2);
+                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), (int) dist));
                 } else {
                     RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                 }

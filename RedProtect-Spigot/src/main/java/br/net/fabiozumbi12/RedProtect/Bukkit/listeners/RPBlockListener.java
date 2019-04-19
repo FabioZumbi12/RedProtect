@@ -29,7 +29,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.EncompassRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
@@ -54,7 +53,6 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Crops;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class RPBlockListener implements Listener {
