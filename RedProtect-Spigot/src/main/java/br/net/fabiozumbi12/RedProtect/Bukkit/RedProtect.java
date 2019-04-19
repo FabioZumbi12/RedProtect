@@ -243,7 +243,7 @@ public class RedProtect extends JavaPlugin {
             logger.info("Dynmap markers loaded!");
         }
         if (placeHolderAPI) {
-            new RPPlaceHoldersAPI(this).hook();
+            new RPPlaceHoldersAPI().register();
             logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
         }
         if (fac) {
