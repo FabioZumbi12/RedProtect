@@ -64,8 +64,6 @@ public class RedProtect extends JavaPlugin {
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public File jarFile = null;
     public PluginDescriptionFile pdf;
-    public boolean Update;
-    public String UptVersion;
     public RegionManager rm;
     public List<String> changeWait = new ArrayList<>();
     public List<String> tpWait = new ArrayList<>();
@@ -83,9 +81,7 @@ public class RedProtect extends JavaPlugin {
     public boolean Ess;
     public boolean GP;
     public boolean WE;
-    //public boolean AWE;
     public boolean SC;
-    //public boolean PLib;
     public ClanManager clanManager;
     public Essentials pless;
     public boolean Dyn;
@@ -176,10 +172,8 @@ public class RedProtect extends JavaPlugin {
         GP = checkGP();
         Dyn = checkDyn();
         WE = checkWe();
-        //AWE = checkAWe();
         SC = checkSP();
         boolean fac = checkFac();
-        //PLib = checkPLib();
         boolean placeHolderAPI = checkPHAPI();
 
         if (Vault) {
@@ -193,9 +187,6 @@ public class RedProtect extends JavaPlugin {
             }
         }
 
-       /* if (PLib) {
-            logger.info("ProtocolLib found. Hiding Gui Flag item stats.");
-        }*/
         if (PvPm) {
             logger.info("PvPManager found. Hooked.");
         }
@@ -206,9 +197,6 @@ public class RedProtect extends JavaPlugin {
         if (WE) {
             logger.info("WorldEdit found. Hooked.");
         }
-        /*if (AWE) {
-            logger.info("AsyncWorldEdit found. Hooked.");
-        }*/
         if (BossBar) {
             logger.info("BossbarAPI found. Hooked.");
         }
@@ -456,11 +444,6 @@ public class RedProtect extends JavaPlugin {
         return false;
     }
 
-    private boolean checkAWe() {
-        Plugin pAWe = Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");
-        return pAWe != null && pAWe.isEnabled();
-    }
-
     private boolean checkSP() {
         Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
         return p != null && p.isEnabled();
@@ -473,11 +456,6 @@ public class RedProtect extends JavaPlugin {
 
     private boolean checkFac() {
         Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkPLib() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("ProtocolLib");
         return p != null && p.isEnabled();
     }
 }

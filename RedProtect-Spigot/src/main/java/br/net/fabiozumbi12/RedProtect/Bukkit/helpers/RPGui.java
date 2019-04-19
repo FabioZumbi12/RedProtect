@@ -240,9 +240,6 @@ public class RPGui implements Listener {
                 }
             } else {
                 RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
-                if (this.region.setFlag(this.player, flag, "")) {
-                    flagv = false;
-                }
             }
         } else {
             flagv = !this.region.getFlagBool(flag);
