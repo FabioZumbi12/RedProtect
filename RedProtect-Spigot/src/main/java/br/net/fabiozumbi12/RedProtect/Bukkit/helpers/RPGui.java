@@ -264,8 +264,7 @@ public class RPGui implements Listener {
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
     }
 
-    public void close() {
-        this.player.closeInventory();
+    private void close() {
         // Check for items
         this.player.updateInventory();
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
