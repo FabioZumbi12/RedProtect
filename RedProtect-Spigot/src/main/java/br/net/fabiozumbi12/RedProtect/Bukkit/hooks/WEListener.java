@@ -29,7 +29,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
@@ -111,6 +110,10 @@ public class WEListener {
         }
 
         ClipboardFormat format = ClipboardFormats.findByFile(file);
+        if (format == null) {
+            RPLang.sendMessage(p, "playerlistener.region.copyfail");
+            return null;
+        }
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
             Clipboard clipboard = reader.read();
 
