@@ -255,7 +255,7 @@ public class RPGlobalListener implements Listener {
         if (RedProtect.get().version >= 191) {
             if (!RPConfig.getGlobalFlagBool(p.getWorld().getName() + ".elytra.allow")) {
                 ItemStack item = p.getInventory().getChestplate();
-                if (item != null && item.getType().equals(Material.ELYTRA)) {
+                if (item != null && item.getType().name().equals("ELYTRA")) {
                     PlayerInventory inv = p.getInventory();
                     inv.setChestplate(new ItemStack(Material.AIR));
                     if (inv.firstEmpty() == -1) {
@@ -284,7 +284,7 @@ public class RPGlobalListener implements Listener {
         if (RedProtect.get().version >= 190) {
             Location to = e.getTo();
             if (p.getInventory().getChestplate() != null &&
-                    p.getInventory().getChestplate().getType().equals(Material.ELYTRA) &&
+                    p.getInventory().getChestplate().getType().name().equals("ELYTRA") &&
                     !RPConfig.getGlobalFlagBool(to.getWorld().getName() + ".elytra.allow")) {
                 RPLang.sendMessage(p, "globallistener.elytra.cantworld");
                 e.setCancelled(true);

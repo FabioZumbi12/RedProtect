@@ -265,6 +265,8 @@ public class RPGui implements Listener {
     }
 
     private void close() {
+        if (this.player.getOpenInventory().getTopInventory().equals(this.inv))
+            this.player.closeInventory();
         // Check for items
         this.player.updateInventory();
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
@@ -280,10 +282,9 @@ public class RPGui implements Listener {
             RPLang.sendMessage(player, "cmdmanager.region.rpgui-open");
             return;
         }
-        Inventory inv = Bukkit.createInventory(player, this.size, this.name);
+        this.inv = Bukkit.createInventory(player, this.size, this.name);
         inv.setContents(this.guiItems);
         player.openInventory(inv);
-        this.inv = inv;
         RedProtect.get().openGuis.add(this.region.getID());
     }
 }

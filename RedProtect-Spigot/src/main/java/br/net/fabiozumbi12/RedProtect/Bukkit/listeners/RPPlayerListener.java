@@ -166,7 +166,7 @@ public class RPPlayerListener implements Listener {
         }
     }
 
-
+/*
     @EventHandler(priority = EventPriority.LOW)
     public void onInteractFire(PlayerInteractEvent e) {
         if (e.getClickedBlock() != null) {
@@ -179,7 +179,7 @@ public class RPPlayerListener implements Listener {
                 }
             }
         }
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
