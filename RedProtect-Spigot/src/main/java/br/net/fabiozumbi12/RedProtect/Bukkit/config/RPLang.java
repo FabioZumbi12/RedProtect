@@ -111,14 +111,14 @@ public class RPLang {
 
         if (Lang.get("_lang.version") != null) {
             int langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", ""));
-            int rpv = Integer.parseInt(RedProtect.get().pdf.getVersion().replace(".", ""));
-            if (RedProtect.get().pdf.getVersion().length() > Lang.get("_lang.version").toString().length()) {
+            int rpv = Integer.parseInt(RedProtect.get().getDescription().getVersion().replace(".", ""));
+            if (RedProtect.get().getDescription().getVersion().length() > Lang.get("_lang.version").toString().length()) {
                 langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", "") + 0);
             }
             if (langv < rpv || langv == 0) {
                 RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
                 RedProtect.get().logger.warning("Lang file version: " + Lang.get("_lang.version"));
-                Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
+                Lang.put("_lang.version", RedProtect.get().getDescription().getVersion());
             }
         }
     }
@@ -135,7 +135,7 @@ public class RPLang {
             RedProtect.get().logger.warning("- Removed invalid entries from language files");
 
         if (!Lang.containsKey("_lang.version"))
-            Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
+            Lang.put("_lang.version", RedProtect.get().getDescription().getVersion());
 
         try {
             Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);

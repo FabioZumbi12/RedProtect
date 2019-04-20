@@ -42,7 +42,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -50,12 +49,12 @@ import java.util.*;
 
 public class RedProtect extends JavaPlugin {
     private static RedProtect plugin;
+    private RedProtectAPI rpAPI;
     public final RPLogger logger = new RPLogger();
     public final HooksManager hooks = new HooksManager();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public File jarFile = null;
-    public PluginDescriptionFile pdf;
     public RegionManager rm;
     public List<String> changeWait = new ArrayList<>();
     public List<String> tpWait = new ArrayList<>();
@@ -70,7 +69,6 @@ public class RedProtect extends JavaPlugin {
     public RPVHelper rpvhelper;
     public CommandHandler cmdHandler;
     private int autoSaveID;
-    private RedProtectAPI rpAPI;
     public RPConfig cfgs;
 
     public static RedProtect get() {
@@ -89,8 +87,6 @@ public class RedProtect extends JavaPlugin {
         try {
             plugin = this;
             jarFile = this.getFile();
-
-            pdf = getDescription();
 
             ph = new RPPermissionHandler();
             rm = new RegionManager();
@@ -122,7 +118,7 @@ public class RedProtect extends JavaPlugin {
             logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
             logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    /");
             logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
-            logger.clear("&a» " + pdf.getFullName() + " enabled");
+            logger.clear("&a» " + getDescription().getFullName() + " enabled");
             logger.clear("");
 
         } catch (Exception e) {
@@ -206,7 +202,7 @@ public class RedProtect extends JavaPlugin {
         logger.info("Unregistering listeners...");
         HandlerList.unregisterAll(this);
 
-        logger.info(pdf.getFullName() + " turned off...");
+        logger.info(getDescription().getFullName() + " turned off...");
     }
 
     public boolean denyEnterRegion(String rid, String player) {
