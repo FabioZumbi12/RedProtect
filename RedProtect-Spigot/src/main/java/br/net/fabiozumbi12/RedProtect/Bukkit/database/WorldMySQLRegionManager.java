@@ -421,7 +421,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
-                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                            RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
                         members.add(new PlayerRegion<>(p[0], p[1]));
                     }
@@ -432,7 +432,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
-                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                            RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
                         admins.add(new PlayerRegion<>(p[0], p[1]));
                     }
@@ -442,7 +442,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
-                            RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                            RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
                         leaders.add(new PlayerRegion<>(p[0], p[1]));
                     }

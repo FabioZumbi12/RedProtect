@@ -42,25 +42,27 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.get
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
 
 public class RPLang {
+    private RPLang() {
+    }
 
-    private static final Properties Lang = new Properties() {
+    private static final Properties loadedLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    private static final Properties BaseLang = new Properties() {
+    private static final Properties baseLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    private static final HashMap<Player, String> DelayedMessage = new HashMap<>();
+    private static final HashMap<Player, String> delayedMessage = new HashMap<>();
     private static String pathLang;
 
-    public static SortedSet<String> helpStrings() {
+    public static SortedSet<String> getHelpStrings() {
         SortedSet<String> values = new TreeSet<>();
-        for (Object help : Lang.keySet()) {
+        for (Object help : loadedLang.keySet()) {
             if (help.toString().startsWith("cmdmanager.help.")) {
                 values.add(help.toString().replace("cmdmanager.help.", ""));
             }
@@ -88,11 +90,11 @@ public class RPLang {
     }
 
     private static void loadBaseLang() {
-        BaseLang.clear();
+        baseLang.clear();
         try {
             InputStream fileInput = RedProtect.get().getResource("assets/redprotect/langEN-US.properties");
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            BaseLang.load(reader);
+            baseLang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,45 +102,45 @@ public class RPLang {
     }
 
     private static void loadLang() {
-        Lang.clear();
+        loadedLang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            Lang.load(reader);
+            loadedLang.load(reader);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (Lang.get("_lang.version") != null) {
-            int langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", ""));
-            int rpv = Integer.parseInt(RedProtect.get().pdf.getVersion().replace(".", ""));
-            if (RedProtect.get().pdf.getVersion().length() > Lang.get("_lang.version").toString().length()) {
-                langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", "") + 0);
+        if (loadedLang.get("_lang.version") != null) {
+            int langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", ""));
+            int rpv = Integer.parseInt(RedProtect.get().getDescription().getVersion().replace(".", ""));
+            if (RedProtect.get().getDescription().getVersion().length() > loadedLang.get("_lang.version").toString().length()) {
+                langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", "") + 0);
             }
             if (langv < rpv || langv == 0) {
                 RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
-                RedProtect.get().logger.warning("Lang file version: " + Lang.get("_lang.version"));
-                Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
+                RedProtect.get().logger.warning("Lang file version: " + loadedLang.get("_lang.version"));
+                loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
             }
         }
     }
 
     private static void updateLang() {
-        BaseLang.forEach((key, value) -> {
-            if (!Lang.containsKey(key)) {
-                Lang.put(key, value);
+        baseLang.forEach((key, value) -> {
+            if (!loadedLang.containsKey(key)) {
+                loadedLang.put(key, value);
             }
         });
 
         //remove invalid entries
-        if (Lang.entrySet().removeIf(k -> !BaseLang.containsKey(k.getKey())))
+        if (loadedLang.entrySet().removeIf(k -> !baseLang.containsKey(k.getKey())))
             RedProtect.get().logger.warning("- Removed invalid entries from language files");
 
-        if (!Lang.containsKey("_lang.version"))
-            Lang.put("_lang.version", RedProtect.get().pdf.getVersion());
+        if (!loadedLang.containsKey("_lang.version"))
+            loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
 
         try {
-            Lang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
+            loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,10 +149,10 @@ public class RPLang {
     public static String get(String key) {
         String FMsg;
 
-        if (Lang.get(key) == null) {
+        if (loadedLang.get(key) == null) {
             FMsg = "&c&oMissing language string for " + ChatColor.GOLD + key;
         } else {
-            FMsg = Lang.get(key).toString();
+            FMsg = loadedLang.get(key).toString();
         }
 
         FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
@@ -162,18 +164,18 @@ public class RPLang {
         sendMessage(sender, key, new Replacer[0]);
     }
 
-    public static void sendMessage(CommandSender sender, String key, Replacer<String, String>[] replaces) {
-        if (sender instanceof Player && DelayedMessage.containsKey(sender) && DelayedMessage.get(sender).equals(key)) {
+    public static void sendMessage(CommandSender sender, String key, Replacer[] replaces) {
+        if (sender instanceof Player && delayedMessage.containsKey(sender) && delayedMessage.get(sender).equals(key)) {
             return;
         }
 
-        if (Lang.get(key) == null) {
+        if (loadedLang.get(key) == null) {
             sender.sendMessage(get("_redprotect.prefix") + " " + ChatColor.translateAlternateColorCodes('&', key));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {
             String message = get(key);
-            for (Replacer<String, String> replacer:replaces){
+            for (Replacer replacer : replaces) {
                 message = message.replace(replacer.getPlaceholder(), replacer.getValue());
             }
             sender.sendMessage(get("_redprotect.prefix") + " " + message);
@@ -181,8 +183,8 @@ public class RPLang {
 
         if (sender instanceof Player) {
             final Player p = (Player) sender;
-            DelayedMessage.put(p, key);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> DelayedMessage.remove(p), 20);
+            delayedMessage.put(p, key);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> delayedMessage.remove(p), 20);
         }
     }
 
@@ -200,6 +202,6 @@ public class RPLang {
     }
 
     public static boolean containsValue(String value) {
-        return Lang.containsValue(value);
+        return loadedLang.containsValue(value);
     }
 }

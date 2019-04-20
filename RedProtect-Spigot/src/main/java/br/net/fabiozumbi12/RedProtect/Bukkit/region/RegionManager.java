@@ -77,8 +77,8 @@ public class RegionManager {
     public void unloadAll() {
         for (World w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
-            if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
-                RedProtect.get().dynmap.removeAll(w);
+            if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
+                RedProtect.get().hooks.dynmap.removeAll(w);
             }
         }
         this.regionManagers.clear();
@@ -216,9 +216,9 @@ public class RegionManager {
 
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
-        if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
             try {
-                RedProtect.get().dynmap.addMark(r);
+                RedProtect.get().hooks.dynmap.addMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
@@ -235,9 +235,9 @@ public class RegionManager {
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
         removeCache(r);
-        if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
             try {
-                RedProtect.get().dynmap.removeMark(r);
+                RedProtect.get().hooks.dynmap.removeMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");

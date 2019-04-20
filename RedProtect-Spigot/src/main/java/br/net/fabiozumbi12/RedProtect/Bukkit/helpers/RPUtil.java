@@ -325,7 +325,7 @@ public class RPUtil extends CoreUtil {
                 }
 
                 if (!ignore && days > RedProtect.get().cfgs.getInt("purge.remove-oldest")) {
-                    if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("purge.regen.enable")) {
+                    if (RedProtect.get().hooks.worldEdit && RedProtect.get().cfgs.getBool("purge.regen.enable")) {
                         if (region.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
                             WEHook.regenRegion(region, Bukkit.getWorld(region.getWorld()), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
@@ -370,9 +370,9 @@ public class RPUtil extends CoreUtil {
                 }
             }
 
-            if (RedProtect.get().SC) {
+            if (RedProtect.get().hooks.simpleClans) {
                 //remove deleted clans from regions
-                if (region.flagExists("clan") && !RedProtect.get().clanManager.isClan(region.getFlagString("clan"))) {
+                if (region.flagExists("clan") && !RedProtect.get().hooks.clanManager.isClan(region.getFlagString("clan"))) {
                     region.setFlag(Bukkit.getConsoleSender(), "clan", "");
                 }
             }
@@ -395,19 +395,19 @@ public class RPUtil extends CoreUtil {
         }
 
         if (cfm > 0) {
-            RedProtect.get().logger.sucess("[" + cfm + "] Region names conformed!");
+            RedProtect.get().logger.success("[" + cfm + "] Region names conformed!");
         }
 
         if (skipped > 0) {
-            RedProtect.get().logger.sucess(skipped + " regions skipped due to max size limit to regen!");
+            RedProtect.get().logger.success(skipped + " regions skipped due to max size limit to regen!");
         }
 
         if (purged > 0) {
-            RedProtect.get().logger.sucess("Purged a total of &6" + purged + "&a regions!");
+            RedProtect.get().logger.success("Purged a total of &6" + purged + "&a regions!");
         }
 
         if (sell > 0) {
-            RedProtect.get().logger.sucess("Put to sell a total of &6" + sell + "&a regions!");
+            RedProtect.get().logger.success("Put to sell a total of &6" + sell + "&a regions!");
         }
         regions.clear();
     }
@@ -625,7 +625,7 @@ public class RPUtil extends CoreUtil {
             dbcon.close();
 
             if (saved > 0) {
-                RedProtect.get().logger.sucess((saved - 1) + " regions converted to Yml with sucess!");
+                RedProtect.get().logger.success((saved - 1) + " regions converted to Yml with success!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -710,7 +710,7 @@ public class RPUtil extends CoreUtil {
             dbcon.close();
         }
         if (counter > 0) {
-            RedProtect.get().logger.sucess((counter - 1) + " regions converted to Mysql with success!");
+            RedProtect.get().logger.success((counter - 1) + " regions converted to Mysql with success!");
         }
         return true;
     }
@@ -958,7 +958,7 @@ public class RPUtil extends CoreUtil {
             if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
-                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
         }).collect(Collectors.toSet());
@@ -969,7 +969,7 @@ public class RPUtil extends CoreUtil {
             if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
-                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
         }).collect(Collectors.toSet());
@@ -980,7 +980,7 @@ public class RPUtil extends CoreUtil {
             if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
-                RedProtect.get().logger.sucess("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
         }).collect(Collectors.toSet());

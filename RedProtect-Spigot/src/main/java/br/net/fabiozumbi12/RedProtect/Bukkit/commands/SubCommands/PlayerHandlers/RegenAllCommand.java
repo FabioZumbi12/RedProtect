@@ -49,7 +49,7 @@ public class RegenAllCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            if (!RedProtect.get().WE) {
+            if (!RedProtect.get().hooks.worldEdit) {
                 return true;
             }
             int regen = RedProtect.get().rm.regenAll(args[0]);

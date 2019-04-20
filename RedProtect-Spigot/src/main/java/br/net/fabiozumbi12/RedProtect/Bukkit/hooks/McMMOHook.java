@@ -45,7 +45,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class McMMoHook implements Listener {
+public class McMMOHook implements Listener {
 
 
     @EventHandler
@@ -77,7 +77,7 @@ public class McMMoHook implements Listener {
     }
 
     @EventHandler
-    public void onPlayerActivateAbillity(McMMOPlayerAbilityActivateEvent e) {
+    public void onPlayerActivateAbility(McMMOPlayerAbilityActivateEvent e) {
         if (e.isCancelled()) {
             return;
         }
@@ -111,7 +111,7 @@ public class McMMoHook implements Listener {
     }
 
     @EventHandler
-    public void onPlayerActivateSecAbillity(SubSkillRandomCheckEvent e) {
+    public void onPlayerActivateSecAbility(SubSkillRandomCheckEvent e) {
         RedProtect.get().logger.debug("McMMO SubSkillRandomCheckEvent event.");
 
         Player p = e.getPlayer();

@@ -556,8 +556,8 @@ public class CommandHandlers {
 
         if (loc != null) {
             if (play != null) {
-                if (RedProtect.get().Ess) {
-                    RedProtect.get().pless.getUser(p).setLastLocation();
+                if (RedProtect.get().hooks.essentials) {
+                    RedProtect.get().hooks.pless.getUser(p).setLastLocation();
                 }
                 play.teleport(loc);
                 RPLang.sendMessage(play, RPLang.get("cmdmanager.region.teleport") + " " + rname);
@@ -579,8 +579,8 @@ public class CommandHandlers {
             Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                 if (RedProtect.get().tpWait.contains(p.getName())) {
                     RedProtect.get().tpWait.remove(p.getName());
-                    if (RedProtect.get().Ess) {
-                        RedProtect.get().pless.getUser(p).setLastLocation();
+                    if (RedProtect.get().hooks.essentials) {
+                        RedProtect.get().hooks.pless.getUser(p).setLastLocation();
                     }
                     p.teleport(loc);
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.teleport") + " " + rname);
@@ -771,15 +771,15 @@ public class CommandHandlers {
 
                         //flag clan
                         if (flag.equalsIgnoreCase("clan")) {
-                            if (!RedProtect.get().SC || !RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag.clan")) {
+                            if (!RedProtect.get().hooks.simpleClans || !RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag.clan")) {
                                 sendFlagHelp(p);
                                 return;
                             }
-                            if (!RedProtect.get().clanManager.isClan(value)) {
+                            if (!RedProtect.get().hooks.clanManager.isClan(value)) {
                                 RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.invalidclan").replace("{tag}", value));
                                 return;
                             }
-                            Clan clan = RedProtect.get().clanManager.getClan(value);
+                            Clan clan = RedProtect.get().hooks.clanManager.getClan(value);
                             if (!clan.isLeader(p)) {
                                 RPLang.sendMessage(p, "cmdmanager.region.flag.clancommand");
                                 return;
@@ -820,8 +820,8 @@ public class CommandHandlers {
 
                     //flag clan
                     if (flag.equalsIgnoreCase("clan")) {
-                        if (RedProtect.get().SC) {
-                            ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
+                        if (RedProtect.get().hooks.simpleClans) {
+                            ClanPlayer clan = RedProtect.get().hooks.clanManager.getClanPlayer(p);
                             if (clan == null) {
                                 RPLang.sendMessage(p, "cmdmanager.region.flag.haveclan");
                                 return;
@@ -995,11 +995,11 @@ public class CommandHandlers {
             }
         }
 
-        if (flag.equalsIgnoreCase("setclan") && RedProtect.get().SC) {
+        if (flag.equalsIgnoreCase("setclan") && RedProtect.get().hooks.simpleClans) {
             if (!(value instanceof String)) {
                 return false;
             }
-            if (RedProtect.get().clanManager.getClan(value.toString()) == null) {
+            if (RedProtect.get().hooks.clanManager.getClan(value.toString()) == null) {
                 return false;
             }
         }
@@ -1136,7 +1136,7 @@ public class CommandHandlers {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             int i = 0;
-            for (String key : RPLang.helpStrings()) {
+            for (String key : RPLang.getHelpStrings()) {
                 if (RedProtect.get().ph.hasCommandPerm(player, key) || ((key.equals("pos1") || key.equals("pos2")) && RedProtect.get().ph.hasCommandPerm(player, "redefine"))) {
                     if (key.equalsIgnoreCase("flaggui")) {
                         continue;

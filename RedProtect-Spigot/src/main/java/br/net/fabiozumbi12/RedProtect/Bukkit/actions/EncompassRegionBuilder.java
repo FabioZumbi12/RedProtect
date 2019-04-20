@@ -269,7 +269,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             return;
                         }
 
-                        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().Vault && !p.hasPermission("redprotect.eco.bypass")) {
+                        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
                             double peco = RedProtect.get().econ.getBalance(p);
                             long reco = region.getArea() * RedProtect.get().cfgs.getEcoInt("claim-cost-per-block.cost-per-block");
 
@@ -338,7 +338,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //wecui
-                        if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
+                        if (RedProtect.get().hooks.worldEdit && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
                             WEHook.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
                         }
 

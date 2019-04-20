@@ -43,7 +43,7 @@ public class RPLogger {
                 .sendMessage(translateAlternateColorCodes('&', s));
     }
 
-    public void sucess(String s) {
+    public void success(String s) {
         Bukkit.getConsoleSender()
                 .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &a&l" + s + "&r"));
     }

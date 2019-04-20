@@ -66,7 +66,7 @@ public class Pos1Command implements SubCommand {
             if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)) {
                 Location loc1 = RedProtect.get().firstLocationSelections.get(player);
                 Location loc2 = RedProtect.get().secondLocationSelections.get(player);
-                if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
+                if (RedProtect.get().hooks.worldEdit && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
                     WEHook.setSelectionRP(player, loc1, loc2);
                 }
 

@@ -220,7 +220,7 @@ public class RPMine18 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
-        if (RedProtect.get().Mc && RedProtect.get().cfgs.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
+        if (RedProtect.get().hooks.magicCarpet && RedProtect.get().cfgs.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
             List<Block> blocks = e.getBlocks();
             for (Block block : blocks) {
                 for (Carpet carpet : MagicCarpet.getCarpets().all()) {

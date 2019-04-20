@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 
 public class SimpleClansHook {
     public static boolean getPlayerClan(Region r, Player p) {
-        ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
+        ClanPlayer clan = RedProtect.get().hooks.clanManager.getClanPlayer(p);
         return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
     }
 
@@ -44,11 +44,11 @@ public class SimpleClansHook {
         if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
             return false;
         }
-        ClanPlayer atClan = RedProtect.get().clanManager.getClanPlayer(attack);
+        ClanPlayer atClan = RedProtect.get().hooks.clanManager.getClanPlayer(attack);
         if (atClan == null) {
             return false;
         }
-        ClanPlayer defCclan = RedProtect.get().clanManager.getClanPlayer(defend);
+        ClanPlayer defCclan = RedProtect.get().hooks.clanManager.getClanPlayer(defend);
         return defCclan != null && atClan.getClan().isWarring(defCclan.getClan());
     }
 }

@@ -26,20 +26,20 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.helpers;
 
-public class Replacer<K, V> {
-    private K placeholder;
-    private V value;
+public class Replacer {
+    private String placeholder;
+    private String value;
 
-    public Replacer(K placeholder, V value) {
+    public Replacer(String placeholder, String value) {
         this.placeholder = placeholder;
         this.value = value;
     }
 
-    public K getPlaceholder() {
+    public String getPlaceholder() {
         return this.placeholder;
     }
 
-    public V getValue() {
+    public String getValue() {
         return this.value;
     }
 }

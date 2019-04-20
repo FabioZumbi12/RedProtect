@@ -157,8 +157,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             }
             return executor.onCommand(sender, command, label, Arrays_copyOfRange(args, args.length));
         } else {
-            sender.sendMessage(RPLang.get("general.color") + "---------------- " + plugin.pdf.getFullName() + " ----------------");
-            sender.sendMessage(RPLang.get("general.color") + "Developed by " + ChatColor.GOLD + plugin.pdf.getAuthors() + RPLang.get("general.color") + ".");
+            sender.sendMessage(RPLang.get("general.color") + "---------------- " + plugin.getDescription().getFullName() + " ----------------");
+            sender.sendMessage(RPLang.get("general.color") + "Developed by " + ChatColor.GOLD + plugin.getDescription().getAuthors() + RPLang.get("general.color") + ".");
             sender.sendMessage(RPLang.get("general.color") + "For more information about the commands, type [" + ChatColor.GOLD + "/rp " + getCmd("help") + RPLang.get("general.color") + "].");
             sender.sendMessage(RPLang.get("general.color") + "For a tutorial, type [" + ChatColor.GOLD + "/rp " + getCmd("tutorial") + RPLang.get("general.color") + "].");
             sender.sendMessage(RPLang.get("general.color") + "---------------------------------------------------");
