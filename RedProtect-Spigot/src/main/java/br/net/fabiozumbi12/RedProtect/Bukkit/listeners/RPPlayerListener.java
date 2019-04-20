@@ -227,7 +227,7 @@ public class RPPlayerListener implements Listener {
                 if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
                     Location loc1 = RedProtect.get().firstLocationSelections.get(p);
                     Location loc2 = RedProtect.get().secondLocationSelections.get(p);
-                    if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
+                    if (RedProtect.get().hooks.worldEdit && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
                         WEHook.setSelectionRP(p, loc1, loc2);
                     }
 
@@ -483,7 +483,7 @@ public class RPPlayerListener implements Listener {
                 RPLang.sendMessage(p, "blocklistener.region.cantenter");
                 event.setCancelled(true);
             }
-        } else if (RedProtect.get().MyPet && e instanceof MyPetBukkitEntity) {
+        } else if (RedProtect.get().hooks.myPet && e instanceof MyPetBukkitEntity) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantinteract");
@@ -654,7 +654,7 @@ public class RPPlayerListener implements Listener {
                 return;
             }
 
-            if (RedProtect.get().PvPm) {
+            if (RedProtect.get().hooks.pvpm) {
                 if (rto.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !rto.canBuild(p)) {
                     RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
                     e.setCancelled(true);
@@ -789,7 +789,7 @@ public class RPPlayerListener implements Listener {
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null) {
 
-            if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall")) && RedProtect.get().MyPet && !r.canPet(p)) {
+            if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall")) && RedProtect.get().hooks.myPet && !r.canPet(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantpet");
                 e.setCancelled(true);
                 return;
@@ -823,7 +823,7 @@ public class RPPlayerListener implements Listener {
             }
 
             //Pvp check
-            if (cmds.equalsIgnoreCase("pvp") && RedProtect.get().PvPm) {
+            if (cmds.equalsIgnoreCase("pvp") && RedProtect.get().hooks.pvpm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().cfgs.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
@@ -831,7 +831,7 @@ public class RPPlayerListener implements Listener {
                 }
             }
 
-            if (RedProtect.get().Mc && !r.getFlagBool("allow-magiccarpet") && (!r.isAdmin(p) && !r.isLeader(p))) {
+            if (RedProtect.get().hooks.magicCarpet && !r.getFlagBool("allow-magiccarpet") && (!r.isAdmin(p) && !r.isLeader(p))) {
                 if (cmds.equalsIgnoreCase("magiccarpet")) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p, "playerlistener.region.cantmc");
@@ -1001,7 +1001,7 @@ public class RPPlayerListener implements Listener {
             }
 
             //Mypet Flag
-            if (RedProtect.get().MyPet && !r.canPet(p)) {
+            if (RedProtect.get().hooks.myPet && !r.canPet(p)) {
                 if (MyPetApi.getPlayerManager().isMyPetPlayer(p)) {
                     MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);
                     if (mpp.hasMyPet() && mpp.getMyPet().getStatus() == PetState.Here) {
@@ -1301,7 +1301,7 @@ public class RPPlayerListener implements Listener {
                 if (RedProtect.get().version >= 1110) {
                     RPMine111.sendBarMsg(notify, color, p);
                 } else {
-                    if (RedProtect.get().BossBar) {
+                    if (RedProtect.get().hooks.bossBar) {
                         BossBarAPI.setMessage(p, notify);
                     } else {
                         p.sendMessage(notify);
@@ -1322,7 +1322,7 @@ public class RPPlayerListener implements Listener {
             if (RedProtect.get().version >= 1110) {
                 RPMine111.sendBarMsg(wel, "GREEN", p);
             } else {
-                if (RedProtect.get().BossBar) {
+                if (RedProtect.get().hooks.bossBar) {
                     BossBarAPI.setMessage(p, wel);
                 } else {
                     p.sendMessage(wel);
@@ -1428,7 +1428,7 @@ public class RPPlayerListener implements Listener {
             }
 
             //Pvp check to enter on region
-            if (RedProtect.get().PvPm) {
+            if (RedProtect.get().hooks.pvpm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().cfgs.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
@@ -1447,7 +1447,7 @@ public class RPPlayerListener implements Listener {
             }
 
             //Enter MagicCarpet
-            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().Mc) {
+            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet) {
                 if (MagicCarpet.getCarpets().getCarpet(p) != null) {
                     MagicCarpet.getCarpets().remove(p);
                     RPLang.sendMessage(p, "playerlistener.region.cantmc");
@@ -1540,7 +1540,7 @@ public class RPPlayerListener implements Listener {
             }
 
             //Pvp check to exit region
-            if (er.flagExists("forcepvp") && RedProtect.get().PvPm) {
+            if (er.flagExists("forcepvp") && RedProtect.get().hooks.pvpm) {
                 if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")) {
                     if (PvPState.get(p.getName()) != PvPlayer.get(p).hasPvPEnabled()) {
                         PvPlayer.get(p).setPvP(PvPState.get(p.getName()));
@@ -1554,7 +1554,7 @@ public class RPPlayerListener implements Listener {
         if (r.canEnter(p)) {
 
             //Enter check forcepvp flag
-            if (RedProtect.get().PvPm) {
+            if (RedProtect.get().hooks.pvpm) {
                 if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")) {
                     PvPlayer pvpp = PvPlayer.get(p);
                     if (r.forcePVP() != pvpp.hasPvPEnabled()) {
@@ -1621,7 +1621,7 @@ public class RPPlayerListener implements Listener {
         if (er != null && er.canExit(p)) {
 
             //Pvp check to exit region
-            if (er.flagExists("forcepvp") && RedProtect.get().PvPm) {
+            if (er.flagExists("forcepvp") && RedProtect.get().hooks.pvpm) {
                 if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")) {
                     if (PvPState.get(p.getName()) != PvPlayer.get(p).hasPvPEnabled()) {
                         PvPlayer.get(p).setPvP(PvPState.get(p.getName()));
@@ -1716,8 +1716,8 @@ public class RPPlayerListener implements Listener {
             return;
         }
 
-        if (RedProtect.get().Ess) {
-            User essp = RedProtect.get().pless.getOfflineUser(e.getName());
+        if (RedProtect.get().hooks.essentials) {
+            User essp = RedProtect.get().hooks.pless.getOfflineUser(e.getName());
             if (essp != null && !essp.getConfigUUID().equals(e.getUniqueId())) {
                 e.setKickMessage(RPLang.get("playerlistener.capfilter.kickmessage").replace("{nick}", essp.getName()));
                 e.setLoginResult(Result.KICK_OTHER);

@@ -325,7 +325,7 @@ public class RPUtil extends CoreUtil {
                 }
 
                 if (!ignore && days > RedProtect.get().cfgs.getInt("purge.remove-oldest")) {
-                    if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("purge.regen.enable")) {
+                    if (RedProtect.get().hooks.worldEdit && RedProtect.get().cfgs.getBool("purge.regen.enable")) {
                         if (region.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
                             WEHook.regenRegion(region, Bukkit.getWorld(region.getWorld()), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
@@ -370,9 +370,9 @@ public class RPUtil extends CoreUtil {
                 }
             }
 
-            if (RedProtect.get().SC) {
+            if (RedProtect.get().hooks.simpleClans) {
                 //remove deleted clans from regions
-                if (region.flagExists("clan") && !RedProtect.get().clanManager.isClan(region.getFlagString("clan"))) {
+                if (region.flagExists("clan") && !RedProtect.get().hooks.clanManager.isClan(region.getFlagString("clan"))) {
                     region.setFlag(Bukkit.getConsoleSender(), "clan", "");
                 }
             }

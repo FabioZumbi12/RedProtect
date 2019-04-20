@@ -46,7 +46,7 @@ public class RemoveAllCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            if (!RedProtect.get().WE) {
+            if (!RedProtect.get().hooks.worldEdit) {
                 return true;
             }
             int removed = RedProtect.get().rm.removeAll(args[0]);

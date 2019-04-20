@@ -34,31 +34,24 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPPermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.*;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
-import com.earth2me.essentials.Essentials;
 import net.milkbowl.vault.economy.Economy;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.dynmap.DynmapAPI;
 
 import java.io.File;
 import java.util.*;
 
 public class RedProtect extends JavaPlugin {
-    static boolean McMMo;
-    static boolean SkillAPI;
     private static RedProtect plugin;
     public final RPLogger logger = new RPLogger();
+    public final HooksManager hooks = new HooksManager();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public File jarFile = null;
@@ -70,21 +63,8 @@ public class RedProtect extends JavaPlugin {
     public RPPermissionHandler ph;
     public HashMap<Player, Location> firstLocationSelections = new HashMap<>();
     public HashMap<Player, Location> secondLocationSelections = new HashMap<>();
-    public boolean BossBar;
-    public boolean MyChunk;
-    public boolean MyPet;
     public boolean onlineMode;
-    public boolean Mc;
-    public boolean Vault;
-    public boolean PvPm;
-    public boolean Ess;
-    public boolean GP;
-    public boolean WE;
-    public boolean SC;
-    public ClanManager clanManager;
-    public Essentials pless;
-    public boolean Dyn;
-    public DynmapHook dynmap;
+
     public Economy econ;
     public int version;
     public RPVHelper rpvhelper;
@@ -158,87 +138,6 @@ public class RedProtect extends JavaPlugin {
         }
     }
 
-    private void registerHooks() {
-        BossBar = checkBM();
-        MyChunk = checkMyChunk();
-        MyPet = checkMyPet();
-        McMMo = checkMcMMo();
-        Mc = checkMc();
-        Vault = checkVault();
-        SkillAPI = checkSkillAPI();
-        PvPm = checkPvPm();
-        Ess = checkEss();
-        GP = checkGP();
-        Dyn = checkDyn();
-        WE = checkWe();
-        SC = checkSP();
-        boolean fac = checkFac();
-        boolean placeHolderAPI = checkPHAPI();
-
-        if (Vault) {
-            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp != null) {
-                econ = rsp.getProvider();
-                logger.info("Vault found. Hooked.");
-            } else {
-                logger.warning("Could not initialize Vault hook.");
-                Vault = false;
-            }
-        }
-
-        if (PvPm) {
-            logger.info("PvPManager found. Hooked.");
-        }
-        if (Ess) {
-            pless = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-            logger.info("Essentials found. Hooked.");
-        }
-        if (WE) {
-            logger.info("WorldEdit found. Hooked.");
-        }
-        if (BossBar) {
-            logger.info("BossbarAPI found. Hooked.");
-        }
-        if (MyPet) {
-            getServer().getPluginManager().registerEvents(new MyPetHook(), this);
-            logger.info("MyPet found. Hooked.");
-        }
-        if (McMMo) {
-            getServer().getPluginManager().registerEvents(new McMMoHook(), this);
-            logger.info("McMMo found. Hooked.");
-        }
-        if (SkillAPI) {
-            getServer().getPluginManager().registerEvents(new SkillAPIHook(), this);
-            logger.info("SkillAPI found. Hooked.");
-        }
-        if (MyChunk) {
-            logger.sucess("MyChunk found. Ready to convert!");
-            logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
-        }
-        if (Mc) {
-            logger.info("MagicCarpet found. Hooked.");
-        }
-        if (SC) {
-            clanManager = SimpleClans.getInstance().getClanManager();
-            logger.info("SimpleClans found. Hooked.");
-        }
-        if (Dyn && cfgs.getBool("hooks.dynmap.enabled")) {
-            logger.info("Dynmap found. Hooked.");
-            logger.info("Loading dynmap markers...");
-            dynmap = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
-            getServer().getPluginManager().registerEvents(dynmap, this);
-            logger.info("Dynmap markers loaded!");
-        }
-        if (placeHolderAPI) {
-            new PAPIHook().register();
-            logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
-        }
-        if (fac) {
-            getServer().getPluginManager().registerEvents(new FactionsHook(), this);
-            logger.info("Factions found. Hooked.");
-        }
-    }
-
     public void reload() {
         try {
             //shutdown
@@ -274,7 +173,7 @@ public class RedProtect extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RPWorldListener(), this);
 
         // Register hooks
-        registerHooks();
+        hooks.registerHooks();
 
         try {
             rm = new RegionManager();
@@ -364,94 +263,4 @@ public class RedProtect extends JavaPlugin {
         }
     }
 
-    //check if plugin GriefPrevention is installed
-    private boolean checkGP() {
-        Plugin pGP = Bukkit.getPluginManager().getPlugin("GriefPrevention");
-        return pGP != null && pGP.isEnabled();
-    }
-
-    //check if plugin BossbarAPI is installed
-    private boolean checkBM() {
-        Plugin pBM = Bukkit.getPluginManager().getPlugin("BossBarAPI");
-        return pBM != null && pBM.isEnabled();
-    }
-
-    //check if plugin MyChunk is installed
-    private boolean checkMyChunk() {
-        Plugin pMC = Bukkit.getPluginManager().getPlugin("MyChunk");
-        return pMC != null && pMC.isEnabled();
-    }
-
-    //check if plugin MyPet is installed
-    private boolean checkMyPet() {
-        Plugin pMP = Bukkit.getPluginManager().getPlugin("MyPet");
-        return pMP != null && pMP.isEnabled();
-    }
-
-    //check if plugin McMMo is installed
-    private boolean checkMcMMo() {
-        Plugin pMMO = Bukkit.getPluginManager().getPlugin("mcMMO");
-        return pMMO != null && pMMO.isEnabled();
-    }
-
-    //check if plugin MagicCarpet is installed
-    private boolean checkMc() {
-        Plugin pMC = Bukkit.getPluginManager().getPlugin("MagicCarpet");
-        return pMC != null && pMC.isEnabled();
-    }
-
-    //check if plugin SkillAPI is installed
-    private boolean checkSkillAPI() {
-        Plugin pSK = Bukkit.getPluginManager().getPlugin("SkillAPI");
-        return pSK != null && pSK.isEnabled();
-    }
-
-    //check if plugin Vault is installed
-    private boolean checkVault() {
-        Plugin pVT = Bukkit.getPluginManager().getPlugin("Vault");
-        return pVT != null && pVT.isEnabled();
-    }
-
-    //check if plugin PvPManager is installed
-    private boolean checkPvPm() {
-        Plugin pPvp = Bukkit.getPluginManager().getPlugin("PvPManager");
-        return pPvp != null && pPvp.isEnabled();
-    }
-
-    private boolean checkEss() {
-        Plugin pEss = Bukkit.getPluginManager().getPlugin("Essentials");
-        return pEss != null && pEss.isEnabled();
-    }
-
-    private boolean checkDyn() {
-        Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
-        return pDyn != null && pDyn.isEnabled();
-    }
-
-    private boolean checkWe() {
-        Plugin pWe = Bukkit.getPluginManager().getPlugin("WorldEdit");
-        if (pWe != null) {
-            try {
-                int v = Integer.parseInt(pWe.getDescription().getVersion().split("\\.")[0]);
-                return (v >= 7) && pWe.isEnabled();
-            } catch (Exception ignored) {
-            }
-        }
-        return false;
-    }
-
-    private boolean checkSP() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkPHAPI() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
-        return p != null && p.isEnabled();
-    }
-
-    private boolean checkFac() {
-        Plugin p = Bukkit.getPluginManager().getPlugin("Factions");
-        return p != null && p.isEnabled();
-    }
 }

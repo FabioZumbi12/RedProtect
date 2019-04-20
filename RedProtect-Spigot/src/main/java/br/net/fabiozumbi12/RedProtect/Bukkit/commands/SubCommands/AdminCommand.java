@@ -54,7 +54,7 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 public class AdminCommand implements SubCommand {
 
     private static boolean handleMyChunk() {
-        if (!RedProtect.get().MyChunk) {
+        if (!RedProtect.get().hooks.myChunk) {
             return false;
         }
         Set<LiteChunk> allchunks = new HashSet<>();
@@ -168,7 +168,7 @@ public class AdminCommand implements SubCommand {
             }
 
             if (args[0].equalsIgnoreCase("gpTorp")) {
-                if (!RedProtect.get().GP) {
+                if (!RedProtect.get().hooks.griefPrev) {
                     RedProtect.get().logger.sucess("The plugin GriefPrevention is not installed or is disabled");
                     return true;
                 }
@@ -278,7 +278,7 @@ public class AdminCommand implements SubCommand {
 
             //rp regen stop
             if (checkCmd(args[0], "regenall") && args[1].equalsIgnoreCase("stop")) {
-                if (!RedProtect.get().WE) {
+                if (!RedProtect.get().hooks.worldEdit) {
                     return true;
                 }
                 RPUtil.stopRegen = true;
@@ -342,7 +342,7 @@ public class AdminCommand implements SubCommand {
 
             //rp regen <region> <database>
             if (checkCmd(args[0], "regen")) {
-                if (!RedProtect.get().WE) {
+                if (!RedProtect.get().hooks.worldEdit) {
                     return true;
                 }
                 World w = RedProtect.get().getServer().getWorld(args[2]);
@@ -362,7 +362,7 @@ public class AdminCommand implements SubCommand {
 
             //rp undo <region> <database>
             if (args[0].equalsIgnoreCase("undo")) {
-                if (!RedProtect.get().WE) {
+                if (!RedProtect.get().hooks.worldEdit) {
                     return true;
                 }
                 World w = RedProtect.get().getServer().getWorld(args[2]);
@@ -626,8 +626,8 @@ public class AdminCommand implements SubCommand {
                         }
                     }
 
-                    if (RedProtect.get().Ess) {
-                        RedProtect.get().pless.getUser(play).setLastLocation();
+                    if (RedProtect.get().hooks.essentials) {
+                        RedProtect.get().hooks.pless.getUser(play).setLastLocation();
                     }
                     play.teleport(loc);
                     RPLang.sendMessage(play, RPLang.get("cmdmanager.region.teleport") + " " + args[2]);

@@ -90,7 +90,7 @@ public class KickCommand implements SubCommand {
                 return true;
             }
 
-            if (RedProtect.get().SC && SimpleClansHook.inWar(r, player, visit)) {
+            if (RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(r, player, visit)) {
                 RPLang.sendMessage(player, "cmdmanager.cantkick.war");
                 return true;
             }

@@ -405,7 +405,7 @@ public class Region extends CoreRegion {
             }
         }
 
-        if (RedProtect.get().Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
             dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
@@ -455,7 +455,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isMember(Player player) {
-        boolean cs = RedProtect.get().SC && SimpleClansHook.getPlayerClan(this, player);
+        boolean cs = RedProtect.get().hooks.simpleClans && SimpleClansHook.getPlayerClan(this, player);
         if (cs) return true;
 
         if (RedProtect.get().onlineMode) {
@@ -1130,7 +1130,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean canPVP(Player attack, Player defend) {
-        if (defend != null && RedProtect.get().SC && SimpleClansHook.inWar(this, attack, defend)) {
+        if (defend != null && RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(this, attack, defend)) {
             return true;
         }
         if (!RedProtect.get().cfgs.isFlagEnabled("pvp")) {

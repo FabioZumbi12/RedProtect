@@ -97,10 +97,10 @@ public class RPGui implements Listener {
                 continue;
             }
             if (flag.equalsIgnoreCase("clan")) {
-                if (!RedProtect.get().SC) {
+                if (!RedProtect.get().hooks.simpleClans) {
                     continue;
                 }
-                ClanPlayer cp = RedProtect.get().clanManager.getClanPlayer(player);
+                ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(player);
                 if (cp == null || !cp.isLeader()) {
                     continue;
                 }
@@ -231,7 +231,7 @@ public class RPGui implements Listener {
         boolean flagv = false;
         if (flag.equalsIgnoreCase("clan")) {
             Player p = (Player) event.getInventory().getHolder();
-            ClanPlayer cp = RedProtect.get().clanManager.getClanPlayer(p);
+            ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(p);
             if (this.region.getFlagString(flag).equals("")) {
                 if (this.region.setFlag(this.player, flag, cp.getTag())) {
                     flagv = true;

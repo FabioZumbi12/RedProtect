@@ -54,7 +54,7 @@ public class RegenCommand implements SubCommand {
 
         Player player = (Player) sender;
 
-        if (!RedProtect.get().WE) {
+        if (!RedProtect.get().hooks.worldEdit) {
             RPLang.sendMessage(player, "cmdmanager.wenotloaded");
             return true;
         }
