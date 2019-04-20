@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import net.digiex.magiccarpet.Carpet;
@@ -113,7 +112,6 @@ public class RPMine18 implements Listener {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
-            a = null;
             if (e2 == null) {
                 return;
             }
@@ -150,7 +148,6 @@ public class RPMine18 implements Listener {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
-            a = null;
             if (e2 == null) {
                 return;
             }

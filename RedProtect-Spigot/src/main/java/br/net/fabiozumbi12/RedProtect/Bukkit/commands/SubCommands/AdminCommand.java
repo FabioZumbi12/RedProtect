@@ -33,9 +33,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
 import org.bukkit.*;
@@ -356,7 +356,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
+                WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
                 return true;
             }
 
@@ -376,7 +376,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                if (WEListener.undo(r.getID())) {
+                if (WEHook.undo(r.getID())) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
                 } else {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));

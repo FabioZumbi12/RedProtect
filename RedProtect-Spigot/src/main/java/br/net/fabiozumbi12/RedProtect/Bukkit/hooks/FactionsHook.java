@@ -28,61 +28,43 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import com.sucy.skill.api.event.PlayerExperienceGainEvent;
-import com.sucy.skill.api.event.PlayerGainSkillPointsEvent;
-import com.sucy.skill.api.event.PlayerManaGainEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import com.massivecraft.factions.event.EventFactionsChunksChange;
+import com.massivecraft.factions.event.EventFactionsExpansions;
+import com.massivecraft.massivecore.ps.PS;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class SkillAPIListener implements Listener {
+import java.util.Set;
 
+public class FactionsHook implements Listener {
 
-    @EventHandler
-    public void onPlayerExperience(PlayerExperienceGainEvent e) {
-        if (e.isCancelled()) {
+    @EventHandler(ignoreCancelled = true)
+    public void onCreateFac(EventFactionsChunksChange event) {
+        if (RedProtect.get().cfgs.getBool("hooks.factions.claim-over-rps")) {
             return;
         }
-
-        RedProtect.get().logger.debug("SkillAPI PlayerExperienceGainEvent event.");
-
-        Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-        if (r != null && !r.canSkill(p)) {
-            e.setCancelled(true);
+        for (PS chunk : event.getChunks()) {
+            Player p = event.getMPlayer().getPlayer();
+            Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(chunk.asBukkitChunk());
+            if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
+                event.setCancelled(true);
+                RPLang.sendMessage(p, "rpfactions.cantclaim");
+            }
         }
     }
 
-    @EventHandler
-    public void onPlayerSkillGain(PlayerGainSkillPointsEvent e) {
-        if (e.isCancelled()) {
+    @EventHandler(ignoreCancelled = true)
+    public void onExpandFac(EventFactionsExpansions event) {
+        if (RedProtect.get().cfgs.getBool("hooks.factions.claim-over-rps")) {
             return;
         }
-
-        RedProtect.get().logger.debug("SkillAPI PlayerGainSkillPointsEvent event.");
-
-        Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-
-        if (r != null && !r.canSkill(p)) {
-            e.setCancelled(true);
+        Player p = event.getMPlayer().getPlayer();
+        Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(p.getLocation().getChunk());
+        if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
+            RPLang.sendMessage(p, "rpfactions.cantclaim");
+            event.setCancelled(true);
         }
     }
-
-    @EventHandler
-    public void onPlayerManaGain(PlayerManaGainEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-
-        RedProtect.get().logger.debug("SkillAPI PlayerManaGainEvent event.");
-
-        Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-
-        if (r != null && !r.canSkill(p)) {
-            e.setCancelled(true);
-        }
-    }
-
 }

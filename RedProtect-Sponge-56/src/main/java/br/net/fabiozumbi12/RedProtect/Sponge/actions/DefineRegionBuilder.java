@@ -137,7 +137,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         List<String> othersName = new ArrayList<>();
-        Region otherrg = null;
+        Region otherrg;
 
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc(), this.getClass().getName());
@@ -185,7 +185,7 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
             UniqueAccount acc = RedProtect.get().econ.getOrCreateAccount(p.getUniqueId()).get();
-            Double peco = acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue();
+            double peco = acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue();
             long reco = newRegion.getArea() * RedProtect.get().cfgs.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.y-is-free")) {

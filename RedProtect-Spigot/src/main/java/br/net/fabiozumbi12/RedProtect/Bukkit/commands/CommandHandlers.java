@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;

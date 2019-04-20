@@ -190,9 +190,7 @@ public class RPLang {
         if (sender instanceof Player) {
             final Player p = (Player) sender;
             DelayedMessage.put(p, key);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-                DelayedMessage.remove(p);
-            }, 20);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> DelayedMessage.remove(p), 20);
         }
 
     }

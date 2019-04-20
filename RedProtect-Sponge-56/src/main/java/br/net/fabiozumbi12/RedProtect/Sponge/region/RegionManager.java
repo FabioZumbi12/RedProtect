@@ -142,11 +142,11 @@ public class RegionManager {
     */
 
     /**
-     * Return a {@code set<region>} of regions by player UUID or Name;
+     * Return a {@link Set<Region>} of regions by player UUID or Name;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      *
-     * @param uuid
+     * @param uuid the UUID of the player.
      * @return set<region>
      */
     public Set<Region> getRegions(String uuid) {
@@ -158,12 +158,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@code set<region>} of regions by player UUID or Name;
+     * Return a {@link Set<Region>} of regions by player UUID or Name;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
-     * @param uuid
-     * @return set<region>
+     * @param uuid The UUID of the player
+     * @return {@link Set<Region>}
      */
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -374,8 +374,7 @@ public class RegionManager {
 
     public Set<Region> getRegionsByWorld(World w) {
         WorldRegionManager rm = this.regionManagers.get(w);
-        Set<Region> regions = new HashSet<>(rm.getAllRegions());
-        return regions;
+        return new HashSet<>(rm.getAllRegions());
     }
 
     public void clearDB() {

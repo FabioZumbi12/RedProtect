@@ -29,10 +29,9 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -91,7 +90,7 @@ public class KickCommand implements SubCommand {
                 return true;
             }
 
-            if (RedProtect.get().SC && SCHook.inWar(r, player, visit)) {
+            if (RedProtect.get().SC && SimpleClansHook.inWar(r, player, visit)) {
                 RPLang.sendMessage(player, "cmdmanager.cantkick.war");
                 return true;
             }

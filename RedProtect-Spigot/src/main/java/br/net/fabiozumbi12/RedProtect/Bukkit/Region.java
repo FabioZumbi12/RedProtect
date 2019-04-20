@@ -27,11 +27,10 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SCHook;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
 import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.*;
@@ -456,7 +455,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isMember(Player player) {
-        boolean cs = RedProtect.get().SC && SCHook.getPlayerClan(this, player);
+        boolean cs = RedProtect.get().SC && SimpleClansHook.getPlayerClan(this, player);
         if (cs) return true;
 
         if (RedProtect.get().onlineMode) {
@@ -1131,7 +1130,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean canPVP(Player attack, Player defend) {
-        if (defend != null && RedProtect.get().SC && SCHook.inWar(this, attack, defend)) {
+        if (defend != null && RedProtect.get().SC && SimpleClansHook.inWar(this, attack, defend)) {
             return true;
         }
         if (!RedProtect.get().cfgs.isFlagEnabled("pvp")) {

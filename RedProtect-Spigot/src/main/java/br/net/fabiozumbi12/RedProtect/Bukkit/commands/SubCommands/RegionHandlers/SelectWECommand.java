@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -57,7 +57,7 @@ public class SelectWECommand implements SubCommand {
                     RPLang.sendMessage(player, "cmdmanager.region.doesexists");
                     return true;
                 }
-                WEListener.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());
+                WEHook.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());
             }
             return true;
         }

@@ -121,7 +121,7 @@ public class RPBlockListener {
 
         if ((RedProtect.get().cfgs.root().private_cat.use && s.getType().equals(TileEntityTypes.SIGN))) {
             Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
-            Boolean out = RedProtect.get().cfgs.root().private_cat.allow_outside;
+            boolean out = RedProtect.get().cfgs.root().private_cat.allow_outside;
             //private sign
             if (cont.validatePrivateSign(lines.get(0).toPlain())) {
                 if (out || r != null) {

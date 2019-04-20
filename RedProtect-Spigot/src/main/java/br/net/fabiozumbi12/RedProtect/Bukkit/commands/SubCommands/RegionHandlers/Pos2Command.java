@@ -28,10 +28,9 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -67,12 +66,12 @@ public class Pos2Command implements SubCommand {
                 Location loc1 = RedProtect.get().firstLocationSelections.get(player);
                 Location loc2 = RedProtect.get().secondLocationSelections.get(player);
                 if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("hooks.useWECUI")) {
-                    WEListener.setSelectionRP(player, loc1, loc2);
+                    WEHook.setSelectionRP(player, loc1, loc2);
                 }
 
                 if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")) {
-                    Double dist = loc1.distanceSquared(loc2);
-                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist.intValue()));
+                    double dist = loc1.distanceSquared(loc2);
+                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), (int) dist));
                 } else {
                     RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                 }

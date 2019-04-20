@@ -53,7 +53,7 @@ import java.util.Arrays;
 public class RPGui {
 
     private int size;
-    private ItemStack[] guiItens;
+    private ItemStack[] guiItems;
     private Player player;
     private Region region;
     private Inventory inv;
@@ -65,25 +65,25 @@ public class RPGui {
         this.region = region;
         if (maxSlots <= 9) {
             this.size = 9;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots >= 10 && maxSlots <= 18) {
             this.size = 18;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots >= 19 && maxSlots <= 27) {
             this.size = 27;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
         }
         if (maxSlots >= 28 && maxSlots <= 36) {
             this.size = 36;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
         }
         if (maxSlots >= 37 && maxSlots <= 45) {
             this.size = 45;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
         }
         if (maxSlots >= 46 && maxSlots <= 54) {
             this.size = 54;
-            this.guiItens = new ItemStack[this.size];
+            this.guiItems = new ItemStack[this.size];
         }
 
         for (String flag : region.getFlags().keySet()) {
@@ -98,11 +98,11 @@ public class RPGui {
 
                     int i = RedProtect.get().cfgs.getGuiSlot(flag);
 
-                    this.guiItens[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
+                    this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
 
-                    this.guiItens[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).name));
+                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).name));
 
-                    this.guiItens[i].offer(Keys.ITEM_LORE, Arrays.asList(
+                    this.guiItems[i].offer(Keys.ITEM_LORE, Arrays.asList(
                             Text.of(RedProtect.get().cfgs.getGuiString("value"), RedProtect.get().cfgs.getGuiString(region.getFlags().get(flag).toString())),
                             RPUtil.toText("&0" + flag),
                             RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description),
@@ -110,12 +110,12 @@ public class RPGui {
                             RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description2)));
 
                     if (!this.region.getFlagBool(flag)) {
-                        this.guiItens[i].remove(Keys.ITEM_ENCHANTMENTS);
+                        this.guiItems[i].remove(Keys.ITEM_ENCHANTMENTS);
                     } else {
-                        this.guiItens[i] = RedProtect.get().getPVHelper().offerEnchantment(this.guiItens[i]);
+                        this.guiItems[i] = RedProtect.get().getPVHelper().offerEnchantment(this.guiItems[i]);
                     }
-                    this.guiItens[i].offer(Keys.HIDE_ENCHANTMENTS, true);
-                    this.guiItens[i].offer(Keys.HIDE_ATTRIBUTES, true);
+                    this.guiItems[i].offer(Keys.HIDE_ENCHANTMENTS, true);
+                    this.guiItems[i].offer(Keys.HIDE_ATTRIBUTES, true);
                 }
             } catch (Exception ex) {
                 this.player.sendMessage(Text.of(Color.RED, "Seems RedProtect have a wrong Item Gui or a problem on guiconfig. Report this to server owner."));
@@ -126,8 +126,8 @@ public class RPGui {
         this.inv = RedProtect.get().getPVHelper().newInventory(size, name);
 
         for (int slotc = 0; slotc < this.size; slotc++) {
-            if (this.guiItens[slotc] == null) {
-                this.guiItens[slotc] = RedProtect.get().cfgs.getGuiSeparator();
+            if (this.guiItems[slotc] == null) {
+                this.guiItems[slotc] = RedProtect.get().cfgs.getGuiSeparator();
             }
             int line = 0;
             int slot = slotc;
@@ -135,7 +135,7 @@ public class RPGui {
                 line = slotc / 9;
                 slot = slotc - (line * 9);
             }
-            RedProtect.get().getPVHelper().query(inv, slot, line).set(this.guiItens[slotc]);
+            RedProtect.get().getPVHelper().query(inv, slot, line).set(this.guiItems[slotc]);
         }
 
         RedProtect.get().getGame().getEventManager().registerListeners(RedProtect.get().container, this);
@@ -274,15 +274,12 @@ public class RPGui {
     public void close(boolean close) {
         RedProtect.get().getPVHelper().removeGuiItem(this.player);
         RedProtect.get().getGame().getEventManager().unregisterListeners(this);
-        this.guiItens = null;
         if (close) RedProtect.get().getPVHelper().closeInventory(this.player);
+
+        this.guiItems = null;
         this.player = null;
         this.region = null;
-        try {
-            this.finalize();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void open() {
