@@ -1136,7 +1136,7 @@ public class CommandHandlers {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             int i = 0;
-            for (String key : RPLang.helpStrings()) {
+            for (String key : RPLang.getHelpStrings()) {
                 if (RedProtect.get().ph.hasCommandPerm(player, key) || ((key.equals("pos1") || key.equals("pos2")) && RedProtect.get().ph.hasCommandPerm(player, "redefine"))) {
                     if (key.equalsIgnoreCase("flaggui")) {
                         continue;

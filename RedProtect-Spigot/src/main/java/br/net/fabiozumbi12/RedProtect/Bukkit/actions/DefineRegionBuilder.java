@@ -177,7 +177,7 @@ public class DefineRegionBuilder extends RegionBuilder {
                 RedProtect.get().econ.withdrawPlayer(p, reco);
                 p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco + " " + RedProtect.get().cfgs.getEcoString("economy-name")));
             } else {
-                RPLang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer<>("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco)});
+                RPLang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco)});
                 return;
             }
         }
