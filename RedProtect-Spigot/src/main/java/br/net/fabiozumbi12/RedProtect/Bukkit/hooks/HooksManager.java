@@ -74,7 +74,7 @@ public class HooksManager {
             RedProtect.get().logger.info("MyPet found. Hooked.");
         }
         if (mcMMO) {
-            RedProtect.get().getServer().getPluginManager().registerEvents(new McMMoHook(), RedProtect.get());
+            RedProtect.get().getServer().getPluginManager().registerEvents(new McMMOHook(), RedProtect.get());
             RedProtect.get().logger.info("mcMMo found. Hooked.");
         }
         if (skillAPI) {
