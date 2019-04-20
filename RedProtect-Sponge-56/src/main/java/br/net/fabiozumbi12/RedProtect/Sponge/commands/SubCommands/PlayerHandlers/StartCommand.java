@@ -54,7 +54,7 @@ public class StartCommand {
                     } else {
                         Player player = (Player) src;
 
-                        if (!RedProtect.get().cfgs.isAllowedWorld(player)) {
+                        if (!RedProtect.get().config.isAllowedWorld(player)) {
                             RPLang.sendMessage(player, "regionbuilder.region.worldnotallowed");
                             return CommandResult.success();
                         }

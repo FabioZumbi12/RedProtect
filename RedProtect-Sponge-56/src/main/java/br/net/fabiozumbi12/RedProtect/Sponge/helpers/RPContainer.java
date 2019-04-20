@@ -44,14 +44,14 @@ import java.util.List;
 public class RPContainer {
 
     public boolean canOpen(BlockSnapshot b, Player p) {
-        if (!RedProtect.get().cfgs.root().private_cat.use || p.hasPermission("redprotect.bypass")) {
+        if (!RedProtect.get().config.root().private_cat.use || p.hasPermission("redprotect.bypass")) {
             return true;
         }
 
         List<Direction> dirs = Arrays.asList(Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.WEST);
         String blocktype = b.getState().getType().getName();
         Location<World> loc = b.getLocation().get();
-        List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().config.root().private_cat.allowed_blocks;
         boolean deny = true;
         if (blocks.stream().anyMatch(blocktype::matches)) {
             for (Direction dir : dirs) {
@@ -80,19 +80,19 @@ public class RPContainer {
     }
 
     public boolean canBreak(Player p, BlockSnapshot b) {
-        if (!RedProtect.get().cfgs.root().private_cat.use) {
+        if (!RedProtect.get().config.root().private_cat.use) {
             return true;
         }
 
         Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
-        if (reg == null && !RedProtect.get().cfgs.root().private_cat.allow_outside) {
+        if (reg == null && !RedProtect.get().config.root().private_cat.allow_outside) {
             return true;
         }
 
         List<Direction> dirs = Arrays.asList(Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.UP, Direction.DOWN);
         String blocktype = b.getState().getType().getName();
         Location<World> loc = b.getLocation().get();
-        List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().config.root().private_cat.allowed_blocks;
 
         boolean deny = true;
 
@@ -130,19 +130,19 @@ public class RPContainer {
     }
 
     public boolean canWorldBreak(BlockSnapshot b) {
-        if (!RedProtect.get().cfgs.root().private_cat.use) {
+        if (!RedProtect.get().config.root().private_cat.use) {
             return true;
         }
 
         Region reg = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
-        if (reg == null && !RedProtect.get().cfgs.root().private_cat.allow_outside) {
+        if (reg == null && !RedProtect.get().config.root().private_cat.allow_outside) {
             return true;
         }
 
         List<Direction> dirs = Arrays.asList(Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.UP, Direction.DOWN);
         String blocktype = b.getState().getType().getName();
         Location<World> loc = b.getLocation().get();
-        List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().config.root().private_cat.allowed_blocks;
 
         if (isSign(loc.createSnapshot())) {
             BlockSnapshot sign1 = loc.createSnapshot();
@@ -212,7 +212,7 @@ public class RPContainer {
 
     public boolean isContainer(BlockSnapshot block) {
         Location<World> loc = block.getLocation().get().getBlockRelative(block.getLocation().get().get(Keys.DIRECTION).get().getOpposite());
-        List<String> blocks = RedProtect.get().cfgs.root().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().config.root().private_cat.allowed_blocks;
 
         return blocks.stream().anyMatch(loc.getBlockType().getName()::matches);
     }

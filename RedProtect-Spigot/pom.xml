@@ -145,6 +145,12 @@
 
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>LATEST</version>
         </dependency>
@@ -201,8 +207,8 @@
         </dependency>
         <!--
           <dependency>
-              <groupId>org.dynmap</groupId>
-              <artifactId>dynmap-api</artifactId>
+              <groupId>org.dynmapHook</groupId>
+              <artifactId>dynmapHook-api</artifactId>
               <version>LATEST</version>
           </dependency>-->
     </dependencies>

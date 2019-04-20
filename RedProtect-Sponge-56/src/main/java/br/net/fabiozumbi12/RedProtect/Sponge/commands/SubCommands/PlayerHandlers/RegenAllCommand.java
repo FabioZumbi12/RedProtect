@@ -49,7 +49,7 @@ public class RegenAllCommand {
                     } else {
                         Player player = (Player) src;
 
-                        if (!RedProtect.get().WE) {
+                        if (!RedProtect.get().hooks.WE) {
                             return CommandResult.success();
                         }
                         int regen = RedProtect.get().rm.regenAll(args.<String>getOne("player").get());

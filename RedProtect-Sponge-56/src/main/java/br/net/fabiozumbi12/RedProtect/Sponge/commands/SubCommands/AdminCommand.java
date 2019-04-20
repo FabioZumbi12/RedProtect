@@ -93,8 +93,8 @@ public class AdminCommand implements CommandCallable {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'file' before convert from FILE to Mysql.");
                         return cmdr;
                     } else {
-                        RedProtect.get().cfgs.root().file_type = "mysql";
-                        RedProtect.get().cfgs.save();
+                        RedProtect.get().config.root().file_type = "mysql";
+                        RedProtect.get().config.save();
                         RedProtect.get().reload();
                         RedProtect.get().logger.sucess("Redprotect reloaded with Mysql as database! Ready to use!");
                         return cmdr;
@@ -111,8 +111,8 @@ public class AdminCommand implements CommandCallable {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to File.");
                         return cmdr;
                     } else {
-                        RedProtect.get().cfgs.root().file_type = "file";
-                        RedProtect.get().cfgs.save();
+                        RedProtect.get().config.root().file_type = "file";
+                        RedProtect.get().config.save();
                         RedProtect.get().reload();
                         RedProtect.get().logger.sucess("Redprotect reloaded with File as database! Ready to use!");
                         return cmdr;
@@ -157,7 +157,7 @@ public class AdminCommand implements CommandCallable {
 
 
             if (checkCmd(args[0], "reload")) {
-                for (Player p : RedProtect.get().getGame().getServer().getOnlinePlayers()) {
+                for (Player p : Sponge.getGame().getServer().getOnlinePlayers()) {
                     RedProtect.get().getPVHelper().closeInventory(p);
                 }
                 RedProtect.get().reload();
@@ -169,7 +169,7 @@ public class AdminCommand implements CommandCallable {
                 try {
                     RedProtect.get().commandHandler.unregisterAll();
 
-                    RedProtect.get().cfgs = new RPConfig(RedProtect.get().factory);
+                    RedProtect.get().config = new RPConfig(RedProtect.get().factory);
                     RPLang.init();
 
                     RedProtect.get().logger.info("Re-registering commands...");
@@ -210,7 +210,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp regen stop
             if (checkCmd(args[0], "regen") && args[1].equalsIgnoreCase("stop")) {
-                if (!RedProtect.get().WE) {
+                if (!RedProtect.get().hooks.WE) {
                     return cmdr;
                 }
                 RPUtil.stopRegen = true;
@@ -262,7 +262,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp regen <region> <database>
             if (checkCmd(args[0], "regen")) {
-                if (!RedProtect.get().WE) {
+                if (!RedProtect.get().hooks.WE) {
                     return cmdr;
                 }
                 Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
@@ -282,7 +282,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp undo <region> <database>
             if (args[0].equalsIgnoreCase("undo")) {
-                if (!RedProtect.get().WE) {
+                if (!RedProtect.get().hooks.WE) {
                     return cmdr;
                 }
                 Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
@@ -469,7 +469,7 @@ public class AdminCommand implements CommandCallable {
 
                 RPUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
 
-                String sec = String.valueOf(RedProtect.get().cfgs.root().region_settings.delay_after_kick_region);
+                String sec = String.valueOf(RedProtect.get().config.root().region_settings.delay_after_kick_region);
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.get().getName())) {
                     RPUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.kicked").replace("{player}", visit.get().getName()).replace("{region}", r.getName()).replace("{time", sec));
@@ -561,7 +561,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[1], w);
-                if (r != null && (RedProtect.get().cfgs.getDefFlags().contains(args[2]) || RedProtect.get().cfgs.AdminFlags.contains(args[2]))) {
+                if (r != null && (RedProtect.get().config.getDefFlags().contains(args[2]) || RedProtect.get().config.AdminFlags.contains(args[2]))) {
                     Object objflag = RPUtil.parseObject(args[3]);
                     if (r.setFlag(RedProtect.get().getPVHelper().getCause(sender), args[2], objflag)) {
                         sender.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2])));
@@ -580,7 +580,7 @@ public class AdminCommand implements CommandCallable {
                 } catch (Exception ignored){}
             }
             sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
-            int regionsPage = RedProtect.get().cfgs.root().region_settings.region_per_page;
+            int regionsPage = RedProtect.get().config.root().region_settings.region_per_page;
             int total = 0;
             int last = 0;
 
@@ -596,7 +596,7 @@ public class AdminCommand implements CommandCallable {
 
                 Set<Region> wregions = new HashSet<>();
                 for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
-                    SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
+                    SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.root().region_settings.date_format);
                     Date now = null;
                     try {
                         now = dateformat.parse(RPUtil.dateNow());
@@ -611,12 +611,12 @@ public class AdminCommand implements CommandCallable {
                         e.printStackTrace();
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-                    for (String play : RedProtect.get().cfgs.root().purge.ignore_regions_from_players) {
+                    for (String play : RedProtect.get().config.root().purge.ignore_regions_from_players) {
                         if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
                             break;
                         }
                     }
-                    if (!r.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader) && days > RedProtect.get().cfgs.root().purge.remove_oldest && r.getArea() >= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
+                    if (!r.isLeader(RedProtect.get().config.root().region_settings.default_leader) && days > RedProtect.get().config.root().purge.remove_oldest && r.getArea() >= RedProtect.get().config.root().purge.regen.max_area_regen) {
                         wregions.add(r);
                     }
                 }
@@ -624,7 +624,7 @@ public class AdminCommand implements CommandCallable {
                     continue;
                 }
 
-                String colorChar = RedProtect.get().cfgs.root().region_settings.world_colors.get(w.getName());
+                String colorChar = RedProtect.get().config.root().region_settings.world_colors.get(w.getName());
 
                 int totalLocal = wregions.size();
                 total += totalLocal;
@@ -719,18 +719,18 @@ public class AdminCommand implements CommandCallable {
         return cmdr;
     }
 
+    public List<String> consoleCmds = Arrays.asList("list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "teleport", "filetomysql", "mysqltofile", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+
     @Override
     public List<String> getSuggestions(@Nullable CommandSource source, String arguments, @Nullable Location<World> targetPosition) {
-        List<String> consolecmds = Arrays.asList("list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "teleport", "filetomysql", "mysqltofile", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
-
         String[] args = arguments.split(" ");
         if (args.length == 0) {
-            return consolecmds;
+            return consoleCmds;
         }
 
         if (args.length == 1) {
             SortedSet<String> tab = new TreeSet<>();
-            for (String command : consolecmds) {
+            for (String command : consoleCmds) {
                 if (command.startsWith(args[0])) {
                     tab.add(command);
                 }

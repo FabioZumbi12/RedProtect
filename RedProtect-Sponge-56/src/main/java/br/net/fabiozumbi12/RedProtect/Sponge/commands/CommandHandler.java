@@ -33,7 +33,10 @@ import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.util.Arrays;
@@ -47,7 +50,6 @@ public class CommandHandler {
 
     public CommandHandler(RedProtect plugin) {
         this.plugin = plugin;
-
         CommandSpec redProtect = CommandSpec.builder()
                 .description(Text.of("Main command for RedProtect."))
                 .executor((src, args) -> {
@@ -109,6 +111,15 @@ public class CommandHandler {
                 .build();
 
         plugin.commandManager.register(plugin, redProtect, Arrays.asList("redprotect", "rp"));
+    }
+
+    public static CommandResult sendHelpMessageOrAdmin(CommandSource src, String command, boolean usage){
+        if (src instanceof Player){
+            RPLang.sendCommandHelp(src, command, usage);
+            return CommandResult.success();
+        } else {
+            return new AdminCommand().process(src, command);
+        }
     }
 
     public void unregisterAll() {

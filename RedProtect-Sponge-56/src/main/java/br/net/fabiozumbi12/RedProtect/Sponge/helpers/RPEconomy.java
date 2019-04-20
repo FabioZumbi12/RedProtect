@@ -72,7 +72,7 @@ public class RPEconomy {
                             regionCost += getInvValue(inv.slots());
                         }
                     } else {
-                        regionCost += RedProtect.get().cfgs.getBlockCost(b.getState().getType().getName());
+                        regionCost += RedProtect.get().config.getBlockCost(b.getState().getType().getName());
                     }
                 }
             }
@@ -86,11 +86,11 @@ public class RPEconomy {
     }
 
     public static String getCostMessage(Region r) {
-        return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().cfgs.getEcoString("economy-name");
+        return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.getEcoString("economy-name");
     }
 
     public static String getFormatted(long value) {
-        return RedProtect.get().cfgs.getEcoString("economy-symbol") + value;
+        return RedProtect.get().config.getEcoString("economy-symbol") + value;
     }
 
     public static boolean putToSell(Region r, String uuid, long value) {
@@ -100,7 +100,7 @@ public class RPEconomy {
             r.setValue(value);
             r.setWelcome(getCostMessage(r));
             r.setFlag(null, "for-sale", true);
-            if (RedProtect.get().cfgs.getEcoBool("rename-region")) {
+            if (RedProtect.get().config.getEcoBool("rename-region")) {
                 RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             return true;
@@ -117,8 +117,8 @@ public class RPEconomy {
             r.addLeader(uuid);
             r.setDate(RPUtil.dateNow());
             r.setWelcome("");
-            r.setFlags(RedProtect.get().cfgs.getDefFlagsValues());
-            if (RedProtect.get().cfgs.getEcoBool("rename-region")) {
+            r.setFlags(RedProtect.get().config.getDefFlagsValues());
+            if (RedProtect.get().config.getEcoBool("rename-region")) {
                 RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             r.removeFlag("for-sale");

@@ -48,7 +48,7 @@ import java.util.Set;
 public class DefineRegionBuilder extends RegionBuilder {
 
     public DefineRegionBuilder(Player p, Location<World> loc1, Location<World> loc2, String regionName, String leader, Set<String> leaders, boolean admin) {
-        if (!RedProtect.get().cfgs.isAllowedWorld(p)) {
+        if (!RedProtect.get().config.isAllowedWorld(p)) {
             this.setError(p, RPLang.get("regionbuilder.newRegion.worldnotallowed"));
             return;
         }
@@ -78,7 +78,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         String pName = RPUtil.PlayerToUUID(p.getName());
 
         String wmsg = "";
-        if (leader.equals(RedProtect.get().cfgs.root().region_settings.default_leader)) {
+        if (leader.equals(RedProtect.get().config.root().region_settings.default_leader)) {
             pName = leader;
             wmsg = "hide ";
         }
@@ -89,9 +89,9 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (new Region(null, loc1, loc2, null).getArea() > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+        if (new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.root().region_settings.wand_max_distance, dist));
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.root().region_settings.wand_max_distance, dist));
             return;
         }
 
@@ -102,16 +102,16 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
-        if (RedProtect.get().cfgs.root().region_settings.autoexpandvert_ondefine) {
+        if (RedProtect.get().config.root().region_settings.autoexpandvert_ondefine) {
             miny = 0;
             maxy = p.getWorld().getBlockMax().getY();
-            if (RedProtect.get().cfgs.root().region_settings.claim.miny != -1)
-                miny = RedProtect.get().cfgs.root().region_settings.claim.miny;
-            if (RedProtect.get().cfgs.root().region_settings.claim.maxy != -1)
-                maxy = RedProtect.get().cfgs.root().region_settings.claim.maxy;
+            if (RedProtect.get().config.root().region_settings.claim.miny != -1)
+                miny = RedProtect.get().config.root().region_settings.claim.miny;
+            if (RedProtect.get().config.root().region_settings.claim.maxy != -1)
+                maxy = RedProtect.get().config.root().region_settings.claim.maxy;
         }
 
-        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.dateNow(), RedProtect.get().cfgs.getDefFlagsValues(), wmsg, 0, null, true);
+        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RPUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), wmsg, 0, null, true);
         leaders.forEach(newRegion::addLeader);
         newRegion.setPrior(RPUtil.getUpdatedPrior(newRegion));
 
@@ -183,20 +183,20 @@ public class DefineRegionBuilder extends RegionBuilder {
             }
         }
 
-        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
             UniqueAccount acc = RedProtect.get().econ.getOrCreateAccount(p.getUniqueId()).get();
             double peco = acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue();
-            long reco = newRegion.getArea() * RedProtect.get().cfgs.getEcoInt("claim-cost-per-block.cost-per-block");
+            long reco = newRegion.getArea() * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
 
-            if (!RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.y-is-free")) {
+            if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
                 reco = reco * Math.abs(newRegion.getMaxY() - newRegion.getMinY());
             }
 
             if (peco >= reco) {
                 acc.withdraw(RedProtect.get().econ.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getPVHelper().getCause(p));
-                p.sendMessage(RPUtil.toText(RPLang.get("economy.newRegion.claimed").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco + " " + RedProtect.get().cfgs.getEcoString("economy-name"))));
+                p.sendMessage(RPUtil.toText(RPLang.get("economy.newRegion.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
             } else {
-                this.setError(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco));
+                this.setError(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco));
                 return;
             }
         }

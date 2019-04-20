@@ -78,20 +78,20 @@ public class FlagCommand {
                                 value = args.<String>getOne("value").get();
                             }
 
-                            if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.enable) {
-                                if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                            if (RedProtect.get().config.root().flags_configuration.change_flag_delay.enable) {
+                                if (RedProtect.get().config.root().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
                                         RPUtil.startFlagChanger(r.getName(), flag, player);
                                         handleFlag(player, flag, value, r);
                                     } else {
-                                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds + ""));
+                                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.root().flags_configuration.change_flag_delay.seconds + ""));
                                     }
                                     return CommandResult.success();
                                 }
                             }
                             handleFlag(player, flag, value, r);
                         } else {
-                            RPGui gui = new RPGui(r.getName(), player, r, false, RedProtect.get().cfgs.getGuiMaxSlot());
+                            RPGui gui = new RPGui(r.getName(), player, r, false, RedProtect.get().config.getGuiMaxSlot());
                             gui.open();
                         }
                     }
@@ -120,8 +120,8 @@ class FlagCommandElement extends CommandElement {
         String[] args = argss.getRaw().split(" ");
         if (args.length == 1) {
             RedProtect.get().logger.severe("args2: " + Arrays.asList(args));
-            SortedSet<String> tab = new TreeSet<>(RedProtect.get().cfgs.getDefFlags());
-            for (String flag : RedProtect.get().cfgs.AdminFlags) {
+            SortedSet<String> tab = new TreeSet<>(RedProtect.get().config.getDefFlags());
+            for (String flag : RedProtect.get().config.AdminFlags) {
                 if (RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
@@ -131,12 +131,12 @@ class FlagCommandElement extends CommandElement {
         if (args.length == 2) {
             RedProtect.get().logger.severe("args3: " + Arrays.asList(args));
             SortedSet<String> tab = new TreeSet<>();
-            for (String flag : RedProtect.get().cfgs.getDefFlags()) {
+            for (String flag : RedProtect.get().config.getDefFlags()) {
                 if (flag.startsWith(args[1])) {
                     tab.add(flag);
                 }
             }
-            for (String flag : RedProtect.get().cfgs.AdminFlags) {
+            for (String flag : RedProtect.get().config.AdminFlags) {
                 if (flag.startsWith(args[1]) && RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }

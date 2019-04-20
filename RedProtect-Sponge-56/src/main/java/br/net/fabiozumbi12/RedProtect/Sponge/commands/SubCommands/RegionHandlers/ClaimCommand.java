@@ -59,7 +59,7 @@ public class ClaimCommand {
                     } else {
                         Player player = (Player) src;
 
-                        String claimmode = RedProtect.get().cfgs.getWorldClaimType(player.getWorld().getName());
+                        String claimmode = RedProtect.get().config.getWorldClaimType(player.getWorld().getName());
                         if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH"))) {
                             RPLang.sendMessage(player, "blocklistener.region.blockmode");
                             return CommandResult.success();

@@ -61,13 +61,13 @@ public class RPLogger {
     }
 
     public void debug(LogLevel level, String s) {
-        if (RedProtect.get().cfgs.root().debug_messages.get(level.name().toLowerCase())) {
+        if (RedProtect.get().config.root().debug_messages.get(level.name().toLowerCase())) {
             Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &b" + s + "&r]"));
         }
     }
 
     public void addLog(String logLine) {
-        if (!RedProtect.get().cfgs.root().log_actions) {
+        if (!RedProtect.get().config.root().log_actions) {
             return;
         }
         int key = MainLog.keySet().size() + 1;
@@ -79,7 +79,7 @@ public class RPLogger {
     }
 
     public void SaveLogs() {
-        if (!RedProtect.get().cfgs.root().log_actions) {
+        if (!RedProtect.get().config.root().log_actions) {
             return;
         }
 

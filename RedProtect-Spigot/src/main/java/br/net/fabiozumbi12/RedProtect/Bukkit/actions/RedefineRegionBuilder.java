@@ -50,9 +50,9 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().cfgs.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().cfgs.getInt("region-settings.define-max-distance"), dist));
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.getInt("region-settings.define-max-distance"), dist));
             return;
         }
 
@@ -60,13 +60,13 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
-        if (RedProtect.get().cfgs.getBool("region-settings.autoexpandvert-ondefine")) {
+        if (RedProtect.get().config.getBool("region-settings.autoexpandvert-ondefine")) {
             miny = 0;
             maxy = w.getMaxHeight();
-            if (RedProtect.get().cfgs.getInt("region-settings.claim.miny") != -1)
-                miny = RedProtect.get().cfgs.getInt("region-settings.claim.miny");
-            if (RedProtect.get().cfgs.getInt("region-settings.claim.maxy") != -1)
-                maxy = RedProtect.get().cfgs.getInt("region-settings.claim.maxy");
+            if (RedProtect.get().config.getInt("region-settings.claim.miny") != -1)
+                miny = RedProtect.get().config.getInt("region-settings.claim.miny");
+            if (RedProtect.get().config.getInt("region-settings.claim.maxy") != -1)
+                maxy = RedProtect.get().config.getInt("region-settings.claim.maxy");
         }
 
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
@@ -141,19 +141,19 @@ public class RedefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        if (RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
             double peco = RedProtect.get().econ.getBalance(p);
-            long reco = (region.getArea() <= old.getArea() ? 0 : region.getArea() - old.getArea()) * RedProtect.get().cfgs.getEcoInt("claim-cost-per-block.cost-per-block");
+            long reco = (region.getArea() <= old.getArea() ? 0 : region.getArea() - old.getArea()) * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
 
-            if (!RedProtect.get().cfgs.getEcoBool("claim-cost-per-block.y-is-free")) {
+            if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
                 reco = reco * Math.abs(region.getMaxY() - region.getMinY());
             }
 
             if (peco >= reco) {
                 RedProtect.get().econ.withdrawPlayer(p, reco);
-                p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco + " " + RedProtect.get().cfgs.getEcoString("economy-name")));
+                p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name")));
             } else {
-                RPLang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco)});
+                RPLang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco)});
                 return;
             }
         }

@@ -110,14 +110,6 @@
         </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-core</artifactId>
-            <version>LATEST</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <resources>

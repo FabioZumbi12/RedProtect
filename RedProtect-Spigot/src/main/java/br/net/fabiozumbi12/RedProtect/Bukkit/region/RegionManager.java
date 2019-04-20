@@ -65,7 +65,7 @@ public class RegionManager {
             return;
         }
         WorldRegionManager mgr;
-        if (RedProtect.get().cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
+        if (RedProtect.get().config.getString("file-type").equalsIgnoreCase("mysql")) {
             mgr = new WorldMySQLRegionManager(w);
         } else {
             mgr = new WorldFlatFileRegionManager(w);
@@ -77,8 +77,8 @@ public class RegionManager {
     public void unloadAll() {
         for (World w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
-            if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
-                RedProtect.get().hooks.dynmap.removeAll(w);
+            if (RedProtect.get().hooks.Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enable")) {
+                RedProtect.get().hooks.dynmapHook.removeAll(w);
             }
         }
         this.regionManagers.clear();
@@ -126,7 +126,7 @@ public class RegionManager {
             return 0;
         }
         int size = 0;
-        if (RedProtect.get().cfgs.getBool("region-settings.blocklimit-per-world")) {
+        if (RedProtect.get().config.getBool("region-settings.blocklimit-per-world")) {
             WorldRegionManager rms = this.regionManagers.get(w);
             size = rms.getTotalRegionSize(uuid);
         } else {
@@ -206,7 +206,7 @@ public class RegionManager {
     public int getPlayerRegions(String player, World w) {
         player = RPUtil.PlayerToUUID(player);
         int size;
-        if (RedProtect.get().cfgs.getBool("region-settings.claimlimit-per-world")) {
+        if (RedProtect.get().config.getBool("region-settings.claimlimit-per-world")) {
             size = getRegions(player, w).size();
         } else {
             size = getRegions(player).size();
@@ -216,9 +216,9 @@ public class RegionManager {
 
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enable")) {
             try {
-                RedProtect.get().hooks.dynmap.addMark(r);
+                RedProtect.get().hooks.dynmapHook.addMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
@@ -235,9 +235,9 @@ public class RegionManager {
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
         removeCache(r);
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enable")) {
             try {
-                RedProtect.get().hooks.dynmap.removeMark(r);
+                RedProtect.get().hooks.dynmapHook.removeMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
@@ -282,7 +282,7 @@ public class RegionManager {
     public int regenAll(String player) {
         int delay = 0;
         for (Region r : getRegions(player)) {
-            if (r.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
+            if (r.getArea() <= RedProtect.get().config.getInt("purge.regen.max-area-regen")) {
                 WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
             }

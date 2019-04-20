@@ -44,7 +44,7 @@ public class RPWorldListener {
         World w = e.getTargetWorld();
         try {
             RedProtect.get().rm.load(w);
-            RedProtect.get().cfgs.loadPerWorlds(w);
+            RedProtect.get().config.loadPerWorlds(w);
             RedProtect.get().logger.warning("World loaded: " + w.getName());
 
         } catch (Exception ex) {

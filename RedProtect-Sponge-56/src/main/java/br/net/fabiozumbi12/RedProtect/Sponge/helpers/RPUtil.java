@@ -184,7 +184,7 @@ public class RPUtil extends CoreUtil {
         if (item.get(Keys.ITEM_LORE).isPresent()) {
             try {
                 String lore = item.get(Keys.ITEM_LORE).get().get(1).toPlain();
-                if (RedProtect.get().cfgs.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.get().cfgs.getGuiString("separator").toPlain())) {
+                if (RedProtect.get().config.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.get().config.getGuiString("separator").toPlain())) {
                     return true;
                 }
             } catch (IndexOutOfBoundsException ignored) {
@@ -196,22 +196,22 @@ public class RPUtil extends CoreUtil {
     public static boolean isGuiItem(ItemStack pitem) {
         if (pitem.get(Keys.ITEM_LORE).isPresent() &&
                 pitem.get(Keys.ITEM_LORE).get().size() >= 1 &&
-                RedProtect.get().cfgs.getDefFlags().contains(pitem.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", ""))) {
+                RedProtect.get().config.getDefFlags().contains(pitem.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", ""))) {
             return true;
         }
         if (pitem.get(Keys.ITEM_LORE).isPresent()) {
             List<Text> lore = pitem.get(Keys.ITEM_LORE).get();
-            return RedProtect.get().cfgs.getGuiSeparator().get(Keys.ITEM_LORE).get().equals(lore);
+            return RedProtect.get().config.getGuiSeparator().get(Keys.ITEM_LORE).get().equals(lore);
         }
         return false;
     }
 
     public static File genFileName(String Path, Boolean isBackup) {
-        return genFileName(Path, isBackup, RedProtect.get().cfgs.root().flat_file.max_backups, dateNow());
+        return genFileName(Path, isBackup, RedProtect.get().config.root().flat_file.max_backups, dateNow());
     }
 
     public static String dateNow() {
-        return dateNow(RedProtect.get().cfgs.root().region_settings.date_format);
+        return dateNow(RedProtect.get().config.root().region_settings.date_format);
     }
 
     /**
@@ -249,7 +249,7 @@ public class RPUtil extends CoreUtil {
         int skipped = 0;
         int delay = 0;
         Date now = null;
-        SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().cfgs.root().region_settings.date_format);
+        SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.root().region_settings.date_format);
 
         try {
             now = dateformat.parse(dateNow());
@@ -260,13 +260,13 @@ public class RPUtil extends CoreUtil {
         for (Region region : regions) {
             boolean serverRegion = false;
 
-            if (region.isLeader(RedProtect.get().cfgs.root().region_settings.default_leader)) {
+            if (region.isLeader(RedProtect.get().config.root().region_settings.default_leader)) {
                 serverRegion = true;
                 region.setDate(dateNow());
             }
 
             //purge regions
-            if (RedProtect.get().cfgs.root().purge.enabled && !serverRegion) {
+            if (RedProtect.get().config.root().purge.enabled && !serverRegion) {
                 Date regiondate = null;
                 try {
                     regiondate = dateformat.parse(region.getDate());
@@ -277,16 +277,16 @@ public class RPUtil extends CoreUtil {
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
-                for (String play : RedProtect.get().cfgs.root().purge.ignore_regions_from_players) {
+                for (String play : RedProtect.get().config.root().purge.ignore_regions_from_players) {
                     if (region.isLeader(RPUtil.PlayerToUUID(play)) || region.isAdmin(RPUtil.PlayerToUUID(play))) {
                         ignore = true;
                         break;
                     }
                 }
 
-                if (!ignore && days > RedProtect.get().cfgs.root().purge.remove_oldest) {
-                    if (RedProtect.get().WE && RedProtect.get().cfgs.root().purge.regen.enable) {
-                        if (region.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
+                if (!ignore && days > RedProtect.get().config.root().purge.remove_oldest) {
+                    if (RedProtect.get().hooks.WE && RedProtect.get().config.root().purge.regen.enable) {
+                        if (region.getArea() <= RedProtect.get().config.root().purge.regen.max_area_regen) {
                             WEHook.regenRegion(region, Sponge.getServer().getWorld(region.getWorld()).get(), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
                         } else {
@@ -304,7 +304,7 @@ public class RPUtil extends CoreUtil {
 
 
             //sell rergions
-            if (RedProtect.get().cfgs.root().sell.enabled && !serverRegion) {
+            if (RedProtect.get().config.root().sell.enabled && !serverRegion) {
                 Date regiondate = null;
                 try {
                     regiondate = dateformat.parse(region.getDate());
@@ -315,16 +315,16 @@ public class RPUtil extends CoreUtil {
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
-                for (String play : RedProtect.get().cfgs.root().sell.ignore_regions_from_players) {
+                for (String play : RedProtect.get().config.root().sell.ignore_regions_from_players) {
                     if (region.isLeader(RPUtil.PlayerToUUID(play)) || region.isAdmin(RPUtil.PlayerToUUID(play))) {
                         ignore = true;
                         break;
                     }
                 }
 
-                if (!ignore && days > RedProtect.get().cfgs.root().sell.sell_oldest) {
+                if (!ignore && days > RedProtect.get().config.root().sell.sell_oldest) {
                     RedProtect.get().logger.warning("Selling " + region.getName() + " - Days: " + days);
-                    RPEconomy.putToSell(region, RedProtect.get().cfgs.root().region_settings.default_leader, RPEconomy.getRegionValue(region));
+                    RPEconomy.putToSell(region, RedProtect.get().config.root().region_settings.default_leader, RPEconomy.getRegionValue(region));
                     sell++;
                     RedProtect.get().rm.saveAll(false);
                     continue;
@@ -342,7 +342,7 @@ public class RPUtil extends CoreUtil {
 
         if (delay > 0) {
             RedProtect.get().logger.warning("&c> There's " + delay / 10 + " regions to be regenerated at 2 regions/second.");
-            if (RedProtect.get().cfgs.root().purge.regen.enable_whitelist_regen) {
+            if (RedProtect.get().config.root().purge.regen.enable_whitelist_regen) {
                 Sponge.getServer().setHasWhitelist(true);
                 RedProtect.get().logger.warning("&eEnabled whitelist until regen!");
             }
@@ -368,7 +368,7 @@ public class RPUtil extends CoreUtil {
 
 
     private static boolean isDefaultServer(String check) {
-        return check.equalsIgnoreCase(RedProtect.get().cfgs.root().region_settings.default_leader);
+        return check.equalsIgnoreCase(RedProtect.get().config.root().region_settings.default_leader);
     }
 
     public static String PlayerToUUID(String PlayerName) {
@@ -453,10 +453,10 @@ public class RPUtil extends CoreUtil {
         int saved = 1;
 
         try {
-            Connection dbcon = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/" + RedProtect.get().cfgs.root().mysql.db_name + "?autoReconnect=true", RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+            Connection dbcon = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().config.root().mysql.host + "/" + RedProtect.get().config.root().mysql.db_name + "?autoReconnect=true", RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
 
             for (World world : Sponge.getServer().getWorlds()) {
-                String tableName = RedProtect.get().cfgs.root().mysql.table_prefix + world.getName();
+                String tableName = RedProtect.get().config.root().mysql.table_prefix + world.getName();
                 PreparedStatement st = dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE world=?");
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
@@ -526,7 +526,7 @@ public class RPUtil extends CoreUtil {
                         continue;
                     }
 
-                    if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                    if (RedProtect.get().config.root().flat_file.region_per_file) {
                         if (!r.toSave()) {
                             continue;
                         }
@@ -538,14 +538,14 @@ public class RPUtil extends CoreUtil {
                     RPUtil.addProps(fileDB, r);
                     saved++;
 
-                    if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                    if (RedProtect.get().config.root().flat_file.region_per_file) {
                         dbs.add(fileDB);
                         saveConf(fileDB, regionManager);
                         r.setToSave(false);
                     }
                 }
 
-                if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                if (!RedProtect.get().config.root().flat_file.region_per_file) {
                     saveConf(fileDB, regionManager);
                 } else {
                     //remove deleted regions
@@ -563,7 +563,7 @@ public class RPUtil extends CoreUtil {
                 }
 
                 //try backup
-                if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
+                if (!RedProtect.get().config.root().flat_file.region_per_file) {
                     backupRegions(Collections.singleton(fileDB), world.getName(), "data_" + world + ".conf");
                 } else {
                     backupRegions(dbs, world.getName(), null);
@@ -582,7 +582,7 @@ public class RPUtil extends CoreUtil {
     }
 
     public static boolean fileToMysql() throws Exception {
-        if (!RedProtect.get().cfgs.root().file_type.equalsIgnoreCase("file")) {
+        if (!RedProtect.get().config.root().file_type.equalsIgnoreCase("file")) {
             return false;
         }
         RedProtect.get().rm.saveAll(false);
@@ -592,11 +592,11 @@ public class RPUtil extends CoreUtil {
 
         for (World world : Sponge.getServer().getWorlds()) {
 
-            String dbname = RedProtect.get().cfgs.root().mysql.db_name;
-            String url = "jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/";
-            String tableName = RedProtect.get().cfgs.root().mysql.table_prefix + world.getName();
+            String dbname = RedProtect.get().config.root().mysql.db_name;
+            String url = "jdbc:mysql://" + RedProtect.get().config.root().mysql.host + "/";
+            String tableName = RedProtect.get().config.root().mysql.table_prefix + world.getName();
 
-            Connection dbcon = DriverManager.getConnection(url + dbname, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+            Connection dbcon = DriverManager.getConnection(url + dbname, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
 
             for (Region r : RedProtect.get().rm.getRegionsByWorld(world)) {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
@@ -643,9 +643,9 @@ public class RPUtil extends CoreUtil {
     private static void initMysql() throws Exception {
         for (World world : Sponge.getServer().getWorlds()) {
 
-            String url = "jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/";
+            String url = "jdbc:mysql://" + RedProtect.get().config.root().mysql.host + "/";
             String reconnect = "?autoReconnect=true";
-            String tableName = RedProtect.get().cfgs.root().mysql.table_prefix + world.getName();
+            String tableName = RedProtect.get().config.root().mysql.table_prefix + world.getName();
 
             try {
                 Class.forName("com.mysql.jdbc.Driver");
@@ -657,7 +657,7 @@ public class RPUtil extends CoreUtil {
             try {
                 if (!checkTableExists(tableName)) {
                     //create db
-                    Connection con = DriverManager.getConnection(url + RedProtect.get().cfgs.root().mysql.db_name + reconnect, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+                    Connection con = DriverManager.getConnection(url + RedProtect.get().config.root().mysql.db_name + reconnect, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
                     st = con.prepareStatement("CREATE TABLE `" + tableName + "` "
                             + "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
                     st.executeUpdate();
@@ -679,8 +679,8 @@ public class RPUtil extends CoreUtil {
 
     private static void addNewColumns(String tableName) {
         try {
-            String url = "jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/";
-            Connection con = DriverManager.getConnection(url + RedProtect.get().cfgs.root().mysql.db_name, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+            String url = "jdbc:mysql://" + RedProtect.get().config.root().mysql.host + "/";
+            Connection con = DriverManager.getConnection(url + RedProtect.get().config.root().mysql.db_name, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
             DatabaseMetaData md = con.getMetaData();
             ResultSet rs = md.getColumns(null, null, tableName, "candelete");
             if (!rs.next()) {
@@ -701,7 +701,7 @@ public class RPUtil extends CoreUtil {
     }
 
     public static void backupRegions(Set<CommentedConfigurationNode> fileDB, String world, String savedFile) {
-        if (!RedProtect.get().cfgs.root().flat_file.backup || fileDB.isEmpty()) {
+        if (!RedProtect.get().config.root().flat_file.backup || fileDB.isEmpty()) {
             return;
         }
 
@@ -742,7 +742,7 @@ public class RPUtil extends CoreUtil {
 
     private static boolean checkTableExists(String tableName) throws SQLException {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
-        Connection con = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/" + RedProtect.get().cfgs.root().mysql.db_name, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+        Connection con = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().config.root().mysql.host + "/" + RedProtect.get().config.root().mysql.db_name, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
         DatabaseMetaData meta = con.getMetaData();
         ResultSet rs = meta.getTables(null, null, tableName, null);
         boolean exists = rs.next();
@@ -759,7 +759,7 @@ public class RPUtil extends CoreUtil {
                     RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
                 }*/
             RedProtect.get().changeWait.remove(r + flag);
-        }, RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds, TimeUnit.SECONDS);
+        }, RedProtect.get().config.root().flags_configuration.change_flag_delay.seconds, TimeUnit.SECONDS);
     }
 
     public static int getUpdatedPrior(Region region) {
@@ -793,9 +793,9 @@ public class RPUtil extends CoreUtil {
      */
     public static void addBorder(final Player p, List<Location<World>> locs) {
         for (final Location<World> loc : locs) {
-            p.sendBlockChange(loc.getBlockPosition(), RedProtect.get().cfgs.getBorderMaterial().getDefaultState());
+            p.sendBlockChange(loc.getBlockPosition(), RedProtect.get().config.getBorderMaterial().getDefaultState());
 
-            Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> p.resetBlockChange(loc.getBlockPosition()), RedProtect.get().cfgs.root().region_settings.border.time_showing, TimeUnit.SECONDS);
+            Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> p.resetBlockChange(loc.getBlockPosition()), RedProtect.get().config.root().region_settings.border.time_showing, TimeUnit.SECONDS);
         }
     }
 
@@ -863,7 +863,7 @@ public class RPUtil extends CoreUtil {
         int minZ = region.getNode(rname, "minZ").getInt();
         int maxY = region.getNode(rname, "maxY").getInt(world.getBlockMax().getY());
         int minY = region.getNode(rname, "minY").getInt(0);
-        String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
+        String serverName = RedProtect.get().config.root().region_settings.default_leader;
 
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
@@ -910,16 +910,16 @@ public class RPUtil extends CoreUtil {
             tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
         }
 
-        Region newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().cfgs.getDefFlagsValues(), welcome, value, tppoint, candel);
+        Region newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
 
-        for (String flag : RedProtect.get().cfgs.getDefFlags()) {
+        for (String flag : RedProtect.get().config.getDefFlags()) {
             if (region.getNode(rname, "flags", flag) != null) {
                 newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
             } else {
-                newr.getFlags().put(flag, RedProtect.get().cfgs.getDefFlagsValues().get(flag));
+                newr.getFlags().put(flag, RedProtect.get().config.getDefFlagsValues().get(flag));
             }
         }
-        for (String flag : RedProtect.get().cfgs.AdminFlags) {
+        for (String flag : RedProtect.get().config.AdminFlags) {
             if (region.getNode(rname, "flags", flag).getString() != null) {
                 newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
             }
@@ -952,10 +952,10 @@ public class RPUtil extends CoreUtil {
             }
         }
 
-        if (!RedProtect.get().cfgs.root().flat_file.region_per_file) {
-            RedProtect.get().cfgs.root().flat_file.region_per_file = true;
+        if (!RedProtect.get().config.root().flat_file.region_per_file) {
+            RedProtect.get().config.root().flat_file.region_per_file = true;
         }
-        RedProtect.get().cfgs.save();
+        RedProtect.get().config.save();
         return saved;
     }
 
@@ -980,10 +980,10 @@ public class RPUtil extends CoreUtil {
             }
             saveConf(fileDB, regionManager);
         }
-        if (RedProtect.get().cfgs.root().flat_file.region_per_file) {
-            RedProtect.get().cfgs.root().flat_file.region_per_file = false;
+        if (RedProtect.get().config.root().flat_file.region_per_file) {
+            RedProtect.get().config.root().flat_file.region_per_file = false;
         }
-        RedProtect.get().cfgs.save();
+        RedProtect.get().config.save();
         return saved;
     }
 
@@ -996,13 +996,13 @@ public class RPUtil extends CoreUtil {
     }
 
     public static boolean canBuildNear(Player p, Location<World> loc) {
-        if (RedProtect.get().cfgs.root().region_settings.deny_build_near == 0) {
+        if (RedProtect.get().config.root().region_settings.deny_build_near == 0) {
             return true;
         }
         int x = loc.getBlockX();
         int y = loc.getBlockY();
         int z = loc.getBlockZ();
-        int radius = RedProtect.get().cfgs.root().region_settings.deny_build_near;
+        int radius = RedProtect.get().config.root().region_settings.deny_build_near;
 
         for (int ix = x - radius; ix <= x + radius; ++ix) {
             for (int iy = y - radius; iy <= y + radius; ++iy) {

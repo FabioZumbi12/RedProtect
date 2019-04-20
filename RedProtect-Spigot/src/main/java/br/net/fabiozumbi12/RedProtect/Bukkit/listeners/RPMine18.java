@@ -68,7 +68,7 @@ public class RPMine18 implements Listener {
         Entity e = event.getEntity();
 
         //spawn arms on armor stands
-        if (e instanceof ArmorStand && RedProtect.get().cfgs.getBool("hooks.armor-stands.spawn-arms")) {
+        if (e instanceof ArmorStand && RedProtect.get().config.getBool("hooks.armor-stands.spawn-arms")) {
             ArmorStand as = (ArmorStand) e;
             as.setArms(true);
         }
@@ -84,7 +84,7 @@ public class RPMine18 implements Listener {
         if (r == null) {
             //global flags
             if (ent instanceof ArmorStand) {
-                if (!RedProtect.get().cfgs.getGlobalFlagBool(l.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().config.getGlobalFlagBool(l.getWorld().getName() + ".build")) {
                     e.setCancelled(true);
                     return;
                 }
@@ -122,7 +122,7 @@ public class RPMine18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().cfgs.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().config.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
                     e.setCancelled(true);
                 }
             }
@@ -158,7 +158,7 @@ public class RPMine18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().cfgs.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().config.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
                     e.setCancelled(true);
                 }
             }
@@ -220,7 +220,7 @@ public class RPMine18 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
-        if (RedProtect.get().hooks.magicCarpet && RedProtect.get().cfgs.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
+        if (RedProtect.get().hooks.magicCarpet && RedProtect.get().config.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
             List<Block> blocks = e.getBlocks();
             for (Block block : blocks) {
                 for (Carpet carpet : MagicCarpet.getCarpets().all()) {

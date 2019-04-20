@@ -38,10 +38,10 @@ public class SimpleClansHook {
     }
 
     public static boolean inWar(Region r, Player attack, Player defend) {
-        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.use-war")) {
+        if (!RedProtect.get().config.getBool("hooks.simpleclans.use-war")) {
             return false;
         }
-        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
+        if (!RedProtect.get().config.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RedProtect.get().config.getString("region-settings.default-leader"))) {
             return false;
         }
         ClanPlayer atClan = RedProtect.get().hooks.clanManager.getClanPlayer(attack);

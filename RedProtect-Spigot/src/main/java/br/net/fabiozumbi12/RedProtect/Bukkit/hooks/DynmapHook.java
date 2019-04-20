@@ -45,15 +45,15 @@ public class DynmapHook implements Listener {
 
     public DynmapHook(DynmapAPI dyn) {
         MApi = dyn.getMarkerAPI();
-        MSet = MApi.getMarkerSet(RedProtect.get().cfgs.getString("hooks.dynmap.marks-groupname"));
+        MSet = MApi.getMarkerSet(RedProtect.get().config.getString("hooks.dynmapHook.marks-groupname"));
         if (MSet == null) {
-            MSet = MApi.createMarkerSet("RedProtect", RedProtect.get().cfgs.getString("hooks.dynmap.marks-groupname"), null, false);
+            MSet = MApi.createMarkerSet("RedProtect", RedProtect.get().config.getString("hooks.dynmapHook.marks-groupname"), null, false);
         }
-        MSet.setHideByDefault(RedProtect.get().cfgs.getBool("hooks.dynmap.hide-by-default"));
-        MSet.setLayerPriority(RedProtect.get().cfgs.getInt("hooks.dynmap.layer-priority"));
-        MSet.setLabelShow(RedProtect.get().cfgs.getBool("hooks.dynmap.show-label"));
-        MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().cfgs.getString("hooks.dynmap.player.marker-icon")));
-        int minzoom = RedProtect.get().cfgs.getInt("hooks.dynmap.min-zoom");
+        MSet.setHideByDefault(RedProtect.get().config.getBool("hooks.dynmapHook.hide-by-default"));
+        MSet.setLayerPriority(RedProtect.get().config.getInt("hooks.dynmapHook.layer-priority"));
+        MSet.setLabelShow(RedProtect.get().config.getBool("hooks.dynmapHook.show-label"));
+        MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().config.getString("hooks.dynmapHook.player.marker-icon")));
+        int minzoom = RedProtect.get().config.getInt("hooks.dynmapHook.min-zoom");
         if (minzoom > 0) {
             MSet.setMinZoom(minzoom);
         } else {
@@ -71,7 +71,7 @@ public class DynmapHook implements Listener {
 
     @EventHandler
     public void onChangeFlag(ChangeRegionFlagEvent event) {
-        if (event.getFlag().equalsIgnoreCase("dynmap")) {
+        if (event.getFlag().equalsIgnoreCase("dynmapHook")) {
             boolean value = (boolean) event.getFlagValue();
             if (value) {
                 addMark(event.getRegion());
@@ -120,40 +120,40 @@ public class DynmapHook implements Listener {
         String area = RPLang.get("region.area") + " <span style=\"font-weight:bold;\">" + r.getArea() + "</span>";
         am.setDescription(ChatColor.stripColor(rName + area));
 
-        if (RedProtect.get().cfgs.getBool("hooks.dynmap.show-leaders-admins")) {
+        if (RedProtect.get().config.getBool("hooks.dynmapHook.show-leaders-admins")) {
             String leader = RPLang.get("region.leaders") + " <span style=\"font-weight:bold;\">" + r.getLeadersDesc() + "</span><br>";
             String admin = RPLang.get("region.admins") + " <span style=\"font-weight:bold;\">" + r.getAdminDesc() + "</span><br>";
             am.setDescription(ChatColor.stripColor(rName + leader + admin + area));
         }
 
         int center = -1;
-        if (RedProtect.get().cfgs.getBool("hooks.dynmap.cuboid-region.enabled")) {
+        if (RedProtect.get().config.getBool("hooks.dynmapHook.cuboid-region.enabled")) {
             am.setRangeY(r.getMinLocation().getBlockY() + 0.500, r.getMaxLocation().getBlockY() + 0.500);
         } else {
-            center = RedProtect.get().cfgs.getInt("hooks.dynmap.cuboid-region.if-disable-set-center");
+            center = RedProtect.get().config.getInt("hooks.dynmapHook.cuboid-region.if-disable-set-center");
             am.setRangeY(center, center);
         }
 
         String type = "player";
-        if (r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader")))
+        if (r.isLeader(RedProtect.get().config.getString("region-settings.default-leader")))
             type = "server";
 
         am.setLineStyle(
-                RedProtect.get().cfgs.getInt("hooks.dynmap." + type + ".border.weight"),
-                RedProtect.get().cfgs.getDouble("hooks.dynmap." + type + ".border.opacity"),
-                Integer.decode(RedProtect.get().cfgs.getString("hooks.dynmap." + type + ".border.color").replace("#", "0x")));
+                RedProtect.get().config.getInt("hooks.dynmapHook." + type + ".border.weight"),
+                RedProtect.get().config.getDouble("hooks.dynmapHook." + type + ".border.opacity"),
+                Integer.decode(RedProtect.get().config.getString("hooks.dynmapHook." + type + ".border.color").replace("#", "0x")));
         am.setFillStyle(
-                RedProtect.get().cfgs.getDouble("hooks.dynmap." + type + ".fill.opacity"),
-                Integer.decode(RedProtect.get().cfgs.getString("hooks.dynmap." + type + ".fill.color").replace("#", "0x")));
+                RedProtect.get().config.getDouble("hooks.dynmapHook." + type + ".fill.opacity"),
+                Integer.decode(RedProtect.get().config.getString("hooks.dynmapHook." + type + ".fill.color").replace("#", "0x")));
 
 
-        if (RedProtect.get().cfgs.getBool("hooks.dynmap.show-icon")) {
+        if (RedProtect.get().config.getBool("hooks.dynmapHook.show-icon")) {
             Marker m = MSet.findMarker(r.getID());
             if (center == -1) {
                 center = r.getCenterY();
             }
 
-            MarkerIcon icon = MApi.getMarkerIcon(RedProtect.get().cfgs.getString("hooks.dynmap." + type + ".marker-icon"));
+            MarkerIcon icon = MApi.getMarkerIcon(RedProtect.get().config.getString("hooks.dynmapHook." + type + ".marker-icon"));
 
             if (m == null) {
                 MSet.createMarker(r.getID(), r.getName(), r.getWorld(), r.getCenterX(), center, r.getCenterZ(), icon, true);

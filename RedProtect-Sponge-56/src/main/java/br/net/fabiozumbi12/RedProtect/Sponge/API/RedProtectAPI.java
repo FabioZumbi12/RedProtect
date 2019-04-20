@@ -240,7 +240,7 @@ public class RedProtectAPI {
      * @param flag Admin Flag to add
      */
     public void addAdminFlag(String flag) {
-        RedProtect.get().cfgs.AdminFlags.add(flag);
+        RedProtect.get().config.AdminFlags.add(flag);
     }
 
     /**
@@ -255,7 +255,7 @@ public class RedProtectAPI {
      */
     public void addPlayerFlag(String flag, Object defValue) {
         if (defValue instanceof Boolean)
-            RedProtect.get().cfgs.root().flags.put(flag, (Boolean) defValue);
+            RedProtect.get().config.root().flags.put(flag, (Boolean) defValue);
     }
 
     /**
@@ -278,6 +278,6 @@ public class RedProtectAPI {
      * @return true if added or false if the flag already exists.
      */
     public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
-        return RedProtect.get().cfgs.addFlag(flag, defaultValue, isAdmin);
+        return RedProtect.get().config.addFlag(flag, defaultValue, isAdmin);
     }
 }

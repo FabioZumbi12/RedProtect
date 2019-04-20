@@ -57,7 +57,7 @@ public class WandCommand {
                     } else {
                         Player player = (Player) src;
                         Inventory inv = player.getInventory();
-                        ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.root().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
+                        ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.root().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
                         ItemStack item = ItemStack.of(mat, 1);
                         item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
 

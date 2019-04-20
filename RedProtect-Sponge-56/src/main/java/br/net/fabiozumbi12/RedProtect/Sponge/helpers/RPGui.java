@@ -88,27 +88,27 @@ public class RPGui {
         }
 
         for (String flag : region.getFlags().keySet()) {
-            if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().cfgs.guiRoot().gui_flags.containsKey(flag)) {
+            if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
                 continue;
             }
             try {
-                if ((RedProtect.get().cfgs.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && RedProtect.get().cfgs.isFlagEnabled(flag) && Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material).isPresent()) {
-                    if (flag.equals("pvp") && !RedProtect.get().cfgs.root().flags_configuration.enabled_flags.contains("pvp")) {
+                if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && RedProtect.get().config.isFlagEnabled(flag) && Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).isPresent()) {
+                    if (flag.equals("pvp") && !RedProtect.get().config.root().flags_configuration.enabled_flags.contains("pvp")) {
                         continue;
                     }
 
-                    int i = RedProtect.get().cfgs.getGuiSlot(flag);
+                    int i = RedProtect.get().config.getGuiSlot(flag);
 
-                    this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
+                    this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
 
-                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).name));
+                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).name));
 
                     this.guiItems[i].offer(Keys.ITEM_LORE, Arrays.asList(
-                            Text.of(RedProtect.get().cfgs.getGuiString("value"), RedProtect.get().cfgs.getGuiString(region.getFlags().get(flag).toString())),
+                            Text.of(RedProtect.get().config.getGuiString("value"), RedProtect.get().config.getGuiString(region.getFlags().get(flag).toString())),
                             RPUtil.toText("&0" + flag),
-                            RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description),
-                            RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description1),
-                            RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description2)));
+                            RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
+                            RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
+                            RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
 
                     if (!this.region.getFlagBool(flag)) {
                         this.guiItems[i].remove(Keys.ITEM_ENCHANTMENTS);
@@ -128,7 +128,7 @@ public class RPGui {
 
         for (int slotc = 0; slotc < this.size; slotc++) {
             if (this.guiItems[slotc] == null) {
-                this.guiItems[slotc] = RedProtect.get().cfgs.getGuiSeparator();
+                this.guiItems[slotc] = RedProtect.get().config.getGuiSeparator();
             }
             int line = 0;
             int slot = slotc;
@@ -157,8 +157,8 @@ public class RPGui {
                             ItemStack stack = RedProtect.get().getPVHelper().query(event.getTargetInventory(), slot, line).peek().get();
                             stack.get(Keys.ITEM_LORE).ifPresent(ls -> {
                                 String flag = ls.get(1).toPlain().replace("§0", "");
-                                if (RedProtect.get().cfgs.getDefFlags().contains(flag))
-                                    RedProtect.get().cfgs.setGuiSlot(flag, fi);
+                                if (RedProtect.get().config.getDefFlags().contains(flag))
+                                    RedProtect.get().config.setGuiSlot(flag, fi);
                             });
                         }
                     } catch (Exception e) {
@@ -168,7 +168,7 @@ public class RPGui {
                         return;
                     }
                 }
-                RedProtect.get().cfgs.saveGui();
+                RedProtect.get().config.saveGui();
                 RPLang.sendMessage(this.player, "gui.edit.ok");
             }
             close(false);
@@ -213,14 +213,14 @@ public class RPGui {
 
                 if (!RedProtect.get().getPVHelper().getItemType(item).equals(ItemTypes.NONE) && item.get(Keys.ITEM_LORE).isPresent()) {
                     String flag = item.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", "");
-                    if (RedProtect.get().cfgs.getDefFlags().contains(flag)) {
-                        if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.enable) {
-                            if (RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                    if (RedProtect.get().config.getDefFlags().contains(flag)) {
+                        if (RedProtect.get().config.root().flags_configuration.change_flag_delay.enable) {
+                            if (RedProtect.get().config.root().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                 if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                                     applyFlag(flag, item, event);
                                     RPUtil.startFlagChanger(this.region.getName(), flag, this.player);
                                 } else {
-                                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.root().flags_configuration.change_flag_delay.seconds + ""));
+                                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.root().flags_configuration.change_flag_delay.seconds + ""));
                                     event.setCancelled(true);
                                 }
                                 return;
@@ -252,11 +252,11 @@ public class RPGui {
             item.offer(Keys.HIDE_ATTRIBUTES, true);
 
             item.offer(Keys.ITEM_LORE, Arrays.asList(
-                    Text.of(RedProtect.get().cfgs.getGuiString("value"), RedProtect.get().cfgs.getGuiString(this.region.getFlagString(flag))),
+                    Text.of(RedProtect.get().config.getGuiString("value"), RedProtect.get().config.getGuiString(this.region.getFlagString(flag))),
                     RPUtil.toText("&0" + flag),
-                    RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description),
-                    RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description1),
-                    RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description2)));
+                    RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
+                    RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
+                    RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
 
             event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
             event.getTransactions().get(0).getSlot().offer(item);
@@ -274,7 +274,7 @@ public class RPGui {
         RedProtect.get().getPVHelper().removeGuiItem(this.player);
 
         // Check for items
-        RedProtect.get().getGame().getEventManager().unregisterListeners(this);
+        Sponge.getGame().getEventManager().unregisterListeners(this);
         if (close) RedProtect.get().getPVHelper().closeInventory(this.player);
 
         this.guiItems = null;
@@ -294,7 +294,7 @@ public class RPGui {
             }
         }
         //Register Listener
-        RedProtect.get().getGame().getEventManager().registerListeners(RedProtect.get().container, this);
+        Sponge.getGame().getEventManager().registerListeners(RedProtect.get().container, this);
 
         RedProtect.get().getPVHelper().openInventory(this.inv, this.player);
     }

@@ -105,7 +105,7 @@ public class RPConfig {
             "set-portal",
             "exit",
             "particles",
-            "rpDynmap",
+            "dynmapHook",
             "deny-exit-items");
     public CommentedConfigurationNode ecoCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> protManager;
@@ -289,7 +289,7 @@ public class RPConfig {
             e1.printStackTrace();
         }
 
-        RedProtect.get().logger.info("Server version: " + RedProtect.get().getGame().getPlatform().getMinecraftVersion().getName());
+        RedProtect.get().logger.info("Server version: " + Sponge.getGame().getPlatform().getMinecraftVersion().getName());
 
         //add allowed claim worlds to config
         if (root.allowed_claim_worlds.isEmpty()) {

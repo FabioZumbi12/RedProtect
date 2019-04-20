@@ -92,7 +92,7 @@ public class RPConfig {
             "for-sale",
             "exit",
             "set-portal",
-            "dynmap",
+            "dynmapHook",
             "particles",
             "deny-exit-items");
     private  CommentedConfig comConfig;
@@ -371,31 +371,31 @@ public class RPConfig {
 
         comConfig.setDefault("hooks", null, null);
         comConfig.setDefault("hooks.useWECUI", true, "Use worldeditCUI to visualize the region limits. (Need WorldEdit on server and WECUI on client)");
-        comConfig.setDefault("hooks.dynmap.enabled", true, "Enable hook to show all regions on dynmap plugin?");
-        comConfig.setDefault("hooks.dynmap.hide-by-default", true, "Hide the Redprotect tab group by default?");
-        comConfig.setDefault("hooks.dynmap.marks-groupname", "RedProtect", "Group name to show on hide/show tab map.");
-        comConfig.setDefault("hooks.dynmap.layer-priority", 10, "If you use another region mark plugin.");
-        comConfig.setDefault("hooks.dynmap.show-label", true, "Show names under regions.");
-        comConfig.setDefault("hooks.dynmap.show-icon", true, "Show icons under regions.");
+        comConfig.setDefault("hooks.dynmapHook.enabled", true, "Enable hook to show all regions on dynmapHook plugin?");
+        comConfig.setDefault("hooks.dynmapHook.hide-by-default", true, "Hide the Redprotect tab group by default?");
+        comConfig.setDefault("hooks.dynmapHook.marks-groupname", "RedProtect", "Group name to show on hide/show tab map.");
+        comConfig.setDefault("hooks.dynmapHook.layer-priority", 10, "If you use another region mark plugin.");
+        comConfig.setDefault("hooks.dynmapHook.show-label", true, "Show names under regions.");
+        comConfig.setDefault("hooks.dynmapHook.show-icon", true, "Show icons under regions.");
 
-        comConfig.setDefault("hooks.dynmap.player.marker-icon", "house", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
-        comConfig.setDefault("hooks.dynmap.player.fill.opacity", 0.35, null);
-        comConfig.setDefault("hooks.dynmap.player.fill.color", "#00ff00", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
-        comConfig.setDefault("hooks.dynmap.player.border.opacity", 0.8, null);
-        comConfig.setDefault("hooks.dynmap.player.border.color", "#00ff00", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
-        comConfig.setDefault("hooks.dynmap.player.border.weight", 1, null);
+        comConfig.setDefault("hooks.dynmapHook.player.marker-icon", "house", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
+        comConfig.setDefault("hooks.dynmapHook.player.fill.opacity", 0.35, null);
+        comConfig.setDefault("hooks.dynmapHook.player.fill.color", "#00ff00", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        comConfig.setDefault("hooks.dynmapHook.player.border.opacity", 0.8, null);
+        comConfig.setDefault("hooks.dynmapHook.player.border.color", "#00ff00", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        comConfig.setDefault("hooks.dynmapHook.player.border.weight", 1, null);
 
-        comConfig.setDefault("hooks.dynmap.server.marker-icon", "star", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
-        comConfig.setDefault("hooks.dynmap.server.fill.opacity", 0.35, null);
-        comConfig.setDefault("hooks.dynmap.server.fill.color", "#ff0000", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
-        comConfig.setDefault("hooks.dynmap.server.border.opacity", 0.8, null);
-        comConfig.setDefault("hooks.dynmap.server.border.color", "#ff0000", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
-        comConfig.setDefault("hooks.dynmap.server.border.weight", 1, null);
+        comConfig.setDefault("hooks.dynmapHook.server.marker-icon", "star", "Icon name to show under regions. All icons are available here: http://i.imgur.com/f61GPoE.png");
+        comConfig.setDefault("hooks.dynmapHook.server.fill.opacity", 0.35, null);
+        comConfig.setDefault("hooks.dynmapHook.server.fill.color", "#ff0000", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        comConfig.setDefault("hooks.dynmapHook.server.border.opacity", 0.8, null);
+        comConfig.setDefault("hooks.dynmapHook.server.border.color", "#ff0000", "Pick a color: https://www.w3schools.com/colors/colors_picker.asp");
+        comConfig.setDefault("hooks.dynmapHook.server.border.weight", 1, null);
 
-        comConfig.setDefault("hooks.dynmap.show-leaders-admins", false, "Show leaders and admins on hover?");
-        comConfig.setDefault("hooks.dynmap.cuboid-region.enable", true, "Cuboid region config.");
-        comConfig.setDefault("hooks.dynmap.cuboid-region.if-disable-set-center", 60, null);
-        comConfig.setDefault("hooks.dynmap.min-zoom", 0, null);
+        comConfig.setDefault("hooks.dynmapHook.show-leaders-admins", false, "Show leaders and admins on hover?");
+        comConfig.setDefault("hooks.dynmapHook.cuboid-region.enable", true, "Cuboid region config.");
+        comConfig.setDefault("hooks.dynmapHook.cuboid-region.if-disable-set-center", 60, null);
+        comConfig.setDefault("hooks.dynmapHook.min-zoom", 0, null);
         comConfig.setDefault("hooks.magiccarpet.fix-piston-getblocks", true, "Fix pistons allow get mc blocks.");
         comConfig.setDefault("hooks.armor-stands.spawn-arms", true, null);
         comConfig.setDefault("hooks.mcmmo.fix-acrobatics-fireoff-leveling", true, "Fix players leveling with creeper explosions on flag fire disabled.");

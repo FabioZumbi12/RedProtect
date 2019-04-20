@@ -53,7 +53,7 @@ public class RegenCommand {
                     } else {
                         Player player = (Player) src;
 
-                        if (!RedProtect.get().WE) {
+                        if (!RedProtect.get().hooks.WE) {
                             return CommandResult.success();
                         }
 
@@ -78,7 +78,7 @@ public class RegenCommand {
                             } else {
                                 Player player = (Player) src;
 
-                                if (!RedProtect.get().WE) {
+                                if (!RedProtect.get().hooks.WE) {
                                     return CommandResult.success();
                                 }
 
@@ -102,7 +102,7 @@ public class RegenCommand {
                             } else {
                                 Player player = (Player) src;
 
-                                if (!RedProtect.get().WE) {
+                                if (!RedProtect.get().hooks.WE) {
                                     return CommandResult.success();
                                 }
 

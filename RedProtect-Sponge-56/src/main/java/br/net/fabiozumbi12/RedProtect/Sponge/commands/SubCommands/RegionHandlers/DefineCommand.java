@@ -57,7 +57,7 @@ public class DefineCommand {
                     } else {
                         Player player = (Player) src;
 
-                        String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
+                        String serverName = RedProtect.get().config.root().region_settings.default_leader;
                         String name = RPUtil.nameGen(serverName, player.getWorld().getName());
                         if (args.hasAny("regionName")) {
                             name = args.<String>getOne("regionName").get();

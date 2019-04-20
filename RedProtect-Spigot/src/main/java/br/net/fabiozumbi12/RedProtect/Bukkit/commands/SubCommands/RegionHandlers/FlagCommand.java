@@ -59,7 +59,7 @@ public class FlagCommand implements SubCommand {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
                 if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")) {
-                    RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, false, RedProtect.get().cfgs.getGuiMaxSlot());
+                    RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
                     gui.open();
                 } else {
                     RPLang.sendMessage(player, "cmdmanager.region.flag.nopermregion");
@@ -79,7 +79,7 @@ public class FlagCommand implements SubCommand {
 
             if (args[0].equalsIgnoreCase("gui-edit")) {
                 if (RedProtect.get().ph.hasCommandPerm(player, "gui-edit")) {
-                    RPGui gui = new RPGui(RPLang.get("gui.editflag"), player, r, true, RedProtect.get().cfgs.getGuiMaxSlot());
+                    RPGui gui = new RPGui(RPLang.get("gui.editflag"), player, r, true, RedProtect.get().config.getGuiMaxSlot());
                     gui.open();
                 } else {
                     RPLang.sendMessage(player, "no.permission");
@@ -87,14 +87,14 @@ public class FlagCommand implements SubCommand {
                 return true;
             }
 
-            if (RedProtect.get().cfgs.getBool("flags-configuration.change-flag-delay.enable")) {
-                if (RedProtect.get().cfgs.getStringList("flags-configuration.change-flag-delay.flags").contains(args[0])) {
+            if (RedProtect.get().config.getBool("flags-configuration.change-flag-delay.enable")) {
+                if (RedProtect.get().config.getStringList("flags-configuration.change-flag-delay.flags").contains(args[0])) {
                     if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
                         RPUtil.startFlagChanger(r.getName(), args[0], player);
                         handleFlag(player, args[0], "", r);
                         return true;
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.getString("flags-configuration.change-flag-delay.seconds")));
+                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.getString("flags-configuration.change-flag-delay.seconds")));
                         return true;
                     }
                 }
@@ -115,7 +115,7 @@ public class FlagCommand implements SubCommand {
                 int MaxSlot;
                 try {
                     MaxSlot = 9 * Integer.parseInt(args[1]);
-                    if (MaxSlot > 54 || MaxSlot < RedProtect.get().cfgs.getGuiMaxSlot()) {
+                    if (MaxSlot > 54 || MaxSlot < RedProtect.get().config.getGuiMaxSlot()) {
                         RPLang.sendMessage(player, "gui.edit.invalid-lines");
                         return true;
                     }
@@ -136,14 +136,14 @@ public class FlagCommand implements SubCommand {
         for (int i = 1; i < args.length; i++) {
             text.append(" ").append(args[i]);
         }
-        if (RedProtect.get().cfgs.getBool("flags-configuration.change-flag-delay.enable")) {
-            if (RedProtect.get().cfgs.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])) {
+        if (RedProtect.get().config.getBool("flags-configuration.change-flag-delay.enable")) {
+            if (RedProtect.get().config.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])) {
                 if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
                     RPUtil.startFlagChanger(r.getName(), args[1], player);
                     handleFlag(player, args[1], text.substring(1), r);
                     return true;
                 } else {
-                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().cfgs.getString("flags-configuration.change-flag-delay.seconds")));
+                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.getString("flags-configuration.change-flag-delay.seconds")));
                     return true;
                 }
             }
@@ -155,8 +155,8 @@ public class FlagCommand implements SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 0) {
-            SortedSet<String> tab = new TreeSet<>(RedProtect.get().cfgs.getDefFlags());
-            for (String flag : RedProtect.get().cfgs.AdminFlags) {
+            SortedSet<String> tab = new TreeSet<>(RedProtect.get().config.getDefFlags());
+            for (String flag : RedProtect.get().config.AdminFlags) {
                 if (RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
@@ -165,12 +165,12 @@ public class FlagCommand implements SubCommand {
         }
         if (args.length == 1) {
             SortedSet<String> tab = new TreeSet<>();
-            for (String flag : RedProtect.get().cfgs.getDefFlags()) {
+            for (String flag : RedProtect.get().config.getDefFlags()) {
                 if (flag.startsWith(args[0])) {
                     tab.add(flag);
                 }
             }
-            for (String flag : RedProtect.get().cfgs.AdminFlags) {
+            for (String flag : RedProtect.get().config.AdminFlags) {
                 if (flag.startsWith(args[0]) && RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }

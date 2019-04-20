@@ -89,7 +89,7 @@ public class KickCommand {
                             return CommandResult.success();
                         }
 
-                        String sec = String.valueOf(RedProtect.get().cfgs.root().region_settings.delay_after_kick_region);
+                        String sec = String.valueOf(RedProtect.get().config.root().region_settings.delay_after_kick_region);
                         if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                             RPUtil.DenyEnterPlayer(visit.getWorld(), new Transform<>(visit.getLocation()), new Transform<>(visit.getLocation()), r, true);
                             RPLang.sendMessage(player, RPLang.get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time}", sec));

@@ -49,7 +49,7 @@ public class SelectWECommand {
                     } else {
                         Player player = (Player) src;
 
-                        if (RedProtect.get().WE) {
+                        if (RedProtect.get().hooks.WE) {
                             Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                             if (r == null) {
                                 RPLang.sendMessage(player, "cmdmanager.region.doesexists");

@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;

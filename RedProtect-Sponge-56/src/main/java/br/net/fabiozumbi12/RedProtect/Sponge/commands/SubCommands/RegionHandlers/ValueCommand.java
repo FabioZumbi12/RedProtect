@@ -53,11 +53,11 @@ public class ValueCommand {
                         Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r != null) {
                             if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
-                                if (r.getArea() < RedProtect.get().cfgs.getEcoInt("max-area-toget-value")) {
-                                    RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(RPEconomy.getRegionValue(r)) + " " + RedProtect.get().cfgs.getEcoString("economy-name")));
+                                if (r.getArea() < RedProtect.get().config.getEcoInt("max-area-toget-value")) {
+                                    RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(RPEconomy.getRegionValue(r)) + " " + RedProtect.get().config.getEcoString("economy-name")));
                                     RedProtect.get().logger.debug(LogLevel.PLAYER, "Region Value: " + RPEconomy.getRegionValue(r));
                                 } else {
-                                    RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().cfgs.getEcoInt("max-area-toget-value").toString()));
+                                    RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().config.getEcoInt("max-area-toget-value").toString()));
                                 }
                             } else {
                                 RPLang.sendMessage(player, "playerlistener.region.cantuse");

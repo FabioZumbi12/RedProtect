@@ -117,7 +117,7 @@ public class RPMine19 implements Listener {
 
         Player p = (Player) e.getEntity();
         Entity proj = e.getProjectile();
-        List<String> Pots = RedProtect.get().cfgs.getStringList("server-protection.deny-potions");
+        List<String> Pots = RedProtect.get().config.getStringList("server-protection.deny-potions");
 
         if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;

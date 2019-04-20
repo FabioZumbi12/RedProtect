@@ -49,12 +49,11 @@ import java.util.*;
 
 public class RedProtect extends JavaPlugin {
     private static RedProtect plugin;
-    private RedProtectAPI rpAPI;
+    private RedProtectAPI redProtectAPI;
     public final RPLogger logger = new RPLogger();
     public final HooksManager hooks = new HooksManager();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
-    public File jarFile = null;
     public RegionManager rm;
     public List<String> changeWait = new ArrayList<>();
     public List<String> tpWait = new ArrayList<>();
@@ -69,14 +68,14 @@ public class RedProtect extends JavaPlugin {
     public RPVHelper rpvhelper;
     public CommandHandler cmdHandler;
     private int autoSaveID;
-    public RPConfig cfgs;
+    public RPConfig config;
 
     public static RedProtect get() {
         return plugin;
     }
 
     public RedProtectAPI getAPI() {
-        return rpAPI;
+        return redProtectAPI;
     }
 
     public void onDisable() {
@@ -86,12 +85,11 @@ public class RedProtect extends JavaPlugin {
     public void onEnable() {
         try {
             plugin = this;
-            jarFile = this.getFile();
 
             ph = new RPPermissionHandler();
             rm = new RegionManager();
 
-            //--- Init config, lang, listeners and flags
+            //Init config, lang, listeners and flags
             startLoad();
 
             version = getBukkitVersion();
@@ -112,7 +110,7 @@ public class RedProtect extends JavaPlugin {
             }
 
             logger.info("Loading API...");
-            this.rpAPI = new RedProtectAPI();
+            this.redProtectAPI = new RedProtectAPI();
             logger.info("API Loaded!");
 
             logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
@@ -123,7 +121,7 @@ public class RedProtect extends JavaPlugin {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (!cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
+            if (!config.getString("file-type").equalsIgnoreCase("mysql")) {
                 logger.severe("Error enabling RedProtect, plugin will shut down.");
                 this.setEnabled(false);
             }
@@ -147,16 +145,16 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() {
-        cfgs = new RPConfig();
+        config = new RPConfig();
         RPLang.init();
 
-        if (cfgs.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()) {
+        if (config.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
             RedProtect.get().logger.success("Whitelist disabled!");
         }
 
         // Set online mode
-        onlineMode = cfgs.getBool("online-mode");
+        onlineMode = config.getBool("online-mode");
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);
@@ -177,10 +175,10 @@ public class RedProtect extends JavaPlugin {
 
             RPUtil.ReadAllDB(rm.getAllRegions());
 
-            if (!cfgs.getString("file-type").equalsIgnoreCase("mysql")) {
+            if (!config.getString("file-type").equalsIgnoreCase("mysql")) {
                 startAutoSave();
             }
-            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + cfgs.getString("file-type") + ") database!");
+            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.getString("file-type") + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -227,7 +225,7 @@ public class RedProtect extends JavaPlugin {
                     denyEnter.put(player, regs);
                 }
             }
-        }, cfgs.getInt("region-settings.delay-after-kick-region") * 20);
+        }, config.getInt("region-settings.delay-after-kick-region") * 20);
         return true;
     }
 
@@ -246,13 +244,13 @@ public class RedProtect extends JavaPlugin {
 
     private void startAutoSave() {
         Bukkit.getScheduler().cancelTask(autoSaveID);
-        if (cfgs.getInt("flat-file.auto-save-interval-seconds") != 0) {
-            logger.info("Auto-save Scheduler: Saving " + cfgs.getString("file-type") + " database every " + cfgs.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
+        if (config.getInt("flat-file.auto-save-interval-seconds") != 0) {
+            logger.info("Auto-save Scheduler: Saving " + config.getString("file-type") + " database every " + config.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
 
             autoSaveID = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-                logger.debug("Auto-save Scheduler: Saving " + cfgs.getString("file-type") + " database!");
-                rm.saveAll(cfgs.getBool("flat-file.backup-on-save"));
-            }, cfgs.getInt("flat-file.auto-save-interval-seconds") * 20, cfgs.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
+                logger.debug("Auto-save Scheduler: Saving " + config.getString("file-type") + " database!");
+                rm.saveAll(config.getBool("flat-file.backup-on-save"));
+            }, config.getInt("flat-file.auto-save-interval-seconds") * 20, config.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");

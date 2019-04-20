@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 public class RPVHelper56 implements RPVHelper {
 
     RPVHelper56() {
-        PermissionService permissionService = RedProtect.get().getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
+        PermissionService permissionService = Sponge.getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.help", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.border", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.ldeny", Tristate.TRUE);
@@ -92,8 +92,8 @@ public class RPVHelper56 implements RPVHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.wand", Tristate.TRUE);
 
         for (String ench : Sponge.getRegistry().getAllOf(Enchantment.class).stream().map(Enchantment::getId).collect(Collectors.toList())) {
-            if (RedProtect.get().cfgs.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
-                RedProtect.get().cfgs.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
+            if (RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
+                RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
             }
         }
     }
@@ -163,10 +163,10 @@ public class RPVHelper56 implements RPVHelper {
                 continue;
             }
             ItemStack stack = item.peek().get();
-            value += ((RedProtect.get().cfgs.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
+            value += ((RedProtect.get().config.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                 for (ItemEnchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
-                    value += ((RedProtect.get().cfgs.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
+                    value += ((RedProtect.get().config.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
                 }
             }
         }

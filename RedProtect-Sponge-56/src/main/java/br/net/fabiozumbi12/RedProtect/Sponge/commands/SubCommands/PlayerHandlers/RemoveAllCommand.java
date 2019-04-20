@@ -49,7 +49,7 @@ public class RemoveAllCommand {
                     } else {
                         Player player = (Player) src;
 
-                        if (!RedProtect.get().WE) {
+                        if (!RedProtect.get().hooks.WE) {
                             return CommandResult.success();
                         }
                         int removed = RedProtect.get().rm.removeAll(args.<String>getOne("Player").get());

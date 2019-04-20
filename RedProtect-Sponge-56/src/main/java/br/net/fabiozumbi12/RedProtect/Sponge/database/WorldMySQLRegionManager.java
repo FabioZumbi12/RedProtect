@@ -42,9 +42,9 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("deprecation")
 public class WorldMySQLRegionManager implements WorldRegionManager {
 
-    private final String url = "jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/";
+    private final String url = "jdbc:mysql://" + RedProtect.get().config.root().mysql.host + "/";
     private final String reconnect = "?autoReconnect=true";
-    private final String dbname = RedProtect.get().cfgs.root().mysql.db_name;
+    private final String dbname = RedProtect.get().config.root().mysql.db_name;
     private final String tableName;
     private final HashMap<String, Region> regions;
     private final World world;
@@ -54,7 +54,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         super();
         this.regions = new HashMap<>();
         this.world = world;
-        this.tableName = RedProtect.get().cfgs.root().mysql.table_prefix + world.getName();
+        this.tableName = RedProtect.get().config.root().mysql.table_prefix + world.getName();
 
         this.dbcon = null;
         try {
@@ -71,7 +71,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         PreparedStatement st = null;
         try {
             if (!this.checkTableExists()) {
-                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
 
                 st = con.prepareStatement("CREATE TABLE `" + tableName + "` "
                         + "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
@@ -95,7 +95,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private boolean checkTableExists() {
         try {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
             DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getTables(null, null, tableName, null);
             if (rs.next()) {
@@ -113,7 +113,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void addNewColumns() {
         try {
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
             DatabaseMetaData md = con.getMetaData();
             ResultSet rs = md.getColumns(null, null, tableName, "candelete");
             if (!rs.next()) {
@@ -426,7 +426,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         		Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4])*/);
                     }
 
-                    String serverName = RedProtect.get().cfgs.root().region_settings.default_leader;
+                    String serverName = RedProtect.get().config.root().region_settings.default_leader;
 
                     for (String member : rs.getString("members").split(", ")) {
                         String[] pi = member.split("@");
@@ -478,7 +478,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         regions.remove(rname);
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed cached region: " + rname);
                     }
-                }, RedProtect.get().cfgs.root().mysql.region_cache_minutes, TimeUnit.MINUTES);
+                }, RedProtect.get().config.root().mysql.region_cache_minutes, TimeUnit.MINUTES);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -684,7 +684,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void ConnectDB() {
         try {
-            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.root().mysql.user_name, RedProtect.get().config.root().mysql.user_pass);
             RedProtect.get().logger.info("Conected to " + this.tableName + " via Mysql!");
         } catch (SQLException e) {
             e.printStackTrace();

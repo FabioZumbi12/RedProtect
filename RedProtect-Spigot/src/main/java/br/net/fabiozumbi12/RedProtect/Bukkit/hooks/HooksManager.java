@@ -26,7 +26,7 @@ public class HooksManager {
     public ClanManager clanManager;
     public Essentials pless;
     public boolean Dyn;
-    public DynmapHook dynmap;
+    public DynmapHook dynmapHook;
 
     public void registerHooks() {
         bossBar = checkBM();
@@ -92,11 +92,11 @@ public class HooksManager {
             clanManager = SimpleClans.getInstance().getClanManager();
             RedProtect.get().logger.info("SimpleClans found. Hooked.");
         }
-        if (Dyn && RedProtect.get().cfgs.getBool("hooks.dynmap.enabled")) {
+        if (Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enabled")) {
             RedProtect.get().logger.info("Dynmap found. Hooked.");
-            RedProtect.get().logger.info("Loading dynmap markers...");
-            dynmap = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
-            RedProtect.get().getServer().getPluginManager().registerEvents(dynmap, RedProtect.get());
+            RedProtect.get().logger.info("Loading dynmapHook markers...");
+            dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmapHook"));
+            RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
             RedProtect.get().logger.info("Dynmap markers loaded!");
         }
         if (placeHolderAPI) {
@@ -116,7 +116,7 @@ public class HooksManager {
     }
 
     private boolean checkDyn() {
-        Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
+        Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmapHook");
         return pDyn != null && pDyn.isEnabled();
     }
 

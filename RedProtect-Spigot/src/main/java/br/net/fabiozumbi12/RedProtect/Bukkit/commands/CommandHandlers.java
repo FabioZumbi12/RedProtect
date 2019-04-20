@@ -98,7 +98,7 @@ public class CommandHandlers {
                             RPLang.sendMessage(src, RPLang.get("cmdmanager.region.leader.requestexpired").replace("{player}", pVictim.getName()));
                         }
                     }
-                }, RedProtect.get().cfgs.getInt("region-settings.leadership-request-time") * 20);
+                }, RedProtect.get().config.getInt("region-settings.leadership-request-time") * 20);
             } else {
                 RPLang.sendMessage(src, ChatColor.RED + sVictim + " " + RPLang.get("cmdmanager.region.leader.already"));
             }
@@ -320,7 +320,7 @@ public class CommandHandlers {
                 return;
             }
 
-            int claims = RedProtect.get().cfgs.getInt("region-settings.first-home.can-delete-after-claims");
+            int claims = RedProtect.get().config.getInt("region-settings.first-home.can-delete-after-claims");
             if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")) {
                 if (claims != -1) {
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", "" + claims));
@@ -363,7 +363,7 @@ public class CommandHandlers {
                 return;
             }
 
-            int claims = RedProtect.get().cfgs.getInt("region-settings.first-home.can-delete-after-claims");
+            int claims = RedProtect.get().config.getInt("region-settings.first-home.can-delete-after-claims");
             if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")) {
                 if (claims != -1) {
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", "" + claims));
@@ -585,7 +585,7 @@ public class CommandHandlers {
                     p.teleport(loc);
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.teleport") + " " + rname);
                 }
-            }, RedProtect.get().cfgs.getInt("region-settings.teleport-time") * 20);
+            }, RedProtect.get().config.getInt("region-settings.teleport-time") * 20);
         } else {
             RPLang.sendMessage(p, "cmdmanager.region.tpneedwait");
         }
@@ -643,7 +643,7 @@ public class CommandHandlers {
                 sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
                 RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.list") + " " + pname);
 
-                int regionsPage = RedProtect.get().cfgs.getInt("region-settings.region-list.regions-per-page");
+                int regionsPage = RedProtect.get().config.getInt("region-settings.region-list.regions-per-page");
                 int total = 0;
                 int last = 0;
 
@@ -657,7 +657,7 @@ public class CommandHandlers {
                     int min = max - regionsPage;
                     int count;
 
-                    String colorChar = ChatColor.translateAlternateColorCodes('&', RedProtect.get().cfgs.getString("region-settings.world-colors." + w.getName(), "&a"));
+                    String colorChar = ChatColor.translateAlternateColorCodes('&', RedProtect.get().config.getString("region-settings.world-colors." + w.getName(), "&a"));
                     Set<Region> wregions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
                     int totalLocal = wregions.size();
                     total += totalLocal;
@@ -673,12 +673,12 @@ public class CommandHandlers {
                         }
                         if (max > it.size()) max = (it.size() - 1);
                         //-------------
-                        if (RedProtect.get().cfgs.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                        if (RedProtect.get().config.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
                             FancyMessage fancy = new FancyMessage();
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
-                                String area = RedProtect.get().cfgs.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
+                                String area = RedProtect.get().config.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
                                 String rname = RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
                                 if (first) {
                                     rname = rname.substring(3);
@@ -702,7 +702,7 @@ public class CommandHandlers {
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
-                                String area = RedProtect.get().cfgs.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
+                                String area = RedProtect.get().config.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
                                 worldregions.append(RPLang.get("general.color")).append(", ").append(ChatColor.GRAY).append(r.getName()).append(area);
                                 lastLocal = count;
                             }
@@ -739,7 +739,7 @@ public class CommandHandlers {
 
         Object objflag = RPUtil.parseObject(value);
 
-        if ((RedProtect.get().cfgs.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) || flag.equalsIgnoreCase("info")) {
+        if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) || flag.equalsIgnoreCase("info")) {
             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RPLang.get("general.color") + "------------[" + RPLang.get("cmdmanager.region.flag.values") + "]------------");
@@ -749,7 +749,7 @@ public class CommandHandlers {
                 }
 
                 if (value.equalsIgnoreCase("remove")) {
-                    if (RedProtect.get().cfgs.AdminFlags.contains(flag) && r.getFlags().containsKey(flag)) {
+                    if (RedProtect.get().config.AdminFlags.contains(flag) && r.getFlags().containsKey(flag)) {
                         r.removeFlag(flag);
                         RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", r.getName()));
                         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " REMOVED FLAG " + flag + " of region " + r.getName());
@@ -761,13 +761,13 @@ public class CommandHandlers {
                 }
 
             	/*
-            	if (RedProtect.get().cfgs.getDefFlagsValues().containsKey("clan") && !RedProtect.get().ph.hasPerm(p, "RedProtect.get().admin.flag.clan")){
+            	if (RedProtect.get().config.getDefFlagsValues().containsKey("clan") && !RedProtect.get().ph.hasPerm(p, "RedProtect.get().admin.flag.clan")){
             		RPLang.sendMessage(p,"cmdmanager.region.flag.clancommand");
             		return;
             	}
             	*/
                 if (!value.equals("")) {
-                    if (RedProtect.get().cfgs.getDefFlagsValues().containsKey(flag)) {
+                    if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
 
                         //flag clan
                         if (flag.equalsIgnoreCase("clan")) {
@@ -803,7 +803,7 @@ public class CommandHandlers {
                         }
                     }
 
-                    if (RedProtect.get().cfgs.AdminFlags.contains(flag)) {
+                    if (RedProtect.get().config.AdminFlags.contains(flag)) {
                         if (!validate(flag, objflag)) {
                             SendFlagUsageMessage(p, flag);
                             return;
@@ -846,13 +846,13 @@ public class CommandHandlers {
                         }
                     }
 
-                    if (RedProtect.get().cfgs.getDefFlagsValues().containsKey(flag)) {
+                    if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
                         if (r.setFlag(p, flag, !r.getFlagBool(flag))) {
                             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
                             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                         }
                     } else {
-                        if (RedProtect.get().cfgs.AdminFlags.contains(flag)) {
+                        if (RedProtect.get().config.AdminFlags.contains(flag)) {
                             SendFlagUsageMessage(p, flag);
                         } else {
                             RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.usage") + " <true/false>");
@@ -892,11 +892,11 @@ public class CommandHandlers {
 
     private static void sendFlagHelp(Player p) {
         p.sendMessage(RPLang.get("general.color") + "-------------[RedProtect Flags]------------");
-        p.sendMessage(RPLang.get("cmdmanager.region.flag.list") + " " + RedProtect.get().cfgs.getDefFlags());
+        p.sendMessage(RPLang.get("cmdmanager.region.flag.list") + " " + RedProtect.get().config.getDefFlags());
         p.sendMessage(RPLang.get("general.color") + "------------------------------------");
 
         StringBuilder sb = new StringBuilder();
-        for (String flag : RedProtect.get().cfgs.AdminFlags) {
+        for (String flag : RedProtect.get().config.AdminFlags) {
             if (RedProtect.get().ph.hasFlagPerm(p, flag))
                 sb.append(flag).append(", ");
         }
@@ -943,7 +943,7 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("spawn-animals") ||
                 flag.equalsIgnoreCase("minecart") ||
                 flag.equalsIgnoreCase("forcepvp") ||
-                flag.equalsIgnoreCase("dynmap") ||
+                flag.equalsIgnoreCase("dynmapHook") ||
                 flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)) {
             return false;
         }
