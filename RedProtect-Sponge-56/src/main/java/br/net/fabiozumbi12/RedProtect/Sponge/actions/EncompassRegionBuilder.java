@@ -32,7 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -348,7 +348,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         //wecui selection
                         if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI) {
-                            WEListener.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
+                            WEHook.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
                         }
 
                         this.r = region;

@@ -38,13 +38,13 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-public class RPDynmap {
+public class DynmapHook {
 
     static MarkerSet MSet;
     private static DynmapCommonAPI Dyn;
     private static MarkerAPI MApi;
 
-    public RPDynmap() {
+    public DynmapHook() {
         DynmapCommonAPIListener.register(new DynmapCommonAPIListener() {
             @Override
             public void apiEnabled(DynmapCommonAPI api) {

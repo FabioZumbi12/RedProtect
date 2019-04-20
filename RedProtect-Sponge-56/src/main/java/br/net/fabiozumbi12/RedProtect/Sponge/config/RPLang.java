@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.Sponge;
@@ -42,7 +43,7 @@ import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.get
 
 public class RPLang {
 
-    public static final Properties Lang = new Properties() {
+    private static final Properties Lang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
@@ -92,7 +93,7 @@ public class RPLang {
         RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().cfgs.root().language);
     }
 
-    static void loadBaseLang() {
+    private static void loadBaseLang() {
         BaseLang.clear();
         try {
             BaseLang.load(RedProtect.get().container.getAsset("langEN-US.properties").get().getUrl().openStream());
@@ -102,7 +103,7 @@ public class RPLang {
         updateLang();
     }
 
-    static void loadLang() {
+    private static void loadLang() {
         Lang.clear();
         try {
             FileInputStream fileInput = new FileInputStream(pathLang);
@@ -116,14 +117,14 @@ public class RPLang {
             int langv = Integer.parseInt(Lang.get("_lang.version").toString().replace(".", ""));
             int rpv = Integer.parseInt(RedProtect.get().container.getVersion().get().replace(".", ""));
             if (langv < rpv || langv == 0) {
-                RedProtect.get().logger.warning("Your lang file is outdated. Probally need strings updates!");
+                RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
                 RedProtect.get().logger.warning("Lang file version: " + Lang.get("_lang.version"));
                 Lang.put("_lang.version", RedProtect.get().container.getVersion().get());
             }
         }
     }
 
-    static void updateLang() {
+    private static void updateLang() {
         BaseLang.forEach((key, value) -> {
             if (!Lang.containsKey(key)) {
                 Lang.put(key, value);
@@ -155,23 +156,31 @@ public class RPLang {
         return FMsg;
     }
 
-    public static void sendMessage(CommandSource p, String key) {
-        if (p instanceof Player && DelayedMessage.containsKey(p) && DelayedMessage.get(p).equals(key)) {
+    public static void sendMessage(CommandSource sender, String key) {
+        sendMessage(sender, key, new Replacer[0]);
+    }
+
+    public static void sendMessage(CommandSource sender, String key, Replacer<String,String>[] replaces) {
+        if (sender instanceof Player && DelayedMessage.containsKey(sender) && DelayedMessage.get(sender).equals(key)) {
             return;
         }
 
         if (Lang.get(key) == null) {
-            p.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + key));
+            sender.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + key));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {
-            p.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + get(key)));
+            String message = get(key);
+            for (Replacer<String, String> replacer:replaces){
+                message = message.replace(replacer.getPlaceholder(), replacer.getValue());
+            }
+            sender.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + message));
         }
 
-        if (p instanceof Player) {
-            DelayedMessage.put((Player) p, key);
+        if (sender instanceof Player) {
+            DelayedMessage.put((Player) sender, key);
             Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                DelayedMessage.remove(p);
+                DelayedMessage.remove(sender);
             }, 1, TimeUnit.SECONDS);
         }
     }

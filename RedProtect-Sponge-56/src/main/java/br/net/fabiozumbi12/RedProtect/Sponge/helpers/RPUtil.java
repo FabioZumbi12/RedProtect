@@ -31,7 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -287,7 +287,7 @@ public class RPUtil extends CoreUtil {
                 if (!ignore && days > RedProtect.get().cfgs.root().purge.remove_oldest) {
                     if (RedProtect.get().WE && RedProtect.get().cfgs.root().purge.regen.enable) {
                         if (region.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
-                            WEListener.regenRegion(region, Sponge.getServer().getWorld(region.getWorld()).get(), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
+                            WEHook.regenRegion(region, Sponge.getServer().getWorld(region.getWorld()).get(), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
                         } else {
                             skipped++;

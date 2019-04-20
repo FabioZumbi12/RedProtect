@@ -32,7 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
@@ -276,7 +276,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                WEListener.regenRegion(r, w.get(), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
+                WEHook.regenRegion(r, w.get(), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
                 return cmdr;
             }
 
@@ -296,7 +296,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                if (WEListener.undo(r.getID())) {
+                if (WEHook.undo(r.getID())) {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
                 } else {
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));

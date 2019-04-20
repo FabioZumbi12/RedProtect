@@ -35,7 +35,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPLogger;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.RPDynmap;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.DynmapHook;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPPermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
@@ -71,14 +71,13 @@ import java.util.concurrent.TimeUnit;
         authors = "FabioZumbi12",
         description = "Complete antigrief plugin",
         dependencies = {
-                @Dependency(id = "worldedit", optional = true, version = "[7.0,)"),
-                @Dependency(id = "rpDynmap", optional = true)})
+                @Dependency(id = "worldedit", optional = true, version = "[7.0,]"),
+                @Dependency(id = "dynmap", optional = true)})
 public class RedProtect {
     private static RedProtect instance;
     public final List<String> changeWait = new ArrayList<>();
     public final List<String> tpWait = new ArrayList<>();
     public final RPLogger logger = new RPLogger();
-    public final List<String> openGuis = new ArrayList<>();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<Player, Location<World>> firstLocationSelections = new HashMap<>();
     public final HashMap<Player, Location<World>> secondLocationSelections = new HashMap<>();
@@ -91,7 +90,7 @@ public class RedProtect {
     public boolean onlineMode;
     public RPConfig cfgs;
     public EconomyService econ;
-    public RPDynmap rpDynmap;
+    public DynmapHook rpDynmap;
     @Inject
     @ConfigDir(sharedRoot = false)
     public File configDir;
@@ -162,7 +161,7 @@ public class RedProtect {
                 logger.info("Dynmap found. Hooked.");
                 logger.info("Loading Dynmap markers...");
                 try {
-                    rpDynmap = new RPDynmap();
+                    rpDynmap = new DynmapHook();
                     game.getEventManager().registerListeners(container, rpDynmap);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -225,9 +224,6 @@ public class RedProtect {
         // Save and unload all regions
         rm.saveAll(true);
         rm.unloadAll();
-
-        // Close all open inventories/GUIs
-        openGuis.clear();
 
         // Cancel tasks from sponge scheduler and save logs
         for (Task task : Sponge.getScheduler().getScheduledTasks(this)) task.cancel();

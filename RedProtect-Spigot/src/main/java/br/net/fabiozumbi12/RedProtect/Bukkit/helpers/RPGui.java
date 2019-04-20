@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -36,6 +37,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -143,8 +145,6 @@ public class RPGui implements Listener {
                 this.guiItems[slotc] = RedProtect.get().cfgs.getGuiSeparator();
             }
         }
-
-        RedProtect.get().getServer().getPluginManager().registerEvents(this, RedProtect.get());
     }
 
     @EventHandler
@@ -161,27 +161,27 @@ public class RPGui implements Listener {
                     }
                 } catch (Exception e) {
                     RPLang.sendMessage(this.player, "gui.edit.error");
-                    close();
+                    close(false);
                     return;
                 }
             }
             RedProtect.get().cfgs.saveGui();
             RPLang.sendMessage(this.player, "gui.edit.ok");
         }
-        close();
+        close(false);
     }
 
     @EventHandler
     void onDeath(PlayerDeathEvent event) {
-        if (event.getEntity().getOpenInventory().getTitle().equals(this.name)) {
-            close();
+        if (event.getEntity().getName().equals(this.player.getName())) {
+            close(true);
         }
     }
 
     @EventHandler
     void onPlayerLogout(PlayerQuitEvent event) {
-        if (event.getPlayer().getInventory().getTitle().equals(this.name)) {
-            close();
+        if (event.getPlayer().getName().equals(this.player.getName())) {
+            close(true);
         }
     }
 
@@ -257,38 +257,39 @@ public class RPGui implements Listener {
         }
         itemMeta.setLore(Arrays.asList(RedProtect.get().cfgs.getGuiString("value") + RedProtect.get().cfgs.getGuiString(String.valueOf(flagv)), "§0" + flag, RedProtect.get().cfgs.getGuiFlagString(flag, "description"), RedProtect.get().cfgs.getGuiFlagString(flag, "description1"), RedProtect.get().cfgs.getGuiFlagString(flag, "description2")));
         event.getCurrentItem().setItemMeta(itemMeta);
+
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
     }
 
-    private void close() {
+    private void close(boolean close) {
+        //Unregister Listener
+        HandlerList.unregisterAll(this);
+
         // Check for items
         this.player.updateInventory();
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
+        if (close) this.player.closeInventory();
 
-        RedProtect.get().openGuis.remove(this.region.getID());
         this.guiItems = null;
         this.name = null;
         this.region = null;
-        try {
-            this.finalize();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     public void open() {
-        if (RedProtect.get().openGuis.contains(this.region.getID())) {
-            RPLang.sendMessage(player, "cmdmanager.region.rpgui-open");
-            try {
-                this.finalize();
-            } catch (Throwable e) {
-                e.printStackTrace();
+        for (Player player:Bukkit.getServer().getOnlinePlayers()){
+            if (player.getOpenInventory().getTitle().equals(this.name)){
+                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                if (r != null && r.equals(this.region) && !player.equals(this.player)){
+                    RPLang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
+                    return;
+                }
             }
-            return;
         }
+        //Register Listener
+        RedProtect.get().getServer().getPluginManager().registerEvents(this, RedProtect.get());
+
         this.inv = Bukkit.createInventory(player, this.size, this.name);
         inv.setContents(this.guiItems);
         player.openInventory(inv);
-        RedProtect.get().openGuis.add(this.region.getID());
     }
 }

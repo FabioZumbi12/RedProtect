@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2019 - @FabioZumbi12
- *  Last Modified: 16/04/19 06:22
+ *  Last Modified: 20/04/19 02:14
  *
  *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *   damages arising from the use of this class.
@@ -24,41 +24,22 @@
  *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
+package br.net.fabiozumbi12.RedProtect.Core.helpers;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
+public class Replacer<K, V> {
+    private K placeholder;
+    private V value;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
+    public Replacer(K placeholder, V value) {
+        this.placeholder = placeholder;
+        this.value = value;
+    }
 
-public class SelectWECommand {
+    public K getPlaceholder() {
+        return this.placeholder;
+    }
 
-    public CommandSpec register() {
-        return CommandSpec.builder()
-                .description(Text.of("Command to set Worldedit selection."))
-                .permission("redprotect.command.select-we")
-                .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
-                        Player player = (Player) src;
-
-                        if (RedProtect.get().WE) {
-                            Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
-                            if (r == null) {
-                                RPLang.sendMessage(player, "cmdmanager.region.doesexists");
-                                return CommandResult.success();
-                            }
-                            WEHook.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());
-                        }
-                    }
-                    return CommandResult.success();
-                }).build();
+    public V getValue() {
+        return this.value;
     }
 }

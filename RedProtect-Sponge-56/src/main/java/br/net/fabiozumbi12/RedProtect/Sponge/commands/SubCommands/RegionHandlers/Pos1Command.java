@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -65,7 +65,7 @@ public class Pos1Command {
                             Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
                             Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
                             if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI) {
-                                WEListener.setSelectionRP(player, loc1, loc2);
+                                WEHook.setSelectionRP(player, loc1, loc2);
                             }
 
                             if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !player.hasPermission("redprotect.bypass.define-max-distance")) {

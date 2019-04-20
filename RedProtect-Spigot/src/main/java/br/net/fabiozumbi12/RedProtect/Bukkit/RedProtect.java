@@ -59,7 +59,6 @@ public class RedProtect extends JavaPlugin {
     static boolean SkillAPI;
     private static RedProtect plugin;
     public final RPLogger logger = new RPLogger();
-    public final List<String> openGuis = new ArrayList<>();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public File jarFile = null;
@@ -299,9 +298,6 @@ public class RedProtect extends JavaPlugin {
         // Save and unload all regions
         rm.saveAll(true);
         rm.unloadAll();
-
-        // Close all open inventories/GUIs
-        openGuis.clear();
 
         // Cancel tasks from bukkit scheduler and save logs
         Bukkit.getScheduler().cancelTasks(this);

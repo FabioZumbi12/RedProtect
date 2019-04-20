@@ -32,11 +32,13 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -176,7 +178,7 @@ public class DefineRegionBuilder extends RegionBuilder {
                 RedProtect.get().econ.withdrawPlayer(p, reco);
                 p.sendMessage(RPLang.get("economy.region.claimed").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco + " " + RedProtect.get().cfgs.getEcoString("economy-name")));
             } else {
-                RPLang.sendMessage(p, RPLang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco));
+                RPLang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer<>("{price}", RedProtect.get().cfgs.getEcoString("economy-symbol") + reco)});
                 return;
             }
         }

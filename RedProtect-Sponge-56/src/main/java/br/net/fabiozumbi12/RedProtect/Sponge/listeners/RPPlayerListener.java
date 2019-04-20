@@ -35,7 +35,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -180,7 +180,7 @@ public class RPPlayerListener {
                 Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
                 Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
                 if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI) {
-                    WEListener.setSelectionRP(p, loc1, loc2);
+                    WEHook.setSelectionRP(p, loc1, loc2);
                 }
 
                 if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !p.hasPermission("redprotect.bypass.define-max-distance")) {
@@ -226,7 +226,7 @@ public class RPPlayerListener {
                 Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
                 Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
                 if (RedProtect.get().WE && RedProtect.get().cfgs.root().hooks.useWECUI) {
-                    WEListener.setSelectionRP(p, loc1, loc2);
+                    WEHook.setSelectionRP(p, loc1, loc2);
                 }
 
                 if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().cfgs.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {

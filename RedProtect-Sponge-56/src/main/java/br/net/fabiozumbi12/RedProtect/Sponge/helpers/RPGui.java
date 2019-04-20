@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
@@ -59,8 +60,8 @@ public class RPGui {
     private Inventory inv;
     private boolean editable;
 
-    public RPGui(String name, Player player, Region region, boolean edit, int maxSlots) {
-        this.editable = edit;
+    public RPGui(String name, Player player, Region region, boolean editable, int maxSlots) {
+        this.editable = editable;
         this.player = player;
         this.region = region;
         if (maxSlots <= 9) {
@@ -137,8 +138,6 @@ public class RPGui {
             }
             RedProtect.get().getPVHelper().query(inv, slot, line).set(this.guiItems[slotc]);
         }
-
-        RedProtect.get().getGame().getEventManager().registerListeners(RedProtect.get().container, this);
     }
 
     @Listener
@@ -237,7 +236,6 @@ public class RPGui {
                     event.setCancelled(true);
                 }
             }
-
         }
     }
 
@@ -260,8 +258,6 @@ public class RPGui {
                     RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description1),
                     RPUtil.toText(RedProtect.get().cfgs.guiRoot().gui_flags.get(flag).description2)));
 
-            //RedProtect.get().logger.severe("Item Lore: "+item.get(Keys.ITEM_LORE).get().get(0).toPlain());
-
             event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
             event.getTransactions().get(0).getSlot().offer(item);
 
@@ -272,7 +268,12 @@ public class RPGui {
     }
 
     public void close(boolean close) {
+        //Unregister Listener
+        Sponge.getEventManager().unregisterListeners(this);
+
         RedProtect.get().getPVHelper().removeGuiItem(this.player);
+
+        // Check for items
         RedProtect.get().getGame().getEventManager().unregisterListeners(this);
         if (close) RedProtect.get().getPVHelper().closeInventory(this.player);
 
@@ -283,6 +284,18 @@ public class RPGui {
     }
 
     public void open() {
+        for (Player player:Sponge.getServer().getOnlinePlayers()){
+            if (player.getOpenInventory().isPresent() && player.getOpenInventory().get().getName().get().equals(this.inv.getName().get())){
+                Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                if (r != null && r.equals(this.region) && !player.equals(this.player)){
+                    RPLang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
+                    return;
+                }
+            }
+        }
+        //Register Listener
+        RedProtect.get().getGame().getEventManager().registerListeners(RedProtect.get().container, this);
+
         RedProtect.get().getPVHelper().openInventory(this.inv, this.player);
     }
 

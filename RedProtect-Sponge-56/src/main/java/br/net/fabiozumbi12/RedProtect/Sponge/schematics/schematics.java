@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.io.File;
@@ -42,7 +42,7 @@ public class schematics {
             File file = new File(RedProtect.get().configDir, "schematics" + File.separator + RedProtect.get().cfgs.root().schematics.first_house_file);
 
 
-            Region region = WEListener.pasteWithWE(p, file);
+            Region region = WEHook.pasteWithWE(p, file);
             if (region == null) return;
 
             p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));

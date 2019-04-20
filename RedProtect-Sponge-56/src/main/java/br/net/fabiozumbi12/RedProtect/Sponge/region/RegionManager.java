@@ -33,7 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -316,7 +316,7 @@ public class RegionManager {
         int delay = 0;
         for (Region r : getRegions(player)) {
             if (r.getArea() <= RedProtect.get().cfgs.root().purge.regen.max_area_regen) {
-                WEListener.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+                WEHook.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
             }
         }
