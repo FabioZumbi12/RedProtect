@@ -227,7 +227,7 @@ public class RPBlockListener implements Listener {
                 return;
             }
 
-            if ((b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.allowSpawner(p)) {
+            if ((b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.canPlaceSpawner(p)) {
                 return;
             }
 
@@ -293,7 +293,7 @@ public class RPBlockListener implements Listener {
             return;
         }
 
-        if (r != null && (b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.allowSpawner(p)) {
+        if (r != null && (b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.canPlaceSpawner(p)) {
             return;
         }
 
@@ -479,7 +479,7 @@ public class RPBlockListener implements Listener {
             e.setCancelled(true);
             return;
         }
-        if (rto != null && !bto.isEmpty() && !rto.FlowDamage()) {
+        if (rto != null && !bto.isEmpty() && !rto.canFlowDamage()) {
             e.setCancelled(true);
             return;
         }

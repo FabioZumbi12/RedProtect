@@ -346,13 +346,13 @@ public class Region extends CoreRegion {
         final StringBuilder leaderStringBuilder = new StringBuilder();
         final StringBuilder adminStringBuilder = new StringBuilder();
         final StringBuilder memberStringBuilder = new StringBuilder();
+        final StringBuilder today = new StringBuilder();
         String leaderString = "None";
         String adminString = "None";
         String memberString = "None";
 
         String wMsgTemp;
         String IsTops = RPLang.translBool(isOnTop());
-        String today;
         String wName = this.world;
         String colorChar = "";
         String dynmapInfo = "";
@@ -386,21 +386,21 @@ public class Region extends CoreRegion {
         }
 
         if (this.date.equals(RPUtil.dateNow())) {
-            today = RPLang.get("region.today");
+            today.append(RPLang.get("region.today"));
         } else {
-            today = this.date;
+            today.append(this.date);
         }
         for (PlayerRegion<String, String> pname : this.leaders) {
             Player play = RedProtect.get().getServer().getPlayer(pname.getPlayerName());
             if (play != null && play.isOnline() && pname.getPlayerName().equalsIgnoreCase(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
-                today = ChatColor.GREEN + "Online!";
+                today.append(ChatColor.GREEN).append("Online!");
                 break;
             }
         }
         for (PlayerRegion<String, String> pname : this.admins) {
             Player play = RedProtect.get().getServer().getPlayer(pname.getPlayerName());
             if (play != null && play.isOnline()) {
-                today = ChatColor.GREEN + "Online!";
+                today.append(ChatColor.GREEN).append("Online!");
                 break;
             }
         }
@@ -415,7 +415,7 @@ public class Region extends CoreRegion {
                 RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
                 RPLang.get("region.leaders") + " " + leaderString + "\n" +
                 RPLang.get("region.admins") + " " + adminString + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberString + "\n" +
-                RPLang.get("region.date") + " " + today + "\n" +
+                RPLang.get("region.date") + " " + today.toString() + "\n" +
                 dynmapInfo +
                 RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
     }
@@ -675,7 +675,7 @@ public class Region extends CoreRegion {
         return !flagExists("spawn-wither") || getFlagBool("spawn-wither");
     }
 
-    public int maxPlayers() {
+    public int getMaxPlayers() {
         if (!flagExists("max-players")) {
             return -1;
         }
@@ -719,11 +719,11 @@ public class Region extends CoreRegion {
         return !flagExists("dynmap") || getFlagBool("dynmap");
     }
 
-    public boolean keepInventory() {
+    public boolean isKeepInventory() {
         return flagExists("keep-inventory") && getFlagBool("keep-inventory");
     }
 
-    public boolean keepLevels() {
+    public boolean isKeepLevels() {
         return flagExists("keep-levels") && getFlagBool("keep-levels");
     }
 
@@ -745,7 +745,7 @@ public class Region extends CoreRegion {
         return !flagExists("player-damage") || getFlagBool("player-damage");
     }
 
-    public boolean forcePVP() {
+    public boolean isForcePVP() {
         return flagExists("forcepvp") && getFlagBool("forcepvp");
     }
 
@@ -755,24 +755,24 @@ public class Region extends CoreRegion {
 
     public boolean canSign(Player p) {
         if (!flagExists("sign")) {
-            return checkAllowedPlayer(p);
+            return isPlayerAllowed(p);
         }
-        return getFlagBool("sign") || checkAllowedPlayer(p);
+        return getFlagBool("sign") || isPlayerAllowed(p);
     }
 
     public boolean canExit(Player p) {
         if (!canExitWithItens(p)) {
             return false;
         }
-        return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p);
+        return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || isPlayerAllowed(p);
     }
 
     public boolean canEnter(Player p) {
         if (RedProtect.get().denyEnter.containsKey(p.getName()) && RedProtect.get().denyEnter.get(p.getName()).contains(this.getID())) {
-            return checkAllowedPlayer(p);
+            return isPlayerAllowed(p);
         }
 
-        return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p);
+        return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || isPlayerAllowed(p);
     }
 
     public boolean canExitWithItens(Player p) {
@@ -780,7 +780,7 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (checkAllowedPlayer(p)) {
+        if (isPlayerAllowed(p)) {
             return true;
         }
 
@@ -802,7 +802,7 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (checkAllowedPlayer(p)) {
+        if (isPlayerAllowed(p)) {
             return true;
         }
 
@@ -822,7 +822,7 @@ public class Region extends CoreRegion {
         if (!flagExists("deny-enter-items")) {
             return true;
         }
-        if (checkAllowedPlayer(p)) {
+        if (isPlayerAllowed(p)) {
             return true;
         }
 
@@ -841,9 +841,9 @@ public class Region extends CoreRegion {
 
     public boolean canTeleport(Player p) {
         if (!flagExists("teleport")) {
-            return checkAllowedPlayer(p);
+            return isPlayerAllowed(p);
         }
-        return getFlagBool("teleport") || checkAllowedPlayer(p);
+        return getFlagBool("teleport") || isPlayerAllowed(p);
     }
 
 
@@ -899,11 +899,11 @@ public class Region extends CoreRegion {
     }
 
     public boolean canSkill(Player p) {
-        return !flagExists("up-skills") || getFlagBool("up-skills") || checkAllowedPlayer(p);
+        return !flagExists("up-skills") || getFlagBool("up-skills") || isPlayerAllowed(p);
     }
 
     public boolean canBack(Player p) {
-        return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p);
+        return !flagExists("can-back") || getFlagBool("can-back") || isPlayerAllowed(p);
     }
 
     public boolean isPvPArena() {
@@ -912,40 +912,40 @@ public class Region extends CoreRegion {
 
     public boolean allowMod(Player p) {
         if (!flagExists("allow-mod")) {
-            return checkAllowedPlayer(p);
+            return isPlayerAllowed(p);
         }
-        return getFlagBool("allow-mod") || checkAllowedPlayer(p);
+        return getFlagBool("allow-mod") || isPlayerAllowed(p);
     }
 
     public boolean canEnterPortal(Player p) {
-        return !flagExists("portal-enter") || getFlagBool("portal-enter") || checkAllowedPlayer(p);
+        return !flagExists("portal-enter") || getFlagBool("portal-enter") || isPlayerAllowed(p);
     }
 
     public boolean canExitPortal(Player p) {
-        return !flagExists("portal-exit") || getFlagBool("portal-exit") || checkAllowedPlayer(p);
+        return !flagExists("portal-exit") || getFlagBool("portal-exit") || isPlayerAllowed(p);
     }
 
     public boolean canPet(Player p) {
-        return !flagExists("can-pet") || getFlagBool("can-pet") || checkAllowedPlayer(p);
+        return !flagExists("can-pet") || getFlagBool("can-pet") || isPlayerAllowed(p);
     }
 
     public boolean canProtectiles(Player p) {
-        return !flagExists("can-projectiles") || getFlagBool("can-projectiles") || checkAllowedPlayer(p);
+        return !flagExists("can-projectiles") || getFlagBool("can-projectiles") || isPlayerAllowed(p);
     }
 
     public boolean canDrop(Player p) {
-        return !flagExists("can-drop") || getFlagBool("can-drop") || checkAllowedPlayer(p);
+        return !flagExists("can-drop") || getFlagBool("can-drop") || isPlayerAllowed(p);
     }
 
     public boolean canPickup(Player p) {
-        return !flagExists("can-pickup") || getFlagBool("can-pickup") || checkAllowedPlayer(p);
+        return !flagExists("can-pickup") || getFlagBool("can-pickup") || isPlayerAllowed(p);
     }
 
     public boolean canCreatePortal() {
         return !flagExists("allow-create-portal") || getFlagBool("allow-create-portal");
     }
 
-    public boolean AllowCommands(Player p, String fullcmd) {
+    public boolean isCmdAllowed(Player p, String fullcmd) {
         if (!flagExists("allow-cmds")) {
             return true;
         }
@@ -982,7 +982,7 @@ public class Region extends CoreRegion {
         return false;
     }
 
-    public boolean DenyCommands(Player p, String fullcmd) {
+    public boolean isCmdDenied(String fullcmd) {
         if (!flagExists("deny-cmds")) {
             return true;
         }
@@ -1022,18 +1022,18 @@ public class Region extends CoreRegion {
 
 
     //---------------------- Player Flags --------------------------//
-    public boolean allowFishing(Player p) {
+    public boolean canFish(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("fishing")) {
-            return RedProtect.get().cfgs.getBool("flags.fishing") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.fishing") || isPlayerAllowed(p);
         }
-        return getFlagBool("fishing") || checkAllowedPlayer(p);
+        return getFlagBool("fishing") || isPlayerAllowed(p);
     }
 
-    public boolean allowPressPlate(Player p) {
+    public boolean canPressPlate(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("press-plate")) {
-            return RedProtect.get().cfgs.getBool("flags.press-plate") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.press-plate") || isPlayerAllowed(p);
         }
-        return getFlagBool("press-plate") || checkAllowedPlayer(p);
+        return getFlagBool("press-plate") || isPlayerAllowed(p);
     }
 
     public boolean canBuild(Player p) {
@@ -1041,9 +1041,9 @@ public class Region extends CoreRegion {
             return false;
         }
         if (!RedProtect.get().cfgs.isFlagEnabled("build")) {
-            return RedProtect.get().cfgs.getBool("flags.build") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.build") || isPlayerAllowed(p);
         }
-        return (getFlagBool("build") || checkAllowedPlayer(p));
+        return (getFlagBool("build") || isPlayerAllowed(p));
     }
 
     public boolean leavesDecay() {
@@ -1054,27 +1054,29 @@ public class Region extends CoreRegion {
     }
 
     /**
-     * Allow non members of this region to break/place spawners.
+     * Check if the specified player can place a spawner in this region.
      *
-     * @return boolean
+     * @param p The player to check for permission.
+     * @return boolean if the player can place o not a spawner.
      */
-    public boolean allowSpawner(Player p) {
+    public boolean canPlaceSpawner(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("allow-spawner")) {
             return RedProtect.get().cfgs.getBool("flags.allow-spawner");
         }
-        return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
+        return getFlagBool("allow-spawner") || isPlayerAllowed(p);
     }
 
     /**
-     * Allow players with fly enabled fly on this region.
+     * Check if the specified player can fly in this region.
      *
-     * @return boolean
+     * @param p The player to check for permission.
+     * @return boolean if the player can fly or not.
      */
     public boolean canFly(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("allow-fly")) {
             return RedProtect.get().cfgs.getBool("flags.allow-fly");
         }
-        return getFlagBool("allow-fly") || checkAllowedPlayer(p);
+        return getFlagBool("allow-fly") || isPlayerAllowed(p);
     }
 
     /**
@@ -1101,7 +1103,7 @@ public class Region extends CoreRegion {
         return getFlagBool("iceform-world");
     }
 
-    public boolean FlowDamage() {
+    public boolean canFlowDamage() {
         if (!RedProtect.get().cfgs.isFlagEnabled("flow-damage")) {
             return RedProtect.get().cfgs.getBool("flags.flow-damage");
         }
@@ -1119,59 +1121,59 @@ public class Region extends CoreRegion {
         if (!RedProtect.get().cfgs.isFlagEnabled("use-potions")) {
             return RedProtect.get().cfgs.getBool("flags.use-potions");
         }
-        return getFlagBool("use-potions") || checkAllowedPlayer(p);
+        return getFlagBool("use-potions") || isPlayerAllowed(p);
     }
 
-    public boolean allowEffects(Player p) {
+    public boolean canGetEffects(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("allow-effects")) {
             return RedProtect.get().cfgs.getBool("flags.allow-effects");
         }
-        return getFlagBool("allow-effects") || checkAllowedPlayer(p);
+        return getFlagBool("allow-effects") || isPlayerAllowed(p);
     }
 
-    public boolean canPVP(Player attack, Player defend) {
-        if (defend != null && RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(this, attack, defend)) {
+    public boolean canPVP(Player attacker, Player defender) {
+        if (defender != null && RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(this, attacker, defender)) {
             return true;
         }
         if (!RedProtect.get().cfgs.isFlagEnabled("pvp")) {
-            return RedProtect.get().cfgs.getBool("flags.pvp") || RedProtect.get().ph.hasPerm(attack, "redprotect.bypass");
+            return RedProtect.get().cfgs.getBool("flags.pvp") || RedProtect.get().ph.hasPerm(attacker, "redprotect.bypass");
         }
-        return getFlagBool("pvp") || RedProtect.get().ph.hasPerm(attack, "redprotect.bypass");
+        return getFlagBool("pvp") || RedProtect.get().ph.hasPerm(attacker, "redprotect.bypass");
     }
 
     public boolean canEnderChest(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("ender-chest")) {
-            return RedProtect.get().cfgs.getBool("flags.ender-chest") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.ender-chest") || isPlayerAllowed(p);
         }
-        return getFlagBool("ender-chest") || checkAllowedPlayer(p);
+        return getFlagBool("ender-chest") || isPlayerAllowed(p);
     }
 
     public boolean canChest(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("chest")) {
-            return RedProtect.get().cfgs.getBool("flags.chest") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.chest") || isPlayerAllowed(p);
         }
-        return getFlagBool("chest") || checkAllowedPlayer(p);
+        return getFlagBool("chest") || isPlayerAllowed(p);
     }
 
     public boolean canLever(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("lever")) {
-            return RedProtect.get().cfgs.getBool("flags.lever") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.lever") || isPlayerAllowed(p);
         }
-        return getFlagBool("lever") || checkAllowedPlayer(p);
+        return getFlagBool("lever") || isPlayerAllowed(p);
     }
 
     public boolean canButton(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("button")) {
-            return RedProtect.get().cfgs.getBool("flags.button") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.button") || isPlayerAllowed(p);
         }
-        return getFlagBool("button") || checkAllowedPlayer(p);
+        return getFlagBool("button") || isPlayerAllowed(p);
     }
 
     public boolean canDoor(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("door")) {
-            return RedProtect.get().cfgs.getBool("flags.door") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.door") || isPlayerAllowed(p);
         }
-        return getFlagBool("door") || checkAllowedPlayer(p);
+        return getFlagBool("door") || isPlayerAllowed(p);
     }
 
     public boolean canSpawnMonsters() {
@@ -1190,16 +1192,16 @@ public class Region extends CoreRegion {
 
     public boolean canMinecart(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("minecart")) {
-            return RedProtect.get().cfgs.getBool("flags.minecart") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.minecart") || isPlayerAllowed(p);
         }
-        return getFlagBool("minecart") || checkAllowedPlayer(p);
+        return getFlagBool("minecart") || isPlayerAllowed(p);
     }
 
     public boolean canInteractPassives(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("passives")) {
-            return RedProtect.get().cfgs.getBool("flags.passives") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.passives") || isPlayerAllowed(p);
         }
-        return getFlagBool("passives") || checkAllowedPlayer(p);
+        return getFlagBool("passives") || isPlayerAllowed(p);
     }
 
     public boolean canFlow() {
@@ -1216,11 +1218,11 @@ public class Region extends CoreRegion {
         return getFlagBool("fire");
     }
 
-    public boolean AllowHome(Player p) {
+    public boolean isHomeAllowed(Player p) {
         if (!RedProtect.get().cfgs.isFlagEnabled("allow-home")) {
-            return RedProtect.get().cfgs.getBool("flags.allow-home") || checkAllowedPlayer(p);
+            return RedProtect.get().cfgs.getBool("flags.allow-home") || isPlayerAllowed(p);
         }
-        return getFlagBool("allow-home") || checkAllowedPlayer(p);
+        return getFlagBool("allow-home") || isPlayerAllowed(p);
     }
 
     public boolean canGrow() {
@@ -1237,7 +1239,7 @@ public class Region extends CoreRegion {
         this.value = value;
     }
 
-    private boolean checkAllowedPlayer(Player p) {
+    private boolean isPlayerAllowed(Player p) {
         return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin");
     }
 

@@ -303,7 +303,7 @@ public class RPPlayerListener implements Listener {
             //if (r != null) && (b != null) >>
             if (b != null) {
                 if (b.getType().name().endsWith("PRESSURE_PLATE")) {
-                    if (!r.allowPressPlate(p)) {
+                    if (!r.canPressPlate(p)) {
                         RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
                         event.setCancelled(true);
                     }
@@ -385,7 +385,7 @@ public class RPPlayerListener implements Listener {
                         event.setCancelled(true);
                     }
                 } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
-                    if (!r.allowFishing(p)) {
+                    if (!r.canFish(p)) {
                         RPLang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setUseItemInHand(Event.Result.DENY);
                         event.setCancelled(true);
@@ -433,7 +433,7 @@ public class RPPlayerListener implements Listener {
                                 itemInHand.getType().equals(Material.BUCKET) ||
                                 itemInHand.getType().equals(Material.LAVA_BUCKET) ||
                                 itemInHand.getType().equals(Material.ITEM_FRAME) ||
-                                (!r.allowFishing(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
+                                (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                 itemInHand.getType().equals(Material.PAINTING))) {
                     RPLang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
@@ -669,9 +669,9 @@ public class RPPlayerListener implements Listener {
             }
 
             //enter max players flag
-            if (rto.maxPlayers() != -1) {
+            if (rto.getMaxPlayers() != -1) {
                 if (!checkMaxPlayer(p, rto)) {
-                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(rto.maxPlayers())));
+                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(rto.getMaxPlayers())));
                     e.setCancelled(true);
                 }
             }
@@ -681,7 +681,7 @@ public class RPPlayerListener implements Listener {
                     RPLang.sendMessage(p, "playerlistener.region.cantback");
                     e.setCancelled(true);
                 }
-                if (!rto.AllowHome(p) && PlayerCmd.get(p.getName()).startsWith("/home")) {
+                if (!rto.isHomeAllowed(p) && PlayerCmd.get(p.getName()).startsWith("/home")) {
                     RPLang.sendMessage(p, "playerlistener.region.canthome");
                     e.setCancelled(true);
                 }
@@ -795,7 +795,7 @@ public class RPPlayerListener implements Listener {
                 return;
             }
 
-            if (!r.AllowCommands(p, msg)) {
+            if (!r.isCmdAllowed(p, msg)) {
                 if (cmds.equalsIgnoreCase("rp") || cmds.equalsIgnoreCase("redprotect")) {
                     return;
                 }
@@ -804,7 +804,7 @@ public class RPPlayerListener implements Listener {
                 return;
             }
 
-            if (!r.DenyCommands(p, msg)) {
+            if (!r.isCmdDenied(msg)) {
                 for (String alias : RedProtect.get().getCommand("RedProtect").getAliases()) {
                     if (cmds.equalsIgnoreCase(alias)) {
                         return;
@@ -816,7 +816,7 @@ public class RPPlayerListener implements Listener {
                 return;
             }
 
-            if (cmds.equalsIgnoreCase("sethome") && !r.AllowHome(p)) {
+            if (cmds.equalsIgnoreCase("sethome") && !r.isHomeAllowed(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.canthome");
                 e.setCancelled(true);
                 return;
@@ -860,10 +860,10 @@ public class RPPlayerListener implements Listener {
         Region r = RedProtect.get().rm.getTopRegion(loc);
 
         if (r != null) {
-            if (r.keepInventory()) {
+            if (r.isKeepInventory()) {
                 e.setKeepInventory(true);
             }
-            if (r.keepLevels()) {
+            if (r.isKeepLevels()) {
                 e.setKeepLevel(true);
             }
         }
@@ -983,16 +983,16 @@ public class RPPlayerListener implements Listener {
             }
 
             //enter max players flag
-            if (r.maxPlayers() != -1) {
+            if (r.getMaxPlayers() != -1) {
                 if (!checkMaxPlayer(p, r)) {
                     e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));
+                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
                     return;
                 }
             }
 
             //remove pots
-            if (!r.allowEffects(p)) {
+            if (!r.canGetEffects(p)) {
                 for (PotionEffect pot : p.getActivePotionEffects()) {
                     if (pot.getDuration() < 36000) {
                         p.removePotionEffect(pot.getType());
@@ -1121,7 +1121,7 @@ public class RPPlayerListener implements Listener {
                 ttl++;
             }
         }
-        return ttl < r.maxPlayers();
+        return ttl < r.getMaxPlayers();
     }
 
     @EventHandler
@@ -1557,9 +1557,9 @@ public class RPPlayerListener implements Listener {
             if (RedProtect.get().hooks.pvpm) {
                 if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")) {
                     PvPlayer pvpp = PvPlayer.get(p);
-                    if (r.forcePVP() != pvpp.hasPvPEnabled()) {
+                    if (r.isForcePVP() != pvpp.hasPvPEnabled()) {
                         PvPState.put(p.getName(), pvpp.hasPvPEnabled());
-                        pvpp.setPvP(r.forcePVP());
+                        pvpp.setPvP(r.isForcePVP());
                     }
                 }
             }
