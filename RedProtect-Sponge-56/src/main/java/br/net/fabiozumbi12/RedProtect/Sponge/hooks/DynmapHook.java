@@ -40,7 +40,7 @@ import org.spongepowered.api.world.World;
 
 public class DynmapHook {
 
-    static MarkerSet MSet;
+    private static MarkerSet MSet;
     private static DynmapCommonAPI Dyn;
     private static MarkerAPI MApi;
 

@@ -759,17 +759,16 @@ public class RPPlayerListener implements Listener {
         }
 
         String msg = e.getMessage();
-        String cmd = msg.split(" ")[0];
-        String cmds = cmd.toLowerCase().replace("/", "");
+        String cmds = msg.split(" ")[0].toLowerCase().replace("/", "");
         //RedProtect.get().logger.severe("Command: "+msg);
 
-        if (RedProtect.get().cfgs.getStringList("server-protection.deny-commands-on-worlds." + p.getWorld().getName()).contains(msg.split(" ")[0].replace("/", "")) && !p.hasPermission("redprotect.bypass")) {
+        if (RedProtect.get().cfgs.getStringList("server-protection.deny-commands-on-worlds." + p.getWorld().getName()).contains(cmds) && !p.hasPermission("redprotect.bypass")) {
             RPLang.sendMessage(p, "playerlistener.command-notallowed");
             e.setCancelled(true);
             return;
         }
 
-        if (RedProtect.get().cfgs.hasGlobalKey(p.getWorld().getName() + ".command-ranges." + cmd.toLowerCase().replace("/", "")) && !cmds.equals(".")) {
+        if (RedProtect.get().cfgs.hasGlobalKey(p.getWorld().getName() + ".command-ranges." + cmds.toLowerCase().replace("/", "")) && !cmds.equals(".")) {
             double min = RedProtect.get().cfgs.getGlobalFlagDouble(p.getWorld().getName() + ".command-ranges." + cmds + ".min-range");
             double max = RedProtect.get().cfgs.getGlobalFlagDouble(p.getWorld().getName() + ".command-ranges." + cmds + ".max-range");
             String mesg = RedProtect.get().cfgs.getGlobalFlagString(p.getWorld().getName() + ".command-ranges." + cmds + ".message");
@@ -783,21 +782,21 @@ public class RPPlayerListener implements Listener {
             }
         }
 
-        if (cmd.equalsIgnoreCase("/back") || cmd.equalsIgnoreCase("/home")) {
+        if (cmds.equalsIgnoreCase("back") || cmds.equalsIgnoreCase("home")) {
             PlayerCmd.put(p.getName(), msg);
         }
 
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null) {
 
-            if ((cmd.equalsIgnoreCase("/petc") || cmd.equalsIgnoreCase("/petcall")) && RedProtect.get().MyPet && !r.canPet(p)) {
+            if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall")) && RedProtect.get().MyPet && !r.canPet(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.cantpet");
                 e.setCancelled(true);
                 return;
             }
 
             if (!r.AllowCommands(p, msg)) {
-                if (cmd.equalsIgnoreCase("/rp") || cmd.equalsIgnoreCase("/redprotect")) {
+                if (cmds.equalsIgnoreCase("rp") || cmds.equalsIgnoreCase("redprotect")) {
                     return;
                 }
                 RPLang.sendMessage(p, "playerlistener.region.cantcommand");
@@ -807,7 +806,7 @@ public class RPPlayerListener implements Listener {
 
             if (!r.DenyCommands(p, msg)) {
                 for (String alias : RedProtect.get().getCommand("RedProtect").getAliases()) {
-                    if (cmd.equalsIgnoreCase("/" + alias)) {
+                    if (cmds.equalsIgnoreCase(alias)) {
                         return;
                     }
                 }
@@ -817,14 +816,14 @@ public class RPPlayerListener implements Listener {
                 return;
             }
 
-            if (cmd.equalsIgnoreCase("/sethome") && !r.AllowHome(p)) {
+            if (cmds.equalsIgnoreCase("sethome") && !r.AllowHome(p)) {
                 RPLang.sendMessage(p, "playerlistener.region.canthome");
                 e.setCancelled(true);
                 return;
             }
 
             //Pvp check
-            if (cmd.equalsIgnoreCase("/pvp") && RedProtect.get().PvPm) {
+            if (cmds.equalsIgnoreCase("pvp") && RedProtect.get().PvPm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().cfgs.getString("flags-configuration.pvparena-nopvp-kick-cmd").replace("{player}", p.getName()));
@@ -833,12 +832,12 @@ public class RPPlayerListener implements Listener {
             }
 
             if (RedProtect.get().Mc && !r.getFlagBool("allow-magiccarpet") && (!r.isAdmin(p) && !r.isLeader(p))) {
-                if (cmd.equalsIgnoreCase("/magiccarpet")) {
+                if (cmds.equalsIgnoreCase("magiccarpet")) {
                     e.setCancelled(true);
                     RPLang.sendMessage(p, "playerlistener.region.cantmc");
                 } else {
                     for (String cmda : MagicCarpet.getPlugin(MagicCarpet.class).getCommand("MagicCarpet").getAliases()) {
-                        if (cmd.equalsIgnoreCase("/" + cmda)) {
+                        if (cmds.equalsIgnoreCase(cmda)) {
                             e.setCancelled(true);
                             RPLang.sendMessage(p, "playerlistener.region.cantmc");
                         }
