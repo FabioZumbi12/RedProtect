@@ -28,12 +28,11 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.region;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldFlatFileRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -144,12 +143,12 @@ public class RegionManager {
     }*/
 
     /**
-     * Return a {@code set<region>} of regions by player UUID or Name;
+     * Return a {@link Set<Region>} of regions by player UUID or Name;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      *
-     * @param uuid
-     * @return {@code set<region>}
+     * @param uuid the UUID of the player.
+     * @return {{@link Set<Region>}
      */
     public Set<Region> getRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -160,12 +159,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@code set<region>} of regions by player UUID or Name if this player is Admin or Leader;
+     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Admin or Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
-     * @param uuid
-     * @return {@code set<region>}
+     * @param uuid the UUID of the player.
+     * @return {@link Set<Region>}
      */
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -284,7 +283,7 @@ public class RegionManager {
         int delay = 0;
         for (Region r : getRegions(player)) {
             if (r.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
-                WEListener.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
+                WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
             }
         }

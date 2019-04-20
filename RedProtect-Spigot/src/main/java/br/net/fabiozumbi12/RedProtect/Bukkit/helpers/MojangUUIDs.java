@@ -24,7 +24,7 @@
  *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
+package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import org.json.simple.JSONArray;

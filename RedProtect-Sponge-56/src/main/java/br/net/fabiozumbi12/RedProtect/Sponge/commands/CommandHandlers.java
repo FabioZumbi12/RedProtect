@@ -631,12 +631,11 @@ public class CommandHandlers {
         String pname = RPUtil.PlayerToUUID(p.getName());
         if (RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.list")) {
             getRegionforList(p, uuid, Page);
-            return;
         } else if (RedProtect.get().ph.hasPerm(p, "redprotect.command.list") && pname.equalsIgnoreCase(uuid)) {
             getRegionforList(p, uuid, Page);
-            return;
+        } else {
+            RPLang.sendMessage(p, "no.permission");
         }
-        RPLang.sendMessage(p, "no.permission");
     }
 
     public static void getRegionforList(CommandSource p, String uuid, int nPage) {

@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2019 - @FabioZumbi12
- *  Last Modified: 28/03/19 20:20
+ *  Last Modified: 16/04/19 06:21
  *
  *  This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *   damages arising from the use of this class.
@@ -26,21 +26,29 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import org.bukkit.entity.Player;
 
-public class RPProtocolLib {
-    public static ItemStack removeAttributes(ItemStack item) {
-        if (item.getType().equals(Material.AIR)) return item;
+public class SimpleClansHook {
+    public static boolean getPlayerClan(Region r, Player p) {
+        ClanPlayer clan = RedProtect.get().clanManager.getClanPlayer(p);
+        return clan != null && clan.getTag().equalsIgnoreCase(r.getFlagString("clan"));
+    }
 
-        if (!MinecraftReflection.isCraftItemStack(item)) {
-            item = MinecraftReflection.getBukkitItemStack(item);
+    public static boolean inWar(Region r, Player attack, Player defend) {
+        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.use-war")) {
+            return false;
         }
-        NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
-        compound.put(NbtFactory.ofList("AttributeModifiers"));
-        return item;
+        if (!RedProtect.get().cfgs.getBool("hooks.simpleclans.war-on-server-regions") && r.isLeader(RedProtect.get().cfgs.getString("region-settings.default-leader"))) {
+            return false;
+        }
+        ClanPlayer atClan = RedProtect.get().clanManager.getClanPlayer(attack);
+        if (atClan == null) {
+            return false;
+        }
+        ClanPlayer defCclan = RedProtect.get().clanManager.getClanPlayer(defend);
+        return defCclan != null && atClan.getClan().isWarring(defCclan.getClan());
     }
 }

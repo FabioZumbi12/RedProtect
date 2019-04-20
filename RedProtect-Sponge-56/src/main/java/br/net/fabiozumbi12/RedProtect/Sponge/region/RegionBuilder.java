@@ -52,7 +52,7 @@ public abstract class RegionBuilder {
 
     protected void setErrorSign(ChangeSignEvent e, String error) {
         SignData sign = e.getText();
-        sign = sign.set(sign.getValue(Keys.SIGN_LINES).get().set(0, RPUtil.toText(RPLang.get("regionbuilder.signerror"))));
+        sign.set(sign.getValue(Keys.SIGN_LINES).get().set(0, RPUtil.toText(RPLang.get("regionbuilder.signerror"))));
         this.setError(e.getCause().first(Player.class).get(), error);
     }
 

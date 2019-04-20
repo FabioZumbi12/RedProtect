@@ -219,7 +219,6 @@ public class RPEntityListener implements Listener {
                 if (a.getShooter() instanceof Entity) {
                     e2 = (Entity) a.getShooter();
                 }
-                a = null;
                 if (e2 == null) {
                     return;
                 }

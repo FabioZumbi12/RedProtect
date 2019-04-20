@@ -44,7 +44,6 @@ import org.spongepowered.api.event.impl.AbstractEvent;
  * can be used too. Only default actions is cancelled.
  *
  * @author FabioZumbi12
- * @returns <b>null</b> if the ExitedRegion or EnteredRegion is wilderness.
  */
 public class EnterExitRegionEvent extends AbstractEvent implements Cancellable, Event {
 

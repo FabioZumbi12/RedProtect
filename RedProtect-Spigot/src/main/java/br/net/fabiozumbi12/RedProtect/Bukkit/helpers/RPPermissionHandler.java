@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;

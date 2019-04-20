@@ -28,13 +28,11 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.MojangUUIDs;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEListener;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import me.ryanhamshire.GriefPrevention.Claim;
@@ -329,7 +327,7 @@ public class RPUtil extends CoreUtil {
                 if (!ignore && days > RedProtect.get().cfgs.getInt("purge.remove-oldest")) {
                     if (RedProtect.get().WE && RedProtect.get().cfgs.getBool("purge.regen.enable")) {
                         if (region.getArea() <= RedProtect.get().cfgs.getInt("purge.regen.max-area-regen")) {
-                            WEListener.regenRegion(region, Bukkit.getWorld(region.getWorld()), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
+                            WEHook.regenRegion(region, Bukkit.getWorld(region.getWorld()), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
                         } else {
                             skipped++;

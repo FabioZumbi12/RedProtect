@@ -274,7 +274,7 @@ public class RPUtil extends CoreUtil {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     e.printStackTrace();
                 }
-                Long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().cfgs.root().purge.ignore_regions_from_players) {
@@ -741,22 +741,15 @@ public class RPUtil extends CoreUtil {
     }
 
     private static boolean checkTableExists(String tableName) throws SQLException {
-        try {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
-            Connection con = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/" + RedProtect.get().cfgs.root().mysql.db_name, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
-            DatabaseMetaData meta = con.getMetaData();
-            ResultSet rs = meta.getTables(null, null, tableName, null);
-            if (rs.next()) {
-                con.close();
-                rs.close();
-                return true;
-            }
-            con.close();
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
+        Connection con = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().cfgs.root().mysql.host + "/" + RedProtect.get().cfgs.root().mysql.db_name, RedProtect.get().cfgs.root().mysql.user_name, RedProtect.get().cfgs.root().mysql.user_pass);
+        DatabaseMetaData meta = con.getMetaData();
+        ResultSet rs = meta.getTables(null, null, tableName, null);
+        boolean exists = rs.next();
+
+        con.close();
+        rs.close();
+        return exists;
     }
 
     public static void startFlagChanger(final String r, final String flag, final Player p) {
@@ -802,9 +795,7 @@ public class RPUtil extends CoreUtil {
         for (final Location<World> loc : locs) {
             p.sendBlockChange(loc.getBlockPosition(), RedProtect.get().cfgs.getBorderMaterial().getDefaultState());
 
-            Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                p.resetBlockChange(loc.getBlockPosition());
-            }, RedProtect.get().cfgs.root().region_settings.border.time_showing, TimeUnit.SECONDS);
+            Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> p.resetBlockChange(loc.getBlockPosition()), RedProtect.get().cfgs.root().region_settings.border.time_showing, TimeUnit.SECONDS);
         }
     }
 

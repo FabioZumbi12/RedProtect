@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
