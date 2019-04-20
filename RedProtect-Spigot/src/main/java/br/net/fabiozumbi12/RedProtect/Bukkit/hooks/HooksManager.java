@@ -82,7 +82,7 @@ public class HooksManager {
             RedProtect.get().logger.info("SkillAPI found. Hooked.");
         }
         if (myChunk) {
-            RedProtect.get().logger.sucess("MyChunk found. Ready to convert!");
+            RedProtect.get().logger.success("MyChunk found. Ready to convert!");
             RedProtect.get().logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
         }
         if (magicCarpet) {

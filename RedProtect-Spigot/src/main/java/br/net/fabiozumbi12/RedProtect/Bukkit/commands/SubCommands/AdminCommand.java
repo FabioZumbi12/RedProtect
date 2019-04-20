@@ -97,7 +97,7 @@ public class AdminCommand implements SubCommand {
                 RedProtect.get().logger.warning("Region converted and named to " + r.getName());
                 i++;
             }
-            RedProtect.get().logger.sucess(i + " MyChunk regions converted!");
+            RedProtect.get().logger.success(i + " MyChunk regions converted!");
             return true;
         } else {
             return false;
@@ -115,17 +115,17 @@ public class AdminCommand implements SubCommand {
 
             if (args[0].equalsIgnoreCase("clear-kicks")) {
                 RedProtect.get().denyEnter.clear();
-                RedProtect.get().logger.sucess("All region kicks was clear");
+                RedProtect.get().logger.success("All region kicks was clear");
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("single-to-files")) {
-                RedProtect.get().logger.sucess("[" + RPUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
+                RedProtect.get().logger.success("[" + RPUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("files-to-single")) {
-                RedProtect.get().logger.sucess("[" + RPUtil.FilesToSingle() + "]" + " regions converted to unified database file with success");
+                RedProtect.get().logger.success("[" + RPUtil.FilesToSingle() + "]" + " regions converted to unified database file with success");
                 return true;
             }
 
@@ -139,7 +139,7 @@ public class AdminCommand implements SubCommand {
                         RedProtect.get().saveConfig();
                         RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                         RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
-                        RedProtect.get().logger.sucess("RedProtect reloaded with Mysql as database! Ready to use!");
+                        RedProtect.get().logger.success("RedProtect reloaded with Mysql as database! Ready to use!");
                         return true;
                     }
                 } catch (Exception e) {
@@ -158,7 +158,7 @@ public class AdminCommand implements SubCommand {
                         RedProtect.get().saveConfig();
                         RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                         RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
-                        RedProtect.get().logger.sucess("RedProtect reloaded with Yml as database! Ready to use!");
+                        RedProtect.get().logger.success("RedProtect reloaded with Yml as database! Ready to use!");
                         return true;
                     }
                 } catch (Exception e) {
@@ -169,7 +169,7 @@ public class AdminCommand implements SubCommand {
 
             if (args[0].equalsIgnoreCase("gpTorp")) {
                 if (!RedProtect.get().hooks.griefPrev) {
-                    RedProtect.get().logger.sucess("The plugin GriefPrevention is not installed or is disabled");
+                    RedProtect.get().logger.success("The plugin GriefPrevention is not installed or is disabled");
                     return true;
                 }
                 if (RPUtil.convertFromGP() == 0) {
@@ -190,7 +190,7 @@ public class AdminCommand implements SubCommand {
                     RedProtect.get().logger.info(ChatColor.GREEN + "[" + total + "]" + "Region: " + r.getName() + ChatColor.RESET + " | " + ChatColor.AQUA + "World: " + r.getWorld() + ChatColor.RESET);
                     total++;
                 }
-                RedProtect.get().logger.sucess(total + " regions for " + Bukkit.getWorlds().size() + " worlds.");
+                RedProtect.get().logger.success(total + " regions for " + Bukkit.getWorlds().size() + " worlds.");
                 return true;
             }
 
@@ -199,11 +199,11 @@ public class AdminCommand implements SubCommand {
                     RedProtect.get().rm.saveAll(true);
                     RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                     RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
-                    RedProtect.get().logger.sucess("...converting MyChunk database");
-                    RedProtect.get().logger.sucess("http://dev.bukkit.org/bukkit-plugins/mychunk/");
+                    RedProtect.get().logger.success("...converting MyChunk database");
+                    RedProtect.get().logger.success("http://dev.bukkit.org/bukkit-plugins/mychunk/");
                     return true;
                 } else {
-                    RedProtect.get().logger.sucess("The plugin MyChunk is not installed or no regions found");
+                    RedProtect.get().logger.success("The plugin MyChunk is not installed or no regions found");
                     return true;
                 }
             }
@@ -217,7 +217,7 @@ public class AdminCommand implements SubCommand {
                     RedProtect.get().logger.severe("Error on load all regions from database files:");
                     e.printStackTrace();
                 }
-                RedProtect.get().logger.sucess(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
+                RedProtect.get().logger.success(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
                 return true;
             }
 
@@ -817,7 +817,7 @@ public class AdminCommand implements SubCommand {
 
         if (args[0].equalsIgnoreCase("save-all")) {
             RedProtect.get().logger.saveLogs();
-            RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
+            RedProtect.get().logger.success(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
             return true;
         }
 

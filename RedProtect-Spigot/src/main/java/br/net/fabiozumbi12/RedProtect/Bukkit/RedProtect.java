@@ -152,7 +152,7 @@ public class RedProtect extends JavaPlugin {
 
         if (cfgs.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
-            RedProtect.get().logger.sucess("Whitelist disabled!");
+            RedProtect.get().logger.success("Whitelist disabled!");
         }
 
         // Set online mode
