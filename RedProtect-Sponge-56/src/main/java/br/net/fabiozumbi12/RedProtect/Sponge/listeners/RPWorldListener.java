@@ -48,7 +48,7 @@ public class RPWorldListener {
             RedProtect.get().logger.warning("World loaded: " + w.getName());
 
         } catch (Exception ex) {
-            RedProtect.get().logger.severe("redprotect problem on load world:");
+            RedProtect.get().logger.severe("RedProtect problem on load world:");
             ex.printStackTrace();
         }
     }
@@ -60,7 +60,7 @@ public class RPWorldListener {
             RedProtect.get().rm.unload(w);
             RedProtect.get().logger.warning("World unloaded: " + w.getName());
         } catch (Exception ex) {
-            RedProtect.get().logger.severe("redprotect problem on unload world:");
+            RedProtect.get().logger.severe("RedProtect problem on unload world:");
             ex.printStackTrace();
         }
     }

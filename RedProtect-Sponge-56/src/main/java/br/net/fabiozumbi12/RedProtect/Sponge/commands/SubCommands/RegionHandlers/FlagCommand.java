@@ -114,12 +114,10 @@ class FlagCommandElement extends CommandElement {
 
     @Override
     public List<String> complete(CommandSource sender, CommandArgs argss, CommandContext context) {
-        RedProtect.get().logger.severe("args1: " + argss.getRaw());
         if (!argss.hasNext()) return null;
 
         String[] args = argss.getRaw().split(" ");
         if (args.length == 1) {
-            RedProtect.get().logger.severe("args2: " + Arrays.asList(args));
             SortedSet<String> tab = new TreeSet<>(RedProtect.get().config.getDefFlags());
             for (String flag : RedProtect.get().config.AdminFlags) {
                 if (RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
@@ -129,7 +127,6 @@ class FlagCommandElement extends CommandElement {
             return new ArrayList<>(tab);
         }
         if (args.length == 2) {
-            RedProtect.get().logger.severe("args3: " + Arrays.asList(args));
             SortedSet<String> tab = new TreeSet<>();
             for (String flag : RedProtect.get().config.getDefFlags()) {
                 if (flag.startsWith(args[1])) {
