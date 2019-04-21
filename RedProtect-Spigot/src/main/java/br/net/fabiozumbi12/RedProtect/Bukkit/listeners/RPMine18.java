@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.digiex.magiccarpet.Carpet;
 import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.Location;
@@ -59,7 +60,7 @@ public class RPMine18 implements Listener {
     private static final RPContainer cont = new RPContainer();
 
     public RPMine18() {
-        RedProtect.get().logger.debug("Loaded RPMine18...");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPMine18...");
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -68,7 +69,7 @@ public class RPMine18 implements Listener {
         Entity e = event.getEntity();
 
         //spawn arms on armor stands
-        if (e instanceof ArmorStand && RedProtect.get().config.getBool("hooks.armor-stands.spawn-arms")) {
+        if (e instanceof ArmorStand && RedProtect.get().config.configRoot().hooks.armor_stand_arms) {
             ArmorStand as = (ArmorStand) e;
             as.setArms(true);
         }
@@ -84,7 +85,7 @@ public class RPMine18 implements Listener {
         if (r == null) {
             //global flags
             if (ent instanceof ArmorStand) {
-                if (!RedProtect.get().config.getGlobalFlagBool(l.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(l.getWorld().getName()).build) {
                     e.setCancelled(true);
                     return;
                 }
@@ -122,7 +123,7 @@ public class RPMine18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().config.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
                     e.setCancelled(true);
                 }
             }
@@ -158,7 +159,7 @@ public class RPMine18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().config.getGlobalFlagBool(loc.getWorld().getName() + ".build")) {
+                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
                     e.setCancelled(true);
                 }
             }
@@ -200,7 +201,7 @@ public class RPMine18 implements Listener {
 
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent e) {
-        RedProtect.get().logger.debug("Is BlockListener - BlockExplodeEvent event");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - BlockExplodeEvent event");
         List<Block> toRemove = new ArrayList<>();
         for (Block b : e.blockList()) {
             Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
@@ -220,13 +221,13 @@ public class RPMine18 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
-        if (RedProtect.get().hooks.magicCarpet && RedProtect.get().config.getBool("hooks.magiccarpet.fix-piston-getblocks")) {
+        if (RedProtect.get().hooks.magicCarpet && RedProtect.get().config.configRoot().hooks.fix_mc_get_blocks) {
             List<Block> blocks = e.getBlocks();
             for (Block block : blocks) {
                 for (Carpet carpet : MagicCarpet.getCarpets().all()) {
                     if (carpet != null && carpet.isVisible() && carpet.touches(e.getBlock())) {
                         block.setType(Material.AIR);
-                        RedProtect.get().logger.debug("Carpet touch block " + block.getType().name());
+                        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Carpet touch block " + block.getType().name());
                         e.setCancelled(true);
                     }
                 }

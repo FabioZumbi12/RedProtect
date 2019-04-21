@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -65,7 +66,7 @@ public class RegionManager {
             return;
         }
         WorldRegionManager mgr;
-        if (RedProtect.get().config.getString("file-type").equalsIgnoreCase("mysql")) {
+        if (RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
             mgr = new WorldMySQLRegionManager(w);
         } else {
             mgr = new WorldFlatFileRegionManager(w);
@@ -77,7 +78,7 @@ public class RegionManager {
     public void unloadAll() {
         for (World w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
-            if (RedProtect.get().hooks.Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enable")) {
+            if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
                 RedProtect.get().hooks.dynmapHook.removeAll(w);
             }
         }
@@ -126,7 +127,7 @@ public class RegionManager {
             return 0;
         }
         int size = 0;
-        if (RedProtect.get().config.getBool("region-settings.blocklimit-per-world")) {
+        if (RedProtect.get().config.configRoot().region_settings.blocklimit_per_world) {
             WorldRegionManager rms = this.regionManagers.get(w);
             size = rms.getTotalRegionSize(uuid);
         } else {
@@ -137,10 +138,6 @@ public class RegionManager {
         }
         return size;
     }
-
-    /*public Set<Region> getWorldRegions(String player, World w) {
-        return this.regionManagers.get(w).getRegions(player);
-    }*/
 
     /**
      * Return a {@link Set<Region>} of regions by player UUID or Name;
@@ -206,7 +203,7 @@ public class RegionManager {
     public int getPlayerRegions(String player, World w) {
         player = RPUtil.PlayerToUUID(player);
         int size;
-        if (RedProtect.get().config.getBool("region-settings.claimlimit-per-world")) {
+        if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world) {
             size = getRegions(player, w).size();
         } else {
             size = getRegions(player).size();
@@ -216,7 +213,7 @@ public class RegionManager {
 
     public void add(Region r, World w) {
         this.regionManagers.get(w).add(r);
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
             try {
                 RedProtect.get().hooks.dynmapHook.addMark(r);
             } catch (Exception ex) {
@@ -235,7 +232,7 @@ public class RegionManager {
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
         removeCache(r);
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enable")) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
             try {
                 RedProtect.get().hooks.dynmapHook.removeMark(r);
             } catch (Exception ex) {
@@ -282,7 +279,7 @@ public class RegionManager {
     public int regenAll(String player) {
         int delay = 0;
         for (Region r : getRegions(player)) {
-            if (r.getArea() <= RedProtect.get().config.getInt("purge.regen.max-area-regen")) {
+            if (r.getArea() <= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
                 WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
             }
@@ -299,7 +296,7 @@ public class RegionManager {
     public @Nullable
     Region getTopRegion(Location loc) {
         if (bLoc.containsKey(loc.getBlock().getLocation())) {
-            RedProtect.get().logger.debug("Get from cache");
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from cache");
             return bLoc.get(loc.getBlock().getLocation());
         } else {
             if (!this.regionManagers.containsKey(loc.getWorld())) {
@@ -313,7 +310,7 @@ public class RegionManager {
 
                 if (r != null) {
                     bLoc.put(loc.getBlock().getLocation(), r);
-                    RedProtect.get().logger.debug("Get from DB");
+                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from DB");
                 }
             } catch (Exception ignored) {
             }

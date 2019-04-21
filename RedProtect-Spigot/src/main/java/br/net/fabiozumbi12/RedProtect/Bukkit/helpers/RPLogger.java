@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -68,8 +69,8 @@ public class RPLogger {
                 .sendMessage(translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
-    public void debug(String s) {
-        if (RedProtect.get().config.getBool("debug-messages")) {
+    public void debug(LogLevel level, String s) {
+        if (RedProtect.get().config.configRoot().debug_messages.get(level.name().toLowerCase())) {
             Bukkit.getConsoleSender()
                     .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
         }
@@ -77,7 +78,7 @@ public class RPLogger {
 
     public void addLog(String logLine) {
         // If log is not enabled return
-        if (!RedProtect.get().config.getBool("log-actions")) {
+        if (!RedProtect.get().config.configRoot().log_actions) {
             return;
         }
         int key = mainLog.keySet().size() + 1;
@@ -89,8 +90,7 @@ public class RPLogger {
     }
 
     public void saveLogs() {
-        // If log is not enabled return
-        if (!RedProtect.get().config.getBool("log-actions")) {
+        if (!RedProtect.get().config.configRoot().log_actions) {
             return;
         }
 

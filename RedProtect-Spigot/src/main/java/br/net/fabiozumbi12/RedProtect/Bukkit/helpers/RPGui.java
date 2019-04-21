@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
@@ -50,6 +51,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+
+import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class RPGui implements Listener {
 
@@ -105,7 +108,7 @@ public class RPGui implements Listener {
                     continue;
                 }
             }
-            if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && Material.getMaterial(RedProtect.get().config.getGuiFlagString(flag, "material")) != null && RedProtect.get().config.isFlagEnabled(flag)) {
+            if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material) != null && RedProtect.get().config.isFlagEnabled(flag)) {
                 if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")) {
                     continue;
                 }
@@ -123,10 +126,15 @@ public class RPGui implements Listener {
                     fvalue = RedProtect.get().config.getGuiString(region.getFlags().get(flag).toString());
                 }
 
-                this.guiItems[i] = RedProtect.get().config.getGuiItemStack(flag);
+                this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                 ItemMeta guiMeta = this.guiItems[i].getItemMeta();
-                guiMeta.setDisplayName(RedProtect.get().config.getGuiFlagString(flag, "name"));
-                guiMeta.setLore(Arrays.asList(RedProtect.get().config.getGuiString("value") + fvalue, "§0" + flag, RedProtect.get().config.getGuiFlagString(flag, "description"), RedProtect.get().config.getGuiFlagString(flag, "description1"), RedProtect.get().config.getGuiFlagString(flag, "description2")));
+                guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).name));
+                guiMeta.setLore(Arrays.asList(
+                        translateAlternateColorCodes('&', RedProtect.get().config.getGuiString("value") + fvalue),
+                        "§0" + flag,
+                        translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
+                        translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
+                        translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
                 if (allowEnchant) {
                     if (this.region.getFlagBool(flag)) {
                         guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -135,7 +143,7 @@ public class RPGui implements Listener {
                     }
                     guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 }
-                this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.getGuiFlagString(flag, "material")));
+                this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                 this.guiItems[i].setItemMeta(guiMeta);
             }
         }
@@ -187,7 +195,7 @@ public class RPGui implements Listener {
 
     @EventHandler
     void onPluginDisable(PluginDisableEvent event) {
-        RedProtect.get().logger.debug("Is PluginDisableEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is PluginDisableEvent event.");
         for (Player play : event.getPlugin().getServer().getOnlinePlayers()) {
             play.closeInventory();
         }
@@ -209,13 +217,13 @@ public class RPGui implements Listener {
             if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
                 ItemMeta itemMeta = item.getItemMeta();
                 String flag = itemMeta.getLore().get(1).replace("§0", "");
-                if (RedProtect.get().config.getBool("flags-configuration.change-flag-delay.enable")) {
-                    if (RedProtect.get().config.getStringList("flags-configuration.change-flag-delay.flags").contains(flag)) {
+                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                    if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                         if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                             applyFlag(flag, itemMeta, event);
                             RPUtil.startFlagChanger(this.region.getName(), flag, player);
                         } else {
-                            RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.getString("flags-configuration.change-flag-delay.seconds")));
+                            RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         }
                     } else {
                         applyFlag(flag, itemMeta, event);
@@ -255,7 +263,12 @@ public class RPGui implements Listener {
             }
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        itemMeta.setLore(Arrays.asList(RedProtect.get().config.getGuiString("value") + RedProtect.get().config.getGuiString(String.valueOf(flagv)), "§0" + flag, RedProtect.get().config.getGuiFlagString(flag, "description"), RedProtect.get().config.getGuiFlagString(flag, "description1"), RedProtect.get().config.getGuiFlagString(flag, "description2")));
+        itemMeta.setLore(Arrays.asList(
+                translateAlternateColorCodes('&', RedProtect.get().config.getGuiString("value") + RedProtect.get().config.getGuiString(String.valueOf(flagv))),
+                "§0" + flag,
+                translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
+                translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
+                translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
         event.getCurrentItem().setItemMeta(itemMeta);
 
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);

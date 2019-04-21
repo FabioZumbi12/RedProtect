@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import org.spongepowered.api.Sponge;
 
@@ -34,9 +35,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class RPLogger {
-    private final SortedMap<Integer, String> MainLog = new TreeMap<>();
+    private final SortedMap<Integer, String> mainLog = new TreeMap<>();
 
-    public void sucess(String s) {
+    public void success(String s) {
         Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &a&l" + s + "&r"));
     }
 
@@ -61,33 +62,31 @@ public class RPLogger {
     }
 
     public void debug(LogLevel level, String s) {
-        if (RedProtect.get().config.root().debug_messages.get(level.name().toLowerCase())) {
-            Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &b" + s + "&r]"));
+        if (RedProtect.get().config.configRoot().debug_messages.get(level.name().toLowerCase())) {
+            Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &b" + s + "&r"));
         }
     }
 
     public void addLog(String logLine) {
-        if (!RedProtect.get().config.root().log_actions) {
+        if (!RedProtect.get().config.configRoot().log_actions) {
             return;
         }
-        int key = MainLog.keySet().size() + 1;
-        MainLog.put(key, key + " - " + RPUtil.hourNow() + ": " + RPUtil.toText(logLine));
+        int key = mainLog.keySet().size() + 1;
+        mainLog.put(key, key + " - " + RPUtil.hourNow() + ": " + RPUtil.toText(logLine));
         if (key == 500) {
             SaveLogs();
-            MainLog.clear();
+            mainLog.clear();
         }
     }
 
     public void SaveLogs() {
-        if (!RedProtect.get().config.root().log_actions) {
+        if (!RedProtect.get().config.configRoot().log_actions) {
             return;
         }
 
         final StringBuilder sb = new StringBuilder();
-        for (int key : MainLog.keySet()) {
-            sb.append(MainLog.get(key));
-            sb.append('\n');
-        }
+        mainLog.forEach((key, entry) -> sb.append(entry).append('\n'));
+
         if (RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false) != null) {
             RPUtil.saveSBToZip(RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false), sb);
         }

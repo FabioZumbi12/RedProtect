@@ -87,14 +87,14 @@ public class FlagCommand implements SubCommand {
                 return true;
             }
 
-            if (RedProtect.get().config.getBool("flags-configuration.change-flag-delay.enable")) {
-                if (RedProtect.get().config.getStringList("flags-configuration.change-flag-delay.flags").contains(args[0])) {
+            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[0])) {
                     if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
                         RPUtil.startFlagChanger(r.getName(), args[0], player);
                         handleFlag(player, args[0], "", r);
                         return true;
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.getString("flags-configuration.change-flag-delay.seconds")));
+                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         return true;
                     }
                 }
@@ -136,14 +136,14 @@ public class FlagCommand implements SubCommand {
         for (int i = 1; i < args.length; i++) {
             text.append(" ").append(args[i]);
         }
-        if (RedProtect.get().config.getBool("flags-configuration.change-flag-delay.enable")) {
-            if (RedProtect.get().config.getStringList("flags-configuration.change-flag-delay.flags").contains(args[1])) {
+        if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[1])) {
                 if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
                     RPUtil.startFlagChanger(r.getName(), args[1], player);
                     handleFlag(player, args[1], text.substring(1), r);
                     return true;
                 } else {
-                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.getString("flags-configuration.change-flag-delay.seconds")));
+                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                     return true;
                 }
             }

@@ -65,13 +65,13 @@ public class Pos2Command implements SubCommand {
             if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)) {
                 Location loc1 = RedProtect.get().firstLocationSelections.get(player);
                 Location loc2 = RedProtect.get().secondLocationSelections.get(player);
-                if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.getBool("hooks.useWECUI")) {
+                if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.configRoot().hooks.useWECUI) {
                     WEHook.setSelectionRP(player, loc1, loc2);
                 }
 
-                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")) {
+                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(player, "redprotect.bypass.define-max-distance")) {
                     double dist = loc1.distanceSquared(loc2);
-                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.getInt("region-settings.define-max-distance"), (int) dist));
+                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
                     RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                 }

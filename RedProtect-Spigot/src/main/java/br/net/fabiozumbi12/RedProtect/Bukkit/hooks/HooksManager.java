@@ -92,10 +92,10 @@ public class HooksManager {
             clanManager = SimpleClans.getInstance().getClanManager();
             RedProtect.get().logger.info("SimpleClans found. Hooked.");
         }
-        if (Dyn && RedProtect.get().config.getBool("hooks.dynmapHook.enabled")) {
+        if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
             RedProtect.get().logger.info("Dynmap found. Hooked.");
             RedProtect.get().logger.info("Loading dynmapHook markers...");
-            dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmapHook"));
+            dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
             RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
             RedProtect.get().logger.info("Dynmap markers loaded!");
         }
@@ -116,7 +116,7 @@ public class HooksManager {
     }
 
     private boolean checkDyn() {
-        Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmapHook");
+        Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
         return pDyn != null && pDyn.isEnabled();
     }
 

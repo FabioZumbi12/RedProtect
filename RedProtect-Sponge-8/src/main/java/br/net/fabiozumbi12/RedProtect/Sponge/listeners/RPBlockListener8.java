@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.Player;
@@ -62,7 +62,7 @@ public class RPBlockListener8 {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "sourceLoc");
 
             if (context.containsKey(EventContextKeys.PISTON_EXTEND) || context.containsKey(EventContextKeys.PISTON_RETRACT)) {
-                if (RedProtect.get().config.root().performance.disable_PistonEvent_handler) {
+                if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
                     return;
                 }
 
@@ -70,7 +70,7 @@ public class RPBlockListener8 {
                 for (Location<World> pistonLoc : e.getLocations()) {
                     Region targetr = RedProtect.get().rm.getTopRegion(pistonLoc, this.getClass().getName());
 
-                    boolean antih = RedProtect.get().config.root().region_settings.anti_hopper;
+                    boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
                     RedProtect.get().logger.debug(LogLevel.BLOCKS, "getLocations");
 
                     if (targetr != null && (r == null || r != targetr)) {

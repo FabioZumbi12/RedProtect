@@ -24,30 +24,30 @@
  *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
+package br.net.fabiozumbi12.RedProtect.Core.config.Category;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.spongepowered.api.Sponge;
 
 import java.util.*;
 
 @ConfigSerializable
 public class MainCategory {
+    public MainCategory(){}
 
-    @Setting(value = "config-version", comment = "Dont touch <3")
-    public double config_version = 7.6;
+    @Setting(value = "config-version", comment = "Don't touch <3")
+    public double config_version = 8.3;
     @Setting(value = "online-mode", comment = "This option will define if RedProtect will work with UUIDs or player names.\n" +
             "Use with caution because offline player has no uuids and maybe some offline player is using online nicknames.\n" +
             "Make a backup of your DATABASE before change this setting in a production server.")
-    public boolean online_mode = Sponge.getServer().getOnlineMode();
+    public boolean online_mode;
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")
     public String file_type = "file";
     @Setting(value = "debug-messages")
-    public Map<String, Boolean> debug_messages = createMapDebug();
+    public Map<String, Boolean> debug_messages = new HashMap<>();
     @Setting(comment = "Default flag values for new regions.\nThis will not change the values for already created regions.")
     public Map<String, Boolean> flags = createMapFlags();
     @Setting(value = "flags-configuration")
@@ -88,15 +88,8 @@ public class MainCategory {
     @Setting
     public schematicsCat schematics = new schematicsCat();
 
-    public MainCategory() {
-    }
-
-    private Map<String, Boolean> createMapDebug() {
-        Map<String, Boolean> myMap = new HashMap<>();
-        for (LogLevel level : LogLevel.values()) {
-            myMap.put(level.name().toLowerCase(), false);
-        }
-        return myMap;
+    public MainCategory(boolean online_mode) {
+        this.online_mode = online_mode;
     }
 
     private Map<String, Boolean> createMapFlags() {
@@ -137,6 +130,8 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class flagsConfig {
+        @Setting(value = "pvparena-nopvp-kick-cmd", comment = "Bukkit only - Use {player} to use player name.")
+        public String pvparena_nopvp_kick_cmd = "spawn {player}";
         @Setting(value = "change-flag-delay", comment = "Delay to change the same flag again, if listed.")
         public flagsDelay change_flag_delay = new flagsDelay();
         @Setting(value = "effects-duration", comment = "Delay for effects flags.")
@@ -214,7 +209,7 @@ public class MainCategory {
     @ConfigSerializable
     public static class needClaim {
         @Setting(value = "allow-break-blocks", comment = "Allow break only this blocks on worlds where this is enabled.")
-        public List<String> allow_break_blocks = Arrays.asList("minecraft:grass", "minecraft:tall_grass");
+        public List<String> allow_break_blocks = new ArrayList<>();
         @Setting(value = "allow-only-protections-blocks", comment = "Allow place only protection blocks like the sign and the \"block-id\".")
         public boolean allow_only_protections_blocks = true;
         @Setting(comment = "Add your worlds here to allow players to place blocks only in your own claims.")
@@ -223,9 +218,9 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class netherProtection {
-        @Setting(value = "execute-cmd", comment = "If the player go to your world nether roof, this commands be fired.")
-        public List<String> execute_cmd = Collections.singletonList("spawn other {player}");
-        @Setting(comment = "The size of your netehr world(s).")
+        @Setting(value = "execute-cmd", comment = "If the player go to your world nether roof, this commands be fired. Use {player} to use player name.")
+        public List<String> execute_cmd = Collections.singletonList("spawn {player}");
+        @Setting(comment = "The size of your nether world(s).")
         public int maxYsize = 128;
     }
 
@@ -262,23 +257,7 @@ public class MainCategory {
         @Setting(value = "allowed-blocks", comment = "Blocks allowed to be locked with private signs.\n" +
                 "Accept mod blocks, eg.: Pixelmon Healers or PCs.\n" +
                 "Accept regex to match a group of blocks, like shulker boxes.")
-        public List<String> allowed_blocks = Arrays.asList(
-                "minecraft:dispenser",
-                "minecraft:note_block",
-                "minecraft:bed_block",
-                "minecraft:chest",
-                "minecraft:workbench",
-                "minecraft:furnace",
-                "minecraft:jukebox",
-                "minecraft:enchantment_table",
-                "minecraft:brewing_stand",
-                "minecraft:cauldron",
-                "minecraft:ender_chest",
-                "minecraft:beacon",
-                "minecraft:trapped_chest",
-                "minecraft:hopper",
-                "minecraft:dropper",
-                "minecraft:[a-z_]+_shulker_box");
+        public List<String> allowed_blocks = new ArrayList<>();
         @Setting
         public boolean use = true;
     }
@@ -313,6 +292,7 @@ public class MainCategory {
     public static class regionSettings {
         @Setting(value = "allow-sign-interact-tags", comment = "Allow non meber of regions to interact with signs with this headers. (line 1 of the sign)")
         public List<String> allow_sign_interact_tags = Arrays.asList(
+                "[Admin Shop]",
                 "[Buy]",
                 "[Sell]",
                 "[Trade]",
@@ -323,7 +303,7 @@ public class MainCategory {
         @Setting(value = "autoexpandvert-ondefine", comment = "Auto expand the vertical region size on claim or on define a region? If false, the region will be flat.")
         public boolean autoexpandvert_ondefine = true;
         @Setting(value = "block-id", comment = "The block id to use for claim regions (not wand). If \"fence\", will work for all fence types.")
-        public String block_id = "fence";
+        public String block_id = "";
         @Setting(value = "blocklimit-per-world", comment = "Split the block limits per world? This is not amount of claims and yes for blocks!")
         public boolean blocklimit_per_world = true;
 
@@ -358,13 +338,26 @@ public class MainCategory {
         public int teleport_time = 3;
         @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
         public Map<String, String> world_colors = new HashMap<>();
-        @Setting(value = "regions-per-page")
-        public int region_per_page = 50;
+        @Setting(value = "deny-structure-bypass-regions")
+        public boolean deny_structure_bypass_regions = true;
+
+        @Setting(value = "region-list")
+        public listCat region_list = new listCat();
+
+        @ConfigSerializable
+        public static class listCat {
+            @Setting(value = "regions-per-page")
+            public int region_per_page = 50;
+            @Setting(value = "hover-and-click-teleport", comment = "Bukkit only - Enable region list click and teleport.")
+            public boolean hover_and_click_teleport = true;
+            @Setting(value = "show-area")
+            public boolean shpw_area = true;
+        }
 
         @ConfigSerializable
         public static class borderCat {
             @Setting
-            public String material = "minecraft:glowstone";
+            public String material = "";
             @Setting(value = "time-showing")
             public int time_showing = 5;
         }
@@ -422,12 +415,14 @@ public class MainCategory {
 
         @Setting(value = "deny-command-on-worlds", comment = "Deny a command in specific world.")
         public Map<String, List<String>> deny_commands_on_worlds = createMapCmdWorld();
-        @Setting(value = "deny-playerdeath-by", comment = "Deny player death or get damage by this types of damage. \n" +
-                "List of types: https://goo.gl/9EyhSd")
-        public List<String> deny_playerdeath_by = Collections.singletonList("SUFFOCATE");
+        @Setting(value = "deny-playerdeath-by", comment = "Deny player death or get damage by this types of damage. List of types:\n" +
+                "Sponge: https://jd.spongepowered.org/7.1.0/org/spongepowered/api/event/cause/entity/damage/DamageTypes.html\n" +
+                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html")
+        public List<String> deny_playerdeath_by = new ArrayList<>();
         @Setting(value = "deny-potions", comment = "Deny this types of potions to be used on server. \n" +
-                "List of types: https://goo.gl/qKufWT")
-        public List<String> deny_potions = Collections.singletonList("INVISIBILITY");
+                "Sponge: https://jd.spongepowered.org/7.1.0/org/spongepowered/api/effect/potion/PotionEffectTypes.html \n" +
+                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionType.html")
+        public List<String> deny_potions = new ArrayList<>();
         @Setting(value = "sign-spy", comment = "Show every placed sign for who have the permission \"redprotect.signspy\" and for console.")
         public signSpy sign_spy = new signSpy();
 
@@ -449,15 +444,50 @@ public class MainCategory {
     @ConfigSerializable
     public static class wandsCat {
         @Setting(comment = "Its used to define regions and for players to claim regions.")
-        public String adminWandID = "minecraft:glass_bottle";
-        @Setting(comment = "Checks the clicked block with this on hand to see if theres a region on that block.")
-        public String infoWandID = "minecraft:paper";
+        public String adminWandID = "";
+        @Setting(comment = "Checks the clicked block with this on hand to see if there's a region on that block.")
+        public String infoWandID = "";
     }
 
     @ConfigSerializable
     public static class hooksCat {
         @Setting(comment = "Use worldeditCUI to visualize the region limits. (Need WorldEdit on server and WECUI on client)")
         public boolean useWECUI = true;
+        @Setting(value = "armor-stand-arms", comment = "Spawn armor stands with arms?")
+        public boolean armor_stand_arms = true;
+        @Setting(value = "fix-mc-get-blocks", comment = "Bukkit only - Fix Magic carpet get world blocks")
+        public boolean fix_mc_get_blocks = true;
+
+        @Setting(comment = "Bukkit only - Hook on McMMo")
+        public mcmmoCat mcmmo = new mcmmoCat();
+
+        @ConfigSerializable
+        public static class mcmmoCat {
+            @Setting(value = "fix-acrobatics-fire-leveling")
+            public boolean fix_acrobatics_fire_leveling = true;
+            @Setting(value = "fix-berserk-invisibility")
+            public boolean fix_berserk_invisibility = true;
+        }
+
+        @Setting(comment = "Bukkit only - Hook on SimpleClans to use wars")
+        public clansCat clans = new clansCat();
+
+        @ConfigSerializable
+        public static class clansCat {
+            @Setting(value = "use-war")
+            public boolean use_war = false;
+            @Setting(value = "war-on-server-regions")
+            public boolean war_on_server_regions = false;
+        }
+
+        @Setting(comment = "Bukkit only - Hook on Factions")
+        public facCat factions = new facCat();
+
+        @ConfigSerializable
+        public static class facCat {
+            @Setting(value = "claim-over-rps")
+            public boolean claim_over_rps = false;
+        }
 
         @Setting
         public dynmapCat dynmap = new dynmapCat();

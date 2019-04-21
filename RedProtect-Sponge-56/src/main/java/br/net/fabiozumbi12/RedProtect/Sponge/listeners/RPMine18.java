@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
@@ -65,7 +65,7 @@ public class RPMine18 {
         if (r == null) {
             //global flags
             if (ent.getType().equals(EntityTypes.ARMOR_STAND)) {
-                if (!RedProtect.get().config.gFlags().worlds.get(l.getExtent().getName()).build) {
+                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(l.getExtent().getName()).build) {
                     e.setCancelled(true);
                     return;
                 }
@@ -116,7 +116,7 @@ public class RPMine18 {
             //global flags
             if (e1 instanceof ArmorStand) {
                 if (e2 instanceof Player) {
-                    if (!RedProtect.get().config.gFlags().worlds.get(loc.getExtent().getName()).build) {
+                    if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getExtent().getName()).build) {
                         e.setCancelled(true);
                         return;
                     }

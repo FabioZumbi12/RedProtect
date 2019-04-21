@@ -37,6 +37,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,7 +45,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.*;
 
 public class RedProtect extends JavaPlugin {
@@ -93,7 +93,7 @@ public class RedProtect extends JavaPlugin {
             startLoad();
 
             version = getBukkitVersion();
-            logger.debug("Version String: " + version);
+            logger.debug(LogLevel.DEFAULT, "Version String: " + version);
 
             if (version >= 180) {
                 getServer().getPluginManager().registerEvents(new RPMine18(), this);
@@ -121,7 +121,7 @@ public class RedProtect extends JavaPlugin {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (!config.getString("file-type").equalsIgnoreCase("mysql")) {
+            if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 logger.severe("Error enabling RedProtect, plugin will shut down.");
                 this.setEnabled(false);
             }
@@ -144,17 +144,17 @@ public class RedProtect extends JavaPlugin {
         }
     }
 
-    private void startLoad() {
+    private void startLoad() throws Exception {
         config = new RPConfig();
         RPLang.init();
 
-        if (config.getBool("purge.regen.whitelist-server-regen") && Bukkit.getServer().hasWhitelist()) {
+        if (config.configRoot().purge.regen.enable_whitelist_regen && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
             RedProtect.get().logger.success("Whitelist disabled!");
         }
 
         // Set online mode
-        onlineMode = config.getBool("online-mode");
+        onlineMode = config.configRoot().online_mode;
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);
@@ -175,10 +175,10 @@ public class RedProtect extends JavaPlugin {
 
             RPUtil.ReadAllDB(rm.getAllRegions());
 
-            if (!config.getString("file-type").equalsIgnoreCase("mysql")) {
+            if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 startAutoSave();
             }
-            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.getString("file-type") + ") database!");
+            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,7 +225,7 @@ public class RedProtect extends JavaPlugin {
                     denyEnter.put(player, regs);
                 }
             }
-        }, config.getInt("region-settings.delay-after-kick-region") * 20);
+        }, config.configRoot().region_settings.delay_after_kick_region * 20);
         return true;
     }
 
@@ -244,13 +244,13 @@ public class RedProtect extends JavaPlugin {
 
     private void startAutoSave() {
         Bukkit.getScheduler().cancelTask(autoSaveID);
-        if (config.getInt("flat-file.auto-save-interval-seconds") != 0) {
-            logger.info("Auto-save Scheduler: Saving " + config.getString("file-type") + " database every " + config.getInt("flat-file.auto-save-interval-seconds") / 60 + " minutes!");
+        if (config.configRoot().flat_file.auto_save_interval_seconds != 0) {
+            logger.info("Auto-save Scheduler: Saving " + config.configRoot().file_type + " database every " + config.configRoot().flat_file.auto_save_interval_seconds / 60 + " minutes!");
 
             autoSaveID = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-                logger.debug("Auto-save Scheduler: Saving " + config.getString("file-type") + " database!");
-                rm.saveAll(config.getBool("flat-file.backup-on-save"));
-            }, config.getInt("flat-file.auto-save-interval-seconds") * 20, config.getInt("flat-file.auto-save-interval-seconds") * 20).getTaskId();
+                logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + config.configRoot().file_type + " database!");
+                rm.saveAll(config.configRoot().flat_file.backup_on_save);
+            }, config.configRoot().flat_file.auto_save_interval_seconds * 20, config.configRoot().flat_file.auto_save_interval_seconds * 20).getTaskId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");

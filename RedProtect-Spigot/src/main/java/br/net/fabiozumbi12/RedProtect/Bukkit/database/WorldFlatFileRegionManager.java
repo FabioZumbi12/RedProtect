@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -54,8 +55,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String world = this.getWorld().getName();
             RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
-            if (!RedProtect.get().config.getString("file-type").equals("mysql")) {
-                if (RedProtect.get().config.getBool("flat-file.region-per-file")) {
+            if (!RedProtect.get().config.configRoot().file_type.equals("mysql")) {
+                if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
                     File f = new File(RedProtect.get().getDataFolder(), "data" + File.separator + world);
                     if (!f.exists()) {
                         f.mkdir();
@@ -91,9 +92,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             }
         }
 
-        if (!RedProtect.get().config.getString("file-type").equals("mysql")) {
+        if (!RedProtect.get().config.configRoot().file_type.equals("mysql")) {
             YamlConfiguration fileDB = new YamlConfiguration();
-            RedProtect.get().logger.debug("Load world " + this.world.getName() + ". File type: yml");
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: yml");
             try {
                 fileDB.load(f);
             } catch (FileNotFoundException e) {
@@ -118,11 +119,11 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public int save(boolean force) {
         int saved = 0;
         try {
-            RedProtect.get().logger.debug("RegionManager.Save(): File type is " + RedProtect.get().config.getString("file-type"));
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().config.configRoot().file_type);
             String world = this.getWorld().getName();
             File datf;
 
-            if (!RedProtect.get().config.getString("file-type").equals("mysql")) {
+            if (!RedProtect.get().config.configRoot().file_type.equals("mysql")) {
                 datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + world + ".yml");
                 YamlConfiguration fileDB = new YamlConfiguration();
                 Set<YamlConfiguration> yamls = new HashSet<>();
@@ -131,7 +132,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         continue;
                     }
 
-                    if (RedProtect.get().config.getBool("flat-file.region-per-file")) {
+                    if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
                         if (!r.toSave() && !force) {
                             continue;
                         }
@@ -142,14 +143,14 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     RPUtil.addProps(fileDB, r);
                     saved++;
 
-                    if (RedProtect.get().config.getBool("flat-file.region-per-file")) {
+                    if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
                         yamls.add(fileDB);
                         saveYaml(fileDB, datf);
                         r.setToSave(false);
                     }
                 }
 
-                if (!RedProtect.get().config.getBool("flat-file.region-per-file")) {
+                if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
                     saveYaml(fileDB, datf);
                 } else {
                     //remove deleted regions
@@ -169,8 +170,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 if (force) RedProtect.get().logger.info("Saving " + this.world.getName() + "'s regions...");
 
                 //try backup
-                if (force && RedProtect.get().config.getBool("flat-file.backup")) {
-                    if (!RedProtect.get().config.getBool("flat-file.region-per-file")) {
+                if (force && RedProtect.get().config.configRoot().flat_file.backup) {
+                    if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
                         RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
                     } else {
                         RPUtil.backupRegions(yamls, world, null);
@@ -251,8 +252,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
 
         for (Region r : regions.values()) {
-            RedProtect.get().logger.debug("Radius: " + radius);
-            RedProtect.get().logger.debug("X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Radius: " + radius);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
             if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
                 ret.add(r);
             }

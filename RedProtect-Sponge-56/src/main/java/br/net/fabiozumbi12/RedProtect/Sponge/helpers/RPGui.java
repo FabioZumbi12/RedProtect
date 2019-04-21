@@ -93,7 +93,7 @@ public class RPGui {
             }
             try {
                 if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && RedProtect.get().config.isFlagEnabled(flag) && Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).isPresent()) {
-                    if (flag.equals("pvp") && !RedProtect.get().config.root().flags_configuration.enabled_flags.contains("pvp")) {
+                    if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags_configuration.enabled_flags.contains("pvp")) {
                         continue;
                     }
 
@@ -214,13 +214,13 @@ public class RPGui {
                 if (!RedProtect.get().getPVHelper().getItemType(item).equals(ItemTypes.NONE) && item.get(Keys.ITEM_LORE).isPresent()) {
                     String flag = item.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", "");
                     if (RedProtect.get().config.getDefFlags().contains(flag)) {
-                        if (RedProtect.get().config.root().flags_configuration.change_flag_delay.enable) {
-                            if (RedProtect.get().config.root().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                        if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                 if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                                     applyFlag(flag, item, event);
                                     RPUtil.startFlagChanger(this.region.getName(), flag, this.player);
                                 } else {
-                                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.root().flags_configuration.change_flag_delay.seconds + ""));
+                                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     event.setCancelled(true);
                                 }
                                 return;

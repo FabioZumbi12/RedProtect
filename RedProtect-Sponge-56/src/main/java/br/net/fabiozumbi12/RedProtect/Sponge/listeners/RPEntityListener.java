@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.key.Keys;
@@ -38,10 +38,7 @@ import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.explosive.Explosive;
 import org.spongepowered.api.entity.hanging.Hanging;
-import org.spongepowered.api.entity.living.Ambient;
-import org.spongepowered.api.entity.living.Aquatic;
-import org.spongepowered.api.entity.living.Living;
-import org.spongepowered.api.entity.living.Villager;
+import org.spongepowered.api.entity.living.*;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.golem.Golem;
 import org.spongepowered.api.entity.living.monster.Monster;
@@ -85,10 +82,17 @@ public class RPEntityListener {
     @IsCancelled(Tristate.FALSE)
     public void onCreatureSpawn(SpawnEntityEvent event) {
 
+
         for (Entity e : event.getEntities()) {
             if (e == null) {
                 continue;
             }
+
+            if (e instanceof ArmorStand && RedProtect.get().config.configRoot().hooks.armor_stand_arms){
+                ArmorStand as = (ArmorStand)e;
+                as.offer(Keys.ARMOR_STAND_HAS_ARMS, true);
+            }
+
             if (!(e instanceof Living)) {
                 continue;
             }

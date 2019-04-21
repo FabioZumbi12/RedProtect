@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.event.Listener;
@@ -53,10 +53,10 @@ public class RPBlockListener56 {
 
         Location<World> piston = null;
         Location<World> block = null;
-        boolean antih = RedProtect.get().config.root().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
 
         if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
-            if (RedProtect.get().config.root().performance.disable_PistonEvent_handler) {
+            if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
                 return;
             }
 
@@ -71,7 +71,7 @@ public class RPBlockListener56 {
         }
 
         if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
-            if (RedProtect.get().config.root().performance.disable_PistonEvent_handler) {
+            if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
                 return;
             }
 

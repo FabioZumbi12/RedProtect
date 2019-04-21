@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -53,7 +54,7 @@ import java.util.List;
 public class RPMine19 implements Listener {
 
     public RPMine19() {
-        RedProtect.get().logger.debug("Loaded RPMine19...");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPMine19...");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
@@ -66,7 +67,7 @@ public class RPMine19 implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug("RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }
@@ -117,7 +118,7 @@ public class RPMine19 implements Listener {
 
         Player p = (Player) e.getEntity();
         Entity proj = e.getProjectile();
-        List<String> Pots = RedProtect.get().config.getStringList("server-protection.deny-potions");
+        List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
 
         if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;
@@ -137,7 +138,7 @@ public class RPMine19 implements Listener {
         Player p = (Player) e.getEntity().getShooter();
         Entity ent = e.getEntity();
 
-        RedProtect.get().logger.debug("Is LingeringPotionSplashEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is LingeringPotionSplashEvent event.");
 
         Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.canGetEffects(p)) {

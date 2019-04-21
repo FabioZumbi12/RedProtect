@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import org.spongepowered.api.command.CommandSource;
@@ -122,11 +123,11 @@ public class RPPermissionHandler {
     }
 
     private int getBlockLimit(User user) {
-        int limit = RedProtect.get().config.root().region_settings.limit_amount;
+        int limit = RedProtect.get().config.configRoot().region_settings.limit_amount;
         List<Integer> limits = new ArrayList<>();
         if (limit > 0) {
             if (!user.hasPermission("redprotect.limits.blocks.unlimited")) {
-                for (String perm : RedProtect.get().config.root().permissions_limits.blocks) {
+                for (String perm : RedProtect.get().config.configRoot().permissions_limits.blocks) {
                     RedProtect.get().logger.debug(LogLevel.DEFAULT, "Perm: " + perm);
                     if (user.hasPermission(perm)) {
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Has block perm: " + perm);
@@ -147,11 +148,11 @@ public class RPPermissionHandler {
     }
 
     private int getClaimLimit(User user) {
-        int limit = RedProtect.get().config.root().region_settings.claim.amount_per_player;
+        int limit = RedProtect.get().config.configRoot().region_settings.claim.amount_per_player;
         List<Integer> limits = new ArrayList<>();
         if (limit > 0) {
             if (!user.hasPermission("redprotect.limits.claim.unlimited")) {
-                for (String perm : RedProtect.get().config.root().permissions_limits.claims) {
+                for (String perm : RedProtect.get().config.configRoot().permissions_limits.claims) {
                     RedProtect.get().logger.debug(LogLevel.DEFAULT, "Perm: " + perm);
                     if (user.hasPermission(perm)) {
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Has claim perm: " + perm);

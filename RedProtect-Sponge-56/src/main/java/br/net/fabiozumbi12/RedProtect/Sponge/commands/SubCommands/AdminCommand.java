@@ -73,17 +73,17 @@ public class AdminCommand implements CommandCallable {
 
             if (args[0].equalsIgnoreCase("clear-kicks")) {
                 RedProtect.get().denyEnter.clear();
-                RedProtect.get().logger.sucess("All region kicks was clear");
+                RedProtect.get().logger.success("All region kicks was clear");
                 return cmdr;
             }
 
             if (args[0].equalsIgnoreCase("single-to-files")) {
-                RedProtect.get().logger.sucess("[" + RPUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
+                RedProtect.get().logger.success("[" + RPUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
                 return cmdr;
             }
 
             if (args[0].equalsIgnoreCase("files-to-single")) {
-                RedProtect.get().logger.sucess("[" + RPUtil.FilesToSingle() + "]" + " regions converted to unified world file with success");
+                RedProtect.get().logger.success("[" + RPUtil.FilesToSingle() + "]" + " regions converted to unified world file with success");
                 return cmdr;
             }
 
@@ -93,10 +93,10 @@ public class AdminCommand implements CommandCallable {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'file' before convert from FILE to Mysql.");
                         return cmdr;
                     } else {
-                        RedProtect.get().config.root().file_type = "mysql";
+                        RedProtect.get().config.configRoot().file_type = "mysql";
                         RedProtect.get().config.save();
                         RedProtect.get().reload();
-                        RedProtect.get().logger.sucess("Redprotect reloaded with Mysql as database! Ready to use!");
+                        RedProtect.get().logger.success("Redprotect reloaded with Mysql as database! Ready to use!");
                         return cmdr;
                     }
                 } catch (Exception e) {
@@ -111,10 +111,10 @@ public class AdminCommand implements CommandCallable {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to File.");
                         return cmdr;
                     } else {
-                        RedProtect.get().config.root().file_type = "file";
+                        RedProtect.get().config.configRoot().file_type = "file";
                         RedProtect.get().config.save();
                         RedProtect.get().reload();
-                        RedProtect.get().logger.sucess("Redprotect reloaded with File as database! Ready to use!");
+                        RedProtect.get().logger.success("Redprotect reloaded with File as database! Ready to use!");
                         return cmdr;
                     }
                 } catch (Exception e) {
@@ -138,7 +138,7 @@ public class AdminCommand implements CommandCallable {
                     RedProtect.get().logger.info("&a[" + total + "]" + "Region: " + r.getName() + "&r | &3World: " + r.getWorld() + "&r");
                     total++;
                 }
-                RedProtect.get().logger.sucess(total + " regions for " + Sponge.getServer().getWorlds().size() + " worlds.");
+                RedProtect.get().logger.success(total + " regions for " + Sponge.getServer().getWorlds().size() + " worlds.");
                 return cmdr;
             }
 
@@ -151,7 +151,7 @@ public class AdminCommand implements CommandCallable {
                     RedProtect.get().logger.severe("Error on load all regions from database files:");
                     e.printStackTrace();
                 }
-                RedProtect.get().logger.sucess(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
+                RedProtect.get().logger.success(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
                 return cmdr;
             }
 
@@ -161,7 +161,7 @@ public class AdminCommand implements CommandCallable {
                     RedProtect.get().getPVHelper().closeInventory(p);
                 }
                 RedProtect.get().reload();
-                RedProtect.get().logger.sucess("Redprotect reloaded with success!");
+                RedProtect.get().logger.success("Redprotect reloaded with success!");
                 return cmdr;
             }
 
@@ -175,7 +175,7 @@ public class AdminCommand implements CommandCallable {
                     RedProtect.get().logger.info("Re-registering commands...");
                     RedProtect.get().commandHandler = new CommandHandler(RedProtect.get());
 
-                    RedProtect.get().logger.sucess("Redprotect Plus configs reloaded!");
+                    RedProtect.get().logger.success("Redprotect Plus configs reloaded!");
                 } catch (ObjectMappingException e) {
                     RedProtect.get().logger.severe("Redprotect Plus configs NOT reloaded!");
                     e.printStackTrace();
@@ -469,7 +469,7 @@ public class AdminCommand implements CommandCallable {
 
                 RPUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
 
-                String sec = String.valueOf(RedProtect.get().config.root().region_settings.delay_after_kick_region);
+                String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.get().getName())) {
                     RPUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
                     RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.kicked").replace("{player}", visit.get().getName()).replace("{region}", r.getName()).replace("{time", sec));
@@ -580,7 +580,7 @@ public class AdminCommand implements CommandCallable {
                 } catch (Exception ignored){}
             }
             sender.sendMessage(RPUtil.toText(RPLang.get("general.color") + "-------------------------------------------------"));
-            int regionsPage = RedProtect.get().config.root().region_settings.region_per_page;
+            int regionsPage = RedProtect.get().config.configRoot().region_settings.region_list.region_per_page;
             int total = 0;
             int last = 0;
 
@@ -596,7 +596,7 @@ public class AdminCommand implements CommandCallable {
 
                 Set<Region> wregions = new HashSet<>();
                 for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
-                    SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.root().region_settings.date_format);
+                    SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
                     Date now = null;
                     try {
                         now = dateformat.parse(RPUtil.dateNow());
@@ -611,12 +611,12 @@ public class AdminCommand implements CommandCallable {
                         e.printStackTrace();
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-                    for (String play : RedProtect.get().config.root().purge.ignore_regions_from_players) {
+                    for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
                         if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
                             break;
                         }
                     }
-                    if (!r.isLeader(RedProtect.get().config.root().region_settings.default_leader) && days > RedProtect.get().config.root().purge.remove_oldest && r.getArea() >= RedProtect.get().config.root().purge.regen.max_area_regen) {
+                    if (!r.isLeader(RedProtect.get().config.configRoot().region_settings.default_leader) && days > RedProtect.get().config.configRoot().purge.remove_oldest && r.getArea() >= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
                         wregions.add(r);
                     }
                 }
@@ -624,7 +624,7 @@ public class AdminCommand implements CommandCallable {
                     continue;
                 }
 
-                String colorChar = RedProtect.get().config.root().region_settings.world_colors.get(w.getName());
+                String colorChar = RedProtect.get().config.configRoot().region_settings.world_colors.get(w.getName());
 
                 int totalLocal = wregions.size();
                 total += totalLocal;
@@ -711,7 +711,7 @@ public class AdminCommand implements CommandCallable {
 
         if (args[0].equalsIgnoreCase("save-all")) {
             RedProtect.get().logger.SaveLogs();
-            RedProtect.get().logger.sucess(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
+            RedProtect.get().logger.success(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
             return cmdr;
         }
 

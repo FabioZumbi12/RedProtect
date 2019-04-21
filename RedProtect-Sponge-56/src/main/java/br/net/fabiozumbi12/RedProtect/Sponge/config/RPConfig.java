@@ -26,10 +26,11 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.FlagGuiCategory;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.GlobalFlagsCategory;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.Category.MainCategory;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -44,6 +45,7 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.Enchantment;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -105,11 +107,9 @@ public class RPConfig {
             "set-portal",
             "exit",
             "particles",
-            "dynmapHook",
+            "dynmap",
             "deny-exit-items");
     public CommentedConfigurationNode ecoCfgs;
-    private ConfigurationLoader<CommentedConfigurationNode> protManager;
-    private CommentedConfigurationNode protCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> ecoManager;
     private ConfigurationLoader<CommentedConfigurationNode> signManager;
     private CommentedConfigurationNode signCfgs;
@@ -118,14 +118,13 @@ public class RPConfig {
     private FlagGuiCategory guiRoot;
     private ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
     private CommentedConfigurationNode gflagsRoot;
-    private GlobalFlagsCategory gflags;
+    private GlobalFlagsCategory globalFlagsRoot;
     private CommentedConfigurationNode configRoot;
     private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
     private MainCategory root;
 
     //init
     public RPConfig(GuiceObjectMapperFactory factory) throws ObjectMappingException {
-        File ecoFile = new File(RedProtect.get().configDir, "economy.conf");
         try {
             if (!RedProtect.get().configDir.exists()) {
                 RedProtect.get().configDir.mkdir();
@@ -151,7 +150,49 @@ public class RPConfig {
             File defConfig = new File(RedProtect.get().configDir, "config.conf");
             cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();
             configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
-            this.root = configRoot.getValue(of(MainCategory.class), new MainCategory());
+            this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Sponge.getServer().getOnlineMode()));
+
+            //Defaults per server
+            if (this.root.private_cat.allowed_blocks.isEmpty()){
+                this.root.private_cat.allowed_blocks = Arrays.asList(
+                        "minecraft:dispenser",
+                        "minecraft:anvil",
+                        "minecraft:note_block",
+                        "minecraft:bed_block",
+                        "minecraft:chest",
+                        "minecraft:workbench",
+                        "minecraft:furnace",
+                        "minecraft:jukebox",
+                        "minecraft:enchantment_table",
+                        "minecraft:brewing_stand",
+                        "minecraft:cauldron",
+                        "minecraft:ender_chest",
+                        "minecraft:beacon",
+                        "minecraft:trapped_chest",
+                        "minecraft:hopper",
+                        "minecraft:dropper",
+                        "minecraft:[a-z_]+_shulker_box");
+            }
+            if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()){
+                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(BlockTypes.GRASS.getId(), BlockTypes.TALLGRASS.getId());
+            }
+            if (this.root.region_settings.block_id.isEmpty()){
+                this.root.region_settings.block_id = BlockTypes.FENCE.getId();
+            }
+            if (this.root.region_settings.border.material.isEmpty()){
+                this.root.region_settings.border.material = BlockTypes.GLOWSTONE.getId();
+            }
+            if (this.root.wands.adminWandID.isEmpty()){
+                this.root.wands.adminWandID = ItemTypes.GLASS_BOTTLE.getId();
+            }
+            if (this.root.wands.infoWandID.isEmpty()){
+                this.root.wands.infoWandID = ItemTypes.PAPER.getId();
+            }
+            if (root.debug_messages.isEmpty()){
+                for (LogLevel level : LogLevel.values()) {
+                    root.debug_messages.put(level.name().toLowerCase(), false);
+                }
+            }
 
             /*--------------------- end config.conf ---------------------------*/
 
@@ -181,7 +222,7 @@ public class RPConfig {
                 RedProtect.get().logger.warning("File \"globalflags.conf\" updated with new configurations!");
             }
 
-            this.gflags = gflagsRoot.getValue(of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
+            this.globalFlagsRoot = gflagsRoot.getValue(of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
 
             /*--------------------- end globalflags.conf ---------------------------*/
 
@@ -204,102 +245,90 @@ public class RPConfig {
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
+            if (this.guiRoot.gui_separator.material.isEmpty())
+                this.guiRoot.gui_separator.material = ItemTypes.STAINED_GLASS_PANE.getId();
+
+            if (this.guiRoot.gui_flags.isEmpty()){
+                this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("&6Description: &aAllow or cancel all", "&atype of effects for non members", "&aof this region.", ItemTypes.BLAZE_ROD.getId(), "&e=> Allow Effects", 15));
+                this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players with", "&a&afly enabled to fly on this region.", "", ItemTypes.FEATHER.getId(), "&e=> Allow Fly", 7));
+                this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use the", "&acommand /sethome or /home to set or come to", "&athis region.", ItemTypes.COMPASS.getId(), "&e=> Allow Set Home", 2));
+                this.guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to consume", "&apotions ins this region.", "", ItemTypes.POTION.getId(), "&e=> Allow Potions", 14));
+                this.guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to interact", "&awith spawners in this region.", "", ItemTypes.MOB_SPAWNER.getId(), "&e=> Allow Interact Spawners", 14));
+                this.guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag("&6Description: &aAllow any player to build", "&ain this region.", "", ItemTypes.GRASS.getId(), "&e=> Allow Build", 8));
+                this.guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to press", "&abutons in this region.", "", ItemTypes.STONE_BUTTON.getId(), "&e=> Allow Buttons", 6));
+                this.guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag("&6Description: &aChoose if farms", "&ain this region will grow or not.", "", ItemTypes.WHEAT.getId(), "&e=> Allow Blocks to Grow", 18));
+                this.guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to open any type of", "&achests in this region.", "", ItemTypes.TRAPPED_CHEST.getId(), "&e=> Allow Open Chest", 3));
+                this.guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to open", "&aand close doors in this region.", "", ItemTypes.WOODEN_DOOR.getId(), "&e=> Allow Open Doors", 0));
+                this.guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&ause ender chests on this region.", "", ItemTypes.ENDER_CHEST.getId(), "&e=> Allow Ender Chest", 12));
+                this.guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag("&6Description: &aAllow damage blocks by fire", "&aand explosion, and fire spread.", "", ItemTypes.BLAZE_POWDER.getId(), "&e=> Fire Spread and Damage Blocks", 19));
+                this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag("&6Description: &aEnable water and lava flow", "&ain this region.", "", ItemTypes.WATER_BUCKET.getId(), "&e=> Water and Lava Flow", 20));
+                this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag("&6Description: &aAllow liquids to", "&aremove blocks on flow.", "", ItemTypes.LAVA_BUCKET.getId(), "&e=> Allow Flow Damage", 21));
+                this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag("&6Description: &aAllow ice form", "&aby players using frost walk", "&aenchant.", ItemTypes.PACKED_ICE.getId(), "&e=> Allow Ice Form by Players", 4));
+                this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag("&6Description: &aAllow ice form", "&aby entities like SnowMan and by", "&aweather like snow.", ItemTypes.ICE.getId(), "&e=> Allow Ice Form by World", 22));
+                this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag("&6Description: &aAllow leaves decay naturally", "&ain this region.", "", ItemTypes.LEAVES.getId(), "&e=> Allow Leaves decay", 6));
+                this.guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use", "&alevers in this region.", "", ItemTypes.LEVER.getId(), "&e=> Allow Lever", 5));
+                this.guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to place,", "&aenter and break Minecarts in this region.", "", ItemTypes.MINECART.getId(), "&e=> Allow Place Minecarts/Boats", 17));
+                this.guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag("&6Description: &aAllow mobs to damage,", "&aexplode or grief blocks on this", "&aregion.", ItemTypes.MYCELIUM.getId(), "&e=> Allow Mob Grief", 23));
+                this.guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to hurt,", "&akill or interact with passives mobs in", "&athis region.", ItemTypes.SADDLE.getId(), "&e=> Hurt/Interact Passives", 24));
+                this.guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag("&6Description: &aAllow PvP for all players", "&ain this region, including members and", "&ano members.", ItemTypes.STONE_SWORD.getId(), "&e=> Allow PvP", 11));
+                this.guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag("&6Description: &aAllow members to open", "&adouble normal and iron doors", "&aand iron trap doors together.", ItemTypes.IRON_DOOR.getId(), "&e=> Open Double and Iron Doors", 1));
+                this.guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag("&6Description: &aAllow natural spawn of", "&apassives mobs in this region.", "", ItemTypes.EGG.getId(), "&e=> Spawn Animals", 25));
+                this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("&6Description: &aAllow natural spawn of", "&amonsters in this region.", "", ItemTypes.PUMPKIN.getId(), "&e=> Allow Spawn Monsters", 26));
+                this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&ateleport on this region using itens", "&alike ender pearls and chorus fruits.", ItemTypes.ENDER_PEARL.getId(), "&e=> Allow Teleport", 10));
+                this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("&6Description: &aAllow use or throw", "&aany type of potions for no members", "&aof region.", ItemTypes.GLASS_BOTTLE.getId(), "&e=> Use Potions", 16));
+                this.guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&awalk on presure plates and interact.", "", ItemTypes.LIGHT_WEIGHTED_PRESSURE_PLATE.getId(), "&e=> Use Pressure Plates", 9));
+            }
+
             for (String key : getDefFlagsValues().keySet()) {
                 if (!guiRoot.gui_flags.containsKey(key)) {
                     guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("&e" + key, getGuiMaxSlot()));
                 }
             }
 
-            /*--------------------- end guiconfig.conf ---------------------------*/
-
+            //Economy file
+            File ecoFile = new File(RedProtect.get().configDir, "economy.conf");
             if (!ecoFile.exists()) {
                 Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
                 ecoAsset.copyToDirectory(RedProtect.get().configDir.toPath());
             }
-        } catch (IOException e1) {
-            RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
-            e1.printStackTrace();
-        }
-
-
-        //load configs
-        try {
             ecoManager = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
             ecoCfgs = ecoManager.load();
 
+            List<String> names = new ArrayList<>();
+            Sponge.getRegistry().getAllOf(BlockType.class).forEach((type) -> names.add(type.getName()));
+            Sponge.getRegistry().getAllOf(ItemType.class).forEach((type) -> {
+                if (!names.contains(type.getName()))
+                    names.add(type.getName());
+            });
+            if (names.size() != ecoCfgs.getNode("items", "values").getChildrenList().size()) {
+                for (String mat : names) {
+                    if (ecoCfgs.getNode("items", "values", mat).getValue() == null) {
+                        ecoCfgs.getNode("items", "values", mat).setValue(0.0);
+                    }
+                }
+            }
+            Sponge.getRegistry().getAllOf(Enchantment.class).forEach((type) ->{
+                if (ecoCfgs.getNode("enchantments", "values", type.getName()).getValue() == null) {
+                    ecoCfgs.getNode("enchantments", "values", type.getName()).setValue(0.0);
+                }
+            });
+
+            //Signs file
             File signFile = new File(RedProtect.get().configDir, "signs.conf");
             signManager = HoconConfigurationLoader.builder().setPath(signFile.toPath()).build();
             signCfgs = signManager.load();
-
-            /*--------------------- protections.conf ---------------------------*/
-            File protFile = new File(RedProtect.get().configDir, "protections.conf");
-            protManager = HoconConfigurationLoader.builder().setFile(protFile).build();
-            protCfgs = protManager.load();
-
-            protCfgs.getNode("chat-protection", "chat-enhancement", "enable").setValue(protCfgs.getNode("chat-protection", "chat-enhancement", "enable").getBoolean(true));
-            protCfgs.getNode("chat-protection", "chat-enhancement", "end-with-dot").setValue(protCfgs.getNode("chat-protection", "chat-enhancement", "end-with-dot").getBoolean(true));
-            protCfgs.getNode("chat-protection", "chat-enhancement", "minimum-lenght").setValue(protCfgs.getNode("chat-protection", "chat-enhancement", "minimum-lenght").getInt(3));
-
-            protCfgs.getNode("chat-protection", "anti-flood", "enable").setValue(protCfgs.getNode("chat-protection", "anti-flood", "enable").getBoolean(true));
-            protCfgs.getNode("chat-protection", "anti-flood", "whitelist-flood-characs")
-                    .setValue(protCfgs.getNode("chat-protection", "anti-flood", "whitelist-flood-characs").getList(of(String.class), Collections.singletonList("k")));
-
-            protCfgs.getNode("chat-protection", "caps-filter", "enable").setValue(protCfgs.getNode("chat-protection", "caps-filter", "enable").getBoolean(true));
-            protCfgs.getNode("chat-protection", "caps-filter", "minimum-lenght").setValue(protCfgs.getNode("chat-protection", "caps-filter", "minimum-lenght").getInt(3));
-
-            protCfgs.getNode("chat-protection", "antispam", "enable").setValue(protCfgs.getNode("chat-protection", "antispam", "enable").getBoolean(false));
-            protCfgs.getNode("chat-protection", "antispam", "time-beteween-messages").setValue(protCfgs.getNode("chat-protection", "antispam", "time-beteween-messages").getInt(1));
-            protCfgs.getNode("chat-protection", "antispam", "count-of-same-message").setValue(protCfgs.getNode("chat-protection", "antispam", "count-of-same-message").getInt(5));
-            protCfgs.getNode("chat-protection", "antispam", "time-beteween-same-messages").setValue(protCfgs.getNode("chat-protection", "antispam", "time-beteween-same-messages").getInt(10));
-            protCfgs.getNode("chat-protection", "antispam", "colldown-msg").setValue(protCfgs.getNode("chat-protection", "antispam", "colldown-msg").getString("&6Slow down your messages!"));
-            protCfgs.getNode("chat-protection", "antispam", "wait-message").setValue(protCfgs.getNode("chat-protection", "antispam", "wait-message").getString("&cWait to send the same message again!"));
-            protCfgs.getNode("chat-protection", "antispam", "cmd-action").setValue(protCfgs.getNode("chat-protection", "antispam", "cmd-action").getString("kick {player} Relax, slow down your messages frequency ;)"));
-
-            protCfgs.getNode("chat-protection", "censor", "enable").setValue(protCfgs.getNode("chat-protection", "censor", "enable").getBoolean(true));
-            protCfgs.getNode("chat-protection", "censor", "replace-by-symbol").setValue(protCfgs.getNode("chat-protection", "censor", "replace-by-symbol").getBoolean(true));
-            protCfgs.getNode("chat-protection", "censor", "by-symbol").setValue(protCfgs.getNode("chat-protection", "censor", "by-symbol").getString("*"));
-            protCfgs.getNode("chat-protection", "censor", "by-word").setValue(protCfgs.getNode("chat-protection", "censor", "by-word").getString("censored"));
-            protCfgs.getNode("chat-protection", "censor", "replace-partial-word").setValue(protCfgs.getNode("chat-protection", "censor", "replace-partial-word").getBoolean(false));
-            protCfgs.getNode("chat-protection", "censor", "action", "cmd").setValue(protCfgs.getNode("chat-protection", "censor", "action", "cmd").getString(""));
-            protCfgs.getNode("chat-protection", "censor", "action", "partial-words").setValue(protCfgs.getNode("chat-protection", "censor", "action", "partial-words").getBoolean(false));
-            protCfgs.getNode("chat-protection", "censor", "replace-words")
-                    .setValue(protCfgs.getNode("chat-protection", "censor", "replace-words").getList(of(String.class), Collections.singletonList("word")));
-
-            protCfgs.getNode("chat-protection", "anti-ip", "enable").setValue(protCfgs.getNode("chat-protection", "anti-ip", "enable").getBoolean(true));
-            protCfgs.getNode("chat-protection", "anti-ip", "custom-ip-regex").setValue(protCfgs.getNode("chat-protection", "anti-ip", "custom-ip-regex").getString("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"));
-            protCfgs.getNode("chat-protection", "anti-ip", "custom-url-regex").setValue(protCfgs.getNode("chat-protection", "anti-ip", "custom-url-regex").getString("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)"));
-            protCfgs.getNode("chat-protection", "anti-ip", "check-for-words")
-                    .setValue(protCfgs.getNode("chat-protection", "anti-ip", "check-for-words").getList(of(String.class), Collections.singletonList("www.google.com")));
-            protCfgs.getNode("chat-protection", "anti-ip", "whitelist-words")
-                    .setValue(protCfgs.getNode("chat-protection", "anti-ip", "whitelist-words").getList(of(String.class), Arrays.asList("www.myserver.com", "prntscr.com", "gyazo.com", "www.youtube.com")));
-            protCfgs.getNode("chat-protection", "anti-ip", "cancel-or-replace").setValue(protCfgs.getNode("chat-protection", "anti-ip", "cancel-or-replace").getString("cancel"));
-            protCfgs.getNode("chat-protection", "anti-ip", "cancel-msg").setValue(protCfgs.getNode("chat-protection", "anti-ip", "cancel-msg").getString("&cYou cant send websites or ips on chat"));
-            protCfgs.getNode("chat-protection", "anti-ip", "replace-by-word").setValue(protCfgs.getNode("chat-protection", "anti-ip", "replace-by-word").getString("-removed-"));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "enable").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "enable").getBoolean(false));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "max-attempts").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "max-attempts").getInt(3));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "mute-or-cmd").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "mute-or-cmd").getString("mute"));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "mute-duration").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "mute-duration").getInt(1));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "mute-msg").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "mute-msg").getString("&cYou have been muted for send IPs or URLs on chat!"));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "unmute-msg").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "unmute-msg").getString("&aYou can chat again!"));
-            protCfgs.getNode("chat-protection", "anti-ip", "punish", "cmd-punish").setValue(protCfgs.getNode("chat-protection", "anti-ip", "punish", "cmd-punish").getString("tempban {player} 10m &cYou have been warned about send links or IPs on chat!"));
-
-
-        } catch (IOException | ObjectMappingException e1) {
+        } catch (IOException e1) {
             RedProtect.get().logger.severe("The default configuration could not be loaded or created!");
             e1.printStackTrace();
         }
 
         RedProtect.get().logger.info("Server version: " + Sponge.getGame().getPlatform().getMinecraftVersion().getName());
 
-        //add allowed claim worlds to config
-        if (root.allowed_claim_worlds.isEmpty()) {
-            for (World w : RedProtect.get().getServer().getWorlds()) {
-                root.allowed_claim_worlds.add(w.getName());
-                RedProtect.get().logger.warning("Added world to claim list " + w.getName());
-            }
+        for (World w : RedProtect.get().getServer().getWorlds()) {
+            this.addWorldProperties(w);
         }
 
-        /*------------- ---- Add default config for not updateable configs ------------------*/
+        /*------------- ---- Add default config for not updatable configs ------------------*/
 
         //update new player flags according version
 
@@ -408,31 +437,6 @@ public class RPConfig {
         if (update > 0) {
             RedProtect.get().logger.warning("Configuration UPDATED!");
         }
-        /*---------------------------------------- Global Flags for worlds loaded --------------------------------------------*/
-
-        for (World w : Sponge.getServer().getWorlds()) {
-            this.loadPerWorlds(w);
-        }
-
-        /*------------------------------------------ Gui Items ------------------------------------------*/
-
-        List<String> names = new ArrayList<>();
-        Sponge.getRegistry().getAllOf(BlockType.class).forEach((type) -> names.add(type.getName()));
-
-        Sponge.getRegistry().getAllOf(ItemType.class).forEach((type) -> {
-            if (!names.contains(type.getName()))
-                names.add(type.getName());
-        });
-
-        if (names.size() != ecoCfgs.getNode("items", "values").getChildrenList().size()) {
-            for (String mat : names) {
-                if (ecoCfgs.getNode("items", "values", mat).getValue() == null) {
-                    ecoCfgs.getNode("items", "values", mat).setValue(0.0);
-                }
-            }
-        }
-
-        //////////////////////
 
         //create logs folder
         File logs = new File(RedProtect.get().configDir + File.separator + "logs");
@@ -443,27 +447,20 @@ public class RPConfig {
 
         save();
         RedProtect.get().logger.info("All configurations loaded!");
-
     }
 
-    public FlagGuiCategory guiRoot() {
-        return this.guiRoot;
-    }
-
-    public GlobalFlagsCategory gFlags() {
-        return this.gflags;
-    }
-
-    public MainCategory root() {
-        return this.root;
-    }
-
-    public void loadPerWorlds(World w) {
+    public void addWorldProperties(World w) {
+        //add allowed claim worlds to config
+        if (!root.allowed_claim_worlds.contains(w.getName())) {
+            root.allowed_claim_worlds.add(w.getName());
+            RedProtect.get().logger.warning("Added world to claim list " + w.getName());
+        }
+        //add worlds to claim types list
         if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
             root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
-            saveConfig();
+            RedProtect.get().logger.warning("Added world to claim list " + w.getName());
         }
-
+        //add worlds to color list
         if (!root.region_settings.world_colors.containsKey(w.getName())) {
             if (w.getDimension().getType().equals(DimensionTypes.OVERWORLD)) {
                 root.region_settings.world_colors.put(w.getName(), "&a&l");
@@ -477,11 +474,23 @@ public class RPConfig {
             RedProtect.get().logger.warning("Added world to color list " + w.getName());
             saveConfig();
         }
-
-        if (!gflags.worlds.containsKey(w.getName())) {
-            gflags.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
+        //add world to globalflags
+        if (!globalFlagsRoot.worlds.containsKey(w.getName())) {
+            globalFlagsRoot.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
             saveGFlags();
         }
+    }
+
+    public FlagGuiCategory guiRoot() {
+        return this.guiRoot;
+    }
+
+    public GlobalFlagsCategory globalFlagsRoot() {
+        return this.globalFlagsRoot;
+    }
+
+    public MainCategory configRoot() {
+        return this.root;
     }
 
     public Text getGuiString(String string) {
@@ -554,7 +563,7 @@ public class RPConfig {
 
     private void saveGFlags() {
         try {
-            gflagsRoot.setValue(of(GlobalFlagsCategory.class), gflags);
+            gflagsRoot.setValue(of(GlobalFlagsCategory.class), globalFlagsRoot);
             gFlagsLoader.save(gflagsRoot);
         } catch (IOException | ObjectMappingException e) {
             e.printStackTrace();
@@ -567,7 +576,6 @@ public class RPConfig {
             saveGFlags();
 
             ecoManager.save(ecoCfgs);
-            protManager.save(protCfgs);
             signManager.save(signCfgs);
             saveGui();
         } catch (IOException e) {
@@ -587,16 +595,9 @@ public class RPConfig {
     }
 
     public boolean isAllowedWorld(Player p) {
-        return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.admin");
+        return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
     }
 
-    /*
-        public SortedSet<String> getAllFlags() {
-            SortedSet<String> values = new TreeSet<>(getDefFlagsValues().keySet());
-            values.addAll(new TreeSet<>(AdminFlags));
-            return values;
-        }
-    */
     public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
         if (isAdmin) {
             if (!AdminFlags.contains(flag)) {
@@ -656,37 +657,6 @@ public class RPConfig {
         }
         return bool;
     }
-
-    //protection methods
-    public int getProtInt(Object... key) {
-        return protCfgs.getNode(key).getInt();
-    }
-
-    public boolean getProtBool(Object... key) {
-        return protCfgs.getNode(key).getBoolean();
-    }
-
-    public List<String> getProtStringList(Object... key) {
-        try {
-            return protCfgs.getNode(key).getList(of(String.class), new ArrayList<>());
-        } catch (ObjectMappingException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
-    public String getProtString(Object... key) {
-        return protCfgs.getNode(key).getString();
-    }
-
-    public Text getProtMsg(Object... key) {
-        return RPUtil.toText(protCfgs.getNode(key).getString());
-    }
-
-    public Text getURLTemplate() {
-        return RPUtil.toText(protCfgs.getNode("general", "URL-template").getString());
-    }
-
 
     public List<Location> getSigns(String rid) {
         List<Location> locs = new ArrayList<>();

@@ -202,7 +202,7 @@ public class WEHook {
                 RedProtect.get().rm.saveAll(true);
             }
 
-            if (RedProtect.get().config.root().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().config.root().purge.regen.stop_server_every) {
+            if (RedProtect.get().config.configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().config.configRoot().purge.regen.stop_server_every) {
                 Sponge.getScheduler().getScheduledTasks(RedProtect.get().container).forEach(Task::cancel);
                 RedProtect.get().rm.saveAll(false);
 

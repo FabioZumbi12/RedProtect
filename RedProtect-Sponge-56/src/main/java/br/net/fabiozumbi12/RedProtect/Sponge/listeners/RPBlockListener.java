@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
@@ -102,12 +102,12 @@ public class RPBlockListener {
             return;
         }
 
-        if (RedProtect.get().config.root().server_protection.sign_spy.enabled) {
+        if (RedProtect.get().config.configRoot().server_protection.sign_spy.enabled) {
             Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
             Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
             Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
             Sponge.getServer().getConsole().sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
-            if (!RedProtect.get().config.root().server_protection.sign_spy.only_console) {
+            if (!RedProtect.get().config.configRoot().server_protection.sign_spy.only_console) {
                 for (Player play : Sponge.getServer().getOnlinePlayers()) {
                     if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/) {
                         play.sendMessage(RPUtil.toText(RPLang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
@@ -119,9 +119,9 @@ public class RPBlockListener {
             }
         }
 
-        if ((RedProtect.get().config.root().private_cat.use && s.getType().equals(TileEntityTypes.SIGN))) {
+        if ((RedProtect.get().config.configRoot().private_cat.use && s.getType().equals(TileEntityTypes.SIGN))) {
             Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
-            boolean out = RedProtect.get().config.root().private_cat.allow_outside;
+            boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
             //private sign
             if (cont.validatePrivateSign(lines.get(0).toPlain())) {
                 if (out || r != null) {
@@ -175,21 +175,21 @@ public class RPBlockListener {
 
     private boolean canPlaceList(World w, String type) {
         //blacklist
-        List<String> blt = RedProtect.get().config.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
+        List<String> blt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
-        List<String> wlt = RedProtect.get().config.gFlags().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
+        List<String> wlt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
         return wlt.isEmpty() || wlt.stream().anyMatch(type::matches);
     }
 
     private boolean canBreakList(World w, String type) {
         //blacklist
-        List<String> blt = RedProtect.get().config.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
+        List<String> blt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
-        List<String> wlt = RedProtect.get().config.gFlags().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
+        List<String> wlt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
         return wlt.isEmpty() || wlt.stream().anyMatch(type::matches);
     }
 
@@ -202,7 +202,7 @@ public class RPBlockListener {
         World w = bloc.getExtent();
 
         ItemType m = RedProtect.get().getPVHelper().getItemInHand(p);
-        boolean antih = RedProtect.get().config.root().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
 
         if (r == null && canPlaceList(w, b.getState().getType().getName())) {
@@ -251,7 +251,7 @@ public class RPBlockListener {
         BlockSnapshot b = e.getTransactions().get(0).getOriginal();
         Location<World> bloc = b.getLocation().get();
 
-        boolean antih = RedProtect.get().config.root().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(bloc, this.getClass().getName());
 
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {

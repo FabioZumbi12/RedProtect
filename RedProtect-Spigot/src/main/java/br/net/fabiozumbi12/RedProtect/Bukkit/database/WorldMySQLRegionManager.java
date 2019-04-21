@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,9 +42,9 @@ import java.util.*;
 @SuppressWarnings("deprecation")
 public class WorldMySQLRegionManager implements WorldRegionManager {
 
-    private final String url = "jdbc:mysql://" + RedProtect.get().config.getString("mysql.host") + "/";
+    private final String url = "jdbc:mysql://" + RedProtect.get().config.configRoot().mysql.host + "/";
     private final String reconnect = "?autoReconnect=true";
-    private final String dbname = RedProtect.get().config.getString("mysql.db-name");
+    private final String dbname = RedProtect.get().config.configRoot().mysql.db_name;
     private final String tableName;
     private final HashMap<String, Region> regions;
     private final World world;
@@ -53,7 +54,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         super();
         this.regions = new HashMap<>();
         this.world = world;
-        this.tableName = RedProtect.get().config.getString("mysql.table-prefix") + world.getName();
+        this.tableName = RedProtect.get().config.configRoot().mysql.table_prefix + world.getName();
 
         this.dbcon = null;
         try {
@@ -69,7 +70,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         PreparedStatement st = null;
         try {
             if (!this.checkTableExists()) {
-                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.getString("mysql.user-name"), RedProtect.get().config.getString("mysql.user-pass"));
+                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
 
                 st = con.prepareStatement("CREATE TABLE `" + tableName + "` (name varchar(20) PRIMARY KEY NOT NULL, leaders longtext, admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
                 st.executeUpdate();
@@ -93,8 +94,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private boolean checkTableExists() {
         try {
-            RedProtect.get().logger.debug("Checking if table exists... " + tableName);
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.getString("mysql.user-name"), RedProtect.get().config.getString("mysql.user-pass"));
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
+            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
             DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getTables(null, null, tableName, null);
             if (rs.next()) {
@@ -112,7 +113,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void addNewColumns() {
         try {
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.getString("mysql.user-name"), RedProtect.get().config.getString("mysql.user-pass"));
+            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
             DatabaseMetaData md = con.getMetaData();
             ResultSet rs = md.getColumns(null, null, tableName, "candelete");
             if (!rs.next()) {
@@ -272,7 +273,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.setString(1, this.world.getName());
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                RedProtect.get().logger.debug("Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
                 Set<PlayerRegion<String, String>> leaders = new HashSet<>();
                 Set<PlayerRegion<String, String>> admins = new HashSet<>();
                 Set<PlayerRegion<String, String>> members = new HashSet<>();
@@ -413,7 +414,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                                 Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                     }
 
-                    String serverName = RedProtect.get().config.getString("region-settings.default-leader");
+                    String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
 
                     for (String member : rs.getString("members").split(", ")) {
                         String[] pi = member.split("@");
@@ -459,13 +460,13 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 }
                 st.close();
                 rs.close();
-                RedProtect.get().logger.debug("Adding region to cache: " + rname);
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Adding region to cache: " + rname);
                 Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
                     if (regions.containsKey(rname)) {
                         regions.remove(rname);
-                        RedProtect.get().logger.debug("Removed cached region: " + rname);
+                        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed cached region: " + rname);
                     }
-                }, (20 * 60) * RedProtect.get().config.getInt("mysql.region-cache-minutes"));
+                }, (20 * 60) * RedProtect.get().config.configRoot().mysql.region_cache_minutes);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -699,7 +700,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void ConnectDB() {
         try {
-            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.getString("mysql.user-name"), RedProtect.get().config.getString("mysql.user-pass"));
+            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
             RedProtect.get().logger.info("Conected to " + this.tableName + " via Mysql!");
         } catch (SQLException e) {
             e.printStackTrace();

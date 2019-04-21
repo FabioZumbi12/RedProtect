@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -96,7 +97,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
         int maxby = current.getY();
         int minby = current.getY();
 
-        for (int i = 0; i < RedProtect.get().config.getInt("region-settings.max-scan"); ++i) {
+        for (int i = 0; i < RedProtect.get().config.configRoot().region_settings.max_scan; ++i) {
             int nearbyCount = 0;
             int x = current.getX();
             int y = current.getY();
@@ -114,7 +115,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                 boolean validBlock;
 
-                validBlock = (block[bi].getType().name().contains(RedProtect.get().config.getString("region-settings.block-id")));
+                validBlock = (block[bi].getType().name().contains(RedProtect.get().config.configRoot().region_settings.block_id));
                 if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {
                     ++nearbyCount;
                     next = block[bi];
@@ -184,8 +185,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             ++bl;
                         }
 
-                        int maxy = RedProtect.get().config.getInt("region-settings.claim.maxy");
-                        int miny = RedProtect.get().config.getInt("region-settings.claim.miny");
+                        int maxy = RedProtect.get().config.configRoot().region_settings.claim.maxy;
+                        int miny = RedProtect.get().config.configRoot().region_settings.claim.miny;
                         if (maxy <= -1) {
                             maxy = w.getMaxHeight();
                         }
@@ -228,7 +229,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             }*/
 
                             otherrg = RedProtect.get().rm.getTopRegion(loc);
-                            RedProtect.get().logger.debug("protection Block is: " + loc.getBlock().getType().name());
+                            RedProtect.get().logger.debug(LogLevel.DEFAULT, "protection Block is: " + loc.getBlock().getType().name());
 
                             if (otherrg != null) {
                                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
@@ -306,7 +307,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //Drop types
-                        if (owner2 != null && RedProtect.get().config.getBool("region-settings.claim-modes.allow-player-decide") && RPLang.containsValue(owner2)) {
+                        if (owner2 != null && RedProtect.get().config.configRoot().region_settings.claim.modes.allow_player_decide && RPLang.containsValue(owner2)) {
                             if (owner2.equalsIgnoreCase(RPLang.get("region.mode.drop"))) {
                                 drop(b, blocks);
                                 RPLang.sendMessage(p, "regionbuilder.region.droped");
@@ -320,13 +321,13 @@ public class EncompassRegionBuilder extends RegionBuilder {
                                 RPLang.sendMessage(p, "regionbuilder.region.given");
                             }
                         } else {
-                            if (RedProtect.get().config.getString("region-settings.claim-modes.mode").equalsIgnoreCase("drop")) {
+                            if (RedProtect.get().config.configRoot().region_settings.claim.modes.mode.equalsIgnoreCase("drop")) {
                                 drop(b, blocks);
                             }
-                            if (RedProtect.get().config.getString("region-settings.claim-modes.mode").equalsIgnoreCase("remove")) {
+                            if (RedProtect.get().config.configRoot().region_settings.claim.modes.mode.equalsIgnoreCase("remove")) {
                                 remove(b, blocks);
                             }
-                            if (RedProtect.get().config.getString("region-settings.claim-modes.mode").equalsIgnoreCase("give")) {
+                            if (RedProtect.get().config.configRoot().region_settings.claim.modes.mode.equalsIgnoreCase("give")) {
                                 give(b, p, blocks);
                             }
                         }
@@ -338,7 +339,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //wecui
-                        if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.getBool("hooks.useWECUI")) {
+                        if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.configRoot().hooks.useWECUI) {
                             WEHook.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
                         }
 
@@ -394,7 +395,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
             current = next;
             oldFacing = curFacing;
         }
-        String maxsize = String.valueOf(RedProtect.get().config.getInt("region-settings.max-scan"));
+        String maxsize = String.valueOf(RedProtect.get().config.configRoot().region_settings.max_scan);
         this.setErrorSign(e, RPLang.get("regionbuilder.area.toobig").replace("{maxsize}", maxsize));
     }
 
@@ -413,9 +414,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
     }
 
     private void give(Block sign, Player p, List<Block> blocks) {
-        HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(RedProtect.get().config.getMaterial("region-settings.block-id"), blocks.size()));
+        HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.block_id), blocks.size()));
         if (!left.isEmpty()) {
-            p.getWorld().dropItem(p.getLocation(), new ItemStack(RedProtect.get().config.getMaterial("region-settings.block-id"), left.get(0).getAmount() - 1));
+            p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.block_id), left.get(0).getAmount() - 1));
         }
         p.updateInventory();
         sign.breakNaturally();

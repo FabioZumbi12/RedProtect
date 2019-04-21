@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,9 +51,9 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.getInt("region-settings.define-max-distance") && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
-            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.getInt("region-settings.define-max-distance"), dist));
+            RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, dist));
             return;
         }
 
@@ -60,13 +61,13 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
-        if (RedProtect.get().config.getBool("region-settings.autoexpandvert-ondefine")) {
+        if (RedProtect.get().config.configRoot().region_settings.autoexpandvert_ondefine) {
             miny = 0;
             maxy = w.getMaxHeight();
-            if (RedProtect.get().config.getInt("region-settings.claim.miny") != -1)
-                miny = RedProtect.get().config.getInt("region-settings.claim.miny");
-            if (RedProtect.get().config.getInt("region-settings.claim.maxy") != -1)
-                maxy = RedProtect.get().config.getInt("region-settings.claim.maxy");
+            if (RedProtect.get().config.configRoot().region_settings.claim.miny != -1)
+                miny = RedProtect.get().config.configRoot().region_settings.claim.miny;
+            if (RedProtect.get().config.configRoot().region_settings.claim.maxy != -1)
+                maxy = RedProtect.get().config.configRoot().region_settings.claim.maxy;
         }
 
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
@@ -120,7 +121,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         Set<Location> limitlocs = region.getLimitLocs(region.getMinY(), region.getMaxY(), true);
         for (Location loc : limitlocs) {
             otherrg = RedProtect.get().rm.getTopRegion(loc);
-            RedProtect.get().logger.debug("protection Block is: " + loc.getBlock().getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "protection Block is: " + loc.getBlock().getType().name());
 
             if (otherrg != null) {
                 if (checkID(region, otherrg)) {

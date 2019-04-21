@@ -31,18 +31,16 @@ import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPLogger;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
-import br.net.fabiozumbi12.RedProtect.Sponge.hooks.DynmapHook;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPPermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
-import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
@@ -193,7 +191,7 @@ public class RedProtect {
                     denyEnter.put(player, regs);
                 }
             }
-        }, config.root().region_settings.delay_after_kick_region, TimeUnit.SECONDS);
+        }, config.configRoot().region_settings.delay_after_kick_region, TimeUnit.SECONDS);
         return true;
     }
 
@@ -212,6 +210,7 @@ public class RedProtect {
         // Unregister listeners
         logger.info("Unregistering listeners...");
         Sponge.getEventManager().unregisterPluginListeners(this.container);
+        Sponge.getEventManager().unregisterPluginListeners(this.container);
 
         logger.info(container.getName() + " turned off...");
     }
@@ -220,13 +219,13 @@ public class RedProtect {
         config = new RPConfig(this.factory);
         RPLang.init();
 
-        if (RedProtect.get().config.root().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()) {
+        if (RedProtect.get().config.configRoot().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()) {
             Sponge.getServer().setHasWhitelist(false);
-            RedProtect.get().logger.sucess("Whitelist disabled!");
+            RedProtect.get().logger.success("Whitelist disabled!");
         }
 
         // Set online mode
-        onlineMode = config.root().online_mode;
+        onlineMode = config.configRoot().online_mode;
 
         logger.info("Registering commands...");
         commandHandler = new CommandHandler(this);
@@ -248,10 +247,10 @@ public class RedProtect {
 
             RPUtil.ReadAllDB(rm.getAllRegions());
 
-            if (!config.root().file_type.equalsIgnoreCase("mysql")) {
+            if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 AutoSaveHandler();
             }
-            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.root().file_type + ") database!");
+            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -275,7 +274,7 @@ public class RedProtect {
             rpvHelper.closeInventory(p);
         }
         reload();
-        logger.sucess("RedProtect reloaded with success!");
+        logger.success("RedProtect reloaded with success!");
     }
 
     @Listener
@@ -289,13 +288,13 @@ public class RedProtect {
         if (autoSaveID != null && Sponge.getScheduler().getTaskById(autoSaveID).isPresent()) {
             Sponge.getScheduler().getTaskById(autoSaveID).get().cancel();
         }
-        if (config.root().flat_file.auto_save_interval_seconds != 0) {
-            logger.info("Auto-save Scheduler: Saving " + config.root().file_type + " database every " + config.root().flat_file.auto_save_interval_seconds / 60 + " minutes!");
+        if (config.configRoot().flat_file.auto_save_interval_seconds != 0) {
+            logger.info("Auto-save Scheduler: Saving " + config.configRoot().file_type + " database every " + config.configRoot().flat_file.auto_save_interval_seconds / 60 + " minutes!");
 
             autoSaveID = Sponge.getScheduler().createAsyncExecutor(container).scheduleWithFixedDelay(() -> {
-                logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + config.root().file_type + " database!");
-                rm.saveAll(config.root().flat_file.backup_on_save);
-            }, config.root().flat_file.auto_save_interval_seconds, config.root().flat_file.auto_save_interval_seconds, TimeUnit.SECONDS).getTask().getUniqueId();
+                logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + config.configRoot().file_type + " database!");
+                rm.saveAll(config.configRoot().flat_file.backup_on_save);
+            }, config.configRoot().flat_file.auto_save_interval_seconds, config.configRoot().flat_file.auto_save_interval_seconds, TimeUnit.SECONDS).getTask().getUniqueId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");

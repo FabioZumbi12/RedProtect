@@ -64,13 +64,13 @@ public class Pos1Command {
                         if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)) {
                             Location<World> loc1 = RedProtect.get().firstLocationSelections.get(player);
                             Location<World> loc2 = RedProtect.get().secondLocationSelections.get(player);
-                            if (RedProtect.get().hooks.WE && RedProtect.get().config.root().hooks.useWECUI) {
+                            if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().hooks.useWECUI) {
                                 WEHook.setSelectionRP(player, loc1, loc2);
                             }
 
-                            if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.root().region_settings.wand_max_distance && !player.hasPermission("redprotect.bypass.define-max-distance")) {
+                            if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !player.hasPermission("redprotect.bypass.define-max-distance")) {
                                 double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                                RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.root().region_settings.wand_max_distance, (int) dist));
+                                RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                             } else {
                                 RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                             }

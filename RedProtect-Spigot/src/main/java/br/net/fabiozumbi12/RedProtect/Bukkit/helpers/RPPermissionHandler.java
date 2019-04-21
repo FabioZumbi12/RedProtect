@@ -119,7 +119,7 @@ public class RPPermissionHandler {
     }
 
     private int getBlockLimit(Player player) {
-        int limit = RedProtect.get().config.getInt("region-settings.limit-amount");
+        int limit = RedProtect.get().config.configRoot().region_settings.limit_amount;
         List<Integer> limits = new ArrayList<>();
         Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {
@@ -143,7 +143,7 @@ public class RPPermissionHandler {
     }
 
     private int getClaimLimit(Player player) {
-        int limit = RedProtect.get().config.getInt("region-settings.claim-amount");
+        int limit = RedProtect.get().config.configRoot().region_settings.claim.amount_per_player;
         List<Integer> limits = new ArrayList<>();
         Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {

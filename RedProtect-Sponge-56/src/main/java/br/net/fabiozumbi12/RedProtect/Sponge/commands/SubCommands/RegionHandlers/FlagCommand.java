@@ -78,13 +78,13 @@ public class FlagCommand {
                                 value = args.<String>getOne("value").get();
                             }
 
-                            if (RedProtect.get().config.root().flags_configuration.change_flag_delay.enable) {
-                                if (RedProtect.get().config.root().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
                                         RPUtil.startFlagChanger(r.getName(), flag, player);
                                         handleFlag(player, flag, value, r);
                                     } else {
-                                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.root().flags_configuration.change_flag_delay.seconds + ""));
+                                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     }
                                     return CommandResult.success();
                                 }

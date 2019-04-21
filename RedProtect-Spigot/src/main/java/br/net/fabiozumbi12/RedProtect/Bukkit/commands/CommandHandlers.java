@@ -98,7 +98,7 @@ public class CommandHandlers {
                             RPLang.sendMessage(src, RPLang.get("cmdmanager.region.leader.requestexpired").replace("{player}", pVictim.getName()));
                         }
                     }
-                }, RedProtect.get().config.getInt("region-settings.leadership-request-time") * 20);
+                }, RedProtect.get().config.configRoot().region_settings.leadership_request_time * 20);
             } else {
                 RPLang.sendMessage(src, ChatColor.RED + sVictim + " " + RPLang.get("cmdmanager.region.leader.already"));
             }
@@ -320,7 +320,7 @@ public class CommandHandlers {
                 return;
             }
 
-            int claims = RedProtect.get().config.getInt("region-settings.first-home.can-delete-after-claims");
+            int claims = RedProtect.get().config.configRoot().region_settings.can_delete_first_home_after_claims;
             if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")) {
                 if (claims != -1) {
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", "" + claims));
@@ -363,7 +363,7 @@ public class CommandHandlers {
                 return;
             }
 
-            int claims = RedProtect.get().config.getInt("region-settings.first-home.can-delete-after-claims");
+            int claims = RedProtect.get().config.configRoot().region_settings.can_delete_first_home_after_claims;
             if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")) {
                 if (claims != -1) {
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", "" + claims));
@@ -585,7 +585,7 @@ public class CommandHandlers {
                     p.teleport(loc);
                     RPLang.sendMessage(p, RPLang.get("cmdmanager.region.teleport") + " " + rname);
                 }
-            }, RedProtect.get().config.getInt("region-settings.teleport-time") * 20);
+            }, RedProtect.get().config.configRoot().region_settings.teleport_time * 20);
         } else {
             RPLang.sendMessage(p, "cmdmanager.region.tpneedwait");
         }
@@ -643,7 +643,7 @@ public class CommandHandlers {
                 sender.sendMessage(RPLang.get("general.color") + "-------------------------------------------------");
                 RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.created.list") + " " + pname);
 
-                int regionsPage = RedProtect.get().config.getInt("region-settings.region-list.regions-per-page");
+                int regionsPage = RedProtect.get().config.configRoot().region_settings.region_list.region_per_page;
                 int total = 0;
                 int last = 0;
 
@@ -657,7 +657,7 @@ public class CommandHandlers {
                     int min = max - regionsPage;
                     int count;
 
-                    String colorChar = ChatColor.translateAlternateColorCodes('&', RedProtect.get().config.getString("region-settings.world-colors." + w.getName(), "&a"));
+                    String colorChar = ChatColor.translateAlternateColorCodes('&', RedProtect.get().config.configRoot().region_settings.world_colors.get(w.getName()));
                     Set<Region> wregions = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(uuid), w);
                     int totalLocal = wregions.size();
                     total += totalLocal;
@@ -673,12 +673,12 @@ public class CommandHandlers {
                         }
                         if (max > it.size()) max = (it.size() - 1);
                         //-------------
-                        if (RedProtect.get().config.getBool("region-settings.region-list.hover-and-click-teleport") && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                        if (RedProtect.get().config.configRoot().region_settings.region_list.hover_and_click_teleport && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
                             FancyMessage fancy = new FancyMessage();
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
-                                String area = RedProtect.get().config.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
+                                String area = RedProtect.get().config.configRoot().region_settings.region_list.shpw_area ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
                                 String rname = RPLang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
                                 if (first) {
                                     rname = rname.substring(3);
@@ -702,7 +702,7 @@ public class CommandHandlers {
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
-                                String area = RedProtect.get().config.getBool("region-settings.region-list.show-area") ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
+                                String area = RedProtect.get().config.configRoot().region_settings.region_list.shpw_area ? "(" + RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(uuid), r) + ")" : "";
                                 worldregions.append(RPLang.get("general.color")).append(", ").append(ChatColor.GRAY).append(r.getName()).append(area);
                                 lastLocal = count;
                             }
@@ -943,7 +943,7 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("spawn-animals") ||
                 flag.equalsIgnoreCase("minecart") ||
                 flag.equalsIgnoreCase("forcepvp") ||
-                flag.equalsIgnoreCase("dynmapHook") ||
+                flag.equalsIgnoreCase("dynmap") ||
                 flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)) {
             return false;
         }

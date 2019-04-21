@@ -255,7 +255,7 @@ public class RedProtectAPI {
      */
     public void addPlayerFlag(String flag, Object defValue) {
         if (defValue instanceof Boolean)
-            RedProtect.get().config.root().flags.put(flag, (Boolean) defValue);
+            RedProtect.get().config.configRoot().flags.put(flag, (Boolean) defValue);
     }
 
     /**

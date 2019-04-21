@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.datatypes.skills.SuperAbilityType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
@@ -54,7 +55,7 @@ public class McMMOHook implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("McMMO McMMOPlayerXpGainEvent event. Skill " + event.getSkill().name());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO McMMOPlayerXpGainEvent event. Skill " + event.getSkill().name());
 
         Player player = event.getPlayer();
         Region region = RedProtect.get().rm.getTopRegion(player.getLocation());
@@ -66,14 +67,9 @@ public class McMMOHook implements Listener {
             event.setCancelled(true);
         }
 
-        if (RedProtect.get().config.getBool("hooks.mcmmo.fix-acrobatics-fire-leveling") && event.getSkill().equals(PrimarySkillType.ACROBATICS) && (!region.canFire() || !region.canDeath())) {
+        if (RedProtect.get().config.configRoot().hooks.mcmmo.fix_acrobatics_fire_leveling && event.getSkill().equals(PrimarySkillType.ACROBATICS) && (!region.canFire() || !region.canDeath())) {
             event.setCancelled(true);
         }
-		/*
-		if (!r.canPVP(p) && (e.getSkill().equals(SkillType.SWORDS) || e.getSkill().equals(SkillType.UNARMED))){
-			e.setCancelled(true);
-		}
-		*/
     }
 
     @EventHandler
@@ -82,12 +78,12 @@ public class McMMOHook implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("McMMO McMMOPlayerAbilityActivateEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO McMMOPlayerAbilityActivateEvent event.");
 
         Player p = e.getPlayer();
 
         //try to fix invisibility on bersek
-        if (RedProtect.get().config.getBool("hooks.mcmmo.fix-berserk-invisibility") && e.getAbility().equals(SuperAbilityType.BERSERK)) {
+        if (RedProtect.get().config.configRoot().hooks.mcmmo.fix_berserk_invisibility && e.getAbility().equals(SuperAbilityType.BERSERK)) {
             p.damage(0);
             for (Entity ent : p.getNearbyEntities(10, 10, 10)) {
                 if (ent instanceof LivingEntity) {
@@ -112,7 +108,7 @@ public class McMMOHook implements Listener {
 
     @EventHandler
     public void onPlayerActivateSecAbility(SubSkillRandomCheckEvent e) {
-        RedProtect.get().logger.debug("McMMO SubSkillRandomCheckEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO SubSkillRandomCheckEvent event.");
 
         Player p = e.getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -130,7 +126,7 @@ public class McMMOHook implements Listener {
 
     @EventHandler
     public void onPlayerUnarmed(McMMOPlayerDisarmEvent e) {
-        RedProtect.get().logger.debug("McMMO McMMOPlayerDisarmEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO McMMOPlayerDisarmEvent event.");
 
         Player p = e.getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(e.getDefender().getLocation());
@@ -148,7 +144,7 @@ public class McMMOHook implements Listener {
 
     @EventHandler
     public void onSecondaryAbilityEvent(SubSkillEvent e) {
-        RedProtect.get().logger.debug("McMMO SecondaryAbilityEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO SecondaryAbilityEvent event.");
 
         Player p = e.getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(e.getPlayer().getLocation());
@@ -165,7 +161,7 @@ public class McMMOHook implements Listener {
 
     @EventHandler
     public void onFakeEntityDamageByEntityEvent(FakeEntityDamageByEntityEvent e) {
-        RedProtect.get().logger.debug("McMMO FakeEntityDamageByEntityEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO FakeEntityDamageByEntityEvent event.");
 
         if (e.getDamager() instanceof Player) {
             Player p = (Player) e.getDamager();
@@ -189,7 +185,7 @@ public class McMMOHook implements Listener {
 
     @EventHandler
     public void onFakeEntityDamageEvent(FakeEntityDamageEvent e) {
-        RedProtect.get().logger.debug("McMMO FakeEntityDamageEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO FakeEntityDamageEvent event.");
 
         Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
 

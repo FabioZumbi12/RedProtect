@@ -24,7 +24,7 @@
  *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
+package br.net.fabiozumbi12.RedProtect.Core.helpers;
 
 public enum LogLevel {
     BLOCKS,

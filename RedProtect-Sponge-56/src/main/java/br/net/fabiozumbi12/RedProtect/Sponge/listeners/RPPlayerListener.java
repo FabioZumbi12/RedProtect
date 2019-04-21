@@ -31,7 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.EnterExitRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
@@ -123,7 +123,7 @@ public class RPPlayerListener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is UseItemStackEvent.Start event. Item: " + RedProtect.get().getPVHelper().getItemType(stack).getName());
 
         //deny potion
-        List<String> Pots = RedProtect.get().config.root().server_protection.deny_potions;
+        List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
 
         if (stack.get(Keys.POTION_EFFECTS).isPresent() && Pots.size() > 0) {
             List<PotionEffect> pot = stack.get(Keys.POTION_EFFECTS).get();
@@ -166,7 +166,7 @@ public class RPPlayerListener {
         ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
 
         String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
-        if (event instanceof InteractBlockEvent.Primary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.root().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
+        if (event instanceof InteractBlockEvent.Primary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
             if (!RPUtil.canBuildNear(p, l)) {
                 event.setCancelled(true);
                 return;
@@ -179,13 +179,13 @@ public class RPPlayerListener {
             if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
                 Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
                 Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
-                if (RedProtect.get().hooks.WE && RedProtect.get().config.root().hooks.useWECUI) {
+                if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().hooks.useWECUI) {
                     WEHook.setSelectionRP(p, loc1, loc2);
                 }
 
-                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.root().region_settings.wand_max_distance && !p.hasPermission("redprotect.bypass.define-max-distance")) {
+                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !p.hasPermission("redprotect.bypass.define-max-distance")) {
                     double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                    RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.root().region_settings.wand_max_distance, (int) dist));
+                    RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
                     RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
                 }
@@ -212,7 +212,7 @@ public class RPPlayerListener {
         ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
 
         String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
-        if (event instanceof InteractBlockEvent.Secondary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.root().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
+        if (event instanceof InteractBlockEvent.Secondary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
             if (!RPUtil.canBuildNear(p, l)) {
                 event.setCancelled(true);
                 return;
@@ -225,13 +225,13 @@ public class RPPlayerListener {
             if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
                 Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
                 Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
-                if (RedProtect.get().hooks.WE && RedProtect.get().config.root().hooks.useWECUI) {
+                if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().hooks.useWECUI) {
                     WEHook.setSelectionRP(p, loc1, loc2);
                 }
 
-                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.root().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
                     double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                    RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.root().region_settings.wand_max_distance, (int) dist));
+                    RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
                     RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
                 }
@@ -298,7 +298,7 @@ public class RPPlayerListener {
             }
         }
 
-        if (itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.root().wands.infoWandID)) {
+        if (itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.infoWandID)) {
             r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
             if (r == null) {
                 RPLang.sendMessage(p, "playerlistener.noregion.atblock");
@@ -316,8 +316,8 @@ public class RPPlayerListener {
         //start player checks
         if (r == null) {
             if (bstate instanceof Container ||
-                    RedProtect.get().config.root().private_cat.allowed_blocks.stream().anyMatch(bstate.getType().getName()::matches)) {
-                boolean out = RedProtect.get().config.root().private_cat.allow_outside;
+                    RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(bstate.getType().getName()::matches)) {
+                boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
                 if (out && !cont.canOpen(b, p)) {
                     if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
                         RPLang.sendMessage(p, "playerlistener.region.cantopen");
@@ -356,7 +356,7 @@ public class RPPlayerListener {
                     event.setCancelled(true);
                 }
             } else if (b.getState() instanceof Container ||
-                    RedProtect.get().config.root().private_cat.allowed_blocks.stream().anyMatch(bstate.getType().getName()::matches)) {
+                    RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(bstate.getType().getName()::matches)) {
 
                 if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
                     if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
@@ -404,7 +404,7 @@ public class RPPlayerListener {
             } else if (bstate.getType().getName().contains("sign") && !r.canSign(p)) {
                 if (b.get(Keys.SIGN_LINES).isPresent()) {
                     List<Text> sign = b.get(Keys.SIGN_LINES).get();
-                    for (String tag : RedProtect.get().config.root().region_settings.allow_sign_interact_tags) {
+                    for (String tag : RedProtect.get().config.configRoot().region_settings.allow_sign_interact_tags) {
                         //check first rule
                         if (tag.equalsIgnoreCase(sign.get(0).toPlain())) {
                             return;
@@ -564,7 +564,7 @@ public class RPPlayerListener {
         }
 
         //deny damagecauses
-        List<String> Causes = RedProtect.get().config.root().server_protection.deny_playerdeath_by;
+        List<String> Causes = RedProtect.get().config.configRoot().server_protection.deny_playerdeath_by;
         if (Causes.size() > 0) {
             DamageType damagec = null;
             if (e.getCause().containsType(EntityDamageSource.class)) {
@@ -602,7 +602,7 @@ public class RPPlayerListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerMovement(MoveEntityEvent e) {
-        if (RedProtect.get().config.root().performance.disable_onPlayerMoveEvent_handler) {
+        if (RedProtect.get().config.configRoot().performance.disable_onPlayerMoveEvent_handler) {
             return;
         }
 
@@ -657,9 +657,9 @@ public class RPPlayerListener {
         }
 
         //teleport player to coord/world if playerup 128 y
-        int NetherY = RedProtect.get().config.root().nether_protection.maxYsize;
+        int NetherY = RedProtect.get().config.configRoot().nether_protection.maxYsize;
         if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")) {
-            for (String cmd : RedProtect.get().config.root().nether_protection.execute_cmd) {
+            for (String cmd : RedProtect.get().config.configRoot().nether_protection.execute_cmd) {
                 Sponge.getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), cmd.replace("{player}", p.getName()));
             }
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
@@ -718,7 +718,7 @@ public class RPPlayerListener {
             }
 
             //update region admin or leader visit
-            if (RedProtect.get().config.root().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")) {
+            if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")) {
                 if (r.isLeader(p) || r.isAdmin(p)) {
                     if (r.getDate() == null || (!r.getDate().equals(RPUtil.dateNow()))) {
                         r.setDate(RPUtil.dateNow());
@@ -776,7 +776,7 @@ public class RPPlayerListener {
                     }
                 } else {
                     noRegionFlags(er, p);
-                    if (!er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.get().config.root().notify.region_exit) {
+                    if (!er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.get().config.configRoot().notify.region_exit) {
                         SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"));
                     }
                 }
@@ -885,7 +885,7 @@ public class RPPlayerListener {
 
 
         //teleport player to coord/world if playerup 128 y
-        int NetherY = RedProtect.get().config.root().nether_protection.maxYsize;
+        int NetherY = RedProtect.get().config.configRoot().nether_protection.maxYsize;
         if (lto.getExtent().getDimension().getType().equals(DimensionTypes.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")) {
             RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
             e.setCancelled(true);
@@ -940,16 +940,16 @@ public class RPPlayerListener {
 
         String cmd = e.getCommand();
 
-        if (RedProtect.get().config.root().server_protection.deny_commands_on_worlds.getOrDefault(p.getWorld().getName(), new ArrayList<>()).contains(cmd) && !p.hasPermission("redprotect.bypass")) {
+        if (RedProtect.get().config.configRoot().server_protection.deny_commands_on_worlds.getOrDefault(p.getWorld().getName(), new ArrayList<>()).contains(cmd) && !p.hasPermission("redprotect.bypass")) {
             RPLang.sendMessage(p, "playerlistener.command-notallowed");
             e.setCancelled(true);
             return;
         }
 
-        if (RedProtect.get().config.gFlags().worlds.get(p.getWorld().getName()).command_ranges.containsKey(cmd) && !cmd.equals(".")) {
-            double min = RedProtect.get().config.gFlags().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).min_range;
-            double max = RedProtect.get().config.gFlags().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).max_range;
-            String mesg = RedProtect.get().config.gFlags().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).message;
+        if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.containsKey(cmd) && !cmd.equals(".")) {
+            double min = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).min_range;
+            double max = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).max_range;
+            String mesg = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmd).message;
             double py = p.getLocation().getY();
             if (py < min || py > max) {
                 if (mesg != null && !mesg.equals("")) {
@@ -1047,7 +1047,7 @@ public class RPPlayerListener {
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is ClientConnectionEvent.Login event.");
 
-        if (RedProtect.get().config.root().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
+        if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
             String uuid = p.getUniqueId().toString();
             if (!RedProtect.get().onlineMode) {
                 uuid = p.getName().toLowerCase();
@@ -1089,7 +1089,7 @@ public class RPPlayerListener {
 
             List<PotionEffect> pottypes = potion.get(Keys.POTION_EFFECTS).get();
             //deny potion
-            List<String> Pots = RedProtect.get().config.root().server_protection.deny_potions;
+            List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
             if (!Pots.isEmpty()) {
                 for (PotionEffect t : pottypes) {
                     if (Pots.contains(t.getType().getName().toUpperCase())) {
@@ -1106,11 +1106,11 @@ public class RPPlayerListener {
     }
 
     public void SendNotifyMsg(Player p, String notify) {
-        if (RedProtect.get().config.root().notify.region_enter_mode.equalsIgnoreCase("OFF")) {
+        if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("OFF")) {
             return;
         }
         if (!notify.equals("")) {
-            if (RedProtect.get().config.root().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
+            if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 ServerBossBar boss = ServerBossBar.builder()
                         .name(RPUtil.toText(notify))
                         .overlay(BossBarOverlays.NOTCHED_12)
@@ -1123,17 +1123,17 @@ public class RPPlayerListener {
                         .execute(new BossBarTimer(boss))
                         .submit(RedProtect.get().container);
             }
-            if (RedProtect.get().config.root().notify.region_enter_mode.equalsIgnoreCase("CHAT")) {
+            if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("CHAT")) {
                 p.sendMessage(RPUtil.toText(notify));
             }
         }
     }
 
     public void SendWelcomeMsg(Player p, String wel) {
-        if (RedProtect.get().config.root().notify.welcome_mode.equalsIgnoreCase("OFF")) {
+        if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("OFF")) {
             return;
         }
-        if (RedProtect.get().config.root().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
+        if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
             ServerBossBar boss = ServerBossBar.builder()
                     .name(RPUtil.toText(wel))
                     .overlay(BossBarOverlays.NOTCHED_12)
@@ -1146,7 +1146,7 @@ public class RPPlayerListener {
                     .execute(new BossBarTimer(boss))
                     .submit(RedProtect.get().container);
         }
-        if (RedProtect.get().config.root().notify.welcome_mode.equalsIgnoreCase("CHAT")) {
+        if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("CHAT")) {
             p.sendMessage(RPUtil.toText(wel));
         }
     }
@@ -1174,7 +1174,7 @@ public class RPPlayerListener {
     }
 
     private void EnterExitNotify(Region r, Player p) {
-        if (RedProtect.get().config.root().notify.region_enter_mode.equalsIgnoreCase("OFF")) {
+        if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("OFF")) {
             return;
         }
 
@@ -1186,8 +1186,8 @@ public class RPPlayerListener {
         String m = "";
         //Enter-Exit notifications
         if (r.getWelcome().equals("")) {
-            if (RedProtect.get().config.root().notify.region_enter_mode.equalsIgnoreCase("CHAT") ||
-                    RedProtect.get().config.root().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
+            if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("CHAT") ||
+                    RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 StringBuilder leaderstringBuilder = new StringBuilder();
                 for (PlayerRegion<String, String> leader : r.getLeaders()) {
                     leaderstringBuilder.append(", ").append(leader.getPlayerName());
@@ -1360,7 +1360,7 @@ public class RPPlayerListener {
                             .particles(false)
                             .potionType(Sponge.getRegistry().getType(PotionEffectType.class, eff).orElse(PotionEffectTypes.STRENGTH))
                             .amplifier(Integer.parseInt(amplifier))
-                            .duration(RedProtect.get().config.root().flags_configuration.effects_duration)
+                            .duration(RedProtect.get().config.configRoot().flags_configuration.effects_duration)
                             .build();
                     String TaskId = Sponge.getScheduler().createAsyncExecutor(RedProtect.get().container).scheduleWithFixedDelay(new Runnable() {
                         public void run() {

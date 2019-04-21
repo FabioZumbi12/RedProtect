@@ -95,7 +95,7 @@ public class KickCommand implements SubCommand {
                 return true;
             }
 
-            String sec = String.valueOf(RedProtect.get().config.getInt("region-settings.delay-after-kick-region"));
+            String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
             if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                 RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
                 RPLang.sendMessage(player, RPLang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));

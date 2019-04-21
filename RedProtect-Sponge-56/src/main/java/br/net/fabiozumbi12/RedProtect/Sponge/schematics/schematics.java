@@ -39,7 +39,7 @@ public class schematics {
     public static class RPSchematics {
 
         public static void pasteSchematic(Player p) {
-            File file = new File(RedProtect.get().configDir, "schematics" + File.separator + RedProtect.get().config.root().schematics.first_house_file);
+            File file = new File(RedProtect.get().configDir, "schematics" + File.separator + RedProtect.get().config.configRoot().schematics.first_house_file);
 
 
             Region region = WEHook.pasteWithWE(p, file);

@@ -24,7 +24,7 @@
  *  3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.config.Category;
+package br.net.fabiozumbi12.RedProtect.Core.config.Category;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -85,8 +85,24 @@ public class GlobalFlagsCategory {
                 "Check the entity types here:\n" +
                 "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
         public List<String> spawn_blacklist = new ArrayList<>();
-        @Setting(value = "allow-weather", comment = "Allow weather changes?")
-        public boolean allow_weather = true;
+        @Setting(value = "allow-elytra")
+        public boolean allow_elytra = true;
+        @Setting(value = "allow-crops-trample")
+        public boolean allow_crop_trample = true;
+
+        @Setting
+        public weatherCat weather = new weatherCat();
+
+        @ConfigSerializable
+        public static class weatherCat {
+            @Setting(value = "allow-weather", comment = "Allow weather changes?")
+            public boolean allow_weather = true;
+            @Setting(value = "rain-time", comment = "The duration of weather rain.")
+            public int rain_time = 60;
+            @Setting(value = "attempts-before-rain", comment = "Every x attempts will rain.")
+            public int attempts_before_rain = 3;
+        }
+
         @Setting(value = "deny-item-usage", comment = "Control what items the player can use.")
         public denyItemUsage deny_item_usage = new denyItemUsage();
         @Setting(value = "on-enter-cmds", comment = "Execute this command on enter in this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
@@ -110,6 +126,28 @@ public class GlobalFlagsCategory {
             Map<String, CommandRanges> map = new HashMap<>();
             map.put("home-command", new CommandRanges());
             return map;
+        }
+
+        @Setting(value = "iceform-by")
+        public iceFormCat iceform_by = new iceFormCat();
+
+        @ConfigSerializable
+        public static class iceFormCat{
+            @Setting
+            public boolean player = true;
+            @Setting
+            public boolean entity = true;
+        }
+
+        @Setting(value = "player-velocity")
+        public playerVeloCat player_velocity = new playerVeloCat();
+
+        @ConfigSerializable
+        public static class playerVeloCat{
+            @Setting(value = "walk-speed")
+            public float walk_speed = -1;
+            @Setting(value = "fly-speed")
+            public float fly_speed = -1;
         }
 
         @ConfigSerializable

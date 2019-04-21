@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -50,7 +51,7 @@ public class RPEntityListener implements Listener {
     static final RPContainer cont = new RPContainer();
 
     public RPEntityListener() {
-        RedProtect.get().logger.debug("Loaded RPEntityListener...");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPEntityListener...");
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -58,7 +59,7 @@ public class RPEntityListener implements Listener {
         if (e.getEntity() instanceof Player) {
             return;
         }
-        RedProtect.get().logger.debug("RPEntityListener - EntityBlockFormEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - EntityBlockFormEvent");
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.canIceForm()) {
             e.setCancelled(true);
@@ -73,7 +74,7 @@ public class RPEntityListener implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("Spawn monster " + event.getEntityType().name());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Spawn monster " + event.getEntityType().name());
 
         if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)) {
             Location l = event.getLocation();
@@ -88,7 +89,7 @@ public class RPEntityListener implements Listener {
             Location l = event.getLocation();
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnMonsters()) {
-                RedProtect.get().logger.debug("Cancelled spawn of monster " + event.getEntityType().name());
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Cancelled spawn of monster " + event.getEntityType().name());
                 event.setCancelled(true);
             }
         }
@@ -97,7 +98,7 @@ public class RPEntityListener implements Listener {
             Location l = event.getLocation();
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canSpawnPassives()) {
-                RedProtect.get().logger.debug("Cancelled spawn of animal " + event.getEntityType().name());
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Cancelled spawn of animal " + event.getEntityType().name());
                 event.setCancelled(true);
             }
         }
@@ -112,7 +113,7 @@ public class RPEntityListener implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("EntityCombustByEntityEvent - Is EntityCombustByEntityEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityCombustByEntityEvent - Is EntityCombustByEntityEvent event.");
 
 
         if (e2 instanceof Projectile) {
@@ -173,7 +174,7 @@ public class RPEntityListener implements Listener {
             }
         } else if (e1 instanceof Hanging && e2 instanceof Monster) {
             if (r1 != null || r2 != null) {
-                RedProtect.get().logger.debug("Cancelled ItemFrame drop Item");
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Cancelled ItemFrame drop Item");
                 e.setCancelled(true);
             }
         } else if (e2 instanceof Explosive) {
@@ -211,7 +212,7 @@ public class RPEntityListener implements Listener {
                 return;
             }
 
-            RedProtect.get().logger.debug("RPEntityListener - Is EntityDamageByEntityEvent event. Damager: " + e2.getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is EntityDamageByEntityEvent event. Damager: " + e2.getType().name());
 
 
             if (e2 instanceof Projectile) {
@@ -224,8 +225,8 @@ public class RPEntityListener implements Listener {
                 }
             }
 
-            RedProtect.get().logger.debug("EntityDamageByEntityEvent event. Damager Player: " + e2.getType().name());
-            RedProtect.get().logger.debug("Cause: " + de.getCause().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityDamageByEntityEvent event. Damager Player: " + e2.getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Cause: " + de.getCause().name());
 
             Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
             Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
@@ -295,7 +296,7 @@ public class RPEntityListener implements Listener {
                 }
             } else if (e1 instanceof Hanging && e2 instanceof Monster) {
                 if (r1 != null || r2 != null) {
-                    RedProtect.get().logger.debug("Cancelled ItemFrame drop Item");
+                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Cancelled ItemFrame drop Item");
                     e.setCancelled(true);
                 }
             } else if (e2 instanceof Explosive) {
@@ -308,7 +309,7 @@ public class RPEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
-        RedProtect.get().logger.debug("RPEntityListener - Is PotionSplashEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is PotionSplashEvent");
 
         ProjectileSource thrower = event.getPotion().getShooter();
         for (PotionEffect e : event.getPotion().getEffects()) {
@@ -341,7 +342,7 @@ public class RPEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInteractEvent(PlayerInteractEntityEvent e) {
-        RedProtect.get().logger.debug("RPEntityListener - Is PlayerInteractEntityEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is PlayerInteractEntityEvent");
 
         Player p = e.getPlayer();
         if (p == null) {
@@ -364,7 +365,7 @@ public class RPEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void WitherBlockBreak(EntityChangeBlockEvent event) {
-        RedProtect.get().logger.debug("RPEntityListener - Is EntityChangeBlockEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is EntityChangeBlockEvent");
 
         Entity e = event.getEntity();
         if (e instanceof Monster) {

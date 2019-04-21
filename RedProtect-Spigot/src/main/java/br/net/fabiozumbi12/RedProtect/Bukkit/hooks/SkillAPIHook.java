@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import com.sucy.skill.api.event.PlayerExperienceGainEvent;
 import com.sucy.skill.api.event.PlayerGainSkillPointsEvent;
 import com.sucy.skill.api.event.PlayerManaGainEvent;
@@ -44,7 +45,7 @@ public class SkillAPIHook implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("SkillAPI PlayerExperienceGainEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "SkillAPI PlayerExperienceGainEvent event.");
 
         Player p = e.getPlayerData().getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -59,7 +60,7 @@ public class SkillAPIHook implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("SkillAPI PlayerGainSkillPointsEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "SkillAPI PlayerGainSkillPointsEvent event.");
 
         Player p = e.getPlayerData().getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
@@ -75,7 +76,7 @@ public class SkillAPIHook implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug("SkillAPI PlayerManaGainEvent event.");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "SkillAPI PlayerManaGainEvent event.");
 
         Player p = e.getPlayerData().getPlayer();
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());

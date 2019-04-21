@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -58,7 +59,7 @@ public class ValueCommand implements SubCommand {
                         r.setValue(RPEconomy.getRegionValue(r));
                         RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RedProtect.get().config.getEcoString("economy-name")));
 
-                        RedProtect.get().logger.debug("Region Value: " + r.getValue());
+                        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Region Value: " + r.getValue());
                         return true;
                     } else {
                         RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().config.getEcoInt("max-area-toget-value").toString()));

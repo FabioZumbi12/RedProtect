@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -58,8 +58,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String world = this.getWorld().getName();
             RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
-            if (!RedProtect.get().config.root().file_type.equalsIgnoreCase("mysql")) {
-                if (RedProtect.get().config.root().flat_file.region_per_file) {
+            if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+                if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
                     File f = new File(RedProtect.get().configDir, "data" + File.separator + world);
                     if (!f.exists()) {
                         f.mkdir();
@@ -87,7 +87,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     private void load(String path) {
         World world = this.getWorld();
 
-        if (!RedProtect.get().config.root().file_type.equalsIgnoreCase("mysql")) {
+        if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: conf");
 
             try {
@@ -118,10 +118,10 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public int save(boolean force) {
         int saved = 0;
         try {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().config.root().file_type);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().config.configRoot().file_type);
             String world = this.getWorld().getName();
 
-            if (!RedProtect.get().config.root().file_type.equalsIgnoreCase("mysql")) {
+            if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
 
                 File datf = new File(RedProtect.get().configDir + File.separator + "data", "data_" + world + ".conf");
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
@@ -132,7 +132,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         continue;
                     }
 
-                    if (RedProtect.get().config.root().flat_file.region_per_file) {
+                    if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
                         if (!r.toSave() && !force) {
                             continue;
                         }
@@ -144,14 +144,14 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     RPUtil.addProps(fileDB, r);
                     saved++;
 
-                    if (RedProtect.get().config.root().flat_file.region_per_file) {
+                    if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
                         dbs.add(fileDB);
                         saveConf(fileDB, regionManager);
                         r.setToSave(false);
                     }
                 }
 
-                if (!RedProtect.get().config.root().flat_file.region_per_file) {
+                if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
                     saveConf(fileDB, regionManager);
                 } else {
                     //remove deleted regions
@@ -171,8 +171,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 if (force) RedProtect.get().logger.info("Saving " + this.world.getName() + "'s regions...");
 
                 //try backup
-                if (force && RedProtect.get().config.root().flat_file.backup) {
-                    if (!RedProtect.get().config.root().flat_file.region_per_file) {
+                if (force && RedProtect.get().config.configRoot().flat_file.backup) {
+                    if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
                         RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
                     } else {
                         RPUtil.backupRegions(dbs, world, null);
