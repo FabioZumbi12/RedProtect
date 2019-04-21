@@ -450,12 +450,12 @@ public class RPConfig {
         //add allowed claim worlds to config
         if (!root.allowed_claim_worlds.contains(w.getName())) {
             root.allowed_claim_worlds.add(w.getName());
-            RedProtect.get().logger.warning("Added world to claim list " + w.getName());
+            RedProtect.get().logger.warning("Added world to allowed claim list " + w.getName());
         }
         //add worlds to claim types list
         if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
             root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
-            RedProtect.get().logger.warning("Added world to claim list " + w.getName());
+            RedProtect.get().logger.warning("Added world to claim types list " + w.getName());
         }
         //add worlds to color list
         if (!root.region_settings.world_colors.containsKey(w.getName())) {
@@ -468,7 +468,7 @@ public class RPConfig {
             } else {
                 root.region_settings.world_colors.put(w.getName(), "&a&l");
             }
-            RedProtect.get().logger.warning("Added world to color list " + w.getName());
+            RedProtect.get().logger.warning("Added world to colors list " + w.getName());
             saveConfig();
         }
         //add world to globalflags
