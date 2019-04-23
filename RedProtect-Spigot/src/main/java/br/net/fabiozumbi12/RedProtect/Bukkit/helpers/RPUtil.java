@@ -429,11 +429,6 @@ public class RPUtil extends CoreUtil {
 
         String uuid = PlayerName;
 
-        if (!RedProtect.get().onlineMode) {
-            uuid = uuid.toLowerCase();
-            return uuid;
-        }
-
         try {
             OfflinePlayer offp = RedProtect.get().getServer().getOfflinePlayer(PlayerName);
             uuid = offp.getUniqueId().toString();
@@ -464,11 +459,6 @@ public class RPUtil extends CoreUtil {
 
         String PlayerName = uuid;
         UUID uuids;
-
-        if (!RedProtect.get().onlineMode) {
-            PlayerName = uuid.toLowerCase();
-            return PlayerName;
-        }
 
         try {
             uuids = UUID.fromString(uuid);

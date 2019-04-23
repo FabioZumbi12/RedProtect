@@ -34,6 +34,22 @@
     </parent>
     <artifactId>RedProtect-Sponge-8</artifactId>
 
+    <repositories>
+
+        <!-- Sponge repo -->
+        <repository>
+            <id>sponge-maven-repo</id>
+            <name>Sponge maven repo</name>
+            <url>https://repo.spongepowered.org/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spongepowered</groupId>

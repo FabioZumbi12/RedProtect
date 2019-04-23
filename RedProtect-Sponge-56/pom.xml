@@ -38,6 +38,26 @@
         <spongeVersion>6.1.0-SNAPSHOT</spongeVersion>
     </properties>
 
+    <repositories>
+
+        <!-- Sponge repo -->
+        <repository>
+            <id>sponge-maven-repo</id>
+            <name>Sponge maven repo</name>
+            <url>https://repo.spongepowered.org/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>dynmap</id>
+            <url>http://repo.mikeprimm.com/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spongepowered</groupId>
@@ -70,13 +90,12 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-sponge</artifactId>
             <version>6.1.7-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.github.webbukkit</groupId>
+            <groupId>org.dynmap</groupId>
             <artifactId>DynmapCoreAPI</artifactId>
-            <version>v2.5</version>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 

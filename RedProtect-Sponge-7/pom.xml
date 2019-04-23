@@ -34,6 +34,22 @@
     </parent>
     <artifactId>RedProtect-Sponge-7</artifactId>
 
+    <repositories>
+
+        <!-- Sponge repo -->
+        <repository>
+            <id>sponge-maven-repo</id>
+            <name>Sponge maven repo</name>
+            <url>https://repo.spongepowered.org/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spongepowered</groupId>
@@ -41,6 +57,7 @@
             <version>${spongeVersion}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
@@ -48,18 +65,10 @@
             <classifier>javadoc</classifier>
         </dependency>
 
-        <!-- shade all -->
-        <dependency>
-            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
-            <artifactId>RedProtect-Spigot</artifactId>
-            <version>LATEST</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Sponge-56</artifactId>
             <version>LATEST</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
