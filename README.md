@@ -25,7 +25,7 @@ Now you can hook with uchat using maven repository (from Github) to use in your 
 <repositories>  
   <repository>  
     <id>redprotect-repo</id>  
-    <url>https://raw.github.com/FabioZumbi12/RedProtect/mvn-repo/</url>  
+    <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>  
   </repository>  
 </repositories>  
 ```
