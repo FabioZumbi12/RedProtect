@@ -494,7 +494,7 @@ public class MainCategory {
 
         @ConfigSerializable
         public static class dynmapCat {
-            @Setting(comment = "Enable hook to show all regions on dynmapHook plugin?")
+            @Setting(comment = "Enable hook to show all regions on dynmap plugin?")
             public boolean enable = true;
             @Setting(value = "hide-by-default", comment = "Hide the Redprotect tab group by default?")
             public boolean hide_by_default = true;
