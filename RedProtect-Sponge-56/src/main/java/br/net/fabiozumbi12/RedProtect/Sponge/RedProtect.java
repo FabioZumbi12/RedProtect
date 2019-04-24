@@ -238,9 +238,6 @@ public class RedProtect {
         Sponge.getGame().getEventManager().registerListeners(container, new RPWorldListener());
         Sponge.getGame().getEventManager().registerListeners(container, new RPMine18());
 
-        // Register hooks
-        this.hooks.registerHooks();
-
         try {
             rm = new RegionManager();
             rm.loadAll();
@@ -254,6 +251,9 @@ public class RedProtect {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Register hooks
+        this.hooks.registerHooks();
     }
 
     public void reload() {
