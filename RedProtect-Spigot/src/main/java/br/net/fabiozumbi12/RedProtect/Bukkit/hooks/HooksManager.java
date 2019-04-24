@@ -94,7 +94,7 @@ public class HooksManager {
         }
         if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
             RedProtect.get().logger.info("Dynmap found. Hooked.");
-            RedProtect.get().logger.info("Loading dynmapHook markers...");
+            RedProtect.get().logger.info("Loading dynmap markers...");
             dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
             RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
             RedProtect.get().logger.info("Dynmap markers loaded!");
