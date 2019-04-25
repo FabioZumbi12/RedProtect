@@ -248,6 +248,7 @@ public class ConfigManager {
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
+            /*
             if (guiCfgRoot.getNode("gui-strings").getValue() != null){
                 guiCfgRoot.removeChild("gui-strings");
             }
@@ -264,7 +265,7 @@ public class ConfigManager {
                 if (key.getNode("description2").getValue() != null){
                     key.removeChild("description2");
                 }
-            }
+            }*/
 
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = ItemTypes.STAINED_GLASS_PANE.getId();
