@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -54,14 +54,14 @@ public class RegenAllCommand implements SubCommand {
             }
             int regen = RedProtect.get().rm.regenAll(args[0]);
             if (regen <= 0) {
-                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneregenerated"));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
             } else {
-                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args[0]));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args[0]));
             }
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "regen-all", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "regen-all", true);
         return true;
     }
 

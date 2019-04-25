@@ -52,7 +52,7 @@ import java.util.*;
 
 import static com.google.common.reflect.TypeToken.of;
 
-public class RPConfig {
+public class ConfigLoader {
 
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
@@ -116,7 +116,7 @@ public class RPConfig {
     private MainCategory root;
 
     //init
-    public RPConfig() throws ObjectMappingException {
+    public ConfigLoader() throws ObjectMappingException {
         try {
             if (!RedProtect.get().getDataFolder().exists()) {
                 RedProtect.get().getDataFolder().mkdir();
@@ -710,12 +710,12 @@ public class RPConfig {
                 boolean blocks = b.getType().name().contains(root.region_settings.block_id) ||
                         root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getType().name()));
                 if (!blocks) {
-                    RPLang.sendMessage(p, "need.claim.blockids");
+                    RedProtect.get().lang.sendMessage(p, "need.claim.blockids");
                 } else {
                     return false;
                 }
             }
-            RPLang.sendMessage(p, "need.claim.tobuild");
+            RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
         }
         return bool;
     }

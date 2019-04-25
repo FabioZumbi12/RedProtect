@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.RegionCommandElement;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -62,17 +62,17 @@ public class CopyFlagCommand {
                         Region from = args.<Region>getOne("region1").get();
                         Region to = args.<Region>getOne("region2").get();
                         /*if (from == null) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + region1);
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region1);
                             return CommandResult.success();
                         }
                         if (to == null) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + region2);
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region2);
                             return CommandResult.success();
                         }*/
                         for (Map.Entry<String, Object> key : from.getFlags().entrySet()) {
                             to.setFlag(RedProtect.get().getPVHelper().getCause(src), key.getKey(), key.getValue());
                         }
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.copied") + from.getName() + " > " + to.getName());
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.copied") + from.getName() + " > " + to.getName());
                         RedProtect.get().logger.addLog("Player " + player.getName() + " Copied FLAGS from " + from.getName() + " to " + to.getName());
                     }
                     return CommandResult.success();

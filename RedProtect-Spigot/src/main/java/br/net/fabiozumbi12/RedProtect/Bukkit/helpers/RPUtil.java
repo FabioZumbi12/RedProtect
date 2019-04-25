@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
@@ -106,11 +106,11 @@ public class RPUtil extends CoreUtil {
         List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             String potname = "";
-            if (RedProtect.get().version >= 190) {
+            if (RedProtect.get().bukkitVersion >= 190) {
                 PotionMeta pot = (PotionMeta) result.getItemMeta();
                 potname = pot.getBasePotionData().getType().name();
             }
-            if (RedProtect.get().version < 190) {
+            if (RedProtect.get().bukkitVersion < 190) {
                 potname = Potion.fromItemStack(result).getType().name();
             }
             return Pots.contains(potname);
@@ -122,15 +122,15 @@ public class RPUtil extends CoreUtil {
         List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             String potname = "";
-            if (RedProtect.get().version >= 190) {
+            if (RedProtect.get().bukkitVersion >= 190) {
                 PotionMeta pot = (PotionMeta) result.getItemMeta();
                 potname = pot.getBasePotionData().getType().name();
             }
-            if (RedProtect.get().version <= 180 && Potion.fromItemStack(result) != null) {
+            if (RedProtect.get().bukkitVersion <= 180 && Potion.fromItemStack(result) != null) {
                 potname = Potion.fromItemStack(result).getType().name();
             }
             if (Pots.contains(potname)) {
-                RPLang.sendMessage(p, "playerlistener.denypotion");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.denypotion");
                 return true;
             }
         }
@@ -147,7 +147,7 @@ public class RPUtil extends CoreUtil {
         Region rto = RedProtect.get().rm.getTopRegion(to);
         if (rto != r) {
             setTo = from;
-            RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionexit");
         }
         return setTo;
     }
@@ -802,7 +802,7 @@ public class RPUtil extends CoreUtil {
         RedProtect.get().changeWait.add(r + flag);
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
             /*if (p != null && p.isOnline()){
-                    RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.ready").replace("{flag}", flag));
                 }*/
             RedProtect.get().changeWait.remove(r + flag);
         }, RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds * 20);
@@ -862,10 +862,10 @@ public class RPUtil extends CoreUtil {
             }
         }
         if (borderBlocks.isEmpty()) {
-            RPLang.sendMessage(p, "cmdmanager.bordernospace");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.bordernospace");
         } else {
             if (msg) {
-                RPLang.sendMessage(p, "cmdmanager.addingborder");
+                RedProtect.get().lang.sendMessage(p, "cmdmanager.addingborder");
             }
             pBorders.put(p.getName(), borderBlocks);
             int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
@@ -875,7 +875,7 @@ public class RPUtil extends CoreUtil {
                     }
                     borderIds.remove(p.getName());
                     pBorders.remove(p.getName());
-                    RPLang.sendMessage(p, "cmdmanager.removingborder");
+                    RedProtect.get().lang.sendMessage(p, "cmdmanager.removingborder");
                 }
             }, RedProtect.get().config.configRoot().region_settings.border.time_showing * 20);
             borderIds.put(p.getName(), taskid);
@@ -889,7 +889,7 @@ public class RPUtil extends CoreUtil {
             if (Bukkit.getWorlds().contains(claim.getGreaterBoundaryCorner().getWorld())) {
                 World w = claim.getGreaterBoundaryCorner().getWorld();
                 String pname = claim.getOwnerName().replace(" ", "_").toLowerCase();
-                if (RedProtect.get().onlineMode && claim.ownerID != null) {
+                if (RedProtect.get().config.configRoot().online_mode && claim.ownerID != null) {
                     pname = claim.ownerID.toString();
                 }
                 Set<PlayerRegion<String, String>> leaders = new HashSet<>();
@@ -914,7 +914,7 @@ public class RPUtil extends CoreUtil {
     }
 
     public static String getTitleName(Region r) {
-        String name = RPLang.get("gui.invflag").replace("{region}", r.getName());
+        String name = RedProtect.get().lang.get("gui.invflag").replace("{region}", r.getName());
         if (name.length() > 16) {
             name = name.substring(0, 16);
         }
@@ -946,7 +946,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -957,7 +957,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -968,7 +968,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -1113,7 +1113,7 @@ public class RPUtil extends CoreUtil {
                 for (int iz = z - radius; iz <= z + radius; ++iz) {
                     Region reg = RedProtect.get().rm.getTopRegion(new Location(p.getWorld(), ix, iy, iz));
                     if (reg != null && !reg.canBuild(p)) {
-                        RPLang.sendMessage(p, RPLang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
+                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
                         return false;
                     }
                 }
@@ -1155,23 +1155,23 @@ public class RPUtil extends CoreUtil {
                 regionName = StripName(pRName) + "_" + i;
             }
             if (regionName.length() > 16) {
-                RPLang.sendMessage(p, "regionbuilder.autoname.error");
+                RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
                 return null;
             }
         }
         if (regionName.contains("@")) {
-            p.sendMessage(RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
+            p.sendMessage(RedProtect.get().lang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
             return null;
         }
 
         //region name conform
         regionName = regionName.replace("/", "|");
         if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
             return null;
         }
         if (regionName.length() < 3 || regionName.length() > 16) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
             return null;
         }
 

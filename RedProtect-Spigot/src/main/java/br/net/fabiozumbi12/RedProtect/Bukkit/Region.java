@@ -27,7 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
@@ -216,7 +216,7 @@ public class Region extends CoreRegion {
                     String[] lines = s.getLines();
                     if (lines[0].equalsIgnoreCase("[flag]")) {
                         if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))) {
-                            s.setLine(3, RPLang.get("region.value") + " " + RPLang.translBool(getFlagString(fname)));
+                            s.setLine(3, RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname)));
                             s.update();
                             RedProtect.get().config.putSign(this.getID(), loc);
                         }
@@ -352,7 +352,7 @@ public class Region extends CoreRegion {
         String memberString = "None";
 
         String wMsgTemp;
-        String IsTops = RPLang.translBool(isOnTop());
+        String IsTops = RedProtect.get().lang.translBool(isOnTop());
         String wName = this.world;
         String colorChar = "";
         String dynmapInfo = "";
@@ -380,13 +380,13 @@ public class Region extends CoreRegion {
             memberString = memberStringBuilder.delete(0, 2).toString();
         }
         if (this.wMessage == null || this.wMessage.equals("")) {
-            wMsgTemp = RPLang.get("region.welcome.notset");
+            wMsgTemp = RedProtect.get().lang.get("region.welcome.notset");
         } else {
             wMsgTemp = wMessage;
         }
 
         if (this.date.equals(RPUtil.dateNow())) {
-            today.append(RPLang.get("region.today"));
+            today.append(RedProtect.get().lang.get("region.today"));
         } else {
             today.append(this.date);
         }
@@ -406,18 +406,18 @@ public class Region extends CoreRegion {
         }
 
         if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
-            dynmapInfo = RPLang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RPLang.get("region.dynmap-showing") : RPLang.get("region.dynmap-hiding")) + ", " + RPLang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
+            dynmapInfo = RedProtect.get().lang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().lang.get("region.dynmap-showing") : RedProtect.get().lang.get("region.dynmap-hiding")) + ", " + RedProtect.get().lang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
-        return RPLang.get("region.name") + " " + colorChar + this.name + RPLang.get("general.color") + " | " + RPLang.get("region.priority") + " " + this.prior + "\n" +
-                RPLang.get("region.priority.top") + " " + IsTops + RPLang.get("general.color") + " | " + RPLang.get("region.lastvalue") + " " + RPEconomy.getFormatted(this.value) + "\n" +
-                RPLang.get("region.world") + " " + colorChar + wName + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
-                RPLang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RPLang.get("general.color") + " | " + RPLang.get("region.area") + " " + this.getArea() + "\n" +
-                RPLang.get("region.leaders") + " " + leaderString + "\n" +
-                RPLang.get("region.admins") + " " + adminString + RPLang.get("general.color") + " | " + RPLang.get("region.members") + " " + memberString + "\n" +
-                RPLang.get("region.date") + " " + today.toString() + "\n" +
+        return RedProtect.get().lang.get("region.name") + " " + colorChar + this.name + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.priority") + " " + this.prior + "\n" +
+                RedProtect.get().lang.get("region.priority.top") + " " + IsTops + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.lastvalue") + " " + RPEconomy.getFormatted(this.value) + "\n" +
+                RedProtect.get().lang.get("region.world") + " " + colorChar + wName + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
+                RedProtect.get().lang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.area") + " " + this.getArea() + "\n" +
+                RedProtect.get().lang.get("region.leaders") + " " + leaderString + "\n" +
+                RedProtect.get().lang.get("region.admins") + " " + adminString + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.members") + " " + memberString + "\n" +
+                RedProtect.get().lang.get("region.date") + " " + today.toString() + "\n" +
                 dynmapInfo +
-                RPLang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RPLang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
+                RedProtect.get().lang.get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RedProtect.get().lang.get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
     }
 
     public void clearLeaders() {
@@ -439,18 +439,18 @@ public class Region extends CoreRegion {
     }
 
     public boolean isLeader(Player player) {
-        if (RedProtect.get().onlineMode) {
-            return isLeader(player.getUniqueId().toString(), RedProtect.get().onlineMode);
+        if (RedProtect.get().config.configRoot().online_mode) {
+            return isLeader(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
         } else {
-            return isLeader(player.getName(), RedProtect.get().onlineMode);
+            return isLeader(player.getName(), RedProtect.get().config.configRoot().online_mode);
         }
     }
 
     public boolean isAdmin(Player player) {
-        if (RedProtect.get().onlineMode) {
-            return isAdmin(player.getUniqueId().toString(), RedProtect.get().onlineMode);
+        if (RedProtect.get().config.configRoot().online_mode) {
+            return isAdmin(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
         } else {
-            return isAdmin(player.getName(), RedProtect.get().onlineMode);
+            return isAdmin(player.getName(), RedProtect.get().config.configRoot().online_mode);
         }
     }
 
@@ -458,23 +458,23 @@ public class Region extends CoreRegion {
         boolean cs = RedProtect.get().hooks.simpleClans && SimpleClansHook.getPlayerClan(this, player);
         if (cs) return true;
 
-        if (RedProtect.get().onlineMode) {
-            return isMember(player.getUniqueId().toString(), RedProtect.get().onlineMode);
+        if (RedProtect.get().config.configRoot().online_mode) {
+            return isMember(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
         } else {
-            return isMember(player.getName(), RedProtect.get().onlineMode);
+            return isMember(player.getName(), RedProtect.get().config.configRoot().online_mode);
         }
     }
 
     public boolean isLeader(String player) {
-        return isLeader(player, RedProtect.get().onlineMode);
+        return isLeader(player, RedProtect.get().config.configRoot().online_mode);
     }
 
     public boolean isAdmin(String player) {
-        return isAdmin(player, RedProtect.get().onlineMode);
+        return isAdmin(player, RedProtect.get().config.configRoot().online_mode);
     }
 
     public boolean isMember(String player) {
-        return isMember(player, RedProtect.get().onlineMode);
+        return isMember(player, RedProtect.get().config.configRoot().online_mode);
     }
 
     /**
@@ -617,7 +617,7 @@ public class Region extends CoreRegion {
             if (RedProtect.get().config.getDefFlags().contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RPLang.translBool(flagValue));
+                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RedProtect.get().lang.translBool(flagValue));
                 } else {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.GRAY).append(flagValue);
                 }
@@ -630,7 +630,7 @@ public class Region extends CoreRegion {
             if (RedProtect.get().config.AdminFlags.contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RPLang.translBool(flagValue));
+                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RedProtect.get().lang.translBool(flagValue));
                 } else {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.GRAY).append(flagValue);
                 }
@@ -1258,7 +1258,7 @@ public class Region extends CoreRegion {
 
     public String getAdminDesc() {
         if (this.admins.size() == 0) {
-            return RPLang.get("region.none");
+            return RedProtect.get().lang.get("region.none");
         }
         StringBuilder adminsList = new StringBuilder();
         for (PlayerRegion<String, String> admin : this.admins) {

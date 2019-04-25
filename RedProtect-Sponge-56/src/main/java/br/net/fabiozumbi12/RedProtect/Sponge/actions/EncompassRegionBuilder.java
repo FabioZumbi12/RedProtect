@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.actions;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
@@ -78,7 +78,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
         int curFacing = 0;
 
         if (!RedProtect.get().config.isAllowedWorld(p)) {
-            this.setErrorSign(e, RPLang.get("regionbuilder.region.worldnotallowed"));
+            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.worldnotallowed"));
             return;
         }
 
@@ -89,19 +89,19 @@ public class EncompassRegionBuilder extends RegionBuilder {
         if (regionName.isEmpty() || regionName.length() < 3) {
             regionName = RPUtil.nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
-                this.setErrorSign(e, RPLang.get("regionbuilder.autoname.error"));
+                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.autoname.error"));
                 return;
             }
         }
 
         //region name conform
         if (regionName.length() < 3) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
             return;
         }
 
         if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
         }
 
@@ -160,7 +160,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         } else if (pName.equals(owner1)) {
                             sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(2, RPUtil.toText("--"))));
-                            RPLang.sendMessage(p, "regionbuilder.sign.dontneed.name");
+                            RedProtect.get().lang.sendMessage(p, "regionbuilder.sign.dontneed.name");
 
                         } else {
                             leaders.add(owner1);
@@ -173,7 +173,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             if (!(owner2.startsWith("[") && owner2.endsWith("]"))) {
                                 if (pName.equals(owner2)) {
                                     sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(3, RPUtil.toText("--"))));
-                                    RPLang.sendMessage(p, "regionbuilder.sign.dontneed.name");
+                                    RedProtect.get().lang.sendMessage(p, "regionbuilder.sign.dontneed.name");
                                 } else {
                                     leaders.add(owner2);
                                 }
@@ -214,7 +214,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         //check retangular region
                         for (BlockSnapshot bkloc : blocks) {
                             if (!limitlocs.contains(bkloc.getLocation().get())) {
-                                this.setErrorSign(e, RPLang.get("regionbuilder.neeberetangle"));
+                                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.neeberetangle"));
                                 return;
                             }
                         }
@@ -223,7 +223,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                                     return;
                                 }
                                 if (!othersName.contains(r.getName())) {
@@ -240,7 +240,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                             if (otherrg != null) {
                                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.admin")) {
-                                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
                                     return;
                                 }
                                 if (!othersName.contains(otherrg.getName())) {
@@ -252,7 +252,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         //check if same area
                         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());
                         if (otherrg != null && otherrg.get4Points(current.getLocation().get().getBlockY()).equals(region.get4Points(current.getLocation().get().getBlockY()))) {
-                            this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                             return;
                         }
 
@@ -262,7 +262,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         int claimused = RedProtect.get().rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), w);
                         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
                         if (claimused >= claimLimit && claimLimit != -1) {
-                            this.setErrorSign(e, RPLang.get("regionbuilder.claim.limit"));
+                            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.claim.limit"));
                             return;
                         }
 
@@ -275,7 +275,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             actualArea = totalArea + regionarea;
                         }
                         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
-                            this.setErrorSign(e, RPLang.get("regionbuilder.reach.limit"));
+                            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.reach.limit"));
                             return;
                         }
 
@@ -290,9 +290,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                             if (peco >= reco) {
                                 acc.withdraw(RedProtect.get().econ.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getPVHelper().getCause(p));
-                                p.sendMessage(RPUtil.toText(RPLang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
+                                p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
                             } else {
-                                this.setErrorSign(e, RPLang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco));
+                                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco));
                                 return;
                             }
                         }
@@ -303,31 +303,31 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             return;
                         }
 
-                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
-                        p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.claim.left") + (claimused + 1) + RPLang.get("general.color") + "/" + (claimUnlimited ? RPLang.get("regionbuilder.area.unlimited") : claimLimit)));
-                        p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? "&a" + regionarea : "&c- " + regionarea) + "\n" +
-                                RPLang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RPLang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea())))));
-                        p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior()));
-                        p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
+                        p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+                        p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimused + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit)));
+                        p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? "&a" + regionarea : "&c- " + regionarea) + "\n" +
+                                RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea())))));
+                        p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior()));
+                        p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         if (othersName.size() > 0) {
-                            p.sendMessage(RPUtil.toText(RPLang.get("regionbuilder.overlapping")));
-                            p.sendMessage(RPUtil.toText(RPLang.get("region.regions") + " " + othersName));
-                            p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
+                            p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("regionbuilder.overlapping")));
+                            p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("region.regions") + " " + othersName));
+                            p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         }
 
                         //Drop types
-                        if (owner2 != null && RedProtect.get().config.configRoot().region_settings.claim.modes.allow_player_decide && RPLang.containsValue(owner2)) {
-                        	/*if (owner2.equalsIgnoreCase(RPLang.get("region.mode.drop"))){
+                        if (owner2 != null && RedProtect.get().config.configRoot().region_settings.claim.modes.allow_player_decide && RedProtect.get().lang.containsValue(owner2)) {
+                        	/*if (owner2.equalsIgnoreCase(RedProtect.get().lang.get("region.mode.drop"))){
                         		drop(b , blocks, p);
-                        		RPLang.sendMessage(p, "regionbuilder.region.droped");
+                        		RedProtect.get().lang.sendMessage(p, "regionbuilder.region.droped");
                         	}*/
-                            if (owner2.equalsIgnoreCase(RPLang.get("region.mode.remove"))) {
+                            if (owner2.equalsIgnoreCase(RedProtect.get().lang.get("region.mode.remove"))) {
                                 remove(b, blocks, p);
-                                RPLang.sendMessage(p, "regionbuilder.region.removed");
+                                RedProtect.get().lang.sendMessage(p, "regionbuilder.region.removed");
                             }
-                            if (owner2.equalsIgnoreCase(RPLang.get("region.mode.give"))) {
+                            if (owner2.equalsIgnoreCase(RedProtect.get().lang.get("region.mode.give"))) {
                                 give(b, p, blocks);
-                                RPLang.sendMessage(p, "regionbuilder.region.given");
+                                RedProtect.get().lang.sendMessage(p, "regionbuilder.region.given");
                             }
                         } else {
                         	/*if (RedProtect.get().config.getString("region-settings.claim-modes.mode").equalsIgnoreCase("drop")) {
@@ -342,8 +342,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         if (RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0) {
-                            p.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.firstwarning")));
-                            p.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
+                            p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.firstwarning")));
+                            p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         }
 
                         //wecui selection
@@ -360,7 +360,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 //check other regions on blocks
                 Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
                 if (rcurrent != null && !rcurrent.canBuild(p)) {
-                    this.setErrorSign(e, RPLang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
+                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
                     return;
                 }
                 blocks.add(current);
@@ -376,14 +376,14 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     pz.add(current.getLocation().get().getBlockZ());
                 }
             } else if (i != 0) {
-                this.setErrorSign(e, RPLang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getLocation().get().getBlockX() + ", y: " + current.getLocation().get().getBlockY() + ", z: " + current.getLocation().get().getBlockZ() + ")"));
+                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getLocation().get().getBlockX() + ", y: " + current.getLocation().get().getBlockY() + ", z: " + current.getLocation().get().getBlockZ() + ")"));
                 Location<World> newbl = current.getLocation().get().getBlockRelative(Direction.UP);
                 RedProtect.get().getPVHelper().setBlock(newbl, BlockTypes.STANDING_SIGN.getDefaultState());
                 Sign errSign = (Sign) newbl.getTileEntity().get();
                 SignData data = errSign.getSignData();
                 data.get(Keys.SIGN_LINES).get().set(0, Text.of(TextColors.RED, "xxxxxxxxxxxxxx"));
-                data.get(Keys.SIGN_LINES).get().set(1, RPUtil.toText(RPLang.get("_redprotect.prefix")));
-                data.get(Keys.SIGN_LINES).get().set(2, RPUtil.toText(RPLang.get("blocklistener.postsign.error")));
+                data.get(Keys.SIGN_LINES).get().set(1, RPUtil.toText(RedProtect.get().lang.get("_redprotect.prefix")));
+                data.get(Keys.SIGN_LINES).get().set(2, RPUtil.toText(RedProtect.get().lang.get("blocklistener.postsign.error")));
                 data.get(Keys.SIGN_LINES).get().set(3, Text.of(TextColors.RED, "xxxxxxxxxxxxxx"));
                 errSign.offer(data);
                 return;
@@ -394,14 +394,14 @@ public class EncompassRegionBuilder extends RegionBuilder {
             }
             last = current;
             if (next == null) {
-                this.setErrorSign(e, RPLang.get("regionbuilder.area.next"));
+                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.area.next"));
                 return;
             }
             current = next;
             oldFacing = curFacing;
         }
         String maxsize = String.valueOf(RedProtect.get().config.configRoot().region_settings.max_scan);
-        this.setErrorSign(e, RPLang.get("regionbuilder.area.toobig").replace("{maxsize}", maxsize));
+        this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.area.toobig").replace("{maxsize}", maxsize));
     }
     
 

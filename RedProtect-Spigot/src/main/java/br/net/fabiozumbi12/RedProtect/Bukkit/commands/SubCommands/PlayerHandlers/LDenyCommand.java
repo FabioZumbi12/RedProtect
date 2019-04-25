@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -59,22 +59,22 @@ public class LDenyCommand implements SubCommand {
                 Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
                 if (r != null) {
-                    RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));
                     if (lsender.isOnline()) {
-                        RPLang.sendMessage(lsender, RPLang.get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName()));
+                        RedProtect.get().lang.sendMessage(lsender, RedProtect.get().lang.get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName()));
                     }
                 } else {
-                    RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                 }
                 RedProtect.get().alWait.remove(player);
                 return true;
             } else {
-                RPLang.sendMessage(player, "cmdmanager.norequests");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.norequests");
                 return true;
             }
         }
 
-        RPLang.sendCommandHelp(sender, "ldeny", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "ldeny", true);
         return true;
     }
 

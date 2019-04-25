@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
@@ -281,7 +281,7 @@ public class RPGlobalListener implements Listener {
             }
         }
 
-        if (RedProtect.get().version >= 191) {
+        if (RedProtect.get().bukkitVersion >= 191) {
             if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).allow_elytra) {
                 ItemStack item = p.getInventory().getChestplate();
                 if (item != null && item.getType().name().equals("ELYTRA")) {
@@ -293,7 +293,7 @@ public class RPGlobalListener implements Listener {
                         inv.setItem(inv.firstEmpty(), item);
                     }
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1);
-                    RPLang.sendMessage(p, "globallistener.elytra.cantequip");
+                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantequip");
                 }
             }
         }
@@ -303,12 +303,12 @@ public class RPGlobalListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
 
-        if (RedProtect.get().version >= 190) {
+        if (RedProtect.get().bukkitVersion >= 190) {
             Location to = e.getTo();
             if (p.getInventory().getChestplate() != null &&
                     p.getInventory().getChestplate().getType().name().equals("ELYTRA") &&
                     !RedProtect.get().config.globalFlagsRoot().worlds.get(to.getWorld().getName()).allow_elytra) {
-                RPLang.sendMessage(p, "globallistener.elytra.cantworld");
+                RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantworld");
                 e.setCancelled(true);
             }
         }
@@ -387,7 +387,7 @@ public class RPGlobalListener implements Listener {
 
         if (b != null && b.getState() instanceof Sign) {
             Sign s = (Sign) b.getState();
-            if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RPLang.get("_redprotect.prefix")))) {
+            if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RedProtect.get().lang.get("_redprotect.prefix")))) {
                 b.setType(Material.AIR);
                 e.setUseInteractedBlock(Result.DENY);
                 e.setUseItemInHand(Result.DENY);
@@ -403,14 +403,14 @@ public class RPGlobalListener implements Listener {
         if (e.getItem() != null && items.stream().anyMatch(e.getItem().getType().name()::matches)) {
             if (r != null && ((!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps && r.canBuild(p)) ||
                     (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps && !r.canBuild(p)))) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setUseInteractedBlock(Event.Result.DENY);
                 e.setUseItemInHand(Event.Result.DENY);
                 e.setCancelled(true);
                 return;
             }
             if (r == null && !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_wilderness && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.world")) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setUseInteractedBlock(Event.Result.DENY);
                 e.setUseItemInHand(Event.Result.DENY);
                 e.setCancelled(true);
@@ -443,7 +443,7 @@ public class RPGlobalListener implements Listener {
             if ((!canBreakList(p.getWorld(), b.getType().name())
                     || !canInteractBlocksList(p.getWorld(), b.getType().name())) &&
                     !bypassBuild(p, null, 0)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 e.setCancelled(true);
                 return;
             }
@@ -843,12 +843,12 @@ public class RPGlobalListener implements Listener {
         if (e.getItem() != null && items.stream().anyMatch(e.getItem().getType().name()::matches)) {
             if (r != null && ((!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps && r.canBuild(p)) ||
                     (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps && !r.canBuild(p)))) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
                 return;
             }
             if (r == null && !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_wilderness && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.world")) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
         }

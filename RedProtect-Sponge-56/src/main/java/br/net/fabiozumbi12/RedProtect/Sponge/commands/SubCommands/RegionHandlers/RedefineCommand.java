@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.RedefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.RegionCommandElement;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -53,19 +53,19 @@ public class RedefineCommand {
 
                         Region oldRect = args.<Region>getOne("region").get();
                         /*if (oldRect == null) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + region);
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region);
                             return CommandResult.success();
                         }*/
 
                         if (!RedProtect.get().ph.hasRegionPermLeader(player, "redefine", oldRect)) {
-                            RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                             return CommandResult.success();
                         }
 
                         RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
                         if (rb.ready()) {
                             Region r2 = rb.build();
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
                             RedProtect.get().rm.add(r2, player.getWorld());
 
                             RedProtect.get().firstLocationSelections.remove(player);

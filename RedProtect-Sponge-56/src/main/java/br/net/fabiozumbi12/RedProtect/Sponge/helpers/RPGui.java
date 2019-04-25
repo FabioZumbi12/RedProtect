@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
@@ -162,14 +162,14 @@ public class RPGui {
                             });
                         }
                     } catch (Exception e) {
-                        RPLang.sendMessage(this.player, "gui.edit.error");
+                        RedProtect.get().lang.sendMessage(this.player, "gui.edit.error");
                         close(false);
                         e.printStackTrace();
                         return;
                     }
                 }
                 RedProtect.get().config.saveGui();
-                RPLang.sendMessage(this.player, "gui.edit.ok");
+                RedProtect.get().lang.sendMessage(this.player, "gui.edit.ok");
             }
             close(false);
         }
@@ -220,7 +220,7 @@ public class RPGui {
                                     applyFlag(flag, item, event);
                                     RPUtil.startFlagChanger(this.region.getName(), flag, this.player);
                                 } else {
-                                    RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
+                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     event.setCancelled(true);
                                 }
                                 return;
@@ -241,7 +241,7 @@ public class RPGui {
 
     private void applyFlag(String flag, ItemStack item, ClickInventoryEvent event) {
         if (this.region.setFlag(RedProtect.get().getPVHelper().getCause(this.player), flag, !this.region.getFlagBool(flag))) {
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
+            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
 
             if (!this.region.getFlagBool(flag)) {
                 item.remove(Keys.ITEM_ENCHANTMENTS);
@@ -288,7 +288,7 @@ public class RPGui {
             if (player.getOpenInventory().isPresent() && player.getOpenInventory().get().getName().get().equals(this.inv.getName().get())){
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                 if (r != null && r.equals(this.region) && !player.equals(this.player)){
-                    RPLang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
+                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
                     return;
                 }
             }

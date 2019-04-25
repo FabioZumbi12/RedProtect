@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -59,26 +59,26 @@ public class LAcceptCommand {
                             Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
                             String VictimUUID = player.getName();
-                            if (RedProtect.get().onlineMode) {
+                            if (RedProtect.get().config.configRoot().online_mode) {
                                 VictimUUID = player.getUniqueId().toString();
                             }
 
                             if (r != null) {
 
                                 if (RedProtect.get().ph.getPlayerClaimLimit(player) == (RedProtect.get().rm.getRegions(VictimUUID, r.getWorld()).size() + 1)) {
-                                    RPLang.sendMessage(player, "regionbuilder.claim.limit");
+                                    RedProtect.get().lang.sendMessage(player, "regionbuilder.claim.limit");
                                     return CommandResult.success();
                                 }
 
                                 r.addLeader(VictimUUID);
-                                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + info.split("@")[2]);
-                                lsender.ifPresent(value -> RPLang.sendMessage(value, RPLang.get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName())));
+                                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + info.split("@")[2]);
+                                lsender.ifPresent(value -> RedProtect.get().lang.sendMessage(value, RedProtect.get().lang.get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName())));
                             } else {
-                                RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                             }
                             RedProtect.get().alWait.remove(player);
                         } else {
-                            RPLang.sendMessage(player, "cmdmanager.norequests");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.norequests");
                         }
                     }
                     return CommandResult.success();

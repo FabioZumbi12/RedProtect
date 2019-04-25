@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -52,7 +52,7 @@ public class BorderCommand {
                         if (r != null) {
                             RPUtil.addBorder(player, r.get4Points(player.getLocation().getBlockY()));
                         } else {
-                            RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                         }
                     }
                     return CommandResult.success();

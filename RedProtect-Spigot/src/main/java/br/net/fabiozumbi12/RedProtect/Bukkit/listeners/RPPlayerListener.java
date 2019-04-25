@@ -29,14 +29,13 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.EnterExitRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPDoor;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
-import com.earth2me.essentials.User;
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
@@ -59,7 +58,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -177,7 +175,7 @@ public class RPPlayerListener implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         if (b != null) {
@@ -197,7 +195,7 @@ public class RPPlayerListener implements Listener {
                         return;
                     }
                     RedProtect.get().secondLocationSelections.put(p, l);
-                    p.sendMessage(RPLang.get("playerlistener.wand2") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
+                    p.sendMessage(RedProtect.get().lang.get("playerlistener.wand2") + RedProtect.get().lang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ").");
                     event.setCancelled(true);
                 } else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
                     if (!RPUtil.canBuildNear(p, l)) {
@@ -205,7 +203,7 @@ public class RPPlayerListener implements Listener {
                         return;
                     }
                     RedProtect.get().firstLocationSelections.put(p, l);
-                    p.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RPLang.get("general.color") + ").");
+                    p.sendMessage(RedProtect.get().lang.get("playerlistener.wand1") + RedProtect.get().lang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ").");
                     event.setCancelled(true);
                 }
 
@@ -219,7 +217,7 @@ public class RPPlayerListener implements Listener {
 
                     if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
                         double dist = loc1.distanceSquared(loc2);
-                        RPLang.sendMessage(p, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
+                        RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                     } else {
                         RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
                     }
@@ -230,13 +228,13 @@ public class RPPlayerListener implements Listener {
             if (itemInHand.getType().name().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.infoWandID)) {
                 Region r = RedProtect.get().rm.getTopRegion(l);
                 if (r == null) {
-                    RPLang.sendMessage(p, "playerlistener.noregion.atblock");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.noregion.atblock");
                 } else if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
-                    p.sendMessage(RPLang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RPLang.get("general.color") + "] ---------------");
+                    p.sendMessage(RedProtect.get().lang.get("general.color") + "--------------- [" + ChatColor.GOLD + r.getName() + RedProtect.get().lang.get("general.color") + "] ---------------");
                     p.sendMessage(r.info());
-                    p.sendMessage(RPLang.get("general.color") + "-----------------------------------------");
+                    p.sendMessage(RedProtect.get().lang.get("general.color") + "-----------------------------------------");
                 } else {
-                    p.sendMessage(RPLang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc()));
+                    p.sendMessage(RedProtect.get().lang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc()));
                 }
                 event.setCancelled(true);
                 return;
@@ -254,7 +252,7 @@ public class RPPlayerListener implements Listener {
                     RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches))) {
                 Boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
                 if (out && !cont.canOpen(b, p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantopen");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
                     event.setCancelled(true);
                 }
             }
@@ -264,22 +262,22 @@ public class RPPlayerListener implements Listener {
             if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)) {
                 Material hand = itemInHand.getType();
                 if (hand.equals(Material.ENDER_PEARL) && !r.canTeleport(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     return;
                 } else if ((hand.equals(Material.BOW) || (hand.name().contains("SNOW") && hand.name().contains("BALL")) || hand.name().contains("FIREWORK") || hand.equals(Material.EGG)) && !r.canProtectiles(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     return;
                 } else if (hand.equals(Material.POTION) && !r.usePotions(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     return;
                 } else if (hand.name().contains("_EGG") && !r.canInteractPassives(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     return;
@@ -290,7 +288,7 @@ public class RPPlayerListener implements Listener {
             if (b != null) {
                 if (b.getType().name().endsWith("PRESSURE_PLATE")) {
                     if (!r.canPressPlate(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantpressplate");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantpressplate");
                         event.setCancelled(true);
                     }
                 } else if (b.getType().equals(Material.DRAGON_EGG) ||
@@ -299,7 +297,7 @@ public class RPPlayerListener implements Listener {
                         b.getType().name().contains("CAKE")) {
 
                     if (!r.canBuild(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setCancelled(true);
                     }
                 } else if (b.getState() instanceof Sign && RedProtect.get().config.configRoot().region_settings.enable_flag_sign) {
@@ -308,7 +306,7 @@ public class RPPlayerListener implements Listener {
                     if (lines[0].equalsIgnoreCase("[flag]") && r.getFlags().containsKey(lines[1])) {
                         String flag = lines[1];
                         if (!(r.getFlags().get(flag) instanceof Boolean)) {
-                            RPLang.sendMessage(p, RPLang.get("playerlistener.region.sign.cantflag"));
+                            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
                             return;
                         }
                         if (RedProtect.get().ph.hasPerm(p, "redprotect.flag." + flag)) {
@@ -320,7 +318,7 @@ public class RPPlayerListener implements Listener {
                                             changeFlag(r, flag, p, s);
                                             return;
                                         } else {
-                                            RPLang.sendMessage(p, RPLang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                                            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                                             return;
                                         }
                                     }
@@ -329,50 +327,50 @@ public class RPPlayerListener implements Listener {
                                 return;
                             }
                         }
-                        RPLang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
+                        RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
                     }
                 } else if (b.getType().name().contains("LEAVES") || b.getType().name().contains("LOG") || b.getType().name().contains("_WOOD")) {
                     if (!r.canTree(b) && !r.canBuild(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setCancelled(true);
                     }
                 } else if (b.getType().equals(Material.ENDER_CHEST)) {
                     if (!r.canEnderChest(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantopen");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
                 } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
                         RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
                     if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantopen");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
                 } else if (b.getType().name().contains("LEVER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
                     if (!r.canLever(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantlever");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantlever");
                         event.setCancelled(true);
                     }
                 } else if (b.getType().name().contains("BUTTON")) {
                     if (!r.canButton(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantbutton");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantbutton");
                         event.setCancelled(true);
                     }
                 } else if (RPDoor.isOpenable(b) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantdoor");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantdoor");
                         event.setCancelled(true);
                     } else {
                         RPDoor.ChangeDoor(b, r);
                     }
                 } else if (itemInHand != null && (itemInHand.getType().name().startsWith("BOAT") || itemInHand.getType().name().contains("MINECART"))) {
                     if (!r.canMinecart(p)) {
-                        RPLang.sendMessage(p, "blocklistener.region.cantplace");
+                        RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantplace");
                         event.setUseItemInHand(Event.Result.DENY);
                         event.setCancelled(true);
                     }
                 } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
                     if (!r.canFish(p)) {
-                        RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setUseItemInHand(Event.Result.DENY);
                         event.setCancelled(true);
                     }
@@ -411,7 +409,7 @@ public class RPPlayerListener implements Listener {
                             }
                         }
                     }
-                    RPLang.sendMessage(p, "playerlistener.region.cantinteract.signs");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract.signs");
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setCancelled(true);
                 } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) &&
@@ -421,12 +419,12 @@ public class RPPlayerListener implements Listener {
                                 itemInHand.getType().equals(Material.ITEM_FRAME) ||
                                 (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                 itemInHand.getType().equals(Material.PAINTING))) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
                 } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                     event.setUseInteractedBlock(Event.Result.DENY);
                 }
@@ -436,9 +434,9 @@ public class RPPlayerListener implements Listener {
 
     private void changeFlag(Region r, String flag, Player p, Sign s) {
         if (r.setFlag(p, flag, !r.getFlagBool(flag))) {
-            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
-            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RPLang.translBool(r.getFlagString(flag)));
-            s.setLine(3, RPLang.get("region.value") + " " + RPLang.translBool(r.getFlagString(flag)));
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
+            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
+            s.setLine(3, RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
             s.update();
             if (!RedProtect.get().config.getSigns(r.getID()).contains(s.getLocation())) {
                 RedProtect.get().config.putSign(r.getID(), s.getLocation());
@@ -460,26 +458,26 @@ public class RPPlayerListener implements Listener {
         if (e instanceof ItemFrame || e instanceof Painting) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canBuild(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantedit");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantedit");
                 event.setCancelled(true);
             }
         } else if (e instanceof Minecart || e instanceof Boat) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canMinecart(p)) {
-                RPLang.sendMessage(p, "blocklistener.region.cantenter");
+                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantenter");
                 event.setCancelled(true);
             }
         } else if (RedProtect.get().hooks.myPet && e instanceof MyPetBukkitEntity) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !((MyPetBukkitEntity) e).getOwner().getPlayer().equals(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
         } else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.allowMod(p)) {
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
-                RPLang.sendMessage(p, "playerlistener.region.cantinteract");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
         }
@@ -495,7 +493,7 @@ public class RPPlayerListener implements Listener {
 
         if (RedProtect.get().tpWait.contains(play.getName())) {
             RedProtect.get().tpWait.remove(play.getName());
-            RPLang.sendMessage((Player) e.getEntity(), RPLang.get("cmdmanager.region.tpcancelled"));
+            RedProtect.get().lang.sendMessage(e.getEntity(), RedProtect.get().lang.get("cmdmanager.region.tpcancelled"));
         }
 
         //deny damagecauses
@@ -562,21 +560,21 @@ public class RPPlayerListener implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         if (e.getEntity() instanceof Player && !p.equals(e.getEntity()) && r.flagExists("pvp") && !r.canPVP((Player) e.getEntity(), p)) {
-            RPLang.sendMessage(p, "entitylistener.region.cantpvp");
+            RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
         }
 
         if ((e.getEntity() instanceof Hanging || e.getEntity() instanceof EnderCrystal) && !r.canBuild(p) && !r.canBreak(e.getEntityType())) {
-            RPLang.sendMessage(p, "playerlistener.region.cantremove");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantremove");
             e.setCancelled(true);
         }
 
         if ((e.getEntity() instanceof Boat || e.getEntity() instanceof Minecart) && !r.canMinecart(p)) {
-            RPLang.sendMessage(p, "blocklistener.region.cantbreak");
+            RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
             e.setCancelled(true);
         }
     }
@@ -591,7 +589,7 @@ public class RPPlayerListener implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         Location lfrom = e.getFrom();
@@ -611,28 +609,28 @@ public class RPPlayerListener implements Listener {
 
             //Allow teleport to with items
             if (!rto.canEnterWithItens(p)) {
-                RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.getFlags().get("allow-enter-items").toString()));
+                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.onlyenter.withitems").replace("{items}", rto.getFlags().get("allow-enter-items").toString()));
                 e.setCancelled(true);
                 return;
             }
 
             //Deny teleport to with item
             if (!rto.denyEnterWithItens(p)) {
-                RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", rto.getFlags().get("deny-enter-items").toString()));
+                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.denyenter.withitems").replace("{items}", rto.getFlags().get("deny-enter-items").toString()));
                 e.setCancelled(true);
                 return;
             }
 
             if (RedProtect.get().hooks.pvpm) {
                 if (rto.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !rto.canBuild(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.pvpenabled");
                     e.setCancelled(true);
                     return;
                 }
             }
 
             if (!rto.canEnter(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
                 e.setCancelled(true);
                 return;
             }
@@ -640,18 +638,18 @@ public class RPPlayerListener implements Listener {
             //enter max players flag
             if (rto.getMaxPlayers() != -1) {
                 if (!checkMaxPlayer(p, rto)) {
-                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(rto.getMaxPlayers())));
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(rto.getMaxPlayers())));
                     e.setCancelled(true);
                 }
             }
 
             if (PlayerCmd.containsKey(p.getName())) {
                 if (!rto.canBack(p) && PlayerCmd.get(p.getName()).startsWith("/back")) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantback");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantback");
                     e.setCancelled(true);
                 }
                 if (!rto.isHomeAllowed(p) && PlayerCmd.get(p.getName()).startsWith("/home")) {
-                    RPLang.sendMessage(p, "playerlistener.region.canthome");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.canthome");
                     e.setCancelled(true);
                 }
                 PlayerCmd.remove(p.getName());
@@ -662,17 +660,17 @@ public class RPPlayerListener implements Listener {
         //teleport player to coord/world if playerup 128 y
         int NetherY = RedProtect.get().config.configRoot().nether_protection.maxYsize;
         if (lto.getWorld().getEnvironment().equals(World.Environment.NETHER) && NetherY != -1 && lto.getBlockY() >= NetherY && !p.hasPermission("redprotect.bypass.nether-roof")) {
-            RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
             e.setCancelled(true);
         }
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) || e.getCause().name().contains("CHORUS_FRUIT")) {
             if (rfrom != null && !rfrom.canTeleport(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantteleportitem");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantteleportitem");
                 e.setCancelled(true);
             }
             if (rto != null && !rto.canTeleport(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantteleportitem");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantteleportitem");
                 e.setCancelled(true);
             }
         }
@@ -724,7 +722,7 @@ public class RPPlayerListener implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         String msg = e.getMessage();
@@ -732,7 +730,7 @@ public class RPPlayerListener implements Listener {
         //RedProtect.get().logger.severe("Command: "+msg);
 
         if (RedProtect.get().config.configRoot().server_protection.deny_commands_on_worlds.getOrDefault(p.getWorld().getName(), new ArrayList<>()).contains(cmds) && !p.hasPermission("redprotect.bypass")) {
-            RPLang.sendMessage(p, "playerlistener.command-notallowed");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.command-notallowed");
             e.setCancelled(true);
             return;
         }
@@ -744,7 +742,7 @@ public class RPPlayerListener implements Listener {
             double py = p.getLocation().getY();
             if (py < min || py > max) {
                 if (mesg != null && !mesg.equals("")) {
-                    RPLang.sendMessage(p, mesg);
+                    RedProtect.get().lang.sendMessage(p, mesg);
                 }
                 e.setCancelled(true);
                 return;
@@ -759,7 +757,7 @@ public class RPPlayerListener implements Listener {
         if (r != null) {
 
             if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall")) && RedProtect.get().hooks.myPet && !r.canPet(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantpet");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantpet");
                 e.setCancelled(true);
                 return;
             }
@@ -768,7 +766,7 @@ public class RPPlayerListener implements Listener {
                 if (cmds.equalsIgnoreCase("rp") || cmds.equalsIgnoreCase("redprotect")) {
                     return;
                 }
-                RPLang.sendMessage(p, "playerlistener.region.cantcommand");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantcommand");
                 e.setCancelled(true);
                 return;
             }
@@ -780,13 +778,13 @@ public class RPPlayerListener implements Listener {
                     }
                 }
 
-                RPLang.sendMessage(p, "playerlistener.region.cantcommand");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantcommand");
                 e.setCancelled(true);
                 return;
             }
 
             if (cmds.equalsIgnoreCase("sethome") && !r.isHomeAllowed(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.canthome");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.canthome");
                 e.setCancelled(true);
                 return;
             }
@@ -794,7 +792,7 @@ public class RPPlayerListener implements Listener {
             //Pvp check
             if (cmds.equalsIgnoreCase("pvp") && RedProtect.get().hooks.pvpm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().config.configRoot().flags_configuration.pvparena_nopvp_kick_cmd.replace("{player}", p.getName()));
                     return;
                 }
@@ -803,12 +801,12 @@ public class RPPlayerListener implements Listener {
             if (RedProtect.get().hooks.magicCarpet && !r.getFlagBool("allow-magiccarpet") && (!r.isAdmin(p) && !r.isLeader(p))) {
                 if (cmds.equalsIgnoreCase("magiccarpet")) {
                     e.setCancelled(true);
-                    RPLang.sendMessage(p, "playerlistener.region.cantmc");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
                 } else {
                     for (String cmda : MagicCarpet.getPlugin(MagicCarpet.class).getCommand("MagicCarpet").getAliases()) {
                         if (cmds.equalsIgnoreCase(cmda)) {
                             e.setCancelled(true);
-                            RPLang.sendMessage(p, "playerlistener.region.cantmc");
+                            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
                         }
                     }
                 }
@@ -822,7 +820,7 @@ public class RPPlayerListener implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         Location loc = p.getLocation();
@@ -891,7 +889,7 @@ public class RPPlayerListener implements Listener {
 
         if (lto.getWorld().equals(lfrom.getWorld()) && lto.distance(lfrom) > 0.1 && RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         //teleport player to coord/world if playerup 128 y
@@ -900,7 +898,7 @@ public class RPPlayerListener implements Listener {
             for (String cmd : RedProtect.get().config.configRoot().nether_protection.execute_cmd) {
                 RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), cmd.replace("{player}", p.getName()));
             }
-            RPLang.sendMessage(p, RPLang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.upnethery").replace("{location}", NetherY + ""));
         }
 
         Region r = RedProtect.get().rm.getTopRegion(lto);
@@ -912,7 +910,7 @@ public class RPPlayerListener implements Listener {
             //Enter flag
             if (!r.canEnter(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-                RPLang.sendMessage(p, "playerlistener.region.cantregionenter");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
                 return;
             }
 
@@ -920,7 +918,7 @@ public class RPPlayerListener implements Listener {
             if (r.getMaxPlayers() != -1) {
                 if (!checkMaxPlayer(p, r)) {
                     e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-                    RPLang.sendMessage(p, RPLang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
                     return;
                 }
             }
@@ -940,7 +938,7 @@ public class RPPlayerListener implements Listener {
                     MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);
                     if (mpp.hasMyPet() && mpp.getMyPet().getStatus() == PetState.Here) {
                         mpp.getMyPet().removePet();
-                        RPLang.sendMessage(p, "playerlistener.region.cantpet");
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantpet");
                     }
                 }
             }
@@ -948,14 +946,14 @@ public class RPPlayerListener implements Listener {
             //Allow enter with items
             if (!r.canEnterWithItens(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-                RPLang.sendMessage(p, RPLang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
+                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
                 return;
             }
 
             //Deny enter with item
             if (!r.denyEnterWithItens(p)) {
                 e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
-                RPLang.sendMessage(p, RPLang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
+                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
                 return;
             }
 
@@ -963,7 +961,7 @@ public class RPPlayerListener implements Listener {
             if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying()) {
                 p.setFlying(false);
                 //p.setAllowFlight(false);
-                RPLang.sendMessage(p, "playerlistener.region.cantfly");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
             //update region admin or leander visit
@@ -1030,10 +1028,10 @@ public class RPPlayerListener implements Listener {
                 } else {
                     noRegionFlags(er, p);
                     if (!er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.get().config.configRoot().notify.region_exit) {
-                        if (RedProtect.get().version >= 1110) {
-                            SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), "RED");
+                        if (RedProtect.get().bukkitVersion >= 1110) {
+                            SendNotifyMsg(p, RedProtect.get().lang.get("playerlistener.region.wilderness"), "RED");
                         } else {
-                            SendNotifyMsg(p, RPLang.get("playerlistener.region.wilderness"), null);
+                            SendNotifyMsg(p, RedProtect.get().lang.get("playerlistener.region.wilderness"), null);
                         }
                     }
                 }
@@ -1073,12 +1071,12 @@ public class RPPlayerListener implements Listener {
 
 
         if (rto != null && !rto.canExitPortal(p)) {
-            RPLang.sendMessage(p, "playerlistener.region.cantteleport");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantteleport");
             e.setCancelled(true);
         }
 
         if (from != null && !from.canEnterPortal(p)) {
-            RPLang.sendMessage(p, "playerlistener.region.cantenterteleport");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantenterteleport");
             e.setCancelled(true);
         }
     }
@@ -1101,7 +1099,7 @@ public class RPPlayerListener implements Listener {
 
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
             String uuid = p.getUniqueId().toString();
-            if (!RedProtect.get().onlineMode) {
+            if (!RedProtect.get().config.configRoot().online_mode) {
                 uuid = p.getName().toLowerCase();
             }
             if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
@@ -1127,7 +1125,7 @@ public class RPPlayerListener implements Listener {
 
         if (r != null && !r.canBuild(p)) {
             e.setHatching(false);
-            RPLang.sendMessage(p, "playerlistener.region.canthatch");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.canthatch");
         }
     }
 
@@ -1145,7 +1143,7 @@ public class RPPlayerListener implements Listener {
 
         if (r != null && !r.canProtectiles(p)) {
             e.setCancelled(true);
-            RPLang.sendMessage(p, "playerlistener.region.cantuse");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
         }
     }
 
@@ -1159,7 +1157,7 @@ public class RPPlayerListener implements Listener {
 
         if (r != null && ((!r.canExit(p) && !r.canDrop(p)) || !r.canDrop(p))) {
             e.setCancelled(true);
-            RPLang.sendMessage(p, "playerlistener.region.cantdrop");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantdrop");
         }
     }
 
@@ -1173,7 +1171,7 @@ public class RPPlayerListener implements Listener {
 
         if (r != null && ((!r.canEnter(p) && !r.canPickup(p) || !r.canPickup(p)))) {
             e.setCancelled(true);
-            RPLang.sendMessage(p, "playerlistener.region.cantpickup");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantpickup");
         }
     }
 
@@ -1190,7 +1188,7 @@ public class RPPlayerListener implements Listener {
 
         Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.usePotions(p)) {
-            RPLang.sendMessage(p, "playerlistener.region.cantuse");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
             return;
         }
@@ -1207,7 +1205,7 @@ public class RPPlayerListener implements Listener {
         }
         if (!notify.equals("")) {
             if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
-                if (RedProtect.get().version >= 1110) {
+                if (RedProtect.get().bukkitVersion >= 1110) {
                     RPMine111.sendBarMsg(notify, color, p);
                 } else {
                     if (RedProtect.get().hooks.bossBar) {
@@ -1228,7 +1226,7 @@ public class RPPlayerListener implements Listener {
             return;
         }
         if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
-            if (RedProtect.get().version >= 1110) {
+            if (RedProtect.get().bukkitVersion >= 1110) {
                 RPMine111.sendBarMsg(wel, "GREEN", p);
             } else {
                 if (RedProtect.get().hooks.bossBar) {
@@ -1288,11 +1286,11 @@ public class RPPlayerListener implements Listener {
                 } else {
                     leaderstring = "None";
                 }
-                m = RPLang.get("playerlistener.region.entered");
+                m = RedProtect.get().lang.get("playerlistener.region.entered");
                 m = m.replace("{leaders}", leaderstring);
                 m = m.replace("{region}", r.getName());
             }
-            if (RedProtect.get().version >= 1110) {
+            if (RedProtect.get().bukkitVersion >= 1110) {
                 SendNotifyMsg(p, m, "GREEN");
             } else {
                 SendNotifyMsg(p, m, null);
@@ -1301,7 +1299,7 @@ public class RPPlayerListener implements Listener {
             String wel = ChatColor.translateAlternateColorCodes('&',
                     r.getWelcome().replace("{r}", r.getName())
                             .replace("{p}", p.getName()));
-            SendWelcomeMsg(p, RPLang.get("playerlistener.region.welcome")
+            SendWelcomeMsg(p, RedProtect.get().lang.get("playerlistener.region.welcome")
                     .replace("{region}", r.getName()).replace("{message}", wel));
         }
     }
@@ -1339,7 +1337,7 @@ public class RPPlayerListener implements Listener {
             //Pvp check to enter on region
             if (RedProtect.get().hooks.pvpm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
-                    RPLang.sendMessage(p, "playerlistener.region.pvpenabled");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().config.configRoot().flags_configuration.pvparena_nopvp_kick_cmd.replace("{player}", p.getName()));
                 }
             }
@@ -1359,7 +1357,7 @@ public class RPPlayerListener implements Listener {
             if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet) {
                 if (MagicCarpet.getCarpets().getCarpet(p) != null) {
                     MagicCarpet.getCarpets().remove(p);
-                    RPLang.sendMessage(p, "playerlistener.region.cantmc");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
                 }
             }
         }
@@ -1632,7 +1630,7 @@ public class RPPlayerListener implements Listener {
         if (ent instanceof Player) {
             Player player = (Player) ent;
             if (r != null && !r.canBuild(player) && !r.canBreak(e.getEntity().getType())) {
-                RPLang.sendMessage(player, "blocklistener.region.cantbuild");
+                RedProtect.get().lang.sendMessage(player, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             }
         }

@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.command.Command;
@@ -57,25 +57,25 @@ public class ValueCommand implements SubCommand {
                 if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
                     if (r.getArea() <= RedProtect.get().config.getEcoInt("max-area-toget-value")) {
                         r.setValue(RPEconomy.getRegionValue(r));
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RedProtect.get().config.getEcoString("economy-name")));
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RedProtect.get().config.getEcoString("economy-name")));
 
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Region Value: " + r.getValue());
                         return true;
                     } else {
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().config.getEcoInt("max-area-toget-value").toString()));
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().config.getEcoInt("max-area-toget-value").toString()));
                         return true;
                     }
                 } else {
-                    RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                     return true;
                 }
             } else {
-                RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
         }
 
-        RPLang.sendCommandHelp(sender, "value", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "value", true);
         return true;
     }
 

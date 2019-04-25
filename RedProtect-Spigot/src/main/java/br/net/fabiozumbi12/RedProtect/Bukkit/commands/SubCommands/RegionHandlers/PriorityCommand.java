@@ -26,8 +26,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -53,7 +54,7 @@ public class PriorityCommand implements SubCommand {
             try {
                 prior = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                RPLang.sendMessage(player, "cmdmanager.region.notnumber");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.notnumber");
                 return true;
             }
             handlePriority(player, prior);
@@ -64,14 +65,14 @@ public class PriorityCommand implements SubCommand {
             try {
                 prior = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                RPLang.sendMessage(player, "cmdmanager.region.notnumber");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.notnumber");
                 return true;
             }
             handlePrioritySingle(player, prior, args[0]);
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "priority", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "priority", true);
         return true;
     }
 

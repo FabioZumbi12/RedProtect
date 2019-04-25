@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -65,7 +65,7 @@ public class ExpandVertCommand {
                         }
 
                         if (r == null) {
-                            RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                             return CommandResult.success();
                         }
 

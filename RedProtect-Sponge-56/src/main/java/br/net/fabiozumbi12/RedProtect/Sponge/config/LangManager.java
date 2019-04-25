@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
@@ -41,36 +42,9 @@ import java.util.concurrent.TimeUnit;
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmdAlias;
 
-public class RPLang {
-    private RPLang() {
-    }
+public class LangManager extends LangCore {
 
-    private static final Properties loadedLang = new Properties() {
-        @Override
-        public synchronized Enumeration<Object> keys() {
-            return Collections.enumeration(new TreeSet<>(super.keySet()));
-        }
-    };
-    private static final Properties baseLang = new Properties() {
-        @Override
-        public synchronized Enumeration<Object> keys() {
-            return Collections.enumeration(new TreeSet<>(super.keySet()));
-        }
-    };
-    private static final HashMap<Player, String> delayedMessage = new HashMap<>();
-    private static String pathLang;
-
-    public static SortedSet<String> helpStrings() {
-        SortedSet<String> values = new TreeSet<>();
-        for (Object help : loadedLang.keySet()) {
-            if (help.toString().startsWith("cmdmanager.help.")) {
-                values.add(help.toString().replace("cmdmanager.help.", ""));
-            }
-        }
-        return values;
-    }
-
-    public static void init() {
+    public LangManager() {
         String resLang = "lang" + RedProtect.get().config.configRoot().language + ".properties";
         pathLang = RedProtect.get().configDir + File.separator + resLang;
 
@@ -95,25 +69,8 @@ public class RPLang {
         RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().config.configRoot().language);
     }
 
-    private static void loadBaseLang() {
-        baseLang.clear();
-        try {
-            baseLang.load(RedProtect.get().container.getAsset("langEN-US.properties").get().getUrl().openStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        updateLang();
-    }
-
-    private static void loadLang() {
-        loadedLang.clear();
-        try {
-            FileInputStream fileInput = new FileInputStream(pathLang);
-            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            loadedLang.load(reader);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void loadLang() {
+        loadBaseLang();
 
         if (loadedLang.get("_lang.version") != null) {
             int langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", ""));
@@ -124,46 +81,25 @@ public class RPLang {
                 loadedLang.put("_lang.version", RedProtect.get().container.getVersion().get());
             }
         }
+        updateLang();
     }
 
-    private static void updateLang() {
-        baseLang.forEach((key, value) -> {
-            if (!loadedLang.containsKey(key)) {
-                loadedLang.put(key, value);
-            }
-        });
-
-        //remove invalid entries
-        if (loadedLang.entrySet().removeIf(k -> !baseLang.containsKey(k.getKey())))
+    private void updateLang() {
+        if (updateLang(RedProtect.get().container.getVersion().get())) {
             RedProtect.get().logger.warning("- Removed invalid entries from language files");
-
-        if (!loadedLang.containsKey("_lang.version"))
-            loadedLang.put("_lang.version", RedProtect.get().container.getVersion().get());
-
-        try {
-            loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-    public static String get(String key) {
-        String FMsg;
-
-        if (loadedLang.get(key) == null) {
-            FMsg = "&c&oMissing language string for &4" + key;
-        } else {
-            FMsg = loadedLang.get(key).toString();
-        }
-        return FMsg;
+    public String get(String key) {
+        return getRaw(key);
     }
 
-    public static void sendMessage(CommandSource sender, String key) {
+    public void sendMessage(CommandSource sender, String key) {
         sendMessage(sender, key, new Replacer[0]);
     }
 
-    public static void sendMessage(CommandSource sender, String key, Replacer[] replaces) {
-        if (sender instanceof Player && delayedMessage.containsKey(sender) && delayedMessage.get(sender).equals(key)) {
+    public void sendMessage(CommandSource sender, String key, Replacer[] replaces) {
+        if (sender instanceof Player && delayedMessage.containsKey(sender.getName()) && delayedMessage.get(sender.getName()).equals(key)) {
             return;
         }
 
@@ -180,27 +116,15 @@ public class RPLang {
         }
 
         if (sender instanceof Player) {
-            delayedMessage.put((Player) sender, key);
+            delayedMessage.put(sender.getName(), key);
             Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                delayedMessage.remove(sender);
+                delayedMessage.remove(sender.getName());
             }, 1, TimeUnit.SECONDS);
         }
     }
 
-    public static void sendCommandHelp(CommandSource sender, String cmd, boolean usage) {
+    public void sendCommandHelp(CommandSource sender, String cmd, boolean usage) {
         if (usage) sendMessage(sender, "correct.usage");
         sender.sendMessage(RPUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
-    }
-
-    public static String translBool(String bool) {
-        return get("region." + bool);
-    }
-
-    public static String translBool(Boolean bool) {
-        return get("region." + bool.toString());
-    }
-
-    public static boolean containsValue(String value) {
-        return loadedLang.containsValue(value);
     }
 }

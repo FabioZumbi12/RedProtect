@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -54,7 +54,7 @@ public class SelectWECommand implements SubCommand {
             if (RedProtect.get().hooks.worldEdit) {
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r == null) {
-                    RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                     return true;
                 }
                 WEHook.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());
@@ -62,7 +62,7 @@ public class SelectWECommand implements SubCommand {
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "select-we", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "select-we", true);
         return true;
     }
 

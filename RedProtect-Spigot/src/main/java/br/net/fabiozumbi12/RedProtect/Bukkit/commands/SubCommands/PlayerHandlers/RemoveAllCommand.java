@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -51,14 +51,14 @@ public class RemoveAllCommand implements SubCommand {
             }
             int removed = RedProtect.get().rm.removeAll(args[0]);
             if (removed <= 0) {
-                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.noneremoved"));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
             } else {
-                RPLang.sendMessage(sender, RPLang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args[1]));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args[1]));
             }
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "remove-all", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "remove-all", true);
         return true;
     }
 

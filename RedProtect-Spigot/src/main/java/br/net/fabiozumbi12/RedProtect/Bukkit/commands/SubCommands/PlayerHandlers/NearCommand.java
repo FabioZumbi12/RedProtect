@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -55,21 +55,21 @@ public class NearCommand implements SubCommand {
         if (args.length == 0) {
             Set<Region> regions = RedProtect.get().rm.getRegionsNear(player, 60);
             if (regions.size() == 0) {
-                RPLang.sendMessage(player, "cmdmanager.noregions.nearby");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.noregions.nearby");
             } else {
                 Iterator<Region> i = regions.iterator();
-                RPLang.sendMessage(player, RPLang.get("general.color") + "------------------------------------");
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.near"));
-                RPLang.sendMessage(player, RPLang.get("general.color") + "------------------------------------");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("general.color") + "------------------------------------");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.near"));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("general.color") + "------------------------------------");
                 while (i.hasNext()) {
                     Region r = i.next();
-                    player.sendMessage(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + ChatColor.translateAlternateColorCodes('&', " | Center (&6X,Z" + RPLang.get("general.color") + "): &6") + r.getCenterX() + ", " + r.getCenterZ());
+                    player.sendMessage(RedProtect.get().lang.get("cmdmanager.region.name") + r.getName() + RedProtect.get().lang.get("general.color") + ChatColor.translateAlternateColorCodes('&', " | Center (&6X,Z" + RedProtect.get().lang.get("general.color") + "): &6") + r.getCenterX() + ", " + r.getCenterZ());
                 }
-                RPLang.sendMessage(player, RPLang.get("general.color") + "------------------------------------");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("general.color") + "------------------------------------");
             }
         }
 
-        RPLang.sendCommandHelp(sender, "near", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "near", true);
         return true;
     }
 

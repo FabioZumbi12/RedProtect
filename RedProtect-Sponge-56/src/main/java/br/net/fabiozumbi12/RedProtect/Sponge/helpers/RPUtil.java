@@ -31,7 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -91,7 +91,7 @@ public class RPUtil extends CoreUtil {
         Region rto = RedProtect.get().rm.getTopRegion(to.getLocation(), RPUtil.class.getName());
         if (rto != r) {
             to = new Transform<>(from.getLocation()).setRotation(from.getRotation());
-            RPLang.sendMessage(p, "playerlistener.region.cantregionexit");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionexit");
         }
         return to;
     }
@@ -384,7 +384,7 @@ public class RPUtil extends CoreUtil {
 
         String uuid = PlayerName;
 
-        if (!RedProtect.get().onlineMode) {
+        if (!RedProtect.get().config.configRoot().online_mode) {
             uuid = uuid.toLowerCase();
             return uuid;
         }
@@ -417,7 +417,7 @@ public class RPUtil extends CoreUtil {
         String PlayerName = uuid;
         UUID uuids;
 
-        if (!RedProtect.get().onlineMode) {
+        if (!RedProtect.get().config.configRoot().online_mode) {
             return uuid.toLowerCase();
         }
         try {
@@ -757,7 +757,7 @@ public class RPUtil extends CoreUtil {
         RedProtect.get().changeWait.add(r + flag);
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
             /*if (p != null && p.isOnline()){
-                    RPLang.sendMessage(p, RPLang.get("gui.needwait.ready").replace("{flag}", flag));
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.ready").replace("{flag}", flag));
                 }*/
             RedProtect.get().changeWait.remove(r + flag);
         }, RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds, TimeUnit.SECONDS);
@@ -869,7 +869,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -880,7 +880,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -891,7 +891,7 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RPUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -1010,7 +1010,7 @@ public class RPUtil extends CoreUtil {
                 for (int iz = z - radius; iz <= z + radius; ++iz) {
                     Region reg = RedProtect.get().rm.getTopRegion(new Location<>(p.getWorld(), ix, iy, iz), RPUtil.class.getName());
                     if (reg != null && !reg.canBuild(p)) {
-                        RPLang.sendMessage(p, RPLang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
+                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
                         return false;
                     }
                 }
@@ -1029,23 +1029,23 @@ public class RPUtil extends CoreUtil {
                 regionName = StripName(pRName) + "_" + i;
             }
             if (regionName.length() > 16) {
-                RPLang.sendMessage(p, "regionbuilder.autoname.error");
+                RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
                 return null;
             }
         }
         if (regionName.contains("@")) {
-            p.sendMessage(toText(RPLang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@")));
+            p.sendMessage(toText(RedProtect.get().lang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@")));
             return null;
         }
 
         //region name conform
         regionName = regionName.replace("/", "|");
         if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.existis");
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
             return null;
         }
         if (regionName.length() < 3 || regionName.length() > 16) {
-            RPLang.sendMessage(p, "regionbuilder.regionname.invalid");
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
             return null;
         }
 

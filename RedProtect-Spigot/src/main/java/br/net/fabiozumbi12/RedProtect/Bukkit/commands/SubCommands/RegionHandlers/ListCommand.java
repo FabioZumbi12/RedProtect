@@ -26,8 +26,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -71,12 +72,12 @@ public class ListCommand implements SubCommand {
                 handleList(player, RPUtil.PlayerToUUID(args[0]), Page);
                 return true;
             } catch (NumberFormatException e) {
-                RPLang.sendMessage(player, "cmdmanager.region.listpage.error");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");
                 return true;
             }
         }
 
-        RPLang.sendCommandHelp(sender, "list", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "list", true);
         return true;
     }
 

@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -69,24 +69,24 @@ public class SetMinYCommand {
                         }
 
                         if (r == null) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist"));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist"));
                             return CommandResult.success();
                         }
 
                         if (!r.isLeader(player) && !r.isAdmin(player)) {
-                            RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                             return CommandResult.success();
                         }
 
                         if ((r.getMaxY() - size) <= 1) {
-                            RPLang.sendMessage(player, "cmdmanager.region.ysiszesmatch");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.ysiszesmatch");
                             return CommandResult.success();
                         }
 
                         String from = String.valueOf(r.getMinY());
 
                         r.setMinY(size);
-                        RPLang.sendMessage(player, RPLang.get("cmdmanager.region.setminy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.setminy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
                         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " SETMINY of region " + r.getName() + " to " + size);
                     }
                     return CommandResult.success();

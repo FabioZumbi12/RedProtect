@@ -27,7 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -62,9 +62,9 @@ public class WandCommand {
                         item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
 
                         if (inv.query(Hotbar.class).offer(item).getType().equals(InventoryTransactionResult.Type.SUCCESS)) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.wand.given").replace("{item}", mat.getName()));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.given").replace("{item}", mat.getName()));
                         } else {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
                         }
                     }
                     return CommandResult.success();

@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -59,14 +59,14 @@ public class LDenyCommand {
                             Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
                             if (r != null) {
-                                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", info.split("@")[2]));
-                                lsender.ifPresent(value -> RPLang.sendMessage(value, RPLang.get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName())));
+                                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", info.split("@")[2]));
+                                lsender.ifPresent(value -> RedProtect.get().lang.sendMessage(value, RedProtect.get().lang.get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName())));
                             } else {
-                                RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                             }
                             RedProtect.get().alWait.remove(player);
                         } else {
-                            RPLang.sendMessage(player, "cmdmanager.norequests");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.norequests");
                         }
                     }
                     return CommandResult.success();

@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -220,7 +220,7 @@ public class RPContainer {
     }
 
     public boolean validatePrivateSign(String[] lines) {
-        String priv = RPLang.get("blocklistener.container.signline");
+        String priv = RedProtect.get().lang.get("blocklistener.container.signline");
         String line1 = lines[0];
         return line1.equalsIgnoreCase("[private]") ||
                 line1.equalsIgnoreCase("private") ||

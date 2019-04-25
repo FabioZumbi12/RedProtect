@@ -48,7 +48,7 @@ public class HooksManager {
         if (vault) {
             RegisteredServiceProvider<Economy> rsp = RedProtect.get().getServer().getServicesManager().getRegistration(Economy.class);
             if (rsp != null) {
-                RedProtect.get().econ = rsp.getProvider();
+                RedProtect.get().economy = rsp.getProvider();
                 RedProtect.get().logger.info("Vault found. Hooked.");
             } else {
                 RedProtect.get().logger.warning("Could not initialize Vault hook.");

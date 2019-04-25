@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -93,7 +93,7 @@ public class RPGui implements Listener {
             throw new IllegalArgumentException("Parameter size is exceeding size limit (54)");
         }
 
-        allowEnchant = RedProtect.get().version >= 181;
+        allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
         for (String flag : region.getFlags().keySet()) {
             if (!(region.getFlags().get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")) {
@@ -168,13 +168,13 @@ public class RPGui implements Listener {
                         RedProtect.get().config.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
                     }
                 } catch (Exception e) {
-                    RPLang.sendMessage(this.player, "gui.edit.error");
+                    RedProtect.get().lang.sendMessage(this.player, "gui.edit.error");
                     close(false);
                     return;
                 }
             }
             RedProtect.get().config.saveGui();
-            RPLang.sendMessage(this.player, "gui.edit.ok");
+            RedProtect.get().lang.sendMessage(this.player, "gui.edit.ok");
         }
         close(false);
     }
@@ -223,7 +223,7 @@ public class RPGui implements Listener {
                             applyFlag(flag, itemMeta, event);
                             RPUtil.startFlagChanger(this.region.getName(), flag, player);
                         } else {
-                            RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         }
                     } else {
                         applyFlag(flag, itemMeta, event);
@@ -243,15 +243,15 @@ public class RPGui implements Listener {
             if (this.region.getFlagString(flag).equals("")) {
                 if (this.region.setFlag(this.player, flag, cp.getTag())) {
                     flagv = true;
-                    RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
                 }
             } else {
-                RPLang.sendMessage(p, RPLang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
+                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
             }
         } else {
             flagv = !this.region.getFlagBool(flag);
             if (this.region.setFlag(this.player, flag, flagv)) {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + flagv);
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + flagv);
             }
         }
 
@@ -293,7 +293,7 @@ public class RPGui implements Listener {
             if (player.getOpenInventory().getTitle().equals(this.name)){
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r != null && r.equals(this.region) && !player.equals(this.player)){
-                    RPLang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
+                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
                     return;
                 }
             }

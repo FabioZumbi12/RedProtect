@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -86,7 +86,7 @@ public class RPEconomy {
     }
 
     public static String getCostMessage(Region r) {
-        return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.getEcoString("economy-name");
+        return RedProtect.get().lang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.getEcoString("economy-name");
     }
 
     public static String getFormatted(long value) {

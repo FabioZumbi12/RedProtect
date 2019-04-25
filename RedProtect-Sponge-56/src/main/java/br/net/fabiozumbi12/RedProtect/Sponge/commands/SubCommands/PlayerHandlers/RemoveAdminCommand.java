@@ -26,7 +26,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -54,7 +55,7 @@ public class RemoveAdminCommand {
                             return CommandResult.success();
                         }
 
-                        RPLang.sendCommandHelp(src, "removeadmin", true);
+                        RedProtect.get().lang.sendCommandHelp(src, "removeadmin", true);
                     }
                     return CommandResult.success();
                 }).build();

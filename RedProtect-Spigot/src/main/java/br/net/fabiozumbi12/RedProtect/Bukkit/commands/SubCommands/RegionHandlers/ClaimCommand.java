@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import org.bukkit.command.Command;
@@ -56,20 +56,20 @@ public class ClaimCommand implements SubCommand {
         String claimmode = RedProtect.get().config.getWorldClaimType(player.getWorld().getName());
 
         if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH") && !RedProtect.get().ph.hasCommandPerm(player, "claim")) {
-            RPLang.sendMessage(player, "blocklistener.region.blockmode");
+            RedProtect.get().lang.sendMessage(player, "blocklistener.region.blockmode");
             return true;
         }
 
         if (args.length == 0) {
             String name = RPUtil.nameGen(player.getName(), player.getWorld().getName());
             String leader = player.getUniqueId().toString();
-            if (!RedProtect.get().onlineMode) {
+            if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = player.getName().toLowerCase();
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
             if (rb2.ready()) {
                 Region r2 = rb2.build();
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
                 RedProtect.get().firstLocationSelections.remove(player);
@@ -83,13 +83,13 @@ public class ClaimCommand implements SubCommand {
         if (args.length == 1) {
             String name = args[0];
             String leader = player.getUniqueId().toString();
-            if (!RedProtect.get().onlineMode) {
+            if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = player.getName().toLowerCase();
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, new HashSet<>(), false);
             if (rb2.ready()) {
                 Region r2 = rb2.build();
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
                 RedProtect.get().firstLocationSelections.remove(player);
@@ -105,13 +105,13 @@ public class ClaimCommand implements SubCommand {
             String leader = player.getUniqueId().toString();
             Set<String> addedAdmins = new HashSet<>();
             addedAdmins.add(RPUtil.PlayerToUUID(args[1]));
-            if (!RedProtect.get().onlineMode) {
+            if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = player.getName().toLowerCase();
             }
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, addedAdmins, false);
             if (rb2.ready()) {
                 Region r2 = rb2.build();
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
                 RedProtect.get().firstLocationSelections.remove(player);
@@ -122,7 +122,7 @@ public class ClaimCommand implements SubCommand {
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "claim", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "claim", true);
         return true;
     }
 

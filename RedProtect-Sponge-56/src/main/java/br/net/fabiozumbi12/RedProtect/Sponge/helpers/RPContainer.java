@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
@@ -182,7 +182,7 @@ public class RPContainer {
     }
 
     public boolean validatePrivateSign(String line) {
-        String priv = RPLang.get("blocklistener.container.signline");
+        String priv = RedProtect.get().lang.get("blocklistener.container.signline");
 
         return line.equalsIgnoreCase("[private]") ||
                 line.equalsIgnoreCase("private") ||

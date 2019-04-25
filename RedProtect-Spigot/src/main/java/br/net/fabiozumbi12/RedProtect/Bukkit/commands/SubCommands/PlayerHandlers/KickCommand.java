@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
 import org.bukkit.Bukkit;
@@ -56,56 +56,56 @@ public class KickCommand implements SubCommand {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
 
             if (r == null) {
-                RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
 
             if (args.length == 3) {
                 r = RedProtect.get().rm.getRegion(args[1], args[2]);
                 if (r == null) {
-                    RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                     return true;
                 }
             }
 
             if (!RedProtect.get().ph.hasRegionPermMember(player, "kick", r)) {
-                RPLang.sendMessage(player, "no.permission");
+                RedProtect.get().lang.sendMessage(player, "no.permission");
                 return true;
             }
 
             Player visit = Bukkit.getPlayer(args[1]);
             if (visit == null) {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
                 return true;
             }
 
             if (r.canBuild(visit)) {
-                RPLang.sendMessage(player, "cmdmanager.cantkick.member");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.cantkick.member");
                 return true;
             }
 
             Region rv = RedProtect.get().rm.getTopRegion(visit.getLocation());
             if (rv == null || !rv.getID().equals(r.getID())) {
-                RPLang.sendMessage(player, "cmdmanager.noplayer.thisregion");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.noplayer.thisregion");
                 return true;
             }
 
             if (RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(r, player, visit)) {
-                RPLang.sendMessage(player, "cmdmanager.cantkick.war");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.cantkick.war");
                 return true;
             }
 
             String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
             if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                 RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
             } else {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.already.cantenter").replace("{time}", sec));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
             }
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "kick", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "kick", true);
         return true;
     }
 

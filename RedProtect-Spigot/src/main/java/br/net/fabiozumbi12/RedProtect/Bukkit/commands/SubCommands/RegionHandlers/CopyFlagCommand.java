@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,22 +56,22 @@ public class CopyFlagCommand implements SubCommand {
             Region from = RedProtect.get().rm.getRegion(args[0], w);
             Region to = RedProtect.get().rm.getRegion(args[1], w);
             if (from == null || !from.isLeader(player)) {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;
             }
             if (to == null || !to.isLeader(player)) {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
                 return true;
             }
             for (Map.Entry<String, Object> key : from.getFlags().entrySet()) {
                 to.setFlag(sender, key.getKey(), key.getValue());
             }
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.flag.copied") + args[0] + " > " + args[1]);
+            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.copied") + args[0] + " > " + args[1]);
             RedProtect.get().logger.addLog("Player " + player.getName() + " Copied FLAGS from " + args[0] + " to " + args[1]);
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "copyflag", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "copyflag", true);
         return true;
     }
 

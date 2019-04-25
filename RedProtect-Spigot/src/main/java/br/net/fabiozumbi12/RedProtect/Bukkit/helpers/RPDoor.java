@@ -67,10 +67,10 @@ public class RPDoor {
         if (b.getRelative(BlockFace.DOWN).getType().equals(b.getType())) {
             b = b.getRelative(BlockFace.DOWN);
         }
-        RedProtect.get().rpvhelper.toggleDoor(b);
+        RedProtect.get().getPVHelper().toggleDoor(b);
     }
 
     public static boolean isOpenable(Block b) {
-        return RedProtect.get().rpvhelper.isOpenable(b);
+        return RedProtect.get().getPVHelper().isOpenable(b);
     }
 }

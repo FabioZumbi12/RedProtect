@@ -29,7 +29,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
 import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.RPSchematics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -53,33 +52,33 @@ public class StartCommand implements SubCommand {
 
         if (args.length == 0) {
             if (!RedProtect.get().config.isAllowedWorld(player)) {
-                RPLang.sendMessage(player, "regionbuilder.region.worldnotallowed");
+                RedProtect.get().lang.sendMessage(player, "regionbuilder.region.worldnotallowed");
                 return true;
             }
 
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null && r.isMember(player)) {
-                RPLang.sendMessage(player, "playerlistener.region.claimlimit.start");
+                RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                 return true;
             }
 
-            RedProtect.get().confiemStart.add(player.getName());
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.confirm").replace("{cmd}", getCmd("start")));
+            RedProtect.get().confirmStart.add(player.getName());
+            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.confirm").replace("{cmd}", getCmd("start")));
 
-            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().confiemStart.remove(player.getName()), 600);
+            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().confirmStart.remove(player.getName()), 600);
             return true;
         }
 
         if (args.length == 1 && checkCmd(args[0], "confirm")) {
-            if (!RedProtect.get().confiemStart.contains(player.getName())) {
-                player.sendMessage(RPLang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
+            if (!RedProtect.get().confirmStart.contains(player.getName())) {
+                player.sendMessage(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
                 return true;
             }
             RPSchematics.pasteSchematic(player);
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "start", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "start", true);
         return true;
     }
 

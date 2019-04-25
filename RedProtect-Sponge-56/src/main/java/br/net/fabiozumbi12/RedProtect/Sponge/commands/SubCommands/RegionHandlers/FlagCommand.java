@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPGui;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.command.CommandResult;
@@ -62,12 +62,12 @@ public class FlagCommand {
 
                         Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r == null) {
-                            RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                             return CommandResult.success();
                         }
 
                         if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.flag")) {
-                            RPLang.sendMessage(player, "no.permission");
+                            RedProtect.get().lang.sendMessage(player, "no.permission");
                             return CommandResult.success();
                         }
 
@@ -84,7 +84,7 @@ public class FlagCommand {
                                         RPUtil.startFlagChanger(r.getName(), flag, player);
                                         handleFlag(player, flag, value, r);
                                     } else {
-                                        RPLang.sendMessage(player, RPLang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
+                                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     }
                                     return CommandResult.success();
                                 }

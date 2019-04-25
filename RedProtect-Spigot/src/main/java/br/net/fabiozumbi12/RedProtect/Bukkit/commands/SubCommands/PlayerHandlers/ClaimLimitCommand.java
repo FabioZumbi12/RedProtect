@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -53,35 +53,35 @@ public class ClaimLimitCommand implements SubCommand {
         if (args.length == 0) {
             int limit = RedProtect.get().ph.getPlayerClaimLimit(player);
             if (limit < 0 || RedProtect.get().ph.hasPerm(player, "redprotect.limits.claim.unlimited")) {
-                RPLang.sendMessage(player, "cmdmanager.nolimit");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.nolimit");
                 return true;
             }
 
             int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(player.getName()), player.getWorld()).size();
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.yourclaims") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
+            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
             return true;
         }
 
         if (args.length == 1 && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.claimlimit")) {
             Player offp = RedProtect.get().getServer().getOfflinePlayer(args[0]).getPlayer();
             if (offp == null) {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));
                 return true;
             }
             int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
             if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
-                RPLang.sendMessage(player, "cmdmanager.nolimit");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.nolimit");
                 return true;
             }
 
             int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
-            RPLang.sendMessage(player, RPLang.get("cmdmanager.yourclaims") + color + currentUsed + RPLang.get("general.color") + "/" + color + limit + RPLang.get("general.color"));
+            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "claimlimit", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "claimlimit", true);
         return true;
     }
 

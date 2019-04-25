@@ -27,7 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -54,9 +54,9 @@ public class RemoveAllCommand {
                         }
                         int removed = RedProtect.get().rm.removeAll(args.<String>getOne("Player").get());
                         if (removed <= 0) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.noneremoved"));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
                         } else {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args.<String>getOne("Player").get()));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args.<String>getOne("Player").get()));
                         }
                     }
                     return CommandResult.success();

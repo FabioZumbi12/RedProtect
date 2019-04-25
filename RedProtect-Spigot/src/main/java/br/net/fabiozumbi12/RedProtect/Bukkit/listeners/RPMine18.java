@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.digiex.magiccarpet.Carpet;
@@ -95,7 +95,7 @@ public class RPMine18 implements Listener {
 
         if (ent instanceof ArmorStand) {
             if (!r.canBuild(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantedit");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantedit");
                 e.setCancelled(true);
             }
         }
@@ -131,7 +131,7 @@ public class RPMine18 implements Listener {
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
                 if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
                     e.setCancelled(true);
-                    RPLang.sendMessage(e2, "blocklistener.region.cantbreak");
+                    RedProtect.get().lang.sendMessage(e2, "blocklistener.region.cantbreak");
                 }
             }
         }
@@ -167,7 +167,7 @@ public class RPMine18 implements Listener {
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
                 if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
                     e.setCancelled(true);
-                    RPLang.sendMessage(e2, "blocklistener.region.cantbreak");
+                    RedProtect.get().lang.sendMessage(e2, "blocklistener.region.cantbreak");
                 }
             }
         }
@@ -179,7 +179,7 @@ public class RPMine18 implements Listener {
             return;
         }
 
-        if (RedProtect.get().version <= 180) {
+        if (RedProtect.get().bukkitVersion <= 180) {
             return;
         }
         Player p = e.getPlayer();
@@ -187,14 +187,14 @@ public class RPMine18 implements Listener {
         Region r = RedProtect.get().rm.getTopRegion(l);
         Material m = p.getItemInHand().getType();
 
-        if (RedProtect.get().version >= 190 && e.getItem() != null) {
+        if (RedProtect.get().bukkitVersion >= 190 && e.getItem() != null) {
             m = e.getItem().getType();
         }
 
         if (m.equals(Material.ARMOR_STAND) || m.equals(Material.END_CRYSTAL)) {
             if (r != null && !r.canBuild(p) && !r.canPlace(m)) {
                 e.setCancelled(true);
-                RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
             }
         }
     }

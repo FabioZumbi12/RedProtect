@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -52,12 +52,12 @@ public class SetTpCommand {
                         if (r != null) {
                             if (RedProtect.get().ph.hasRegionPermLeader(player, "settp", r)) {
                                 r.setTPPoint(player.getLocation());
-                                RPLang.sendMessage(player, "cmdmanager.region.settp.ok");
+                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.ok");
                             } else {
-                                RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                                RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                             }
                         } else {
-                            RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                         }
                     }
                     return CommandResult.success();

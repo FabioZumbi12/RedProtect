@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.datatypes.skills.SuperAbilityType;
@@ -98,7 +98,7 @@ public class McMMOHook implements Listener {
         }
 
         if (!r.canSkill(p)) {
-            p.sendMessage(RPLang.get("mcmmolistener.notallowed"));
+            p.sendMessage(RedProtect.get().lang.get("mcmmolistener.notallowed"));
             e.setCancelled(true);
         }
         if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED))) {
@@ -169,14 +169,14 @@ public class McMMOHook implements Listener {
 
             if (e.getEntity() instanceof Animals) {
                 if (r != null && !r.canInteractPassives(p)) {
-                    RPLang.sendMessage(p, "entitylistener.region.cantpassive");
+                    RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpassive");
                     e.setCancelled(true);
                 }
             }
 
             if (e.getEntity() instanceof Player) {
                 if (r != null && !r.canPVP(p, (Player) e.getEntity())) {
-                    RPLang.sendMessage(p, "entitylistener.region.cantpvp");
+                    RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpvp");
                     e.setCancelled(true);
                 }
             }

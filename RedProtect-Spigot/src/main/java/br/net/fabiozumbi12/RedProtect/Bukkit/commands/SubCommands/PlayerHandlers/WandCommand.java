@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -57,14 +57,14 @@ public class WandCommand implements SubCommand {
             ItemStack item = new ItemStack(mat);
             if (!inv.contains(mat) && inv.firstEmpty() != -1) {
                 inv.addItem(item);
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.wand.given").replace("{item}", item.getType().name()));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.given").replace("{item}", item.getType().name()));
             } else {
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.wand.nospace").replace("{item}", item.getType().name()));
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.nospace").replace("{item}", item.getType().name()));
             }
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "wand", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "wand", true);
         return true;
     }
 

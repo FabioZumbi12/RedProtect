@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.DynmapCommonAPIListener;
@@ -123,13 +123,13 @@ public class DynmapHook {
             am.setCornerLocations(x, z);
         }
 
-        String rName = RPLang.get("region.name") + " <span style=\"font-weight:bold;\">" + r.getName() + "</span><br>";
-        String area = RPLang.get("region.area") + " <span style=\"font-weight:bold;\">" + r.getArea() + "</span>";
+        String rName = RedProtect.get().lang.get("region.name") + " <span style=\"font-weight:bold;\">" + r.getName() + "</span><br>";
+        String area = RedProtect.get().lang.get("region.area") + " <span style=\"font-weight:bold;\">" + r.getArea() + "</span>";
         am.setDescription(TextSerializers.FORMATTING_CODE.stripCodes(rName + area));
 
         if (RedProtect.get().config.configRoot().hooks.dynmap.show_leaders_admins) {
-            String leader = RPLang.get("region.leaders") + " <span style=\"font-weight:bold;\">" + r.getLeadersDesc() + "</span><br>";
-            String admin = RPLang.get("region.admins") + " <span style=\"font-weight:bold;\">" + r.getAdminDesc() + "</span><br>";
+            String leader = RedProtect.get().lang.get("region.leaders") + " <span style=\"font-weight:bold;\">" + r.getLeadersDesc() + "</span><br>";
+            String admin = RedProtect.get().lang.get("region.admins") + " <span style=\"font-weight:bold;\">" + r.getAdminDesc() + "</span><br>";
             am.setDescription(TextSerializers.FORMATTING_CODE.stripCodes(rName + leader + admin + area));
         }
 

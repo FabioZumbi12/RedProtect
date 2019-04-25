@@ -26,8 +26,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.region;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
@@ -48,11 +49,11 @@ public abstract class RegionBuilder {
     }
 
     protected void setErrorSign(SignChangeEvent e, String error) {
-        e.setLine(0, RPLang.get("regionbuilder.signerror"));
+        e.setLine(0, RedProtect.get().lang.get("regionbuilder.signerror"));
         this.setError(e.getPlayer(), error);
     }
 
     protected void setError(Player p, String error) {
-        RPLang.sendMessage(p, RPLang.get("regionbuilder.error") + "(" + error + ")");
+        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("regionbuilder.error") + "(" + error + ")");
     }
 }

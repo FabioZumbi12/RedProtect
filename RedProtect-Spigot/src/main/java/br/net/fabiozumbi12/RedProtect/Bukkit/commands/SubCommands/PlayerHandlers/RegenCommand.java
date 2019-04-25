@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.Bukkit;
@@ -55,14 +55,14 @@ public class RegenCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (!RedProtect.get().hooks.worldEdit) {
-            RPLang.sendMessage(player, "cmdmanager.wenotloaded");
+            RedProtect.get().lang.sendMessage(player, "cmdmanager.wenotloaded");
             return true;
         }
 
         if (args.length == 0) {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r == null) {
-                RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                 return true;
             }
             WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
@@ -73,21 +73,21 @@ public class RegenCommand implements SubCommand {
             if (args[0].equalsIgnoreCase("undo")) {
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r == null) {
-                    RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                     return true;
                 }
 
                 if (WEHook.undo(r.getID())) {
-                    RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+                    RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
                 } else {
-                    RPLang.sendMessage(sender, RPLang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+                    RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
                 }
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("stop")) {
                 RPUtil.stopRegen = true;
-                RPLang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
+                RedProtect.get().lang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
                 return true;
             }
         }
@@ -95,12 +95,12 @@ public class RegenCommand implements SubCommand {
         if (args.length == 2) {
             World w = RedProtect.get().getServer().getWorld(args[1]);
             if (w == null) {
-                sender.sendMessage(RPLang.get("cmdmanager.region.invalidworld"));
+                sender.sendMessage(RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                 return true;
             }
             Region r = RedProtect.get().rm.getRegion(args[0], w);
             if (r == null) {
-                sender.sendMessage(RPLang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[0]);
+                sender.sendMessage(RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[0]);
                 return true;
             }
 
@@ -108,7 +108,7 @@ public class RegenCommand implements SubCommand {
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "regen", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "regen", true);
         return true;
     }
 

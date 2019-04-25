@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.Sponge;
@@ -59,7 +59,7 @@ public class RegenCommand {
 
                         Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r == null) {
-                            RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                             return CommandResult.success();
                         }
 
@@ -83,7 +83,7 @@ public class RegenCommand {
                                 }
 
                                 RPUtil.stopRegen = true;
-                                RPLang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
+                                RedProtect.get().lang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
                                 return CommandResult.success();
 
                             }
@@ -108,7 +108,7 @@ public class RegenCommand {
 
                                 Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<World>getOne("world").get().getName());
                                 if (r == null) {
-                                    RPLang.sendMessage(player, RPLang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
+                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
                                     return CommandResult.success();
                                 }
 

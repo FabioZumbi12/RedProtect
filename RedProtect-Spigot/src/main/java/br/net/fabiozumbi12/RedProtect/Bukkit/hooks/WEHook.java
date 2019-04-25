@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import com.sk89q.worldedit.*;
@@ -75,7 +75,7 @@ public class WEHook {
         regs.selectPrimary(BlockVector3.at(pos1.getX(), pos1.getY(), pos1.getZ()), null);
         regs.selectSecondary(BlockVector3.at(pos2.getX(), pos2.getY(), pos2.getZ()), null);
         worldEdit.getSession(p).setRegionSelector(ws, regs);
-        RPLang.sendMessage(p, RPLang.get("cmdmanager.region.select-we.show")
+        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.show")
                 .replace("{pos1}", pos1.getBlockX() + "," + pos1.getBlockY() + "," + pos1.getBlockZ())
                 .replace("{pos2}", pos2.getBlockX() + "," + pos2.getBlockY() + "," + pos2.getBlockZ())
         );
@@ -94,7 +94,7 @@ public class WEHook {
             setSelection(ws, p, pos1, pos2);
         } else {
             worldEdit.getSession(p).getRegionSelector(ws).clear();
-            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.select-we.hide"));
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.hide"));
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
@@ -105,13 +105,13 @@ public class WEHook {
         Region r = null;
 
         if (!p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
-            RPLang.sendMessage(p, "playerlistener.region.needground");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.needground");
             return null;
         }
 
         ClipboardFormat format = ClipboardFormats.findByFile(file);
         if (format == null) {
-            RPLang.sendMessage(p, "playerlistener.region.copyfail");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.copyfail");
             return null;
         }
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
@@ -124,7 +124,7 @@ public class WEHook {
             Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
             String leader = p.getUniqueId().toString();
-            if (!RedProtect.get().onlineMode) {
+            if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = p.getName().toLowerCase();
             }
 
@@ -179,9 +179,9 @@ public class WEHook {
 
             if (sender != null) {
                 if (wReg.getWorld().regenerate(wReg, eSession)) {
-                    RPLang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
+                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
                 } else {
-                    RPLang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
+                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
                 }
             } else {
                 if (wReg.getWorld().regenerate(wReg, eSession)) {

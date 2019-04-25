@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,36 +42,9 @@ import java.util.*;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
 
-public class RPLang {
-    private RPLang() {
-    }
+public class LangManager extends LangCore {
 
-    private static final Properties loadedLang = new Properties() {
-        @Override
-        public synchronized Enumeration<Object> keys() {
-            return Collections.enumeration(new TreeSet<>(super.keySet()));
-        }
-    };
-    private static final Properties baseLang = new Properties() {
-        @Override
-        public synchronized Enumeration<Object> keys() {
-            return Collections.enumeration(new TreeSet<>(super.keySet()));
-        }
-    };
-    private static final HashMap<Player, String> delayedMessage = new HashMap<>();
-    private static String pathLang;
-
-    public static SortedSet<String> getHelpStrings() {
-        SortedSet<String> values = new TreeSet<>();
-        for (Object help : loadedLang.keySet()) {
-            if (help.toString().startsWith("cmdmanager.help.")) {
-                values.add(help.toString().replace("cmdmanager.help.", ""));
-            }
-        }
-        return values;
-    }
-
-    public static void init() {
+    public LangManager() {
         String resLang = "lang" + RedProtect.get().config.configRoot().language + ".properties";
         pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 
@@ -89,27 +63,8 @@ public class RPLang {
         RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().config.configRoot().language);
     }
 
-    private static void loadBaseLang() {
-        baseLang.clear();
-        try {
-            InputStream fileInput = RedProtect.get().getResource("assets/redprotect/langEN-US.properties");
-            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            baseLang.load(reader);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        updateLang();
-    }
-
-    private static void loadLang() {
-        loadedLang.clear();
-        try {
-            FileInputStream fileInput = new FileInputStream(pathLang);
-            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
-            loadedLang.load(reader);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void loadLang() {
+        loadDefaultLang();
 
         if (loadedLang.get("_lang.version") != null) {
             int langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", ""));
@@ -123,49 +78,25 @@ public class RPLang {
                 loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
             }
         }
+        updateLang();
     }
 
-    private static void updateLang() {
-        baseLang.forEach((key, value) -> {
-            if (!loadedLang.containsKey(key)) {
-                loadedLang.put(key, value);
-            }
-        });
-
-        //remove invalid entries
-        if (loadedLang.entrySet().removeIf(k -> !baseLang.containsKey(k.getKey())))
+    private void updateLang() {
+        if (updateLang(RedProtect.get().getDescription().getVersion())){
             RedProtect.get().logger.warning("- Removed invalid entries from language files");
-
-        if (!loadedLang.containsKey("_lang.version"))
-            loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
-
-        try {
-            loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), null);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-    public static String get(String key) {
-        String FMsg;
-
-        if (loadedLang.get(key) == null) {
-            FMsg = "&c&oMissing language string for " + ChatColor.GOLD + key;
-        } else {
-            FMsg = loadedLang.get(key).toString();
-        }
-
-        FMsg = ChatColor.translateAlternateColorCodes('&', FMsg);
-
-        return FMsg;
+    public String get(String key) {
+        return ChatColor.translateAlternateColorCodes('&', getRaw(key)).replace("/n", "\n");
     }
 
-    public static void sendMessage(CommandSender sender, String key) {
+    public void sendMessage(CommandSender sender, String key) {
         sendMessage(sender, key, new Replacer[0]);
     }
 
-    public static void sendMessage(CommandSender sender, String key, Replacer[] replaces) {
-        if (sender instanceof Player && delayedMessage.containsKey(sender) && delayedMessage.get(sender).equals(key)) {
+    public void sendMessage(CommandSender sender, String key, Replacer[] replaces) {
+        if (sender instanceof Player && delayedMessage.containsKey(sender.getName()) && delayedMessage.get(sender.getName()).equals(key)) {
             return;
         }
 
@@ -183,25 +114,13 @@ public class RPLang {
 
         if (sender instanceof Player) {
             final Player p = (Player) sender;
-            delayedMessage.put(p, key);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> delayedMessage.remove(p), 20);
+            delayedMessage.put(p.getName(), key);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> delayedMessage.remove(p.getName()), 20);
         }
     }
 
-    public static void sendCommandHelp(CommandSender sender, String cmd, boolean usage) {
+    public void sendCommandHelp(CommandSender sender, String cmd, boolean usage) {
         if (usage) sendMessage(sender, "correct.usage");
         sender.sendMessage(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd)));
-    }
-
-    public static String translBool(String bool) {
-        return get("region." + bool);
-    }
-
-    public static String translBool(Boolean bool) {
-        return get("region." + bool.toString());
-    }
-
-    public static boolean containsValue(String value) {
-        return loadedLang.containsValue(value);
     }
 }

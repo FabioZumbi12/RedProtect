@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.TileEntity;
@@ -86,7 +86,7 @@ public class RPEconomy {
     }
 
     public static String getCostMessage(Region r) {
-        return RPLang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.getEcoString("economy-name");
+        return RedProtect.get().lang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.getEcoString("economy-name");
     }
 
     public static String getFormatted(long value) {

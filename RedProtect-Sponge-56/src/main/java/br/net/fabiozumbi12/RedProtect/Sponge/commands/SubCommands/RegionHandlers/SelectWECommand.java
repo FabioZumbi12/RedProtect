@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -52,7 +52,7 @@ public class SelectWECommand {
                         if (RedProtect.get().hooks.WE) {
                             Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                             if (r == null) {
-                                RPLang.sendMessage(player, "cmdmanager.region.doesexists");
+                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                                 return CommandResult.success();
                             }
                             WEHook.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());

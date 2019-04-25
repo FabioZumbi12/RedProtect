@@ -27,7 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -54,9 +54,9 @@ public class RegenAllCommand {
                         }
                         int regen = RedProtect.get().rm.regenAll(args.<String>getOne("player").get());
                         if (regen <= 0) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.noneregenerated"));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
                         } else {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args.<String>getOne("player").get()));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args.<String>getOne("player").get()));
                         }
 
                     }

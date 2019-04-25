@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Location;
@@ -74,14 +74,14 @@ public class RPMine19 implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RPLang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)) {
             Material hand = itemInHand.getType();
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true);
                 event.setUseItemInHand(Event.Result.DENY);
             }
@@ -100,11 +100,11 @@ public class RPMine19 implements Listener {
             final Region rto = RedProtect.get().rm.getTopRegion(lto);
 
             if (rfrom != null && !rfrom.canTeleport(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
             if (rto != null && !rto.canTeleport(p)) {
-                RPLang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
         }
@@ -123,7 +123,7 @@ public class RPMine19 implements Listener {
         if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;
             if (Pots.contains(arr.getBasePotionData().getType().name())) {
-                RPLang.sendMessage(p, "playerlistener.denypotion");
+                RedProtect.get().lang.sendMessage(p, "playerlistener.denypotion");
                 e.setCancelled(true);
             }
         }
@@ -142,7 +142,7 @@ public class RPMine19 implements Listener {
 
         Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.canGetEffects(p)) {
-            RPLang.sendMessage(p, "playerlistener.region.cantuse");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
             return;
         }
@@ -150,7 +150,7 @@ public class RPMine19 implements Listener {
         if (RPUtil.denyPotion(e.getEntity().getItem())) {
             e.setCancelled(true);
             if (e.getEntity().getShooter() instanceof Player) {
-                RPLang.sendMessage((Player) e.getEntity().getShooter(), RPLang.get("playerlistener.denypotion"));
+                RedProtect.get().lang.sendMessage((Player) e.getEntity().getShooter(), RedProtect.get().lang.get("playerlistener.denypotion"));
             }
         }
     }
@@ -169,7 +169,7 @@ public class RPMine19 implements Listener {
 
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r != null && e.getItem().getType().equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
-            RPLang.sendMessage(p, "playerlistener.region.cantuse");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
         }
     }
@@ -182,7 +182,7 @@ public class RPMine19 implements Listener {
             Block b = e.getBlock();
             Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (r != null && !r.canBuild(p)) {
-                RPLang.sendMessage(p, "blocklistener.region.cantbreak");
+                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
                 e.setCancelled(true);
             }
         }

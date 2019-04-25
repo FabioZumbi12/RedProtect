@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -54,19 +54,19 @@ public class SetTpCommand implements SubCommand {
             if (r != null) {
                 if (RedProtect.get().ph.hasRegionPermLeader(player, "settp", r)) {
                     r.setTPPoint(player.getLocation());
-                    RPLang.sendMessage(player, "cmdmanager.region.settp.ok");
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.ok");
                     return true;
                 } else {
-                    RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                     return true;
                 }
             } else {
-                RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
         }
 
-        RPLang.sendCommandHelp(sender, "settp", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "settp", true);
         return true;
     }
 

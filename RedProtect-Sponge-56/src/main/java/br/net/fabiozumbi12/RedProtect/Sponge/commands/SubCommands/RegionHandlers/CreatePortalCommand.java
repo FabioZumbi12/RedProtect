@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -66,7 +66,7 @@ public class CreatePortalCommand {
 
                         Region r = RedProtect.get().rm.getRegion(regionTo, w);
                         if (r == null) {
-                            RPLang.sendMessage(player, RPLang.get("cmdmanager.createportal.warning").replace("{region}", regionTo));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.warning").replace("{region}", regionTo));
                         }
 
                         String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
@@ -76,11 +76,11 @@ public class CreatePortalCommand {
 
                         if (r2 != null) {
                             if (!r2.isLeader(player) || !r2.isAdmin(player)) {
-                                RPLang.sendMessage(player, "no.permission");
+                                RedProtect.get().lang.sendMessage(player, "no.permission");
                                 return CommandResult.success();
                             }
-                            RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getName()));
-                            RPLang.sendMessage(player, "cmdmanager.region.portalhint");
+                            RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getName()));
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
                             r2.setFlag(RedProtect.get().getPVHelper().getCause(src), "set-portal", regionTo + " " + w.getName());
 
                             RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " CREATED A PORTAL " + r2.getName() + " to " + regionTo + " world " + w.getName());
@@ -88,8 +88,8 @@ public class CreatePortalCommand {
                             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
                             if (rb2.ready()) {
                                 r2 = rb2.build();
-                                RPLang.sendMessage(player, String.format(RPLang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getName()));
-                                RPLang.sendMessage(player, "cmdmanager.region.portalhint");
+                                RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getName()));
+                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
 
                                 r2.setFlag(RedProtect.get().getPVHelper().getCause(src), "set-portal", regionTo + " " + w.getName());
                                 RedProtect.get().rm.add(r2, player.getWorld());

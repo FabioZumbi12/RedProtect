@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
 import de.Keyle.MyPet.api.entity.skill.ranged.CraftMyPetProjectile;
 import org.bukkit.Location;
@@ -84,7 +84,7 @@ public class MyPetHook implements Listener {
                         for (PotionEffect ef : liv.getActivePotionEffects()) {
                             liv.removePotionEffect(ef.getType());
                         }
-                        p2.sendMessage(RPLang.get("mplistener.cantattack.passives"));
+                        p2.sendMessage(RedProtect.get().lang.get("mplistener.cantattack.passives"));
                         return;
                     }
                 }
@@ -104,7 +104,7 @@ public class MyPetHook implements Listener {
                         for (PotionEffect ef : p2.getActivePotionEffects()) {
                             p2.removePotionEffect(ef.getType());
                         }
-                        p2.sendMessage(RPLang.get("mplistener.cantattack.players"));
+                        p2.sendMessage(RedProtect.get().lang.get("mplistener.cantattack.players"));
                     }
                 }
             }

@@ -30,11 +30,10 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.AdminCommand;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers.*;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -53,11 +52,11 @@ public class CommandHandler {
         CommandSpec redProtect = CommandSpec.builder()
                 .description(Text.of("Main command for RedProtect."))
                 .executor((src, args) -> {
-                    src.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
-                    src.sendMessage(RPUtil.toText(RPLang.get("general.color") + "Developed by &eFabioZumbi12" + RPLang.get("general.color") + "."));
-                    src.sendMessage(RPUtil.toText(RPLang.get("general.color") + "For more information about the commands, type [&e/rp " + getCmd("help") + RPLang.get("general.color") + "]."));
-                    src.sendMessage(RPUtil.toText(RPLang.get("general.color") + "For a tutorial, type [&e/rp " + getCmd("tutorial") + RPLang.get("general.color") + "]."));
-                    src.sendMessage(RPUtil.toText(RPLang.get("general.color") + "---------------------------------------------------"));
+                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
+                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().lang.get("general.color") + "."));
+                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [&e/rp " + getCmd("help") + RedProtect.get().lang.get("general.color") + "]."));
+                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "For a tutorial, type [&e/rp " + getCmd("tutorial") + RedProtect.get().lang.get("general.color") + "]."));
+                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------------------------------------------"));
                     return CommandResult.success();
                 })
                 //player handlers
@@ -115,7 +114,7 @@ public class CommandHandler {
 
     public static CommandResult sendHelpMessageOrAdmin(CommandSource src, String command, boolean usage){
         if (src instanceof Player){
-            RPLang.sendCommandHelp(src, command, usage);
+            RedProtect.get().lang.sendCommandHelp(src, command, usage);
             return CommandResult.success();
         } else {
             return new AdminCommand().process(src, command);

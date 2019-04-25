@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import org.bukkit.command.Command;
@@ -61,7 +61,7 @@ public class DefineCommand implements SubCommand {
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
             if (rb2.ready()) {
                 Region r2 = rb2.build();
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
                 RedProtect.get().firstLocationSelections.remove(player);
@@ -77,7 +77,7 @@ public class DefineCommand implements SubCommand {
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), args[0], serverName, new HashSet<>(), true);
             if (rb2.ready()) {
                 Region r2 = rb2.build();
-                RPLang.sendMessage(player, RPLang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
                 RedProtect.get().rm.add(r2, player.getWorld());
 
                 RedProtect.get().firstLocationSelections.remove(player);
@@ -88,7 +88,7 @@ public class DefineCommand implements SubCommand {
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "define", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "define", true);
         return true;
     }
 

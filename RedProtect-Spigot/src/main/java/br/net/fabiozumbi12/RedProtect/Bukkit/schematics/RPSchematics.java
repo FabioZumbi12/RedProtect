@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.schematics;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.entity.Player;
 
@@ -43,11 +43,11 @@ public class RPSchematics {
         Region region = WEHook.pasteWithWE(p, file);
         if (region == null) return;
 
-        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        RPLang.sendMessage(p, "playerlistener.region.startdone");
-        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
-        RPLang.sendMessage(p, "cmdmanager.region.firstwarning");
-        p.sendMessage(RPLang.get("general.color") + "------------------------------------");
+        p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
+        RedProtect.get().lang.sendMessage(p, "playerlistener.region.startdone");
+        p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
+        RedProtect.get().lang.sendMessage(p, "cmdmanager.region.firstwarning");
+        p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
 
 
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());

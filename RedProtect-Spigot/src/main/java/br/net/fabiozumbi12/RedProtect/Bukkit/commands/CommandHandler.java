@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.AdminCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers.*;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -152,16 +152,16 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         if (args.length > 0 && hasCommand(args[0])) {
             CommandExecutor executor = this.getCommandSubCommand(args[0]);
             if (!RedProtect.get().ph.hasCommandPerm(sender, getCmdFromAlias(args[0]))) {
-                RPLang.sendMessage(sender, "no.permission");
+                RedProtect.get().lang.sendMessage(sender, "no.permission");
                 return true;
             }
             return executor.onCommand(sender, command, label, Arrays_copyOfRange(args, args.length));
         } else {
-            sender.sendMessage(RPLang.get("general.color") + "---------------- " + plugin.getDescription().getFullName() + " ----------------");
-            sender.sendMessage(RPLang.get("general.color") + "Developed by " + ChatColor.GOLD + plugin.getDescription().getAuthors() + RPLang.get("general.color") + ".");
-            sender.sendMessage(RPLang.get("general.color") + "For more information about the commands, type [" + ChatColor.GOLD + "/rp " + getCmd("help") + RPLang.get("general.color") + "].");
-            sender.sendMessage(RPLang.get("general.color") + "For a tutorial, type [" + ChatColor.GOLD + "/rp " + getCmd("tutorial") + RPLang.get("general.color") + "].");
-            sender.sendMessage(RPLang.get("general.color") + "---------------------------------------------------");
+            sender.sendMessage(RedProtect.get().lang.get("general.color") + "---------------- " + plugin.getDescription().getFullName() + " ----------------");
+            sender.sendMessage(RedProtect.get().lang.get("general.color") + "Developed by " + ChatColor.GOLD + plugin.getDescription().getAuthors() + RedProtect.get().lang.get("general.color") + ".");
+            sender.sendMessage(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [" + ChatColor.GOLD + "/rp " + getCmd("help") + RedProtect.get().lang.get("general.color") + "].");
+            sender.sendMessage(RedProtect.get().lang.get("general.color") + "For a tutorial, type [" + ChatColor.GOLD + "/rp " + getCmd("tutorial") + RedProtect.get().lang.get("general.color") + "].");
+            sender.sendMessage(RedProtect.get().lang.get("general.color") + "---------------------------------------------------");
             return true;
         }
     }
@@ -176,7 +176,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 SortedSet<String> tab = new TreeSet<>();
                 for (List<String> cmds : commandMap.keySet()) {
                     String key = cmds.get(0);
-                    String cmdtrans = RPLang.get("cmdmanager.translation." + key);
+                    String cmdtrans = RedProtect.get().lang.get("cmdmanager.translation." + key);
                     if (cmdtrans.startsWith(args[0]) && RedProtect.get().ph.hasCommandPerm(sender, key) && !tab.contains(key)) {
                         tab.add(cmdtrans);
                     }

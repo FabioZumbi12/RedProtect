@@ -26,7 +26,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -45,12 +46,12 @@ public class TutorialCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
-                        RPLang.sendMessage(player, "cmdmanager.tutorial");
-                        RPLang.sendMessage(player, "cmdmanager.tutorial1");
-                        RPLang.sendMessage(player, "cmdmanager.tutorial2");
-                        RPLang.sendMessage(player, "cmdmanager.tutorial3");
-                        RPLang.sendMessage(player, "cmdmanager.tutorial4");
-                        RPLang.sendMessage(player, "cmdmanager.tutorial5");
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial");
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial1");
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial2");
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial3");
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial4");
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial5");
                     }
                     return CommandResult.success();
                 }).build();

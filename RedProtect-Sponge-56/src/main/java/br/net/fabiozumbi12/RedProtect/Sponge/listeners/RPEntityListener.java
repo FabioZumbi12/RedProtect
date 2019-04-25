@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -191,26 +191,26 @@ public class RPEntityListener {
 
                     if (itemInHand.getType().equals(ItemTypes.EGG) && !r1.canProtectiles(p2)) {
                         e.setCancelled(true);
-                        RPLang.sendMessage(p2, "playerlistener.region.cantuse");
+                        RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
                         return;
                     }
                     if (r2 != null) {
                         if (itemInHand.getType().equals(ItemTypes.EGG) && !r2.canProtectiles(p2)) {
                             e.setCancelled(true);
-                            RPLang.sendMessage(p2, "playerlistener.region.cantuse");
+                            RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
                             return;
                         }
                         if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
                             e.setCancelled(true);
-                            RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
+                            RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
                         }
                     } else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
                         e.setCancelled(true);
-                        RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
+                        RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
                     }
                 } else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
                     e.setCancelled(true);
-                    RPLang.sendMessage(p2, "entitylistener.region.cantpvp");
+                    RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
                 }
             }
         } else if (e1 instanceof Animal || e1 instanceof Villager || e1 instanceof Golem || e instanceof Ambient) {
@@ -218,19 +218,19 @@ public class RPEntityListener {
                 Player p2 = (Player) e2;
                 if (!r1.canInteractPassives(p2)) {
                     e.setCancelled(true);
-                    RPLang.sendMessage(p2, "entitylistener.region.cantpassive");
+                    RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpassive");
                 }
             }
         } else if ((e1 instanceof Hanging) && e2 instanceof Player) {
             Player p2 = (Player) e2;
             if (r1 != null && !r1.canBuild(p2)) {
                 e.setCancelled(true);
-                RPLang.sendMessage(p2, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
                 return;
             }
             if (r2 != null && !r2.canBuild(p2)) {
                 e.setCancelled(true);
-                RPLang.sendMessage(p2, "playerlistener.region.cantuse");
+                RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
             }
         } else if ((e1 instanceof Hanging) && e2 instanceof Monster) {
             if (r1 != null || r2 != null) {
@@ -304,7 +304,7 @@ public class RPEntityListener {
                 return;
             }
             e.setCancelled(true);
-            RPLang.sendMessage(p, "entitylistener.region.cantinteract");
+            RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantinteract");
         }
     }
 

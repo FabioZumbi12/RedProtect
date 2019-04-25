@@ -28,8 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPLogger;
@@ -73,7 +73,19 @@ import java.util.concurrent.TimeUnit;
                 @Dependency(id = "worldedit", optional = true),
                 @Dependency(id = "dynmap", optional = true)})
 public class RedProtect {
+
     private static RedProtect instance;
+    private UUID autoSaveID;
+    private RPVHelper rpvHelper;
+    private RedProtectAPI redProtectAPI;
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    public File configDir;
+    @Inject
+    public PluginContainer container;
+    @Inject
+    public GuiceObjectMapperFactory factory;
     public final List<String> changeWait = new ArrayList<>();
     public final List<String> tpWait = new ArrayList<>();
     public final RPLogger logger = new RPLogger();
@@ -85,21 +97,12 @@ public class RedProtect {
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public RegionManager rm;
     public RPPermissionHandler ph;
-    public boolean onlineMode;
-    public RPConfig config;
+    public ConfigManager config;
+    public LangManager lang;
     public EconomyService econ;
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    public File configDir;
-    @Inject
-    public PluginContainer container;
-    @Inject
-    public GuiceObjectMapperFactory factory;
+
     public CommandManager commandManager;
     public CommandHandler commandHandler;
-    private UUID autoSaveID;
-    private RPVHelper rpvHelper;
-    private RedProtectAPI redProtectAPI;
 
     public static RedProtect get() {
         return instance;
@@ -216,16 +219,13 @@ public class RedProtect {
     }
 
     private void startLoad() throws Exception {
-        config = new RPConfig(this.factory);
-        RPLang.init();
+        config = new ConfigManager(this.factory);
+        lang = new LangManager();
 
         if (RedProtect.get().config.configRoot().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()) {
             Sponge.getServer().setHasWhitelist(false);
             RedProtect.get().logger.success("Whitelist disabled!");
         }
-
-        // Set online mode
-        onlineMode = config.configRoot().online_mode;
 
         logger.info("Registering commands...");
         commandHandler = new CommandHandler(this);

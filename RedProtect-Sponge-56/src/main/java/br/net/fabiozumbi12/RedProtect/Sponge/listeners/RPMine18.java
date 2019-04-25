@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
 import org.spongepowered.api.entity.Entity;
@@ -78,7 +78,7 @@ public class RPMine18 {
         if (!itemInHand.equals(ItemTypes.NONE) && itemInHand.getType().equals(ItemTypes.ARMOR_STAND)) {
             if (!r.canBuild(p)) {
                 e.setCancelled(true);
-                RPLang.sendMessage(p, "blocklistener.region.cantbuild");
+                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
                 return;
             }
         }
@@ -87,7 +87,7 @@ public class RPMine18 {
         if (ent.getType().equals(EntityTypes.ARMOR_STAND)) {
             if (!r.canBuild(p)) {
                 if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
-                    RPLang.sendMessage(p, "playerlistener.region.cantedit");
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantedit");
                     e.setCancelled(true);
                 }
             }
@@ -128,7 +128,7 @@ public class RPMine18 {
         if (e1 instanceof ArmorStand) {
             if (!r1.canBuild(damager)) {
                 e.setCancelled(true);
-                RPLang.sendMessage(damager, "blocklistener.region.cantbreak");
+                RedProtect.get().lang.sendMessage(damager, "blocklistener.region.cantbreak");
             }
         }
     }

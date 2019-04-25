@@ -431,7 +431,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String member : rs.getString("members").split(", ")) {
                         String[] pi = member.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+                        if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -442,7 +442,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String admin : rs.getString("admins").split(", ")) {
                         String[] pi = admin.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+                        if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
@@ -452,7 +452,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String leader : rs.getString("leaders").split(", ")) {
                         String[] pi = leader.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().onlineMode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+                        if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
                             p[0] = RPUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);

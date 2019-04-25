@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import com.sk89q.worldedit.*;
@@ -79,7 +79,7 @@ public class WEHook {
         regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
         regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
         SpongeWorldEdit.inst().getSession(p).setRegionSelector(ws, regs);
-        RPLang.sendMessage(p, RPLang.get("cmdmanager.region.select-we.show")
+        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.show")
                 .replace("{pos1}", pos1.getBlockX() + "," + pos1.getBlockY() + "," + pos1.getBlockZ())
                 .replace("{pos2}", pos2.getBlockX() + "," + pos2.getBlockY() + "," + pos2.getBlockZ())
         );
@@ -98,7 +98,7 @@ public class WEHook {
             setSelection(ws, p, pos1, pos2);
         } else {
             worldEdit.getSession(p).getRegionSelector(ws).clear();
-            RPLang.sendMessage(p, RPLang.get("cmdmanager.region.select-we.hide"));
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.hide"));
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
@@ -109,7 +109,7 @@ public class WEHook {
 
         if (p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.WATER) ||
                 p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.FLOWING_WATER)) {
-            RPLang.sendMessage(p, "playerlistener.region.needground");
+            RedProtect.get().lang.sendMessage(p, "playerlistener.region.needground");
             return null;
         }
 
@@ -136,7 +136,7 @@ public class WEHook {
             Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
             String leader = p.getUniqueId().toString();
-            if (!RedProtect.get().onlineMode) {
+            if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = p.getName().toLowerCase();
             }
 
@@ -181,9 +181,9 @@ public class WEHook {
 
             if (sender != null) {
                 if (wreg.getWorld().regenerate(wreg, esession)) {
-                    RPLang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + r.getID().split("@")[0] + " regenerated with success!");
+                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + r.getID().split("@")[0] + " regenerated with success!");
                 } else {
-                    RPLang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + r.getID().split("@")[0] + "!");
+                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + r.getID().split("@")[0] + "!");
                 }
             } else {
                 if (wreg.getWorld().regenerate(wreg, esession)) {

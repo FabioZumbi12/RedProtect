@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -54,16 +54,16 @@ public class NearCommand {
 
                         Set<Region> regions = RedProtect.get().rm.getRegionsNear(player, 60, player.getWorld());
                         if (regions.size() == 0) {
-                            RPLang.sendMessage(player, "cmdmanager.noregions.nearby");
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.noregions.nearby");
                         } else {
                             Iterator<Region> i = regions.iterator();
-                            player.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.regionwith40")));
-                            player.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
+                            player.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.regionwith40")));
+                            player.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                             while (i.hasNext()) {
                                 Region r = i.next();
-                                player.sendMessage(RPUtil.toText(RPLang.get("cmdmanager.region.name") + r.getName() + RPLang.get("general.color") + " | " + RPLang.get("region.center") + " (&6X,Z" + RPLang.get("general.color") + "): &6" + r.getCenterX() + ", " + r.getCenterZ()));
+                                player.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.name") + r.getName() + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.center") + " (&6X,Z" + RedProtect.get().lang.get("general.color") + "): &6" + r.getCenterX() + ", " + r.getCenterZ()));
                             }
-                            player.sendMessage(RPUtil.toText(RPLang.get("general.color") + "------------------------------------"));
+                            player.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         }
                     }
                     return CommandResult.success();

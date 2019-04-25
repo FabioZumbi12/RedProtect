@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.ChatColor;
@@ -60,7 +60,7 @@ public class Pos1Command implements SubCommand {
         if (args.length == 0) {
             Location pl = player.getLocation();
             RedProtect.get().firstLocationSelections.put(player, pl);
-            player.sendMessage(RPLang.get("playerlistener.wand1") + RPLang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RPLang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RPLang.get("general.color") + ").");
+            player.sendMessage(RedProtect.get().lang.get("playerlistener.wand1") + RedProtect.get().lang.get("general.color") + " (" + ChatColor.GOLD + pl.getBlockX() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockY() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + pl.getBlockZ() + RedProtect.get().lang.get("general.color") + ").");
 
             //show preview border
             if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)) {
@@ -72,7 +72,7 @@ public class Pos1Command implements SubCommand {
 
                 if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.configRoot().region_settings.wand_max_distance) {
                     double dist = loc1.distanceSquared(loc2);
-                    RPLang.sendMessage(player, String.format(RPLang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
+                    RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
                     RPUtil.addBorder(player, RPUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
                 }
@@ -80,7 +80,7 @@ public class Pos1Command implements SubCommand {
             return true;
         }
 
-        RPLang.sendCommandHelp(sender, "pos1", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "pos1", true);
         return true;
     }
 

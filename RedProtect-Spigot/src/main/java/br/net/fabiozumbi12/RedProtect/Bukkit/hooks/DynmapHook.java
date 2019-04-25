@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -116,13 +116,13 @@ public class DynmapHook implements Listener {
             am.setCornerLocations(x, z);
         }
 
-        String rName = RPLang.get("region.name") + " <span style=\"font-weight:bold;\">" + r.getName() + "</span><br>";
-        String area = RPLang.get("region.area") + " <span style=\"font-weight:bold;\">" + r.getArea() + "</span>";
+        String rName = RedProtect.get().lang.get("region.name") + " <span style=\"font-weight:bold;\">" + r.getName() + "</span><br>";
+        String area = RedProtect.get().lang.get("region.area") + " <span style=\"font-weight:bold;\">" + r.getArea() + "</span>";
         am.setDescription(ChatColor.stripColor(rName + area));
 
         if (RedProtect.get().config.configRoot().hooks.dynmap.show_leaders_admins) {
-            String leader = RPLang.get("region.leaders") + " <span style=\"font-weight:bold;\">" + r.getLeadersDesc() + "</span><br>";
-            String admin = RPLang.get("region.admins") + " <span style=\"font-weight:bold;\">" + r.getAdminDesc() + "</span><br>";
+            String leader = RedProtect.get().lang.get("region.leaders") + " <span style=\"font-weight:bold;\">" + r.getLeadersDesc() + "</span><br>";
+            String admin = RedProtect.get().lang.get("region.admins") + " <span style=\"font-weight:bold;\">" + r.getAdminDesc() + "</span><br>";
             am.setDescription(ChatColor.stripColor(rName + leader + admin + area));
         }
 

@@ -28,8 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPConfig;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigLoader;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPPermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
@@ -50,28 +50,33 @@ import java.util.*;
 public class RedProtect extends JavaPlugin {
     private static RedProtect plugin;
     private RedProtectAPI redProtectAPI;
-    public final RPLogger logger = new RPLogger();
-    public final HooksManager hooks = new HooksManager();
-    public final List<String> confiemStart = new ArrayList<>();
+    private int autoSaveID;
+    private RPVHelper rpvHelper;
+
+    public final List<String> confirmStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
-    public RegionManager rm;
-    public List<String> changeWait = new ArrayList<>();
-    public List<String> tpWait = new ArrayList<>();
-    public HashMap<Player, String> alWait = new HashMap<>();
-    public RPPermissionHandler ph;
+    public Economy economy;
     public HashMap<Player, Location> firstLocationSelections = new HashMap<>();
     public HashMap<Player, Location> secondLocationSelections = new HashMap<>();
-    public boolean onlineMode;
+    public int bukkitVersion;
+    public HashMap<Player, String> alWait = new HashMap<>();
+    public List<String> changeWait = new ArrayList<>();
+    public List<String> tpWait = new ArrayList<>();
+    public final HooksManager hooks = new HooksManager();
+    public final RPLogger logger = new RPLogger();
+    public RegionManager rm;
+    public RPPermissionHandler ph;
+    public ConfigLoader config;
+    public LangManager lang;
 
-    public Economy econ;
-    public int version;
-    public RPVHelper rpvhelper;
     public CommandHandler cmdHandler;
-    private int autoSaveID;
-    public RPConfig config;
 
     public static RedProtect get() {
         return plugin;
+    }
+
+    public RPVHelper getPVHelper() {
+        return rpvHelper;
     }
 
     public RedProtectAPI getAPI() {
@@ -92,21 +97,21 @@ public class RedProtect extends JavaPlugin {
             //Init config, lang, listeners and flags
             startLoad();
 
-            version = getBukkitVersion();
-            logger.debug(LogLevel.DEFAULT, "Version String: " + version);
+            bukkitVersion = getBukkitVersion();
+            logger.debug(LogLevel.DEFAULT, "Version String: " + bukkitVersion);
 
-            if (version >= 180) {
+            if (bukkitVersion >= 180) {
                 getServer().getPluginManager().registerEvents(new RPMine18(), this);
             }
-            if (version >= 190) {
+            if (bukkitVersion >= 190) {
                 getServer().getPluginManager().registerEvents(new RPMine19(), this);
             }
 
-            if (version <= 1122) {
-                rpvhelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper112").newInstance();
+            if (bukkitVersion <= 1122) {
+                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper112").newInstance();
             }
-            if (version >= 1130) {
-                rpvhelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper113").newInstance();
+            if (bukkitVersion >= 1130) {
+                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper113").newInstance();
             }
 
             logger.info("Loading API...");
@@ -145,16 +150,13 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() throws Exception {
-        config = new RPConfig();
-        RPLang.init();
+        config = new ConfigLoader();
+        lang = new LangManager();
 
         if (config.configRoot().purge.regen.enable_whitelist_regen && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
             RedProtect.get().logger.success("Whitelist disabled!");
         }
-
-        // Set online mode
-        onlineMode = config.configRoot().online_mode;
 
         logger.info("Registering commands...");
         cmdHandler = new CommandHandler(this);
@@ -256,5 +258,4 @@ public class RedProtect extends JavaPlugin {
             logger.info("Auto-save Scheduler: Disabled");
         }
     }
-
 }

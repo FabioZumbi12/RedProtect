@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.RPLang;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -55,19 +55,19 @@ public class DelTpCommand implements SubCommand {
             if (r != null) {
                 if (RedProtect.get().ph.hasRegionPermLeader(player, "deltp", r)) {
                     r.setTPPoint(null);
-                    RPLang.sendMessage(player, "cmdmanager.region.settp.removed");
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.removed");
                     return true;
                 } else {
-                    RPLang.sendMessage(player, "playerlistener.region.cantuse");
+                    RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                     return true;
                 }
             } else {
-                RPLang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
         }
 
-        RPLang.sendCommandHelp(sender, "deltp", true);
+        RedProtect.get().lang.sendCommandHelp(sender, "deltp", true);
         return true;
     }
 
