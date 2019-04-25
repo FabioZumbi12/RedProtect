@@ -30,15 +30,15 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class GuiLangCore {
-
+public class LangCore {
+    protected final HashMap<String, String> delayedMessage = new HashMap<>();
     protected final Properties loadedLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    private final Properties baseLang = new Properties() {
+    protected final Properties baseLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
@@ -46,10 +46,20 @@ public class GuiLangCore {
     };
     protected String pathLang;
 
+    public SortedSet<String> getHelpStrings() {
+        SortedSet<String> values = new TreeSet<>();
+        for (Object help : loadedLang.keySet()) {
+            if (help.toString().startsWith("cmdmanager.help.")) {
+                values.add(help.toString().replace("cmdmanager.help.", ""));
+            }
+        }
+        return values;
+    }
+
     protected void loadBaseLang() {
         baseLang.clear();
         try {
-            InputStream fileInput = LangCore.class.getResourceAsStream("/assets/redprotect/guiEN-US.properties");
+            InputStream fileInput = LangCore.class.getResourceAsStream("/assets/redprotect/langEN-US.properties");
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             baseLang.load(reader);
         } catch (Exception e) {
@@ -98,10 +108,22 @@ public class GuiLangCore {
         String langLine;
 
         if (loadedLang.get(key) == null) {
-            langLine = "&c&oNo entry for &4" + key;
+            langLine = "&c&oMissing language string for &4" + key;
         } else {
             langLine = loadedLang.get(key).toString();
         }
-        return langLine;
+        return langLine.replace("/n", "\n");
+    }
+
+    public String translBool(String bool) {
+        return getRaw("region." + bool);
+    }
+
+    public String translBool(Boolean bool) {
+        return getRaw("region." + bool.toString());
+    }
+
+    public boolean containsValue(String value) {
+        return loadedLang.containsValue(value);
     }
 }
