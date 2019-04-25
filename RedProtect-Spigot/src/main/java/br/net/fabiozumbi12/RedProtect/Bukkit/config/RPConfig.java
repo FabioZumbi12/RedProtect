@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
@@ -35,9 +36,9 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -105,7 +106,7 @@ public class RPConfig {
     private ConfigurationNode signCfgs;
     private ConfigurationLoader<CommentedConfigurationNode> signsLoader;
     private ConfigurationNode guiCfgRoot;
-    private ConfigurationLoader<CommentedConfigurationNode> guiLoader;
+    private ConfigurationLoader<CommentedConfigurationNode> guiCfgLoader;
     private FlagGuiCategory guiRoot;
     private ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
     private ConfigurationNode gflagsRoot;
@@ -141,7 +142,7 @@ public class RPConfig {
 
             cfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "config.conf")).build();
 
-            if (new File(RedProtect.get().getDataFolder(), "config.yml").exists()){
+            if (new File(RedProtect.get().getDataFolder(), "config.yml").exists()) {
                 File defConfig = new File(RedProtect.get().getDataFolder(), "config.yml");
                 ConfigurationLoader<ConfigurationNode> cfgLoader = YAMLConfigurationLoader.builder().setFile(defConfig).build();
                 configRoot = cfgLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(header));
@@ -152,7 +153,7 @@ public class RPConfig {
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Bukkit.getOnlineMode()));
 
             //Defaults per server
-            if (this.root.private_cat.allowed_blocks.isEmpty()){
+            if (this.root.private_cat.allowed_blocks.isEmpty()) {
                 this.root.private_cat.allowed_blocks = Arrays.asList(
                         "ANVIL",
                         "DAMAGED_ANVIL",
@@ -175,22 +176,22 @@ public class RPConfig {
                         "DROPPER",
                         "[A-Z_]+_SHULKER_BOX");
             }
-            if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()){
+            if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name());
             }
-            if (this.root.region_settings.block_id.isEmpty()){
+            if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = "FENCE";
             }
-            if (this.root.region_settings.border.material.isEmpty()){
+            if (this.root.region_settings.border.material.isEmpty()) {
                 this.root.region_settings.border.material = Material.GLOWSTONE.name();
             }
-            if (this.root.wands.adminWandID.isEmpty()){
+            if (this.root.wands.adminWandID.isEmpty()) {
                 this.root.wands.adminWandID = Material.GLASS_BOTTLE.name();
             }
-            if (this.root.wands.infoWandID.isEmpty()){
+            if (this.root.wands.infoWandID.isEmpty()) {
                 this.root.wands.infoWandID = Material.PAPER.name();
             }
-            if (root.debug_messages.isEmpty()){
+            if (root.debug_messages.isEmpty()) {
                 for (LogLevel level : LogLevel.values()) {
                     root.debug_messages.put(level.name().toLowerCase(), false);
                 }
@@ -214,7 +215,7 @@ public class RPConfig {
 
             gFlagsLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "globalflags.conf")).build();
 
-            if (new File(RedProtect.get().getDataFolder(), "globalflags.yml").exists()){
+            if (new File(RedProtect.get().getDataFolder(), "globalflags.yml").exists()) {
                 File gFlagsConfig = new File(RedProtect.get().getDataFolder(), "globalflags.yml");
                 ConfigurationLoader<ConfigurationNode> gFlagsLoader = YAMLConfigurationLoader.builder().setFile(gFlagsConfig).build();
                 gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerg));
@@ -240,22 +241,43 @@ public class RPConfig {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
-            guiLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "guiconfig.conf")).build();
+            String guiFileName = "guiconfig" + RedProtect.get().config.configRoot().language + ".conf";
+            File guiCfgFile = new File(RedProtect.get().getDataFolder(), guiFileName);
 
-            if (new File(RedProtect.get().getDataFolder(), "guiconfig.yml").exists()){
-                File guiConfig = new File(RedProtect.get().getDataFolder(), "guiconfig.yml");
-                ConfigurationLoader<ConfigurationNode> guiLoader = YAMLConfigurationLoader.builder().setFile(guiConfig).build();
+            // If the old guiconfig file exists rename it
+            File oldGuiConfigFile = new File(RedProtect.get().getDataFolder(), "guiconfig.conf");
+            if (oldGuiConfigFile.isFile() && !oldGuiConfigFile.renameTo(guiCfgFile)) {
+                RedProtect.get().logger.severe("Could not rename guiconfig.conf file to "
+                        + guiFileName + ". Check file permissions.");
+            }
+
+            // If the language file for the selected language exists and there
+            // is no other file copy it to the data folder
+            if (!guiCfgFile.isFile()) {
+                if (RedProtect.get().getResource("assets/redprotect/" + guiFileName) != null) {
+                    RPUtil.saveResource("/assets/redprotect/" + guiFileName, null, new File(RedProtect.get().getDataFolder(), guiFileName));
+                } else {
+                    RedProtect.get().logger.warning("Could not find guiconfig language file for language"
+                            + RedProtect.get().config.configRoot().language);
+                }
+
+            }
+            guiCfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), guiFileName)).build();
+
+            if (new File(RedProtect.get().getDataFolder(), "guiconfig.yml").exists()) {
+                File guiOldCfg = new File(RedProtect.get().getDataFolder(), "guiconfig.yml");
+                ConfigurationLoader<ConfigurationNode> guiLoader = YAMLConfigurationLoader.builder().setFile(guiOldCfg).build();
                 guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerGui));
-                guiConfig.renameTo(new File(RedProtect.get().getDataFolder(), "guiconfig_BKP.yml"));
+                guiOldCfg.renameTo(new File(RedProtect.get().getDataFolder(), "guiconfig_BKP.yml"));
             } else {
-                guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerGui));
+                guiCfgRoot = guiCfgLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerGui));
             }
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = "WHITE_STAINED_GLASS_PANE";
 
-            if (this.guiRoot.gui_flags.isEmpty()){
+            if (this.guiRoot.gui_flags.isEmpty()) {
                 this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("&6Description: &aAllow or cancel all", "&atype of effects for non members", "&aof this region.", Material.BLAZE_ROD.name(), "&e=> Allow Effects", 16));
                 this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players with", "&a&afly enabled to fly on this region.", "", Material.FEATHER.name(), "&e=> Allow Fly", 8));
                 this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use the", "&acommand /sethome or /home to set or come to", "&athis region.", Material.COMPASS.name(), "&e=> Allow Set Home", 2));
@@ -295,13 +317,13 @@ public class RPConfig {
 
             //Economy file
             ecoLoader = HoconConfigurationLoader.builder().setPath(new File(RedProtect.get().getDataFolder(), "economy.conf").toPath()).build();
-            if (new File(RedProtect.get().getDataFolder(), "economy.yml").exists()){
+            if (new File(RedProtect.get().getDataFolder(), "economy.yml").exists()) {
                 File ecoConfig = new File(RedProtect.get().getDataFolder(), "economy.yml");
                 ConfigurationLoader<ConfigurationNode> ecoLoader = YAMLConfigurationLoader.builder().setPath(ecoConfig.toPath()).build();
                 ecoCfgs = ecoLoader.load();
                 ecoConfig.renameTo(new File(RedProtect.get().getDataFolder(), "economy_BKP.yml"));
             } else {
-                if (!new File(RedProtect.get().getDataFolder(), "economy.conf").exists()){
+                if (!new File(RedProtect.get().getDataFolder(), "economy.conf").exists()) {
                     RedProtect.get().saveResource("economy.conf", false);
                 }
                 ecoCfgs = ecoLoader.load();
@@ -324,7 +346,7 @@ public class RPConfig {
 
             //Signs file
             signsLoader = HoconConfigurationLoader.builder().setPath(new File(RedProtect.get().getDataFolder(), "signs.conf").toPath()).build();
-            if (new File(RedProtect.get().getDataFolder(), "signs.yml").exists()){
+            if (new File(RedProtect.get().getDataFolder(), "signs.yml").exists()) {
                 File signFile = new File(RedProtect.get().getDataFolder(), "signs.yml");
                 ConfigurationLoader<ConfigurationNode> signsLoader = YAMLConfigurationLoader.builder().setPath(signFile.toPath()).build();
                 signCfgs = signsLoader.load();
@@ -502,7 +524,7 @@ public class RPConfig {
         }
         //add worlds to color list
         if (!root.region_settings.world_colors.containsKey(w.getName())) {
-            switch (w.getEnvironment()){
+            switch (w.getEnvironment()) {
                 case NORMAL:
                     root.region_settings.world_colors.put(w.getName(), "&a&l");
                 case NETHER:
@@ -627,7 +649,7 @@ public class RPConfig {
     public void saveGui() {
         try {
             guiCfgRoot.setValue(of(FlagGuiCategory.class), guiRoot);
-            guiLoader.save(guiCfgRoot);
+            guiCfgLoader.save(guiCfgRoot);
         } catch (IOException | ObjectMappingException e) {
             RedProtect.get().logger.severe("Problems during save gui file:");
             e.printStackTrace();

@@ -152,7 +152,7 @@ public class RPConfig {
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Sponge.getServer().getOnlineMode()));
 
             //Defaults per server
-            if (this.root.private_cat.allowed_blocks.isEmpty()){
+            if (this.root.private_cat.allowed_blocks.isEmpty()) {
                 this.root.private_cat.allowed_blocks = Arrays.asList(
                         "minecraft:dispenser",
                         "minecraft:anvil",
@@ -172,22 +172,22 @@ public class RPConfig {
                         "minecraft:dropper",
                         "minecraft:[a-z_]+_shulker_box");
             }
-            if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()){
+            if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(BlockTypes.GRASS.getId(), BlockTypes.TALLGRASS.getId());
             }
-            if (this.root.region_settings.block_id.isEmpty()){
+            if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = BlockTypes.FENCE.getId();
             }
-            if (this.root.region_settings.border.material.isEmpty()){
+            if (this.root.region_settings.border.material.isEmpty()) {
                 this.root.region_settings.border.material = BlockTypes.GLOWSTONE.getId();
             }
-            if (this.root.wands.adminWandID.isEmpty()){
+            if (this.root.wands.adminWandID.isEmpty()) {
                 this.root.wands.adminWandID = ItemTypes.GLASS_BOTTLE.getId();
             }
-            if (this.root.wands.infoWandID.isEmpty()){
+            if (this.root.wands.infoWandID.isEmpty()) {
                 this.root.wands.infoWandID = ItemTypes.PAPER.getId();
             }
-            if (root.debug_messages.isEmpty()){
+            if (root.debug_messages.isEmpty()) {
                 for (LogLevel level : LogLevel.values()) {
                     root.debug_messages.put(level.name().toLowerCase(), false);
                 }
@@ -239,7 +239,24 @@ public class RPConfig {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
-            File guiConfig = new File(RedProtect.get().configDir, "guiconfig.conf");
+            String guiFileName = "guiconfig" + RedProtect.get().config.configRoot().language + ".conf";
+            File guiConfig = new File(RedProtect.get().configDir, guiFileName);
+            if (!guiConfig.isFile()) {
+                Optional<Asset> mayAsset = RedProtect.get().container.getAsset(guiFileName);
+                if (mayAsset.isPresent()) {
+                    try {
+                        mayAsset.get().copyToFile(guiConfig.toPath());
+                    } catch (IOException e) {
+                        RedProtect.get().logger.severe("Could not copy guiconfig language file " + guiFileName
+                                + " to path " + guiConfig.getAbsolutePath());
+                        e.printStackTrace();
+                    }
+                } else {
+                    RedProtect.get().logger.warning("Could not find guiconfig language file for language"
+                            + RedProtect.get().config.configRoot().language);
+                }
+
+            }
             guiLoader = HoconConfigurationLoader.builder().setFile(guiConfig).build();
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
@@ -247,7 +264,7 @@ public class RPConfig {
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = ItemTypes.STAINED_GLASS_PANE.getId();
 
-            if (this.guiRoot.gui_flags.isEmpty()){
+            if (this.guiRoot.gui_flags.isEmpty()) {
                 this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("&6Description: &aAllow or cancel all", "&atype of effects for non members", "&aof this region.", ItemTypes.BLAZE_ROD.getId(), "&e=> Allow Effects", 16));
                 this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players with", "&a&afly enabled to fly on this region.", "", ItemTypes.FEATHER.getId(), "&e=> Allow Fly", 8));
                 this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use the", "&acommand /sethome or /home to set or come to", "&athis region.", ItemTypes.COMPASS.getId(), "&e=> Allow Set Home", 2));
