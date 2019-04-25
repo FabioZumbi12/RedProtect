@@ -52,7 +52,7 @@ import java.util.*;
 
 import static com.google.common.reflect.TypeToken.of;
 
-public class ConfigLoader {
+public class ConfigManager {
 
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
@@ -116,7 +116,7 @@ public class ConfigLoader {
     private MainCategory root;
 
     //init
-    public ConfigLoader() throws ObjectMappingException {
+    public ConfigManager() throws ObjectMappingException {
         try {
             if (!RedProtect.get().getDataFolder().exists()) {
                 RedProtect.get().getDataFolder().mkdir();
@@ -241,28 +241,11 @@ public class ConfigLoader {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
-            String guiFileName = "guiconfig" + RedProtect.get().config.configRoot().language + ".conf";
-            File guiCfgFile = new File(RedProtect.get().getDataFolder(), guiFileName);
-
-            // If the old guiconfig file exists rename it
-            File oldGuiConfigFile = new File(RedProtect.get().getDataFolder(), "guiconfig.conf");
-            if (oldGuiConfigFile.isFile() && !oldGuiConfigFile.renameTo(guiCfgFile)) {
-                RedProtect.get().logger.severe("Could not rename guiconfig.conf file to "
-                        + guiFileName + ". Check file permissions.");
+            String guiFileName = "guiconfig" + configRoot().language + ".conf";
+            if (new File(RedProtect.get().getDataFolder(), guiFileName).exists()){
+                new File(RedProtect.get().getDataFolder(), guiFileName).renameTo(new File(RedProtect.get().getDataFolder(), "guiconfig.conf"));
             }
-
-            // If the language file for the selected language exists and there
-            // is no other file copy it to the data folder
-            if (!guiCfgFile.isFile()) {
-                if (RedProtect.get().getResource("assets/redprotect/" + guiFileName) != null) {
-                    RPUtil.saveResource("/assets/redprotect/" + guiFileName, null, new File(RedProtect.get().getDataFolder(), guiFileName));
-                } else {
-                    RedProtect.get().logger.warning("Could not find guiconfig language file for language"
-                            + RedProtect.get().config.configRoot().language);
-                }
-
-            }
-            guiCfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), guiFileName)).build();
+            guiCfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "guiconfig.conf")).build();
 
             if (new File(RedProtect.get().getDataFolder(), "guiconfig.yml").exists()) {
                 File guiOldCfg = new File(RedProtect.get().getDataFolder(), "guiconfig.yml");
@@ -274,44 +257,62 @@ public class ConfigLoader {
             }
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
+            if (guiCfgRoot.getNode("gui-strings").getValue() != null){
+                guiCfgRoot.removeChild("gui-strings");
+            }
+            for (ConfigurationNode key:guiCfgRoot.getNode("gui-flags").getChildrenList()){
+                if (key.getNode("name").getValue() != null){
+                    key.removeChild("name");
+                }
+                if (key.getNode("description").getValue() != null){
+                    key.removeChild("description");
+                }
+                if (key.getNode("description1").getValue() != null){
+                    key.removeChild("description1");
+                }
+                if (key.getNode("description2").getValue() != null){
+                    key.removeChild("description2");
+                }
+            }
+
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = "WHITE_STAINED_GLASS_PANE";
 
             if (this.guiRoot.gui_flags.isEmpty()) {
-                this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("&6Description: &aAllow or cancel all", "&atype of effects for non members", "&aof this region.", Material.BLAZE_ROD.name(), "&e=> Allow Effects", 16));
-                this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players with", "&a&afly enabled to fly on this region.", "", Material.FEATHER.name(), "&e=> Allow Fly", 8));
-                this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use the", "&acommand /sethome or /home to set or come to", "&athis region.", Material.COMPASS.name(), "&e=> Allow Set Home", 2));
-                this.guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to consume", "&apotions ins this region.", "", Material.POTION.name(), "&e=> Allow Potions", 26));
-                this.guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to interact", "&awith spawners in this region.", "", Material.LEASH.name(), "&e=> Allow Interact Spawners", 10));
-                this.guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag("&6Description: &aAllow any player to build", "&ain this region.", "", Material.GRASS.name(), "&e=> Allow Build", 13));
-                this.guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to press", "&abutons in this region.", "", Material.STONE_BUTTON.name(), "&e=> Allow Buttons", 6));
-                this.guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag("&6Description: &aChoose if farms", "&ain this region will grow or not.", "", Material.WHEAT.name(), "&e=> Allow Blocks to Grow", 27));
-                this.guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to open any type of", "&achests in this region.", "", Material.TRAPPED_CHEST.name(), "&e=> Allow Open Chest", 3));
-                this.guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to open", "&aand close doors in this region.", "", Material.ACACIA_DOOR.name(), "&e=> Allow Open Doors", 0));
-                this.guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&ause ender chests on this region.", "", Material.ENDER_CHEST.name(), "&e=> Allow Ender Chest", 22));
-                this.guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag("&6Description: &aAllow damage blocks by fire", "&aand explosion, and fire spread.", "", Material.BLAZE_POWDER.name(), "&e=> Fire Spread and Damage Blocks", 9));
-                this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag("&6Description: &aAllow fishing and", "&ainteract with water animals.", "", Material.FISHING_ROD.name(), "&e=> Allow Fishing", 28));
-                this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag("&6Description: &aEnable water and lava flow", "&ain this region.", "", Material.WATER_BUCKET.name(), "&e=> Water and Lava Flow", 29));
-                this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag("&6Description: &aAllow liquids to", "&aremove blocks on flow.", "", Material.LAVA_BUCKET.name(), "&e=> Allow Flow Damage", 30));
-                this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag("&6Description: &aAllow ice form", "&aby players using frost walk", "&aenchant.", Material.PACKED_ICE.name(), "&e=> Allow Ice Form by Players", 4));
-                this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag("&6Description: &aAllow ice form", "&aby entities like SnowMan and by", "&aweather like snow.", Material.ICE.name(), "&e=> Allow Ice Form by World", 31));
-                this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag("&6Description: &aAllow leaves decay naturally", "&ain this region.", "", Material.LEAVES.name(), "&e=> Allow Leaves decay", 18));
-                this.guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use", "&alevers in this region.", "", Material.LEVER.name(), "&e=> Allow Lever", 5));
-                this.guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to place,", "&aenter and break Minecarts in this region.", "", Material.MINECART.name(), "&e=> Allow Place Minecarts/Boats", 25));
-                this.guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag("&6Description: &aAllow mobs to damage,", "&aexplode or grief blocks on this", "&aregion.", Material.MYCEL.name(), "&e=> Allow Mob Grief", 32));
-                this.guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to hurt,", "&akill or interact with passives mobs in", "&athis region.", Material.SADDLE.name(), "&e=> Hurt/Interact Passives", 33));
-                this.guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&awalk on pressure plates and interact.", "", Material.GOLD_PLATE.name(), "&e=> Use Pressure Plates", 17));
-                this.guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag("&6Description: &aAllow PvP for all players", "&ain this region, including members and", "&ano members.", Material.STONE_SWORD.name(), "&e=> Allow PvP", 20));
-                this.guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag("&6Description: &aAllow members to open", "&adouble normal and iron doors", "&aand iron trap doors together.", Material.IRON_DOOR.name(), "&e=> Open Double and Iron Doors", 1));
-                this.guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag("&6Description: &aAllow natural spawn of", "&apassives mobs in this region.", "", Material.EGG.name(), "&e=> Spawn Animals", 34));
-                this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("&6Description: &aAllow natural spawn of", "&amonsters in this region.", "", Material.PUMPKIN.name(), "&e=> Allow Spawn Monsters", 35));
-                this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&ateleport on this region using itens", "&alike ender pearls and chorus fruits.", Material.ENDER_PEARL.name(), "&e=> Allow Teleport", 19));
-                this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("&6Description: &aAllow use or throw", "&aany type of potions for no members", "&aof region.", Material.GLASS_BOTTLE.name(), "&e=> Use Potions", 26));
+                this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("BLAZE_ROD", 16));
+                this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("FEATHER", 8));
+                this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("COMPASS", 2));
+                this.guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag("POTION", 26));
+                this.guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag("LEASH", 10));
+                this.guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag("GRASS", 13));
+                this.guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag("STONE_BUTTON", 6));
+                this.guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag("WHEAT", 27));
+                this.guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag("TRAPPED_CHEST", 3));
+                this.guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag("ACACIA_DOOR", 0));
+                this.guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag("ENDER_CHEST", 22));
+                this.guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag("BLAZE_POWDER", 9));
+                this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag("FISHING_ROD", 28));
+                this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag("WATER_BUCKET", 29));
+                this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag("LAVA_BUCKET", 30));
+                this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag("PACKED_ICE", 4));
+                this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag("ICE", 31));
+                this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag("LEAVES", 18));
+                this.guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag("LEVER", 5));
+                this.guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag("MINECART", 25));
+                this.guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag("MYCEL", 32));
+                this.guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag("SADDLE", 33));
+                this.guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag("GOLD_PLATE", 17));
+                this.guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag("STONE_SWORD", 20));
+                this.guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag("IRON_DOOR", 1));
+                this.guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag("EGG", 34));
+                this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("PUMPKIN", 35));
+                this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("ENDER_PEARL", 19));
+                this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("GLASS_BOTTLE", 26));
             }
 
             for (String key : getDefFlagsValues().keySet()) {
                 if (!guiRoot.gui_flags.containsKey(key)) {
-                    guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("&e" + key, getGuiMaxSlot()));
+                    guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("GOLDEN_APPLE", getGuiMaxSlot()));
                 }
             }
 
@@ -555,10 +556,6 @@ public class ConfigLoader {
         return this.root;
     }
 
-    public String getGuiString(String string) {
-        return ChatColor.translateAlternateColorCodes('&', guiRoot.gui_strings.get(string));
-    }
-
     public int getGuiSlot(String flag) {
         return guiRoot.gui_flags.get(flag).slot;
     }
@@ -571,8 +568,8 @@ public class ConfigLoader {
     public ItemStack getGuiSeparator() {
         ItemStack separator = new ItemStack(Material.getMaterial(guiRoot.gui_separator.material), 1, (short) guiRoot.gui_separator.data);
         ItemMeta meta = separator.getItemMeta();
-        meta.setDisplayName(getGuiString("separator"));
-        meta.setLore(Arrays.asList("", getGuiString("separator")));
+        meta.setDisplayName(RedProtect.get().guiLang.getFlagString("separator"));
+        meta.setLore(Arrays.asList("", RedProtect.get().guiLang.getFlagString("separator")));
         separator.setItemMeta(meta);
         return separator;
     }

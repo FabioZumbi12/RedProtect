@@ -118,23 +118,21 @@ public class RPGui implements Listener {
                 String fvalue;
                 if (flag.equalsIgnoreCase("clan")) {
                     if (region.getFlags().get(flag).toString().equals("")) {
-                        fvalue = RedProtect.get().config.getGuiString("false");
+                        fvalue = RedProtect.get().guiLang.getFlagString("false");
                     } else {
-                        fvalue = RedProtect.get().config.getGuiString("true");
+                        fvalue = RedProtect.get().guiLang.getFlagString("true");
                     }
                 } else {
-                    fvalue = RedProtect.get().config.getGuiString(region.getFlags().get(flag).toString());
+                    fvalue = RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString());
                 }
 
                 this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                 ItemMeta guiMeta = this.guiItems[i].getItemMeta();
-                guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).name));
+                guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
                 guiMeta.setLore(Arrays.asList(
-                        translateAlternateColorCodes('&', RedProtect.get().config.getGuiString("value") + fvalue),
+                        translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + fvalue),
                         "§0" + flag,
-                        translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
-                        translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
-                        translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
+                        translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagDescription(flag))));
                 if (allowEnchant) {
                     if (this.region.getFlagBool(flag)) {
                         guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -264,11 +262,9 @@ public class RPGui implements Listener {
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
         itemMeta.setLore(Arrays.asList(
-                translateAlternateColorCodes('&', RedProtect.get().config.getGuiString("value") + RedProtect.get().config.getGuiString(String.valueOf(flagv))),
+                translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + RedProtect.get().guiLang.getFlagString(String.valueOf(flagv))),
                 "§0" + flag,
-                translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
-                translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
-                translateAlternateColorCodes('&', RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
+                translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagDescription(flag))));
         event.getCurrentItem().setItemMeta(itemMeta);
 
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);

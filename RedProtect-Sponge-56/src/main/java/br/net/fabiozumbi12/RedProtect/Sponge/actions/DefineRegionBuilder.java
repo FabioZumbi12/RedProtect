@@ -184,8 +184,8 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
-            UniqueAccount acc = RedProtect.get().econ.getOrCreateAccount(p.getUniqueId()).get();
-            double peco = acc.getBalance(RedProtect.get().econ.getDefaultCurrency()).doubleValue();
+            UniqueAccount acc = RedProtect.get().economy.getOrCreateAccount(p.getUniqueId()).get();
+            double peco = acc.getBalance(RedProtect.get().economy.getDefaultCurrency()).doubleValue();
             long reco = newRegion.getArea() * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
@@ -193,7 +193,7 @@ public class DefineRegionBuilder extends RegionBuilder {
             }
 
             if (peco >= reco) {
-                acc.withdraw(RedProtect.get().econ.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getPVHelper().getCause(p));
+                acc.withdraw(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getPVHelper().getCause(p));
                 p.sendMessage(RPUtil.toText(RedProtect.get().lang.get("economy.newRegion.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
             } else {
                 this.setError(p, RedProtect.get().lang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco));

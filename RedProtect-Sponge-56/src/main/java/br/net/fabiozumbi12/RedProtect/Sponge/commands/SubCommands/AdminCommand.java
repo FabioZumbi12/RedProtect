@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
@@ -170,7 +171,9 @@ public class AdminCommand implements CommandCallable {
                     RedProtect.get().commandHandler.unregisterAll();
 
                     RedProtect.get().config = new ConfigManager(RedProtect.get().factory);
+
                     RedProtect.get().lang = new LangManager();
+                    RedProtect.get().guiLang = new LangGuiManager();
 
                     RedProtect.get().logger.info("Re-registering commands...");
                     RedProtect.get().commandHandler = new CommandHandler(RedProtect.get());

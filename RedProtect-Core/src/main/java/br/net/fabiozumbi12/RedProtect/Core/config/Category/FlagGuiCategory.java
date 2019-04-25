@@ -37,21 +37,10 @@ public class FlagGuiCategory {
 
     @Setting(value = "gui-separator")
     public guiSeparator gui_separator = new guiSeparator();
-    @Setting(value = "gui-strings", comment = "Gui general customization.")
-    public Map<String, String> gui_strings = createMap();
     @Setting(value = "gui-flags")
     public Map<String, GuiFlag> gui_flags = new HashMap<>();
 
     public FlagGuiCategory() {
-    }
-
-    private Map<String, String> createMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("false", "&cfalse");
-        map.put("separator", "&7|");
-        map.put("true", "&atrue");
-        map.put("value", "&bValue: ");
-        return map;
     }
 
     @ConfigSerializable
@@ -65,32 +54,15 @@ public class FlagGuiCategory {
     @ConfigSerializable
     public static class GuiFlag {
         @Setting
-        public String description = "&bDescription: &2Add a flag description here.";
-        @Setting
-        public String description1 = "";
-        @Setting
-        public String description2 = "";
-        @Setting
         public String material = "golden_apple";
-        @Setting
-        public String name = "";
         @Setting
         public int slot = 0;
 
         public GuiFlag() {
         }
 
-        public GuiFlag(String name, int slot) {
-            this.name = name;
-            this.slot = slot;
-        }
-
-        public GuiFlag(String desc, String desc1, String desc2, String mat, String name, int slot) {
-            this.description = desc;
-            this.description1 = desc1;
-            this.description2 = desc2;
+        public GuiFlag(String mat, int slot) {
             this.material = mat;
-            this.name = name;
             this.slot = slot;
         }
     }

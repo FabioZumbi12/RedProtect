@@ -28,7 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigLoader;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPPermissionHandler;
@@ -66,8 +67,9 @@ public class RedProtect extends JavaPlugin {
     public final RPLogger logger = new RPLogger();
     public RegionManager rm;
     public RPPermissionHandler ph;
-    public ConfigLoader config;
+    public ConfigManager config;
     public LangManager lang;
+    public LangGuiManager guiLang;
 
     public CommandHandler cmdHandler;
 
@@ -125,13 +127,11 @@ public class RedProtect extends JavaPlugin {
             logger.clear("");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
-                logger.severe("Error enabling RedProtect, plugin will shut down.");
-                this.setEnabled(false);
-            }
             getServer().setWhitelist(true);
             getServer().getOnlinePlayers().forEach(p -> p.kickPlayer("The server has been whitelisted due to an error while loading plugins!"));
+            this.setEnabled(false);
+
+            e.printStackTrace();
             logger.severe("Due to an error in RedProtect loading, the whitelist has been turned on and every player has been kicked.");
             logger.severe("DO NOT LET ANYONE ENTER before fixing the problem, otherwise you risk losing protected regions.");
         }
@@ -150,7 +150,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() throws Exception {
-        config = new ConfigLoader();
+        config = new ConfigManager();
         lang = new LangManager();
 
         if (config.configRoot().purge.regen.enable_whitelist_regen && Bukkit.getServer().hasWhitelist()) {
@@ -181,6 +181,9 @@ public class RedProtect extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Load Gui lang file
+        guiLang = new LangGuiManager();
 
         // Register hooks
         hooks.registerHooks();

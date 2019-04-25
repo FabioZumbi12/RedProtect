@@ -101,14 +101,12 @@ public class RPGui {
 
                     this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
 
-                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).name));
+                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
 
                     this.guiItems[i].offer(Keys.ITEM_LORE, Arrays.asList(
-                            Text.of(RedProtect.get().config.getGuiString("value"), RedProtect.get().config.getGuiString(region.getFlags().get(flag).toString())),
+                            Text.of(RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
                             RPUtil.toText("&0" + flag),
-                            RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
-                            RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
-                            RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
+                            RPUtil.toText(RedProtect.get().guiLang.getFlagDescription(flag))));
 
                     if (!this.region.getFlagBool(flag)) {
                         this.guiItems[i].remove(Keys.ITEM_ENCHANTMENTS);
@@ -252,11 +250,9 @@ public class RPGui {
             item.offer(Keys.HIDE_ATTRIBUTES, true);
 
             item.offer(Keys.ITEM_LORE, Arrays.asList(
-                    Text.of(RedProtect.get().config.getGuiString("value"), RedProtect.get().config.getGuiString(this.region.getFlagString(flag))),
+                    Text.of(RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(this.region.getFlagString(flag))),
                     RPUtil.toText("&0" + flag),
-                    RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description),
-                    RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description1),
-                    RPUtil.toText(RedProtect.get().config.guiRoot().gui_flags.get(flag).description2)));
+                    RPUtil.toText(RedProtect.get().guiLang.getFlagDescription(flag))));
 
             event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
             event.getTransactions().get(0).getSlot().offer(item);

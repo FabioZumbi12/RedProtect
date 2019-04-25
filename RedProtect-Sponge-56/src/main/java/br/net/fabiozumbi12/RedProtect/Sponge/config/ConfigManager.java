@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -239,66 +240,70 @@ public class ConfigManager {
                     + "Lists are [object1, object2, ...]\n"
                     + "Strings containing the char & always need to be quoted";
 
-            String guiFileName = "guiconfig" + RedProtect.get().config.configRoot().language + ".conf";
-            File guiConfig = new File(RedProtect.get().configDir, guiFileName);
-            if (!guiConfig.isFile()) {
-                Optional<Asset> mayAsset = RedProtect.get().container.getAsset(guiFileName);
-                if (mayAsset.isPresent()) {
-                    try {
-                        mayAsset.get().copyToFile(guiConfig.toPath());
-                    } catch (IOException e) {
-                        RedProtect.get().logger.severe("Could not copy guiconfig language file " + guiFileName
-                                + " to path " + guiConfig.getAbsolutePath());
-                        e.printStackTrace();
-                    }
-                } else {
-                    RedProtect.get().logger.warning("Could not find guiconfig language file for language"
-                            + RedProtect.get().config.configRoot().language);
-                }
-
+            String guiFileName = "guiconfig" + configRoot().language + ".conf";
+            if (new File(RedProtect.get().configDir, guiFileName).exists()){
+                new File(RedProtect.get().configDir, guiFileName).renameTo(new File(RedProtect.get().configDir, "guiconfig.conf"));
             }
-            guiLoader = HoconConfigurationLoader.builder().setFile(guiConfig).build();
+            guiLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().configDir, "guiconfig.conf")).build();
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
+
+            if (guiCfgRoot.getNode("gui-strings").getValue() != null){
+                guiCfgRoot.removeChild("gui-strings");
+            }
+            for (ConfigurationNode key:guiCfgRoot.getNode("gui-flags").getChildrenList()){
+                if (key.getNode("name").getValue() != null){
+                    key.removeChild("name");
+                }
+                if (key.getNode("description").getValue() != null){
+                    key.removeChild("description");
+                }
+                if (key.getNode("description1").getValue() != null){
+                    key.removeChild("description1");
+                }
+                if (key.getNode("description2").getValue() != null){
+                    key.removeChild("description2");
+                }
+            }
 
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = ItemTypes.STAINED_GLASS_PANE.getId();
 
             if (this.guiRoot.gui_flags.isEmpty()) {
-                this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("&6Description: &aAllow or cancel all", "&atype of effects for non members", "&aof this region.", ItemTypes.BLAZE_ROD.getId(), "&e=> Allow Effects", 16));
-                this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players with", "&a&afly enabled to fly on this region.", "", ItemTypes.FEATHER.getId(), "&e=> Allow Fly", 8));
-                this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use the", "&acommand /sethome or /home to set or come to", "&athis region.", ItemTypes.COMPASS.getId(), "&e=> Allow Set Home", 2));
-                this.guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to consume", "&apotions ins this region.", "", ItemTypes.POTION.getId(), "&e=> Allow Potions", 26));
-                this.guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to interact", "&awith spawners in this region.", "", ItemTypes.MOB_SPAWNER.getId(), "&e=> Allow Interact Spawners", 10));
-                this.guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag("&6Description: &aAllow any player to build", "&ain this region.", "", ItemTypes.GRASS.getId(), "&e=> Allow Build", 13));
-                this.guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to press", "&abutons in this region.", "", ItemTypes.STONE_BUTTON.getId(), "&e=> Allow Buttons", 6));
-                this.guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag("&6Description: &aChoose if farms", "&ain this region will grow or not.", "", ItemTypes.WHEAT.getId(), "&e=> Allow Blocks to Grow", 27));
-                this.guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to open any type of", "&achests in this region.", "", ItemTypes.TRAPPED_CHEST.getId(), "&e=> Allow Open Chest", 3));
-                this.guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to open", "&aand close doors in this region.", "", ItemTypes.WOODEN_DOOR.getId(), "&e=> Allow Open Doors", 0));
-                this.guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&ause ender chests on this region.", "", ItemTypes.ENDER_CHEST.getId(), "&e=> Allow Ender Chest", 22));
-                this.guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag("&6Description: &aAllow damage blocks by fire", "&aand explosion, and fire spread.", "", ItemTypes.BLAZE_POWDER.getId(), "&e=> Fire Spread and Damage Blocks", 9));
-                this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag("&6Description: &aAllow fishing and", "&ainteract with water animals.", "", ItemTypes.FISHING_ROD.getId(), "&e=> Allow Fishing", 28));
-                this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag("&6Description: &aEnable water and lava flow", "&ain this region.", "", ItemTypes.WATER_BUCKET.getId(), "&e=> Water and Lava Flow", 29));
-                this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag("&6Description: &aAllow liquids to", "&aremove blocks on flow.", "", ItemTypes.LAVA_BUCKET.getId(), "&e=> Allow Flow Damage", 30));
-                this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag("&6Description: &aAllow ice form", "&aby players using frost walk", "&aenchant.", ItemTypes.PACKED_ICE.getId(), "&e=> Allow Ice Form by Players", 4));
-                this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag("&6Description: &aAllow ice form", "&aby entities like SnowMan and by", "&aweather like snow.", ItemTypes.ICE.getId(), "&e=> Allow Ice Form by World", 31));
-                this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag("&6Description: &aAllow leaves decay naturally", "&ain this region.", "", ItemTypes.LEAVES.getId(), "&e=> Allow Leaves decay", 18));
-                this.guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to use", "&alevers in this region.", "", ItemTypes.LEVER.getId(), "&e=> Allow Lever", 5));
-                this.guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to place,", "&aenter and break Minecarts in this region.", "", ItemTypes.MINECART.getId(), "&e=> Allow Place Minecarts/Boats", 25));
-                this.guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag("&6Description: &aAllow mobs to damage,", "&aexplode or grief blocks on this", "&aregion.", ItemTypes.MYCELIUM.getId(), "&e=> Allow Mob Grief", 32));
-                this.guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag("&6Description: &aAllow no members to hurt,", "&akill or interact with passives mobs in", "&athis region.", ItemTypes.SADDLE.getId(), "&e=> Hurt/Interact Passives", 33));
-                this.guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag("&6Description: &aAllow PvP for all players", "&ain this region, including members and", "&ano members.", ItemTypes.STONE_SWORD.getId(), "&e=> Allow PvP", 17));
-                this.guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&awalk on pressure plates and interact.", "", ItemTypes.LIGHT_WEIGHTED_PRESSURE_PLATE.getId(), "&e=> Use Pressure Plates", 20));
-                this.guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag("&6Description: &aAllow members to open", "&adouble normal and iron doors", "&aand iron trap doors together.", ItemTypes.IRON_DOOR.getId(), "&e=> Open Double and Iron Doors", 1));
-                this.guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag("&6Description: &aAllow natural spawn of", "&apassives mobs in this region.", "", ItemTypes.EGG.getId(), "&e=> Spawn Animals", 34));
-                this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("&6Description: &aAllow natural spawn of", "&amonsters in this region.", "", ItemTypes.PUMPKIN.getId(), "&e=> Allow Spawn Monsters", 35));
-                this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("&6Description: &aAllow players to", "&ateleport on this region using itens", "&alike ender pearls and chorus fruits.", ItemTypes.ENDER_PEARL.getId(), "&e=> Allow Teleport", 19));
-                this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("&6Description: &aAllow use or throw", "&aany type of potions for no members", "&aof region.", ItemTypes.GLASS_BOTTLE.getId(), "&e=> Use Potions", 26));
+                this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag(ItemTypes.BLAZE_ROD.getId(), 16));
+                this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag(ItemTypes.FEATHER.getId(), 8));
+                this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag(ItemTypes.COMPASS.getId(), 2));
+                this.guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag(ItemTypes.POTION.getId(), 26));
+                this.guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag(ItemTypes.MOB_SPAWNER.getId(), 10));
+                this.guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag(ItemTypes.GRASS.getId(), 13));
+                this.guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag(ItemTypes.STONE_BUTTON.getId(), 6));
+                this.guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag(ItemTypes.WHEAT.getId(), 27));
+                this.guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag(ItemTypes.TRAPPED_CHEST.getId(), 3));
+                this.guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag(ItemTypes.WOODEN_DOOR.getId(), 0));
+                this.guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag(ItemTypes.ENDER_CHEST.getId(), 22));
+                this.guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag(ItemTypes.BLAZE_POWDER.getId(), 9));
+                this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag(ItemTypes.FISHING_ROD.getId(), 28));
+                this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag(ItemTypes.WATER_BUCKET.getId(), 29));
+                this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag(ItemTypes.LAVA_BUCKET.getId(), 30));
+                this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag(ItemTypes.PACKED_ICE.getId(), 4));
+                this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag(ItemTypes.ICE.getId(), 31));
+                this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag(ItemTypes.LEAVES.getId(), 18));
+                this.guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag(ItemTypes.LEVER.getId(), 5));
+                this.guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag(ItemTypes.MINECART.getId(), 25));
+                this.guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag(ItemTypes.MYCELIUM.getId(), 32));
+                this.guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag(ItemTypes.SADDLE.getId(), 33));
+                this.guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag(ItemTypes.STONE_SWORD.getId(), 17));
+                this.guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag(ItemTypes.LIGHT_WEIGHTED_PRESSURE_PLATE.getId(), 20));
+                this.guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag(ItemTypes.IRON_DOOR.getId(), 1));
+                this.guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag(ItemTypes.EGG.getId(), 34));
+                this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag(ItemTypes.PUMPKIN.getId(), 35));
+                this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag(ItemTypes.ENDER_PEARL.getId(), 19));
+                this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag(ItemTypes.GLASS_BOTTLE.getId(), 26));
             }
 
             for (String key : getDefFlagsValues().keySet()) {
                 if (!guiRoot.gui_flags.containsKey(key)) {
-                    guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("&e" + key, getGuiMaxSlot()));
+                    guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("golden_apple", getGuiMaxSlot()));
                 }
             }
 
@@ -505,10 +510,6 @@ public class ConfigManager {
         return this.root;
     }
 
-    public Text getGuiString(String string) {
-        return RPUtil.toText(guiRoot.gui_strings.get(string));
-    }
-
     public int getGuiSlot(String flag) {
         return guiRoot.gui_flags.get(flag).slot;
     }
@@ -521,9 +522,9 @@ public class ConfigManager {
 
     public ItemStack getGuiSeparator() {
         ItemStack separator = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, guiRoot.gui_separator.material).orElse(ItemTypes.GLASS_PANE), 1);
-        separator.offer(Keys.DISPLAY_NAME, getGuiString("separator"));
+        separator.offer(Keys.DISPLAY_NAME, RedProtect.get().guiLang.getFlagString("separator"));
         separator.offer(Keys.ITEM_DURABILITY, guiRoot.gui_separator.data);
-        separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, getGuiString("separator")));
+        separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, RedProtect.get().guiLang.getFlagString("separator")));
         return separator;
     }
 

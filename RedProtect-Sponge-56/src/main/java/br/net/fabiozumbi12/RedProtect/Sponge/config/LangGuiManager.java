@@ -26,105 +26,66 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
-import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import br.net.fabiozumbi12.RedProtect.Core.config.GuiLangCore;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.IOException;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmd;
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmdAlias;
+public class LangGuiManager extends GuiLangCore {
 
-public class LangManager extends LangCore {
-
-    public LangManager() {
-        String resLang = "lang" + RedProtect.get().config.configRoot().language + ".properties";
+    public LangGuiManager() {
+        String resLang = "gui" + RedProtect.get().config.configRoot().language + ".properties";
         pathLang = RedProtect.get().configDir + File.separator + resLang;
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
             if (!RedProtect.get().container.getAsset(resLang).isPresent()) {
-                resLang = "langEN-US.properties";
+                resLang = "guiEN-US.properties";
                 pathLang = RedProtect.get().configDir + File.separator + resLang;
             }
-
             try {
                 RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            RedProtect.get().logger.info("Created config file: " + pathLang);
+            RedProtect.get().logger.info("Created GUI language file: " + pathLang);
         }
 
         loadLang();
         loadBaseLang();
         updateLang();
-
-        RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().config.configRoot().language);
     }
 
     private void loadLang() {
-        loadBaseLang();
+        loadDefaultLang();
 
         if (loadedLang.get("_lang.version") != null) {
             int langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", ""));
             int rpv = Integer.parseInt(RedProtect.get().container.getVersion().get().replace(".", ""));
             if (langv < rpv || langv == 0) {
-                RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
-                RedProtect.get().logger.warning("Lang file version: " + loadedLang.get("_lang.version"));
                 loadedLang.put("_lang.version", RedProtect.get().container.getVersion().get());
             }
         }
     }
 
     private void updateLang() {
-        if (updateLang(RedProtect.get().container.getVersion().get())) {
-            RedProtect.get().logger.warning("- Removed invalid entries from language files");
+        if (updateLang(RedProtect.get().container.getVersion().get())){
+            RedProtect.get().logger.warning("- Removed invalid entries from GUI language files");
         }
     }
 
-    public String get(String key) {
-        return getRaw(key);
+    public String getFlagName(String flag) {
+        return getRaw("gui.flags." + flag + ".name");
     }
 
-    public void sendMessage(CommandSource sender, String key) {
-        sendMessage(sender, key, new Replacer[0]);
+    public String getFlagDescription(String flag) {
+        return getRaw("gui.flags." + flag + ".description");
     }
 
-    public void sendMessage(CommandSource sender, String key, Replacer[] replaces) {
-        if (sender instanceof Player && delayedMessage.containsKey(sender.getName()) && delayedMessage.get(sender.getName()).equals(key)) {
-            return;
-        }
-
-        if (loadedLang.get(key) == null) {
-            sender.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + key));
-        } else if (get(key).equalsIgnoreCase("")) {
-            return;
-        } else {
-            String message = get(key);
-            for (Replacer replacer : replaces) {
-                message = message.replace(replacer.getPlaceholder(), replacer.getValue());
-            }
-            sender.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + message));
-        }
-
-        if (sender instanceof Player) {
-            delayedMessage.put(sender.getName(), key);
-            Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-                delayedMessage.remove(sender.getName());
-            }, 1, TimeUnit.SECONDS);
-        }
-    }
-
-    public void sendCommandHelp(CommandSource sender, String cmd, boolean usage) {
-        if (usage) sendMessage(sender, "correct.usage");
-        sender.sendMessage(RPUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
+    public Text getFlagString(String key) {
+        return RPUtil.toText(getRaw("gui.strings." + key));
     }
 }

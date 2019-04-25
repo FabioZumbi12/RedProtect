@@ -185,7 +185,7 @@ public class RPUtil extends CoreUtil {
         if (item.get(Keys.ITEM_LORE).isPresent()) {
             try {
                 String lore = item.get(Keys.ITEM_LORE).get().get(1).toPlain();
-                if (RedProtect.get().config.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.get().config.getGuiString("separator").toPlain())) {
+                if (RedProtect.get().config.getDefFlags().contains(lore.replace("§0", "")) || lore.equals(RedProtect.get().guiLang.getFlagString("separator").toPlain())) {
                     return true;
                 }
             } catch (IndexOutOfBoundsException ignored) {

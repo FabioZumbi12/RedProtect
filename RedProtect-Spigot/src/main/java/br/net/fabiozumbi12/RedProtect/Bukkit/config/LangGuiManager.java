@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Core.config.GuiLangCore;
 import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
@@ -35,34 +36,30 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.io.File;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
 
-public class LangManager extends LangCore {
+public class LangGuiManager extends GuiLangCore {
 
-    public LangManager() {
-        String resLang = "lang" + RedProtect.get().config.configRoot().language + ".properties";
+    public LangGuiManager() {
+        String resLang = "gui" + RedProtect.get().config.configRoot().language + ".properties";
         pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
             if (RedProtect.get().getResource("assets/redprotect/" + resLang) == null) {
-                resLang = "langEN-US.properties";
+                resLang = "guiEN-US.properties";
                 pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
             }
             RPUtil.saveResource("/assets/redprotect/" + resLang, null, new File(RedProtect.get().getDataFolder(), resLang));
-            RedProtect.get().logger.info("Created language file: " + pathLang);
+            RedProtect.get().logger.info("Created GUI language file: " + pathLang);
         }
 
         loadLang();
         loadBaseLang();
         updateLang();
-
-        RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().config.configRoot().language);
     }
 
     private void loadLang() {
@@ -75,8 +72,6 @@ public class LangManager extends LangCore {
                 langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", "") + 0);
             }
             if (langv < rpv || langv == 0) {
-                RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
-                RedProtect.get().logger.warning("Lang file version: " + loadedLang.get("_lang.version"));
                 loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
             }
         }
@@ -84,44 +79,19 @@ public class LangManager extends LangCore {
 
     private void updateLang() {
         if (updateLang(RedProtect.get().getDescription().getVersion())){
-            RedProtect.get().logger.warning("- Removed invalid entries from language files");
+            RedProtect.get().logger.warning("- Removed invalid entries from GUI language files");
         }
     }
 
-    public String get(String key) {
-        return ChatColor.translateAlternateColorCodes('&', getRaw(key));
+    public String getFlagName(String flag) {
+        return ChatColor.translateAlternateColorCodes('&', getRaw("gui.flags." + flag + ".name"));
     }
 
-    public void sendMessage(CommandSender sender, String key) {
-        sendMessage(sender, key, new Replacer[0]);
+    public String getFlagDescription(String flag) {
+        return ChatColor.translateAlternateColorCodes('&', getRaw("gui.flags." + flag + ".description"));
     }
 
-    public void sendMessage(CommandSender sender, String key, Replacer[] replaces) {
-        if (sender instanceof Player && delayedMessage.containsKey(sender.getName()) && delayedMessage.get(sender.getName()).equals(key)) {
-            return;
-        }
-
-        if (loadedLang.get(key) == null) {
-            sender.sendMessage(get("_redprotect.prefix") + " " + ChatColor.translateAlternateColorCodes('&', key));
-        } else if (get(key).equalsIgnoreCase("")) {
-            return;
-        } else {
-            String message = get(key);
-            for (Replacer replacer : replaces) {
-                message = message.replace(replacer.getPlaceholder(), replacer.getValue());
-            }
-            sender.sendMessage(get("_redprotect.prefix") + " " + message);
-        }
-
-        if (sender instanceof Player) {
-            final Player p = (Player) sender;
-            delayedMessage.put(p.getName(), key);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> delayedMessage.remove(p.getName()), 20);
-        }
-    }
-
-    public void sendCommandHelp(CommandSender sender, String cmd, boolean usage) {
-        if (usage) sendMessage(sender, "correct.usage");
-        sender.sendMessage(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd)));
+    public String getFlagString(String key) {
+        return ChatColor.translateAlternateColorCodes('&', getRaw("gui.strings." + key));
     }
 }

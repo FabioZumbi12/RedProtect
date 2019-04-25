@@ -30,7 +30,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigLoader;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
@@ -232,11 +233,14 @@ public class AdminCommand implements SubCommand {
                 RedProtect.get().cmdHandler.unregisterAll();
 
                 try {
-                    RedProtect.get().config = new ConfigLoader();
+                    RedProtect.get().config = new ConfigManager();
                 } catch (ObjectMappingException e) {
                     e.printStackTrace();
                 }
+
+                RedProtect.get().logger.info("Loading language files...");
                 RedProtect.get().lang = new LangManager();
+                RedProtect.get().guiLang = new LangGuiManager();
 
                 RedProtect.get().logger.info("Re-registering commands...");
                 RedProtect.get().cmdHandler = new CommandHandler(RedProtect.get());

@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
@@ -99,7 +100,8 @@ public class RedProtect {
     public RPPermissionHandler ph;
     public ConfigManager config;
     public LangManager lang;
-    public EconomyService econ;
+    public LangGuiManager guiLang;
+    public EconomyService economy;
 
     public CommandManager commandManager;
     public CommandHandler commandHandler;
@@ -163,10 +165,11 @@ public class RedProtect {
                     "");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.severe("Error enabling RedProtect, plugin will shut down.");
             Sponge.getGame().getServer().setHasWhitelist(true);
             Sponge.getGame().getServer().getOnlinePlayers().forEach(Player::kick);
+
+            e.printStackTrace();
+            logger.severe("Error enabling RedProtect, plugin will shut down.");
             logger.severe("Due to an error in RedProtect loading, the whitelist has been turned on and every player has been kicked.");
             logger.severe("DO NOT LET ANYONE ENTER before fixing the problem, otherwise you risk losing protected regions.");
         }
@@ -252,6 +255,9 @@ public class RedProtect {
             e.printStackTrace();
         }
 
+        // Load Gui lang file
+        guiLang = new LangGuiManager();
+
         // Register hooks
         this.hooks.registerHooks();
     }
@@ -280,7 +286,7 @@ public class RedProtect {
     @Listener
     public void onChangeServiceProvider(ChangeServiceProviderEvent event) {
         if (event.getService().equals(EconomyService.class)) {
-            econ = (EconomyService) event.getNewProviderRegistration().getProvider();
+            economy = (EconomyService) event.getNewProviderRegistration().getProvider();
         }
     }
 
