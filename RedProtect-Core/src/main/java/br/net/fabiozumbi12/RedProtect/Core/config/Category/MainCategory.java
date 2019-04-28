@@ -36,7 +36,7 @@ public class MainCategory {
     public MainCategory(){}
 
     @Setting(value = "config-version", comment = "Don't touch <3")
-    public double config_version = 8.3;
+    public double config_version = 8.4;
     @Setting(value = "online-mode", comment = "This option will define if RedProtect will work with UUIDs or player names.\n" +
             "Use with caution because offline player has no uuids and maybe some offline player is using online nicknames.\n" +
             "Make a backup of your DATABASE before change this setting in a production server.")

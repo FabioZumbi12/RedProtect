@@ -127,11 +127,12 @@ public class RedProtect extends JavaPlugin {
             logger.clear("");
 
         } catch (Exception e) {
+            e.printStackTrace();
+
             getServer().setWhitelist(true);
             getServer().getOnlinePlayers().forEach(p -> p.kickPlayer("The server has been whitelisted due to an error while loading plugins!"));
             this.setEnabled(false);
 
-            e.printStackTrace();
             logger.severe("Due to an error in RedProtect loading, the whitelist has been turned on and every player has been kicked.");
             logger.severe("DO NOT LET ANYONE ENTER before fixing the problem, otherwise you risk losing protected regions.");
         }

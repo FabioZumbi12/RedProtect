@@ -165,10 +165,11 @@ public class RedProtect {
                     "");
 
         } catch (Exception e) {
+            e.printStackTrace();
+
             Sponge.getGame().getServer().setHasWhitelist(true);
             Sponge.getGame().getServer().getOnlinePlayers().forEach(Player::kick);
 
-            e.printStackTrace();
             logger.severe("Error enabling RedProtect, plugin will shut down.");
             logger.severe("Due to an error in RedProtect loading, the whitelist has been turned on and every player has been kicked.");
             logger.severe("DO NOT LET ANYONE ENTER before fixing the problem, otherwise you risk losing protected regions.");

@@ -157,7 +157,7 @@ public class ConfigManager {
 
             //Defaults per server
             if (this.root.private_cat.allowed_blocks.isEmpty()) {
-                this.root.private_cat.allowed_blocks = Arrays.asList(
+                this.root.private_cat.allowed_blocks = new ArrayList<>(Arrays.asList(
                         "minecraft:dispenser",
                         "minecraft:anvil",
                         "minecraft:note_block",
@@ -174,7 +174,7 @@ public class ConfigManager {
                         "minecraft:trapped_chest",
                         "minecraft:hopper",
                         "minecraft:dropper",
-                        "minecraft:[a-z_]+_shulker_box");
+                        "minecraft:[a-z_]+_shulker_box"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(BlockTypes.GRASS.getId(), BlockTypes.TALLGRASS.getId());
@@ -217,33 +217,6 @@ public class ConfigManager {
             gFlagsLoader = HoconConfigurationLoader.builder().setFile(gFlagsConfig).build();
             gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerg));
 
-            // Import old gui translations
-            if (guiCfgRoot.getNode("gui-strings").getValue() != null){
-                guiCfgRoot.removeChild("gui-strings");
-                for (Map.Entry<Object, ? extends ConfigurationNode> key:guiCfgRoot.getNode("gui-flags").getChildrenMap().entrySet()){
-                    if (key.getValue().getNode("name").getValue() != null){
-                        backupGuiName.put(key.getKey().toString(), key.getValue().getNode("name").getString());
-                        key.getValue().removeChild("name");
-                    }
-                    StringBuilder description = new StringBuilder();
-                    if (key.getValue().getNode("description").getValue() != null){
-                        description.append(key.getValue().getNode("description").getString()).append("/n");
-                        key.getValue().removeChild("description");
-                    }
-                    if (key.getValue().getNode("description1").getValue() != null){
-                        description.append(key.getValue().getNode("description1").getString()).append("/n");
-                        key.getValue().removeChild("description1");
-                    }
-                    if (key.getValue().getNode("description2").getValue() != null){
-                        description.append(key.getValue().getNode("description2").getString()).append("/n");
-                        key.getValue().removeChild("description2");
-                    }
-                    if (description.length() > 0){
-                        backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length()-2));
-                    }
-                }
-            }
-
             //import old world values
             if (gFlagsConfig.exists() && !gflagsRoot.getNode("worlds").hasMapChildren()) {
                 Object values = gflagsRoot.getValue();
@@ -274,24 +247,32 @@ public class ConfigManager {
             guiCfgRoot = guiLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
-            /*
+            // Import old gui translations
             if (guiCfgRoot.getNode("gui-strings").getValue() != null){
                 guiCfgRoot.removeChild("gui-strings");
+                for (Map.Entry<Object, ? extends ConfigurationNode> key:guiCfgRoot.getNode("gui-flags").getChildrenMap().entrySet()){
+                    if (key.getValue().getNode("name").getValue() != null){
+                        backupGuiName.put(key.getKey().toString(), key.getValue().getNode("name").getString());
+                        key.getValue().removeChild("name");
+                    }
+                    StringBuilder description = new StringBuilder();
+                    if (key.getValue().getNode("description").getValue() != null){
+                        description.append(key.getValue().getNode("description").getString()).append("/n");
+                        key.getValue().removeChild("description");
+                    }
+                    if (key.getValue().getNode("description1").getValue() != null){
+                        description.append(key.getValue().getNode("description1").getString()).append("/n");
+                        key.getValue().removeChild("description1");
+                    }
+                    if (key.getValue().getNode("description2").getValue() != null){
+                        description.append(key.getValue().getNode("description2").getString()).append("/n");
+                        key.getValue().removeChild("description2");
+                    }
+                    if (description.length() > 0){
+                        backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length()-2));
+                    }
+                }
             }
-            for (ConfigurationNode key:guiCfgRoot.getNode("gui-flags").getChildrenList()){
-                if (key.getNode("name").getValue() != null){
-                    key.removeChild("name");
-                }
-                if (key.getNode("description").getValue() != null){
-                    key.removeChild("description");
-                }
-                if (key.getNode("description1").getValue() != null){
-                    key.removeChild("description1");
-                }
-                if (key.getNode("description2").getValue() != null){
-                    key.removeChild("description2");
-                }
-            }*/
 
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = ItemTypes.STAINED_GLASS_PANE.getId();

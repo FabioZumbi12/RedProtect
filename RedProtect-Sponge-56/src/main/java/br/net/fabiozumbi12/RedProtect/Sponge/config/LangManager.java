@@ -71,7 +71,7 @@ public class LangManager extends LangCore {
     }
 
     private void loadLang() {
-        loadBaseLang();
+        loadDefaultLang();
 
         if (loadedLang.get("_lang.version") != null) {
             int langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", ""));

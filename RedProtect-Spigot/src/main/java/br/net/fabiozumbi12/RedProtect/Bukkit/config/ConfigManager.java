@@ -157,7 +157,7 @@ public class ConfigManager {
 
             //Defaults per server
             if (this.root.private_cat.allowed_blocks.isEmpty()) {
-                this.root.private_cat.allowed_blocks = Arrays.asList(
+                this.root.private_cat.allowed_blocks = new ArrayList<>(Arrays.asList(
                         "ANVIL",
                         "DAMAGED_ANVIL",
                         "CHIPPED_ANVIL",
@@ -177,7 +177,19 @@ public class ConfigManager {
                         "TRAPPED_CHEST",
                         "HOPPER",
                         "DROPPER",
-                        "[A-Z_]+_SHULKER_BOX");
+                        "[A-Z_]+_SHULKER_BOX",
+                        "COMPOSTER",
+                        "BARREL",
+                        "LOOM",
+                        "SMOKER",
+                        "BLAST_FURNACE",
+                        "CARTOGRAPHY_TABLE",
+                        "FLETCHING_TABLE",
+                        "GRINDSTONE",
+                        "SMITHING_TABLE",
+                        "STONECUTTER",
+                        "ANVIL",
+                        "STONECUTTER"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name());
@@ -518,11 +530,6 @@ public class ConfigManager {
             root.private_cat.allowed_blocks.add("GRINDSTONE");
             root.private_cat.allowed_blocks.add("SMITHING_TABLE");
             root.private_cat.allowed_blocks.add("STONECUTTER");
-            root.private_cat.allowed_blocks.add("ANVIL");
-            root.private_cat.allowed_blocks.add("STONECUTTER");
-            root.private_cat.allowed_blocks.add("ANVIL");
-            root.private_cat.allowed_blocks.add("DAMAGED_ANVIL");
-            root.private_cat.allowed_blocks.add("DAMAGED_ANVIL");
             update++;
         }
 
