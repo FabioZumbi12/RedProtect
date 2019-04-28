@@ -105,14 +105,7 @@ public class LangCore {
     }
 
     protected String getRaw(String key) {
-        String langLine;
-
-        if (loadedLang.get(key) == null) {
-            langLine = "&c&oMissing language string for &4" + key;
-        } else {
-            langLine = loadedLang.get(key).toString();
-        }
-        return langLine.replace("/n", "\n");
+        return loadedLang.getProperty(key, "&c&oMissing language string for &4" + key).replace("/n", "\n");
     }
 
     public String translBool(String bool) {

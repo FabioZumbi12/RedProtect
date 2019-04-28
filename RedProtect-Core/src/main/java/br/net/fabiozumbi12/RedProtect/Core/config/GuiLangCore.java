@@ -90,10 +90,6 @@ public class GuiLangCore {
     }
 
     protected String getRaw(String key) {
-        if (loadedLang.get(key) == null) {
-            return null;
-        } else {
-            return loadedLang.get(key).toString();
-        }
+        return loadedLang.getProperty(key);
     }
 }
