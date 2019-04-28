@@ -257,6 +257,7 @@ public class ConfigManager {
             }
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
+            /*
             if (guiCfgRoot.getNode("gui-strings").getValue() != null){
                 guiCfgRoot.removeChild("gui-strings");
             }
@@ -273,7 +274,7 @@ public class ConfigManager {
                 if (key.getNode("description2").getValue() != null){
                     key.removeChild("description2");
                 }
-            }
+            }*/
 
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = "WHITE_STAINED_GLASS_PANE";
