@@ -31,7 +31,6 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -70,7 +69,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
-public class RPUtil extends CoreUtil {
+public class RedProtectUtil extends CoreUtil {
     public static boolean stopRegen;
     private static HashMap<String, String> cachedUUIDs = new HashMap<>();
 
@@ -89,7 +88,7 @@ public class RPUtil extends CoreUtil {
     }
 
     public static Transform<World> DenyExitPlayer(Player p, Transform<World> from, Transform<World> to, Region r) {
-        Region rto = RedProtect.get().rm.getTopRegion(to.getLocation(), RPUtil.class.getName());
+        Region rto = RedProtect.get().rm.getTopRegion(to.getLocation(), RedProtectUtil.class.getName());
         if (rto != r) {
             to = new Transform<>(from.getLocation()).setRotation(from.getRotation());
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionexit");
@@ -100,12 +99,12 @@ public class RPUtil extends CoreUtil {
     public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r, boolean checkSec) {
         Location<World> setFrom = from.getLocation();
         for (int i = 0; i < r.getArea() + 10; i++) {
-            Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ(), RPUtil.class.getName());
-            Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ(), RPUtil.class.getName());
-            Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() + i, RPUtil.class.getName());
-            Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() - i, RPUtil.class.getName());
-            Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ() + i, RPUtil.class.getName());
-            Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ() - i, RPUtil.class.getName());
+            Region r1 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ(), RedProtectUtil.class.getName());
+            Region r2 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ(), RedProtectUtil.class.getName());
+            Region r3 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() + i, RedProtectUtil.class.getName());
+            Region r4 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() - i, RedProtectUtil.class.getName());
+            Region r5 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ() + i, RedProtectUtil.class.getName());
+            Region r6 = RedProtect.get().rm.getTopRegion(wFrom, setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ() - i, RedProtectUtil.class.getName());
             if (r1 != r) {
                 to = new Transform<>(setFrom.add(+i, 0, 0)).setRotation(from.getRotation());
                 break;
@@ -178,6 +177,8 @@ public class RPUtil extends CoreUtil {
             }
             zos.close();
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -274,13 +275,15 @@ public class RPUtil extends CoreUtil {
                     regiondate = dateformat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
-                    e.printStackTrace();
+                    CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
-                    if (region.isLeader(RPUtil.PlayerToUUID(play)) || region.isAdmin(RPUtil.PlayerToUUID(play))) {
+                    if (region.isLeader(RedProtectUtil.PlayerToUUID(play)) || region.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
                         ignore = true;
                         break;
                     }
@@ -312,13 +315,14 @@ public class RPUtil extends CoreUtil {
                     regiondate = dateformat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
-                    e.printStackTrace();
+                    CoreUtil.printJarVersion();
+            e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().config.configRoot().sell.ignore_regions_from_players) {
-                    if (region.isLeader(RPUtil.PlayerToUUID(play)) || region.isAdmin(RPUtil.PlayerToUUID(play))) {
+                    if (region.isLeader(RedProtectUtil.PlayerToUUID(play)) || region.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
                         ignore = true;
                         break;
                     }
@@ -326,7 +330,7 @@ public class RPUtil extends CoreUtil {
 
                 if (!ignore && days > RedProtect.get().config.configRoot().sell.sell_oldest) {
                     RedProtect.get().logger.warning("Selling " + region.getName() + " - Days: " + days);
-                    RPEconomy.putToSell(region, RedProtect.get().config.configRoot().region_settings.default_leader, RPEconomy.getRegionValue(region));
+                    EconomyManager.putToSell(region, RedProtect.get().config.configRoot().region_settings.default_leader, EconomyManager.getRegionValue(region));
                     sell++;
                     RedProtect.get().rm.saveAll(false);
                     continue;
@@ -334,9 +338,9 @@ public class RPUtil extends CoreUtil {
             }
 
             //filter name
-            String rname = RPUtil.setName(region.getName());
+            String rname = RedProtectUtil.setName(region.getName());
             if (rname.length() < 4) {
-                rname = RPUtil.nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
+                rname = RedProtectUtil.nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
                 RedProtect.get().rm.renameRegion(rname, region);
                 cfm++;
             }
@@ -521,7 +525,7 @@ public class RPUtil extends CoreUtil {
                         String key = flag.split(":")[0];
                         String replace = key + ":";
                         if (replace.length() <= flag.length()) {
-                            flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));
+                            flags.put(key, RedProtectUtil.parseObject(flag.substring(replace.length())));
                         }
                     }
                     Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
@@ -548,7 +552,7 @@ public class RPUtil extends CoreUtil {
                         fileDB = regionManager.createEmptyNode();
                     }
 
-                    RPUtil.addProps(fileDB, r);
+                    RedProtectUtil.addProps(fileDB, r);
                     saved++;
 
                     if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
@@ -588,6 +592,7 @@ public class RPUtil extends CoreUtil {
                 RedProtect.get().logger.success((saved - 1) + " regions converted to File with success!");
             }
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
@@ -641,7 +646,8 @@ public class RPUtil extends CoreUtil {
                         st.close();
                         counter++;
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        CoreUtil.printJarVersion();
+            e.printStackTrace();
                     }
                 }
             }
@@ -680,7 +686,8 @@ public class RPUtil extends CoreUtil {
                 }
                 addNewColumns(tableName);
             } catch (SQLException e) {
-                e.printStackTrace();
+                CoreUtil.printJarVersion();
+            e.printStackTrace();
                 RedProtect.get().logger.severe("There was an error while parsing SQL, redProtect will still with actual DB setting until you change the connection options or check if a Mysql service is running. Use /rp reload to try again");
             } finally {
                 if (st != null) {
@@ -709,6 +716,7 @@ public class RPUtil extends CoreUtil {
             rs.close();
             con.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -730,8 +738,8 @@ public class RPUtil extends CoreUtil {
         }
 
         //Save backup
-        if (RPUtil.genFileName(folder.getPath() + File.separator, true) != null) {
-            RPUtil.saveToZipFile(RPUtil.genFileName(folder.getPath() + File.separator, true), savedFile, fileDB);
+        if (RedProtectUtil.genFileName(folder.getPath() + File.separator, true) != null) {
+            RedProtectUtil.saveToZipFile(RedProtectUtil.genFileName(folder.getPath() + File.separator, true), savedFile, fileDB);
         }
 
     }
@@ -748,6 +756,7 @@ public class RPUtil extends CoreUtil {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return total > 0;
@@ -778,7 +787,7 @@ public class RPUtil extends CoreUtil {
     public static int getUpdatedPrior(Region region) {
         int regionarea = region.getArea();
         int prior = region.getPrior();
-        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ(), RPUtil.class.getName());
+        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ(), RedProtectUtil.class.getName());
         Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().getServer().getWorld(region.getWorld()).get(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
 
         if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))) {
@@ -881,9 +890,9 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
-                p[0] = RPUtil.PlayerToUUID(p[0]);
+                p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
@@ -892,9 +901,9 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
-                p[0] = RPUtil.PlayerToUUID(p[0]);
+                p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
@@ -903,9 +912,9 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
-                p[0] = RPUtil.PlayerToUUID(p[0]);
+                p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
@@ -1004,6 +1013,7 @@ public class RPUtil extends CoreUtil {
         try {
             regionManager.save(fileDB);
         } catch (IOException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -1020,7 +1030,7 @@ public class RPUtil extends CoreUtil {
         for (int ix = x - radius; ix <= x + radius; ++ix) {
             for (int iy = y - radius; iy <= y + radius; ++iy) {
                 for (int iz = z - radius; iz <= z + radius; ++iz) {
-                    Region reg = RedProtect.get().rm.getTopRegion(new Location<>(p.getWorld(), ix, iy, iz), RPUtil.class.getName());
+                    Region reg = RedProtect.get().rm.getTopRegion(new Location<>(p.getWorld(), ix, iy, iz), RedProtectUtil.class.getName());
                     if (reg != null && !reg.canBuild(p)) {
                         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
                         return false;

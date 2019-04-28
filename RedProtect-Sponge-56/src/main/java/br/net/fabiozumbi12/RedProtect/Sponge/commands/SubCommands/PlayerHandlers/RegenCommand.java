@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -82,7 +81,7 @@ public class RegenCommand {
                                     return CommandResult.success();
                                 }
 
-                                RPUtil.stopRegen = true;
+                                RedProtectUtil.stopRegen = true;
                                 RedProtect.get().lang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
                                 return CommandResult.success();
 

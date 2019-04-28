@@ -29,8 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -97,7 +96,7 @@ public class KickCommand implements SubCommand {
 
             String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
             if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
-                RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
+                RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
             } else {
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));

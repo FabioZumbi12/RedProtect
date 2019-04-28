@@ -27,7 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
@@ -36,8 +36,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
@@ -51,9 +49,9 @@ public class LangManager extends LangCore {
         File lang = new File(pathLang);
         if (!lang.exists()) {
             if (RedProtect.get().getResource("assets/redprotect/" + resLang) != null) {
-                RPUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
+                RedProtectUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
             } else {
-                RPUtil.saveResource("/assets/redprotect/langEN-US.properties", null, lang);
+                RedProtectUtil.saveResource("/assets/redprotect/langEN-US.properties", null, lang);
             }
             RedProtect.get().logger.info("Created language file: " + pathLang);
         }

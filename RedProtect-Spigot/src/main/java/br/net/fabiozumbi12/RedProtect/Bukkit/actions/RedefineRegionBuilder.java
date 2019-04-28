@@ -28,7 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
@@ -71,7 +71,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
-        region.setPrior(RPUtil.getUpdatedPrior(region));
+        region.setPrior(RedProtectUtil.getUpdatedPrior(region));
 
         String pName = p.getUniqueId().toString();
         if (!RedProtect.get().config.configRoot().online_mode) {
@@ -81,7 +81,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
-        int regionarea = RPUtil.simuleTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), region);
+        int regionarea = RedProtectUtil.simuleTotalRegionSize(RedProtectUtil.PlayerToUUID(p.getName()), region);
         int actualArea = 0;
         if (regionarea > 0) {
             actualArea = totalArea + regionarea;
@@ -97,7 +97,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
         if (otherrg != null && !checkID(region, otherrg) && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+            this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
             return;
         }
 
@@ -106,7 +106,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check regions inside region
         for (Region r : RedProtect.get().rm.getInnerRegions(region, p.getWorld())) {
             if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(r.getLeadersDesc())));
                 return;
             }
             if (checkID(region, r)) {
@@ -129,7 +129,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                 }
 
                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                    this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RPUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                    this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
                     return;
                 }
                 othersName.add(otherrg.getName());

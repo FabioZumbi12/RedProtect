@@ -29,8 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -65,7 +64,7 @@ public class ClaimCommand {
                             return CommandResult.success();
                         }
 
-                        String name = RPUtil.nameGen(player.getName(), player.getWorld().getName());
+                        String name = RedProtectUtil.nameGen(player.getName(), player.getWorld().getName());
                         if (args.hasAny("regionName")) {
                             name = args.<String>getOne("regionName").get();
                         }
@@ -73,7 +72,7 @@ public class ClaimCommand {
 
                         Set<String> addedAdmins = new HashSet<>();
                         if (args.hasAny("playerAdmin")) {
-                            addedAdmins.add(RPUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()));
+                            addedAdmins.add(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()));
                         }
 
                         if (!RedProtect.get().config.configRoot().online_mode) {

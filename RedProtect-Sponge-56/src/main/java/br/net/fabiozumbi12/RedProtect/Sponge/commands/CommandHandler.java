@@ -30,8 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.AdminCommand;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers.*;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -52,11 +51,11 @@ public class CommandHandler {
         CommandSpec redProtect = CommandSpec.builder()
                 .description(Text.of("Main command for RedProtect."))
                 .executor((src, args) -> {
-                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
-                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().lang.get("general.color") + "."));
-                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [&e/rp " + getCmd("help") + RedProtect.get().lang.get("general.color") + "]."));
-                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "For a tutorial, type [&e/rp " + getCmd("tutorial") + RedProtect.get().lang.get("general.color") + "]."));
-                    src.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------------------------------------------"));
+                    src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
+                    src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().lang.get("general.color") + "."));
+                    src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [&e/rp " + getCmd("help") + RedProtect.get().lang.get("general.color") + "]."));
+                    src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "For a tutorial, type [&e/rp " + getCmd("tutorial") + RedProtect.get().lang.get("general.color") + "]."));
+                    src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "---------------------------------------------------"));
                     return CommandResult.success();
                 })
                 //player handlers

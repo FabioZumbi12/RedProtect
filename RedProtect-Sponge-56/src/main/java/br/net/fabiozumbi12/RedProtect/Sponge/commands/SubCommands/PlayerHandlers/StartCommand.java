@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.schematics.schematics;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -83,7 +82,7 @@ public class StartCommand {
                                 Player player = (Player) src;
 
                                 if (!RedProtect.get().confiemStart.contains(player.getName())) {
-                                    player.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
+                                    player.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
                                     return CommandResult.success();
                                 }
                                 schematics.RPSchematics.pasteSchematic(player);

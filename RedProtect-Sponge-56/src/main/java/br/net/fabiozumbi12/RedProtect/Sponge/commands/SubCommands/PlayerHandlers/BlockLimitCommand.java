@@ -27,8 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -67,7 +66,7 @@ public class BlockLimitCommand {
                         }
 
                         if (args.hasAny("player") && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.blocklimit")) {
-                            User offp = RPUtil.getUser(args.<String>getOne("player").get());
+                            User offp = RedProtectUtil.getUser(args.<String>getOne("player").get());
 
                             if (offp == null) {
                                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get()));
@@ -79,7 +78,7 @@ public class BlockLimitCommand {
                                 return CommandResult.success();
                             }
 
-                            int currentUsed = RedProtect.get().rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
+                            int currentUsed = RedProtect.get().rm.getTotalRegionSize(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
                             return CommandResult.success();
                         }

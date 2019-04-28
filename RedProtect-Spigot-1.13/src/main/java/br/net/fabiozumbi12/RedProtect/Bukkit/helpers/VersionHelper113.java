@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Openable;
 
-public class RPVHelper113 implements RPVHelper {
+public class VersionHelper113 implements VersionHelper {
 
     public void toggleDoor(Block b) {
         Openable openable = (Openable) b.getBlockData();

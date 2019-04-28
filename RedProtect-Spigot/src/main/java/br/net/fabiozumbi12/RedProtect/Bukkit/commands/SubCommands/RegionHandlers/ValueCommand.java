@@ -29,8 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPEconomy;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.EconomyManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,8 +55,8 @@ public class ValueCommand implements SubCommand {
             if (r != null) {
                 if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
                     if (r.getArea() <= RedProtect.get().config.getEcoInt("max-area-toget-value")) {
-                        r.setValue(RPEconomy.getRegionValue(r));
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(r.getValue()) + " " + RedProtect.get().config.getEcoString("economy-name")));
+                        r.setValue(EconomyManager.getRegionValue(r));
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", EconomyManager.getFormatted(r.getValue()) + " " + RedProtect.get().config.getEcoString("economy-name")));
 
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Region Value: " + r.getValue());
                         return true;

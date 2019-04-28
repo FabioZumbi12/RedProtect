@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
@@ -33,10 +34,10 @@ import br.net.fabiozumbi12.RedProtect.Sponge.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPLogger;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPPermissionHandler;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectLogger;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.PermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
@@ -77,7 +78,7 @@ public class RedProtect {
 
     private static RedProtect instance;
     private UUID autoSaveID;
-    private RPVHelper rpvHelper;
+    private VersionHelper rpvHelper;
     private RedProtectAPI redProtectAPI;
 
     @Inject
@@ -89,7 +90,7 @@ public class RedProtect {
     public GuiceObjectMapperFactory factory;
     public final List<String> changeWait = new ArrayList<>();
     public final List<String> tpWait = new ArrayList<>();
-    public final RPLogger logger = new RPLogger();
+    public final RedProtectLogger logger = new RedProtectLogger();
     public final HooksManager hooks = new HooksManager();
     public final List<String> confiemStart = new ArrayList<>();
     public final HashMap<Player, Location<World>> firstLocationSelections = new HashMap<>();
@@ -97,7 +98,7 @@ public class RedProtect {
     public final HashMap<Player, String> alWait = new HashMap<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public RegionManager rm;
-    public RPPermissionHandler ph;
+    public PermissionHandler ph;
     public ConfigManager config;
     public LangManager lang;
     public LangGuiManager guiLang;
@@ -110,7 +111,7 @@ public class RedProtect {
         return instance;
     }
 
-    public RPVHelper getPVHelper() {
+    public VersionHelper getPVHelper() {
         return rpvHelper;
     }
 
@@ -135,21 +136,21 @@ public class RedProtect {
             instance = this;
             commandManager = Sponge.getGame().getCommandManager();
 
-            ph = new RPPermissionHandler();
+            ph = new PermissionHandler();
             rm = new RegionManager();
 
             //Init config, lang, listeners and flags
             startLoad();
 
             if (v.startsWith("7")) {
-                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
+                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper7").newInstance();
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener7").newInstance());
             } else if (v.startsWith("8")) {
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener8").newInstance());
-                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
+                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
             } else {
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
-                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper56").newInstance();
+                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper56").newInstance();
             }
 
             logger.info("Loading API...");
@@ -165,6 +166,8 @@ public class RedProtect {
                     "");
 
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
             e.printStackTrace();
 
             Sponge.getGame().getServer().setHasWhitelist(true);
@@ -246,13 +249,15 @@ public class RedProtect {
             rm = new RegionManager();
             rm.loadAll();
 
-            RPUtil.ReadAllDB(rm.getAllRegions());
+            RedProtectUtil.ReadAllDB(rm.getAllRegions());
 
             if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 AutoSaveHandler();
             }
             logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
         } catch (Exception e) {
+             CoreUtil.printJarVersion();
+             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
@@ -271,6 +276,7 @@ public class RedProtect {
             //start
             startLoad();
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }

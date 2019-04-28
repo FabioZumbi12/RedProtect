@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -56,7 +55,7 @@ import java.util.List;
 
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
-public class RPGui implements Listener {
+public class FlagGui implements Listener {
 
     private final boolean allowEnchant;
     private final boolean editable;
@@ -67,7 +66,7 @@ public class RPGui implements Listener {
     private Region region;
     private Inventory inv;
 
-    public RPGui(String name, Player player, Region region, boolean editable, int maxSlots) {
+    public FlagGui(String name, Player player, Region region, boolean editable, int maxSlots) {
         this.editable = editable;
         this.name = name;
         this.player = player;
@@ -112,8 +111,8 @@ public class RPGui implements Listener {
             }
             if ((RedProtect.get().config.getDefFlags().contains(flag) ||
                     RedProtect.get().ph.hasFlagPerm(player, flag)) &&
-                    Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material) != null &&
-                    RedProtect.get().config.isFlagEnabled(flag)) {
+                    RedProtect.get().config.isFlagEnabled(flag) &&
+                    Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material) != null) {
                 if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")) {
                     continue;
                 }
@@ -225,7 +224,7 @@ public class RPGui implements Listener {
                     if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                         if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                             applyFlag(flag, itemMeta, event);
-                            RPUtil.startFlagChanger(this.region.getName(), flag, player);
+                            RedProtectUtil.startFlagChanger(this.region.getName(), flag, player);
                         } else {
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         }

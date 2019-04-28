@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.digiex.magiccarpet.Carpet;
 import net.digiex.magiccarpet.MagicCarpet;
@@ -57,7 +56,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class RPMine18 implements Listener {
 
-    private static final RPContainer cont = new RPContainer();
+    private static final ContainerManager cont = new ContainerManager();
 
     public RPMine18() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPMine18...");

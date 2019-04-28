@@ -24,62 +24,72 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
+package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import org.spongepowered.api.Sponge;
+import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class RPLogger {
+import static org.bukkit.ChatColor.translateAlternateColorCodes;
+
+public class RedProtectLogger {
     private final SortedMap<Integer, String> mainLog = new TreeMap<>();
 
+    public void clear(String s) {
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', s));
+    }
+
     public void success(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &a&l" + s + "&r"));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &a&l" + s + "&r"));
     }
 
     public void info(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] " + s));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
     public void warning(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &6" + s + "&r"));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &6" + s + "&r"));
     }
 
     public void severe(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &c&l" + s + "&r"));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &c&l" + s + "&r"));
     }
 
     public void log(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] " + s));
-    }
-
-    public void clear(String s) {
-        Sponge.getServer().getConsole().sendMessage(RPUtil.toText(s));
+        Bukkit.getConsoleSender()
+                .sendMessage(translateAlternateColorCodes('&', "[RedProtect] " + s));
     }
 
     public void debug(LogLevel level, String s) {
         if (RedProtect.get().config.configRoot().debug_messages.get(level.name().toLowerCase())) {
-            Sponge.getServer().getConsole().sendMessage(RPUtil.toText("[RedProtect] &b" + s + "&r"));
+            Bukkit.getConsoleSender()
+                    .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
         }
     }
 
     public void addLog(String logLine) {
+        // If log is not enabled return
         if (!RedProtect.get().config.configRoot().log_actions) {
             return;
         }
         int key = mainLog.keySet().size() + 1;
-        mainLog.put(key, key + " - " + RPUtil.hourNow() + ": " + RPUtil.toText(logLine));
+        mainLog.put(key, key + " - " + RedProtectUtil.hourNow() + ": " + translateAlternateColorCodes('&', logLine));
         if (key == 500) {
-            SaveLogs();
+            saveLogs();
             mainLog.clear();
         }
     }
 
-    public void SaveLogs() {
+    public void saveLogs() {
         if (!RedProtect.get().config.configRoot().log_actions) {
             return;
         }
@@ -87,8 +97,8 @@ public class RPLogger {
         final StringBuilder sb = new StringBuilder();
         mainLog.forEach((key, entry) -> sb.append(entry).append('\n'));
 
-        if (RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false) != null) {
-            RPUtil.saveSBToZip(RPUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false), sb);
+        if (RedProtectUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false) != null) {
+            RedProtectUtil.saveSBToZip(RedProtectUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false), sb);
         }
     }
 }

@@ -28,10 +28,9 @@ package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.EconomyManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -227,7 +226,7 @@ public class Region extends CoreRegion {
                     ListValue<Text> lines = s.lines();
                     if (lines.get(0).toPlain().equalsIgnoreCase("[flag]")) {
                         if (lines.get(1).toPlain().equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(lines.get(2).toPlain())) {
-                            lines.set(3, RPUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname))));
+                            lines.set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname))));
                             s.offer(lines);
                             RedProtect.get().config.putSign(this.getID(), loc);
                         }
@@ -399,7 +398,7 @@ public class Region extends CoreRegion {
             wMsgTemp = wMessage;
         }
 
-        if (this.date.equals(RPUtil.dateNow())) {
+        if (this.date.equals(RedProtectUtil.dateNow())) {
             today = RedProtect.get().lang.get("region.today");
         } else {
             today = this.date;
@@ -423,8 +422,8 @@ public class Region extends CoreRegion {
             dynmapInfo = RedProtect.get().lang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().lang.get("region.dynmap-showing") : RedProtect.get().lang.get("region.dynmap-hiding")) + ", " + RedProtect.get().lang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
-        return RPUtil.toText(RedProtect.get().lang.get("region.name") + " " + colorChar + this.name + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.priority") + " " + this.prior + "\n" +
-                RedProtect.get().lang.get("region.priority.top") + " " + IsTops + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.lastvalue") + " " + RPEconomy.getFormatted(this.value) + "\n" +
+        return RedProtectUtil.toText(RedProtect.get().lang.get("region.name") + " " + colorChar + this.name + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.priority") + " " + this.prior + "\n" +
+                RedProtect.get().lang.get("region.priority.top") + " " + IsTops + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.lastvalue") + " " + EconomyManager.getFormatted(this.value) + "\n" +
                 RedProtect.get().lang.get("region.world") + " " + colorChar + wName + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
                 RedProtect.get().lang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.area") + " " + this.getArea() + "\n" +
                 RedProtect.get().lang.get("region.leaders") + " " + leaderString + "\n" +
@@ -483,7 +482,7 @@ public class Region extends CoreRegion {
      */
     public void addLeader(String uuid) {
         setToSave(true);
-        String name = RPUtil.UUIDtoPlayer(uuid).toLowerCase();
+        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -502,7 +501,7 @@ public class Region extends CoreRegion {
      */
     public void addMember(String uuid) {
         setToSave(true);
-        String name = RPUtil.UUIDtoPlayer(uuid).toLowerCase();
+        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -521,7 +520,7 @@ public class Region extends CoreRegion {
      */
     public void addAdmin(String uuid) {
         setToSave(true);
-        String name = RPUtil.UUIDtoPlayer(uuid).toLowerCase();
+        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -560,7 +559,7 @@ public class Region extends CoreRegion {
 
         String name = uuid;
         if (RedProtect.get().config.configRoot().online_mode) {
-            name = RPUtil.UUIDtoPlayer(uuid);
+            name = RedProtectUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
@@ -583,7 +582,7 @@ public class Region extends CoreRegion {
 
         String name = uuid;
         if (RedProtect.get().config.configRoot().online_mode) {
-            name = RPUtil.UUIDtoPlayer(uuid);
+            name = RedProtectUtil.UUIDtoPlayer(uuid);
         }
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
@@ -648,7 +647,7 @@ public class Region extends CoreRegion {
         } else {
             flaginfo = new StringBuilder("Default");
         }
-        return RPUtil.toText(flaginfo.toString());
+        return RedProtectUtil.toText(flaginfo.toString());
     }
 
     public boolean isOnTop() {

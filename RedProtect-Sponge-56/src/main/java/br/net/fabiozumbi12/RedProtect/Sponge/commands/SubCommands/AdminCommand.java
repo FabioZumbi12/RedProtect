@@ -26,13 +26,14 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -79,18 +80,18 @@ public class AdminCommand implements CommandCallable {
             }
 
             if (args[0].equalsIgnoreCase("single-to-files")) {
-                RedProtect.get().logger.success("[" + RPUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
+                RedProtect.get().logger.success("[" + RedProtectUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
                 return cmdr;
             }
 
             if (args[0].equalsIgnoreCase("files-to-single")) {
-                RedProtect.get().logger.success("[" + RPUtil.FilesToSingle() + "]" + " regions converted to unified world file with success");
+                RedProtect.get().logger.success("[" + RedProtectUtil.FilesToSingle() + "]" + " regions converted to unified world file with success");
                 return cmdr;
             }
 
             if (args[0].equalsIgnoreCase("fileToMysql")) {
                 try {
-                    if (!RPUtil.fileToMysql()) {
+                    if (!RedProtectUtil.fileToMysql()) {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'file' before convert from FILE to Mysql.");
                         return cmdr;
                     } else {
@@ -101,6 +102,7 @@ public class AdminCommand implements CommandCallable {
                         return cmdr;
                     }
                 } catch (Exception e) {
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                     return cmdr;
                 }
@@ -108,7 +110,7 @@ public class AdminCommand implements CommandCallable {
 
             if (args[0].equalsIgnoreCase("mysqlToFile")) {
                 try {
-                    if (!RPUtil.mysqlToFile()) {
+                    if (!RedProtectUtil.mysqlToFile()) {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to File.");
                         return cmdr;
                     } else {
@@ -119,17 +121,18 @@ public class AdminCommand implements CommandCallable {
                         return cmdr;
                     }
                 } catch (Exception e) {
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                     return cmdr;
                 }
             }
 
             if (args[0].isEmpty()) {
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().lang.get("general.color") + "."));
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [&e/rp ?" + RedProtect.get().lang.get("general.color") + "]."));
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "For a tutorial, type [&e/rp tutorial" + RedProtect.get().lang.get("general.color") + "]."));
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------------------------------------------"));
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().lang.get("general.color") + "."));
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [&e/rp ?" + RedProtect.get().lang.get("general.color") + "]."));
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "For a tutorial, type [&e/rp tutorial" + RedProtect.get().lang.get("general.color") + "]."));
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "---------------------------------------------------"));
                 return cmdr;
             }
 
@@ -147,9 +150,10 @@ public class AdminCommand implements CommandCallable {
                 RedProtect.get().rm.clearDB();
                 try {
                     RedProtect.get().rm.loadAll();
-                    RPUtil.ReadAllDB(RedProtect.get().rm.getAllRegions());
+                    RedProtectUtil.ReadAllDB(RedProtect.get().rm.getAllRegions());
                 } catch (Exception e) {
                     RedProtect.get().logger.severe("Error on load all regions from database files:");
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                 }
                 RedProtect.get().logger.success(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
@@ -181,6 +185,7 @@ public class AdminCommand implements CommandCallable {
                     RedProtect.get().logger.success("Redprotect Plus configs reloaded!");
                 } catch (ObjectMappingException e) {
                     RedProtect.get().logger.severe("Redprotect Plus configs NOT reloaded!");
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                 }
                 return cmdr;
@@ -216,46 +221,46 @@ public class AdminCommand implements CommandCallable {
                 if (!RedProtect.get().hooks.WE) {
                     return cmdr;
                 }
-                RPUtil.stopRegen = true;
+                RedProtectUtil.stopRegen = true;
                 RedProtect.get().lang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
                 return cmdr;
             }
 
             //rp clamilimit player
             if (checkCmd(args[0], "claimlimit")) {
-                User offp = RPUtil.getUser(args[1]);
+                User offp = RedProtectUtil.getUser(args[1]);
 
                 if (offp == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
                     return cmdr;
                 }
                 int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
                 if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(offp.getName())).size();
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
+                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName())).size();
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
 
             //rp limit player
             if (checkCmd(args[0], "blocklimit")) {
-                User offp = RPUtil.getUser(args[1]);
+                User offp = RedProtectUtil.getUser(args[1]);
 
                 if (offp == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
                     return cmdr;
                 }
                 int limit = RedProtect.get().ph.getPlayerBlockLimit(offp);
                 if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
+                int currentUsed = RedProtect.get().rm.getTotalRegionSize(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
 
@@ -309,7 +314,7 @@ public class AdminCommand implements CommandCallable {
 
             //rp clamilimit player world
             if (checkCmd(args[0], "claimlimit")) {
-                User offp = RPUtil.getUser(args[1]);
+                User offp = RedProtectUtil.getUser(args[1]);
 
                 Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
                 if (!w.isPresent()) {
@@ -317,17 +322,17 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
                 if (offp == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
                     return cmdr;
                 }
                 int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
                 if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), w.get()).size();
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
+                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), w.get()).size();
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
 
@@ -336,14 +341,14 @@ public class AdminCommand implements CommandCallable {
                 if (Sponge.getServer().getWorld(args[2]).isPresent()) {
                     Region r = RedProtect.get().rm.getRegion(args[1], Sponge.getServer().getWorld(args[2]).get());
                     if (r != null) {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
                         sender.sendMessage(r.info());
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
                     } else {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args[1]));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args[1]));
                     }
                 } else {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args[2]));
                 }
                 return cmdr;
             }
@@ -354,12 +359,12 @@ public class AdminCommand implements CommandCallable {
             //rp addmember <player> <region> <world>
             if (checkCmd(args[0], "addmember")) {
                 if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
                 }
                 handleAddMember(sender, args[1], r);
@@ -369,12 +374,12 @@ public class AdminCommand implements CommandCallable {
             //rp addadmin <player> <region> <world>
             if (checkCmd(args[0], "addadmin")) {
                 if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
                 }
                 handleAddAdmin(sender, args[1], r);
@@ -384,12 +389,12 @@ public class AdminCommand implements CommandCallable {
             //rp addleader <player> <region> <world>
             if (checkCmd(args[0], "addleader")) {
                 if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
                 }
                 handleAddLeader(sender, args[1], r);
@@ -399,12 +404,12 @@ public class AdminCommand implements CommandCallable {
             //rp removemember <player> <region> <world>
             if (checkCmd(args[0], "removemember")) {
                 if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
                 }
                 handleRemoveMember(sender, args[1], r);
@@ -414,12 +419,12 @@ public class AdminCommand implements CommandCallable {
             //rp removeadmin <player> <region> <world>
             if (checkCmd(args[0], "removeadmin")) {
                 if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
                 }
                 handleRemoveAdmin(sender, args[1], r);
@@ -429,12 +434,12 @@ public class AdminCommand implements CommandCallable {
             //rp removeleader <player> <region> <world>
             if (checkCmd(args[0], "removeleader")) {
                 if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
                 if (r == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                     return cmdr;
                 }
                 handleRemoveLeader(sender, args[1], r);
@@ -470,11 +475,11 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                RPUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
+                RedProtectUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
 
                 String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.get().getName())) {
-                    RPUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
+                    RedProtectUtil.DenyEnterPlayer(visit.get().getWorld(), visit.get().getTransform(), visit.get().getTransform(), r, true);
                     RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", visit.get().getName()).replace("{region}", r.getName()).replace("{time", sec));
                 } else {
                     RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
@@ -494,12 +499,12 @@ public class AdminCommand implements CommandCallable {
                         w = RedProtect.get().getServer().getWorld(args[3]).get();
                     }
                     if (w == null) {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                         return cmdr;
                     }
                     Region region = RedProtect.get().rm.getRegion(args[2], w);
                     if (region == null) {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
                         return cmdr;
                     }
 
@@ -524,10 +529,10 @@ public class AdminCommand implements CommandCallable {
 
                     play.setLocation(loc);
                     RedProtect.get().lang.sendMessage(play, RedProtect.get().lang.get("cmdmanager.region.tp") + " " + args[2]);
-                    sender.sendMessage(RPUtil.toText("&3Player teleported to " + args[2]));
+                    sender.sendMessage(RedProtectUtil.toText("&3Player teleported to " + args[2]));
                     return cmdr;
                 } else {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
                     HandleHelpPage(sender, 1);
                     return cmdr;
                 }
@@ -538,14 +543,14 @@ public class AdminCommand implements CommandCallable {
                 if (Sponge.getServer().getWorld(args[3]).isPresent()) {
                     Region r = RedProtect.get().rm.getRegion(args[2], Sponge.getServer().getWorld(args[3]).get());
                     if (r != null) {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------"));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------"));
                         sender.sendMessage(r.getFlagInfo());
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                     } else {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args[2]));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args[2]));
                     }
                 } else {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + args[3]));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + args[3]));
                 }
                 return cmdr;
             }
@@ -560,14 +565,14 @@ public class AdminCommand implements CommandCallable {
                 }
 
                 if (w == null) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("correct.usage") + "&e rp flag <regionName> <flag> <value> <world>"));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + "&e rp flag <regionName> <flag> <value> <world>"));
                     return cmdr;
                 }
                 Region r = RedProtect.get().rm.getRegion(args[1], w);
                 if (r != null && (RedProtect.get().config.getDefFlags().contains(args[2]) || RedProtect.get().config.AdminFlags.contains(args[2]))) {
-                    Object objflag = RPUtil.parseObject(args[3]);
+                    Object objflag = RedProtectUtil.parseObject(args[3]);
                     if (r.setFlag(RedProtect.get().getPVHelper().getCause(sender), args[2], objflag)) {
-                        sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2])));
+                        sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2])));
                         RedProtect.get().logger.addLog("Console changed flag " + args[2] + " to " + r.getFlagString(args[2]));
                     }
                     return cmdr;
@@ -582,7 +587,7 @@ public class AdminCommand implements CommandCallable {
                     Page = Integer.parseInt(args[1]);
                 } catch (Exception ignored){}
             }
-            sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "-------------------------------------------------"));
+            sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-------------------------------------------------"));
             int regionsPage = RedProtect.get().config.configRoot().region_settings.region_list.region_per_page;
             int total = 0;
             int last = 0;
@@ -602,7 +607,7 @@ public class AdminCommand implements CommandCallable {
                     SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
                     Date now = null;
                     try {
-                        now = dateformat.parse(RPUtil.dateNow());
+                        now = dateformat.parse(RedProtectUtil.dateNow());
                     } catch (ParseException e1) {
                         RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
                     }
@@ -611,11 +616,12 @@ public class AdminCommand implements CommandCallable {
                         regiondate = dateformat.parse(r.getDate());
                     } catch (ParseException e) {
                         RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
+                        CoreUtil.printJarVersion();
                         e.printStackTrace();
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
                     for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
-                        if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                        if (r.isLeader(RedProtectUtil.PlayerToUUID(play)) || r.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
                             break;
                         }
                     }
@@ -652,23 +658,23 @@ public class AdminCommand implements CommandCallable {
                             if (first) {
                                 first = false;
                                 worldregions.append(Text.builder()
-                                        .append(RPUtil.toText("&8" + r.getName() + r.getArea()))
-                                        .onHover(TextActions.showText(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                        .append(RedProtectUtil.toText("&8" + r.getName() + r.getArea()))
+                                        .onHover(TextActions.showText(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                         .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                             } else {
                                 worldregions.append(Text.builder()
-                                        .append(RPUtil.toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + r.getArea()))
-                                        .onHover(TextActions.showText(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                        .append(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + r.getArea()))
+                                        .onHover(TextActions.showText(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                         .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                             }
                         } else {
                             if (first) {
                                 first = false;
                                 worldregions.append(Text.builder()
-                                        .append(RPUtil.toText("&8" + r.getName() + r.getArea())).build());
+                                        .append(RedProtectUtil.toText("&8" + r.getName() + r.getArea())).build());
                             } else {
                                 worldregions.append(Text.builder()
-                                        .append(RPUtil.toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + r.getArea())).build());
+                                        .append(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + r.getArea())).build());
                             }
                         }
                         lastLocal = count;
@@ -676,17 +682,17 @@ public class AdminCommand implements CommandCallable {
                     //-----------
 
                     last += lastLocal + 1;
-                    sender.sendMessage(RPUtil.toText("-----"));
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + RedProtect.get().lang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]&r: "));
-                    sender.sendMessages(worldregions.append(RPUtil.toText(RedProtect.get().lang.get("general.color") + ".")).build());
+                    sender.sendMessage(RedProtectUtil.toText("-----"));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + RedProtect.get().lang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]&r: "));
+                    sender.sendMessages(worldregions.append(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + ".")).build());
                 }
             }
-            sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
+            sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
             if (last < total) {
-                sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.listpage.more").replace("{player}", "" + (Page + 1))));
+                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.listpage.more").replace("{player}", "" + (Page + 1))));
             } else {
                 if (Page != 1) {
-                    sender.sendMessage(RPUtil.toText(RedProtect.get().lang.get("cmdmanager.region.listpage.nomore")));
+                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.listpage.nomore")));
                 }
             }
             return cmdr;
@@ -696,14 +702,14 @@ public class AdminCommand implements CommandCallable {
         if (args.length >= 2 && checkCmd(args[0], "list")) {
             //rp list [player]
             if (args.length == 2) {
-                getRegionforList(sender, RPUtil.PlayerToUUID(args[1]), 1);
+                getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), 1);
                 return cmdr;
             }
             //rp list [player] [page]
             if (args.length == 3) {
                 try {
                     int Page = Integer.parseInt(args[2]);
-                    getRegionforList(sender, RPUtil.PlayerToUUID(args[1]), Page);
+                    getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), Page);
                     return cmdr;
                 } catch (NumberFormatException e) {
                     RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");

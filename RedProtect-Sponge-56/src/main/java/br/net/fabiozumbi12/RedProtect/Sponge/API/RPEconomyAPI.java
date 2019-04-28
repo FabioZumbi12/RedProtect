@@ -27,7 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.API;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.EconomyManager;
 
 public class RPEconomyAPI {
 
@@ -43,7 +43,7 @@ public class RPEconomyAPI {
 
 
     public static boolean SellRegion(Region region, String owner, long value) {
-        return RPEconomy.putToSell(region, owner, value);
+        return EconomyManager.putToSell(region, owner, value);
     }
 
     /**
@@ -57,7 +57,7 @@ public class RPEconomyAPI {
 
 
     public static boolean BuyRegion(Region region, String owner) {
-        return RPEconomy.BuyRegion(region, owner);
+        return EconomyManager.BuyRegion(region, owner);
     }
 
     /**
@@ -70,7 +70,7 @@ public class RPEconomyAPI {
 
 
     public static long getRegionValue(Region region) {
-        return RPEconomy.getRegionValue(region);
+        return EconomyManager.getRegionValue(region);
     }
 
 }

@@ -35,8 +35,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -70,7 +71,7 @@ public class AdminCommand implements SubCommand {
             int i = 0;
             for (LiteChunk c : allchunks) {
                 Set<String> leaders = new HashSet<>();
-                String admin = RPUtil.PlayerToUUID(c.getOwner());
+                String admin = RedProtectUtil.PlayerToUUID(c.getOwner());
                 leaders.add(admin);
                 World w = RedProtect.get().getServer().getWorld(c.getWorldName());
                 Chunk chunk = w.getChunkAt(c.getX(), c.getZ());
@@ -81,10 +82,10 @@ public class AdminCommand implements SubCommand {
                 int in = 0;
                 while (true) {
                     int is = String.valueOf(in).length();
-                    if (RPUtil.UUIDtoPlayer(admin).length() > 13) {
-                        regionName = RPUtil.UUIDtoPlayer(admin).substring(0, 14 - is) + "_" + in;
+                    if (RedProtectUtil.UUIDtoPlayer(admin).length() > 13) {
+                        regionName = RedProtectUtil.UUIDtoPlayer(admin).substring(0, 14 - is) + "_" + in;
                     } else {
-                        regionName = RPUtil.UUIDtoPlayer(admin) + "_" + in;
+                        regionName = RedProtectUtil.UUIDtoPlayer(admin) + "_" + in;
                     }
                     if (RedProtect.get().rm.getRegion(regionName, w) == null) {
                         break;
@@ -92,7 +93,7 @@ public class AdminCommand implements SubCommand {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RPUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RedProtectUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().rm.add(r, w);
@@ -122,18 +123,18 @@ public class AdminCommand implements SubCommand {
             }
 
             if (args[0].equalsIgnoreCase("single-to-files")) {
-                RedProtect.get().logger.success("[" + RPUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
+                RedProtect.get().logger.success("[" + RedProtectUtil.SingleToFiles() + "]" + " regions converted to your own files with success");
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("files-to-single")) {
-                RedProtect.get().logger.success("[" + RPUtil.FilesToSingle() + "]" + " regions converted to unified database file with success");
+                RedProtect.get().logger.success("[" + RedProtectUtil.FilesToSingle() + "]" + " regions converted to unified database file with success");
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("fileToMysql")) {
                 try {
-                    if (!RPUtil.fileToMysql()) {
+                    if (!RedProtectUtil.fileToMysql()) {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'yml' before convert from YML to Mysql.");
                         return true;
                     } else {
@@ -145,6 +146,7 @@ public class AdminCommand implements SubCommand {
                         return true;
                     }
                 } catch (Exception e) {
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                     return true;
                 }
@@ -152,7 +154,7 @@ public class AdminCommand implements SubCommand {
 
             if (args[0].equalsIgnoreCase("mysqlToFile")) {
                 try {
-                    if (!RPUtil.mysqlToFile()) {
+                    if (!RedProtectUtil.mysqlToFile()) {
                         RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to Yml.");
                         return true;
                     } else {
@@ -164,6 +166,7 @@ public class AdminCommand implements SubCommand {
                         return true;
                     }
                 } catch (Exception e) {
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                     return true;
                 }
@@ -174,12 +177,12 @@ public class AdminCommand implements SubCommand {
                     RedProtect.get().logger.success("The plugin GriefPrevention is not installed or is disabled");
                     return true;
                 }
-                if (RPUtil.convertFromGP() == 0) {
+                if (RedProtectUtil.convertFromGP() == 0) {
                     RedProtect.get().logger.severe("No region converted from GriefPrevention.");
                     return true;
                 } else {
                     RedProtect.get().rm.saveAll(true);
-                    RedProtect.get().logger.info(ChatColor.AQUA + "[" + RPUtil.convertFromGP() + "] regions converted from GriefPrevention with success");
+                    RedProtect.get().logger.info(ChatColor.AQUA + "[" + RedProtectUtil.convertFromGP() + "] regions converted from GriefPrevention with success");
                     RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                     RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
                     return true;
@@ -214,9 +217,10 @@ public class AdminCommand implements SubCommand {
                 RedProtect.get().rm.clearDB();
                 try {
                     RedProtect.get().rm.loadAll();
-                    RPUtil.ReadAllDB(RedProtect.get().rm.getAllRegions());
+                    RedProtectUtil.ReadAllDB(RedProtect.get().rm.getAllRegions());
                 } catch (Exception e) {
                     RedProtect.get().logger.severe("Error on load all regions from database files:");
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                 }
                 RedProtect.get().logger.success(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
@@ -235,6 +239,7 @@ public class AdminCommand implements SubCommand {
                 try {
                     RedProtect.get().config = new ConfigManager();
                 } catch (ObjectMappingException e) {
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                 }
 
@@ -258,6 +263,7 @@ public class AdminCommand implements SubCommand {
                     RedProtect.get().logger.warning("Leader from: " + args[1]);
                     RedProtect.get().logger.warning("UUID To name: " + name);
                 } catch (Exception e) {
+                    CoreUtil.printJarVersion();
                     e.printStackTrace();
                 }
                 return true;
@@ -290,7 +296,7 @@ public class AdminCommand implements SubCommand {
                 if (!RedProtect.get().hooks.worldEdit) {
                     return true;
                 }
-                RPUtil.stopRegen = true;
+                RedProtectUtil.stopRegen = true;
                 RedProtect.get().lang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
                 return true;
             }
@@ -321,7 +327,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
+                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;
@@ -340,7 +346,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getTotalRegionSize(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld().getName());
+                int currentUsed = RedProtect.get().rm.getTotalRegionSize(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getWorld().getName());
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourarea") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;
@@ -412,7 +418,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), w).size();
+                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), w).size();
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;
@@ -587,11 +593,11 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
+                RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
 
                 String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
-                    RPUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
+                    RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
                     RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time", sec));
                 } else {
                     RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
@@ -677,7 +683,7 @@ public class AdminCommand implements SubCommand {
                 }
                 Region r = RedProtect.get().rm.getRegion(args[1], w);
                 if (r != null && (RedProtect.get().config.getDefFlags().contains(args[2]) || RedProtect.get().config.AdminFlags.contains(args[2]))) {
-                    Object objflag = RPUtil.parseObject(args[3]);
+                    Object objflag = RedProtectUtil.parseObject(args[3]);
                     r.setFlag(sender, args[2], objflag);
                     RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2]));
                     RedProtect.get().logger.addLog("Console changed flag " + args[2] + " to " + r.getFlagString(args[2]));
@@ -713,7 +719,7 @@ public class AdminCommand implements SubCommand {
                     SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
                     Date now = null;
                     try {
-                        now = dateformat.parse(RPUtil.dateNow());
+                        now = dateformat.parse(RedProtectUtil.dateNow());
                     } catch (ParseException e1) {
                         RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
                     }
@@ -722,11 +728,12 @@ public class AdminCommand implements SubCommand {
                         regiondate = dateformat.parse(r.getDate());
                     } catch (ParseException e) {
                         RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
+                        CoreUtil.printJarVersion();
                         e.printStackTrace();
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
                     for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
-                        if (r.isLeader(RPUtil.PlayerToUUID(play)) || r.isAdmin(RPUtil.PlayerToUUID(play))) {
+                        if (r.isLeader(RedProtectUtil.PlayerToUUID(play)) || r.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
                             break;
                         }
                     }
@@ -808,14 +815,14 @@ public class AdminCommand implements SubCommand {
         if (args.length >= 2 && checkCmd(args[0], "list")) {
             //rp list [player]
             if (args.length == 2) {
-                getRegionforList(sender, RPUtil.PlayerToUUID(args[1]), 1);
+                getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), 1);
                 return true;
             }
             //rp list [player] [page]
             if (args.length == 3) {
                 try {
                     int Page = Integer.parseInt(args[2]);
-                    getRegionforList(sender, RPUtil.PlayerToUUID(args[1]), Page);
+                    getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), Page);
                     return true;
                 } catch (NumberFormatException e) {
                     RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");

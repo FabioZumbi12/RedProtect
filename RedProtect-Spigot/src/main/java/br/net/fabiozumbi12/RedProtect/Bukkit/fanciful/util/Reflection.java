@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.util;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
@@ -96,6 +97,7 @@ public final class Reflection {
         try {
             clazz = Class.forName(fullName);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
             _loadedNMSClasses.put(className, null);
             return null;
@@ -121,6 +123,7 @@ public final class Reflection {
         try {
             clazz = Class.forName(fullName);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
             _loadedOBCClasses.put(className, null);
             return null;
@@ -142,6 +145,7 @@ public final class Reflection {
         try {
             return getMethod(obj.getClass(), "getHandle").invoke(obj);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
             return null;
         }
@@ -184,6 +188,7 @@ public final class Reflection {
             return field;
         } catch (Exception e) {
             // Error loading
+            CoreUtil.printJarVersion();
             e.printStackTrace();
             // Cache field as not existing
             loaded.put(name, null);

@@ -27,16 +27,15 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
 import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmd;
@@ -58,6 +57,7 @@ public class LangManager extends LangCore {
                     new File(RedProtect.get().configDir,"langEN-US.properties").renameTo(lang);
                 }
             } catch (IOException e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
             RedProtect.get().logger.info("Created config file: " + pathLang);
@@ -104,7 +104,7 @@ public class LangManager extends LangCore {
         }
 
         if (loadedLang.get(key) == null) {
-            sender.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + key));
+            sender.sendMessage(RedProtectUtil.toText(get("_redprotect.prefix") + " " + key));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {
@@ -112,7 +112,7 @@ public class LangManager extends LangCore {
             for (Replacer replacer : replaces) {
                 message = message.replace(replacer.getPlaceholder(), replacer.getValue());
             }
-            sender.sendMessage(RPUtil.toText(get("_redprotect.prefix") + " " + message));
+            sender.sendMessage(RedProtectUtil.toText(get("_redprotect.prefix") + " " + message));
         }
 
         if (sender instanceof Player) {
@@ -125,6 +125,6 @@ public class LangManager extends LangCore {
 
     public void sendCommandHelp(CommandSource sender, String cmd, boolean usage) {
         if (usage) sendMessage(sender, "correct.usage");
-        sender.sendMessage(RPUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
+        sender.sendMessage(RedProtectUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
     }
 }

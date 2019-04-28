@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RPPermissionHandler {
+public class PermissionHandler {
 
     public boolean hasCommandPerm(CommandSource p, String s) {
         String adminPerm = "redprotect.command.admin." + s;

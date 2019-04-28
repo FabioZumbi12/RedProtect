@@ -27,8 +27,9 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
 import br.net.fabiozumbi12.RedProtect.Core.config.GuiLangCore;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.text.Text;
 
 import java.io.File;
@@ -53,6 +54,7 @@ public class LangGuiManager extends GuiLangCore {
                     new File(RedProtect.get().configDir,"guiEN-US.properties").renameTo(lang);
                 }
             } catch (IOException e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
             RedProtect.get().logger.info("Created GUI language file: " + pathLang);
@@ -101,10 +103,10 @@ public class LangGuiManager extends GuiLangCore {
         if (flagDescription == null){
             flagDescription = getRaw("gui.flags.default.description");
         }
-        return Arrays.stream(flagDescription.split("/n")).map(RPUtil::toText).collect(Collectors.toList());
+        return Arrays.stream(flagDescription.split("/n")).map(RedProtectUtil::toText).collect(Collectors.toList());
     }
 
     public Text getFlagString(String key) {
-        return RPUtil.toText(getRaw("gui.strings." + key));
+        return RedProtectUtil.toText(getRaw("gui.strings." + key));
     }
 }

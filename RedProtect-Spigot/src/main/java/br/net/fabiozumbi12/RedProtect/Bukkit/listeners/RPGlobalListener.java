@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -331,7 +330,7 @@ public class RPGlobalListener implements Listener {
             return;
         }
 
-        if (!RPUtil.canBuildNear(p, b.getLocation())) {
+        if (!RedProtectUtil.canBuildNear(p, b.getLocation())) {
             e.setCancelled(true);
             return;
         }
@@ -359,7 +358,7 @@ public class RPGlobalListener implements Listener {
             return;
         }
 
-        if (!RPUtil.canBuildNear(p, b.getLocation())) {
+        if (!RedProtectUtil.canBuildNear(p, b.getLocation())) {
             e.setCancelled(true);
             return;
         }
@@ -532,7 +531,7 @@ public class RPGlobalListener implements Listener {
             return;
         }
 
-        if (!RPUtil.canBuildNear(e.getPlayer(), l)) {
+        if (!RedProtectUtil.canBuildNear(e.getPlayer(), l)) {
             e.setCancelled(true);
             return;
         }
@@ -550,7 +549,7 @@ public class RPGlobalListener implements Listener {
             return;
         }
 
-        if (!RPUtil.canBuildNear(e.getPlayer(), l)) {
+        if (!RedProtectUtil.canBuildNear(e.getPlayer(), l)) {
             e.setCancelled(true);
             return;
         }

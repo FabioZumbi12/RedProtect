@@ -26,6 +26,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -53,6 +55,7 @@ public class GuiLangCore {
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             baseLang.load(reader);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -64,6 +67,8 @@ public class GuiLangCore {
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             loadedLang.load(reader);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -85,6 +90,7 @@ public class GuiLangCore {
                             "===================================================";
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }

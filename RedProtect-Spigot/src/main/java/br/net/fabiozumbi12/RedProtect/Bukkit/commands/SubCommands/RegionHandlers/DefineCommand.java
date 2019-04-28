@@ -30,8 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -56,7 +55,7 @@ public class DefineCommand implements SubCommand {
 
         if (args.length == 0) {
             String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-            String name = RPUtil.nameGen(serverName, player.getWorld().getName());
+            String name = RedProtectUtil.nameGen(serverName, player.getWorld().getName());
 
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
             if (rb2.ready()) {

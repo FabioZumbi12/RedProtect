@@ -31,7 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldFlatFileRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.database.WorldRegionManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Bukkit;
@@ -190,18 +190,18 @@ public class RegionManager {
     }
 
     public Set<Region> getRegions(String player, World w) {
-        player = RPUtil.PlayerToUUID(player);
+        player = RedProtectUtil.PlayerToUUID(player);
         return this.regionManagers.get(w).getRegions(player);
     }
 
     public Set<Region> getRegions(String player, String w) {
-        player = RPUtil.PlayerToUUID(player);
+        player = RedProtectUtil.PlayerToUUID(player);
         World world = Bukkit.getWorld(w);
         return this.regionManagers.get(world).getRegions(player);
     }
 
     public int getPlayerRegions(String player, World w) {
-        player = RPUtil.PlayerToUUID(player);
+        player = RedProtectUtil.PlayerToUUID(player);
         int size;
         if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world) {
             size = getRegions(player, w).size();

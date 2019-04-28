@@ -27,21 +27,13 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.config.GuiLangCore;
-import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
 
 public class LangGuiManager extends GuiLangCore {
 
@@ -52,9 +44,9 @@ public class LangGuiManager extends GuiLangCore {
         File lang = new File(pathLang);
         if (!lang.exists()) {
             if (RedProtect.get().getResource("assets/redprotect/" + resLang) != null) {
-                RPUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
+                RedProtectUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
             } else {
-                RPUtil.saveResource("/assets/redprotect/guiEN-US.properties", null, lang);
+                RedProtectUtil.saveResource("/assets/redprotect/guiEN-US.properties", null, lang);
             }
             RedProtect.get().logger.info("Created GUI language file: " + pathLang);
         }

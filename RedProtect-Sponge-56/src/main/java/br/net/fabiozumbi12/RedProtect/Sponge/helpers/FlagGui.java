@@ -26,10 +26,10 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
@@ -53,7 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class RPGui {
+public class FlagGui {
 
     private int size;
     private ItemStack[] guiItems;
@@ -62,7 +62,7 @@ public class RPGui {
     private Inventory inv;
     private boolean editable;
 
-    public RPGui(String name, Player player, Region region, boolean editable, int maxSlots) {
+    public FlagGui(String name, Player player, Region region, boolean editable, int maxSlots) {
         this.editable = editable;
         this.player = player;
         this.region = region;
@@ -103,11 +103,11 @@ public class RPGui {
 
                     this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
 
-                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RPUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
+                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RedProtectUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
 
                     List<Text> lore =  new ArrayList<>(Arrays.asList(
-                            RPUtil.toText(RedProtect.get().guiLang.getFlagString("value")+ " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
-                            RPUtil.toText("&0" + flag)));
+                            RedProtectUtil.toText(RedProtect.get().guiLang.getFlagString("value")+ " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
+                            RedProtectUtil.toText("&0" + flag)));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     this.guiItems[i].offer(Keys.ITEM_LORE, lore);
 
@@ -165,6 +165,7 @@ public class RPGui {
                     } catch (Exception e) {
                         RedProtect.get().lang.sendMessage(this.player, "gui.edit.error");
                         close(false);
+                        CoreUtil.printJarVersion();
                         e.printStackTrace();
                         return;
                     }
@@ -219,7 +220,7 @@ public class RPGui {
                             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                 if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                                     applyFlag(flag, item, event);
-                                    RPUtil.startFlagChanger(this.region.getName(), flag, this.player);
+                                    RedProtectUtil.startFlagChanger(this.region.getName(), flag, this.player);
                                 } else {
                                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     event.setCancelled(true);
@@ -253,8 +254,8 @@ public class RPGui {
             item.offer(Keys.HIDE_ATTRIBUTES, true);
 
             List<Text> lore = new ArrayList<>(Arrays.asList(
-                    RPUtil.toText(RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
-                    RPUtil.toText("&0" + flag)));
+                    RedProtectUtil.toText(RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
+                    RedProtectUtil.toText("&0" + flag)));
             lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
             item.offer(Keys.ITEM_LORE, lore);
 

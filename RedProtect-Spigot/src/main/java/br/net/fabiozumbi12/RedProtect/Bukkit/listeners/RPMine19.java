@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -147,7 +146,7 @@ public class RPMine19 implements Listener {
             return;
         }
 
-        if (RPUtil.denyPotion(e.getEntity().getItem())) {
+        if (RedProtectUtil.denyPotion(e.getEntity().getItem())) {
             e.setCancelled(true);
             if (e.getEntity().getShooter() instanceof Player) {
                 RedProtect.get().lang.sendMessage((Player) e.getEntity().getShooter(), RedProtect.get().lang.get("playerlistener.denypotion"));

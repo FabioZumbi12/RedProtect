@@ -29,7 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -44,7 +44,7 @@ import org.spongepowered.api.world.World;
 
 public class RPBlockListener8 {
 
-    private static final RPContainer cont = new RPContainer();
+    private static final ContainerManager cont = new ContainerManager();
 
     public RPBlockListener8() {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded RPBlockListener 8...");

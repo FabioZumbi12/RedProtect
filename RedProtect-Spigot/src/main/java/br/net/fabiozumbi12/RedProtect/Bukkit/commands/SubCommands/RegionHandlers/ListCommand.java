@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -51,17 +50,17 @@ public class ListCommand implements SubCommand {
 
         //rp list
         if (args.length == 0) {
-            handleList(player, RPUtil.PlayerToUUID(player.getName()), 1);
+            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
             return true;
         }
         //rp list [player|page]
         if (args.length == 1) {
             try {
                 int Page = Integer.parseInt(args[0]);
-                getRegionforList(sender, RPUtil.PlayerToUUID(sender.getName()), Page);
+                getRegionforList(sender, RedProtectUtil.PlayerToUUID(sender.getName()), Page);
                 return true;
             } catch (NumberFormatException e) {
-                handleList(player, RPUtil.PlayerToUUID(args[0]), 1);
+                handleList(player, RedProtectUtil.PlayerToUUID(args[0]), 1);
                 return true;
             }
         }
@@ -69,7 +68,7 @@ public class ListCommand implements SubCommand {
         if (args.length == 2) {
             try {
                 int Page = Integer.parseInt(args[1]);
-                handleList(player, RPUtil.PlayerToUUID(args[0]), Page);
+                handleList(player, RedProtectUtil.PlayerToUUID(args[0]), Page);
                 return true;
             } catch (NumberFormatException e) {
                 RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");

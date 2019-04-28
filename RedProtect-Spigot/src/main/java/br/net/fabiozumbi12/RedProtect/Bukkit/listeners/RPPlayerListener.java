@@ -29,10 +29,9 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.EnterExitRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPDoor;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.DoorManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
@@ -74,7 +73,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class RPPlayerListener implements Listener {
 
-    private static final RPContainer cont = new RPContainer();
+    private static final ContainerManager cont = new ContainerManager();
     private final HashMap<String, String> Ownerslist = new HashMap<>();
     private final HashMap<String, String> PlayerCmd = new HashMap<>();
     private final HashMap<String, Boolean> PvPState = new HashMap<>();
@@ -114,7 +113,7 @@ public class RPPlayerListener implements Listener {
     public void onBrewing(BrewEvent e) {
         ItemStack[] cont = e.getContents().getContents();
         for (int i = 0; i < cont.length; i++) {
-            if (RPUtil.denyPotion(cont[i])) {
+            if (RedProtectUtil.denyPotion(cont[i])) {
                 e.getContents().setItem(i, new ItemStack(Material.AIR));
             }
         }
@@ -127,7 +126,7 @@ public class RPPlayerListener implements Listener {
 
             ItemStack result = e.getInventory().getResult();
 
-            if (RPUtil.denyPotion(result, p)) {
+            if (RedProtectUtil.denyPotion(result, p)) {
                 e.getInventory().setResult(new ItemStack(Material.AIR));
             }
         }
@@ -158,7 +157,7 @@ public class RPPlayerListener implements Listener {
             return;
         }
 
-        if (RPUtil.denyPotion(e.getItem(), p)) {
+        if (RedProtectUtil.denyPotion(e.getItem(), p)) {
             e.setCancelled(true);
         }
     }
@@ -190,7 +189,7 @@ public class RPPlayerListener implements Listener {
             if (itemInHand.getType().name().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
 
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                    if (!RPUtil.canBuildNear(p, l)) {
+                    if (!RedProtectUtil.canBuildNear(p, l)) {
                         event.setCancelled(true);
                         return;
                     }
@@ -198,7 +197,7 @@ public class RPPlayerListener implements Listener {
                     p.sendMessage(RedProtect.get().lang.get("playerlistener.wand2") + RedProtect.get().lang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ").");
                     event.setCancelled(true);
                 } else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
-                    if (!RPUtil.canBuildNear(p, l)) {
+                    if (!RedProtectUtil.canBuildNear(p, l)) {
                         event.setCancelled(true);
                         return;
                     }
@@ -219,7 +218,7 @@ public class RPPlayerListener implements Listener {
                         double dist = loc1.distanceSquared(loc2);
                         RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                     } else {
-                        RPUtil.addBorder(p, RPUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
+                        RedProtectUtil.addBorder(p, RedProtectUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
                     }
                 }
                 return;
@@ -314,7 +313,7 @@ public class RPPlayerListener implements Listener {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                     if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                         if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
-                                            RPUtil.startFlagChanger(r.getName(), flag, p);
+                                            RedProtectUtil.startFlagChanger(r.getName(), flag, p);
                                             changeFlag(r, flag, p, s);
                                             return;
                                         } else {
@@ -355,12 +354,12 @@ public class RPPlayerListener implements Listener {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantbutton");
                         event.setCancelled(true);
                     }
-                } else if (RPDoor.isOpenable(b) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                } else if (DoorManager.isOpenable(b) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantdoor");
                         event.setCancelled(true);
                     } else {
-                        RPDoor.ChangeDoor(b, r);
+                        DoorManager.ChangeDoor(b, r);
                     }
                 } else if (itemInHand != null && (itemInHand.getType().name().startsWith("BOAT") || itemInHand.getType().name().contains("MINECART"))) {
                     if (!r.canMinecart(p)) {
@@ -404,7 +403,7 @@ public class RPPlayerListener implements Listener {
 
                         //check if tag is player name
                         if (tag.equalsIgnoreCase("{playername}")) {
-                            if (sign.getLine(0).equalsIgnoreCase(RPUtil.UUIDtoPlayer(p.getName()))) {
+                            if (sign.getLine(0).equalsIgnoreCase(RedProtectUtil.UUIDtoPlayer(p.getName()))) {
                                 return;
                             }
                         }
@@ -423,7 +422,7 @@ public class RPPlayerListener implements Listener {
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
-                } else if (!r.allowMod(p) && !RPUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
+                } else if (!r.allowMod(p) && !RedProtectUtil.isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                     event.setUseInteractedBlock(Event.Result.DENY);
@@ -473,7 +472,7 @@ public class RPPlayerListener implements Listener {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
-        } else if (!RPUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
+        } else if (!RedProtectUtil.isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.allowMod(p)) {
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
@@ -601,7 +600,7 @@ public class RPPlayerListener implements Listener {
 
         //Exit flag
         if (rfrom != null && !rfrom.canExit(p)) {
-            e.setTo(RPUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
+            e.setTo(RedProtectUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
             return;
         }
 
@@ -883,7 +882,7 @@ public class RPPlayerListener implements Listener {
         Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
         //Exit flag
         if (rfrom != null && !rfrom.canExit(p)) {
-            e.setTo(RPUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
+            e.setTo(RedProtectUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
             return;
         }
 
@@ -909,7 +908,7 @@ public class RPPlayerListener implements Listener {
 
             //Enter flag
             if (!r.canEnter(p)) {
-                e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
+                e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
                 return;
             }
@@ -917,7 +916,7 @@ public class RPPlayerListener implements Listener {
             //enter max players flag
             if (r.getMaxPlayers() != -1) {
                 if (!checkMaxPlayer(p, r)) {
-                    e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
+                    e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
                     return;
                 }
@@ -945,14 +944,14 @@ public class RPPlayerListener implements Listener {
 
             //Allow enter with items
             if (!r.canEnterWithItens(p)) {
-                e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
+                e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
                 return;
             }
 
             //Deny enter with item
             if (!r.denyEnterWithItens(p)) {
-                e.setTo(RPUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
+                e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
                 return;
             }
@@ -967,8 +966,8 @@ public class RPPlayerListener implements Listener {
             //update region admin or leander visit
             if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")) {
                 if (r.isLeader(p) || r.isAdmin(p)) {
-                    if (r.getDate() == null || (!r.getDate().equals(RPUtil.dateNow()))) {
-                        r.setDate(RPUtil.dateNow());
+                    if (r.getDate() == null || (!r.getDate().equals(RedProtectUtil.dateNow()))) {
+                        r.setDate(RedProtectUtil.dateNow());
                     }
                 }
             }
@@ -1104,8 +1103,8 @@ public class RPPlayerListener implements Listener {
             }
             if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
                 for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
-                    if (r.getDate() == null || !r.getDate().equals(RPUtil.dateNow())) {
-                        r.setDate(RPUtil.dateNow());
+                    if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
+                        r.setDate(RedProtectUtil.dateNow());
                     }
                 }
             }
@@ -1194,7 +1193,7 @@ public class RPPlayerListener implements Listener {
         }
 
         //deny potion
-        if (RPUtil.denyPotion(e.getPotion().getItem(), p)) {
+        if (RedProtectUtil.denyPotion(e.getPotion().getItem(), p)) {
             e.setCancelled(true);
         }
     }

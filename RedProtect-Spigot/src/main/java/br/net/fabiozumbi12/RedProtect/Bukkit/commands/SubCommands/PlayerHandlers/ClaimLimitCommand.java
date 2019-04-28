@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -57,7 +56,7 @@ public class ClaimLimitCommand implements SubCommand {
                 return true;
             }
 
-            int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(player.getName()), player.getWorld()).size();
+            int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(player.getName()), player.getWorld()).size();
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
             return true;
@@ -75,7 +74,7 @@ public class ClaimLimitCommand implements SubCommand {
                 return true;
             }
 
-            int currentUsed = RedProtect.get().rm.getRegions(RPUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
+            int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
             return true;

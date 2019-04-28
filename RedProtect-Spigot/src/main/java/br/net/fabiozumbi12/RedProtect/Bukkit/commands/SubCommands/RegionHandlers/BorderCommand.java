@@ -29,8 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -54,7 +53,7 @@ public class BorderCommand implements SubCommand {
         if (args.length == 0) {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
-                RPUtil.addBorder(player, new HashSet<>(r.get4Points(player.getLocation().getBlockY())));
+                RedProtectUtil.addBorder(player, new HashSet<>(r.get4Points(player.getLocation().getBlockY())));
                 return true;
             } else {
                 RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");

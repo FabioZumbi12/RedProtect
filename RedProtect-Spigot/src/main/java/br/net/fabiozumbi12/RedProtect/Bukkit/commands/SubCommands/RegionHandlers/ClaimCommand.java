@@ -30,8 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -61,7 +60,7 @@ public class ClaimCommand implements SubCommand {
         }
 
         if (args.length == 0) {
-            String name = RPUtil.nameGen(player.getName(), player.getWorld().getName());
+            String name = RedProtectUtil.nameGen(player.getName(), player.getWorld().getName());
             String leader = player.getUniqueId().toString();
             if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = player.getName().toLowerCase();
@@ -104,7 +103,7 @@ public class ClaimCommand implements SubCommand {
             String name = args[0];
             String leader = player.getUniqueId().toString();
             Set<String> addedAdmins = new HashSet<>();
-            addedAdmins.add(RPUtil.PlayerToUUID(args[1]));
+            addedAdmins.add(RedProtectUtil.PlayerToUUID(args[1]));
             if (!RedProtect.get().config.configRoot().online_mode) {
                 leader = player.getName().toLowerCase();
             }

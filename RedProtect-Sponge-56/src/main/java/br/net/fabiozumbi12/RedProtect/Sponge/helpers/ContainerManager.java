@@ -41,7 +41,7 @@ import org.spongepowered.api.world.World;
 import java.util.Arrays;
 import java.util.List;
 
-public class RPContainer {
+public class ContainerManager {
 
     public boolean canOpen(BlockSnapshot b, Player p) {
         if (!RedProtect.get().config.configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {

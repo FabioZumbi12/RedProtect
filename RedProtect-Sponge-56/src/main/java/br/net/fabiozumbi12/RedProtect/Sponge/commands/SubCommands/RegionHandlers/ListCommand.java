@@ -26,7 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -57,19 +57,19 @@ public class ListCommand {
 
                             try {
                                 int Page = Integer.parseInt(playerPage);
-                                handleList(player, RPUtil.PlayerToUUID(player.getName()), Page);
+                                handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), Page);
                             } catch (NumberFormatException e) {
 
                                 int page = 1;
                                 if (args.hasAny("page")) {
                                     page = args.<Integer>getOne("page").get();
                                 }
-                                handleList(player, RPUtil.PlayerToUUID(playerPage), page);
+                                handleList(player, RedProtectUtil.PlayerToUUID(playerPage), page);
                             }
 
                             return CommandResult.success();
                         } else {
-                            handleList(player, RPUtil.PlayerToUUID(player.getName()), 1);
+                            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
                         }
                     }
                     return CommandResult.success();

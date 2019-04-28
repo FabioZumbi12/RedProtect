@@ -29,9 +29,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPGui;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.FlagGui;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -59,7 +58,7 @@ public class FlagCommand implements SubCommand {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
                 if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")) {
-                    RPGui gui = new RPGui(RPUtil.getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
+                    FlagGui gui = new FlagGui(RedProtectUtil.getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
                     gui.open();
                 } else {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.flag.nopermregion");
@@ -79,7 +78,7 @@ public class FlagCommand implements SubCommand {
 
             if (args[0].equalsIgnoreCase("gui-edit")) {
                 if (RedProtect.get().ph.hasCommandPerm(player, "gui-edit")) {
-                    RPGui gui = new RPGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, RedProtect.get().config.getGuiMaxSlot());
+                    FlagGui gui = new FlagGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, RedProtect.get().config.getGuiMaxSlot());
                     gui.open();
                 } else {
                     RedProtect.get().lang.sendMessage(player, "no.permission");
@@ -90,7 +89,7 @@ public class FlagCommand implements SubCommand {
             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[0])) {
                     if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
-                        RPUtil.startFlagChanger(r.getName(), args[0], player);
+                        RedProtectUtil.startFlagChanger(r.getName(), args[0], player);
                         handleFlag(player, args[0], "", r);
                         return true;
                     } else {
@@ -123,7 +122,7 @@ public class FlagCommand implements SubCommand {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalid.number");
                     return true;
                 }
-                RPGui gui = new RPGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, MaxSlot);
+                FlagGui gui = new FlagGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, MaxSlot);
                 gui.open();
             } else {
                 RedProtect.get().lang.sendMessage(player, "no.permission");
@@ -139,7 +138,7 @@ public class FlagCommand implements SubCommand {
         if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[1])) {
                 if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
-                    RPUtil.startFlagChanger(r.getName(), args[1], player);
+                    RedProtectUtil.startFlagChanger(r.getName(), args[1], player);
                     handleFlag(player, args[1], text.substring(1), r);
                     return true;
                 } else {

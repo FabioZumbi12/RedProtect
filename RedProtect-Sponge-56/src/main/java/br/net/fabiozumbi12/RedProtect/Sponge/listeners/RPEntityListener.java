@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.potion.PotionEffect;
@@ -72,7 +71,7 @@ import java.util.Optional;
 
 public class RPEntityListener {
 
-    private static final RPContainer cont = new RPContainer();
+    private static final ContainerManager cont = new ContainerManager();
 
     public RPEntityListener() {
         RedProtect.get().logger.debug(LogLevel.ENTITY, "Loaded RPEntityListener...");

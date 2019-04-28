@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class RPContainer {
+public class ContainerManager {
 
     @SuppressWarnings("deprecation")
     public boolean canOpen(Block b, Player p) {

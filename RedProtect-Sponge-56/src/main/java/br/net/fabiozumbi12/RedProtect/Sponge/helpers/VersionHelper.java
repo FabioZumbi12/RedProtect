@@ -38,7 +38,7 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-public interface RPVHelper {
+public interface VersionHelper {
     Cause getCause(CommandSource p);
 
     void closeInventory(Player p);

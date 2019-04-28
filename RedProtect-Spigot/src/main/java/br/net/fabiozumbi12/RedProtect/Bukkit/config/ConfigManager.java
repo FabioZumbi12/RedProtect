@@ -27,10 +27,10 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
@@ -655,6 +655,7 @@ public class ConfigManager {
             configRoot.setValue(of(MainCategory.class), root);
             cfgLoader.save(configRoot);
         } catch (IOException | ObjectMappingException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -664,6 +665,7 @@ public class ConfigManager {
             gflagsRoot.setValue(of(GlobalFlagsCategory.class), globalFlagsRoot);
             gFlagsLoader.save(gflagsRoot);
         } catch (IOException | ObjectMappingException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -678,6 +680,7 @@ public class ConfigManager {
             saveGui();
         } catch (IOException e) {
             RedProtect.get().logger.severe("Problems during save file:");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -688,6 +691,7 @@ public class ConfigManager {
             guiCfgLoader.save(guiCfgRoot);
         } catch (IOException | ObjectMappingException e) {
             RedProtect.get().logger.severe("Problems during save gui file:");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -767,6 +771,7 @@ public class ConfigManager {
                 locs.add(new Location(Bukkit.getServer().getWorld(val[0]), Double.valueOf(val[1]), Double.valueOf(val[2]), Double.valueOf(val[3])));
             }
         } catch (ObjectMappingException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return locs;
@@ -781,6 +786,7 @@ public class ConfigManager {
                 saveSigns(rid, lsigns);
             }
         } catch (ObjectMappingException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -794,6 +800,7 @@ public class ConfigManager {
                 saveSigns(rid, lsigns);
             }
         } catch (ObjectMappingException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -808,6 +815,7 @@ public class ConfigManager {
             signsLoader.save(signCfgs);
         } catch (IOException e) {
             RedProtect.get().logger.severe("Problems during save file:");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }

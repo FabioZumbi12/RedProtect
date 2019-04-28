@@ -32,7 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldFlatFileRegionManager
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldRegionManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
@@ -178,18 +178,18 @@ public class RegionManager {
     }
 
     public Set<Region> getRegions(String player, World w) {
-        player = RPUtil.PlayerToUUID(player);
+        player = RedProtectUtil.PlayerToUUID(player);
         return this.regionManagers.get(w).getRegions(player);
     }
 
     public Set<Region> getRegions(String player, String w) {
-        player = RPUtil.PlayerToUUID(player);
+        player = RedProtectUtil.PlayerToUUID(player);
         World world = Sponge.getServer().getWorld(w).get();
         return this.regionManagers.get(world).getRegions(player);
     }
 
     public int getPlayerRegions(String player, World w) {
-        player = RPUtil.PlayerToUUID(player);
+        player = RedProtectUtil.PlayerToUUID(player);
         int size;
         if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world) {
             size = getRegions(player, w).size();

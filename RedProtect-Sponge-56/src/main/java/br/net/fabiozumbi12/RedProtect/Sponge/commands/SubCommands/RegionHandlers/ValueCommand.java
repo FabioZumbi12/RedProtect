@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPEconomy;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.EconomyManager;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -54,8 +53,8 @@ public class ValueCommand {
                         if (r != null) {
                             if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
                                 if (r.getArea() < RedProtect.get().config.getEcoInt("max-area-toget-value")) {
-                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", RPEconomy.getFormatted(RPEconomy.getRegionValue(r)) + " " + RedProtect.get().config.getEcoString("economy-name")));
-                                    RedProtect.get().logger.debug(LogLevel.PLAYER, "Region Value: " + RPEconomy.getRegionValue(r));
+                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", EconomyManager.getFormatted(EconomyManager.getRegionValue(r)) + " " + RedProtect.get().config.getEcoString("economy-name")));
+                                    RedProtect.get().logger.debug(LogLevel.PLAYER, "Region Value: " + EconomyManager.getRegionValue(r));
                                 } else {
                                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().config.getEcoInt("max-area-toget-value").toString()));
                                 }

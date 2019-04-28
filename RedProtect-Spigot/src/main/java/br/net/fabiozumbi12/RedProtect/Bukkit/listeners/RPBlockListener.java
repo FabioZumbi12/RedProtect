@@ -29,9 +29,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.EncompassRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
@@ -58,7 +57,7 @@ import java.util.List;
 
 public class RPBlockListener implements Listener {
 
-    private static final RPContainer cont = new RPContainer();
+    private static final ContainerManager cont = new ContainerManager();
 
     public RPBlockListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPBlockListener...");
@@ -66,7 +65,7 @@ public class RPBlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDispenser(BlockDispenseEvent e) {
-        if (RPUtil.denyPotion(e.getItem())) {
+        if (RedProtectUtil.denyPotion(e.getItem())) {
             e.setCancelled(true);
         }
     }
@@ -272,7 +271,7 @@ public class RPBlockListener implements Listener {
         Player p = e.getPlayer();
         Block b = e.getBlock();
 
-        if (RPUtil.pBorders.containsKey(p.getName()) && b != null && b.getType().equals(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.border.material))) {
+        if (RedProtectUtil.pBorders.containsKey(p.getName()) && b != null && b.getType().equals(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.border.material))) {
             RedProtect.get().lang.sendMessage(p, "blocklistener.cantbreak.borderblock");
             e.setCancelled(true);
             return;

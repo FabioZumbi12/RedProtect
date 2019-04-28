@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPGui;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.FlagGui;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.*;
@@ -81,7 +80,7 @@ public class FlagCommand {
                             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
-                                        RPUtil.startFlagChanger(r.getName(), flag, player);
+                                        RedProtectUtil.startFlagChanger(r.getName(), flag, player);
                                         handleFlag(player, flag, value, r);
                                     } else {
                                         RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
@@ -91,7 +90,7 @@ public class FlagCommand {
                             }
                             handleFlag(player, flag, value, r);
                         } else {
-                            RPGui gui = new RPGui(r.getName(), player, r, false, RedProtect.get().config.getGuiMaxSlot());
+                            FlagGui gui = new FlagGui(r.getName(), player, r, false, RedProtect.get().config.getGuiMaxSlot());
                             gui.open();
                         }
                     }

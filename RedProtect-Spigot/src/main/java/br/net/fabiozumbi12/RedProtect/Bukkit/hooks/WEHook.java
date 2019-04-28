@@ -29,9 +29,9 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -128,7 +128,7 @@ public class WEHook {
                 leader = p.getName().toLowerCase();
             }
 
-            String regionName = RPUtil.regionNameConform("", p);
+            String regionName = RedProtectUtil.regionNameConform("", p);
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
@@ -142,9 +142,11 @@ public class WEHook {
                         .build();
                 Operations.complete(operation);
             } catch (WorldEditException e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
         } catch (IOException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
@@ -153,7 +155,7 @@ public class WEHook {
 
     public static void regenRegion(final Region region, final World world, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            if (RPUtil.stopRegen) {
+            if (RedProtectUtil.stopRegen) {
                 return;
             }
 

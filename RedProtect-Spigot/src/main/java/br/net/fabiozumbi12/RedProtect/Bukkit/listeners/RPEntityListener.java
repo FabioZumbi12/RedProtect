@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,7 +47,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class RPEntityListener implements Listener {
 
-    static final RPContainer cont = new RPContainer();
+    static final ContainerManager cont = new ContainerManager();
 
     public RPEntityListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPEntityListener...");

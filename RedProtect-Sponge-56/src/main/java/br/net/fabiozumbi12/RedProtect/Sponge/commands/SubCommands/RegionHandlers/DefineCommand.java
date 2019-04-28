@@ -29,8 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -58,7 +57,7 @@ public class DefineCommand {
                         Player player = (Player) src;
 
                         String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-                        String name = RPUtil.nameGen(serverName, player.getWorld().getName());
+                        String name = RedProtectUtil.nameGen(serverName, player.getWorld().getName());
                         if (args.hasAny("regionName")) {
                             name = args.<String>getOne("regionName").get();
                         }

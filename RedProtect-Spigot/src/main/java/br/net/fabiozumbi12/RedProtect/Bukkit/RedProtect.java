@@ -31,13 +31,14 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPLogger;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPPermissionHandler;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectLogger;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.PermissionHandler;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -45,6 +46,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -52,7 +54,7 @@ public class RedProtect extends JavaPlugin {
     private static RedProtect plugin;
     private RedProtectAPI redProtectAPI;
     private int autoSaveID;
-    private RPVHelper rpvHelper;
+    private VersionHelper rpvHelper;
 
     public final List<String> confirmStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
@@ -64,9 +66,9 @@ public class RedProtect extends JavaPlugin {
     public List<String> changeWait = new ArrayList<>();
     public List<String> tpWait = new ArrayList<>();
     public final HooksManager hooks = new HooksManager();
-    public final RPLogger logger = new RPLogger();
+    public final RedProtectLogger logger = new RedProtectLogger();
     public RegionManager rm;
-    public RPPermissionHandler ph;
+    public PermissionHandler ph;
     public ConfigManager config;
     public LangManager lang;
     public LangGuiManager guiLang;
@@ -77,7 +79,7 @@ public class RedProtect extends JavaPlugin {
         return plugin;
     }
 
-    public RPVHelper getPVHelper() {
+    public VersionHelper getPVHelper() {
         return rpvHelper;
     }
 
@@ -93,7 +95,7 @@ public class RedProtect extends JavaPlugin {
         try {
             plugin = this;
 
-            ph = new RPPermissionHandler();
+            ph = new PermissionHandler();
             rm = new RegionManager();
 
             //Init config, lang, listeners and flags
@@ -110,10 +112,10 @@ public class RedProtect extends JavaPlugin {
             }
 
             if (bukkitVersion <= 1122) {
-                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper112").newInstance();
+                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
             }
             if (bukkitVersion >= 1130) {
-                rpvHelper = (RPVHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPVHelper113").newInstance();
+                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper113").newInstance();
             }
 
             logger.info("Loading API...");
@@ -127,6 +129,7 @@ public class RedProtect extends JavaPlugin {
             logger.clear("");
 
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
 
             getServer().setWhitelist(true);
@@ -146,6 +149,7 @@ public class RedProtect extends JavaPlugin {
             //start
             startLoad();
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -173,13 +177,14 @@ public class RedProtect extends JavaPlugin {
             rm = new RegionManager();
             rm.loadAll();
 
-            RPUtil.ReadAllDB(rm.getAllRegions());
+            RedProtectUtil.ReadAllDB(rm.getAllRegions());
 
             if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 startAutoSave();
             }
             logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 

@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPContainer;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.ArmorStand;
@@ -49,7 +48,7 @@ import org.spongepowered.api.world.World;
 
 public class RPMine18 {
 
-    static final RPContainer cont = new RPContainer();
+    static final ContainerManager cont = new ContainerManager();
 
     public RPMine18() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPMine18...");

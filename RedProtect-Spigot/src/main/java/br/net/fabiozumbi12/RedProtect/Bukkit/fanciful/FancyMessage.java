@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.fanciful;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.util.ArrayWrapper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.util.Reflection;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -460,6 +461,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             Object nmsItem = Reflection.getMethod(Reflection.getOBCClass("inventory.CraftItemStack"), "asNMSCopy", ItemStack.class).invoke(null, itemStack);
             return itemTooltip(Reflection.getMethod(Reflection.getNMSClass("ItemStack"), "save", Reflection.getNMSClass("NBTTagCompound")).invoke(nmsItem, Reflection.getNMSClass("NBTTagCompound").newInstance()).toString());
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
             return this;
         }

@@ -26,51 +26,23 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import org.bukkit.Effect;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Openable;
 
-public class RPDoor {
+public class VersionHelper112 implements VersionHelper {
 
-    public static void ChangeDoor(Block b, Region r) {
-        if ((!RedProtect.get().config.isFlagEnabled("smart-door") && !RedProtect.get().config.configRoot().flags.get("smart-door")) || !r.getFlagBool("smart-door")) {
-            return;
-        }
-
-        if (b.getType().name().contains("IRON")) {
-            b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
-            toggleDoor(b);
-        }
-
-        if (b.getType().name().contains("TRAP")) {
-            return;
-        }
-
-        //check side block if is door
-        Block[] block = new Block[4];
-        block[0] = b.getRelative(BlockFace.EAST);
-        block[1] = b.getRelative(BlockFace.WEST);
-        block[2] = b.getRelative(BlockFace.NORTH);
-        block[3] = b.getRelative(BlockFace.SOUTH);
-
-        for (Block b2 : block) {
-            if (b.getType().equals(b2.getType())) {
-                toggleDoor(b2);
-                break;
-            }
-        }
+    public void toggleDoor(Block b) {
+        BlockState state = b.getState();
+        Openable op = (Openable) state.getData();
+        op.setOpen(!op.isOpen());
+        state.setData((MaterialData) op);
+        state.update();
     }
 
-    private static void toggleDoor(Block b) {
-        if (b.getRelative(BlockFace.DOWN).getType().equals(b.getType())) {
-            b = b.getRelative(BlockFace.DOWN);
-        }
-        RedProtect.get().getPVHelper().toggleDoor(b);
-    }
-
-    public static boolean isOpenable(Block b) {
-        return RedProtect.get().getPVHelper().isOpenable(b);
+    public boolean isOpenable(Block b) {
+        return b.getState().getData() instanceof Openable;
     }
 }
+

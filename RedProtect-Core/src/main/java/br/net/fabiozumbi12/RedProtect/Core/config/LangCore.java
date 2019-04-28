@@ -26,6 +26,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -38,7 +40,7 @@ public class LangCore {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    protected final Properties baseLang = new Properties() {
+    private final Properties baseLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
@@ -63,6 +65,7 @@ public class LangCore {
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             baseLang.load(reader);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -74,6 +77,7 @@ public class LangCore {
             Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             loadedLang.load(reader);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -98,6 +102,8 @@ public class LangCore {
                             "===================================================";
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 

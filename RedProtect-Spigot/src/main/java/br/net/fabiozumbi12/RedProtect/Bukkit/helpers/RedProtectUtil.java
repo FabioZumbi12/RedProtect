@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
@@ -64,7 +63,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
-public class RPUtil extends CoreUtil {
+public class RedProtectUtil extends CoreUtil {
     public static final HashMap<String, HashMap<Location, Material>> pBorders = new HashMap<>();
     private static final HashMap<String, Integer> borderIds = new HashMap<>();
     private static final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
@@ -87,6 +86,7 @@ public class RPUtil extends CoreUtil {
             fos.close();
             isReader.close();
         } catch (IOException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -247,6 +247,7 @@ public class RPUtil extends CoreUtil {
             }
             zos.close();
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -313,7 +314,8 @@ public class RPUtil extends CoreUtil {
                     regiondate = dateformat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
-                    e.printStackTrace();
+                    CoreUtil.printJarVersion();
+            e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
@@ -350,7 +352,8 @@ public class RPUtil extends CoreUtil {
                     regiondate = dateformat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
-                    e.printStackTrace();
+                    CoreUtil.printJarVersion();
+            e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
@@ -364,7 +367,7 @@ public class RPUtil extends CoreUtil {
 
                 if (!ignore && days > RedProtect.get().config.configRoot().sell.sell_oldest) {
                     RedProtect.get().logger.warning("Selling " + region.getName() + " - Days: " + days);
-                    RPEconomy.putToSell(region, RedProtect.get().config.configRoot().region_settings.default_leader, RPEconomy.getRegionValue(region));
+                    EconomyManager.putToSell(region, RedProtect.get().config.configRoot().region_settings.default_leader, EconomyManager.getRegionValue(region));
                     sell++;
                     RedProtect.get().rm.saveAll(false);
                     continue;
@@ -379,9 +382,9 @@ public class RPUtil extends CoreUtil {
             }
 
             //filter name
-            String rname = RPUtil.setName(region.getName());
+            String rname = RedProtectUtil.setName(region.getName());
             if (rname.length() < 4) {
-                rname = RPUtil.nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
+                rname = RedProtectUtil.nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
                 RedProtect.get().rm.renameRegion(rname, region);
                 cfm++;
             }
@@ -619,6 +622,7 @@ public class RPUtil extends CoreUtil {
                 RedProtect.get().logger.success((saved - 1) + " regions converted to Yml with success!");
             }
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
@@ -694,7 +698,8 @@ public class RPUtil extends CoreUtil {
                         st.close();
                         counter++;
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        CoreUtil.printJarVersion();
+            e.printStackTrace();
                     }
                 }
             }
@@ -735,7 +740,8 @@ public class RPUtil extends CoreUtil {
                 RedProtect.get().logger.severe("Couldn't connect to mysql! Make sure you have mysql turned on and installed properly, and the service is started.");
                 throw new Exception("Couldn't connect to mysql!");
             } catch (SQLException e) {
-                e.printStackTrace();
+                CoreUtil.printJarVersion();
+            e.printStackTrace();
                 RedProtect.get().logger.severe("There was an error while parsing SQL, redProtect will still with actual DB setting until you change the connection options or check if a Mysql service is running. Use /rp reload to try again");
             } finally {
                 if (st != null) {
@@ -758,6 +764,7 @@ public class RPUtil extends CoreUtil {
             rs.close();
             con.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -774,6 +781,7 @@ public class RPUtil extends CoreUtil {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return total > 0;
@@ -793,6 +801,7 @@ public class RPUtil extends CoreUtil {
             con.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return false;
@@ -926,6 +935,7 @@ public class RPUtil extends CoreUtil {
             fileDB.save(file);
         } catch (IOException e) {
             RedProtect.get().logger.severe("Error during save database file");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -946,9 +956,9 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
-                p[0] = RPUtil.PlayerToUUID(p[0]);
+                p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
@@ -957,9 +967,9 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
-                p[0] = RPUtil.PlayerToUUID(p[0]);
+                p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);
@@ -968,9 +978,9 @@ public class RPUtil extends CoreUtil {
         Set<PlayerRegion<String, String>> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
-                p[0] = RPUtil.PlayerToUUID(p[0]);
+                p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
             return new PlayerRegion<>(p[0], p[1]);

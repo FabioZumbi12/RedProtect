@@ -26,8 +26,8 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPVHelper;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper;
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
@@ -63,9 +63,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class RPVHelper8 implements RPVHelper {
+public class VersionHelper7 implements VersionHelper {
 
-    RPVHelper8() {
+    VersionHelper7() {
         PermissionService permissionService = Sponge.getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.help", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.border", Tristate.TRUE);
@@ -166,10 +166,10 @@ public class RPVHelper8 implements RPVHelper {
     public long getInvValue(Iterable<Inventory> inv) {
         long value = 0;
         for (Inventory item : inv) {
-            if (item.peek().isEmpty()) {
+            if (!item.peek().isPresent()) {
                 continue;
             }
-            ItemStack stack = item.peek();
+            ItemStack stack = item.peek().get();
             value += ((RedProtect.get().config.getBlockCost(stack.getType().getId()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                 for (Enchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
@@ -187,26 +187,26 @@ public class RPVHelper8 implements RPVHelper {
 
     @Override
     public ItemStack getItemMainHand(Player player) {
-        if (!player.getItemInHand(HandTypes.MAIN_HAND).isEmpty())
-            return player.getItemInHand(HandTypes.MAIN_HAND);
+        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
+            return player.getItemInHand(HandTypes.MAIN_HAND).get();
 
         return ItemStack.empty();
     }
 
     @Override
     public ItemStack getItemOffHand(Player player) {
-        if (!player.getItemInHand(HandTypes.OFF_HAND).isEmpty())
-            return player.getItemInHand(HandTypes.OFF_HAND);
+        if (player.getItemInHand(HandTypes.OFF_HAND).isPresent())
+            return player.getItemInHand(HandTypes.OFF_HAND).get();
 
         return ItemStack.empty();
     }
 
     @Override
     public ItemType getItemInHand(Player player) {
-        if (!player.getItemInHand(HandTypes.MAIN_HAND).isEmpty()) {
-            return player.getItemInHand(HandTypes.MAIN_HAND).getType();
-        } else if (!player.getItemInHand(HandTypes.OFF_HAND).isEmpty()) {
-            return player.getItemInHand(HandTypes.OFF_HAND).getType();
+        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
+            return player.getItemInHand(HandTypes.MAIN_HAND).get().getType();
+        } else if (player.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
+            return player.getItemInHand(HandTypes.OFF_HAND).get().getType();
         }
         return ItemTypes.NONE;
     }
@@ -220,16 +220,16 @@ public class RPVHelper8 implements RPVHelper {
     public Inventory newInventory(int size, String name) {
         return Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
                 .property(InventoryDimension.of(new Vector2i(9, size / 9)))
-                .property(InventoryTitle.of(RPUtil.toText(name)))
+                .property(InventoryTitle.of(RedProtectUtil.toText(name)))
                 .build(RedProtect.get().container);
     }
 
     @Override
     public void removeGuiItem(Player p) {
         p.getInventory().slots().forEach(slot -> {
-            if (!slot.peek().isEmpty()) {
-                ItemStack pitem = slot.peek();
-                if (RPUtil.removeGuiItem(pitem)) {
+            if (slot.peek().isPresent()) {
+                ItemStack pitem = slot.peek().get();
+                if (RedProtectUtil.removeGuiItem(pitem)) {
                     slot.poll();
                 }
             }

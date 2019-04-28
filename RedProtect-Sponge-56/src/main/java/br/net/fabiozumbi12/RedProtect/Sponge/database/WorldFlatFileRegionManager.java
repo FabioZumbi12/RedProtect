@@ -26,10 +26,11 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -80,6 +81,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 }
             }
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -104,11 +106,12 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     if (!region.getNode(rname).hasMapChildren()) {
                         continue;
                     }
-                    Region newr = RPUtil.loadRegion(region, rname, world);
+                    Region newr = RedProtectUtil.loadRegion(region, rname, world);
                     newr.setToSave(false);
                     regions.put(rname, newr);
                 }
             } catch (IOException | ObjectMappingException e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
         }
@@ -141,7 +144,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         fileDB = regionManager.createEmptyNode();
                     }
 
-                    RPUtil.addProps(fileDB, r);
+                    RedProtectUtil.addProps(fileDB, r);
                     saved++;
 
                     if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
@@ -173,9 +176,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 //try backup
                 if (force && RedProtect.get().config.configRoot().flat_file.backup) {
                     if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
-                        RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
+                        RedProtectUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
                     } else {
-                        RPUtil.backupRegions(dbs, world, null);
+                        RedProtectUtil.backupRegions(dbs, world, null);
                     }
                 }
             }
@@ -190,6 +193,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             regionManager.save(fileDB);
         } catch (IOException e) {
             RedProtect.get().logger.severe("Error during save database file for world " + world + ": ");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -241,7 +245,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         int total = 0;
         for (Region r2 : regionslist) {
-            total += RPUtil.simuleTotalRegionSize(uuid, r2);
+            total += RedProtectUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }

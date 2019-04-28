@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -43,9 +42,9 @@ public class PAPIHook extends PlaceholderExpansion {
             Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
             return r == null ? RedProtect.get().lang.get("region.wilderness") : r.getName();
         } else if (arg.equals("player_used_claims")) {
-            return String.valueOf(RedProtect.get().rm.getPlayerRegions(RPUtil.PlayerToUUID(p.getName()), p.getWorld()));
+            return String.valueOf(RedProtect.get().rm.getPlayerRegions(RedProtectUtil.PlayerToUUID(p.getName()), p.getWorld()));
         } else if (arg.equals("player_used_blocks")) {
-            return String.valueOf(RedProtect.get().rm.getTotalRegionSize(RPUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
+            return String.valueOf(RedProtect.get().rm.getTotalRegionSize(RedProtectUtil.PlayerToUUID(p.getName()), p.getWorld().getName()));
         } else if (arg.equals("player_total_claims")) {
             int l = RedProtect.get().ph.getPlayerClaimLimit(p);
             return l == -1 ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : String.valueOf(l);

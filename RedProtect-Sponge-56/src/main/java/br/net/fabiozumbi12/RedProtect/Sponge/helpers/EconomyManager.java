@@ -24,65 +24,64 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
+package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.type.TileEntityInventory;
+import org.spongepowered.api.world.World;
 
-public class RPEconomy {
+public class EconomyManager {
+
 
     public static long getRegionValue(Region r) {
         long regionCost = 0;
-        World w = RedProtect.get().getServer().getWorld(r.getWorld());
+        World w = RedProtect.get().getServer().getWorld(r.getWorld()).get();
         int maxX = r.getMaxMbrX();
         int minX = r.getMinMbrX();
         int maxZ = r.getMaxMbrZ();
         int minZ = r.getMinMbrZ();
-        int factor;
         for (int x = minX; x < maxX; x++) {
             for (int y = 0; y < 256; y++) {
                 for (int z = minZ; z < maxZ; z++) {
 
-                    Block b = w.getBlockAt(x, y, z);
-                    if (b.isEmpty()) {
+                    BlockSnapshot b = w.createSnapshot(x, y, z);
+		      /*
+		      Location<World> loc = new Location<World>(w, x, y, z);		      
+		      Collection<Entity> ents = w.getEntities(ent-> ent.getLocation().getBlockPosition().equals(loc.getBlockPosition()));
+		      for (Entity ent:ents){
+		    	  if (ent instanceof Equipable){
+		    		  Equipable equip = (Equipable) ent;
+		    		  regionCost += getInvValue(equip.getInventory().slots());
+		    	  }
+		      }
+		      */
+                    if (b.getState().getType().equals(BlockTypes.AIR)) {
                         continue;
                     }
 
-                    if (b.getState() instanceof InventoryHolder) {
-                        Inventory inv = ((InventoryHolder) b.getState()).getInventory();
-
-                        if (inv.getSize() == 54) {
-                            factor = 2;
-                        } else {
-                            factor = 1;
-                        }
-
-                        for (ItemStack item : inv.getContents()) {
-                            if (item == null || item.getAmount() == 0) {
-                                continue;
-                            }
-                            regionCost = regionCost + ((RedProtect.get().config.getBlockCost(item.getType().name()) * item.getAmount()) / factor);
-                            if (item.getEnchantments().size() > 0) {
-                                for (Enchantment enchant : item.getEnchantments().keySet()) {
-                                    regionCost = regionCost + ((RedProtect.get().config.getEnchantCost(enchant.getName()) * item.getEnchantments().get(enchant)) / factor);
-                                }
-                            }
+                    if (b.getLocation().get().getTileEntity().isPresent()) {
+                        TileEntity invTile = b.getLocation().get().getTileEntity().get();
+                        if (invTile instanceof TileEntityInventory) {
+                            TileEntityInventory<?> inv = (TileEntityInventory<?>) invTile;
+                            regionCost += getInvValue(inv.slots());
                         }
                     } else {
-                        regionCost = regionCost + RedProtect.get().config.getBlockCost(b.getType().name());
+                        regionCost += RedProtect.get().config.getBlockCost(b.getState().getType().getName());
                     }
                 }
             }
         }
+        r.setValue(regionCost);
         return regionCost;
+    }
+
+    private static long getInvValue(Iterable<Inventory> inv) {
+        return RedProtect.get().getPVHelper().getInvValue(inv);
     }
 
     public static String getCostMessage(Region r) {
@@ -99,9 +98,9 @@ public class RPEconomy {
             r.clearAdmins();
             r.setValue(value);
             r.setWelcome(getCostMessage(r));
-            r.setFlag(Bukkit.getConsoleSender(), "for-sale", true);
+            r.setFlag(null, "for-sale", true);
             if (RedProtect.get().config.getEcoBool("rename-region")) {
-                RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
+                RedProtect.get().rm.renameRegion(RedProtectUtil.nameGen(RedProtectUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             return true;
         } catch (Exception e) {
@@ -115,11 +114,11 @@ public class RPEconomy {
             r.clearAdmins();
             r.clearLeaders();
             r.addLeader(uuid);
-            r.setDate(RPUtil.dateNow());
+            r.setDate(RedProtectUtil.dateNow());
             r.setWelcome("");
             r.setFlags(RedProtect.get().config.getDefFlagsValues());
             if (RedProtect.get().config.getEcoBool("rename-region")) {
-                RedProtect.get().rm.renameRegion(RPUtil.nameGen(RPUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
+                RedProtect.get().rm.renameRegion(RedProtectUtil.nameGen(RedProtectUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             r.removeFlag("for-sale");
             return true;
@@ -127,4 +126,5 @@ public class RPEconomy {
             return false;
         }
     }
+
 }

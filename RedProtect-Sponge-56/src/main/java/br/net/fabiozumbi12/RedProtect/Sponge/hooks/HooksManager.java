@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import org.spongepowered.api.Sponge;
 
@@ -49,6 +50,7 @@ public class HooksManager {
                 dynmapHook = new DynmapHook();
                 Sponge.getGame().getEventManager().registerListeners(RedProtect.get().container, dynmapHook);
             } catch (Exception e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
             RedProtect.get().logger.info("Dynmap markers loaded!");

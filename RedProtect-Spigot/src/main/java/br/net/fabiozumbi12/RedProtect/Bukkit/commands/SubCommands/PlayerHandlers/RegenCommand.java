@@ -29,8 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -86,7 +85,7 @@ public class RegenCommand implements SubCommand {
             }
 
             if (args[0].equalsIgnoreCase("stop")) {
-                RPUtil.stopRegen = true;
+                RedProtectUtil.stopRegen = true;
                 RedProtect.get().lang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
                 return true;
             }

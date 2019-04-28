@@ -28,8 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.region;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import org.spongepowered.api.entity.living.player.Player;
@@ -53,7 +52,7 @@ public abstract class RegionBuilder {
 
     protected void setErrorSign(ChangeSignEvent e, String error) {
         SignData sign = e.getText();
-        sign.set(sign.getValue(Keys.SIGN_LINES).get().set(0, RPUtil.toText(RedProtect.get().lang.get("regionbuilder.signerror"))));
+        sign.set(sign.getValue(Keys.SIGN_LINES).get().set(0, RedProtectUtil.toText(RedProtect.get().lang.get("regionbuilder.signerror"))));
         this.setError(e.getCause().first(Player.class).get(), error);
     }
 

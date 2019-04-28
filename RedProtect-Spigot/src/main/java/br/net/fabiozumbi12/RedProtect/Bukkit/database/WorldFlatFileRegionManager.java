@@ -28,7 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.database;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -78,6 +79,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
             }
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -88,6 +90,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             try {
                 f.createNewFile();
             } catch (IOException e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
         }
@@ -100,13 +103,15 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             } catch (FileNotFoundException e) {
                 RedProtect.get().logger.severe("DB file not found!");
                 RedProtect.get().logger.severe("File:" + f.getName());
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             } catch (Exception e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
 
             for (String rname : fileDB.getKeys(false)) {
-                Region newr = RPUtil.loadRegion(fileDB, rname, this.world);
+                Region newr = RedProtectUtil.loadRegion(fileDB, rname, this.world);
                 if (newr == null) return;
 
                 newr.setToSave(false);
@@ -140,7 +145,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", world + File.separator + r.getName() + ".yml");
                     }
 
-                    RPUtil.addProps(fileDB, r);
+                    RedProtectUtil.addProps(fileDB, r);
                     saved++;
 
                     if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
@@ -172,9 +177,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 //try backup
                 if (force && RedProtect.get().config.configRoot().flat_file.backup) {
                     if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
-                        RPUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
+                        RedProtectUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
                     } else {
-                        RPUtil.backupRegions(yamls, world, null);
+                        RedProtectUtil.backupRegions(yamls, world, null);
                     }
                 }
             }
@@ -189,6 +194,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             fileDB.save(file);
         } catch (IOException e) {
             RedProtect.get().logger.severe("Error during save database file for world " + world + ": ");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -242,7 +248,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         int total = 0;
         for (Region r2 : regionslist) {
-            total += RPUtil.simuleTotalRegionSize(uuid, r2);
+            total += RedProtectUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }

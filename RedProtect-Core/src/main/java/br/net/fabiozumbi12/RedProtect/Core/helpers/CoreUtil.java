@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.helpers;
 
+import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
@@ -61,6 +62,8 @@ public class CoreUtil {
             out.closeEntry();
             out.close();
         } catch (Exception e) {
+            CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -121,7 +124,7 @@ public class CoreUtil {
         return obj;
     }
 
-    public static String StripName(String pRName) {
+    protected static String StripName(String pRName) {
         String regionName;
         if (pRName.length() > 13) {
             regionName = pRName.substring(0, 13);
@@ -130,4 +133,14 @@ public class CoreUtil {
         }
         return regionName;
     }
+
+    public static void printJarVersion(){
+        String jarVersion = new File(CoreUtil.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath())
+                .getName();
+        System.out.print("RedProtect jar: " + jarVersion);
+    }
+
 }

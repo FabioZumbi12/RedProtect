@@ -24,31 +24,36 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
+package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper;
+import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.animal.Horse;
+import org.spongepowered.api.entity.living.animal.RideableHorse;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.item.Enchantment;
-import org.spongepowered.api.item.Enchantments;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKey;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.enchantment.Enchantment;
+import org.spongepowered.api.item.enchantment.EnchantmentType;
+import org.spongepowered.api.item.enchantment.EnchantmentTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.SlotPos;
+import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.Location;
@@ -58,9 +63,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class RPVHelper56 implements RPVHelper {
+public class VersionHelper8 implements VersionHelper {
 
-    RPVHelper56() {
+    VersionHelper8() {
         PermissionService permissionService = Sponge.getGame().getServiceManager().getRegistration(PermissionService.class).get().getProvider();
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.help", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.border", Tristate.TRUE);
@@ -91,7 +96,7 @@ public class RPVHelper56 implements RPVHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.infowand", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.wand", Tristate.TRUE);
 
-        for (String ench : Sponge.getRegistry().getAllOf(Enchantment.class).stream().map(Enchantment::getId).collect(Collectors.toList())) {
+        for (String ench : Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList())) {
             if (RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
                 RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
             }
@@ -100,49 +105,51 @@ public class RPVHelper56 implements RPVHelper {
 
     @Override
     public Cause getCause(CommandSource p) {
-        return Cause.of(NamedCause.simulated(p));
+        if (p instanceof Player)
+            return Cause.of(EventContext.builder().add(EventContextKeys.PLAYER, (Player) p).build(), p);
+        else
+            return Cause.of(EventContext.builder().add(EventContextKeys.PLUGIN, RedProtect.get().container).build(), p);
     }
 
     @Override
     public void closeInventory(Player p) {
-        p.closeInventory(getCause(p));
+        p.closeInventory();
     }
 
     @Override
     public void openInventory(Inventory inv, Player p) {
-        p.openInventory(inv, Cause.of(NamedCause.of(p.getName(), p)));
+        p.openInventory(inv);
     }
 
     @Override
     public void setBlock(Location<World> loc, BlockState block) {
-        loc.setBlockType(block.getType(), Cause.of(NamedCause.owner(RedProtect.get().container)));
+        loc.setBlock(block);
     }
 
     @Override
     public void digBlock(Player p, ItemStack item, Vector3i loc) {
-        p.getWorld().digBlockWith(loc, item, Cause.of(NamedCause.owner(RedProtect.get().container)));
+        p.getWorld().digBlockWith(loc, item, p.getProfile());
     }
 
     @Override
     public void digBlock(Player p, Vector3i loc) {
-        p.getWorld().digBlock(loc, Cause.of(NamedCause.owner(RedProtect.get().container)));
+        p.getWorld().digBlock(loc, p.getProfile());
     }
 
     @Override
     public void removeBlock(Location<World> loc) {
-        loc.removeBlock(Cause.of(NamedCause.owner(RedProtect.get().container)));
+        loc.removeBlock();
     }
 
     @Override
     public boolean checkCause(Cause cause, String toCompare) {
-        return cause.containsNamed(toCompare);
+        return Sponge.getGame().getRegistry().getType(EventContextKey.class, toCompare).isPresent() && cause.contains(Sponge.getGame().getRegistry().getType(EventContextKey.class, toCompare).get());
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean checkHorseOwner(Entity ent, Player p) {
-        if (ent instanceof Horse && ((Horse) ent).getHorseData().get(Keys.TAMED_OWNER).isPresent()) {
-            Horse tam = (Horse) ent;
+        if (ent instanceof RideableHorse && ((RideableHorse) ent).getHorseData().get(Keys.TAMED_OWNER).isPresent()) {
+            RideableHorse tam = (RideableHorse) ent;
             Player owner = RedProtect.get().getServer().getPlayer(tam.getHorseData().get(Keys.TAMED_OWNER).get().get()).get();
             return owner.getName().equals(p.getName());
         }
@@ -151,7 +158,7 @@ public class RPVHelper56 implements RPVHelper {
 
     @Override
     public ItemStack offerEnchantment(ItemStack item) {
-        item.offer(Keys.ITEM_ENCHANTMENTS, Collections.singletonList(new ItemEnchantment(Enchantments.UNBREAKING, 1)));
+        item.offer(Keys.ITEM_ENCHANTMENTS, Collections.singletonList(Enchantment.builder().type(EnchantmentTypes.UNBREAKING).level(1).build()));
         return item;
     }
 
@@ -159,14 +166,14 @@ public class RPVHelper56 implements RPVHelper {
     public long getInvValue(Iterable<Inventory> inv) {
         long value = 0;
         for (Inventory item : inv) {
-            if (!item.peek().isPresent()) {
+            if (item.peek().isEmpty()) {
                 continue;
             }
-            ItemStack stack = item.peek().get();
-            value += ((RedProtect.get().config.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
+            ItemStack stack = item.peek();
+            value += ((RedProtect.get().config.getBlockCost(stack.getType().getId()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
-                for (ItemEnchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
-                    value += ((RedProtect.get().config.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
+                for (Enchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
+                    value += ((RedProtect.get().config.getEnchantCost(enchant.getType().getId()) * enchant.getLevel()));
                 }
             }
         }
@@ -175,55 +182,55 @@ public class RPVHelper56 implements RPVHelper {
 
     @Override
     public Inventory query(Inventory inventory, int x, int y) {
-        return inventory.query(SlotPos.of(x, y));
+        return inventory.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(x, y)));
     }
 
     @Override
     public ItemStack getItemMainHand(Player player) {
-        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
-            return player.getItemInHand(HandTypes.MAIN_HAND).get();
+        if (!player.getItemInHand(HandTypes.MAIN_HAND).isEmpty())
+            return player.getItemInHand(HandTypes.MAIN_HAND);
 
         return ItemStack.empty();
     }
 
     @Override
     public ItemStack getItemOffHand(Player player) {
-        if (player.getItemInHand(HandTypes.OFF_HAND).isPresent())
-            return player.getItemInHand(HandTypes.OFF_HAND).get();
+        if (!player.getItemInHand(HandTypes.OFF_HAND).isEmpty())
+            return player.getItemInHand(HandTypes.OFF_HAND);
 
         return ItemStack.empty();
     }
 
     @Override
     public ItemType getItemInHand(Player player) {
-        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-            return player.getItemInHand(HandTypes.MAIN_HAND).get().getItem();
-        } else if (player.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
-            return player.getItemInHand(HandTypes.OFF_HAND).get().getItem();
+        if (!player.getItemInHand(HandTypes.MAIN_HAND).isEmpty()) {
+            return player.getItemInHand(HandTypes.MAIN_HAND).getType();
+        } else if (!player.getItemInHand(HandTypes.OFF_HAND).isEmpty()) {
+            return player.getItemInHand(HandTypes.OFF_HAND).getType();
         }
         return ItemTypes.NONE;
     }
 
     @Override
     public ItemType getItemType(ItemStack itemStack) {
-        return itemStack.getItem();
+        return itemStack.getType();
     }
 
     @Override
     public Inventory newInventory(int size, String name) {
         return Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
-                .property(InventoryDimension.PROPERTY_NAME, new InventoryDimension(9, size / 9))
-                .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(RPUtil.toText(name)))
+                .property(InventoryDimension.of(new Vector2i(9, size / 9)))
+                .property(InventoryTitle.of(RedProtectUtil.toText(name)))
                 .build(RedProtect.get().container);
     }
 
     @Override
     public void removeGuiItem(Player p) {
         p.getInventory().slots().forEach(slot -> {
-            if (slot.peek().isPresent()) {
-                ItemStack pitem = slot.peek().get();
-                if (RPUtil.removeGuiItem(pitem)) {
-                    slot.poll().get();
+            if (!slot.peek().isEmpty()) {
+                ItemStack pitem = slot.peek();
+                if (RedProtectUtil.removeGuiItem(pitem)) {
+                    slot.poll();
                 }
             }
         });

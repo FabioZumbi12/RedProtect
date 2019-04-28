@@ -26,11 +26,12 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -84,6 +85,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             ConnectDB();
             addNewColumns();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         } finally {
             if (st != null) {
@@ -106,6 +108,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             con.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return false;
@@ -135,6 +138,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             rs.close();
             con.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
@@ -158,7 +162,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.executeUpdate();
                 st.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                CoreUtil.printJarVersion();
+            e.printStackTrace();
             }
         }
     }
@@ -197,7 +202,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.executeUpdate();
                 st.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                CoreUtil.printJarVersion();
+            e.printStackTrace();
             }
         }
     }
@@ -228,6 +234,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             rs.close();
         } catch (SQLException e) {
             RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -242,6 +249,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
         } catch (SQLException e) {
             RedProtect.get().logger.severe("RedProtect can't save the region " + rname + ", please verify the Mysql Connection and table structures.");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -272,6 +280,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             rs.close();
         } catch (SQLException e) {
             RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -335,7 +344,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     String key = flag.split(":")[0];
                     String replace = key + ":";
                     if (replace.length() <= flag.length()) {
-                        flags.put(key, RPUtil.parseObject(flag.substring(replace.length())));
+                        flags.put(key, RedProtectUtil.parseObject(flag.substring(replace.length())));
                     }
                 }
                 Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
@@ -344,6 +353,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -363,6 +373,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return regionsp;
@@ -382,6 +393,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return regionsp;
@@ -431,9 +443,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String member : rs.getString("members").split(", ")) {
                         String[] pi = member.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+                        if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
-                            p[0] = RPUtil.PlayerToUUID(p[0]);
+                            p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
                         members.add(new PlayerRegion<>(p[0], p[1]));
@@ -442,9 +454,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String admin : rs.getString("admins").split(", ")) {
                         String[] pi = admin.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+                        if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
-                            p[0] = RPUtil.PlayerToUUID(p[0]);
+                            p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
                         admins.add(new PlayerRegion<>(p[0], p[1]));
@@ -452,9 +464,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String leader : rs.getString("leaders").split(", ")) {
                         String[] pi = leader.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (RedProtect.get().config.configRoot().online_mode && !RPUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+                        if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                             String before = p[0];
-                            p[0] = RPUtil.PlayerToUUID(p[0]);
+                            p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                             RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                         }
                         leaders.add(new PlayerRegion<>(p[0], p[1]));
@@ -462,7 +474,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                     for (String flag : rs.getString("flags").split(",")) {
                         String key = flag.split(":")[0];
-                        flags.put(key, RPUtil.parseObject(flag.substring((key + ":").length())));
+                        flags.put(key, RedProtectUtil.parseObject(flag.substring((key + ":").length())));
                     }
 
                     Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
@@ -480,6 +492,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     }
                 }, RedProtect.get().config.configRoot().mysql.region_cache_minutes, TimeUnit.MINUTES);
             } catch (SQLException e) {
+                CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
         }
@@ -495,7 +508,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     public int getTotalRegionSize(String uuid) {
         int total = 0;
         for (Region r2 : this.getRegions(uuid)) {
-            total += RPUtil.simuleTotalRegionSize(uuid, r2);
+            total += RedProtectUtil.simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }
@@ -516,6 +529,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return ret;
@@ -533,6 +547,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return total > 0;
@@ -560,6 +575,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return regionl;
@@ -649,6 +665,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
             rs.close();
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return allregions;
@@ -667,6 +684,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             st.close();
         }
         catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }		*/
     }
@@ -687,6 +705,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
             RedProtect.get().logger.info("Conected to " + this.tableName + " via Mysql!");
         } catch (SQLException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
             RedProtect.get().logger.severe("[" + dbname + "] Theres was an error while connecting to Mysql database! RedProtect will try to connect again in 15 seconds. If still not connecting, check the DB configurations and reload.");
         }
@@ -705,6 +724,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             rs.close();
         } catch (SQLException e) {
             RedProtect.get().logger.severe("Error on get total of regions for " + tableName + "!");
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return total;

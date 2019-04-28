@@ -26,11 +26,11 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -140,7 +140,7 @@ public class WEHook {
                 leader = p.getName().toLowerCase();
             }
 
-            String regionName = RPUtil.regionNameConform("", p);
+            String regionName = RedProtectUtil.regionNameConform("", p);
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
@@ -151,6 +151,7 @@ public class WEHook {
             Operation op = holder.createPaste(session.createEditSession(sp), ws.getWorldData()).to(session.getPlacementPosition(sp)).build();
             Operations.completeLegacy(op);
         } catch (IOException | EmptyClipboardException | IncompleteRegionException | MaxChangedBlocksException e) {
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
@@ -159,7 +160,7 @@ public class WEHook {
 
     public static void regenRegion(final Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-            if (RPUtil.stopRegen) {
+            if (RedProtectUtil.stopRegen) {
                 return;
             }
 

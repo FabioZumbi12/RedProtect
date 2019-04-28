@@ -28,9 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RPUtil;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -294,7 +293,7 @@ public class RPGlobalListener {
             return;
         }
 
-        if (!RPUtil.canBuildNear(p, b.getLocation().get())) {
+        if (!RedProtectUtil.canBuildNear(p, b.getLocation().get())) {
             e.setCancelled(true);
             return;
         }
@@ -437,7 +436,7 @@ public class RPGlobalListener {
             return;
         }
 
-        if (!RPUtil.canBuildNear(p, bt.getLocation().get())) {
+        if (!RedProtectUtil.canBuildNear(p, bt.getLocation().get())) {
             e.setCancelled(true);
             return;
         }
