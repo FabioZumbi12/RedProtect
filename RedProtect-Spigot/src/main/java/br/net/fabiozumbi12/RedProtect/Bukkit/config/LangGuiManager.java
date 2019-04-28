@@ -90,9 +90,7 @@ public class LangGuiManager extends GuiLangCore {
     }
 
     private void updateLang() {
-        if (updateLang(RedProtect.get().getDescription().getVersion())){
-            RedProtect.get().logger.warning("- Removed invalid entries from GUI language files");
-        }
+        updateLang(RedProtect.get().getDescription().getVersion());
     }
 
     public String getFlagName(String flag) {

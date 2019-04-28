@@ -68,15 +68,12 @@ public class GuiLangCore {
         }
     }
 
-    protected boolean updateLang(String pluginVersion) {
+    protected void updateLang(String pluginVersion) {
         baseLang.forEach((key, value) -> {
             if (!loadedLang.containsKey(key)) {
                 loadedLang.put(key, value);
             }
         });
-
-        //remove invalid entries
-        boolean updated = loadedLang.entrySet().removeIf(k -> !baseLang.containsKey(k.getKey()));
 
         if (!loadedLang.containsKey("_lang.version"))
             loadedLang.put("_lang.version", pluginVersion);
@@ -90,8 +87,6 @@ public class GuiLangCore {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return updated;
     }
 
     protected String getRaw(String key) {
