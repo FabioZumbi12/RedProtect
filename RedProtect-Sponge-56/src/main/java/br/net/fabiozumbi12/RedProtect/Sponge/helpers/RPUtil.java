@@ -72,6 +72,7 @@ import java.util.zip.ZipOutputStream;
 @SuppressWarnings("deprecation")
 public class RPUtil extends CoreUtil {
     public static boolean stopRegen;
+    private static HashMap<String, String> cachedUUIDs = new HashMap<>();
 
     public static Text toText(String str) {
         return TextSerializers.FORMATTING_CODE.deserialize(str);
@@ -382,6 +383,10 @@ public class RPUtil extends CoreUtil {
             return PlayerName;
         }
 
+        if (cachedUUIDs.containsValue(PlayerName)) {
+            return cachedUUIDs.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(PlayerName)).findFirst().get().getKey();
+        }
+
         String uuid = PlayerName;
 
         if (!RedProtect.get().config.configRoot().online_mode) {
@@ -401,6 +406,7 @@ public class RPUtil extends CoreUtil {
             }
         }
 
+        cachedUUIDs.put(uuid, PlayerName);
         return uuid;
     }
 
@@ -412,6 +418,10 @@ public class RPUtil extends CoreUtil {
         //check if is UUID
         if (isDefaultServer(uuid) || !isUUIDs(uuid)) {
             return uuid;
+        }
+
+        if (cachedUUIDs.containsKey(uuid)) {
+            return cachedUUIDs.get(uuid);
         }
 
         String PlayerName = uuid;
@@ -431,6 +441,8 @@ public class RPUtil extends CoreUtil {
                 PlayerName = MojangUUIDs.getName(uuid);
             }
         }
+
+        cachedUUIDs.put(uuid, PlayerName);
         return PlayerName;
     }
 

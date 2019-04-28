@@ -81,31 +81,6 @@ public class TaskChain {
     }
 
     /**
-     * Adds a delay to the chain execution
-     *
-     * @param ticks # of ticks to delay before next task (20 = 1 second)
-     * @return
-     */
-    public TaskChain delay(final int ticks) {
-        add(new GenericTask() {
-            {
-                // Prevent switching between sync/async
-                final BaseTask peek = TaskChain.this.chainQueue.peek();
-                this.async = peek != null ? peek.async : TaskChain.this.async;
-            }
-
-            @Override
-            public void run() {
-                final GenericTask task = this;
-                task.chain.async = false;
-                Bukkit.getScheduler().runTaskLater(plugin, task::next, ticks);
-                async();
-            }
-        });
-        return this;
-    }
-
-    /**
      * Adds a step to the chain execution. Async*Task will run off of main thread,
      * *Task will run sync with main thread
      *

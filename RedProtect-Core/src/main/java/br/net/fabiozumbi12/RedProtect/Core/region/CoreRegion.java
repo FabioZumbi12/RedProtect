@@ -387,53 +387,19 @@ public class CoreRegion implements Serializable {
         return Math.abs((this.maxMbrX - this.minMbrX) + 1) * Math.abs((this.maxMbrZ - this.minMbrZ) + 1);
     }
 
-    public boolean inBoundingRect(CoreRegion other) {
-        return other.maxMbrX >= this.minMbrX && other.minMbrZ >= this.minMbrZ && other.minMbrX <= this.maxMbrX && other.minMbrZ <= this.maxMbrZ;
+    public boolean isLeader(String player) {
+        return this.leaders.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player)) ||
+                this.leaders.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
     }
 
-    protected boolean isLeader(String player, boolean OnlineMode) {
-        if (OnlineMode) {
-            return this.leaders.stream().anyMatch(l -> {
-                try {
-                    UUID uuid = UUID.fromString(l.getUUID());
-                    return uuid.toString().equalsIgnoreCase(player);
-                } catch (Exception ignored) {
-                    return l.getUUID().equalsIgnoreCase(player);
-                }
-            });
-        } else {
-            return this.leaders.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
-        }
+    public boolean isAdmin(String player) {
+        return this.admins.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player)) ||
+                this.admins.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
     }
 
-    protected boolean isAdmin(String player, boolean OnlineMode) {
-        if (OnlineMode) {
-            return this.admins.stream().anyMatch(l -> {
-                try {
-                    UUID uuid = UUID.fromString(l.getUUID());
-                    return uuid.toString().equalsIgnoreCase(player);
-                } catch (Exception ignored) {
-                    return l.getUUID().equalsIgnoreCase(player);
-                }
-            });
-        } else {
-            return this.admins.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
-        }
-    }
-
-    protected boolean isMember(String player, boolean OnlineMode) {
-        if (OnlineMode) {
-            return this.members.stream().anyMatch(l -> {
-                try {
-                    UUID uuid = UUID.fromString(l.getUUID());
-                    return uuid.toString().equalsIgnoreCase(player);
-                } catch (Exception ignored) {
-                    return l.getUUID().equalsIgnoreCase(player);
-                }
-            });
-        } else {
-            return this.members.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
-        }
+    public boolean isMember(String player) {
+        return this.members.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player)) ||
+                this.members.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
     }
 
     public int adminSize() {

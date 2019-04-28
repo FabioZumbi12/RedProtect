@@ -418,13 +418,13 @@ public class RPUtil extends CoreUtil {
             return null;
         }
 
-        if (cachedUUIDs.containsValue(PlayerName)) {
-            return cachedUUIDs.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(PlayerName)).findFirst().get().getKey();
-        }
-
         //check if is already UUID
         if (isUUIDs(PlayerName) || isDefaultServer(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))) {
             return PlayerName;
+        }
+
+        if (cachedUUIDs.containsValue(PlayerName)) {
+            return cachedUUIDs.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(PlayerName)).findFirst().get().getKey();
         }
 
         String uuid = PlayerName;
@@ -448,13 +448,13 @@ public class RPUtil extends CoreUtil {
             return null;
         }
 
-        if (cachedUUIDs.containsKey(uuid)) {
-            return cachedUUIDs.get(uuid);
-        }
-
         //check if is UUID
         if (isDefaultServer(uuid) || !isUUIDs(uuid)) {
             return uuid;
+        }
+
+        if (cachedUUIDs.containsKey(uuid)) {
+            return cachedUUIDs.get(uuid);
         }
 
         String PlayerName = uuid;

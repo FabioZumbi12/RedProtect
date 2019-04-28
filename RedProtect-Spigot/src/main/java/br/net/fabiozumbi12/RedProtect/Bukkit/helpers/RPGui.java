@@ -158,7 +158,7 @@ public class RPGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (event.getInventory().getTitle() == null || !event.getInventory().getTitle().equals(this.name)) {
+        if (!event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
             return;
         }
         if (this.editable) {
@@ -204,7 +204,7 @@ public class RPGui implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     void onInventoryClick(InventoryClickEvent event) {
-        if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getInventory().getTitle().equals(this.name)) {
+        if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
             return;
         }
 
@@ -212,7 +212,7 @@ public class RPGui implements Listener {
             return;
         }
 
-        if (event.getInventory().getTitle() != null && event.getInventory().getTitle().equals(this.name)) {
+        if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
             if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {

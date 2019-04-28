@@ -116,8 +116,8 @@ public class RPBlockListener implements Listener {
             }
         }
 
-        if ((RedProtect.get().config.configRoot().private_cat.use && b.getType().equals(Material.WALL_SIGN))) {
-            Boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
+        if ((RedProtect.get().config.configRoot().private_cat.use && b.getType().name().contains("WALL_SIGN"))) {
+            boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
             if (cont.validatePrivateSign(e.getLines())) {
                 if (out || signr != null) {
                     if (cont.isContainer(b)) {

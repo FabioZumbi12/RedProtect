@@ -234,11 +234,7 @@ public class ConfigManager {
                     + "<            This is the gui flags configuration file.               > #\n"
                     + "<                       Feel free to edit it.                        > #\n"
                     + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "\n"
-                    + "Notes:\n"
-                    + "Lists are [object1, object2, ...]\n"
-                    + "Strings containing the char & always need to be quoted";
+                    + "+--------------------------------------------------------------------+ #\n";
 
             String guiFileName = "guiconfig" + configRoot().language + ".conf";
             if (new File(RedProtect.get().configDir, guiFileName).exists()){

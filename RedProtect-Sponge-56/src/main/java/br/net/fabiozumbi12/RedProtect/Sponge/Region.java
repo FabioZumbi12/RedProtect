@@ -454,38 +454,26 @@ public class Region extends CoreRegion {
 
     public boolean isLeader(Player player) {
         if (RedProtect.get().config.configRoot().online_mode) {
-            return isLeader(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
+            return isLeader(player.getUniqueId().toString());
         } else {
-            return isLeader(player.getName(), RedProtect.get().config.configRoot().online_mode);
+            return isLeader(player.getName());
         }
     }
 
     public boolean isAdmin(Player player) {
         if (RedProtect.get().config.configRoot().online_mode) {
-            return isAdmin(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
+            return isAdmin(player.getUniqueId().toString());
         } else {
-            return isAdmin(player.getName(), RedProtect.get().config.configRoot().online_mode);
+            return isAdmin(player.getName());
         }
     }
 
     public boolean isMember(Player player) {
         if (RedProtect.get().config.configRoot().online_mode) {
-            return isMember(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
+            return isMember(player.getUniqueId().toString());
         } else {
-            return isMember(player.getName(), RedProtect.get().config.configRoot().online_mode);
+            return isMember(player.getName());
         }
-    }
-
-    public boolean isLeader(String player) {
-        return isLeader(player, RedProtect.get().config.configRoot().online_mode);
-    }
-
-    public boolean isAdmin(String player) {
-        return isAdmin(player, RedProtect.get().config.configRoot().online_mode);
-    }
-
-    public boolean isMember(String player) {
-        return isMember(player, RedProtect.get().config.configRoot().online_mode);
     }
 
     /**
@@ -495,11 +483,7 @@ public class Region extends CoreRegion {
      */
     public void addLeader(String uuid) {
         setToSave(true);
-
-        String name = uuid;
-        if (RedProtect.get().config.configRoot().online_mode) {
-            name = RPUtil.UUIDtoPlayer(uuid);
-        }
+        String name = RPUtil.UUIDtoPlayer(uuid).toLowerCase();
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -518,11 +502,7 @@ public class Region extends CoreRegion {
      */
     public void addMember(String uuid) {
         setToSave(true);
-
-        String name = uuid;
-        if (RedProtect.get().config.configRoot().online_mode) {
-            name = RPUtil.UUIDtoPlayer(uuid);
-        }
+        String name = RPUtil.UUIDtoPlayer(uuid).toLowerCase();
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -541,11 +521,7 @@ public class Region extends CoreRegion {
      */
     public void addAdmin(String uuid) {
         setToSave(true);
-
-        String name = uuid;
-        if (RedProtect.get().config.configRoot().online_mode) {
-            name = RPUtil.UUIDtoPlayer(uuid);
-        }
+        String name = RPUtil.UUIDtoPlayer(uuid).toLowerCase();
         PlayerRegion<String, String> pinfo = new PlayerRegion<>(uuid, name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));

@@ -352,7 +352,7 @@ public class Region extends CoreRegion {
         String memberString = "None";
 
         String wMsgTemp;
-        String IsTops = RedProtect.get().lang.translBool(isOnTop());
+        String IsTops = ChatColor.translateAlternateColorCodes('&', RedProtect.get().lang.translBool(isOnTop()));
         String wName = this.world;
         String colorChar = "";
         String dynmapInfo = "";
@@ -440,17 +440,17 @@ public class Region extends CoreRegion {
 
     public boolean isLeader(Player player) {
         if (RedProtect.get().config.configRoot().online_mode) {
-            return isLeader(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
+            return isLeader(player.getUniqueId().toString());
         } else {
-            return isLeader(player.getName(), RedProtect.get().config.configRoot().online_mode);
+            return isLeader(player.getName());
         }
     }
 
     public boolean isAdmin(Player player) {
         if (RedProtect.get().config.configRoot().online_mode) {
-            return isAdmin(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
+            return isAdmin(player.getUniqueId().toString());
         } else {
-            return isAdmin(player.getName(), RedProtect.get().config.configRoot().online_mode);
+            return isAdmin(player.getName());
         }
     }
 
@@ -459,22 +459,10 @@ public class Region extends CoreRegion {
         if (cs) return true;
 
         if (RedProtect.get().config.configRoot().online_mode) {
-            return isMember(player.getUniqueId().toString(), RedProtect.get().config.configRoot().online_mode);
+            return isMember(player.getUniqueId().toString());
         } else {
-            return isMember(player.getName(), RedProtect.get().config.configRoot().online_mode);
+            return isMember(player.getName());
         }
-    }
-
-    public boolean isLeader(String player) {
-        return isLeader(player, RedProtect.get().config.configRoot().online_mode);
-    }
-
-    public boolean isAdmin(String player) {
-        return isAdmin(player, RedProtect.get().config.configRoot().online_mode);
-    }
-
-    public boolean isMember(String player) {
-        return isMember(player, RedProtect.get().config.configRoot().online_mode);
     }
 
     /**

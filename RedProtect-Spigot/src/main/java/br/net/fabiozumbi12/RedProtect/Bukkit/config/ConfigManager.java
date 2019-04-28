@@ -494,6 +494,26 @@ public class ConfigManager {
             update++;
         }
 
+        if (root.config_version < 8.4D) {
+            root.config_version = 8.4D;
+            root.private_cat.allowed_blocks.add("COMPOSTER");
+            root.private_cat.allowed_blocks.add("BARREL");
+            root.private_cat.allowed_blocks.add("LOOM");
+            root.private_cat.allowed_blocks.add("SMOKER");
+            root.private_cat.allowed_blocks.add("BLAST_FURNACE");
+            root.private_cat.allowed_blocks.add("CARTOGRAPHY_TABLE");
+            root.private_cat.allowed_blocks.add("FLETCHING_TABLE");
+            root.private_cat.allowed_blocks.add("GRINDSTONE");
+            root.private_cat.allowed_blocks.add("SMITHING_TABLE");
+            root.private_cat.allowed_blocks.add("STONECUTTER");
+            root.private_cat.allowed_blocks.add("ANVIL");
+            root.private_cat.allowed_blocks.add("STONECUTTER");
+            root.private_cat.allowed_blocks.add("ANVIL");
+            root.private_cat.allowed_blocks.add("DAMAGED_ANVIL");
+            root.private_cat.allowed_blocks.add("DAMAGED_ANVIL");
+            update++;
+        }
+
         if (update > 0) {
             RedProtect.get().logger.warning("Configuration UPDATED!");
         }
