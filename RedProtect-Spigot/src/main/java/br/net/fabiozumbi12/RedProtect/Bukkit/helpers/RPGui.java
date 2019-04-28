@@ -110,7 +110,10 @@ public class RPGui implements Listener {
                     continue;
                 }
             }
-            if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) && Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material) != null && RedProtect.get().config.isFlagEnabled(flag)) {
+            if ((RedProtect.get().config.getDefFlags().contains(flag) ||
+                    RedProtect.get().ph.hasFlagPerm(player, flag)) &&
+                    Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material) != null &&
+                    RedProtect.get().config.isFlagEnabled(flag)) {
                 if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")) {
                     continue;
                 }

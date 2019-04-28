@@ -95,13 +95,10 @@ public class GuiLangCore {
     }
 
     protected String getRaw(String key) {
-        String langLine;
-
         if (loadedLang.get(key) == null) {
-            langLine = "&c&oNo entry for &4" + key;
+            return null;
         } else {
-            langLine = loadedLang.get(key).toString();
+            return loadedLang.get(key).toString();
         }
-        return langLine;
     }
 }

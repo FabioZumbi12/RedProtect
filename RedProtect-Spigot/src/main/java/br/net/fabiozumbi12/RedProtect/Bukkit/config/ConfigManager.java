@@ -54,6 +54,9 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class ConfigManager {
 
+    HashMap<String, String> backupGuiName = new HashMap<>();
+    HashMap<String, String> backupGuiDescription = new HashMap<>();
+
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
@@ -257,24 +260,32 @@ public class ConfigManager {
             }
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
-            /*
+            // Import old gui translations
             if (guiCfgRoot.getNode("gui-strings").getValue() != null){
                 guiCfgRoot.removeChild("gui-strings");
+                for (Map.Entry<Object, ? extends ConfigurationNode> key:guiCfgRoot.getNode("gui-flags").getChildrenMap().entrySet()){
+                    if (key.getValue().getNode("name").getValue() != null){
+                        backupGuiName.put(key.getKey().toString(), key.getValue().getNode("name").getString());
+                        key.getValue().removeChild("name");
+                    }
+                    StringBuilder description = new StringBuilder();
+                    if (key.getValue().getNode("description").getValue() != null){
+                        description.append(key.getValue().getNode("description").getString()).append("/n");
+                        key.getValue().removeChild("description");
+                    }
+                    if (key.getValue().getNode("description1").getValue() != null){
+                        description.append(key.getValue().getNode("description1").getString()).append("/n");
+                        key.getValue().removeChild("description1");
+                    }
+                    if (key.getValue().getNode("description2").getValue() != null){
+                        description.append(key.getValue().getNode("description2").getString()).append("/n");
+                        key.getValue().removeChild("description2");
+                    }
+                    if (description.length() > 0){
+                        backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length()-2));
+                    }
+                }
             }
-            for (ConfigurationNode key:guiCfgRoot.getNode("gui-flags").getChildrenList()){
-                if (key.getNode("name").getValue() != null){
-                    key.removeChild("name");
-                }
-                if (key.getNode("description").getValue() != null){
-                    key.removeChild("description");
-                }
-                if (key.getNode("description1").getValue() != null){
-                    key.removeChild("description1");
-                }
-                if (key.getNode("description2").getValue() != null){
-                    key.removeChild("description2");
-                }
-            }*/
 
             if (this.guiRoot.gui_separator.material.isEmpty())
                 this.guiRoot.gui_separator.material = "WHITE_STAINED_GLASS_PANE";

@@ -45,12 +45,13 @@ public class LangGuiManager extends GuiLangCore {
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
-            if (!RedProtect.get().container.getAsset(resLang).isPresent()) {
-                resLang = "guiEN-US.properties";
-                pathLang = RedProtect.get().configDir + File.separator + resLang;
-            }
             try {
-                RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
+                if (RedProtect.get().container.getAsset(resLang).isPresent()) {
+                    RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
+                } else {
+                    RedProtect.get().container.getAsset("guiEN-US.properties").get().copyToDirectory(RedProtect.get().configDir.toPath());
+                    new File(RedProtect.get().configDir,"guiEN-US.properties").renameTo(lang);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -59,6 +60,15 @@ public class LangGuiManager extends GuiLangCore {
 
         loadLang();
         loadBaseLang();
+
+        // Restore form backup
+        if (!RedProtect.get().config.backupGuiName.isEmpty()){
+            RedProtect.get().config.backupGuiName.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".name", v));
+        }
+        if (!RedProtect.get().config.backupGuiDescription.isEmpty()){
+            RedProtect.get().config.backupGuiDescription.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".description", v));
+        }
+
         updateLang();
     }
 
@@ -81,11 +91,19 @@ public class LangGuiManager extends GuiLangCore {
     }
 
     public String getFlagName(String flag) {
-        return getRaw("gui.flags." + flag + ".name");
+        String flagName = getRaw("gui.flags." + flag + ".name");
+        if (flagName == null){
+            flagName = getRaw("gui.flags.default.name");
+        }
+        return flagName;
     }
 
     public List<Text> getFlagDescription(String flag) {
-        return Arrays.asList(getRaw("gui.flags." + flag + ".description").split("/n")).stream().map(RPUtil::toText).collect(Collectors.toList());
+        String flagDescription = getRaw("gui.flags." + flag + ".description");
+        if (flagDescription == null){
+            flagDescription = getRaw("gui.flags.default.description");
+        }
+        return Arrays.stream(flagDescription.split("/n")).map(RPUtil::toText).collect(Collectors.toList());
     }
 
     public Text getFlagString(String key) {

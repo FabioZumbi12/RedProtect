@@ -50,13 +50,13 @@ public class LangManager extends LangCore {
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
-            if (!RedProtect.get().container.getAsset(resLang).isPresent()) {
-                resLang = "langEN-US.properties";
-                pathLang = RedProtect.get().configDir + File.separator + resLang;
-            }
-
             try {
-                RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
+                if (RedProtect.get().container.getAsset(resLang).isPresent()) {
+                    RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
+                } else {
+                    RedProtect.get().container.getAsset("langEN-US.properties").get().copyToDirectory(RedProtect.get().configDir.toPath());
+                    new File(RedProtect.get().configDir,"langEN-US.properties").renameTo(lang);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

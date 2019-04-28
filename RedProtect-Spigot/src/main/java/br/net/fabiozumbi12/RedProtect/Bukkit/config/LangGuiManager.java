@@ -51,17 +51,27 @@ public class LangGuiManager extends GuiLangCore {
 
         File lang = new File(pathLang);
         if (!lang.exists()) {
-            if (RedProtect.get().getResource("assets/redprotect/" + resLang) == null) {
-                resLang = "guiEN-US.properties";
-                pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
+            if (RedProtect.get().getResource("assets/redprotect/" + resLang) != null) {
+                RPUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
+            } else {
+                RPUtil.saveResource("/assets/redprotect/guiEN-US.properties", null, lang);
             }
-            RPUtil.saveResource("/assets/redprotect/" + resLang, null, new File(RedProtect.get().getDataFolder(), resLang));
             RedProtect.get().logger.info("Created GUI language file: " + pathLang);
         }
 
         loadLang();
         loadBaseLang();
+
+        // Restore form backup
+        if (!RedProtect.get().config.backupGuiName.isEmpty()){
+            RedProtect.get().config.backupGuiName.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".name", v));
+        }
+        if (!RedProtect.get().config.backupGuiDescription.isEmpty()){
+            RedProtect.get().config.backupGuiDescription.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".description", v));
+        }
+
         updateLang();
+
     }
 
     private void loadLang() {
@@ -86,11 +96,19 @@ public class LangGuiManager extends GuiLangCore {
     }
 
     public String getFlagName(String flag) {
-        return ChatColor.translateAlternateColorCodes('&', getRaw("gui.flags." + flag + ".name"));
+        String flagName = getRaw("gui.flags." + flag + ".name");
+        if (flagName == null){
+            flagName = getRaw("gui.flags.default.name");
+        }
+        return ChatColor.translateAlternateColorCodes('&', flagName);
     }
 
     public List<String> getFlagDescription(String flag) {
-        return Arrays.asList(ChatColor.translateAlternateColorCodes('&', getRaw("gui.flags." + flag + ".description")).split("/n"));
+        String flagDescription = getRaw("gui.flags." + flag + ".description");
+        if (flagDescription == null){
+            flagDescription = getRaw("gui.flags.default.description");
+        }
+        return Arrays.asList(ChatColor.translateAlternateColorCodes('&', flagDescription).split("/n"));
     }
 
     public String getFlagString(String key) {

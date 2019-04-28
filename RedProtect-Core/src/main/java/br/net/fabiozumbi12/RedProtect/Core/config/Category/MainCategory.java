@@ -26,7 +26,6 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.config.Category;
 
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -54,8 +53,8 @@ public class MainCategory {
     public flagsConfig flags_configuration = new flagsConfig();
     @Setting(value = "flat-file", comment = "Options for flatfile database.")
     public flatFile flat_file = new flatFile();
-    @Setting(comment = "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR")
-    public String language = "EN-US";
+    @Setting(comment = "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR-FR")
+    public String language = Locale.getDefault().getLanguage().toUpperCase() + "-" + Locale.getDefault().getCountry();
     @Setting(value = "log-actions", comment = "Log all redprotect commands?")
     public boolean log_actions = true;
     @Setting(comment = "Mysql options")

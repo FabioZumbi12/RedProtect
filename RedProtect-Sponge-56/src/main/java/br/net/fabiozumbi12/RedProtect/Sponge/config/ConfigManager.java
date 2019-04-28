@@ -62,6 +62,9 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class ConfigManager {
 
+    HashMap<String, String> backupGuiName = new HashMap<>();
+    HashMap<String, String> backupGuiDescription = new HashMap<>();
+
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
@@ -213,6 +216,33 @@ public class ConfigManager {
             File gFlagsConfig = new File(RedProtect.get().configDir, "globalflags.conf");
             gFlagsLoader = HoconConfigurationLoader.builder().setFile(gFlagsConfig).build();
             gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerg));
+
+            // Import old gui translations
+            if (guiCfgRoot.getNode("gui-strings").getValue() != null){
+                guiCfgRoot.removeChild("gui-strings");
+                for (Map.Entry<Object, ? extends ConfigurationNode> key:guiCfgRoot.getNode("gui-flags").getChildrenMap().entrySet()){
+                    if (key.getValue().getNode("name").getValue() != null){
+                        backupGuiName.put(key.getKey().toString(), key.getValue().getNode("name").getString());
+                        key.getValue().removeChild("name");
+                    }
+                    StringBuilder description = new StringBuilder();
+                    if (key.getValue().getNode("description").getValue() != null){
+                        description.append(key.getValue().getNode("description").getString()).append("/n");
+                        key.getValue().removeChild("description");
+                    }
+                    if (key.getValue().getNode("description1").getValue() != null){
+                        description.append(key.getValue().getNode("description1").getString()).append("/n");
+                        key.getValue().removeChild("description1");
+                    }
+                    if (key.getValue().getNode("description2").getValue() != null){
+                        description.append(key.getValue().getNode("description2").getString()).append("/n");
+                        key.getValue().removeChild("description2");
+                    }
+                    if (description.length() > 0){
+                        backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length()-2));
+                    }
+                }
+            }
 
             //import old world values
             if (gFlagsConfig.exists() && !gflagsRoot.getNode("worlds").hasMapChildren()) {
