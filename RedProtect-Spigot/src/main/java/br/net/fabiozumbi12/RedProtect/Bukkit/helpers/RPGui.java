@@ -293,7 +293,7 @@ public class RPGui implements Listener {
 
     public void open() {
         for (Player player:Bukkit.getServer().getOnlinePlayers()){
-            if (player.getOpenInventory().getTitle().equals(this.name)){
+            if (player.getOpenInventory().getTopInventory().equals(this.inv)){
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r != null && r.equals(this.region) && !player.equals(this.player)){
                     RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
