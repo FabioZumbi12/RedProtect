@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -109,11 +110,17 @@ public class FlagGui implements Listener {
                     continue;
                 }
             }
-            if ((RedProtect.get().config.getDefFlags().contains(flag) ||
-                    RedProtect.get().ph.hasFlagPerm(player, flag)) &&
-                    RedProtect.get().config.isFlagEnabled(flag) &&
-                    Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material) != null) {
-                if (flag.equals("pvp") && !RedProtect.get().getConfig().getStringList("flags-configuration.enabled-flags").contains("pvp")) {
+            if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) &&
+                    RedProtect.get().config.isFlagEnabled(flag)) {
+                if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags_configuration.enabled_flags.contains("pvp")) {
+                    continue;
+                }
+
+                try {
+                    Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material);
+                } catch (Exception e){
+                    CoreUtil.printJarVersion();
+                    e.printStackTrace();
                     continue;
                 }
 
