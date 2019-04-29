@@ -50,8 +50,8 @@ public class CoreRegion implements Serializable {
     protected long value;
     protected int[] tppoint;
     protected float[] tppointYaw;
-    protected boolean tosave = true;
     protected boolean canDelete;
+    private boolean tosave = true;
 
     /**
      * Represents the region created by player.
