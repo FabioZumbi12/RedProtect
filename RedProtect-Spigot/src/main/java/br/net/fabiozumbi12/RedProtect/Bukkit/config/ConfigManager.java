@@ -334,10 +334,8 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("GLASS_BOTTLE", 26));
             }
 
-            for (String key : getDefFlagsValues().keySet()) {
-                if (!guiRoot.gui_flags.containsKey(key)) {
-                    guiRoot.gui_flags.put(key, new FlagGuiCategory.GuiFlag("GOLDEN_APPLE", getGuiMaxSlot()));
-                }
+            for (String key: getDefFlagsValues().keySet()) {
+                this.guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag("GOLDEN_APPLE", 0));
             }
 
             //Economy file
@@ -623,13 +621,12 @@ public class ConfigManager {
 
     public HashMap<String, Object> getDefFlagsValues() {
         HashMap<String, Object> flags = new HashMap<>();
-        for (Object oflag : root.flags.keySet()) {
-            if (oflag instanceof String && isFlagEnabled(((String) oflag).replace("flags.", ""))) {
-                String flag = (String) oflag;
-                if (flag.equals("pvp") && !root.flags_configuration.enabled_flags.contains("pvp")) {
+        for (Map.Entry<String, Boolean> flag : root.flags.entrySet()) {
+            if (isFlagEnabled(flag.getKey())) {
+                if (flag.getKey().equals("pvp") && !root.flags_configuration.enabled_flags.contains("pvp")) {
                     continue;
                 }
-                flags.put(flag, root.flags.get(flag));
+                flags.put(flag.getKey(), flag.getValue());
             }
         }
         return flags;

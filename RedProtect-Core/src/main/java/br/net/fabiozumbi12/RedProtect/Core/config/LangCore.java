@@ -90,7 +90,7 @@ public class LangCore {
         });
 
         //remove invalid entries
-        boolean updated = loadedLang.entrySet().removeIf(k -> !baseLang.containsKey(k.getKey()));
+        boolean updated = loadedLang.entrySet().removeIf(k -> !baseLang.containsKey(k.getKey()) && !k.getKey().equals("_lang.version"));
 
         if (!loadedLang.containsKey("_lang.version"))
             loadedLang.put("_lang.version", pluginVersion);
