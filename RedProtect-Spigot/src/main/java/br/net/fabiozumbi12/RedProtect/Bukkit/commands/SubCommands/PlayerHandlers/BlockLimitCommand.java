@@ -56,9 +56,7 @@ public class BlockLimitCommand implements SubCommand {
                 return true;
             }
             String uuid = player.getUniqueId().toString();
-            if (!RedProtect.get().config.configRoot().online_mode) {
-                uuid = player.getName().toLowerCase();
-            }
+
             int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getWorld().getName());
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));

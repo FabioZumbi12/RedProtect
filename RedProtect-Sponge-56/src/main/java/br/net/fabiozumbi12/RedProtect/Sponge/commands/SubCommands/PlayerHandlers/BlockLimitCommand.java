@@ -57,9 +57,6 @@ public class BlockLimitCommand {
                                 return CommandResult.success();
                             }
                             String uuid = player.getUniqueId().toString();
-                            if (!RedProtect.get().config.configRoot().online_mode) {
-                                uuid = player.getName().toLowerCase();
-                            }
                             int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName() : null);
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
                             return CommandResult.success();

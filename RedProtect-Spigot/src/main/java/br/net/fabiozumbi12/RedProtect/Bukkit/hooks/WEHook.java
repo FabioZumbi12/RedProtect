@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -123,13 +124,8 @@ public class WEHook {
             Location min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
             Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
-            String leader = p.getUniqueId().toString();
-            if (!RedProtect.get().config.configRoot().online_mode) {
-                leader = p.getName().toLowerCase();
-            }
-
             String regionName = RedProtectUtil.regionNameConform("", p);
-            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
+            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, new PlayerRegion(p.getUniqueId().toString(), p.getName()), new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
             }

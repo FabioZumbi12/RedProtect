@@ -52,16 +52,12 @@ public class LAcceptCommand {
                         Player player = (Player) src;
 
                         if (RedProtect.get().alWait.containsKey(player)) {
-                            //info = region+world+pname
                             String info = RedProtect.get().alWait.get(player);
 
                             Optional<Player> lsender = Sponge.getServer().getPlayer(info.split("@")[2]);
                             Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
-                            String VictimUUID = player.getName();
-                            if (RedProtect.get().config.configRoot().online_mode) {
-                                VictimUUID = player.getUniqueId().toString();
-                            }
+                            String VictimUUID = player.getUniqueId().toString();
 
                             if (r != null) {
 

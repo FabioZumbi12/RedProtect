@@ -56,6 +56,9 @@ public class WandCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
+                        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK"))
+                            return CommandResult.success();
+
                         Inventory inv = player.getInventory();
                         ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.configRoot().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
                         ItemStack item = ItemStack.of(mat, 1);

@@ -50,6 +50,8 @@ public class WandCommand implements SubCommand {
         }
 
         Player player = (Player) sender;
+        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK"))
+            return true;
 
         if (args.length == 0) {
             Inventory inv = player.getInventory();

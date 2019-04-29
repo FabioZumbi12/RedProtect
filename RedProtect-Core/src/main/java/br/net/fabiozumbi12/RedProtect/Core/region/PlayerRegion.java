@@ -26,12 +26,12 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.region;
 
-public class PlayerRegion<K, V> {
+public class PlayerRegion {
 
-    private K uuid;
-    private V playerName;
+    private String uuid;
+    private String playerName;
 
-    public PlayerRegion(K uuid, V playerName) {
+    public PlayerRegion(String uuid, String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
     }
@@ -41,11 +41,11 @@ public class PlayerRegion<K, V> {
      *
      * @return String of UUID or PlayerName
      */
-    public K getUUID() {
+    public String getUUID() {
         return this.uuid;
     }
 
-    public void setUUID(K uuid) {
+    public void setUUID(String uuid) {
         this.uuid = uuid;
     }
 
@@ -54,12 +54,16 @@ public class PlayerRegion<K, V> {
      *
      * @return String of PlayerName
      */
-    public V getPlayerName() {
+    public String getPlayerName() {
         return this.playerName;
     }
 
-    public void setPlayerName(V playerName) {
+    public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public boolean contains(String option){
+        return this.uuid.equalsIgnoreCase(option) || this.playerName.equalsIgnoreCase(option);
     }
 
     @Override

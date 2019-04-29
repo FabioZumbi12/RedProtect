@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
@@ -69,7 +70,7 @@ public class CreatePortalCommand {
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.warning").replace("{region}", regionTo));
                         }
 
-                        String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+                        PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
                         String name = Normalizer.normalize(regionFrom.replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
                         Region r2 = RedProtect.get().rm.getRegion(name, w);

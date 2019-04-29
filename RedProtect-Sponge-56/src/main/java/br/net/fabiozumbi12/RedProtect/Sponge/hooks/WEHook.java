@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
@@ -104,7 +105,7 @@ public class WEHook {
     }
 
     public static Region pasteWithWE(Player p, File file) {
-        Location loc = p.getLocation();
+        Location<World> loc = p.getLocation();
         Region r = null;
 
         if (p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.WATER) ||
@@ -132,14 +133,10 @@ public class WEHook {
             Vector bmin = clipboard.getMinimumPoint();
             Vector bmax = clipboard.getMaximumPoint();
 
-            Location min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
-            Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
+            Location<World> min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
+            Location<World> max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
-            String leader = p.getUniqueId().toString();
-            if (!RedProtect.get().config.configRoot().online_mode) {
-                leader = p.getName().toLowerCase();
-            }
-
+            PlayerRegion leader = new PlayerRegion(p.getUniqueId().toString(), p.getName());
             String regionName = RedProtectUtil.regionNameConform("", p);
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {

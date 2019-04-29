@@ -40,9 +40,9 @@ public class CoreRegion implements Serializable {
     protected int maxY;
     protected int prior;
     protected String name;
-    protected Set<PlayerRegion<String, String>> leaders;
-    protected Set<PlayerRegion<String, String>> admins;
-    protected Set<PlayerRegion<String, String>> members;
+    protected Set<PlayerRegion> leaders;
+    protected Set<PlayerRegion> admins;
+    protected Set<PlayerRegion> members;
     protected String wMessage;
     protected String world;
     protected String date;
@@ -71,7 +71,7 @@ public class CoreRegion implements Serializable {
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
      */
-    public CoreRegion(String name, Set<PlayerRegion<String, String>> admins, Set<PlayerRegion<String, String>> members, Set<PlayerRegion<String, String>> leaders, int[] minLoc, int[] maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
+    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] minLoc, int[] maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
         this.name = name;
         this.maxMbrX = maxLoc[0];
         this.minMbrX = minLoc[0];
@@ -121,7 +121,7 @@ public class CoreRegion implements Serializable {
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
      */
-    public CoreRegion(String name, Set<PlayerRegion<String, String>> admins, Set<PlayerRegion<String, String>> members, Set<PlayerRegion<String, String>> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
+    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
         this.name = name;
         this.maxMbrX = maxMbrX;
         this.minMbrX = minMbrX;
@@ -172,7 +172,7 @@ public class CoreRegion implements Serializable {
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
      */
-    public CoreRegion(String name, Set<PlayerRegion<String, String>> admins, Set<PlayerRegion<String, String>> members, Set<PlayerRegion<String, String>> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
+    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
         this.name = name;
         this.prior = prior;
         this.world = worldName;
@@ -227,7 +227,7 @@ public class CoreRegion implements Serializable {
         this.minY = min[1];
         this.admins = new HashSet<>();
         this.members = new HashSet<>();
-        this.leaders = Collections.singleton(new PlayerRegion<>(defLeader, defLeader));
+        this.leaders = Collections.singleton(new PlayerRegion(defLeader, defLeader));
         this.flags = defFlags;
         this.canDelete = true;
         this.world = world;
@@ -327,7 +327,7 @@ public class CoreRegion implements Serializable {
      * @return {@code Set<PlayerRegion<String, String>>}
      */
     @Deprecated
-    public Set<PlayerRegion<String, String>> getAdmins() {
+    public Set<PlayerRegion> getAdmins() {
         return this.admins;
     }
 
@@ -339,7 +339,7 @@ public class CoreRegion implements Serializable {
      * @return {@code Set<PlayerRegion<String, String>>}
      */
     @Deprecated
-    public Set<PlayerRegion<String, String>> getMembers() {
+    public Set<PlayerRegion> getMembers() {
         return this.members;
     }
 
@@ -351,7 +351,7 @@ public class CoreRegion implements Serializable {
      * @return {@code Set<PlayerRegion<String, String>>}
      */
     @Deprecated
-    public Set<PlayerRegion<String, String>> getLeaders() {
+    public Set<PlayerRegion> getLeaders() {
         return this.leaders;
     }
 
@@ -418,7 +418,7 @@ public class CoreRegion implements Serializable {
         return this.value;
     }
 
-    protected String serializeMembers(Set<PlayerRegion<String, String>> pairs) {
+    protected String serializeMembers(Set<PlayerRegion> pairs) {
         StringBuilder list = new StringBuilder();
         pairs.forEach(l -> list.append(",").append(l.getUUID()).append("@").append(l.getPlayerName()));
         return list.length() > 0 ? list.toString().substring(1) : "";
@@ -426,7 +426,7 @@ public class CoreRegion implements Serializable {
 
 
     public boolean sameLeaders(CoreRegion r) {
-        for (PlayerRegion<String, String> l : this.leaders) {
+        for (PlayerRegion l : this.leaders) {
             if (r.leaders.contains(l)) {
                 return true;
             }

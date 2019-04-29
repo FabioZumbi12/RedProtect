@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -43,7 +44,7 @@ import java.util.Set;
 
 public class DefineRegionBuilder extends RegionBuilder {
 
-    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, String leader, Set<String> leaders, boolean admin) {
+    public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, PlayerRegion leader, Set<PlayerRegion> leaders, boolean admin) {
         if (!RedProtect.get().config.isAllowedWorld(p)) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.region.worldnotallowed"));
             return;
@@ -67,12 +68,8 @@ public class DefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        //region leader
-        String pName = RedProtectUtil.PlayerToUUID(p.getName());
-
         String wmsg = "";
-        if (leader.equals(RedProtect.get().config.configRoot().region_settings.default_leader)) {
-            pName = leader;
+        if (leader.contains(RedProtect.get().config.configRoot().region_settings.default_leader)) {
             wmsg = "hide ";
         }
 
@@ -89,9 +86,6 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         leaders.add(leader);
-        if (!pName.equals(leader)) {
-            leaders.add(pName);
-        }
 
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
@@ -104,8 +98,7 @@ public class DefineRegionBuilder extends RegionBuilder {
                 maxy = RedProtect.get().config.configRoot().region_settings.claim.maxy;
         }
 
-        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RedProtectUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), wmsg, 0, null, true);
-        leaders.forEach(newRegion::addLeader);
+        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RedProtectUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), wmsg, 0, null, true);
         newRegion.setPrior(RedProtectUtil.getUpdatedPrior(newRegion));
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
@@ -117,7 +110,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
-        int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
+        int totalArea = RedProtect.get().rm.getTotalRegionSize(leader.getUUID(), p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
         int regionarea = RedProtectUtil.simuleTotalRegionSize(RedProtectUtil.PlayerToUUID(p.getName()), newRegion);
         int actualArea = 0;

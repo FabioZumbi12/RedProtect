@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -54,8 +55,8 @@ public class DefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-            String name = RedProtectUtil.nameGen(serverName, player.getWorld().getName());
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader);
+            String name = RedProtectUtil.nameGen(RedProtect.get().config.configRoot().region_settings.default_leader, player.getWorld().getName());
 
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
             if (rb2.ready()) {
@@ -72,7 +73,7 @@ public class DefineCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader);
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), args[0], serverName, new HashSet<>(), true);
             if (rb2.ready()) {
                 Region r2 = rb2.build();

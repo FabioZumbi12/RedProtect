@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
@@ -68,17 +69,11 @@ public class ClaimCommand {
                         if (args.hasAny("regionName")) {
                             name = args.<String>getOne("regionName").get();
                         }
-                        String leader = player.getUniqueId().toString();
 
-                        Set<String> addedAdmins = new HashSet<>();
-                        if (args.hasAny("playerAdmin")) {
-                            addedAdmins.add(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()));
-                        }
+                        Set<PlayerRegion> addedAdmins = new HashSet<>();
+                        addedAdmins.add(new PlayerRegion(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()), args.<String>getOne("playerAdmin").get()));
 
-                        if (!RedProtect.get().config.configRoot().online_mode) {
-                            leader = player.getName().toLowerCase();
-                        }
-                        RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, leader, addedAdmins, false);
+                        RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name,  new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
                         if (rb2.ready()) {
                             Region r2 = rb2.build();
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");

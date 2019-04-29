@@ -377,40 +377,35 @@ public class RedProtectUtil extends CoreUtil {
         return check.equalsIgnoreCase(RedProtect.get().config.configRoot().region_settings.default_leader);
     }
 
-    public static String PlayerToUUID(String PlayerName) {
-        if (PlayerName == null || PlayerName.equals("")) {
+    public static String PlayerToUUID(String playerName) {
+        if (playerName == null || playerName.equals("")) {
             return null;
         }
 
         //check if is already UUID
-        if (isUUIDs(PlayerName) || isDefaultServer(PlayerName) || (PlayerName.startsWith("[") && PlayerName.endsWith("]"))) {
-            return PlayerName;
+        if (isUUIDs(playerName) || isDefaultServer(playerName) || (playerName.startsWith("[") && playerName.endsWith("]"))) {
+            return playerName;
         }
 
-        if (cachedUUIDs.containsValue(PlayerName)) {
-            return cachedUUIDs.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(PlayerName)).findFirst().get().getKey();
+        if (cachedUUIDs.containsValue(playerName)) {
+            return cachedUUIDs.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(playerName)).findFirst().get().getKey();
         }
 
-        String uuid = PlayerName;
-
-        if (!RedProtect.get().config.configRoot().online_mode) {
-            uuid = uuid.toLowerCase();
-            return uuid;
-        }
+        String uuid = playerName;
 
         UserStorageService uss = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
 
-        Optional<GameProfile> ogpName = uss.getAll().stream().filter(f -> f.getName().isPresent() && f.getName().get().equalsIgnoreCase(PlayerName)).findFirst();
+        Optional<GameProfile> ogpName = uss.getAll().stream().filter(f -> f.getName().isPresent() && f.getName().get().equalsIgnoreCase(playerName)).findFirst();
         if (ogpName.isPresent()) {
-            return ogpName.get().getUniqueId().toString();
+            uuid = ogpName.get().getUniqueId().toString();
         } else {
-            Optional<Player> p = RedProtect.get().getServer().getPlayer(PlayerName);
+            Optional<Player> p = RedProtect.get().getServer().getPlayer(playerName);
             if (p.isPresent()) {
-                return p.get().getUniqueId().toString();
+                uuid = p.get().getUniqueId().toString();
             }
         }
 
-        cachedUUIDs.put(uuid, PlayerName);
+        cachedUUIDs.put(uuid, playerName);
         return uuid;
     }
 
@@ -428,26 +423,23 @@ public class RedProtectUtil extends CoreUtil {
             return cachedUUIDs.get(uuid);
         }
 
-        String PlayerName = uuid;
+        String playerName = uuid;
         UUID uuids;
 
-        if (!RedProtect.get().config.configRoot().online_mode) {
-            return uuid.toLowerCase();
-        }
         try {
             uuids = UUID.fromString(uuid);
             UserStorageService uss = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
             if (uss.get(uuids).isPresent()) {
-                PlayerName = uss.get(uuids).get().getName();
+                playerName = uss.get(uuids).get().getName();
             }
         } catch (IllegalArgumentException e) {
-            if (PlayerName.isEmpty()) {
-                PlayerName = MojangUUIDs.getName(uuid);
+            if (playerName.isEmpty()) {
+                playerName = MojangUUIDs.getName(uuid);
             }
         }
 
-        cachedUUIDs.put(uuid, PlayerName);
-        return PlayerName;
+        cachedUUIDs.put(uuid, playerName);
+        return playerName;
     }
 
     public static User getUser(String name) {
@@ -478,9 +470,9 @@ public class RedProtectUtil extends CoreUtil {
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
-                    Set<PlayerRegion<String, String>> leaders = new HashSet<>();
-                    Set<PlayerRegion<String, String>> admins = new HashSet<>();
-                    Set<PlayerRegion<String, String>> members = new HashSet<>();
+                    Set<PlayerRegion> leaders = new HashSet<>();
+                    Set<PlayerRegion> admins = new HashSet<>();
+                    Set<PlayerRegion> members = new HashSet<>();
                     HashMap<String, Object> flags = new HashMap<>();
 
                     int maxMbrX = rs.getInt("maxMbrX");
@@ -505,19 +497,19 @@ public class RedProtectUtil extends CoreUtil {
                     for (String member : rs.getString("members").split(", ")) {
                         if (member.length() > 0) {
                             String[] p = member.split("@");
-                            members.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            members.add(new PlayerRegion(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
                         if (admin.length() > 0) {
                             String[] p = admin.split("@");
-                            admins.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            admins.add(new PlayerRegion(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
                         if (leader.length() > 0) {
                             String[] p = leader.split("@");
-                            leaders.add(new PlayerRegion<>(p[0], p.length == 2 ? p[1] : p[0]));
+                            leaders.add(new PlayerRegion(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
 
@@ -887,37 +879,37 @@ public class RedProtectUtil extends CoreUtil {
         int minY = region.getNode(rname, "minY").getInt(0);
         String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
 
-        Set<PlayerRegion<String, String>> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
+        Set<PlayerRegion> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (!RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
-            return new PlayerRegion<>(p[0], p[1]);
+            return new PlayerRegion(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        Set<PlayerRegion<String, String>> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
+        Set<PlayerRegion> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (!RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
-            return new PlayerRegion<>(p[0], p[1]);
+            return new PlayerRegion(p[0], p[1]);
         }).collect(Collectors.toSet());
 
-        Set<PlayerRegion<String, String>> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
+        Set<PlayerRegion> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
             String[] pi = s.split("@");
             String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (RedProtect.get().config.configRoot().online_mode && !RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
+            if (!RedProtectUtil.isUUIDs(p[0]) && !p[0].equalsIgnoreCase(serverName)) {
                 String before = p[0];
                 p[0] = RedProtectUtil.PlayerToUUID(p[0]);
                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
             }
-            return new PlayerRegion<>(p[0], p[1]);
+            return new PlayerRegion(p[0], p[1]);
         }).collect(Collectors.toSet());
 
         String welcome = region.getNode(rname, "welcome").getString("");

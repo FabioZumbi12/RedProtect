@@ -31,7 +31,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -66,7 +68,7 @@ public class CreatePortalCommand implements SubCommand {
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.warning").replace("{region}", args[1]));
             }
 
-            String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader);
             String name = Normalizer.normalize(args[0].replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
             Region r2 = RedProtect.get().rm.getRegion(name, w);

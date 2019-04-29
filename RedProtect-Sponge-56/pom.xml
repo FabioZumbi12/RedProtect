@@ -56,6 +56,10 @@
             <id>dynmap</id>
             <url>http://repo.mikeprimm.com/</url>
         </repository>
+        <repository>
+            <id>sk89q-snapshots</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>

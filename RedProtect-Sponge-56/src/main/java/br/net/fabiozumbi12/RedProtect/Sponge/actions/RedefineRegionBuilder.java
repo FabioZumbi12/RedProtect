@@ -74,9 +74,6 @@ public class RedefineRegionBuilder extends RegionBuilder {
         region.setPrior(RedProtectUtil.getUpdatedPrior(region));
 
         String pName = p.getUniqueId().toString();
-        if (!RedProtect.get().config.configRoot().online_mode) {
-            pName = p.getName().toLowerCase();
-        }
 
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());

@@ -52,16 +52,12 @@ public class LAcceptCommand implements SubCommand {
 
         if (args.length == 0) {
             if (RedProtect.get().alWait.containsKey(player)) {
-                //info = region+database+pname
                 String info = RedProtect.get().alWait.get(player);
 
                 Player lsender = Bukkit.getPlayer(info.split("@")[2]);
                 Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
 
-                String VictimUUID = player.getName();
-                if (RedProtect.get().config.configRoot().online_mode) {
-                    VictimUUID = player.getUniqueId().toString();
-                }
+                String VictimUUID = player.getUniqueId().toString();
 
                 if (r != null) {
 
