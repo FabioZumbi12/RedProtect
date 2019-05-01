@@ -27,19 +27,23 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
@@ -106,11 +110,11 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     if (!region.getNode(rname).hasMapChildren()) {
                         continue;
                     }
-                    Region newr = RedProtectUtil.loadRegion(region, rname, world);
+                    Region newr = loadRegion(region, rname, world);
                     newr.setToSave(false);
                     regions.put(rname, newr);
                 }
-            } catch (IOException | ObjectMappingException e) {
+            } catch (IOException e) {
                 CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
@@ -378,6 +382,109 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public void removeLiveFlags(String rname, String flag) {
+    }
+
+
+    private static Region loadRegion(CommentedConfigurationNode region, String rname, World world) {
+        Region newr = null;
+        try {
+            if (region.getNode(rname,"name").getString() == null) {
+                region.getNode(rname,"name").setValue(rname);
+            }
+            int maxX = region.getNode(rname, "maxX").getInt();
+            int maxZ = region.getNode(rname, "maxZ").getInt();
+            int minX = region.getNode(rname, "minX").getInt();
+            int minZ = region.getNode(rname, "minZ").getInt();
+            int maxY = region.getNode(rname, "maxY").getInt(world.getBlockMax().getY());
+            int minY = region.getNode(rname, "minY").getInt(0);
+            String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+
+            Set<PlayerRegion> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
+                String[] pi = s.split("@");
+                String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
+                    if (!RedProtectUtil.isUUIDs(p[0])) {
+                        String before = p[0];
+                        p[0] = RedProtectUtil.PlayerToUUID(p[0]);
+                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                    }
+                    if (RedProtectUtil.isUUIDs(p[1])) {
+                        String before = p[1];
+                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    }
+                }
+                return new PlayerRegion(p[0], p[1]);
+            }).collect(Collectors.toSet());
+
+            Set<PlayerRegion> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
+                String[] pi = s.split("@");
+                String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
+                    if (!RedProtectUtil.isUUIDs(p[0])) {
+                        String before = p[0];
+                        p[0] = RedProtectUtil.PlayerToUUID(p[0]);
+                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                    }
+                    if (RedProtectUtil.isUUIDs(p[1])) {
+                        String before = p[1];
+                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    }
+                }
+                return new PlayerRegion(p[0], p[1]);
+            }).collect(Collectors.toSet());
+
+            Set<PlayerRegion> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
+                String[] pi = s.split("@");
+                String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
+                    if (!RedProtectUtil.isUUIDs(p[0])) {
+                        String before = p[0];
+                        p[0] = RedProtectUtil.PlayerToUUID(p[0]);
+                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
+                    }
+                    if (RedProtectUtil.isUUIDs(p[1])) {
+                        String before = p[1];
+                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    }
+                }
+                return new PlayerRegion(p[0], p[1]);
+            }).collect(Collectors.toSet());
+
+            String welcome = region.getNode(rname, "welcome").getString("");
+            int prior = region.getNode(rname, "priority").getInt(0);
+            String date = region.getNode(rname, "lastvisit").getString("");
+            long value = region.getNode(rname, "value").getLong(0);
+            boolean candel = region.getNode(rname, "candelete").getBoolean(true);
+
+            Location<World> tppoint = null;
+            if (!region.getNode(rname, "tppoint").getString("").isEmpty()) {
+                String[] tpstring = region.getNode(rname, "tppoint").getString().split(",");
+                tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
+            }
+
+            newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
+
+            for (String flag : RedProtect.get().config.getDefFlags()) {
+                if (region.getNode(rname, "flags", flag) != null) {
+                    newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
+                } else {
+                    newr.getFlags().put(flag, RedProtect.get().config.getDefFlagsValues().get(flag));
+                }
+            }
+            for (String flag : RedProtect.get().config.AdminFlags) {
+                if (region.getNode(rname, "flags", flag).getString() != null) {
+                    newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
+                }
+            }
+        } catch (Exception e){
+            RedProtect.get().logger.severe("Error on load region " + rname);
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
+        }
+        return newr;
     }
 
 }

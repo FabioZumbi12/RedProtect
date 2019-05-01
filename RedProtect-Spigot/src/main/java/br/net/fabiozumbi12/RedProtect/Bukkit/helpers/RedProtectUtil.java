@@ -479,17 +479,6 @@ public class RedProtectUtil extends CoreUtil {
         return check.equalsIgnoreCase(RedProtect.get().config.configRoot().region_settings.default_leader);
     }
 
-    private static void fixdbFlags(YamlConfiguration db, String rname) {
-        if (db.contains(rname + ".flags.mobs")) {
-            db.set("spawn-monsters", db.get(rname + ".flags.mobs"));
-            db.set(rname + ".flags.mobs", null);
-        }
-        if (db.contains(rname + ".flags.spawnpassives")) {
-            db.set("spawn-animals", db.get(rname + ".flags.spawnpassives"));
-            db.set(rname + ".flags.spawnpassives", null);
-        }
-    }
-
     public static boolean mysqlToFile() {
         HashMap<String, Region> regions = new HashMap<>();
         int saved = 1;
@@ -932,104 +921,6 @@ public class RedProtectUtil extends CoreUtil {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
-    }
-
-    public static Region loadRegion(YamlConfiguration fileDB, String rname, World world) {
-        if (fileDB.getString(rname + ".name") == null) {
-            return null;
-        }
-        int maxX = fileDB.getInt(rname + ".maxX");
-        int maxZ = fileDB.getInt(rname + ".maxZ");
-        int minX = fileDB.getInt(rname + ".minX");
-        int minZ = fileDB.getInt(rname + ".minZ");
-        int maxY = fileDB.getInt(rname + ".maxY", world.getMaxHeight());
-        int minY = fileDB.getInt(rname + ".minY", 0);
-        String name = fileDB.getString(rname + ".name");
-        String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-
-        Set<PlayerRegion> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s -> {
-            String[] pi = s.split("@");
-            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
-                if (!RedProtectUtil.isUUIDs(p[0])) {
-                    String before = p[0];
-                    p[0] = RedProtectUtil.PlayerToUUID(p[0]);
-                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
-                }
-                if (RedProtectUtil.isUUIDs(p[1])) {
-                    String before = p[1];
-                    p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
-                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                }
-            }
-            return new PlayerRegion(p[0], p[1]);
-        }).collect(Collectors.toSet());
-
-        Set<PlayerRegion> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s -> {
-            String[] pi = s.split("@");
-            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
-                if (!RedProtectUtil.isUUIDs(p[0])) {
-                    String before = p[0];
-                    p[0] = RedProtectUtil.PlayerToUUID(p[0]);
-                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
-                }
-                if (RedProtectUtil.isUUIDs(p[1])) {
-                    String before = p[1];
-                    p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
-                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                }
-            }
-            return new PlayerRegion(p[0], p[1]);
-        }).collect(Collectors.toSet());
-
-        Set<PlayerRegion> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s -> {
-            String[] pi = s.split("@");
-            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
-                if (!RedProtectUtil.isUUIDs(p[0])) {
-                    String before = p[0];
-                    p[0] = RedProtectUtil.PlayerToUUID(p[0]);
-                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
-                }
-                if (RedProtectUtil.isUUIDs(p[1])) {
-                    String before = p[1];
-                    p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
-                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                }
-            }
-            return new PlayerRegion(p[0], p[1]);
-        }).collect(Collectors.toSet());
-
-        String welcome = fileDB.getString(rname + ".welcome", "");
-        int prior = fileDB.getInt(rname + ".priority", 0);
-        String date = fileDB.getString(rname + ".lastvisit", "");
-        long value = fileDB.getLong(rname + ".value", 0);
-        boolean candel = fileDB.getBoolean(rname + ".candelete", true);
-
-        Location tppoint = null;
-        if (!fileDB.getString(rname + ".tppoint", "").equalsIgnoreCase("")) {
-            String[] tpstring = fileDB.getString(rname + ".tppoint").split(",");
-            tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
-                    Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
-        }
-
-        fixdbFlags(fileDB, rname);
-        Region newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
-
-        for (String flag : RedProtect.get().config.getDefFlags()) {
-            if (fileDB.get(rname + ".flags." + flag) != null) {
-                newr.getFlags().put(flag, fileDB.get(rname + ".flags." + flag));
-            } else {
-                newr.getFlags().put(flag, RedProtect.get().config.getDefFlagsValues().get(flag));
-            }
-        }
-        for (String flag : RedProtect.get().config.AdminFlags) {
-            if (fileDB.get(rname + ".flags." + flag) != null) {
-                newr.getFlags().put(flag, fileDB.get(rname + ".flags." + flag));
-            }
-        }
-        return newr;
     }
 
     public static void addProps(YamlConfiguration fileDB, Region r) {
