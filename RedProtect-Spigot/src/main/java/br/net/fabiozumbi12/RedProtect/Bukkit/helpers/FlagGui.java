@@ -28,11 +28,13 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -98,63 +100,59 @@ public class FlagGui implements Listener {
         allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
         for (String flag : region.getFlags().keySet()) {
-            if (!(region.getFlags().get(flag) instanceof Boolean) && !flag.equalsIgnoreCase("clan")) {
-                continue;
-            }
-            if (flag.equalsIgnoreCase("clan")) {
-                if (!RedProtect.get().hooks.simpleClans) {
+            try {
+                if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
-                ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(player);
-                if (cp == null || !cp.isLeader()) {
-                    continue;
-                }
-            }
-            if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) &&
-                    RedProtect.get().config.isFlagEnabled(flag)) {
-                if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags_configuration.enabled_flags.contains("pvp")) {
-                    continue;
-                }
-
-                try {
-                    Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material);
-                } catch (Exception e){
-                    CoreUtil.printJarVersion();
-                    e.printStackTrace();
-                    continue;
-                }
-
-                int i = RedProtect.get().config.getGuiSlot(flag);
-
-                String fvalue;
                 if (flag.equalsIgnoreCase("clan")) {
-                    if (region.getFlags().get(flag).toString().equals("")) {
-                        fvalue = RedProtect.get().guiLang.getFlagString("false");
-                    } else {
-                        fvalue = RedProtect.get().guiLang.getFlagString("true");
+                    if (!RedProtect.get().hooks.simpleClans) {
+                        continue;
                     }
-                } else {
-                    fvalue = RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString());
+                    ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(player);
+                    if (cp == null || !cp.isLeader()) {
+                        continue;
+                    }
                 }
+                if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) &&
+                        RedProtect.get().config.isFlagEnabled(flag)) {
+                    if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags_configuration.enabled_flags.contains("pvp")) {
+                        continue;
+                    }
 
-                this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
-                ItemMeta guiMeta = this.guiItems[i].getItemMeta();
-                guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
-                List<String> lore =  new ArrayList<>(Arrays.asList(
-                        translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + fvalue),
-                        "§0" + flag));
-                lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
-                guiMeta.setLore(lore);
-                if (allowEnchant) {
-                    if (this.region.getFlagBool(flag)) {
-                        guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+                    int i = RedProtect.get().config.getGuiSlot(flag);
+
+                    String fvalue;
+                    if (flag.equalsIgnoreCase("clan")) {
+                        if (region.getFlags().get(flag).toString().equals("")) {
+                            fvalue = RedProtect.get().guiLang.getFlagString("false");
+                        } else {
+                            fvalue = RedProtect.get().guiLang.getFlagString("true");
+                        }
                     } else {
-                        guiMeta.removeEnchant(Enchantment.DURABILITY);
+                        fvalue = RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString());
                     }
-                    guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+                    this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
+                    ItemMeta guiMeta = this.guiItems[i].getItemMeta();
+                    guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
+                    List<String> lore =  new ArrayList<>(Arrays.asList(
+                            translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + fvalue),
+                            "§0" + flag));
+                    lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
+                    guiMeta.setLore(lore);
+                    if (allowEnchant) {
+                        if (this.region.getFlagBool(flag)) {
+                            guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+                        } else {
+                            guiMeta.removeEnchant(Enchantment.DURABILITY);
+                        }
+                        guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    }
+                    this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
+                    this.guiItems[i].setItemMeta(guiMeta);
                 }
-                this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
-                this.guiItems[i].setItemMeta(guiMeta);
+            } catch (Exception e){
+                this.player.sendMessage(ChatColor.RED + "Seems RedProtect have a wrong Item Gui or a problem on guiconfig for flag " + flag);
             }
         }
 

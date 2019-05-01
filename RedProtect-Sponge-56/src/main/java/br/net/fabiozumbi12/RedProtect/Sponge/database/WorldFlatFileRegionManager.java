@@ -410,7 +410,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
                     if (RedProtectUtil.isUUIDs(p[1])) {
                         String before = p[1];
-                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                     }
                 }
@@ -428,7 +428,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
                     if (RedProtectUtil.isUUIDs(p[1])) {
                         String before = p[1];
-                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                     }
                 }
@@ -446,7 +446,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
                     if (RedProtectUtil.isUUIDs(p[1])) {
                         String before = p[1];
-                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                     }
                 }

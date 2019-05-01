@@ -122,8 +122,7 @@ public class FlagGui {
                     this.guiItems[i].offer(Keys.HIDE_ATTRIBUTES, true);
                 }
             } catch (Exception ex) {
-                this.player.sendMessage(Text.of(Color.RED, "Seems RedProtect have a wrong Item Gui or a problem on guiconfig. Report this to server owner."));
-                return;
+                this.player.sendMessage(Text.of(Color.RED, "Seems RedProtect have a wrong Item Gui or a problem on guiconfig for flag " + flag));
             }
         }
 
