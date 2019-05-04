@@ -641,8 +641,8 @@ public class ConfigManager {
     }
 
     public Material getBorderMaterial() {
-        if (Material.getMaterial(guiRoot.gui_separator.material) != null) {
-            return Material.getMaterial(guiRoot.gui_separator.material);
+        if (Material.getMaterial(root.region_settings.border.material) != null) {
+            return Material.getMaterial(root.region_settings.border.material);
         }
         return Material.GLOWSTONE;
     }
