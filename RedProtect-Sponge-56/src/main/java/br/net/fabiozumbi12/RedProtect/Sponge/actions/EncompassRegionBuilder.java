@@ -222,7 +222,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
                                     return;
                                 }
                                 if (!othersName.contains(r.getName())) {
@@ -239,7 +239,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                             if (otherrg != null) {
                                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.admin")) {
-                                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", r.getLeadersDesc()));
                                     return;
                                 }
                                 if (!othersName.contains(otherrg.getName())) {
@@ -251,14 +251,14 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         //check if same area
                         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc(), this.getClass().getName());
                         if (otherrg != null && otherrg.get4Points(current.getLocation().get().getBlockY()).equals(region.get4Points(current.getLocation().get().getBlockY()))) {
-                            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                             return;
                         }
 
                         region.setPrior(RedProtectUtil.getUpdatedPrior(region));
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
-                        int claimused = RedProtect.get().rm.getPlayerRegions(RedProtectUtil.PlayerToUUID(p.getName()), w);
+                        int claimused = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w);
                         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
                         if (claimused >= claimLimit && claimLimit != -1) {
                             this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.claim.limit"));
@@ -268,7 +268,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
                         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
                         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
-                        int regionarea = RedProtectUtil.simuleTotalRegionSize(RedProtectUtil.PlayerToUUID(p.getName()), region);
+                        int regionarea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
                         int actualArea = 0;
                         if (regionarea > 0) {
                             actualArea = totalArea + regionarea;
@@ -340,7 +340,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             }
                         }
 
-                        if (RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(p.getName()), p.getWorld()).size() == 0) {
+                        if (RedProtect.get().rm.getRegions(p.getUniqueId().toString(), p.getWorld()).size() == 0) {
                             p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.firstwarning")));
                             p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         }
@@ -359,7 +359,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 //check other regions on blocks
                 Region rcurrent = RedProtect.get().rm.getTopRegion(current.getLocation().get(), this.getClass().getName());
                 if (rcurrent != null && !rcurrent.canBuild(p)) {
-                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(rcurrent.getLeadersDesc())));
+                    this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + rcurrent.getCenterX() + ", z: " + rcurrent.getCenterZ()).replace("{player}", rcurrent.getLeadersDesc()));
                     return;
                 }
                 blocks.add(current);

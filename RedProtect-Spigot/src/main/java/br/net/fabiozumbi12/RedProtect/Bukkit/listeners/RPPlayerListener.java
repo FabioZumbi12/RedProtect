@@ -403,7 +403,7 @@ public class RPPlayerListener implements Listener {
 
                         //check if tag is player name
                         if (tag.equalsIgnoreCase("{playername}")) {
-                            if (sign.getLine(0).equalsIgnoreCase(RedProtectUtil.UUIDtoPlayer(p.getName()))) {
+                            if (sign.getLine(0).equalsIgnoreCase(p.getName())) {
                                 return;
                             }
                         }

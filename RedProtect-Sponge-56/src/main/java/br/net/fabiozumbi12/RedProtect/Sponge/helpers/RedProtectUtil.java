@@ -284,7 +284,7 @@ public class RedProtectUtil extends CoreUtil {
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
-                    if (region.isLeader(RedProtectUtil.PlayerToUUID(play)) || region.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
+                    if (region.isLeader(play) || region.isAdmin(play)) {
                         ignore = true;
                         break;
                     }
@@ -323,7 +323,7 @@ public class RedProtectUtil extends CoreUtil {
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().config.configRoot().sell.ignore_regions_from_players) {
-                    if (region.isLeader(RedProtectUtil.PlayerToUUID(play)) || region.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
+                    if (region.isLeader(play) || region.isAdmin(play)) {
                         ignore = true;
                         break;
                     }
@@ -956,7 +956,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public static String regionNameConform(String regionName, Player p) {
-        String pRName = UUIDtoPlayer(p.getName());
+        String pRName = p.getName();
         if (regionName.equals("")) {
             int i = 0;
             regionName = StripName(pRName) + "_" + 0;

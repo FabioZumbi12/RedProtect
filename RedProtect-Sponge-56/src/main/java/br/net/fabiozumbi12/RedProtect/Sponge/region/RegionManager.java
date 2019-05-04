@@ -178,18 +178,15 @@ public class RegionManager {
     }
 
     public Set<Region> getRegions(String player, World w) {
-        player = RedProtectUtil.PlayerToUUID(player);
         return this.regionManagers.get(w).getRegions(player);
     }
 
     public Set<Region> getRegions(String player, String w) {
-        player = RedProtectUtil.PlayerToUUID(player);
         World world = Sponge.getServer().getWorld(w).get();
         return this.regionManagers.get(world).getRegions(player);
     }
 
     public int getPlayerRegions(String player, World w) {
-        player = RedProtectUtil.PlayerToUUID(player);
         int size;
         if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world) {
             size = getRegions(player, w).size();

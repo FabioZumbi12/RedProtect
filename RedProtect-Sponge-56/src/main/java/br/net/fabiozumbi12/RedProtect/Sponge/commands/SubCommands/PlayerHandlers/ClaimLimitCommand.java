@@ -57,7 +57,7 @@ public class ClaimLimitCommand {
                                 return CommandResult.success();
                             }
 
-                            int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(player.getName()), player.getWorld()).size();
+                            int currentUsed = RedProtect.get().rm.getRegions(player.getName(), player.getWorld()).size();
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
                             return CommandResult.success();
                         }
@@ -75,7 +75,7 @@ public class ClaimLimitCommand {
                                 return CommandResult.success();
                             }
 
-                            int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), player.getWorld()).size();
+                            int currentUsed = RedProtect.get().rm.getRegions(offp.getName(), player.getWorld()).size();
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
                             return CommandResult.success();
                         }

@@ -50,14 +50,14 @@ public class ListCommand implements SubCommand {
 
         //rp list
         if (args.length == 0) {
-            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
+            handleList(player, player.getUniqueId().toString(), 1);
             return true;
         }
         //rp list [player|page]
         if (args.length == 1) {
             try {
                 int Page = Integer.parseInt(args[0]);
-                getRegionforList(sender, RedProtectUtil.PlayerToUUID(sender.getName()), Page);
+                getRegionforList(sender, ((Player) sender).getUniqueId().toString(), Page);
                 return true;
             } catch (NumberFormatException e) {
                 handleList(player, RedProtectUtil.PlayerToUUID(args[0]), 1);

@@ -627,10 +627,9 @@ public class CommandHandlers {
     }
 
     public static void handleList(Player p, String uuid, int Page) {
-        String pname = RedProtectUtil.PlayerToUUID(p.getName());
         if (RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.list")) {
             getRegionforList(p, uuid, Page);
-        } else if (RedProtect.get().ph.hasPerm(p, "redprotect.command.list") && pname.equalsIgnoreCase(uuid)) {
+        } else if (RedProtect.get().ph.hasPerm(p, "redprotect.command.list") && p.getUniqueId().toString().equalsIgnoreCase(uuid)) {
             getRegionforList(p, uuid, Page);
         } else {
             RedProtect.get().lang.sendMessage(p, "no.permission");

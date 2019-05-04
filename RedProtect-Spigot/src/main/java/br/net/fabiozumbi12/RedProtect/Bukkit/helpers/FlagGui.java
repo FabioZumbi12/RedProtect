@@ -74,28 +74,22 @@ public class FlagGui implements Listener {
         this.name = name;
         this.player = player;
         this.region = region;
-
         if (maxSlots <= 9) {
             this.size = 9;
-            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots <= 18) {
             this.size = 18;
-            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots <= 27) {
             this.size = 27;
-            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots <= 36) {
             this.size = 36;
-            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots <= 45) {
             this.size = 45;
-            this.guiItems = new ItemStack[this.size];
         } else if (maxSlots <= 54) {
             this.size = 54;
-            this.guiItems = new ItemStack[this.size];
         } else {
             throw new IllegalArgumentException("Parameter size is exceeding size limit (54)");
         }
+        this.guiItems = new ItemStack[this.size];
 
         allowEnchant = RedProtect.get().bukkitVersion >= 181;
 

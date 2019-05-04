@@ -240,7 +240,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName())).size();
+                int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString()).size();
                 sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
@@ -259,7 +259,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getTotalRegionSize(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
+                int currentUsed = RedProtect.get().rm.getTotalRegionSize(offp.getUniqueId().toString(), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
                 sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
@@ -331,7 +331,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), w.get()).size();
+                int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString(), w.get()).size();
                 sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
@@ -621,7 +621,7 @@ public class AdminCommand implements CommandCallable {
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
                     for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
-                        if (r.isLeader(RedProtectUtil.PlayerToUUID(play)) || r.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
+                        if (r.isLeader(play) || r.isAdmin(play)) {
                             break;
                         }
                     }
@@ -702,14 +702,14 @@ public class AdminCommand implements CommandCallable {
         if (args.length >= 2 && checkCmd(args[0], "list")) {
             //rp list [player]
             if (args.length == 2) {
-                getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), 1);
+                getRegionforList(sender, args[1], 1);
                 return cmdr;
             }
             //rp list [player] [page]
             if (args.length == 3) {
                 try {
                     int Page = Integer.parseInt(args[2]);
-                    getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), Page);
+                    getRegionforList(sender, args[1], Page);
                     return cmdr;
                 } catch (NumberFormatException e) {
                     RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");

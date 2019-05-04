@@ -327,7 +327,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getWorld()).size();
+                int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString(), offp.getWorld()).size();
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;
@@ -346,7 +346,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getTotalRegionSize(RedProtectUtil.PlayerToUUID(offp.getName()), offp.getWorld().getName());
+                int currentUsed = RedProtect.get().rm.getTotalRegionSize(offp.getUniqueId().toString(), offp.getWorld().getName());
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourarea") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;
@@ -418,7 +418,7 @@ public class AdminCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(RedProtectUtil.PlayerToUUID(offp.getName()), w).size();
+                int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString(), w).size();
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;
@@ -733,7 +733,7 @@ public class AdminCommand implements SubCommand {
                     }
                     long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
                     for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
-                        if (r.isLeader(RedProtectUtil.PlayerToUUID(play)) || r.isAdmin(RedProtectUtil.PlayerToUUID(play))) {
+                        if (r.isLeader(play) || r.isAdmin(play)) {
                             break;
                         }
                     }
@@ -815,14 +815,14 @@ public class AdminCommand implements SubCommand {
         if (args.length >= 2 && checkCmd(args[0], "list")) {
             //rp list [player]
             if (args.length == 2) {
-                getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), 1);
+                getRegionforList(sender, args[1], 1);
                 return true;
             }
             //rp list [player] [page]
             if (args.length == 3) {
                 try {
                     int Page = Integer.parseInt(args[2]);
-                    getRegionforList(sender, RedProtectUtil.PlayerToUUID(args[1]), Page);
+                    getRegionforList(sender, args[1], Page);
                     return true;
                 } catch (NumberFormatException e) {
                     RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");

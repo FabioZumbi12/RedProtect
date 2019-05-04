@@ -68,26 +68,20 @@ public class FlagGui {
         this.region = region;
         if (maxSlots <= 9) {
             this.size = 9;
-            this.guiItems = new ItemStack[this.size];
-        } else if (maxSlots >= 10 && maxSlots <= 18) {
+        } else if (maxSlots <= 18) {
             this.size = 18;
-            this.guiItems = new ItemStack[this.size];
-        } else if (maxSlots >= 19 && maxSlots <= 27) {
+        } else if (maxSlots <= 27) {
             this.size = 27;
-            this.guiItems = new ItemStack[this.size];
-        }
-        if (maxSlots >= 28 && maxSlots <= 36) {
+        } else if (maxSlots <= 36) {
             this.size = 36;
-            this.guiItems = new ItemStack[this.size];
-        }
-        if (maxSlots >= 37 && maxSlots <= 45) {
+        } else if (maxSlots <= 45) {
             this.size = 45;
-            this.guiItems = new ItemStack[this.size];
-        }
-        if (maxSlots >= 46 && maxSlots <= 54) {
+        } else if (maxSlots <= 54) {
             this.size = 54;
-            this.guiItems = new ItemStack[this.size];
+        } else {
+            throw new IllegalArgumentException("Parameter size is exceeding size limit (54)");
         }
+        this.guiItems = new ItemStack[this.size];
 
         for (String flag : region.getFlags().keySet()) {
             if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {

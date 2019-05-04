@@ -78,7 +78,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
-        int regionarea = RedProtectUtil.simuleTotalRegionSize(RedProtectUtil.PlayerToUUID(p.getName()), region);
+        int regionarea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
         int actualArea = 0;
         if (regionarea > 0) {
             actualArea = totalArea + regionarea;
@@ -94,7 +94,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check if same area
         otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
         if (otherrg != null && !checkID(region, otherrg) && otherrg.get4Points(region.getCenterY()).equals(region.get4Points(region.getCenterY()))) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+            this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
             return;
         }
 
@@ -103,7 +103,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check regions inside region
         for (Region r : RedProtect.get().rm.getInnerRegions(region, p.getWorld())) {
             if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(r.getLeadersDesc())));
+                this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
                 return;
             }
             if (checkID(region, r)) {
@@ -126,7 +126,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                 }
 
                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                    this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", RedProtectUtil.UUIDtoPlayer(otherrg.getLeadersDesc())));
+                    this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                     return;
                 }
                 othersName.add(otherrg.getName());
@@ -158,7 +158,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         RedProtect.get().rm.remove(old, w);
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.get().rm.getPlayerRegions(p.getName(), w);
+        int claimused = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w);
         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
 
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
