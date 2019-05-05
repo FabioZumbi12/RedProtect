@@ -37,8 +37,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.dynmap.DynmapAPI;
 
 public class HooksManager {
-    public boolean mcMMO;
-    public boolean skillAPI;
     public boolean bossBar;
     public boolean myChunk;
     public boolean myPet;
@@ -58,10 +56,10 @@ public class HooksManager {
         bossBar = checkBM();
         myChunk = checkMyChunk();
         myPet = checkMyPet();
-        mcMMO = checkMcMMo();
+        boolean mcMMO = checkMcMMo();
         magicCarpet = checkMagicCarpet();
         vault = checkVault();
-        skillAPI = checkSkillAPI();
+        boolean skillAPI = checkSkillAPI();
         pvpm = checkPvPm();
         essentials = checkEss();
         griefPrev = checkGriefPrev();

@@ -131,12 +131,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.executeUpdate();
             }
             rs.close();
-            rs = md.getColumns(null, null, tableName, "rent");
-            if (!rs.next()) {
-                PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `rent` longtext");
-                st.executeUpdate();
-            }
-            rs.close();
             con.close();
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
@@ -180,9 +174,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
                         + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 st.setString(1, r.getName());
-                st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
-                st.setString(3, r.getAdmins().toString().replace("[", "").replace("]", ""));
-                st.setString(4, r.getMembers().toString().replace("[", "").replace("]", ""));
+                st.setString(2, r.getLeadersString());
+                st.setString(3, r.getAdminString());
+                st.setString(4, r.getMembersString());
                 st.setInt(5, r.getMaxMbrX());
                 st.setInt(6, r.getMinMbrX());
                 st.setInt(7, r.getMaxMbrZ());
@@ -407,7 +401,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     public Set<Region> getRegions(String uuid) {
         Set<Region> regionsp = new HashSet<>();
         try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders = ?");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders LIKE ?");
             st.setString(1, "%" + uuid + "%");
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -426,7 +420,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> regionsp = new HashSet<>();
         try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders = ? OR admins = ?");
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders LIKE ? OR admins LIKE ?");
             st.setString(1, "%" + uuid + "%");
             st.setString(2, "%" + uuid + "%");
             ResultSet rs = st.executeQuery();

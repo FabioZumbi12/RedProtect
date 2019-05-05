@@ -424,7 +424,6 @@ public class CoreRegion implements Serializable {
         return list.length() > 0 ? list.toString().substring(1) : "";
     }
 
-
     public boolean sameLeaders(CoreRegion r) {
         for (PlayerRegion l : this.leaders) {
             if (r.leaders.contains(l)) {
@@ -432,5 +431,17 @@ public class CoreRegion implements Serializable {
             }
         }
         return false;
+    }
+
+    public String getLeadersString(){
+        return serializeMembers(this.leaders);
+    }
+
+    public String getAdminString(){
+        return serializeMembers(this.admins);
+    }
+
+    public String getMembersString(){
+        return serializeMembers(this.members);
     }
 }

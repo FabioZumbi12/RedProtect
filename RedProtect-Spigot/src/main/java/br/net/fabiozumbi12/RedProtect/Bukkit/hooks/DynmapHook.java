@@ -43,7 +43,7 @@ public class DynmapHook implements Listener {
     private static MarkerSet MSet;
     private static MarkerAPI MApi;
 
-    public DynmapHook(DynmapAPI dyn) {
+    DynmapHook(DynmapAPI dyn) {
         MApi = dyn.getMarkerAPI();
         MSet = MApi.getMarkerSet(RedProtect.get().config.configRoot().hooks.dynmap.marks_groupname);
         if (MSet == null) {
