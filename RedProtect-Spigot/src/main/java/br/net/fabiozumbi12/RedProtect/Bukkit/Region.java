@@ -215,7 +215,7 @@ public class Region extends CoreRegion {
                     String[] lines = s.getLines();
                     if (lines[0].equalsIgnoreCase("[flag]")) {
                         if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))) {
-                            s.setLine(3, RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname)));
+                            s.setLine(3, RedProtect.get().lang.get("region.value") + " " + ChatColor.translateAlternateColorCodes('&', RedProtect.get().lang.translBool(getFlagString(fname))));
                             s.update();
                             RedProtect.get().config.putSign(this.getID(), loc);
                         }
@@ -592,7 +592,7 @@ public class Region extends CoreRegion {
             if (RedProtect.get().config.getDefFlags().contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RedProtect.get().lang.translBool(flagValue));
+                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.translateAlternateColorCodes('&', RedProtect.get().lang.translBool(flagValue)));
                 } else {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.GRAY).append(flagValue);
                 }
@@ -605,7 +605,7 @@ public class Region extends CoreRegion {
             if (RedProtect.get().config.AdminFlags.contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(RedProtect.get().lang.translBool(flagValue));
+                    flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.translateAlternateColorCodes('&', RedProtect.get().lang.translBool(flagValue)));
                 } else {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.GRAY).append(flagValue);
                 }
