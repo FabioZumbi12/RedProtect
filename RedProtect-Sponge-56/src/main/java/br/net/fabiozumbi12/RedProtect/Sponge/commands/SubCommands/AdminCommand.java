@@ -658,12 +658,12 @@ public class AdminCommand implements CommandCallable {
                             if (first) {
                                 first = false;
                                 worldregions.append(Text.builder()
-                                        .append(RedProtectUtil.toText("&8" + r.getName() + r.getArea()))
+                                        .append(RedProtectUtil.toText("&8" + r.getName() + "(" + r.getArea() + ")"))
                                         .onHover(TextActions.showText(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                         .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                             } else {
                                 worldregions.append(Text.builder()
-                                        .append(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + r.getArea()))
+                                        .append(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + "(" + r.getArea() + ")"))
                                         .onHover(TextActions.showText(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                         .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                             }

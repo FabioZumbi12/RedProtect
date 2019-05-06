@@ -766,7 +766,7 @@ public class AdminCommand implements SubCommand {
                         for (int i = min; i <= max; i++) {
                             count = i;
                             Region r = it.get(i);
-                            String rname = RedProtect.get().lang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + r.getArea();
+                            String rname = RedProtect.get().lang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + "(" + r.getArea() + ")";
                             if (first) {
                                 rname = rname.substring(3);
                                 first = false;
