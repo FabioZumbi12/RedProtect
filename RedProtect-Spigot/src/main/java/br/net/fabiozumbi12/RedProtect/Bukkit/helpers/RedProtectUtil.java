@@ -49,7 +49,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -330,7 +329,7 @@ public class RedProtectUtil extends CoreUtil {
                 }
 
                 if (!ignore && days > RedProtect.get().config.configRoot().purge.remove_oldest) {
-                    if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.configRoot().purge.regen.enable) {
+                    if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.configRoot().purge.regen.enabled) {
                         if (region.getArea() <= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
                             WEHook.regenRegion(region, Bukkit.getWorld(region.getWorld()), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;

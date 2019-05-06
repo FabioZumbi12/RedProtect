@@ -187,8 +187,6 @@ public class ConfigManager {
                         "FLETCHING_TABLE",
                         "GRINDSTONE",
                         "SMITHING_TABLE",
-                        "STONECUTTER",
-                        "ANVIL",
                         "STONECUTTER"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
@@ -389,6 +387,14 @@ public class ConfigManager {
             this.addWorldProperties(w);
         }
 
+        //add allowed claim worlds to config
+        if (root.allowed_claim_worlds.isEmpty()) {
+            for (World w : RedProtect.get().getServer().getWorlds()) {
+                root.allowed_claim_worlds.add(w.getName());
+                RedProtect.get().logger.warning("Added world to allowed claim list " + w.getName());
+            }
+        }
+
         /*------------- ---- Add default config for not updatable configs ------------------*/
 
         //update new player flags according version
@@ -550,11 +556,6 @@ public class ConfigManager {
     }
 
     public void addWorldProperties(World w) {
-        //add allowed claim worlds to config
-        if (!root.allowed_claim_worlds.contains(w.getName())) {
-            root.allowed_claim_worlds.add(w.getName());
-            RedProtect.get().logger.warning("Added world to allowed claim list " + w.getName());
-        }
         //add worlds to claim types list
         if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
             root.region_settings.claim.world_types.put(w.getName(), "BLOCK");

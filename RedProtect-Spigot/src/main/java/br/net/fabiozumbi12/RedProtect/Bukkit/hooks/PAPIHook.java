@@ -28,13 +28,10 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
 public class PAPIHook extends PlaceholderExpansion {
-    public PAPIHook() {
-    }
 
     @Override
     public String onPlaceholderRequest(Player p, String arg) {

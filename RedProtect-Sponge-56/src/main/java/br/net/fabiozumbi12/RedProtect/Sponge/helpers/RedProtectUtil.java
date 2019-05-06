@@ -32,11 +32,9 @@ import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
-import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
@@ -291,7 +289,7 @@ public class RedProtectUtil extends CoreUtil {
                 }
 
                 if (!ignore && days > RedProtect.get().config.configRoot().purge.remove_oldest) {
-                    if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().purge.regen.enable) {
+                    if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().purge.regen.enabled) {
                         if (region.getArea() <= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
                             WEHook.regenRegion(region, Sponge.getServer().getWorld(region.getWorld()).get(), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;

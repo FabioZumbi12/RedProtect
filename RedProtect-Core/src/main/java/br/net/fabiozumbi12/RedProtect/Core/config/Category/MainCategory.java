@@ -252,7 +252,7 @@ public class MainCategory {
     @ConfigSerializable
     public static class privateCat {
         @Setting(value = "allow-outside", comment = "Allow player to create private container outside regions? (on wilderness)")
-        public boolean allow_outside = true;
+        public boolean allow_outside = false;
         @Setting(value = "allowed-blocks", comment = "Blocks allowed to be locked with private signs.\n" +
                 "Accept mod blocks, eg.: Pixelmon Healers or PCs.\n" +
                 "Accept regex to match a group of blocks, like shulker boxes.")
@@ -277,7 +277,7 @@ public class MainCategory {
         @ConfigSerializable
         public static class regenCat {
             @Setting(comment = "If worldedit is installed, regen the region instead remove?")
-            public boolean enable = false;
+            public boolean enabled = false;
             @Setting(value = "max-area-regen", comment = "Regions with an area greater than this will be ignored.")
             public int max_area_regen = 500;
             @Setting(value = "stop-server-every", comment = "Stop server on every x regions regenerated (if you is using a script to reboot your server)")
@@ -291,6 +291,7 @@ public class MainCategory {
     public static class regionSettings {
         @Setting(value = "allow-sign-interact-tags", comment = "Allow non meber of regions to interact with signs with this headers. (line 1 of the sign)")
         public List<String> allow_sign_interact_tags = Arrays.asList(
+                "Admin Shop",
                 "[Admin Shop]",
                 "[Buy]",
                 "[Sell]",
@@ -310,7 +311,7 @@ public class MainCategory {
         public borderCat border = new borderCat();
         @Setting
         public claimCat claim = new claimCat();
-        @Setting(value = "enable-flag-sign", comment = "Allow players to create signs to change your regions flags states?")
+        @Setting(value = "enabled-flag-sign", comment = "Allow players to create signs to change your regions flags states?")
         public boolean enable_flag_sign = true;
         @Setting(value = "date-format", comment = "Time format to use with data and time infos.")
         public String date_format = "dd/MM/yyyy";
@@ -330,7 +331,7 @@ public class MainCategory {
                 "The permission \"redprotect.limits.blocks.<amount>\" overrides this setting.")
         public int limit_amount = 8000;
         @Setting(value = "max-scan", comment = "If using blocks for claim, this is the max blocks the plugin will scan before claim a region.")
-        public int max_scan = 600;
+        public int max_scan = 1000;
         @Setting(value = "record-player-visit-method", comment = "Method to record the player visit on regions. Available: \"ON-LOGIN\" or \"ON-REGION-ENTER\"")
         public String record_player_visit_method = "ON-LOGIN";
         @Setting(value = "teleport-time", comment = "Delay to teleport command.")
