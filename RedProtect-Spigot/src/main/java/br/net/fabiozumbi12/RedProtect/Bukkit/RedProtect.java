@@ -173,6 +173,9 @@ public class RedProtect extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RPEntityListener(), this);
         getServer().getPluginManager().registerEvents(new RPWorldListener(), this);
 
+        // Register hooks
+        hooks.registerHooks();
+
         try {
             rm = new RegionManager();
             rm.loadAll();
@@ -190,9 +193,6 @@ public class RedProtect extends JavaPlugin {
 
         // Load Gui lang file
         guiLang = new LangGuiManager();
-
-        // Register hooks
-        hooks.registerHooks();
     }
 
     private void shutDown() {

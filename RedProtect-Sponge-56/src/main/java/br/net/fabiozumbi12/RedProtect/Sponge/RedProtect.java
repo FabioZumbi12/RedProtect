@@ -245,6 +245,9 @@ public class RedProtect {
         Sponge.getGame().getEventManager().registerListeners(container, new RPWorldListener());
         Sponge.getGame().getEventManager().registerListeners(container, new RPMine18());
 
+        // Register hooks
+        this.hooks.registerHooks();
+
         try {
             rm = new RegionManager();
             rm.loadAll();
@@ -257,15 +260,12 @@ public class RedProtect {
             logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
         } catch (Exception e) {
              CoreUtil.printJarVersion();
-             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
         // Load Gui lang file
         guiLang = new LangGuiManager();
 
-        // Register hooks
-        this.hooks.registerHooks();
     }
 
     public void reload() {
