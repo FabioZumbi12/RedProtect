@@ -466,12 +466,12 @@ public class RedProtectUtil extends CoreUtil {
                 playerName = onp.getName();
             }
         }
-        if (playerName == null) {
+        if (playerName == null && Bukkit.getOnlineMode()) {
             playerName = MojangUUIDs.getName(uuid);
         }
 
-        if(playerName != null)
-        cachedUUIDs.put(uuid, playerName);
+        if (playerName != null)
+            cachedUUIDs.put(uuid, playerName);
         return playerName;
     }
 
