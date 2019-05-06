@@ -37,10 +37,6 @@ public class MainCategory {
 
     @Setting(value = "config-version", comment = "Don't touch <3")
     public double config_version = 8.4;
-    /*@Setting(value = "online-mode", comment = "This option will define if RedProtect will work with UUIDs or player names.\n" +
-            "Use with caution because offline player has no uuids and maybe some offline player is using online nicknames.\n" +
-            "Make a backup of your DATABASE before change this setting in a production server.")
-    public boolean online_mode;*/
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")

@@ -427,7 +427,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
                     if (!RedProtectUtil.isUUIDs(p[0])) {
                         String before = p[0];
-                        p[0] = RedProtectUtil.PlayerToUUID(p[0]);
+                        p[0] = RedProtectUtil.PlayerToUUID(p[0]) == null ? p[0] : RedProtectUtil.PlayerToUUID(p[0]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                     }
                     if (RedProtectUtil.isUUIDs(p[1])) {
@@ -445,7 +445,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
                     if (!RedProtectUtil.isUUIDs(p[0])) {
                         String before = p[0];
-                        p[0] = RedProtectUtil.PlayerToUUID(p[0]);
+                        p[0] = RedProtectUtil.PlayerToUUID(p[0]) == null ? p[0] : RedProtectUtil.PlayerToUUID(p[0]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                     }
                     if (RedProtectUtil.isUUIDs(p[1])) {
@@ -463,7 +463,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
                     if (!RedProtectUtil.isUUIDs(p[0])) {
                         String before = p[0];
-                        p[0] = RedProtectUtil.PlayerToUUID(p[0]);
+                        p[0] = RedProtectUtil.PlayerToUUID(p[0]) == null ? p[0] : RedProtectUtil.PlayerToUUID(p[0]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
                     }
                     if (RedProtectUtil.isUUIDs(p[1])) {
@@ -504,9 +504,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 }
             }
         } catch (Exception e){
+            e.printStackTrace();
             RedProtect.get().logger.severe("Error on load region " + rname);
             CoreUtil.printJarVersion();
-            e.printStackTrace();
         }
         return newr;
     }

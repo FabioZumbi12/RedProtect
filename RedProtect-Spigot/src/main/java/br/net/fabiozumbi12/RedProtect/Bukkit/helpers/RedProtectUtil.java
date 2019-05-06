@@ -470,6 +470,7 @@ public class RedProtectUtil extends CoreUtil {
             playerName = MojangUUIDs.getName(uuid);
         }
 
+        if(playerName != null)
         cachedUUIDs.put(uuid, playerName);
         return playerName;
     }
