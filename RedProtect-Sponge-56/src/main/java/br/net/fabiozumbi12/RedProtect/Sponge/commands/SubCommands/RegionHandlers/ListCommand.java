@@ -57,7 +57,7 @@ public class ListCommand {
 
                             try {
                                 int Page = Integer.parseInt(playerPage);
-                                handleList(player, player.getUniqueId().toString(), Page);
+                                handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), Page);
                             } catch (NumberFormatException e) {
 
                                 int page = 1;
@@ -69,7 +69,7 @@ public class ListCommand {
 
                             return CommandResult.success();
                         } else {
-                            handleList(player, player.getUniqueId().toString(), 1);
+                            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
                         }
                     }
                     return CommandResult.success();

@@ -622,7 +622,7 @@ public class CommandHandlers {
         if (RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.list")) {
             getRegionforList(p, uuid, Page);
             return;
-        } else if (RedProtect.get().ph.hasPerm(p, "redprotect.command.list") && p.getUniqueId().toString().equalsIgnoreCase(uuid)) {
+        } else if (RedProtect.get().ph.hasPerm(p, "redprotect.command.list") && RedProtectUtil.PlayerToUUID(p.getName()).equalsIgnoreCase(uuid)) {
             getRegionforList(p, uuid, Page);
             return;
         }

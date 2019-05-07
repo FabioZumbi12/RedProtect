@@ -408,6 +408,8 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class serverProtection {
+        @Setting(value = "fix-uuids", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions)")
+        public boolean fix_uuids = false;
 
         @Setting(value = "deny-command-on-worlds", comment = "Deny a command in specific world.")
         public Map<String, List<String>> deny_commands_on_worlds = createMapCmdWorld();

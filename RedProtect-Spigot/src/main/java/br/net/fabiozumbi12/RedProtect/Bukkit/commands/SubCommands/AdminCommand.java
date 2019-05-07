@@ -115,6 +115,38 @@ public class AdminCommand implements SubCommand {
         }
 
         if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("fix-uuids")) {
+                final boolean[] save = {false};
+                RedProtect.get().rm.getAllRegions().forEach(r->{
+                    Bukkit.getOnlinePlayers().forEach(p->{
+                        r.getLeaders().forEach(rp->{
+                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                rp.setUUID(p.getUniqueId().toString());
+                                save[0] = true;
+                            }
+                        });
+                        r.getAdmins().forEach(rp->{
+                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                rp.setUUID(p.getUniqueId().toString());
+                                save[0] = true;
+                            }
+                        });
+                        r.getMembers().forEach(rp->{
+                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                rp.setUUID(p.getUniqueId().toString());
+                                save[0] = true;
+                            }
+                        });
+                    });
+                });
+                if (save[0]){
+                    RedProtect.get().rm.saveAll(true);
+                    RedProtect.get().logger.success("Fixed some online players uuids!");
+                } else {
+                    RedProtect.get().logger.success("No uuids fixed!");
+                }
+                return true;
+            }
 
             if (args[0].equalsIgnoreCase("clear-kicks")) {
                 RedProtect.get().denyEnter.clear();
@@ -843,7 +875,7 @@ public class AdminCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consolecmds = Arrays.asList("list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+        List<String> consolecmds = Arrays.asList("fix-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
 
         if (args.length == 0) {
             return consolecmds;

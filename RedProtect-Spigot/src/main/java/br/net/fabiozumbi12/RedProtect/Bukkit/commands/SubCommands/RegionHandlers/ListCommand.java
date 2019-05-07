@@ -50,7 +50,7 @@ public class ListCommand implements SubCommand {
 
         //rp list
         if (args.length == 0) {
-            handleList(player, player.getUniqueId().toString(), 1);
+            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
             return true;
         }
         //rp list [player|page]

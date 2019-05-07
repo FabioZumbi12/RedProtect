@@ -72,6 +72,38 @@ public class AdminCommand implements CommandCallable {
         String[] args = arguments.split(" ");
 
         if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("fix-uuids")) {
+                final boolean[] save = {false};
+                RedProtect.get().rm.getAllRegions().forEach(r->{
+                    Sponge.getServer().getOnlinePlayers().forEach(p->{
+                        r.getLeaders().forEach(rp->{
+                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                rp.setUUID(p.getUniqueId().toString());
+                                save[0] = true;
+                            }
+                        });
+                        r.getAdmins().forEach(rp->{
+                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                rp.setUUID(p.getUniqueId().toString());
+                                save[0] = true;
+                            }
+                        });
+                        r.getMembers().forEach(rp->{
+                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                rp.setUUID(p.getUniqueId().toString());
+                                save[0] = true;
+                            }
+                        });
+                    });
+                });
+                if (save[0]){
+                    RedProtect.get().rm.saveAll(true);
+                    RedProtect.get().logger.success("Fixed some online players uuids!");
+                } else {
+                    RedProtect.get().logger.success("No uuids fixed!");
+                }
+                return cmdr;
+            }
 
             if (args[0].equalsIgnoreCase("clear-kicks")) {
                 RedProtect.get().denyEnter.clear();

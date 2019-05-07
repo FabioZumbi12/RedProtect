@@ -1046,14 +1046,40 @@ public class RPPlayerListener {
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is ClientConnectionEvent.Login event.");
 
-        if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
-            String uuid = p.getUniqueId().toString();
-            for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
-                if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
-                    r.setDate(RedProtectUtil.dateNow());
+        Sponge.getScheduler().createAsyncExecutor(RedProtect.get().container).execute(() -> {
+
+            if (RedProtect.get().config.configRoot().server_protection.fix_uuids){
+                RedProtect.get().rm.getAllRegions().forEach(r->{
+                    r.getLeaders().forEach(rp->{
+                        if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                            rp.setUUID(p.getUniqueId().toString());
+                            r.setToSave(true);
+                        }
+                    });
+                    r.getAdmins().forEach(rp->{
+                        if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                            rp.setUUID(p.getUniqueId().toString());
+                            r.setToSave(true);
+                        }
+                    });
+                    r.getMembers().forEach(rp->{
+                        if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                            rp.setUUID(p.getUniqueId().toString());
+                            r.setToSave(true);
+                        }
+                    });
+                });
+            }
+
+            if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
+                String uuid = p.getUniqueId().toString();
+                for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
+                    if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
+                        r.setDate(RedProtectUtil.dateNow());
+                    }
                 }
             }
-        }
+        });
 
         if (p.getPlayer().isPresent()) {
             Region r = RedProtect.get().rm.getTopRegion(p.getPlayer().get().getLocation(), this.getClass().getName());

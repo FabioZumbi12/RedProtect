@@ -1097,6 +1097,30 @@ public class RPPlayerListener implements Listener {
         Player p = e.getPlayer();
 
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+
+            if (RedProtect.get().config.configRoot().server_protection.fix_uuids){
+                RedProtect.get().rm.getAllRegions().forEach(r->{
+                    r.getLeaders().forEach(rp->{
+                        if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                            rp.setUUID(p.getUniqueId().toString());
+                            r.setToSave(true);
+                        }
+                    });
+                    r.getAdmins().forEach(rp->{
+                        if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                            rp.setUUID(p.getUniqueId().toString());
+                            r.setToSave(true);
+                        }
+                    });
+                    r.getMembers().forEach(rp->{
+                        if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                            rp.setUUID(p.getUniqueId().toString());
+                            r.setToSave(true);
+                        }
+                    });
+                });
+            }
+
             String uuid = p.getUniqueId().toString();
             if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
                 for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {

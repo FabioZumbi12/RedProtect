@@ -424,7 +424,7 @@ public class RedProtectUtil extends CoreUtil {
                 playerName = uss.get(uuids).get().getName();
             }
         } catch (IllegalArgumentException e) {
-            if (playerName.isEmpty() && Sponge.getServer().getOnlineMode()) {
+            if (playerName.isEmpty()) {
                 playerName = MojangUUIDs.getName(uuid);
             }
         }
