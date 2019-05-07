@@ -639,7 +639,7 @@ public class CommandHandlers {
     public static void getRegionforList(CommandSource p, String uuid, int nPage) {
         Sponge.getScheduler().createAsyncExecutor(RedProtect.get()).execute(() -> {
             int Page = nPage;
-            Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
+            Set<Region> regions = RedProtect.get().rm.getLeaderRegions(uuid);
             String pname = RedProtectUtil.UUIDtoPlayer(uuid);
             int length = regions.size();
             if (pname == null || length == 0) {

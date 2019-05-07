@@ -215,7 +215,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getRegions(String pname) {
+    public Set<Region> getLeaderRegions(String pname) {
         SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
         for (Region r : regions.values()) {
             if (r.isLeader(pname)) {
@@ -226,10 +226,21 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public Set<Region> getMemberRegions(String uuid) {
+    public Set<Region> getAdminRegions(String uuid) {
         SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
         for (Region r : regions.values()) {
             if (r.isLeader(uuid) || r.isAdmin(uuid)) {
+                regionsp.add(r);
+            }
+        }
+        return regionsp;
+    }
+
+    @Override
+    public Set<Region> getMemberRegions(String uuid) {
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid) || r.isAdmin(uuid) || r.isMember(uuid)) {
                 regionsp.add(r);
             }
         }
@@ -387,7 +398,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     @Override
-    public void updateLiveRegion(String rname, String columm, Object value) {
+    public void updateLiveRegion(String rname, String column, Object value) {
     }
 
     @Override
@@ -425,11 +436,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
-                    if (!RedProtectUtil.isUUIDs(p[0])) {
-                        String before = p[0];
-                        p[0] = RedProtectUtil.PlayerToUUID(p[0]) == null ? p[0] : RedProtectUtil.PlayerToUUID(p[0]).toLowerCase();
-                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
-                    }
                     if (RedProtectUtil.isUUIDs(p[1])) {
                         String before = p[1];
                         p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
@@ -443,11 +449,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
-                    if (!RedProtectUtil.isUUIDs(p[0])) {
-                        String before = p[0];
-                        p[0] = RedProtectUtil.PlayerToUUID(p[0]) == null ? p[0] : RedProtectUtil.PlayerToUUID(p[0]).toLowerCase();
-                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
-                    }
                     if (RedProtectUtil.isUUIDs(p[1])) {
                         String before = p[1];
                         p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
@@ -461,11 +462,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
-                    if (!RedProtectUtil.isUUIDs(p[0])) {
-                        String before = p[0];
-                        p[0] = RedProtectUtil.PlayerToUUID(p[0]) == null ? p[0] : RedProtectUtil.PlayerToUUID(p[0]).toLowerCase();
-                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[0]);
-                    }
                     if (RedProtectUtil.isUUIDs(p[1])) {
                         String before = p[1];
                         p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();

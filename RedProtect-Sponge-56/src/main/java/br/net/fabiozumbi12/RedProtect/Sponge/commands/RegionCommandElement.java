@@ -57,7 +57,7 @@ public class RegionCommandElement extends CommandElement {
     @Override
     public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
         if (src instanceof Player)
-            return RedProtect.get().rm.getMemberRegions(src.getName()).stream().map(Region::getName).collect(Collectors.toList());
+            return RedProtect.get().rm.getAdminRegions(src.getName()).stream().map(Region::getName).collect(Collectors.toList());
         return null;
     }
 }

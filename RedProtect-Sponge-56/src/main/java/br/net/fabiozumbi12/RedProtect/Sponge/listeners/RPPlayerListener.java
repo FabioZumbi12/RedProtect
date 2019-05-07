@@ -1043,13 +1043,36 @@ public class RPPlayerListener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is ClientConnectionEvent.Login event. Player " + e.getTargetUser().getName());
 
         User p = e.getTargetUser();
-
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is ClientConnectionEvent.Login event.");
-
         Sponge.getScheduler().createAsyncExecutor(RedProtect.get().container).execute(() -> {
 
-            if (RedProtect.get().config.configRoot().server_protection.fix_uuids){
-                RedProtect.get().rm.getAllRegions().forEach(r->{
+            String uuid = p.getUniqueId().toString();
+            RedProtect.get().rm.getMemberRegions(uuid).forEach(r->{
+
+                if (RedProtect.get().config.configRoot().online_mode){
+
+                    // Update player names based on uuids
+                    r.getLeaders().forEach(rp->{
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                            rp.setPlayerName(p.getName().toLowerCase());
+                            r.setToSave(true);
+                        }
+                    });
+                    r.getAdmins().forEach(rp->{
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                            rp.setPlayerName(p.getName().toLowerCase());
+                            r.setToSave(true);
+                        }
+                    });
+                    r.getMembers().forEach(rp->{
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                            rp.setPlayerName(p.getName().toLowerCase());
+                            r.setToSave(true);
+                        }
+                    });
+
+                } else {
+
+                    // Update uuids based on player names
                     r.getLeaders().forEach(rp->{
                         if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
                             rp.setUUID(p.getUniqueId().toString());
@@ -1068,17 +1091,14 @@ public class RPPlayerListener {
                             r.setToSave(true);
                         }
                     });
-                });
-            }
+                }
 
-            if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")) {
-                String uuid = p.getUniqueId().toString();
-                for (Region r : RedProtect.get().rm.getMemberRegions(uuid)) {
+                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(uuid) || r.isLeader(uuid))){
                     if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
                         r.setDate(RedProtectUtil.dateNow());
                     }
                 }
-            }
+            });
         });
 
         if (p.getPlayer().isPresent()) {

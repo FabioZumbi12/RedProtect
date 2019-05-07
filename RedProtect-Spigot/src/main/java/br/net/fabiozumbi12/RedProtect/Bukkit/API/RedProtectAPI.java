@@ -85,7 +85,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(String uuid) {
-        return RedProtect.get().rm.getRegions(uuid);
+        return RedProtect.get().rm.getLeaderRegions(uuid);
     }
 
     /**

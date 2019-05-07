@@ -246,7 +246,7 @@ public class RedProtect {
         Sponge.getGame().getEventManager().registerListeners(container, new RPMine18());
 
         // Register hooks
-        this.hooks.registerHooks();
+        this.hooks.registerHooksFirst();
 
         try {
             rm = new RegionManager();
@@ -262,6 +262,9 @@ public class RedProtect {
              CoreUtil.printJarVersion();
             e.printStackTrace();
         }
+
+        // Register hooks
+        this.hooks.registerHooksLast();
 
         // Load Gui lang file
         guiLang = new LangGuiManager();

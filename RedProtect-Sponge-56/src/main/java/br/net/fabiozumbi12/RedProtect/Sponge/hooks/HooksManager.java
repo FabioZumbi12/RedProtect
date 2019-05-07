@@ -35,14 +35,16 @@ public class HooksManager {
     public boolean WE;
     public boolean Dyn;
 
-    public void registerHooks(){
+    public void registerHooksFirst(){
         WE = checkWE();
         Dyn = checkDM();
 
         if (WE){
             RedProtect.get().logger.info("WorldEdit found. Hooked.");
         }
+    }
 
+    public void registerHooksLast(){
         if (Dyn) {
             RedProtect.get().logger.info("Dynmap found. Hooked.");
             RedProtect.get().logger.info("Loading Dynmap markers...");

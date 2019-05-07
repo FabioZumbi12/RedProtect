@@ -632,7 +632,7 @@ public class CommandHandlers {
     public static void getRegionforList(CommandSender sender, String uuid, int nPage) {
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
             int Page = nPage;
-            Set<Region> regions = RedProtect.get().rm.getRegions(uuid);
+            Set<Region> regions = RedProtect.get().rm.getLeaderRegions(uuid);
             int length = regions.size();
             if (length == 0) {
                 RedProtect.get().lang.sendMessage(sender, "cmdmanager.player.noregions");

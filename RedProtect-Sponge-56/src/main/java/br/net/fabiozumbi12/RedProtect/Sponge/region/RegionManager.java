@@ -32,7 +32,6 @@ import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldFlatFileRegionManager
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldRegionManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
@@ -135,34 +134,45 @@ public class RegionManager {
         }
         return size;
     }
-    /*
-    public Set<Region> getWorldRegions(String player, World w) {
-        return this.regionManagers.get(w).getRegions(player);
-    }
-    */
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name;
+     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      *
      * @param uuid the UUID of the player.
-     * @return set<region>
+     * @return {{@link Set<Region>}
      */
-    public Set<Region> getRegions(String uuid) {
+    public Set<Region> getLeaderRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
-            ret.addAll(worldRegionManager.getRegions(uuid));
+            ret.addAll(worldRegionManager.getLeaderRegions(uuid));
         }
         return ret;
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name;
+     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Admin or Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
-     * @param uuid The UUID of the player
+     * @param uuid the UUID of the player.
+     * @return {@link Set<Region>}
+     */
+    public Set<Region> getAdminRegions(String uuid) {
+        Set<Region> ret = new HashSet<>();
+        for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
+            ret.addAll(worldRegionManager.getAdminRegions(uuid));
+        }
+        return ret;
+    }
+
+    /**
+     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Member, Admin or Leader;
+     * <p>
+     * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
+     *
+     * @param uuid the UUID of the player.
      * @return {@link Set<Region>}
      */
     public Set<Region> getMemberRegions(String uuid) {
@@ -178,12 +188,12 @@ public class RegionManager {
     }
 
     public Set<Region> getRegions(String player, World w) {
-        return this.regionManagers.get(w).getRegions(player);
+        return this.regionManagers.get(w).getLeaderRegions(player);
     }
 
     public Set<Region> getRegions(String player, String w) {
         World world = Sponge.getServer().getWorld(w).get();
-        return this.regionManagers.get(world).getRegions(player);
+        return this.regionManagers.get(world).getLeaderRegions(player);
     }
 
     public int getPlayerRegions(String player, World w) {
@@ -191,7 +201,7 @@ public class RegionManager {
         if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world) {
             size = getRegions(player, w).size();
         } else {
-            size = getRegions(player).size();
+            size = getLeaderRegions(player).size();
         }
         return size;
     }
@@ -299,7 +309,7 @@ public class RegionManager {
     public int removeAll(String player) {
         int qtd = 0;
         for (WorldRegionManager wrm : this.regionManagers.values()) {
-            for (Region r : wrm.getRegions(player)) {
+            for (Region r : wrm.getLeaderRegions(player)) {
                 r.notifyRemove();
                 wrm.remove(r);
                 removeCache(r);
@@ -311,7 +321,7 @@ public class RegionManager {
 
     public int regenAll(String player) {
         int delay = 0;
-        for (Region r : getRegions(player)) {
+        for (Region r : getLeaderRegions(player)) {
             if (r.getArea() <= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
                 WEHook.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;

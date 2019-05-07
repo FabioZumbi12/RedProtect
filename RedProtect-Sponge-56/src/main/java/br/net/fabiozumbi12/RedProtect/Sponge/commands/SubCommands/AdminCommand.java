@@ -72,28 +72,77 @@ public class AdminCommand implements CommandCallable {
         String[] args = arguments.split(" ");
 
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("fix-uuids")) {
+            if (args[0].equalsIgnoreCase("reset-uuids")) {
                 final boolean[] save = {false};
+
+                // Reset uuids
                 RedProtect.get().rm.getAllRegions().forEach(r->{
+                    r.getLeaders().forEach(rp->{
+                        if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            rp.setUUID(rp.getPlayerName());
+                            save[0] = true;
+                        }
+                    });
+                    r.getAdmins().forEach(rp->{
+                        if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            rp.setUUID(rp.getPlayerName());
+                            save[0] = true;
+                        }
+                    });
+                    r.getMembers().forEach(rp->{
+                        if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            rp.setUUID(rp.getPlayerName());
+                            save[0] = true;
+                        }
+                    });
+
+                    // Set uuids for online players
                     Sponge.getServer().getOnlinePlayers().forEach(p->{
-                        r.getLeaders().forEach(rp->{
-                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
-                                rp.setUUID(p.getUniqueId().toString());
-                                save[0] = true;
-                            }
-                        });
-                        r.getAdmins().forEach(rp->{
-                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
-                                rp.setUUID(p.getUniqueId().toString());
-                                save[0] = true;
-                            }
-                        });
-                        r.getMembers().forEach(rp->{
-                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
-                                rp.setUUID(p.getUniqueId().toString());
-                                save[0] = true;
-                            }
-                        });
+
+                        if (RedProtect.get().config.configRoot().online_mode){
+
+                            // Update player names based on uuids
+                            r.getLeaders().forEach(rp->{
+                                if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                    rp.setPlayerName(p.getName().toLowerCase());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getAdmins().forEach(rp->{
+                                if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                    rp.setPlayerName(p.getName().toLowerCase());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getMembers().forEach(rp->{
+                                if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                    rp.setPlayerName(p.getName().toLowerCase());
+                                    r.setToSave(true);
+                                }
+                            });
+
+                        } else {
+
+                            // Update uuids based on player names
+                            r.getLeaders().forEach(rp->{
+                                if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                    rp.setUUID(p.getUniqueId().toString());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getAdmins().forEach(rp->{
+                                if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                    rp.setUUID(p.getUniqueId().toString());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getMembers().forEach(rp->{
+                                if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                    rp.setUUID(p.getUniqueId().toString());
+                                    r.setToSave(true);
+                                }
+                            });
+                        }
                     });
                 });
                 if (save[0]){
@@ -272,7 +321,7 @@ public class AdminCommand implements CommandCallable {
                     return cmdr;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString()).size();
+                int currentUsed = RedProtect.get().rm.getLeaderRegions(offp.getUniqueId().toString()).size();
                 sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                 return cmdr;
             }
@@ -760,7 +809,7 @@ public class AdminCommand implements CommandCallable {
         return cmdr;
     }
 
-    public List<String> consoleCmds = Arrays.asList("list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "teleport", "filetomysql", "mysqltofile", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+    public List<String> consoleCmds = Arrays.asList("reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "teleport", "filetomysql", "mysqltofile", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
 
     @Override
     public List<String> getSuggestions(@Nullable CommandSource source, String arguments, @Nullable Location<World> targetPosition) {

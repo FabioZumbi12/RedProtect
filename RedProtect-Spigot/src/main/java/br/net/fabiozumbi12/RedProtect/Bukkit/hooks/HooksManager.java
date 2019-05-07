@@ -52,7 +52,7 @@ public class HooksManager {
     public boolean Dyn;
     public DynmapHook dynmapHook;
 
-    public void registerHooks() {
+    public void registerHooksFirst() {
         bossBar = checkBM();
         myChunk = checkMyChunk();
         myPet = checkMyPet();
@@ -63,7 +63,6 @@ public class HooksManager {
         pvpm = checkPvPm();
         essentials = checkEss();
         griefPrev = checkGriefPrev();
-        Dyn = checkDyn();
         worldEdit = checkWe();
         simpleClans = checkSC();
         boolean fac = checkFac();
@@ -116,13 +115,6 @@ public class HooksManager {
             clanManager = SimpleClans.getInstance().getClanManager();
             RedProtect.get().logger.info("SimpleClans found. Hooked.");
         }
-        if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
-            RedProtect.get().logger.info("Dynmap found. Hooked.");
-            RedProtect.get().logger.info("Loading dynmap markers...");
-            dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
-            RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
-            RedProtect.get().logger.info("Dynmap markers loaded!");
-        }
         if (placeHolderAPI) {
             new PAPIHook().register();
             RedProtect.get().logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
@@ -130,6 +122,17 @@ public class HooksManager {
         if (fac) {
             RedProtect.get().getServer().getPluginManager().registerEvents(new FactionsHook(), RedProtect.get());
             RedProtect.get().logger.info("Factions found. Hooked.");
+        }
+    }
+
+    public void registerHooksLast(){
+        Dyn = checkDyn();
+        if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
+            RedProtect.get().logger.info("Dynmap found. Hooked.");
+            RedProtect.get().logger.info("Loading dynmap markers...");
+            dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+            RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
+            RedProtect.get().logger.info("Dynmap markers loaded!");
         }
     }
 

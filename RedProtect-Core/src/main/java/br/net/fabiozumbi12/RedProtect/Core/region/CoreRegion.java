@@ -387,6 +387,30 @@ public class CoreRegion implements Serializable {
         return Math.abs((this.maxMbrX - this.minMbrX) + 1) * Math.abs((this.maxMbrZ - this.minMbrZ) + 1);
     }
 
+    public boolean isLeaderByUUID(String player) {
+        return this.leaders.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player));
+    }
+
+    public boolean isAdminByUUID(String player) {
+        return this.admins.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player));
+    }
+
+    public boolean isMemberByUUID(String player) {
+        return this.members.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player));
+    }
+
+    public boolean isLeaderByName(String player) {
+        return this.leaders.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
+    }
+
+    public boolean isAdminByName(String player) {
+        return this.admins.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
+    }
+
+    public boolean isMemberByName(String player) {
+        return this.members.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));
+    }
+
     public boolean isLeader(String player) {
         return this.leaders.stream().anyMatch(l -> l.getUUID().equalsIgnoreCase(player)) ||
                 this.leaders.stream().anyMatch(l -> l.getPlayerName().equalsIgnoreCase(player));

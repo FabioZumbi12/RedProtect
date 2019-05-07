@@ -115,28 +115,77 @@ public class AdminCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("fix-uuids")) {
+            if (args[0].equalsIgnoreCase("reset-uuids")) {
                 final boolean[] save = {false};
+
+                // Reset uuids
                 RedProtect.get().rm.getAllRegions().forEach(r->{
+                    r.getLeaders().forEach(rp->{
+                        if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            rp.setUUID(rp.getPlayerName());
+                            save[0] = true;
+                        }
+                    });
+                    r.getAdmins().forEach(rp->{
+                        if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            rp.setUUID(rp.getPlayerName());
+                            save[0] = true;
+                        }
+                    });
+                    r.getMembers().forEach(rp->{
+                        if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            rp.setUUID(rp.getPlayerName());
+                            save[0] = true;
+                        }
+                    });
+
+                    // Set uudis for online players
                     Bukkit.getOnlinePlayers().forEach(p->{
-                        r.getLeaders().forEach(rp->{
-                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
-                                rp.setUUID(p.getUniqueId().toString());
-                                save[0] = true;
-                            }
-                        });
-                        r.getAdmins().forEach(rp->{
-                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
-                                rp.setUUID(p.getUniqueId().toString());
-                                save[0] = true;
-                            }
-                        });
-                        r.getMembers().forEach(rp->{
-                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
-                                rp.setUUID(p.getUniqueId().toString());
-                                save[0] = true;
-                            }
-                        });
+
+                        if (RedProtect.get().config.configRoot().online_mode){
+
+                            // Update player names based on uuids
+                            r.getLeaders().forEach(rp->{
+                                if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                    rp.setPlayerName(p.getName().toLowerCase());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getAdmins().forEach(rp->{
+                                if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                    rp.setPlayerName(p.getName().toLowerCase());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getMembers().forEach(rp->{
+                                if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                    rp.setPlayerName(p.getName().toLowerCase());
+                                    r.setToSave(true);
+                                }
+                            });
+
+                        } else {
+
+                            // Update uuids based on player names
+                            r.getLeaders().forEach(rp->{
+                                if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                    rp.setUUID(p.getUniqueId().toString());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getAdmins().forEach(rp->{
+                                if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                    rp.setUUID(p.getUniqueId().toString());
+                                    r.setToSave(true);
+                                }
+                            });
+                            r.getMembers().forEach(rp->{
+                                if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                    rp.setUUID(p.getUniqueId().toString());
+                                    r.setToSave(true);
+                                }
+                            });
+                        }
                     });
                 });
                 if (save[0]){
@@ -875,7 +924,7 @@ public class AdminCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consolecmds = Arrays.asList("fix-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+        List<String> consolecmds = Arrays.asList("reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
 
         if (args.length == 0) {
             return consolecmds;

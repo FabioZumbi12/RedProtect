@@ -35,6 +35,8 @@ import java.util.*;
 public class MainCategory {
     public MainCategory(){}
 
+    @Setting(value = "online-mode", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions and in offline mode)")
+    public boolean online_mode = false;
     @Setting(value = "config-version", comment = "Don't touch <3")
     public double config_version = 8.4;
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
@@ -84,7 +86,7 @@ public class MainCategory {
     public schematicsCat schematics = new schematicsCat();
 
     public MainCategory(boolean online_mode) {
-        //this.online_mode = online_mode;
+        this.online_mode = online_mode;
     }
 
     private Map<String, Boolean> createMapFlags() {
@@ -408,9 +410,6 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class serverProtection {
-        @Setting(value = "fix-uuids", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions)")
-        public boolean fix_uuids = false;
-
         @Setting(value = "deny-command-on-worlds", comment = "Deny a command in specific world.")
         public Map<String, List<String>> deny_commands_on_worlds = createMapCmdWorld();
         @Setting(value = "deny-playerdeath-by", comment = "Deny player death or get damage by this types of damage. List of types:\n" +
