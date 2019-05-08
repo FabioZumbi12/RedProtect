@@ -296,7 +296,7 @@ public class RPBlockListener {
         }
 
         if (r != null && r.canBuild(p) && b.getState().getType().getName().equalsIgnoreCase("sign")){
-            Sign s = (Sign) b.getState();
+            Sign s = (Sign) b.getLocation().get().getTileEntity().get();
             if (s.lines().get(0).toPlain().equalsIgnoreCase("[flag]")){
                 RedProtect.get().config.removeSign(r.getID(), b.getLocation().get());
                 return;
