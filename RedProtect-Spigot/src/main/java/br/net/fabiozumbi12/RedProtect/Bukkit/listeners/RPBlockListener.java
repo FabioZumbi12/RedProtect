@@ -37,6 +37,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -162,7 +163,7 @@ public class RPBlockListener implements Listener {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                         e.setLine(1, flag);
                         e.setLine(2, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + signr.getName());
-                        e.setLine(3, RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag)));
+                        e.setLine(3, ChatColor.translateAlternateColorCodes('&', RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag))));
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.placed");
                         RedProtect.get().config.putSign(signr.getID(), b.getLocation());
                         return;
@@ -266,14 +267,21 @@ public class RPBlockListener implements Listener {
         Player p = e.getPlayer();
         Block b = e.getBlock();
 
-        if (RedProtectUtil.pBorders.containsKey(p.getName()) && b != null && b.getType().equals(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.border.material))) {
+        if (RedProtectUtil.pBorders.containsKey(p.getName()) && b.getType().equals(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.border.material))) {
             RedProtect.get().lang.sendMessage(p, "blocklistener.cantbreak.borderblock");
             e.setCancelled(true);
             return;
         }
 
-        Boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+
+        if (r != null && b.getType().name().endsWith("_SIGN")){
+            Sign s = (Sign) b.getState();
+            if (s.getLine(0).equalsIgnoreCase("[flag]")){
+                RedProtect.get().config.removeSign(r.getID(), b.getLocation());
+            }
+        }
 
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
             Block ib = b.getRelative(BlockFace.UP);

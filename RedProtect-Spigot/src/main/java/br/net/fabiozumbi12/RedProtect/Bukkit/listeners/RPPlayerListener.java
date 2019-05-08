@@ -308,7 +308,8 @@ public class RPPlayerListener implements Listener {
                             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
                             return;
                         }
-                        if (RedProtect.get().ph.hasPerm(p, "redprotect.flag." + flag)) {
+                        if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) &&
+                                RedProtect.get().config.isFlagEnabled(flag)) {
                             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                     if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
@@ -435,7 +436,7 @@ public class RPPlayerListener implements Listener {
         if (r.setFlag(p, flag, !r.getFlagBool(flag))) {
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
-            s.setLine(3, RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
+            s.setLine(3, ChatColor.translateAlternateColorCodes('&', RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag))));
             s.update();
             if (!RedProtect.get().config.getSigns(r.getID()).contains(s.getLocation())) {
                 RedProtect.get().config.putSign(r.getID(), s.getLocation());

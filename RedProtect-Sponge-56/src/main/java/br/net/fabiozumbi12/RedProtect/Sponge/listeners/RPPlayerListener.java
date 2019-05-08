@@ -39,6 +39,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.boss.ServerBossBar;
@@ -400,44 +401,75 @@ public class RPPlayerListener {
                     RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantplace");
                     event.setCancelled(true);
                 }
-            } else if (bstate.getType().getName().contains("sign") && !r.canSign(p)) {
-                if (b.get(Keys.SIGN_LINES).isPresent()) {
-                    List<Text> sign = b.get(Keys.SIGN_LINES).get();
-                    for (String tag : RedProtect.get().config.configRoot().region_settings.allow_sign_interact_tags) {
-                        //check first rule
-                        if (tag.equalsIgnoreCase(sign.get(0).toPlain())) {
+            } else if (bstate.getType().getName().contains("sign")) {
+                Sign sign = (Sign) b.getLocation().get().getTileEntity().get();
+
+                if (b.get(Keys.SIGN_LINES).isPresent() && sign.get(Keys.SIGN_LINES).get().get(0).toPlain().equalsIgnoreCase("[flag]") && r.getFlags().containsKey(sign.get(Keys.SIGN_LINES).get().get(1).toPlain())) {
+                    String flag = sign.get(Keys.SIGN_LINES).get().get(0).toPlain();
+                    if (!(r.getFlags().get(flag) instanceof Boolean)) {
+                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
+                        return;
+                    }
+                    if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) &&
+                            RedProtect.get().config.isFlagEnabled(flag)) {
+                        if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
+                            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                                    if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
+                                        RedProtectUtil.startFlagChanger(r.getName(), flag, p);
+                                        changeFlag(r, flag, p, sign);
+                                        return;
+                                    } else {
+                                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                                        return;
+                                    }
+                                }
+                            }
+                            changeFlag(r, flag, p, sign);
                             return;
                         }
-
-                        //check if tag is leaders or members names
-                        if (tag.equalsIgnoreCase("{membername}")) {
-                            for (PlayerRegion leader : r.getLeaders()) {
-                                if (sign.get(0).toPlain().equalsIgnoreCase(leader.getPlayerName())) {
-                                    return;
-                                }
-                            }
-                            for (PlayerRegion member : r.getMembers()) {
-                                if (sign.get(0).toPlain().equalsIgnoreCase(member.getPlayerName())) {
-                                    return;
-                                }
-                            }
-                            for (PlayerRegion admin : r.getAdmins()) {
-                                if (sign.get(0).toPlain().equalsIgnoreCase(admin.getPlayerName())) {
-                                    return;
-                                }
-                            }
-                        }
-
-                        //check if tag is player name
-                        if (tag.equalsIgnoreCase("{playername}")) {
-                            if (sign.get(0).toPlain().equalsIgnoreCase(RedProtectUtil.UUIDtoPlayer(p.getName()))) {
+                    }
+                    RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
+                    event.setCancelled(true);
+                } else if (!r.canSign(p)){
+                    if (b.get(Keys.SIGN_LINES).isPresent()) {
+                        List<Text> lines = b.get(Keys.SIGN_LINES).get();
+                        for (String tag : RedProtect.get().config.configRoot().region_settings.allow_sign_interact_tags) {
+                            //check first rule
+                            if (tag.equalsIgnoreCase(lines.get(0).toPlain())) {
                                 return;
+                            }
+
+                            //check if tag is leaders or members names
+                            if (tag.equalsIgnoreCase("{membername}")) {
+                                for (PlayerRegion leader : r.getLeaders()) {
+                                    if (lines.get(0).toPlain().equalsIgnoreCase(leader.getPlayerName())) {
+                                        return;
+                                    }
+                                }
+                                for (PlayerRegion member : r.getMembers()) {
+                                    if (lines.get(0).toPlain().equalsIgnoreCase(member.getPlayerName())) {
+                                        return;
+                                    }
+                                }
+                                for (PlayerRegion admin : r.getAdmins()) {
+                                    if (lines.get(0).toPlain().equalsIgnoreCase(admin.getPlayerName())) {
+                                        return;
+                                    }
+                                }
+                            }
+
+                            //check if tag is player name
+                            if (tag.equalsIgnoreCase("{playername}")) {
+                                if (lines.get(0).toPlain().equalsIgnoreCase(RedProtectUtil.UUIDtoPlayer(p.getName()))) {
+                                    return;
+                                }
                             }
                         }
                     }
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract.signs");
+                    event.setCancelled(true);
                 }
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract.signs");
-                event.setCancelled(true);
             } else if ((itemInHand.equals(ItemTypes.FLINT_AND_STEEL) ||
                     itemInHand.equals(ItemTypes.WATER_BUCKET) ||
                     itemInHand.equals(ItemTypes.BUCKET) ||
@@ -450,6 +482,17 @@ public class RPPlayerListener {
             } else if (!r.allowMod(p) && !RedProtectUtil.isBukkitBlock(bstate)) {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
+            }
+        }
+    }
+
+    private void changeFlag(Region r, String flag, Player p, Sign s) {
+        if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, !r.getFlagBool(flag))) {
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
+            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
+            s.lines().set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag))));
+            if (!RedProtect.get().config.getSigns(r.getID()).contains(s.getLocation())) {
+                RedProtect.get().config.putSign(r.getID(), s.getLocation());
             }
         }
     }

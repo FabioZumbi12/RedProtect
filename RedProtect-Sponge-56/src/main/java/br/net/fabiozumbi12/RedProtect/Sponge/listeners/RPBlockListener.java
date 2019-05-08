@@ -278,6 +278,13 @@ public class RPBlockListener {
         boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(bloc, this.getClass().getName());
 
+        if (r != null && b.getState().getType().getName().equalsIgnoreCase("sign")){
+            Sign s = (Sign) b.getState();
+            if (s.lines().get(0).toPlain().equalsIgnoreCase("[flag]")){
+                RedProtect.get().config.removeSign(r.getID(), b.getLocation().get());
+            }
+        }
+
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
             BlockSnapshot ib = bloc.getBlockRelative(Direction.UP).createSnapshot();
             if ((antih && !cont.canBreak(p, ib)) || !cont.canBreak(p, b)) {
