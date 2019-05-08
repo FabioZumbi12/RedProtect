@@ -115,7 +115,7 @@ public class RPBlockListener implements Listener {
             }
         }
 
-        if ((RedProtect.get().config.configRoot().private_cat.use && b.getType().name().contains("WALL_SIGN"))) {
+        if ((RedProtect.get().config.configRoot().private_cat.use && b.getType().name().endsWith("WALL_SIGN"))) {
             boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
             if (cont.validatePrivateSign(e.getLines())) {
                 if (out || signr != null) {
@@ -163,7 +163,8 @@ public class RPBlockListener implements Listener {
                     b.breakNaturally();
                     return;
                 }
-                if (RedProtect.get().ph.hasPerm(p, "redprotect.flag." + flag)) {
+                if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) &&
+                        RedProtect.get().config.isFlagEnabled(flag)) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                         e.setLine(1, flag);
                         e.setLine(2, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + signr.getName());

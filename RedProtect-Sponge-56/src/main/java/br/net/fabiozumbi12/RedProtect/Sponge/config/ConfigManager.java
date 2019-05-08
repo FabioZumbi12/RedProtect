@@ -578,7 +578,6 @@ public class ConfigManager {
             cfgLoader.save(configRoot);
         } catch (IOException | ObjectMappingException e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -588,7 +587,6 @@ public class ConfigManager {
             gflagsRoot.setValue(of(GlobalFlagsCategory.class), globalFlagsRoot);
             gFlagsLoader.save(gflagsRoot);
         } catch (IOException | ObjectMappingException e) {
-            CoreUtil.printJarVersion();
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
@@ -698,7 +696,6 @@ public class ConfigManager {
             }
         } catch (ObjectMappingException e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
         return locs;
@@ -714,7 +711,6 @@ public class ConfigManager {
             }
         } catch (ObjectMappingException e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -728,7 +724,6 @@ public class ConfigManager {
                 saveSigns(rid, lsigns);
             }
         } catch (ObjectMappingException e) {
-            CoreUtil.printJarVersion();
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
@@ -744,7 +739,6 @@ public class ConfigManager {
             signManager.save(signCfgs);
         } catch (IOException e) {
             RedProtect.get().logger.severe("Problems during save file:");
-            CoreUtil.printJarVersion();
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }

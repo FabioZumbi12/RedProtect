@@ -162,6 +162,31 @@ public class RPBlockListener {
                 //RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.region.created").replace("{region}",  r.getName()));
                 RedProtect.get().rm.add(r, RedProtect.get().getServer().getWorld(r.getWorld()).get());
             }
+        } else if (RedProtect.get().config.configRoot().region_settings.enable_flag_sign && line1.toPlain().equalsIgnoreCase("[flag]") && signr != null) {
+            if (signr.getFlags().containsKey(lines.get(1))) {
+                String flag = lines.get(1).toPlain();
+                if (!(signr.getFlags().get(flag) instanceof Boolean)) {
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
+                    RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
+                    return;
+                }
+                if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) &&
+                        RedProtect.get().config.isFlagEnabled(flag)) {
+                    if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
+                        lines.set(1, RedProtectUtil.toText(flag));
+                        lines.set(2, RedProtectUtil.toText("&1&l" + signr.getName()));
+                        lines.set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag))));
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.placed");
+                        RedProtect.get().config.putSign(signr.getID(), b.getLocation().get());
+                        return;
+                    }
+                }
+                RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
+                RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
+            } else {
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.invalidflag");
+                RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
+            }
         }
     }
 
