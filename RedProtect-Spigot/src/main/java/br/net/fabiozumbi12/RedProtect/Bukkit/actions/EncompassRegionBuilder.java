@@ -144,7 +144,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     if (current.equals(first)) {
                         Set<String> leaders = new HashSet<>();
                         leaders.add(pName);
-                        if (owner1 == null) {
+                        if (owner1 == null || owner1.isEmpty()) {
                             e.setLine(2, "--");
 
                         } else if (pName.equals(owner1)) {
@@ -156,7 +156,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
 
-                        if (owner2 == null) {
+                        if (owner2 == null || owner2.isEmpty()) {
                             e.setLine(3, "--");
                         } else {
                             if (!(owner2.startsWith("[") && owner2.endsWith("]"))) {

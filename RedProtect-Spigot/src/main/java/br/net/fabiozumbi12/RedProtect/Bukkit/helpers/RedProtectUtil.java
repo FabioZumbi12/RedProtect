@@ -418,6 +418,8 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public static String PlayerToUUID(@Nonnull String playerName) {
+        if (playerName.isEmpty()) return null;
+
         //check if is already UUID
         if (isUUIDs(playerName) || isDefaultServer(playerName) || (playerName.startsWith("[") && playerName.endsWith("]"))) {
             return playerName;
@@ -444,6 +446,8 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public static String UUIDtoPlayer(@Nonnull String uuid) {
+        if (uuid.isEmpty()) return null;
+
         //check if is UUID
         if (isDefaultServer(uuid) || !isUUIDs(uuid)) {
             return uuid;
