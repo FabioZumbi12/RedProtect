@@ -276,13 +276,6 @@ public class RPBlockListener implements Listener {
         boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
-        if (r != null && b.getType().name().endsWith("_SIGN")){
-            Sign s = (Sign) b.getState();
-            if (s.getLine(0).equalsIgnoreCase("[flag]")){
-                RedProtect.get().config.removeSign(r.getID(), b.getLocation());
-            }
-        }
-
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
             Block ib = b.getRelative(BlockFace.UP);
             if ((antih && !cont.canBreak(p, ib)) || !cont.canBreak(p, b)) {
@@ -298,6 +291,14 @@ public class RPBlockListener implements Listener {
 
         if (r != null && (b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.canPlaceSpawner(p)) {
             return;
+        }
+
+        if (r != null && r.canBuild(p) && b.getType().name().endsWith("_SIGN")){
+            Sign s = (Sign) b.getState();
+            if (s.getLine(0).equalsIgnoreCase("[flag]")){
+                RedProtect.get().config.removeSign(r.getID(), b.getLocation());
+                return;
+            }
         }
 
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())) {
