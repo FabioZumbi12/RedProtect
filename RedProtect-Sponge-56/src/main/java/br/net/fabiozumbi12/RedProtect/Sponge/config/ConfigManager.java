@@ -703,7 +703,7 @@ public class ConfigManager {
 
     public void putSign(String rid, Location<World> loc) {
         try {
-            List<String> lsigns = signCfgs.getNode(rid).getList(of(String.class));
+            List<String> lsigns = new ArrayList<>(signCfgs.getNode(rid).getList(of(String.class)));
             String locs = loc.getExtent().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
             if (!lsigns.contains(locs)) {
                 lsigns.add(locs);
@@ -717,7 +717,7 @@ public class ConfigManager {
 
     public void removeSign(String rid, Location<World> loc) {
         try {
-            List<String> lsigns = signCfgs.getNode(rid).getList(of(String.class));
+            List<String> lsigns = new ArrayList<>(signCfgs.getNode(rid).getList(of(String.class)));
             String locs = loc.getExtent().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
             if (lsigns.contains(locs)) {
                 lsigns.remove(locs);
