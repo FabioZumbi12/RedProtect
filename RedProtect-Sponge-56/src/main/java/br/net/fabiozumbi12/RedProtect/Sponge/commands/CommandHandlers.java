@@ -137,8 +137,7 @@ public class CommandHandlers {
                 pVictim = RedProtect.get().getServer().getPlayer(sVictim).get();
             }
 
-            String VictimUUID = RedProtectUtil.PlayerToUUID(sVictim);
-            if (RedProtectUtil.UUIDtoPlayer(VictimUUID) == null) {
+            if (RedProtectUtil.PlayerToUUID(sVictim) == null) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", sVictim));
                 return;
             }
@@ -183,8 +182,7 @@ public class CommandHandlers {
                 pVictim = RedProtect.get().getServer().getPlayer(sVictim).get();
             }
 
-            String VictimUUID = RedProtectUtil.PlayerToUUID(sVictim);
-            if (RedProtectUtil.UUIDtoPlayer(VictimUUID) == null) {
+            if (RedProtectUtil.PlayerToUUID(sVictim) == null) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", sVictim));
                 return;
             }
@@ -225,8 +223,7 @@ public class CommandHandlers {
                 pVictim = RedProtect.get().getServer().getPlayer(sVictim).get();
             }
 
-            String VictimUUID = RedProtectUtil.PlayerToUUID(sVictim);
-            if (RedProtectUtil.UUIDtoPlayer(VictimUUID) == null) {
+            if (RedProtectUtil.PlayerToUUID(sVictim) == null) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", sVictim));
                 return;
             }
@@ -258,8 +255,7 @@ public class CommandHandlers {
 
         if (RedProtect.get().ph.hasRegionPermAdmin(src, "addmember", r)) {
 
-            String VictimUUID = RedProtectUtil.PlayerToUUID(sVictim);
-            if (RedProtectUtil.UUIDtoPlayer(VictimUUID) == null) {
+            if (RedProtectUtil.PlayerToUUID(sVictim) == null) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", sVictim));
                 return;
             }
@@ -307,8 +303,7 @@ public class CommandHandlers {
                 pVictim = RedProtect.get().getServer().getPlayer(sVictim).get();
             }
 
-            String VictimUUID = RedProtectUtil.PlayerToUUID(sVictim);
-            if (RedProtectUtil.UUIDtoPlayer(VictimUUID) == null) {
+            if (RedProtectUtil.PlayerToUUID(sVictim) == null) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", sVictim));
                 return;
             }
