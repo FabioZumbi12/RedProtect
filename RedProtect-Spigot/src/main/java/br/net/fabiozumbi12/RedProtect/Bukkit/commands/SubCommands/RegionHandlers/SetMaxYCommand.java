@@ -88,7 +88,7 @@ public class SetMaxYCommand implements SubCommand {
         String from = String.valueOf(r.getMaxY());
 
         try {
-            int size = Integer.parseInt(args[1]);
+            int size = Integer.parseInt(args[0]);
             if ((size - r.getMinY()) <= 1) {
                 RedProtect.get().lang.sendMessage(player, "cmdmanager.region.ysiszesmatch");
                 return true;
@@ -101,7 +101,7 @@ public class SetMaxYCommand implements SubCommand {
 
             r.setMaxY(size);
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.setmaxy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
-            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " SETMAXY of region " + r.getName() + " to " + args[1]);
+            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " SETMAXY of region " + r.getName() + " to " + args[0]);
             return true;
         } catch (NumberFormatException e) {
             RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalid.number");
