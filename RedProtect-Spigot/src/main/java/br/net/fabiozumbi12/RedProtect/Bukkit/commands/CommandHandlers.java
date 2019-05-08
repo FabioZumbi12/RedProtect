@@ -58,7 +58,6 @@ public class CommandHandlers {
         if (RedProtect.get().ph.hasRegionPermLeader(src, "addleader", r)) {
             final Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
-            final String VictimUUID = RedProtectUtil.PlayerToUUID(sVictim);
             if ((pVictim == null || !pVictim.isOnline()) && !src.hasPermission("redprotect.command.admin.addleader")) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.online").replace("{player}", sVictim));
                 return;
@@ -74,11 +73,11 @@ public class CommandHandlers {
                 }
             }
 
-            if (!r.isLeader(VictimUUID)) {
+            if (!r.isLeader(sVictim)) {
 
                 if (src.hasPermission("redprotect.command.admin.addleader")) {
-                    r.addLeader(VictimUUID);
-                    RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED LEADER " + RedProtectUtil.UUIDtoPlayer(VictimUUID) + " to region " + r.getName());
+                    r.addLeader(sVictim);
+                    RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED LEADER " + sVictim + " to region " + r.getName());
                     RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.leader.added") + " " + r.getName());
                     if (pVictim != null && pVictim.isOnline() && !pVictim.equals(src)) {
                         RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + src.getName());
@@ -129,17 +128,16 @@ public class CommandHandlers {
                 return;
             }
 
-            if (rLow != null && rLow != r && ((!RedProtect.get().ph.hasRegionPermLeader(src, "removeleader", rLow) || (regions.size() > 1 && rLow.isLeader(VictimUUID))))) {
+            if (rLow != null && rLow != r && ((!RedProtect.get().ph.hasRegionPermLeader(src, "removeleader", rLow) || (regions.size() > 1 && rLow.isLeader(sVictim))))) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.leader.cantremove.lowregion").replace("{player}", sVictim) + " " + rLow.getName());
                 return;
             }
 
-            String victname = RedProtectUtil.UUIDtoPlayer(VictimUUID);
-            if (r.isLeader(VictimUUID)) {
+            if (r.isLeader(sVictim)) {
                 if (r.leaderSize() > 1) {
                     RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.admin.added") + " " + r.getName());
-                    r.removeLeader(VictimUUID);
-                    RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " DEMOTED TO ADMIN " + victname + " to region " + r.getName());
+                    r.removeLeader(sVictim);
+                    RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " DEMOTED TO ADMIN " + sVictim + " to region " + r.getName());
                     if (pVictim != null && pVictim.isOnline() && !pVictim.equals(src)) {
                         RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.leader.youdemoted").replace("{region}", r.getName()) + " " + src.getName());
                     }
@@ -173,14 +171,14 @@ public class CommandHandlers {
                 return;
             }
 
-            if (r.isLeader(VictimUUID)) {
+            if (r.isLeader(sVictim)) {
                 RedProtect.get().lang.sendMessage(src, ChatColor.RED + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.leader.already"));
                 return;
             }
 
-            if (!r.isAdmin(VictimUUID)) {
-                r.addAdmin(VictimUUID);
-                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED ADMIN " + RedProtectUtil.UUIDtoPlayer(VictimUUID) + " to region " + r.getName());
+            if (!r.isAdmin(sVictim)) {
+                r.addAdmin(sVictim);
+                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED ADMIN " + sVictim + " to region " + r.getName());
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.admin.added") + " " + r.getName());
                 if (pVictim != null && pVictim.isOnline() && !pVictim.equals(src)) {
                     RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.admin.youadded").replace("{region}", r.getName()) + " " + src.getName());
@@ -212,11 +210,10 @@ public class CommandHandlers {
                 return;
             }
 
-            String victname = RedProtectUtil.UUIDtoPlayer(VictimUUID);
-            if (r.isAdmin(VictimUUID)) {
+            if (r.isAdmin(sVictim)) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.member.added") + " " + r.getName());
-                r.removeAdmin(VictimUUID);
-                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " DEMOTED TO MEMBER " + victname + " to region " + r.getName());
+                r.removeAdmin(sVictim);
+                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " DEMOTED TO MEMBER " + sVictim + " to region " + r.getName());
                 if (pVictim != null && pVictim.isOnline() && !pVictim.equals(src)) {
                     RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.admin.youdemoted").replace("{region}", r.getName()) + " " + src.getName());
                 }
@@ -247,21 +244,21 @@ public class CommandHandlers {
 
             Player pVictim = RedProtect.get().getServer().getPlayer(sVictim);
 
-            if (r.isLeader(VictimUUID)) {
+            if (r.isLeader(sVictim)) {
                 RedProtect.get().lang.sendMessage(src, ChatColor.RED + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.leader.already"));
                 return;
             }
 
-            if (r.isAdmin(VictimUUID)) {
-                r.addMember(VictimUUID);
-                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED MEMBER " + RedProtectUtil.UUIDtoPlayer(VictimUUID) + " to region " + r.getName());
+            if (r.isAdmin(sVictim)) {
+                r.addMember(sVictim);
+                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED MEMBER " + sVictim + " to region " + r.getName());
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.member.demoted") + " " + r.getName());
                 if (pVictim != null && pVictim.isOnline()) {
                     RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.admin.youdemoted").replace("{region}", r.getName()) + " " + src.getName());
                 }
-            } else if (!r.isMember(VictimUUID)) {
-                r.addMember(VictimUUID);
-                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED MEMBER " + RedProtectUtil.UUIDtoPlayer(VictimUUID) + " to region " + r.getName());
+            } else if (!r.isMember(sVictim)) {
+                r.addMember(sVictim);
+                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED MEMBER " + sVictim + " to region " + r.getName());
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.member.added") + " " + r.getName());
                 if (pVictim != null && pVictim.isOnline() && !pVictim.equals(src)) {
                     RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.member.youadded").replace("{region}", r.getName()) + " " + src.getName());
@@ -294,12 +291,10 @@ public class CommandHandlers {
                 return;
             }
 
-            String victname = RedProtectUtil.UUIDtoPlayer(VictimUUID);
-
-            if ((r.isMember(VictimUUID) || r.isAdmin(VictimUUID)) && !r.isLeader(VictimUUID)) {
+            if ((r.isMember(sVictim) || r.isAdmin(sVictim)) && !r.isLeader(sVictim)) {
                 RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("general.color") + sVictim + " " + RedProtect.get().lang.get("cmdmanager.region.member.removed") + " " + r.getName());
-                r.removeMember(VictimUUID);
-                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " REMOVED MEMBER " + victname + " to region " + r.getName());
+                r.removeMember(sVictim);
+                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " REMOVED MEMBER " + sVictim + " to region " + r.getName());
                 if (pVictim != null && pVictim.isOnline() && !pVictim.equals(src)) {
                     RedProtect.get().lang.sendMessage(pVictim, RedProtect.get().lang.get("cmdmanager.region.member.youremoved").replace("{region}", r.getName()) + " " + src.getName());
                 }
