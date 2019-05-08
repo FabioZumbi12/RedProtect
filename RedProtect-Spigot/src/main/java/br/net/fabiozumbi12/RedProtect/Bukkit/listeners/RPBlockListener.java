@@ -77,13 +77,7 @@ public class RPBlockListener implements Listener {
         Block b = e.getBlock();
         Player p = e.getPlayer();
 
-        if (b == null) {
-            this.setErrorSign(e, p, RedProtect.get().lang.get("blocklistener.block.null"));
-            return;
-        }
-
         Region signr = RedProtect.get().rm.getTopRegion(b.getLocation());
-
         if (signr != null && !signr.canSign(p)) {
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
             e.setCancelled(true);
