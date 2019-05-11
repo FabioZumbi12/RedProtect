@@ -486,6 +486,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String member : rs.getString("members").split(", ")) {
                         String[] pi = member.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                        if (p[1].isEmpty()) continue;
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
                             if (RedProtectUtil.isUUIDs(p[1])) {
                                 String before = p[1];
@@ -499,6 +500,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String admin : rs.getString("admins").split(", ")) {
                         String[] pi = admin.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                        if (p[1].isEmpty()) continue;
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
                             if (RedProtectUtil.isUUIDs(p[1])) {
                                 String before = p[1];
@@ -511,6 +513,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     for (String leader : rs.getString("leaders").split(", ")) {
                         String[] pi = leader.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                        if (p[1].isEmpty()) continue;
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
                             if (RedProtectUtil.isUUIDs(p[1])) {
                                 String before = p[1];

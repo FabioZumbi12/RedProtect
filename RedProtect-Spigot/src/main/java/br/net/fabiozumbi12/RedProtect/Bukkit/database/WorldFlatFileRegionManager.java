@@ -432,7 +432,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             int minY = fileDB.getInt(rname + ".minY", 0);
             String name = fileDB.getString(rname + ".name");
             String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-            Set<PlayerRegion> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().map(s -> {
+            Set<PlayerRegion> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().filter(s-> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
@@ -445,7 +445,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 return new PlayerRegion(p[0], p[1]);
             }).collect(Collectors.toSet());
 
-            Set<PlayerRegion> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().map(s -> {
+            Set<PlayerRegion> admins = new HashSet<>(fileDB.getStringList(rname + ".admins")).stream().filter(s-> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
@@ -458,7 +458,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 return new PlayerRegion(p[0], p[1]);
             }).collect(Collectors.toSet());
 
-            Set<PlayerRegion> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().map(s -> {
+            Set<PlayerRegion> members = new HashSet<>(fileDB.getStringList(rname + ".members")).stream().filter(s-> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){

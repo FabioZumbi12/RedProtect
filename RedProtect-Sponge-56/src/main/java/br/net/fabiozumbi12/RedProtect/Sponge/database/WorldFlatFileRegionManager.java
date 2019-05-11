@@ -410,7 +410,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             int minY = region.getNode(rname, "minY").getInt(0);
             String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
 
-            Set<PlayerRegion> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().map(s -> {
+            Set<PlayerRegion> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().filter(s-> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
@@ -423,7 +423,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 return new PlayerRegion(p[0], p[1]);
             }).collect(Collectors.toSet());
 
-            Set<PlayerRegion> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().map(s -> {
+            Set<PlayerRegion> admins = new HashSet<>(region.getNode(rname, "admins").getList(TypeToken.of(String.class))).stream().filter(s-> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){
@@ -436,7 +436,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 return new PlayerRegion(p[0], p[1]);
             }).collect(Collectors.toSet());
 
-            Set<PlayerRegion> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().map(s -> {
+            Set<PlayerRegion> members = new HashSet<>(region.getNode(rname, "members").getList(TypeToken.of(String.class))).stream().filter(s-> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)){

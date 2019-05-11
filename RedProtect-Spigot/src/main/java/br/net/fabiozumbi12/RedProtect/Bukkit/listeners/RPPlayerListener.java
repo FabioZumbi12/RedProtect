@@ -448,9 +448,6 @@ public class RPPlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         Entity e = event.getRightClicked();
         Player p = event.getPlayer();
-        if (e == null) {
-            return;
-        }
 
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
         Location l = e.getLocation();
