@@ -43,6 +43,7 @@ import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
@@ -186,7 +187,7 @@ public class RPPlayerListener implements Listener {
 
         if (itemInHand != null && !itemInHand.getType().equals(Material.AIR)) {
             String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
-            if (itemInHand.getType().name().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || p.hasPermission("redprotect.admin.claim"))) {
+            if (itemInHand.getType().name().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && (p.hasPermission("redprotect.command.admin.wand") || (claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")))) {
 
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                     if (!RedProtectUtil.canBuildNear(p, l)) {
@@ -249,7 +250,7 @@ public class RPPlayerListener implements Listener {
         if (r == null) {
             if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
                     RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches))) {
-                Boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
+                boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
                 if (out && !cont.canOpen(b, p)) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
                     event.setCancelled(true);
@@ -1080,14 +1081,12 @@ public class RPPlayerListener implements Listener {
 
     @EventHandler
     public void onPortalCreate(PortalCreateEvent e) {
-        List<Block> blocks = e.getBlocks();
-        for (Block b : blocks) {
+        e.getBlocks().forEach(b -> {
             Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (r != null && !r.canCreatePortal()) {
                 e.setCancelled(true);
-                break;
             }
-        }
+        });
     }
 
     @EventHandler

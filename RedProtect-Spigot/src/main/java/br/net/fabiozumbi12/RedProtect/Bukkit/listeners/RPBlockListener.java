@@ -45,6 +45,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -62,15 +63,6 @@ public class RPBlockListener implements Listener {
 
     public RPBlockListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPBlockListener...");
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onFallingBlock(BlockPhysicsEvent e){
-        if (e.getChangedType().hasGravity()){
-            Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
-            if (r != null && !r.allowGravity())
-                e.setCancelled(true);
-        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -192,6 +184,16 @@ public class RPBlockListener implements Listener {
         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("regionbuilder.signerror") + ": " + error);
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onFallBlockPlace(EntitySpawnEvent e) {
+        if (e.getEntityType().equals(EntityType.FALLING_BLOCK)){
+            Region r = RedProtect.get().rm.getTopRegion(e.getLocation());
+            if (r != null && !r.allowGravity()){
+                e.getEntity().remove();
+            }
+        }
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockPlaceEvent event!");
@@ -199,15 +201,12 @@ public class RPBlockListener implements Listener {
         Player p = e.getPlayer();
         Block b = e.getBlockPlaced();
         World w = p.getWorld();
-        Material m = null;
-        if (e.getItemInHand() != null) {
-            m = e.getItemInHand().getType();
-        }
+        Material m = e.getItemInHand().getType();
 
-        Boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
 
-        if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass") && antih && m != null &&
+        if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass") && antih &&
                 (m.equals(Material.HOPPER) || m.name().contains("RAIL"))) {
             int x = b.getX();
             int y = b.getY();
@@ -226,7 +225,7 @@ public class RPBlockListener implements Listener {
 
         if (r != null) {
 
-            if (m != null && !r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))) {
+            if (!r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))) {
                 RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantplace");
                 e.setCancelled(true);
                 return;
