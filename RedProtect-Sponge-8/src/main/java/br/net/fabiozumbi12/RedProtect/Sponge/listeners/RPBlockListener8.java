@@ -47,7 +47,7 @@ public class RPBlockListener8 {
     private static final ContainerManager cont = new ContainerManager();
 
     public RPBlockListener8() {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded RPBlockListener 8...");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded BlockListener 8...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)

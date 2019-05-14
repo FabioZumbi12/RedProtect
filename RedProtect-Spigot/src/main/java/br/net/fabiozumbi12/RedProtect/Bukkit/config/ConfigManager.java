@@ -330,6 +330,7 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("PUMPKIN", 35));
                 this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("ENDER_PEARL", 19));
                 this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("GLASS_BOTTLE", 26));
+                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag("SAND", 7));
             }
 
             for (String key: getDefFlagsValues().keySet()) {

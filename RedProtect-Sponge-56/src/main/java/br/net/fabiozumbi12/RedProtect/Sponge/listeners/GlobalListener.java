@@ -76,10 +76,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class RPGlobalListener {
+public class GlobalListener {
 
-    public RPGlobalListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPGlobalListener...");
+    public GlobalListener() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded GlobalListener...");
     }
 
     /**
@@ -250,7 +250,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockBreakGeneric(ChangeBlockEvent.Break e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onBlockBreakGeneric event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onBlockBreakGeneric event");
 
         LocatableBlock locatable = e.getCause().first(LocatableBlock.class).orElse(null);
         if (locatable != null) {
@@ -271,7 +271,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onDecay(ChangeBlockEvent.Decay e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onDecay event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onDecay event");
 
         BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
         boolean allowDecay = RedProtect.get().config.globalFlagsRoot().worlds.get(bfrom.getLocation().get().getExtent().getName()).allow_changes_of.leaves_decay;
@@ -283,7 +283,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockPlace(ChangeBlockEvent.Place e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is ChangeBlockEvent event! Cancelled? " + false);
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is ChangeBlockEvent event! Cancelled? " + false);
 
         BlockSnapshot b = e.getTransactions().get(0).getFinal();
         ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
@@ -301,12 +301,12 @@ public class RPGlobalListener {
         if (item.getName().contains("minecart") || item.getName().contains("boat")) {
             if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).use_minecart && !p.hasPermission("redprotect.world.bypass")) {
                 e.setCancelled(true);
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Can't place minecart/boat!");
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Can't place minecart/boat!");
             }
         } else {
             if (!bypassBuild(p, b, 1)) {
                 e.setCancelled(true);
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Can't Build!");
+                RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Can't Build!");
             }
         }
     }
@@ -314,7 +314,7 @@ public class RPGlobalListener {
     private final HashMap<World, Integer> rainCounter = new HashMap<>();
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onChangeWeather(ChangeWorldWeatherEvent e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onChangeWeather event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onChangeWeather event");
 
         World w = e.getTargetWorld();
         if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getTargetWorld().getName()).weather.allow_weather && !e.getWeather().equals(Weathers.CLEAR)) {
@@ -341,7 +341,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerInteract(InteractEvent e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is InteractEvent event! Cancelled? " + false);
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is InteractEvent event! Cancelled? " + false);
         if (!e.getInteractionPoint().isPresent()) {
             return;
         }
@@ -359,7 +359,7 @@ public class RPGlobalListener {
 
         if (e instanceof InteractEntityEvent) {
             Entity ent = ((InteractEntityEvent) e).getTargetEntity();
-            RedProtect.get().logger.debug(LogLevel.ENTITY, "RPGlobalListener - Entity: " + ent.getType().getName());
+            RedProtect.get().logger.debug(LogLevel.ENTITY, "GlobalListener - Entity: " + ent.getType().getName());
             if (ent instanceof Minecart || ent instanceof Boat) {
                 if (!RedProtect.get().config.globalFlagsRoot().worlds.get(ent.getWorld().getName()).use_minecart && !p.hasPermission("redprotect.world.bypass")) {
                     e.setCancelled(true);
@@ -404,7 +404,7 @@ public class RPGlobalListener {
         if (e instanceof InteractBlockEvent) {
             InteractBlockEvent eb = (InteractBlockEvent) e;
             String bname = eb.getTargetBlock().getState().getType().getName();
-            RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Block: " + bname);
+            RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Block: " + bname);
             if (bname.contains("rail") || bname.contains("water")) {
                 if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).use_minecart && p.hasPermission("redprotect.world.bypass")) {
                     e.setCancelled(true);
@@ -428,7 +428,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockBreakGlobal(ChangeBlockEvent.Break e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Is BlockBreakEvent event! Cancelled? " + false);
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is BlockBreakEvent event! Cancelled? " + false);
 
         BlockSnapshot bt = e.getTransactions().get(0).getOriginal();
         Region r = RedProtect.get().rm.getTopRegion(bt.getLocation().get(), this.getClass().getName());
@@ -443,13 +443,13 @@ public class RPGlobalListener {
 
         if (!bypassBuild(p, bt, 2)) {
             e.setCancelled(true);
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPGlobalListener - Can't Break!");
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Can't Break!");
         }
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockBurnGlobal(ChangeBlockEvent.Modify e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onBlockBurnGlobal event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onBlockBurnGlobal event");
 
         Transaction<BlockSnapshot> b = e.getTransactions().get(0);
 
@@ -464,7 +464,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onFireSpread(ChangeBlockEvent.Place e, @First LocatableBlock locatable) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onFireSpread event!");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onFireSpread event!");
 
         BlockState sourceState = locatable.getBlockState();
 
@@ -483,7 +483,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onFireSpread(ChangeBlockEvent.Break e, @First LocatableBlock locatable) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onBlockBreakGeneric event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onBlockBreakGeneric event");
 
         BlockState sourceState = locatable.getBlockState();
 
@@ -502,7 +502,7 @@ public class RPGlobalListener {
 /*
 	@Listener(order = Order.FIRST, beforeModifications = true)	
     public void onPlayerInteract(InteractEntityEvent e, @Root Player p) {
-		RedProtect.get().logger.debug(LogLevel.BLOCKS,"RPGlobalListener - Is onPlayerInteract event");
+		RedProtect.get().logger.debug(LogLevel.BLOCKS,"GlobalListener - Is onPlayerInteract event");
 
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
@@ -520,7 +520,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBucketUse(UseItemStackEvent.Start e, @Root Player p) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is onBucketUse event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onBucketUse event");
 
         Location<World> l = p.getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
@@ -581,7 +581,7 @@ public class RPGlobalListener {
         Entity e1 = e.getTargetEntity();
         Entity e2;
 
-        RedProtect.get().logger.debug(LogLevel.ENTITY, "RPGlobalListener: DamageEntityEvent - e1: " + e1.getType().getName());
+        RedProtect.get().logger.debug(LogLevel.ENTITY, "GlobalListener: DamageEntityEvent - e1: " + e1.getType().getName());
 
 
         if (e1 instanceof Living && !(e1 instanceof Monster)) {
@@ -593,12 +593,12 @@ public class RPGlobalListener {
 
         if (e.getCause().first(Living.class).isPresent()) {
             e2 = e.getCause().first(Living.class).get();
-            RedProtect.get().logger.debug(LogLevel.ENTITY, "RPGlobalListener: DamageEntityEvent - Is DamageEntityEvent event. Damager " + e2.getType().getName());
+            RedProtect.get().logger.debug(LogLevel.ENTITY, "GlobalListener: DamageEntityEvent - Is DamageEntityEvent event. Damager " + e2.getType().getName());
         } else {
             return;
         }
 
-        RedProtect.get().logger.debug(LogLevel.ENTITY, "RPGlobalListener: DamageEntityEvent - e1: " + e1.getType().getName() + " - e2: " + e2.getType().getName());
+        RedProtect.get().logger.debug(LogLevel.ENTITY, "GlobalListener: DamageEntityEvent - e1: " + e1.getType().getName() + " - e2: " + e2.getType().getName());
 
         Location<World> loc = e1.getLocation();
 
@@ -742,17 +742,17 @@ public class RPGlobalListener {
             //blacklist
             List<String> blacklist = RedProtect.get().config.globalFlagsRoot().worlds.get(e.getWorld().getName()).spawn_blacklist;
             if (e instanceof Monster && blacklist.contains("MONSTERS")) {
-                RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of BLACKLISTED Monster " + e.getType().getName());
+                RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Cancelled spawn of BLACKLISTED Monster " + e.getType().getName());
                 event.setCancelled(true);
                 return;
             }
             if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && blacklist.contains("PASSIVES")) {
-                RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of BLACKLISTED Animal " + e.getType().getName());
+                RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Cancelled spawn of BLACKLISTED Animal " + e.getType().getName());
                 event.setCancelled(true);
                 return;
             }
             if (blacklist.stream().anyMatch(e.getType().getName()::matches)) {
-                RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of BLACKLISTED " + e.getType().getName());
+                RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Cancelled spawn of BLACKLISTED " + e.getType().getName());
                 event.setCancelled(true);
                 return;
             }
@@ -761,28 +761,28 @@ public class RPGlobalListener {
             List<String> wtl = RedProtect.get().config.globalFlagsRoot().worlds.get(e.getWorld().getName()).spawn_whitelist;
             if (!wtl.isEmpty()) {
                 if (e instanceof Monster && !wtl.contains("MONSTERS")) {
-                    RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of NON WHITELISTED Monster " + e.getType().getName());
+                    RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Cancelled spawn of NON WHITELISTED Monster " + e.getType().getName());
                     event.setCancelled(true);
                     return;
                 }
                 if ((e instanceof Animal || e instanceof Villager || e instanceof Ambient || e instanceof Golem) && !wtl.contains("PASSIVES")) {
-                    RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of NON WHITELISTED Animal " + e.getType().getName());
+                    RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Cancelled spawn of NON WHITELISTED Animal " + e.getType().getName());
                     event.setCancelled(true);
                     return;
                 }
                 if (wtl.stream().noneMatch(e.getType().getName()::matches)) {
-                    RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Cancelled spawn of NON WHITELISTED " + e.getType().getName());
+                    RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Cancelled spawn of NON WHITELISTED " + e.getType().getName());
                     event.setCancelled(true);
                     return;
                 }
             }
-            RedProtect.get().logger.debug(LogLevel.SPAWN, "RPGlobalListener - Spawn mob " + e.getType().getName());
+            RedProtect.get().logger.debug(LogLevel.SPAWN, "GlobalListener - Spawn mob " + e.getType().getName());
         }
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onBlockGrow(ChangeBlockEvent.Grow e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "RPGlobalListener - Is ChangeBlockEvent.Grow event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is ChangeBlockEvent.Grow event");
 
         BlockSnapshot b = e.getTransactions().get(0).getOriginal();
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
@@ -794,7 +794,7 @@ public class RPGlobalListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onChangeWorld(MoveEntityEvent.Teleport e, @Root Player player) {
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "RPGlobalListener - Is MoveEntityEvent.Teleport event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "GlobalListener - Is MoveEntityEvent.Teleport event");
         if (e.getFromTransform().getExtent() != e.getToTransform().getExtent()) {
             if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getFromTransform().getExtent().getName()).on_exit_cmds.isEmpty()) {
                 for (String cmd : RedProtect.get().config.globalFlagsRoot().worlds.get(e.getFromTransform().getExtent().getName()).on_exit_cmds) {

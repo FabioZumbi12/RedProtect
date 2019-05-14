@@ -39,12 +39,12 @@ import org.spongepowered.api.world.World;
 
 import java.util.List;
 
-public class RPBlockListener56 {
+public class BlockListenerCompat56 {
 
     private static final ContainerManager cont = new ContainerManager();
 
-    public RPBlockListener56() {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded RPBlockListener56...");
+    public BlockListenerCompat56() {
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded BlockListenerCompat56...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)

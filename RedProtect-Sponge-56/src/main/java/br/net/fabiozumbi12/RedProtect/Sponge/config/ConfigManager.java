@@ -307,6 +307,7 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag(ItemTypes.PUMPKIN.getId(), 35));
                 this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag(ItemTypes.ENDER_PEARL.getId(), 19));
                 this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag(ItemTypes.GLASS_BOTTLE.getId(), 26));
+                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag(ItemTypes.SAND.getId(), 7));
             }
 
             for (String key: getDefFlagsValues().keySet()) {

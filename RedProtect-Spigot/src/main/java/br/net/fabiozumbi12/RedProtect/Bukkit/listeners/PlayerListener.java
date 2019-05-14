@@ -43,7 +43,6 @@ import me.NoChance.PvPManager.PvPlayer;
 import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
@@ -72,7 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class RPPlayerListener implements Listener {
+public class PlayerListener implements Listener {
 
     private static final ContainerManager cont = new ContainerManager();
     private final HashMap<String, String> Ownerslist = new HashMap<>();
@@ -84,8 +83,8 @@ public class RPPlayerListener implements Listener {
     private final HashMap<String, Integer> trys = new HashMap<>();
     private final HashMap<String, Integer> matchRate = new HashMap<>();
 
-    public RPPlayerListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPPlayerListener...");
+    public PlayerListener() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded PlayerListener...");
     }
 
     private static Entity getTarget(final Player player) {
@@ -138,7 +137,7 @@ public class RPPlayerListener implements Listener {
         if (!(e.getEntity() instanceof Player)) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
         Player p = (Player) e.getEntity();
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && e.getNewState().getType().name().contains("FROSTED_ICE") && !r.canIceForm(p)) {
@@ -165,7 +164,7 @@ public class RPPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
 
         final Player p = event.getPlayer();
         Block b = event.getClickedBlock();
@@ -180,7 +179,7 @@ public class RPPlayerListener implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }
@@ -450,7 +449,7 @@ public class RPPlayerListener implements Listener {
         Entity e = event.getRightClicked();
         Player p = event.getPlayer();
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
         Location l = e.getLocation();
 
         if (e instanceof ItemFrame || e instanceof Painting) {
@@ -595,7 +594,7 @@ public class RPPlayerListener implements Listener {
         final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
         final Region rto = RedProtect.get().rm.getTopRegion(lto);
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
 
         //Exit flag
         if (rfrom != null && !rfrom.canExit(p)) {
@@ -1252,7 +1251,7 @@ public class RPPlayerListener implements Listener {
         if (!notify.equals("")) {
             if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 if (RedProtect.get().bukkitVersion >= 1110) {
-                    RPMine111.sendBarMsg(notify, color, p);
+                    Compat111.sendBarMsg(notify, color, p);
                 } else {
                     if (RedProtect.get().hooks.bossBar) {
                         BossBarAPI.setMessage(p, notify);
@@ -1273,7 +1272,7 @@ public class RPPlayerListener implements Listener {
         }
         if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
             if (RedProtect.get().bukkitVersion >= 1110) {
-                RPMine111.sendBarMsg(wel, "GREEN", p);
+                Compat111.sendBarMsg(wel, "GREEN", p);
             } else {
                 if (RedProtect.get().hooks.bossBar) {
                     BossBarAPI.setMessage(p, wel);
@@ -1668,7 +1667,7 @@ public class RPPlayerListener implements Listener {
         if (e.isCancelled()) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is RPPlayerListener - HangingBreakByEntityEvent event");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is PlayerListener - HangingBreakByEntityEvent event");
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(loc);

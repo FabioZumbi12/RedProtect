@@ -45,12 +45,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class RPEntityListener implements Listener {
+public class EntityListener implements Listener {
 
     static final ContainerManager cont = new ContainerManager();
 
-    public RPEntityListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPEntityListener...");
+    public EntityListener() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded EntityListener...");
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -58,7 +58,7 @@ public class RPEntityListener implements Listener {
         if (e.getEntity() instanceof Player) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - EntityBlockFormEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityListener - EntityBlockFormEvent");
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.canIceForm()) {
             e.setCancelled(true);
@@ -211,7 +211,7 @@ public class RPEntityListener implements Listener {
                 return;
             }
 
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is EntityDamageByEntityEvent event. Damager: " + e2.getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityListener - Is EntityDamageByEntityEvent event. Damager: " + e2.getType().name());
 
 
             if (e2 instanceof Projectile) {
@@ -308,7 +308,7 @@ public class RPEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is PotionSplashEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityListener - Is PotionSplashEvent");
 
         ProjectileSource thrower = event.getPotion().getShooter();
         for (PotionEffect e : event.getPotion().getEffects()) {
@@ -341,7 +341,7 @@ public class RPEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInteractEvent(PlayerInteractEntityEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is PlayerInteractEntityEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityListener - Is PlayerInteractEntityEvent");
 
         Player p = e.getPlayer();
         if (p == null) {
@@ -364,7 +364,7 @@ public class RPEntityListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void WitherBlockBreak(EntityChangeBlockEvent event) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPEntityListener - Is EntityChangeBlockEvent");
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "EntityListener - Is EntityChangeBlockEvent");
 
         Entity e = event.getEntity();
         if (e instanceof Monster) {

@@ -54,12 +54,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class RPMine18 implements Listener {
+public class Compat18 implements Listener {
 
     private static final ContainerManager cont = new ContainerManager();
 
-    public RPMine18() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPMine18...");
+    public Compat18() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded Compat18...");
     }
 
     @EventHandler(ignoreCancelled = true)

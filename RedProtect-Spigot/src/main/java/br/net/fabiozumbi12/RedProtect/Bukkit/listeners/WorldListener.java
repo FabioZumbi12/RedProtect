@@ -24,25 +24,27 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
+package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.world.ChangeWorldWeatherEvent;
-import org.spongepowered.api.event.world.LoadWorldEvent;
-import org.spongepowered.api.event.world.UnloadWorldEvent;
-import org.spongepowered.api.world.World;
+import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 
-public class RPWorldListener {
+public class WorldListener implements Listener {
 
-    public RPWorldListener() {
-        RedProtect.get().logger.debug(LogLevel.WORLD, "Loaded RPEntityListener...");
+
+    public WorldListener() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded EntityListener...");
     }
 
-    @Listener
-    public void onWorldLoad(LoadWorldEvent e) {
-        World w = e.getTargetWorld();
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onWorldLoad(WorldLoadEvent e) {
+        World w = e.getWorld();
         try {
             RedProtect.get().rm.load(w);
             RedProtect.get().config.addWorldProperties(w);
@@ -54,9 +56,9 @@ public class RPWorldListener {
         }
     }
 
-    @Listener
-    public void onWorldUnload(UnloadWorldEvent e) {
-        World w = e.getTargetWorld();
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onWorldUnload(WorldUnloadEvent e) {
+        World w = e.getWorld();
         try {
             RedProtect.get().rm.unload(w);
             RedProtect.get().logger.warning("World unloaded: " + w.getName());

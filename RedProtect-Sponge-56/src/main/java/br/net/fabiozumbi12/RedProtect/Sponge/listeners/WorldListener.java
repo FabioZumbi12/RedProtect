@@ -24,27 +24,25 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
+package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import org.bukkit.World;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.world.ChangeWorldWeatherEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
+import org.spongepowered.api.event.world.UnloadWorldEvent;
+import org.spongepowered.api.world.World;
 
-public class RPWorldListener implements Listener {
+public class WorldListener {
 
-
-    public RPWorldListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPEntityListener...");
+    public WorldListener() {
+        RedProtect.get().logger.debug(LogLevel.WORLD, "Loaded EntityListener...");
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onWorldLoad(WorldLoadEvent e) {
-        World w = e.getWorld();
+    @Listener
+    public void onWorldLoad(LoadWorldEvent e) {
+        World w = e.getTargetWorld();
         try {
             RedProtect.get().rm.load(w);
             RedProtect.get().config.addWorldProperties(w);
@@ -56,9 +54,9 @@ public class RPWorldListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onWorldUnload(WorldUnloadEvent e) {
-        World w = e.getWorld();
+    @Listener
+    public void onWorldUnload(UnloadWorldEvent e) {
+        World w = e.getTargetWorld();
         try {
             RedProtect.get().rm.unload(w);
             RedProtect.get().logger.warning("World unloaded: " + w.getName());

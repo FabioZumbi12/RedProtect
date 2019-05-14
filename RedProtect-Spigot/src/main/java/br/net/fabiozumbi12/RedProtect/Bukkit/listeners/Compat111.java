@@ -33,7 +33,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-public class RPMine111 {
+public class Compat111 {
 
     public static void sendBarMsg(String msg, String color, Player p) {
         BossBar bar = Bukkit.createBossBar(msg, BarColor.valueOf(color), BarStyle.SEGMENTED_10);

@@ -94,15 +94,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @SuppressWarnings("deprecation")
-public class RPPlayerListener {
+public class PlayerListener {
 
     private static final ContainerManager cont = new ContainerManager();
     private final HashMap<Player, String> Ownerslist = new HashMap<>();
     private final HashMap<Player, String> PlayerCmd = new HashMap<>();
     private final HashMap<String, String> PlayertaskID = new HashMap<>();
 
-    public RPPlayerListener() {
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "Loaded RPPlayerListener...");
+    public PlayerListener() {
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Loaded PlayerListener...");
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -154,11 +154,11 @@ public class RPPlayerListener {
         BlockSnapshot b = event.getTargetBlock();
         Location<World> l;
 
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractBlockEvent.Primary event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is InteractBlockEvent.Primary event");
 
         if (!b.getState().getType().equals(BlockTypes.AIR)) {
             l = b.getLocation().get();
-            RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractBlockEvent.Primary event. The block is " + b.getState().getType().getName());
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is InteractBlockEvent.Primary event. The block is " + b.getState().getType().getName());
         } else {
             l = p.getLocation();
         }
@@ -199,11 +199,11 @@ public class RPPlayerListener {
         BlockSnapshot b = event.getTargetBlock();
         Location<World> l;
 
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractBlockEvent.Secondary event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is InteractBlockEvent.Secondary event");
 
         if (!b.getState().getType().equals(BlockTypes.AIR)) {
             l = b.getLocation().get();
-            RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractBlockEvent.Secondary event. The block is " + b.getState().getType().getName());
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is InteractBlockEvent.Secondary event. The block is " + b.getState().getType().getName());
         } else {
             l = p.getLocation();
         }
@@ -274,7 +274,7 @@ public class RPPlayerListener {
 
         if (!b.getState().getType().equals(BlockTypes.AIR)) {
             l = b.getLocation().get();
-            RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractBlockEvent event. The block is " + bstate.getType().getName());
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is InteractBlockEvent event. The block is " + bstate.getType().getName());
         } else {
             l = p.getLocation();
         }
@@ -500,7 +500,7 @@ public class RPPlayerListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerInteract(InteractEntityEvent e, @First Player p) {
         Entity ent = e.getTargetEntity();
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "RPPlayerListener - Is InteractEntityEvent event: " + ent.getType().getName());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is InteractEntityEvent event: " + ent.getType().getName());
 
         Location<World> l = ent.getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());

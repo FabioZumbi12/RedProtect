@@ -46,7 +46,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -105,10 +104,10 @@ public class RedProtect extends JavaPlugin {
             logger.debug(LogLevel.DEFAULT, "Version String: " + bukkitVersion);
 
             if (bukkitVersion >= 180) {
-                getServer().getPluginManager().registerEvents(new RPMine18(), this);
+                getServer().getPluginManager().registerEvents(new Compat18(), this);
             }
             if (bukkitVersion >= 190) {
-                getServer().getPluginManager().registerEvents(new RPMine19(), this);
+                getServer().getPluginManager().registerEvents(new Compat19(), this);
             }
 
             if (bukkitVersion <= 1122) {
@@ -167,11 +166,11 @@ public class RedProtect extends JavaPlugin {
         cmdHandler = new CommandHandler(this);
 
         logger.info("Registering listeners...");
-        getServer().getPluginManager().registerEvents(new RPGlobalListener(), this);
-        getServer().getPluginManager().registerEvents(new RPBlockListener(), this);
-        getServer().getPluginManager().registerEvents(new RPPlayerListener(), this);
-        getServer().getPluginManager().registerEvents(new RPEntityListener(), this);
-        getServer().getPluginManager().registerEvents(new RPWorldListener(), this);
+        getServer().getPluginManager().registerEvents(new GlobalListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityListener(), this);
+        getServer().getPluginManager().registerEvents(new WorldListener(), this);
 
         // Register hooks
         hooks.registerHooksFirst();

@@ -50,10 +50,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class RPMine19 implements Listener {
+public class Compat19 implements Listener {
 
-    public RPMine19() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded RPMine19...");
+    public Compat19() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded Compat19...");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
@@ -66,7 +66,7 @@ public class RPMine19 implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPPlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }

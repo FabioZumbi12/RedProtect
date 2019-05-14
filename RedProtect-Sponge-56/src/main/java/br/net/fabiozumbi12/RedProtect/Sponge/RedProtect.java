@@ -149,7 +149,7 @@ public class RedProtect {
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener8").newInstance());
                 rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.RPVHelper8").newInstance();
             } else {
-                Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener56").newInstance());
+                Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.BlockListenerCompat56").newInstance());
                 rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper56").newInstance();
             }
 
@@ -238,12 +238,11 @@ public class RedProtect {
         commandHandler = new CommandHandler(this);
 
         logger.info("Registering listeners...");
-        Sponge.getGame().getEventManager().registerListeners(container, new RPBlockListener());
-        Sponge.getGame().getEventManager().registerListeners(container, new RPGlobalListener());
-        Sponge.getGame().getEventManager().registerListeners(container, new RPPlayerListener());
-        Sponge.getGame().getEventManager().registerListeners(container, new RPEntityListener());
-        Sponge.getGame().getEventManager().registerListeners(container, new RPWorldListener());
-        Sponge.getGame().getEventManager().registerListeners(container, new RPMine18());
+        Sponge.getGame().getEventManager().registerListeners(container, new BlockListener());
+        Sponge.getGame().getEventManager().registerListeners(container, new GlobalListener());
+        Sponge.getGame().getEventManager().registerListeners(container, new PlayerListener());
+        Sponge.getGame().getEventManager().registerListeners(container, new EntityListener());
+        Sponge.getGame().getEventManager().registerListeners(container, new WorldListener());
 
         // Register hooks
         this.hooks.registerHooksFirst();
