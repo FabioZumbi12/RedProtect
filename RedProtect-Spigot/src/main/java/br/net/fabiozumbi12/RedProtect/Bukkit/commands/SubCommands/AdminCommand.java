@@ -114,6 +114,11 @@ public class AdminCommand implements SubCommand {
             return true;
         }
 
+        if (args.length == 0) {
+            HandleHelpPage(sender, 1);
+            return true;
+        }
+
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reset-uuids")) {
                 final boolean[] save = {false};

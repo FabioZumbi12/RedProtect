@@ -1043,7 +1043,7 @@ public class Region extends CoreRegion {
         if (!RedProtect.get().config.isFlagEnabled("iceform-player")) {
             return RedProtect.get().config.configRoot().flags.get("iceform-player");
         }
-        return getFlagBool("iceform-player");
+        return getFlagBool("iceform-player") || isPlayerAllowed(p);
     }
 
     /**
@@ -1056,6 +1056,13 @@ public class Region extends CoreRegion {
             return RedProtect.get().config.configRoot().flags.get("iceform-world");
         }
         return getFlagBool("iceform-world");
+    }
+
+    public boolean allowGravity() {
+        if (!RedProtect.get().config.isFlagEnabled("gravity")) {
+            return RedProtect.get().config.configRoot().flags.get("gravity");
+        }
+        return getFlagBool("gravity");
     }
 
     public boolean canFlowDamage() {

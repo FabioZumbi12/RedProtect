@@ -56,7 +56,7 @@ public class WandCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
-                        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK"))
+                        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK") && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.wand"))
                             return CommandResult.success();
 
                         Inventory inv = player.getInventory();

@@ -50,7 +50,7 @@ public class WandCommand implements SubCommand {
         }
 
         Player player = (Player) sender;
-        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK"))
+        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK") && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.wand"))
             return true;
 
         if (args.length == 0) {

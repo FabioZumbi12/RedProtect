@@ -65,6 +65,15 @@ public class RPBlockListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onFallingBlock(BlockPhysicsEvent e){
+        if (e.getChangedType().hasGravity()){
+            Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+            if (r != null && !r.allowGravity())
+                e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onDispenser(BlockDispenseEvent e) {
         if (RedProtectUtil.denyPotion(e.getItem())) {
             e.setCancelled(true);

@@ -38,7 +38,7 @@ public class MainCategory {
     @Setting(value = "online-mode", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions and in offline mode)")
     public boolean online_mode = false;
     @Setting(value = "config-version", comment = "Don't touch <3")
-    public double config_version = 8.4;
+    public double config_version = 8.5;
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")
@@ -116,6 +116,8 @@ public class MainCategory {
         myMap.put("spawn-monsters", true);
         myMap.put("teleport", false);
         myMap.put("use-potions", false);
+        myMap.put("fishing", false);
+        myMap.put("gravity", true);
         return myMap;
     }
 
@@ -160,6 +162,8 @@ public class MainCategory {
                 "allow-spawner",
                 "leaves-decay",
                 "ender-chest",
+                "fishing",
+                "gravity",
                 "build");
 
         @ConfigSerializable

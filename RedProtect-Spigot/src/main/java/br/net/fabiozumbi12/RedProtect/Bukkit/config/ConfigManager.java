@@ -537,6 +537,15 @@ public class ConfigManager {
             update++;
         }
 
+        if (root.config_version < 8.5D) {
+            root.config_version = 8.5D;
+            if (!root.flags_configuration.enabled_flags.contains("gravity")) {
+                root.flags_configuration.enabled_flags.add("gravity");
+                root.flags.put("gravity", true);
+            }
+            update++;
+        }
+
         if (update > 0) {
             RedProtect.get().logger.warning("Configuration UPDATED!");
         }
