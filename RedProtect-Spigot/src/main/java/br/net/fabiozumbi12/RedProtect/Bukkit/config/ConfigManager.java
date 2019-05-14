@@ -316,6 +316,7 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag("FISHING_ROD", 28));
                 this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag("WATER_BUCKET", 29));
                 this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag("LAVA_BUCKET", 30));
+                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag("SAND", 7));
                 this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag("PACKED_ICE", 4));
                 this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag("ICE", 31));
                 this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag("LEAVES", 18));
@@ -330,7 +331,6 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("PUMPKIN", 35));
                 this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("ENDER_PEARL", 19));
                 this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("GLASS_BOTTLE", 26));
-                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag("SAND", 7));
             }
 
             for (String key: getDefFlagsValues().keySet()) {
@@ -404,29 +404,27 @@ public class ConfigManager {
         if (root.config_version < 6.8D) {
             root.config_version = 6.8D;
 
-            if (!root.flags_configuration.enabled_flags.contains("smart-door")) {
-                root.flags_configuration.enabled_flags.add("smart-door");
+            if (!root.flags.containsKey("smart-door")) {
+                root.flags.put("smart-door", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("allow-potions")) {
-                root.flags_configuration.enabled_flags.add("allow-potions");
+            if (!root.flags.containsKey("allow-potions")) {
+                root.flags.put("allow-potions", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("mob-loot")) {
-                root.flags_configuration.enabled_flags.add("mob-loot");
+            if (!root.flags.containsKey("mob-loot")) {
+                root.flags.put("mob-loot", false);
             }
-            if (!root.flags_configuration.enabled_flags.contains("flow-damage")) {
-                root.flags_configuration.enabled_flags.add("flow-damage");
+            if (!root.flags.containsKey("flow-damage")) {
+                root.flags.put("flow-damage", false);
             }
             update++;
         }
 
         if (root.config_version < 6.9D) {
             root.config_version = 6.9D;
-            if (!root.flags_configuration.enabled_flags.contains("iceform-player")) {
-                root.flags_configuration.enabled_flags.add("iceform-player");
+            if (!root.flags.containsKey("iceform-player")) {
                 root.flags.put("iceform-player", false);
             }
-            if (!root.flags_configuration.enabled_flags.contains("iceform-entity")) {
-                root.flags_configuration.enabled_flags.add("iceform-entity");
+            if (!root.flags.containsKey("iceform-entity")) {
                 root.flags.put("iceform-entity", true);
             }
             update++;
@@ -434,8 +432,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.0D) {
             root.config_version = 7.0D;
-            if (!root.flags_configuration.enabled_flags.contains("allow-fly")) {
-                root.flags_configuration.enabled_flags.add("allow-fly");
+            if (!root.flags.containsKey("allow-fly")) {
                 root.flags.put("allow-fly", true);
             }
             update++;
@@ -443,8 +440,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.1D) {
             root.config_version = 7.1D;
-            if (!root.flags_configuration.enabled_flags.contains("teleport")) {
-                root.flags_configuration.enabled_flags.add("teleport");
+            if (!root.flags.containsKey("teleport")) {
                 root.flags.put("teleport", true);
             }
             update++;
@@ -452,8 +448,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.3D) {
             root.config_version = 7.3D;
-            if (!root.flags_configuration.enabled_flags.contains("ender-chest")) {
-                root.flags_configuration.enabled_flags.add("ender-chest");
+            if (!root.flags.containsKey("ender-chest")) {
                 root.flags.put("ender-chest", false);
             }
             update++;
@@ -467,8 +462,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.5D) {
             root.config_version = 7.5D;
-            if (!root.flags_configuration.enabled_flags.contains("can-grow")) {
-                root.flags_configuration.enabled_flags.add("can-grow");
+            if (!root.flags.containsKey("can-grow")) {
                 root.flags.put("can-grow", true);
             }
             update++;
@@ -476,8 +470,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.6D) {
             root.config_version = 7.6D;
-            if (!root.flags_configuration.enabled_flags.contains("allow-effects")) {
-                root.flags_configuration.enabled_flags.add("allow-effects");
+            if (!root.flags.containsKey("allow-effects")) {
                 root.flags.put("allow-effects", true);
             }
             update++;
@@ -485,8 +478,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.7D) {
             root.config_version = 7.7D;
-            if (!root.flags_configuration.enabled_flags.contains("allow-spawner")) {
-                root.flags_configuration.enabled_flags.add("allow-spawner");
+            if (!root.flags.containsKey("allow-spawner")) {
                 root.flags.put("allow-spawner", false);
             }
             update++;
@@ -494,8 +486,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.8D) {
             root.config_version = 7.8D;
-            if (!root.flags_configuration.enabled_flags.contains("leaves-decay")) {
-                root.flags_configuration.enabled_flags.add("leaves-decay");
+            if (!root.flags.containsKey("leaves-decay")) {
                 root.flags.put("leaves-decay", true);
             }
             update++;
@@ -503,8 +494,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.9D) {
             root.config_version = 7.9D;
-            if (!root.flags_configuration.enabled_flags.contains("build")) {
-                root.flags_configuration.enabled_flags.add("build");
+            if (!root.flags.containsKey("build")) {
                 root.flags.put("build", false);
             }
             update++;
@@ -512,12 +502,10 @@ public class ConfigManager {
 
         if (root.config_version < 8.3D) {
             root.config_version = 8.3D;
-            if (!root.flags_configuration.enabled_flags.contains("press-plate")) {
-                root.flags_configuration.enabled_flags.add("press-plate");
+            if (!root.flags.containsKey("press-plate")) {
                 root.flags.put("press-plate", false);
             }
-            if (!root.flags_configuration.enabled_flags.contains("fishing")) {
-                root.flags_configuration.enabled_flags.add("fishing");
+            if (!root.flags.containsKey("fishing")) {
                 root.flags.put("fishing", false);
             }
             update++;
@@ -540,8 +528,7 @@ public class ConfigManager {
 
         if (root.config_version < 8.5D) {
             root.config_version = 8.5D;
-            if (!root.flags_configuration.enabled_flags.contains("gravity")) {
-                root.flags_configuration.enabled_flags.add("gravity");
+            if (!root.flags.containsKey("gravity")) {
                 root.flags.put("gravity", true);
             }
             update++;
@@ -632,9 +619,9 @@ public class ConfigManager {
 
     public HashMap<String, Object> getDefFlagsValues() {
         HashMap<String, Object> flags = new HashMap<>();
-        for (Map.Entry<String, Boolean> flag : root.flags.entrySet()) {
+        for (Map.Entry<String, Object> flag : root.flags.entrySet()) {
             if (isFlagEnabled(flag.getKey())) {
-                if (flag.getKey().equals("pvp") && !root.flags_configuration.enabled_flags.contains("pvp")) {
+                if (flag.getKey().equals("pvp") && !root.flags.containsKey("pvp")) {
                     continue;
                 }
                 flags.put(flag.getKey(), flag.getValue());
@@ -644,7 +631,7 @@ public class ConfigManager {
     }
 
     public boolean isFlagEnabled(String flag) {
-        return root.flags_configuration.enabled_flags.contains(flag) || AdminFlags.contains(flag);
+        return root.flags.containsKey(flag) || AdminFlags.contains(flag);
     }
 
     public SortedSet<String> getDefFlags() {
@@ -717,7 +704,6 @@ public class ConfigManager {
         } else {
             if (!root.flags.containsKey(flag)) {
                 root.flags.put(flag, defaultValue);
-                root.flags_configuration.enabled_flags.add(flag);
                 saveConfig();
                 return true;
             }

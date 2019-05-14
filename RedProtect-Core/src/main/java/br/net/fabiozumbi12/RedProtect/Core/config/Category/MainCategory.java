@@ -46,7 +46,7 @@ public class MainCategory {
     @Setting(value = "debug-messages")
     public Map<String, Boolean> debug_messages = new HashMap<>();
     @Setting(comment = "Default flag values for new regions.\nThis will not change the values for already created regions.")
-    public Map<String, Boolean> flags = createMapFlags();
+    public Map<String, Object> flags = createMapFlags();
     @Setting(value = "flags-configuration")
     public flagsConfig flags_configuration = new flagsConfig();
     @Setting(value = "flat-file", comment = "Options for flatfile database.")
@@ -89,8 +89,8 @@ public class MainCategory {
         this.online_mode = online_mode;
     }
 
-    private Map<String, Boolean> createMapFlags() {
-        Map<String, Boolean> myMap = new HashMap<>();
+    private Map<String, Object> createMapFlags() {
+        Map<String, Object> myMap = new HashMap<>();
         myMap.put("allow-effects", true);
         myMap.put("allow-fly", true);
         myMap.put("allow-home", false);
@@ -101,9 +101,14 @@ public class MainCategory {
         myMap.put("can-grow", true);
         myMap.put("chest", false);
         myMap.put("door", false);
+        myMap.put("ender-chest", false);
         myMap.put("fire", false);
+        myMap.put("fishing", false);
         myMap.put("flow", true);
         myMap.put("flow-damage", false);
+        myMap.put("gravity", true);
+        myMap.put("iceform-player", true);
+        myMap.put("iceform-world", true);
         myMap.put("leaves-decay", false);
         myMap.put("lever", false);
         myMap.put("minecart", false);
@@ -114,10 +119,8 @@ public class MainCategory {
         myMap.put("smart-door", true);
         myMap.put("spawn-animals", true);
         myMap.put("spawn-monsters", true);
-        myMap.put("teleport", false);
-        myMap.put("use-potions", false);
-        myMap.put("fishing", false);
-        myMap.put("gravity", true);
+        myMap.put("teleport", true);
+        myMap.put("use-potions", true);
         return myMap;
     }
 
@@ -135,36 +138,43 @@ public class MainCategory {
         public flagsDelay change_flag_delay = new flagsDelay();
         @Setting(value = "effects-duration", comment = "Delay for effects flags.")
         public int effects_duration = 5;
-        @Setting(value = "enabled-flags", comment = "This flags will be available to player who have the flags permissions, \nto change the flag state via command on flag gui.")
-        public List<String> enabled_flags = Arrays.asList(
-                "pvp",
-                "chest",
-                "lever",
-                "button",
-                "door",
-                "smart-door",
-                "spawn-monsters",
-                "spawn-animals",
-                "passives",
-                "press-plate",
-                "flow",
-                "fire",
-                "minecart",
-                "allow-potions",
-                "allow-home",
-                "mob-loot",
-                "flow-damage",
-                "allow-fly",
-                "allow-effects",
-                "use-potions",
-                "teleport",
-                "can-grow",
-                "allow-spawner",
-                "leaves-decay",
-                "ender-chest",
-                "fishing",
-                "gravity",
-                "build");
+        /*@Setting(value = "enabled-flags", comment = "This flags will be available to player who have the flags permissions, \nto change the flag state via command on flag gui.")
+        public List<String> enabled_flags = orderedFlags();
+        private List<String> orderedFlags(){
+            List<String> flags = Arrays.asList(
+                    "allow-effects",
+                    "allow-fly",
+                    "allow-home",
+                    "allow-potions",
+                    "allow-spawner",
+                    "build",
+                    "button",
+                    "can-grow",
+                    "chest",
+                    "door",
+                    "ender-chest",
+                    "fire",
+                    "fishing",
+                    "flow",
+                    "flow-damage",
+                    "gravity",
+                    "iceform-player",
+                    "iceform-world",
+                    "leaves-decay",
+                    "lever",
+                    "minecart",
+                    "mob-loot",
+                    "passives",
+                    "press-plate",
+                    "pvp",
+                    "smart-door",
+                    "spawn-animals",
+                    "spawn-monsters",
+                    "teleport",
+                    "use-potions");
+            Collections.sort(flags);
+            return flags;
+        }*/
 
         @ConfigSerializable
         public static class flagsDelay {

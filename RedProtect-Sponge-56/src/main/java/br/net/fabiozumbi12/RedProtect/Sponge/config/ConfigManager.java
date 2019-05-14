@@ -293,6 +293,7 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag(ItemTypes.FISHING_ROD.getId(), 28));
                 this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag(ItemTypes.WATER_BUCKET.getId(), 29));
                 this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag(ItemTypes.LAVA_BUCKET.getId(), 30));
+                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag(ItemTypes.SAND.getId(), 7));
                 this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag(ItemTypes.PACKED_ICE.getId(), 4));
                 this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag(ItemTypes.ICE.getId(), 31));
                 this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag(ItemTypes.LEAVES.getId(), 18));
@@ -307,7 +308,6 @@ public class ConfigManager {
                 this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag(ItemTypes.PUMPKIN.getId(), 35));
                 this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag(ItemTypes.ENDER_PEARL.getId(), 19));
                 this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag(ItemTypes.GLASS_BOTTLE.getId(), 26));
-                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag(ItemTypes.SAND.getId(), 7));
             }
 
             for (String key: getDefFlagsValues().keySet()) {
@@ -368,33 +368,30 @@ public class ConfigManager {
         if (root.config_version < 6.8D) {
             root.config_version = 6.8D;
 
-            if (!root.flags_configuration.enabled_flags.contains("smart-door")) {
-                root.flags_configuration.enabled_flags.add("smart-door");
+            if (!root.flags.containsKey("smart-door")) {
+                root.flags.put("smart-door", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("allow-potions")) {
-                root.flags_configuration.enabled_flags.add("allow-potions");
+            if (!root.flags.containsKey("allow-potions")) {
+                root.flags.put("allow-potions", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("mob-loot")) {
-                root.flags_configuration.enabled_flags.add("mob-loot");
+            if (!root.flags.containsKey("mob-loot")) {
+                root.flags.put("mob-loot", false);
             }
-            if (!root.flags_configuration.enabled_flags.contains("flow-damage")) {
-                root.flags_configuration.enabled_flags.add("flow-damage");
+            if (!root.flags.containsKey("flow-damage")) {
+                root.flags.put("flow-damage", false);
             }
             update++;
         }
 
         if (root.config_version < 6.9D) {
             root.config_version = 6.9D;
-            if (!root.flags_configuration.enabled_flags.contains("allow-fly")) {
-                root.flags_configuration.enabled_flags.add("allow-fly");
+            if (!root.flags.containsKey("allow-fly")) {
                 root.flags.put("allow-fly", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("can-grow")) {
-                root.flags_configuration.enabled_flags.add("can-grow");
+            if (!root.flags.containsKey("can-grow")) {
                 root.flags.put("can-grow", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("teleport")) {
-                root.flags_configuration.enabled_flags.add("teleport");
+            if (!root.flags.containsKey("teleport")) {
                 root.flags.put("teleport", false);
             }
             update++;
@@ -402,18 +399,13 @@ public class ConfigManager {
 
         if (root.config_version < 7.0D) {
             root.config_version = 7.0D;
-            if (!root.flags_configuration.enabled_flags.contains("allow-effects")) {
-                root.flags_configuration.enabled_flags.add("allow-effects");
+            if (!root.flags.containsKey("allow-effects")) {
                 root.flags.put("allow-effects", true);
             }
-            if (!root.flags_configuration.enabled_flags.contains("use-potions")) {
-                root.flags_configuration.enabled_flags.add("use-potions");
+            if (!root.flags.containsKey("use-potions")) {
                 root.flags.put("use-potions", true);
             }
-            if (root.flags_configuration.enabled_flags.contains("allow-potions")) {
-                root.flags_configuration.enabled_flags.remove("allow-potions");
-                root.flags.remove("allow-potions");
-            }
+            root.flags.remove("allow-potions");
             update++;
         }
 
@@ -425,12 +417,10 @@ public class ConfigManager {
 
         if (root.config_version < 7.2D) {
             root.config_version = 7.2D;
-            if (!root.flags_configuration.enabled_flags.contains("allow-spawner")) {
-                root.flags_configuration.enabled_flags.add("allow-spawner");
+            if (!root.flags.containsKey("allow-spawner")) {
                 root.flags.put("allow-spawner", false);
             }
-            if (!root.flags_configuration.enabled_flags.contains("leaves-decay")) {
-                root.flags_configuration.enabled_flags.add("leaves-decay");
+            if (!root.flags.containsKey("leaves-decay")) {
                 root.flags.put("leaves-decay", false);
             }
             update++;
@@ -438,8 +428,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.3D) {
             root.config_version = 7.3D;
-            if (!root.flags_configuration.enabled_flags.contains("build")) {
-                root.flags_configuration.enabled_flags.add("build");
+            if (!root.flags.containsKey("build")) {
                 root.flags.put("build", false);
             }
             update++;
@@ -459,8 +448,7 @@ public class ConfigManager {
 
         if (root.config_version < 7.6D) {
             root.config_version = 7.6D;
-            if (!root.flags_configuration.enabled_flags.contains("press-plate")) {
-                root.flags_configuration.enabled_flags.add("press-plate");
+            if (!root.flags.containsKey("press-plate")) {
                 root.flags.put("press-plate", false);
             }
             update++;
@@ -547,9 +535,9 @@ public class ConfigManager {
 
     public HashMap<String, Object> getDefFlagsValues() {
         HashMap<String, Object> flags = new HashMap<>();
-        for (Map.Entry<String, Boolean> flag : root.flags.entrySet()) {
+        for (Map.Entry<String, Object> flag : root.flags.entrySet()) {
             if (isFlagEnabled(flag.getKey())) {
-                if (flag.getKey().equals("pvp") && !root.flags_configuration.enabled_flags.contains("pvp")) {
+                if (flag.getKey().equals("pvp") && !root.flags.containsKey("pvp")) {
                     continue;
                 }
                 flags.put(flag.getKey(), flag.getValue());
@@ -559,7 +547,7 @@ public class ConfigManager {
     }
 
     public boolean isFlagEnabled(String flag) {
-        return root.flags_configuration.enabled_flags.contains(flag) || AdminFlags.contains(flag);
+        return root.flags.containsKey(flag) || AdminFlags.contains(flag);
     }
 
     public SortedSet<String> getDefFlags() {
@@ -634,7 +622,6 @@ public class ConfigManager {
         } else {
             if (!root.flags.containsKey(flag)) {
                 root.flags.put(flag, defaultValue);
-                root.flags_configuration.enabled_flags.add(flag);
                 saveConfig();
                 return true;
             }
