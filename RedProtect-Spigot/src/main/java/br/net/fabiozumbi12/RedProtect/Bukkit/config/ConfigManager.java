@@ -619,19 +619,13 @@ public class ConfigManager {
 
     public HashMap<String, Object> getDefFlagsValues() {
         HashMap<String, Object> flags = new HashMap<>();
-        for (Map.Entry<String, Object> flag : root.flags.entrySet()) {
-            if (isFlagEnabled(flag.getKey())) {
-                if (flag.getKey().equals("pvp") && !root.flags.containsKey("pvp")) {
-                    continue;
-                }
-                flags.put(flag.getKey(), flag.getValue());
+        for (Map.Entry<String, Boolean> flag : root.flags.entrySet()) {
+            if (flag.getKey().equals("pvp") && !root.flags.containsKey("pvp")) {
+                continue;
             }
+            flags.put(flag.getKey(), flag.getValue());
         }
         return flags;
-    }
-
-    public boolean isFlagEnabled(String flag) {
-        return root.flags.containsKey(flag) || AdminFlags.contains(flag);
     }
 
     public SortedSet<String> getDefFlags() {

@@ -565,18 +565,18 @@ public class Region extends CoreRegion {
     }
 
     public boolean getFlagBool(String key) {
-        if (!flagExists(key) || !RedProtect.get().config.isFlagEnabled(key)) {
+        if (!flagExists(key)) {
             if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
                 return (Boolean) RedProtect.get().config.getDefFlagsValues().get(key);
             } else {
-                return (Boolean) RedProtect.get().config.configRoot().flags.getOrDefault(key, false);
+                return RedProtect.get().config.configRoot().flags.getOrDefault(key, false);
             }
         }
         return this.flags.get(key) instanceof Boolean && (Boolean) this.flags.get(key);
     }
 
     public String getFlagString(String key) {
-        if (!flagExists(key) || !RedProtect.get().config.isFlagEnabled(key)) {
+        if (!flagExists(key)) {
             if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
                 return (String) RedProtect.get().config.getDefFlagsValues().get(key);
             } else {

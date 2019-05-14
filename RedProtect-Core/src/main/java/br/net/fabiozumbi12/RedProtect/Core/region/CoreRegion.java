@@ -84,6 +84,7 @@ public class CoreRegion implements Serializable {
         this.leaders = leaders;
         this.flags = flags;
         this.value = value;
+        this.prior = prior;
         this.tppoint = tppoint;
         this.tppointYaw = tppointYaw;
         this.canDelete = candel;

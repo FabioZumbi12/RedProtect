@@ -576,7 +576,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean getFlagBool(String key) {
-        if (!flagExists(key) || !RedProtect.get().config.isFlagEnabled(key)) {
+        if (!flagExists(key)) {
             if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
                 return (Boolean) RedProtect.get().config.getDefFlagsValues().get(key);
             } else {
@@ -587,7 +587,7 @@ public class Region extends CoreRegion {
     }
 
     public String getFlagString(String key) {
-        if (!flagExists(key) || !RedProtect.get().config.isFlagEnabled(key)) {
+        if (!flagExists(key)) {
             if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
                 return (String) RedProtect.get().config.getDefFlagsValues().get(key);
             } else {

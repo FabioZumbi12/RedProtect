@@ -89,7 +89,6 @@ public class FlagGui {
             }
             try {
                 if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) &&
-                        RedProtect.get().config.isFlagEnabled(flag) &&
                         Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).isPresent()) {
                     if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags.containsKey("pvp")) {
                         continue;

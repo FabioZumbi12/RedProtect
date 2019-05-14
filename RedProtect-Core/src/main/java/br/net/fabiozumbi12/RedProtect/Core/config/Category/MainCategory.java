@@ -46,7 +46,7 @@ public class MainCategory {
     @Setting(value = "debug-messages")
     public Map<String, Boolean> debug_messages = new HashMap<>();
     @Setting(comment = "Default flag values for new regions.\nThis will not change the values for already created regions.")
-    public Map<String, Object> flags = createMapFlags();
+    public Map<String, Boolean> flags = createMapFlags();
     @Setting(value = "flags-configuration")
     public flagsConfig flags_configuration = new flagsConfig();
     @Setting(value = "flat-file", comment = "Options for flatfile database.")
@@ -89,8 +89,8 @@ public class MainCategory {
         this.online_mode = online_mode;
     }
 
-    private Map<String, Object> createMapFlags() {
-        Map<String, Object> myMap = new HashMap<>();
+    private Map<String, Boolean> createMapFlags() {
+        Map<String, Boolean> myMap = new HashMap<>();
         myMap.put("allow-effects", true);
         myMap.put("allow-fly", true);
         myMap.put("allow-home", false);
