@@ -457,6 +457,22 @@ public class ConfigManager {
             }
             update++;
         }
+        if (root.config_version < 8.5D) {
+            root.config_version = 8.5D;
+            if (!root.flags.containsKey("gravity")) {
+                root.flags.put("gravity", true);
+            }
+            if (!root.flags.containsKey("iceform-player")) {
+                root.flags.put("iceform-player", true);
+            }
+            if (!root.flags.containsKey("iceform-world")) {
+                root.flags.put("iceform-world", true);
+            }
+            if (!root.flags.containsKey("ender-chest")) {
+                root.flags.put("ender-chest", true);
+            }
+            update++;
+        }
 
         if (update > 0) {
             RedProtect.get().logger.warning("Configuration UPDATED!");

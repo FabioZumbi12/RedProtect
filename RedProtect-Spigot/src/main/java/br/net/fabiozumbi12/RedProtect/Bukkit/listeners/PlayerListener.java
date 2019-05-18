@@ -308,7 +308,7 @@ public class PlayerListener implements Listener {
                             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
                             return;
                         }
-                        if (RedProtect.get().ph.hasFlagPerm(p, flag)) {
+                        if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                     if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {

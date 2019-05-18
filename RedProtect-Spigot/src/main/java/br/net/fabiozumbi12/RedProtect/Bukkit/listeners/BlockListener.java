@@ -159,7 +159,7 @@ public class BlockListener implements Listener {
                     b.breakNaturally();
                     return;
                 }
-                if (RedProtect.get().ph.hasFlagPerm(p, flag)) {
+                if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                         e.setLine(1, flag);
                         e.setLine(2, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + signr.getName());

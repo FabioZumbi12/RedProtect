@@ -170,7 +170,7 @@ public class BlockListener {
                     RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
                     return;
                 }
-                if (RedProtect.get().ph.hasFlagPerm(p, flag)) {
+                if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                         lines.set(1, RedProtectUtil.toText(flag));
                         lines.set(2, RedProtectUtil.toText("&1&l" + signr.getName()));

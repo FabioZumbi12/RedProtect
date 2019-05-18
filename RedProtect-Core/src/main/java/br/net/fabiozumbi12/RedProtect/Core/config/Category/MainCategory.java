@@ -138,44 +138,6 @@ public class MainCategory {
         public flagsDelay change_flag_delay = new flagsDelay();
         @Setting(value = "effects-duration", comment = "Delay for effects flags.")
         public int effects_duration = 5;
-        /*@Setting(value = "enabled-flags", comment = "This flags will be available to player who have the flags permissions, \nto change the flag state via command on flag gui.")
-        public List<String> enabled_flags = orderedFlags();
-        private List<String> orderedFlags(){
-            List<String> flags = Arrays.asList(
-                    "allow-effects",
-                    "allow-fly",
-                    "allow-home",
-                    "allow-potions",
-                    "allow-spawner",
-                    "build",
-                    "button",
-                    "can-grow",
-                    "chest",
-                    "door",
-                    "ender-chest",
-                    "fire",
-                    "fishing",
-                    "flow",
-                    "flow-damage",
-                    "gravity",
-                    "iceform-player",
-                    "iceform-world",
-                    "leaves-decay",
-                    "lever",
-                    "minecart",
-                    "mob-loot",
-                    "passives",
-                    "press-plate",
-                    "pvp",
-                    "smart-door",
-                    "spawn-animals",
-                    "spawn-monsters",
-                    "teleport",
-                    "use-potions");
-            Collections.sort(flags);
-            return flags;
-        }*/
-
         @ConfigSerializable
         public static class flagsDelay {
             @Setting

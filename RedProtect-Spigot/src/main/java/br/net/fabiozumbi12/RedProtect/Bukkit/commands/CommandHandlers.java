@@ -726,7 +726,7 @@ public class CommandHandlers {
 
         Object objflag = RedProtectUtil.parseObject(value);
 
-        if (RedProtect.get().ph.hasFlagPerm(p, flag) || flag.equalsIgnoreCase("info")) {
+        if ((RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) || flag.equalsIgnoreCase("info")) {
             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------");

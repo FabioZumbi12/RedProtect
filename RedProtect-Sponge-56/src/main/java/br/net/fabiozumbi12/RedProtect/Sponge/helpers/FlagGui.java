@@ -88,7 +88,7 @@ public class FlagGui {
                 if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
-                if (RedProtect.get().ph.hasFlagPerm(player, flag)) {
+                if (RedProtect.get().ph.hasFlagPerm(player, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                     if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags.containsKey("pvp")) {
                         continue;
                     }
@@ -245,7 +245,7 @@ public class FlagGui {
             item.offer(Keys.HIDE_ATTRIBUTES, true);
 
             List<Text> lore = new ArrayList<>(Arrays.asList(
-                    RedProtectUtil.toText(RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
+                    Text.joinWith(Text.of(" "), RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
                     RedProtectUtil.toText("&0" + flag)));
             lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
             item.offer(Keys.ITEM_LORE, lore);
