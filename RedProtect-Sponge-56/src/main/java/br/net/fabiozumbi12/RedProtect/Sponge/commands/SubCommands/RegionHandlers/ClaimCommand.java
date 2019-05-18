@@ -60,7 +60,7 @@ public class ClaimCommand {
                         Player player = (Player) src;
 
                         String claimmode = RedProtect.get().config.getWorldClaimType(player.getWorld().getName());
-                        if ((!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH"))) {
+                        if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) {
                             RedProtect.get().lang.sendMessage(player, "blocklistener.region.blockmode");
                             return CommandResult.success();
                         }
@@ -71,7 +71,9 @@ public class ClaimCommand {
                         }
 
                         Set<PlayerRegion> addedAdmins = new HashSet<>();
-                        addedAdmins.add(new PlayerRegion(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()), args.<String>getOne("playerAdmin").get()));
+
+                        if (args.hasAny("playerAdmin"))
+                            addedAdmins.add(new PlayerRegion(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()), args.<String>getOne("playerAdmin").get()));
 
                         RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name,  new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
                         if (rb2.ready()) {

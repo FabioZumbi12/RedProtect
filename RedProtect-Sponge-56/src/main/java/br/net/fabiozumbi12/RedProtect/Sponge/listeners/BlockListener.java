@@ -62,12 +62,15 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.Color;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.explosion.Explosion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlockListener {
@@ -81,7 +84,7 @@ public class BlockListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onSignPlace(ChangeSignEvent e, @First Player p) {
         Sign s = e.getTargetTile();
-        List<Text> lines = e.getText().asList();
+        List<Text> lines = new ArrayList<>(e.getText().asList());
         Location<World> loc = s.getLocation();
         World w = p.getWorld();
         BlockSnapshot b = loc.createSnapshot();
@@ -159,11 +162,10 @@ public class BlockListener {
                 lines.set(0, RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.region.signcreated")));
                 lines.set(1, RedProtectUtil.toText(r.getName()));
                 e.getText().setElements(lines);
-                //RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.region.created").replace("{region}",  r.getName()));
                 RedProtect.get().rm.add(r, RedProtect.get().getServer().getWorld(r.getWorld()).get());
             }
         } else if (RedProtect.get().config.configRoot().region_settings.enable_flag_sign && line1.toPlain().equalsIgnoreCase("[flag]") && signr != null) {
-            if (signr.getFlags().containsKey(lines.get(1))) {
+            if (signr.getFlags().containsKey(lines.get(1).toPlain())) {
                 String flag = lines.get(1).toPlain();
                 if (!(signr.getFlags().get(flag) instanceof Boolean)) {
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
@@ -173,8 +175,9 @@ public class BlockListener {
                 if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
                         lines.set(1, RedProtectUtil.toText(flag));
-                        lines.set(2, RedProtectUtil.toText("&1&l" + signr.getName()));
+                        lines.set(2, RedProtectUtil.toText("&3&l" + signr.getName()));
                         lines.set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag))));
+                        e.getText().setElements(lines);
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.placed");
                         RedProtect.get().config.putSign(signr.getID(), b.getLocation().get());
                         return;

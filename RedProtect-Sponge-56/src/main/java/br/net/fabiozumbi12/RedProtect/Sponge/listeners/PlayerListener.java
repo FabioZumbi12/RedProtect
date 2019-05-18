@@ -401,11 +401,10 @@ public class PlayerListener {
                     RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantplace");
                     event.setCancelled(true);
                 }
-            } else if (bstate.getType().getName().contains("sign")) {
+            } else if (bstate.getType().getName().contains("sign") && event instanceof InteractBlockEvent.Secondary) {
                 Sign sign = (Sign) b.getLocation().get().getTileEntity().get();
-
-                if (b.get(Keys.SIGN_LINES).isPresent() && sign.get(Keys.SIGN_LINES).get().get(0).toPlain().equalsIgnoreCase("[flag]") && r.getFlags().containsKey(sign.get(Keys.SIGN_LINES).get().get(1).toPlain())) {
-                    String flag = sign.get(Keys.SIGN_LINES).get().get(0).toPlain();
+                if (sign.get(Keys.SIGN_LINES).isPresent() && sign.get(Keys.SIGN_LINES).get().get(0).toPlain().equalsIgnoreCase("[flag]") && r.getFlags().containsKey(sign.get(Keys.SIGN_LINES).get().get(1).toPlain())) {
+                    String flag = sign.get(Keys.SIGN_LINES).get().get(1).toPlain();
                     if (!(r.getFlags().get(flag) instanceof Boolean)) {
                         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
                         return;
