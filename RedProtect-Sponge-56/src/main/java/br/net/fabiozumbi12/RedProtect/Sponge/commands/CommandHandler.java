@@ -111,22 +111,13 @@ public class CommandHandler {
         plugin.commandManager.register(plugin, redProtect, Arrays.asList("redprotect", "rp"));
     }
 
-    public static CommandResult sendHelpMessageOrAdmin(CommandSource src, String command, boolean usage){
-        if (src instanceof Player){
-            RedProtect.get().lang.sendCommandHelp(src, command, usage);
-            return CommandResult.success();
-        } else {
-            return new AdminCommand().process(src, command);
-        }
-    }
-
     public void unregisterAll() {
         plugin.commandManager.getOwnedBy(plugin.container).forEach(p -> plugin.commandManager.removeMapping(p));
     }
 
     private String[] getCmdKeys(String cmd) {
-        /*if (getCmd(cmd).equalsIgnoreCase(cmd))
-            return new String[]{getCmd(cmd), getCmdAlias(cmd)};*/
-        return new String[]{getCmd(cmd), getCmdAlias(cmd)};
+        if (getCmd(cmd).equalsIgnoreCase(cmd))
+            return new String[]{getCmd(cmd), getCmdAlias(cmd)};
+        return new String[]{cmd, getCmd(cmd), getCmdAlias(cmd)};
     }
 }

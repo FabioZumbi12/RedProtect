@@ -56,7 +56,7 @@ public class CreatePortalCommand implements SubCommand {
 
         Player player = (Player) sender;
 
-        //rp createportal <newRegionName> <regionTo> <database>
+        //rp createportal <regionName> <regionTo> <database>
         if (args.length == 3) {
             World w = RedProtect.get().getServer().getWorld(args[2]);
             if (w == null) {
