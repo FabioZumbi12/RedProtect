@@ -98,7 +98,7 @@ public class FlagGui {
                     this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
                     this.guiItems[i].offer(Keys.DISPLAY_NAME, RedProtectUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
                     List<Text> lore =  new ArrayList<>(Arrays.asList(
-                            RedProtectUtil.toText(RedProtect.get().guiLang.getFlagString("value")+ " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
+                            Text.joinWith(Text.of(" "), RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
                             RedProtectUtil.toText("&0" + flag)));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     this.guiItems[i].offer(Keys.ITEM_LORE, lore);
