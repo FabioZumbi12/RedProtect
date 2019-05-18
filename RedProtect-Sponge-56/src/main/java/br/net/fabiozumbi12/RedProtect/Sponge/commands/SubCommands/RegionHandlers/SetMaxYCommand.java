@@ -72,7 +72,7 @@ public class SetMaxYCommand {
                             return CommandResult.success();
                         }
 
-                        if (!r.isLeader(player) && !r.isAdmin(player)) {
+                        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.setmaxy")) {
                             RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
                             return CommandResult.success();
                         }
