@@ -84,12 +84,11 @@ public class FlagGui {
         this.guiItems = new ItemStack[this.size];
 
         for (String flag : region.getFlags().keySet()) {
-            if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
-                continue;
-            }
             try {
-                if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(player, flag)) &&
-                        Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).isPresent()) {
+                if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
+                    continue;
+                }
+                if (RedProtect.get().ph.hasFlagPerm(player, flag)) {
                     if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags.containsKey("pvp")) {
                         continue;
                     }
@@ -97,9 +96,7 @@ public class FlagGui {
                     int i = RedProtect.get().config.getGuiSlot(flag);
 
                     this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
-
                     this.guiItems[i].offer(Keys.DISPLAY_NAME, RedProtectUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
-
                     List<Text> lore =  new ArrayList<>(Arrays.asList(
                             RedProtectUtil.toText(RedProtect.get().guiLang.getFlagString("value")+ " " + RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
                             RedProtectUtil.toText("&0" + flag)));

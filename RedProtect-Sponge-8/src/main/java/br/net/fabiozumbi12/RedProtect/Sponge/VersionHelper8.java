@@ -96,6 +96,37 @@ public class VersionHelper8 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.infowand", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.command.wand", Tristate.TRUE);
 
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.allow-effects", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.allow-fly", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.allow-home", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.allow-potions", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.allow-spawner", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.build", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.button", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.can-grow", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.chest", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.door", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.ender-chest", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.fire", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.fishing", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.flow", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.flow-damage", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.gravity", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.iceform-player", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.iceform-world", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.leaves-decay", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.lever", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.minecart", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.mob-loot", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.passives", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.press-plate", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.pvp", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.smart-door", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.spawn-animals", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.spawn-monsters", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.teleport", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
+
         for (String ench : Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList())) {
             if (RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
                 RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);

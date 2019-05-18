@@ -49,8 +49,42 @@ permissions:
       redprotect.command.deltp: true
       redprotect.command.infowand: true
       redprotect.command.wand: true
+  redprotect.flag.defaults:
+    description: "All default flags."
+    default: true
+    children:
+      redprotect.flag.allow-effects: true
+      redprotect.flag.allow-fly: true
+      redprotect.flag.allow-home: true
+      redprotect.flag.allow-potions: true
+      redprotect.flag.allow-spawner: true
+      redprotect.flag.build: true
+      redprotect.flag.button: true
+      redprotect.flag.can-grow: true
+      redprotect.flag.chest: true
+      redprotect.flag.door: true
+      redprotect.flag.ender-chest: true
+      redprotect.flag.fire: true
+      redprotect.flag.fishing: true
+      redprotect.flag.flow: true
+      redprotect.flag.flow-damage: true
+      redprotect.flag.gravity: true
+      redprotect.flag.iceform-player: true
+      redprotect.flag.iceform-world: true
+      redprotect.flag.leaves-decay: true
+      redprotect.flag.lever: true
+      redprotect.flag.minecart: true
+      redprotect.flag.mob-loot: true
+      redprotect.flag.passives: true
+      redprotect.flag.press-plate: true
+      redprotect.flag.pvp: true
+      redprotect.flag.smart-door: true
+      redprotect.flag.spawn-animals: true
+      redprotect.flag.spawn-monsters: true
+      redprotect.flag.teleport: true
+      redprotect.flag.use-potions: true
   redprotect.command.admin:
-    description: "Recommended Admin permsisions."
+    description: "Recommended Admin permissions."
     default: op
     children:
       redprotect.command.admin.claim: true

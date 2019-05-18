@@ -155,6 +155,10 @@ public class ConfigManager {
             configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Sponge.getServer().getOnlineMode()));
 
+            if (!configRoot.getNode("flags-configuration","enabled-flags").isVirtual()){
+                configRoot.getNode("flags-configuration","enabled-flags").setValue(null);
+            }
+
             //Defaults per server
             if (this.root.private_cat.allowed_blocks.isEmpty()) {
                 this.root.private_cat.allowed_blocks = new ArrayList<>(Arrays.asList(

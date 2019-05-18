@@ -155,6 +155,10 @@ public class ConfigManager {
             }
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Bukkit.getOnlineMode()));
 
+            if (!configRoot.getNode("flags-configuration","enabled-flags").isVirtual()){
+                configRoot.getNode("flags-configuration","enabled-flags").setValue(null);
+            }
+
             //Defaults per server
             if (this.root.private_cat.allowed_blocks.isEmpty()) {
                 this.root.private_cat.allowed_blocks = new ArrayList<>(Arrays.asList(

@@ -730,7 +730,7 @@ public class CommandHandlers {
 
         Object objflag = RedProtectUtil.parseObject(value);
 
-        if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) || flag.equalsIgnoreCase("info")) {
+        if (RedProtect.get().ph.hasFlagPerm(p, flag) || flag.equalsIgnoreCase("info")) {
             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------"));
@@ -749,11 +749,6 @@ public class CommandHandlers {
                         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.notset").replace("{flag}", flag));
                         return;
                     }
-                }
-
-                if (r.flagExists("for-sale") && flag.equalsIgnoreCase("for-sale")) {
-                    RedProtect.get().lang.sendMessage(p, "cmdmanager.eco.changeflag");
-                    return;
                 }
 
                 if (!value.equals("")) {

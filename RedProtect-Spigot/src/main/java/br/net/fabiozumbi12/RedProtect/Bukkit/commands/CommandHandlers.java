@@ -726,7 +726,7 @@ public class CommandHandlers {
 
         Object objflag = RedProtectUtil.parseObject(value);
 
-        if ((RedProtect.get().config.getDefFlags().contains(flag) || RedProtect.get().ph.hasFlagPerm(p, flag)) || flag.equalsIgnoreCase("info")) {
+        if (RedProtect.get().ph.hasFlagPerm(p, flag) || flag.equalsIgnoreCase("info")) {
             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------");
@@ -747,12 +747,6 @@ public class CommandHandlers {
                     }
                 }
 
-            	/*
-            	if (RedProtect.get().config.getDefFlagsValues().containsKey("clan") && !RedProtect.get().ph.hasPerm(p, "RedProtect.get().admin.flag.clan")){
-            		RedProtect.get().lang.sendMessage(p,"cmdmanager.region.flag.clancommand");
-            		return;
-            	}
-            	*/
                 if (!value.equals("")) {
                     if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
 
