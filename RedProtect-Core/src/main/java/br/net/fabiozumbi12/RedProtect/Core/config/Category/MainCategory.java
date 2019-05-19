@@ -263,6 +263,8 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class regionSettings {
+        @Setting(value = "portal-delay", comment = "The delay to teleport again form/to a redprotect portal.")
+        public int portal_delay = 5;
         @Setting(value = "allow-sign-interact-tags", comment = "Allow non meber of regions to interact with signs with this headers. (line 1 of the sign)")
         public List<String> allow_sign_interact_tags = Arrays.asList(
                 "Admin Shop",
@@ -280,7 +282,6 @@ public class MainCategory {
         public String block_id = "";
         @Setting(value = "blocklimit-per-world", comment = "Split the block limits per world? This is not amount of claims and yes for blocks!")
         public boolean blocklimit_per_world = true;
-
         @Setting
         public borderCat border = new borderCat();
         @Setting

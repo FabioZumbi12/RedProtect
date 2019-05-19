@@ -1057,14 +1057,10 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
 
         Region rto = null;
-        Region from = null;
+        Region from = RedProtect.get().rm.getTopRegion(e.getFrom());
         if (e.getTo() != null) {
             rto = RedProtect.get().rm.getTopRegion(e.getTo());
         }
-        if (e.getFrom() != null) {
-            from = RedProtect.get().rm.getTopRegion(e.getFrom());
-        }
-
 
         if (rto != null && !rto.canExitPortal(p)) {
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantteleport");
@@ -1393,8 +1389,15 @@ public class PlayerListener implements Listener {
 
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
-                String[] cmds = r.getFlagString("set-portal").split(" ");
-                RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                if (RedProtect.get().teleportDelay.contains(p.getName())){
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.portal.wait");
+                    return;
+                } else {
+                    String[] cmds = r.getFlagString("set-portal").split(" ");
+                    RedProtect.get().teleportDelay.add(p.getName());
+                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().config.configRoot().region_settings.portal_delay * 20);
+                }
             }
 
             //Enter MagicCarpet

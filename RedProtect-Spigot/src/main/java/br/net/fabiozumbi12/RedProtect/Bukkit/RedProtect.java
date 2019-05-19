@@ -57,15 +57,16 @@ public class RedProtect extends JavaPlugin {
 
     public final List<String> confirmStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
-    public Economy economy;
-    public HashMap<Player, Location> firstLocationSelections = new HashMap<>();
-    public HashMap<Player, Location> secondLocationSelections = new HashMap<>();
-    public int bukkitVersion;
-    public HashMap<Player, String> alWait = new HashMap<>();
-    public List<String> changeWait = new ArrayList<>();
-    public List<String> tpWait = new ArrayList<>();
+    public final HashMap<Player, Location> firstLocationSelections = new HashMap<>();
+    public final HashMap<Player, Location> secondLocationSelections = new HashMap<>();
+    public final HashMap<Player, String> alWait = new HashMap<>();
+    public final List<String> changeWait = new ArrayList<>();
+    public final List<String> tpWait = new ArrayList<>();
     public final HooksManager hooks = new HooksManager();
     public final RedProtectLogger logger = new RedProtectLogger();
+    public final List<String> teleportDelay = new ArrayList<>();
+    public int bukkitVersion;
+    public Economy economy;
     public RegionManager rm;
     public PermissionHandler ph;
     public ConfigManager config;

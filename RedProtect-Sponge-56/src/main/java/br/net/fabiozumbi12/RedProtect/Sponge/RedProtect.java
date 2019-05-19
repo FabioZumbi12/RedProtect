@@ -97,6 +97,7 @@ public class RedProtect {
     public final HashMap<Player, Location<World>> secondLocationSelections = new HashMap<>();
     public final HashMap<Player, String> alWait = new HashMap<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
+    public final List<String> teleportDelay = new ArrayList<>();
     public RegionManager rm;
     public PermissionHandler ph;
     public ConfigManager config;

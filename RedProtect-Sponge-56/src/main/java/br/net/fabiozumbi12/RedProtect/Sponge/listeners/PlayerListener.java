@@ -1338,8 +1338,17 @@ public class PlayerListener {
 
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
-                String[] cmds = r.getFlagString("set-portal").split(" ");
-                Sponge.getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                if (RedProtect.get().teleportDelay.contains(p.getName())){
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.portal.wait");
+                    return;
+                } else {
+                    String[] cmds = r.getFlagString("set-portal").split(" ");
+                    Sponge.getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                    RedProtect.get().teleportDelay.add(p.getName());
+                    Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(()->{
+                        RedProtect.get().teleportDelay.remove(p.getName());
+                    }, RedProtect.get().config.configRoot().region_settings.portal_delay, TimeUnit.SECONDS);
+                }
             }
         }
 
