@@ -662,7 +662,7 @@ public class CommandHandlers {
                             min = regionsPage * diff;
                             max = (regionsPage * diff) + regionsPage;
                         }
-                        if (max > it.size()) max = (it.size() - 1);
+                        if (max >= it.size()) max = (it.size() - 1);
                         //-----------
                         Text.Builder worldregions = Text.builder();
                         for (int i = min; i <= max; i++) {

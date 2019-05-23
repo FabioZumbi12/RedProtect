@@ -656,7 +656,7 @@ public class CommandHandlers {
                             min = regionsPage * diff;
                             max = (regionsPage * diff) + regionsPage;
                         }
-                        if (max > it.size()) max = (it.size() - 1);
+                        if (max >= it.size()) max = (it.size() - 1);
                         //-------------
                         if (RedProtect.get().config.configRoot().region_settings.region_list.hover_and_click_teleport && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
                             FancyMessage fancy = new FancyMessage();
