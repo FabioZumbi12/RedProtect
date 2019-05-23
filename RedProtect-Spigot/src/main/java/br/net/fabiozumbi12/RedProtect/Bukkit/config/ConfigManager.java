@@ -30,11 +30,11 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -52,71 +52,7 @@ import java.util.*;
 
 import static com.google.common.reflect.TypeToken.of;
 
-public class ConfigManager {
-
-    HashMap<String, String> backupGuiName = new HashMap<>();
-    HashMap<String, String> backupGuiDescription = new HashMap<>();
-
-    public final List<String> AdminFlags = Arrays.asList(
-            "spawn-wither",
-            "cropsfarm",
-            "keep-inventory",
-            "keep-levels",
-            "can-drop",
-            "can-pickup",
-            "cmd-onhealth",
-            "can-death",
-            "max-players",
-            "forcefly",
-            "gamemode",
-            "player-damage",
-            "can-hunger",
-            "can-projectiles",
-            "allow-place",
-            "allow-break",
-            "can-pet",
-            "allow-cmds",
-            "deny-cmds",
-            "allow-create-portal",
-            "portal-exit",
-            "portal-enter",
-            "allow-mod",
-            "allow-enter-items",
-            "deny-enter-items",
-            "pvparena",
-            "player-enter-command",
-            "server-enter-command",
-            "player-exit-command",
-            "server-exit-command",
-            "invincible",
-            "effects",
-            "treefarm",
-            "minefarm",
-            "pvp",
-            "sign",
-            "enderpearl",
-            "enter",
-            "up-skills",
-            "can-back",
-            "for-sale",
-            "set-portal",
-            "exit",
-            "particles",
-            "dynmap",
-            "deny-exit-items");
-    public ConfigurationNode ecoCfgs;
-    private ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
-    private ConfigurationNode signCfgs;
-    private ConfigurationLoader<CommentedConfigurationNode> signsLoader;
-    private ConfigurationNode guiCfgRoot;
-    private ConfigurationLoader<CommentedConfigurationNode> guiCfgLoader;
-    private FlagGuiCategory guiRoot;
-    private ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
-    private ConfigurationNode gflagsRoot;
-    private GlobalFlagsCategory globalFlagsRoot;
-    private ConfigurationNode configRoot;
-    private ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
-    private MainCategory root;
+public class ConfigManager extends CoreConfigManager {
 
     //init
     public ConfigManager() throws ObjectMappingException {
@@ -583,22 +519,6 @@ public class ConfigManager {
         }
     }
 
-    public FlagGuiCategory guiRoot() {
-        return this.guiRoot;
-    }
-
-    public GlobalFlagsCategory globalFlagsRoot() {
-        return this.globalFlagsRoot;
-    }
-
-    public MainCategory configRoot() {
-        return this.root;
-    }
-
-    public int getGuiSlot(String flag) {
-        return guiRoot.gui_flags.get(flag).slot;
-    }
-
     public void setGuiSlot(/*String mat, */String flag, int slot) {
         guiRoot.gui_flags.get(flag).slot = slot;
         saveGui();
@@ -613,29 +533,6 @@ public class ConfigManager {
         return separator;
     }
 
-    public int getGuiMaxSlot() {
-        SortedSet<Integer> slots = new TreeSet<>(new ArrayList<>());
-        for (FlagGuiCategory.GuiFlag key : guiRoot.gui_flags.values()) {
-            slots.add(key.slot);
-        }
-        return Collections.max(slots);
-    }
-
-    public HashMap<String, Object> getDefFlagsValues() {
-        HashMap<String, Object> flags = new HashMap<>();
-        for (Map.Entry<String, Boolean> flag : root.flags.entrySet()) {
-            if (flag.getKey().equals("pvp") && !root.flags.containsKey("pvp")) {
-                continue;
-            }
-            flags.put(flag.getKey(), flag.getValue());
-        }
-        return flags;
-    }
-
-    public SortedSet<String> getDefFlags() {
-        return new TreeSet<>(getDefFlagsValues().keySet());
-    }
-
     public Material getBorderMaterial() {
         if (Material.getMaterial(root.region_settings.border.material) != null) {
             return Material.getMaterial(root.region_settings.border.material);
@@ -643,94 +540,8 @@ public class ConfigManager {
         return Material.GLOWSTONE;
     }
 
-    private void saveConfig() {
-        try {
-            configRoot.setValue(of(MainCategory.class), root);
-            cfgLoader.save(configRoot);
-        } catch (IOException | ObjectMappingException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-    }
-
-    private void saveGFlags() {
-        try {
-            gflagsRoot.setValue(of(GlobalFlagsCategory.class), globalFlagsRoot);
-            gFlagsLoader.save(gflagsRoot);
-        } catch (IOException | ObjectMappingException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-    }
-
-    public void save() {
-        try {
-            saveConfig();
-            saveGFlags();
-
-            ecoLoader.save(ecoCfgs);
-            signsLoader.save(signCfgs);
-            saveGui();
-        } catch (IOException e) {
-            RedProtect.get().logger.severe("Problems during save file:");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-    }
-
-    public void saveGui() {
-        try {
-            guiCfgRoot.setValue(of(FlagGuiCategory.class), guiRoot);
-            guiCfgLoader.save(guiCfgRoot);
-        } catch (IOException | ObjectMappingException e) {
-            RedProtect.get().logger.severe("Problems during save gui file:");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-    }
-
     public boolean isAllowedWorld(Player p) {
         return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
-    }
-
-    public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
-        if (isAdmin) {
-            if (!AdminFlags.contains(flag)) {
-                AdminFlags.add(flag);
-                return true;
-            }
-        } else {
-            if (!root.flags.containsKey(flag)) {
-                root.flags.put(flag, defaultValue);
-                saveConfig();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int getBlockCost(String itemName) {
-        return ecoCfgs.getNode("items", "values", itemName).getInt();
-    }
-
-    public int getEnchantCost(String enchantment) {
-        return ecoCfgs.getNode("enchantments", "values", enchantment).getInt(-1);
-    }
-
-    public String getEcoString(String key) {
-        return ecoCfgs.getNode(key).getString("&4Missing economy string for &c" + key);
-    }
-
-    public Integer getEcoInt(String key) {
-        return ecoCfgs.getNode(key).getInt();
-    }
-
-    public boolean getEcoBool(String key) {
-        return ecoCfgs.getNode(key).getBoolean();
-    }
-
-    public String getWorldClaimType(String w) {
-        return root.region_settings.claim.world_types.getOrDefault(w, "");
     }
 
     public boolean needClaimToBuild(Player p, Block b) {

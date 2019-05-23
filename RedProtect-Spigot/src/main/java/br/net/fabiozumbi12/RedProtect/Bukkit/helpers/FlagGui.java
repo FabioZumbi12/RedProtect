@@ -93,19 +93,10 @@ public class FlagGui implements Listener {
 
         allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
-        for (String flag : region.getFlags().keySet()) {
+        for (String flag : RedProtect.get().config.getDefFlags()) {
             try {
-                if (!(region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
+                if (!RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
                     continue;
-                }
-                if (flag.equalsIgnoreCase("clan")) {
-                    if (!RedProtect.get().hooks.simpleClans) {
-                        continue;
-                    }
-                    ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(player);
-                    if (cp == null || !cp.isLeader()) {
-                        continue;
-                    }
                 }
                 if (RedProtect.get().ph.hasFlagPerm(player, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                     if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags.containsKey("pvp")) {

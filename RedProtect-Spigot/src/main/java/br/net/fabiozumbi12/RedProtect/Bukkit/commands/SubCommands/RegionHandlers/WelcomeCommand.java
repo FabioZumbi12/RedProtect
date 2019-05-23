@@ -55,8 +55,8 @@ public class WelcomeCommand implements SubCommand {
                 handleWelcome(player, wMessage.toString());
                 return true;
             } else {
-                for (int i = 1; i < args.length; i++) {
-                    wMessage.append(args[i]).append(" ");
+                for (String arg : args) {
+                    wMessage.append(arg).append(" ");
                 }
                 handleWelcome(player, wMessage.toString());
                 return true;

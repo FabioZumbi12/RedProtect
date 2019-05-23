@@ -592,18 +592,16 @@ public class CommandHandlers {
             if (r != null) {
                 switch (wMessage) {
                     case "":
-                        r.setWelcome("");
                         RedProtect.get().lang.sendMessage(p, "cmdmanager.region.welcomeoff");
                         break;
                     case "hide ":
-                        r.setWelcome(wMessage);
                         RedProtect.get().lang.sendMessage(p, "cmdmanager.region.welcomehide");
                         break;
                     default:
-                        r.setWelcome(wMessage);
                         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.welcomeset") + " " + wMessage);
                         break;
                 }
+                r.setWelcome(wMessage);
                 RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET WELCOME of region " + r.getName() + " to " + wMessage);
                 return;
             } else {

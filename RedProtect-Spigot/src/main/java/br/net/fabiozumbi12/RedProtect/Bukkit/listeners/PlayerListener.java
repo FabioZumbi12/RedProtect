@@ -1390,7 +1390,7 @@ public class PlayerListener implements Listener {
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
                 if (RedProtect.get().teleportDelay.contains(p.getName())){
-                    RedProtect.get().lang.sendMessage(p, "playerlistener.portal.wait");
+                    //RedProtect.get().lang.sendMessage(p, "playerlistener.portal.wait");
                     return;
                 } else {
                     String[] cmds = r.getFlagString("set-portal").split(" ");
