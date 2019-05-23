@@ -712,14 +712,14 @@ public class PlayerListener {
         if (r != null) {
 
             //Enter flag
-            if (!r.canEnter(p)) {
+            if (!r.canEnter(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.enter")) {
                 e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
                 return;
             }
 
             //enter max players flag
-            if (r.maxPlayers() != -1) {
+            if (r.maxPlayers() != -1 && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.max-players")) {
                 if (!checkMaxPlayer(p, r)) {
                     e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));
@@ -728,7 +728,7 @@ public class PlayerListener {
             }
 
             //remove pots
-            if (!r.allowEffects(p) && p.get(Keys.POTION_EFFECTS).isPresent()) {
+            if (!r.allowEffects(p) && p.get(Keys.POTION_EFFECTS).isPresent() && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-effect")) {
                 for (PotionEffect pot : p.get(Keys.POTION_EFFECTS).get()) {
                     if (pot.getDuration() < 36000) {
                         p.offer(Keys.POTION_EFFECTS, new ArrayList<>());
@@ -737,7 +737,7 @@ public class PlayerListener {
             }
 
             //Allow enter with items
-            if (!r.canEnterWithItens(p)) {
+            if (!r.canEnterWithItens(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.deny-enter-items")) {
                 e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
                 return;
@@ -751,9 +751,8 @@ public class PlayerListener {
             }
 
             //Deny Fly
-            if (!p.get(Keys.GAME_MODE).get().getName().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.get(Keys.IS_FLYING).get()) {
+            if (!p.get(Keys.GAME_MODE).get().getName().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.get(Keys.IS_FLYING).get() && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
                 p.offer(Keys.IS_FLYING, false);
-                //p.setAllowFlight(false);
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
@@ -1303,7 +1302,7 @@ public class PlayerListener {
 
     private void RegionFlags(final Region r, Region er, final Player p, boolean join) {
 
-        if (r.canEnter(p)) {
+        if (r.canEnter(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.enter")) {
 
             //prevent spam commands
             if (join || RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName()) != r) {
@@ -1352,7 +1351,7 @@ public class PlayerListener {
             }
         }
 
-        if (er != null && er.canExit(p)) {
+        if (er != null && (er.canExit(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.exit"))) {
 
             //Exit gamemode
             if (er.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")) {
@@ -1446,7 +1445,7 @@ public class PlayerListener {
         }
 
         //2nd checks
-        if (r.canEnter(p)) {
+        if (r.canEnter(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.enter")) {
 
             //Enter effect
             if (r.flagExists("effects") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.effects")) {
@@ -1507,7 +1506,7 @@ public class PlayerListener {
 
     private void noRegionFlags(Region er, Player p) {
 
-        if (er != null && er.canExit(p)) {
+        if (er != null && (er.canExit(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.exit"))) {
 
             //Exit gamemode
             if (er.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")) {

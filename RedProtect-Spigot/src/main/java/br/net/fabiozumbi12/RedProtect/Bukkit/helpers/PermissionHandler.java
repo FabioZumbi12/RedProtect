@@ -46,9 +46,9 @@ public class PermissionHandler {
     }
 
     public boolean hasFlagPerm(Player p, String flag) {
-        String adminperm = "redprotect.flag.admin." + flag;
-        String userperm = "redprotect.flag." + flag;
-        return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
+        String adminPerm = "redprotect.flag.admin." + flag;
+        String userPerm = "redprotect.flag." + flag;
+        return this.hasPerm(p, adminPerm) || this.hasPerm(p, userPerm);
     }
 
     public boolean hasPermOrBypass(Player p, String perm) {

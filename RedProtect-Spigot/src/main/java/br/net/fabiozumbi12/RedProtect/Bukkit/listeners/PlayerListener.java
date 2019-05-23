@@ -904,14 +904,14 @@ public class PlayerListener implements Listener {
         if (r != null) {
 
             //Enter flag
-            if (!r.canEnter(p)) {
+            if (!r.canEnter(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.enter")) {
                 e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
                 return;
             }
 
             //enter max players flag
-            if (r.getMaxPlayers() != -1) {
+            if (r.getMaxPlayers() != -1  && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.max-players")) {
                 if (!checkMaxPlayer(p, r)) {
                     e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
@@ -920,7 +920,7 @@ public class PlayerListener implements Listener {
             }
 
             //remove pots
-            if (!r.canGetEffects(p)) {
+            if (!r.canGetEffects(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-effect")) {
                 for (PotionEffect pot : p.getActivePotionEffects()) {
                     if (pot.getDuration() < 36000) {
                         p.removePotionEffect(pot.getType());
@@ -929,7 +929,7 @@ public class PlayerListener implements Listener {
             }
 
             //Mypet Flag
-            if (RedProtect.get().hooks.myPet && !r.canPet(p)) {
+            if (RedProtect.get().hooks.myPet && !r.canPet(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.can-pet")) {
                 if (MyPetApi.getPlayerManager().isMyPetPlayer(p)) {
                     MyPetPlayer mpp = MyPetApi.getPlayerManager().getMyPetPlayer(p);
                     if (mpp.hasMyPet() && mpp.getMyPet().getStatus() == PetState.Here) {
@@ -940,21 +940,21 @@ public class PlayerListener implements Listener {
             }
 
             //Allow enter with items
-            if (!r.canEnterWithItens(p)) {
+            if (!r.canEnterWithItens(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-enter-items")) {
                 e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
                 return;
             }
 
             //Deny enter with item
-            if (!r.denyEnterWithItens(p)) {
+            if (!r.denyEnterWithItens(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.deny-enter-items")) {
                 e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
                 return;
             }
 
             //Deny Fly
-            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying()) {
+            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying() && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
                 p.setFlying(false);
                 //p.setAllowFlight(false);
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantfly");
@@ -1346,7 +1346,7 @@ public class PlayerListener implements Listener {
 
     private void RegionFlags(final Region r, Region er, final Player p, boolean join) {
 
-        if (r.canEnter(p)) {
+        if (r.canEnter(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.enter")) {
 
             //prevent spam commands
             if (join || RedProtect.get().rm.getTopRegion(p.getLocation()) != r) {
@@ -1358,7 +1358,7 @@ public class PlayerListener implements Listener {
                         if (cmd.startsWith("/")) {
                             cmd = cmd.substring(1);
                         }
-                        p.getServer().dispatchCommand(p.getPlayer(), cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
+                        p.getServer().dispatchCommand(p, cmd.replace("{player}", p.getName()).replace("{region}", r.getName()));
                     }
                 }
 
@@ -1375,7 +1375,7 @@ public class PlayerListener implements Listener {
             }
 
             //Pvp check to enter on region
-            if (RedProtect.get().hooks.pvpm) {
+            if (RedProtect.get().hooks.pvpm && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.forcepvp")) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().config.configRoot().flags_configuration.pvparena_nopvp_kick_cmd.replace("{player}", p.getName()));
@@ -1401,7 +1401,7 @@ public class PlayerListener implements Listener {
             }
 
             //Enter MagicCarpet
-            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet) {
+            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet  && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.allow-magiccarpet")) {
                 if (MagicCarpet.getCarpets().getCarpet(p) != null) {
                     MagicCarpet.getCarpets().remove(p);
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
@@ -1409,7 +1409,7 @@ public class PlayerListener implements Listener {
             }
         }
 
-        if (er != null && er.canExit(p)) {
+        if (er != null && (er.canExit(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.exit"))) {
 
             //Exit gamemode
             if (er.flagExists("gamemode") && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.gamemode")) {
@@ -1494,7 +1494,7 @@ public class PlayerListener implements Listener {
             }
 
             //Pvp check to exit region
-            if (er.flagExists("forcepvp") && RedProtect.get().hooks.pvpm) {
+            if (er.flagExists("forcepvp") && RedProtect.get().hooks.pvpm && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.forcepvp")) {
                 if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")) {
                     if (PvPState.get(p.getName()) != PvPlayer.get(p).hasPvPEnabled()) {
                         PvPlayer.get(p).setPvP(PvPState.get(p.getName()));
@@ -1505,16 +1505,14 @@ public class PlayerListener implements Listener {
         }
 
         //2nd checks
-        if (r.canEnter(p)) {
+        if (r.canEnter(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.enter")) {
 
             //Enter check forcepvp flag
-            if (RedProtect.get().hooks.pvpm) {
-                if (r.canEnter(p) && r.flagExists("forcepvp") && !p.hasPermission("redprotect.forcepvp.bypass")) {
-                    PvPlayer pvpp = PvPlayer.get(p);
-                    if (r.isForcePVP() != pvpp.hasPvPEnabled()) {
-                        PvPState.put(p.getName(), pvpp.hasPvPEnabled());
-                        pvpp.setPvP(r.isForcePVP());
-                    }
+            if (r.flagExists("forcepvp") && RedProtect.get().hooks.pvpm && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.forcepvp")) {
+                PvPlayer pvpp = PvPlayer.get(p);
+                if (r.isForcePVP() != pvpp.hasPvPEnabled()) {
+                    PvPState.put(p.getName(), pvpp.hasPvPEnabled());
+                    pvpp.setPvP(r.isForcePVP());
                 }
             }
 
@@ -1572,10 +1570,10 @@ public class PlayerListener implements Listener {
 
     private void noRegionFlags(Region er, Player p) {
 
-        if (er != null && er.canExit(p)) {
+        if (er != null && (er.canExit(p) || RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.exit"))) {
 
             //Pvp check to exit region
-            if (er.flagExists("forcepvp") && RedProtect.get().hooks.pvpm) {
+            if (er.flagExists("forcepvp") && RedProtect.get().hooks.pvpm && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.forcepvp")) {
                 if (PvPState.containsKey(p.getName()) && !p.hasPermission("redprotect.forcepvp.bypass")) {
                     if (PvPState.get(p.getName()) != PvPlayer.get(p).hasPvPEnabled()) {
                         PvPlayer.get(p).setPvP(PvPState.get(p.getName()));
