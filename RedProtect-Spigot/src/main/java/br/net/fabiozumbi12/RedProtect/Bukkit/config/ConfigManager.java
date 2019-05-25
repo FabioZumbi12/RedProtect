@@ -364,8 +364,8 @@ public class ConfigManager extends CoreConfigManager {
             if (!root.flags.containsKey("iceform-player")) {
                 root.flags.put("iceform-player", false);
             }
-            if (!root.flags.containsKey("iceform-entity")) {
-                root.flags.put("iceform-entity", true);
+            if (!root.flags.containsKey("iceform-world")) {
+                root.flags.put("iceform-world", true);
             }
             update++;
         }
