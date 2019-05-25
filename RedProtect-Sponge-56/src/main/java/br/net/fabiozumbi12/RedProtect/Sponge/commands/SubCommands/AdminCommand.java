@@ -244,7 +244,7 @@ public class AdminCommand implements CommandCallable {
 
             if (checkCmd(args[0], "reload")) {
                 for (Player p : Sponge.getGame().getServer().getOnlinePlayers()) {
-                    RedProtect.get().getPVHelper().closeInventory(p);
+                    RedProtect.get().getVersionHelper().closeInventory(p);
                 }
                 RedProtect.get().reload();
                 RedProtect.get().logger.success("Redprotect reloaded with success!");
@@ -652,7 +652,7 @@ public class AdminCommand implements CommandCallable {
                 Region r = RedProtect.get().rm.getRegion(args[1], w);
                 if (r != null && (RedProtect.get().config.getDefFlags().contains(args[2]) || RedProtect.get().config.AdminFlags.contains(args[2]))) {
                     Object objflag = RedProtectUtil.parseObject(args[3]);
-                    if (r.setFlag(RedProtect.get().getPVHelper().getCause(sender), args[2], objflag)) {
+                    if (r.setFlag(RedProtect.get().getVersionHelper().getCause(sender), args[2], objflag)) {
                         sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2])));
                         RedProtect.get().logger.addLog("Console changed flag " + args[2] + " to " + r.getFlagString(args[2]));
                     }

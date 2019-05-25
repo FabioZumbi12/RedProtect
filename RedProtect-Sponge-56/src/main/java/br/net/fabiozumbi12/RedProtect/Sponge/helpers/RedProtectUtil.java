@@ -130,7 +130,7 @@ public class RedProtectUtil extends CoreUtil {
             }
         }
         if (checkSec && !isSecure(to.getLocation())) {
-            RedProtect.get().getPVHelper().setBlock(to.getLocation().getBlockRelative(Direction.DOWN), BlockTypes.GRASS.getDefaultState());
+            RedProtect.get().getVersionHelper().setBlock(to.getLocation().getBlockRelative(Direction.DOWN), BlockTypes.GRASS.getDefaultState());
         }
         return to;
     }

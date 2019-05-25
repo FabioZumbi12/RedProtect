@@ -106,7 +106,7 @@ public class FlagGui {
                     if (!this.region.getFlagBool(flag)) {
                         this.guiItems[i].remove(Keys.ITEM_ENCHANTMENTS);
                     } else {
-                        this.guiItems[i] = RedProtect.get().getPVHelper().offerEnchantment(this.guiItems[i]);
+                        this.guiItems[i] = RedProtect.get().getVersionHelper().offerEnchantment(this.guiItems[i]);
                     }
                     this.guiItems[i].offer(Keys.HIDE_ENCHANTMENTS, true);
                     this.guiItems[i].offer(Keys.HIDE_ATTRIBUTES, true);
@@ -116,7 +116,7 @@ public class FlagGui {
             }
         }
 
-        this.inv = RedProtect.get().getPVHelper().newInventory(size, name);
+        this.inv = RedProtect.get().getVersionHelper().newInventory(size, name);
 
         for (int slotc = 0; slotc < this.size; slotc++) {
             if (this.guiItems[slotc] == null) {
@@ -128,7 +128,7 @@ public class FlagGui {
                 line = slotc / 9;
                 slot = slotc - (line * 9);
             }
-            RedProtect.get().getPVHelper().query(inv, slot, line).set(this.guiItems[slotc]);
+            RedProtect.get().getVersionHelper().query(inv, slot, line).set(this.guiItems[slotc]);
         }
     }
 
@@ -144,9 +144,9 @@ public class FlagGui {
                             line = i / 9;
                             slot = i - (line * 9);
                         }
-                        if (RedProtect.get().getPVHelper().query(event.getTargetInventory(), slot, line).peek().isPresent()) {
+                        if (RedProtect.get().getVersionHelper().query(event.getTargetInventory(), slot, line).peek().isPresent()) {
                             final int fi = i;
-                            ItemStack stack = RedProtect.get().getPVHelper().query(event.getTargetInventory(), slot, line).peek().get();
+                            ItemStack stack = RedProtect.get().getVersionHelper().query(event.getTargetInventory(), slot, line).peek().get();
                             stack.get(Keys.ITEM_LORE).ifPresent(ls -> {
                                 String flag = ls.get(1).toPlain().replace("§0", "");
                                 if (RedProtect.get().config.getDefFlags().contains(flag))
@@ -204,7 +204,7 @@ public class FlagGui {
 
                 ItemStack item = clickTransaction.getOriginal().createStack();
 
-                if (!RedProtect.get().getPVHelper().getItemType(item).equals(ItemTypes.NONE) && item.get(Keys.ITEM_LORE).isPresent()) {
+                if (!RedProtect.get().getVersionHelper().getItemType(item).equals(ItemTypes.NONE) && item.get(Keys.ITEM_LORE).isPresent()) {
                     String flag = item.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", "");
                     if (RedProtect.get().config.getDefFlags().contains(flag)) {
                         if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
@@ -233,13 +233,13 @@ public class FlagGui {
     }
 
     private void applyFlag(String flag, ItemStack item, ClickInventoryEvent event) {
-        if (this.region.setFlag(RedProtect.get().getPVHelper().getCause(this.player), flag, !this.region.getFlagBool(flag))) {
+        if (this.region.setFlag(RedProtect.get().getVersionHelper().getCause(this.player), flag, !this.region.getFlagBool(flag))) {
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
 
             if (!this.region.getFlagBool(flag)) {
                 item.remove(Keys.ITEM_ENCHANTMENTS);
             } else {
-                item = RedProtect.get().getPVHelper().offerEnchantment(item);
+                item = RedProtect.get().getVersionHelper().offerEnchantment(item);
             }
             item.offer(Keys.HIDE_ENCHANTMENTS, true);
             item.offer(Keys.HIDE_ATTRIBUTES, true);
@@ -253,7 +253,7 @@ public class FlagGui {
             event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
             event.getTransactions().get(0).getSlot().offer(item);
 
-            RedProtect.get().getPVHelper().removeGuiItem(this.player);
+            RedProtect.get().getVersionHelper().removeGuiItem(this.player);
 
             RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + this.region.getFlagString(flag));
         }
@@ -263,11 +263,11 @@ public class FlagGui {
         //Unregister Listener
         Sponge.getEventManager().unregisterListeners(this);
 
-        RedProtect.get().getPVHelper().removeGuiItem(this.player);
+        RedProtect.get().getVersionHelper().removeGuiItem(this.player);
 
         // Check for items
         Sponge.getGame().getEventManager().unregisterListeners(this);
-        if (close) RedProtect.get().getPVHelper().closeInventory(this.player);
+        if (close) RedProtect.get().getVersionHelper().closeInventory(this.player);
 
         this.guiItems = null;
         this.player = null;
@@ -288,7 +288,7 @@ public class FlagGui {
         //Register Listener
         Sponge.getGame().getEventManager().registerListeners(RedProtect.get().container, this);
 
-        RedProtect.get().getPVHelper().openInventory(this.inv, this.player);
+        RedProtect.get().getVersionHelper().openInventory(this.inv, this.player);
     }
 
 }

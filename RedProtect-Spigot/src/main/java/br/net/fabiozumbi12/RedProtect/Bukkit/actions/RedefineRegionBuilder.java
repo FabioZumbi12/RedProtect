@@ -78,10 +78,10 @@ public class RedefineRegionBuilder extends RegionBuilder {
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
-        int regionarea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
+        int regionArea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
         int actualArea = 0;
-        if (regionarea > 0) {
-            actualArea = totalArea + regionarea;
+        if (regionArea > 0) {
+            actualArea = totalArea + regionArea;
         }
         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.reach.limit"));
@@ -140,14 +140,17 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
             double peco = RedProtect.get().economy.getBalance(p);
-            long reco = (region.getArea() <= old.getArea() ? 0 : region.getArea() - old.getArea()) * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+            long reco = (region.getArea() - old.getArea()) * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
 
             if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
-                reco = reco * Math.abs(region.getMaxY() - region.getMinY());
+                reco = reco * Math.abs((region.getMaxY() - region.getMinY()) - (old.getMaxY() - old.getMinY()));
             }
 
             if (peco >= reco) {
-                RedProtect.get().economy.withdrawPlayer(p, reco);
+                if (reco > 0)
+                    RedProtect.get().economy.withdrawPlayer(p, Math.abs(reco));
+                if (reco < 0)
+                    RedProtect.get().economy.depositPlayer(p, Math.abs(reco));
                 p.sendMessage(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name")));
             } else {
                 RedProtect.get().lang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco)});
@@ -163,7 +166,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
         p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimused + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
-        p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? ChatColor.GREEN + "" + regionarea : ChatColor.RED + "- " + regionarea) + "\n" +
+        p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
         p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior());
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");

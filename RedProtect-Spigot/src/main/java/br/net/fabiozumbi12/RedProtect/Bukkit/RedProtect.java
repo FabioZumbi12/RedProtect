@@ -79,7 +79,7 @@ public class RedProtect extends JavaPlugin {
         return plugin;
     }
 
-    public VersionHelper getPVHelper() {
+    public VersionHelper getVersionHelper() {
         return rpvHelper;
     }
 

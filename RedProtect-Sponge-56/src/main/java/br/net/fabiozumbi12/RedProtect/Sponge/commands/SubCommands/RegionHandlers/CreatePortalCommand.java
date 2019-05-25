@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.DefineRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -82,7 +81,7 @@ public class CreatePortalCommand {
                             }
                             RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getName()));
                             RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
-                            r2.setFlag(RedProtect.get().getPVHelper().getCause(src), "set-portal", regionTo + " " + w.getName());
+                            r2.setFlag(RedProtect.get().getVersionHelper().getCause(src), "set-portal", regionTo + " " + w.getName());
 
                             RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " CREATED A PORTAL " + r2.getName() + " to " + regionTo + " world " + w.getName());
                         } else {
@@ -92,7 +91,7 @@ public class CreatePortalCommand {
                                 RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getName()));
                                 RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
 
-                                r2.setFlag(RedProtect.get().getPVHelper().getCause(src), "set-portal", regionTo + " " + w.getName());
+                                r2.setFlag(RedProtect.get().getVersionHelper().getCause(src), "set-portal", regionTo + " " + w.getName());
                                 RedProtect.get().rm.add(r2, player.getWorld());
 
                                 RedProtect.get().firstLocationSelections.remove(player);

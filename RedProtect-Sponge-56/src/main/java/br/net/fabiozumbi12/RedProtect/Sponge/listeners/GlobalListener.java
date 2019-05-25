@@ -286,7 +286,7 @@ public class GlobalListener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is ChangeBlockEvent event! Cancelled? " + false);
 
         BlockSnapshot b = e.getTransactions().get(0).getFinal();
-        ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
+        ItemType item = RedProtect.get().getVersionHelper().getItemInHand(p);
         Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
 
         if (r != null) {
@@ -827,7 +827,7 @@ public class GlobalListener {
         boolean claimRps = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps;
         boolean wilderness = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_wilderness;
 
-        ItemType item = RedProtect.get().getPVHelper().getItemInHand(p);
+        ItemType item = RedProtect.get().getVersionHelper().getItemInHand(p);
 
         //deny item usage
         if (!RedProtect.get().ph.hasPerm(p, "redprotect.world.bypass") && !item.equals(ItemTypes.NONE) && RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.items.stream().anyMatch(item.getType().getName()::matches)) {

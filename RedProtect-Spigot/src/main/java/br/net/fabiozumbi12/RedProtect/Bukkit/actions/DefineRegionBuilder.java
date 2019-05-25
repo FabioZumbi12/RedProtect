@@ -102,9 +102,9 @@ public class DefineRegionBuilder extends RegionBuilder {
         newRegion.setPrior(RedProtectUtil.getUpdatedPrior(newRegion));
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
-        int claimused = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld());
+        int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld());
         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
-        if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
+        if (claimUsed >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.claim.limit"));
             return;
         }
@@ -112,10 +112,10 @@ public class DefineRegionBuilder extends RegionBuilder {
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(leader.getUUID(), p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
-        int regionarea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), newRegion);
+        int regionArea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), newRegion);
         int actualArea = 0;
-        if (regionarea > 0) {
-            actualArea = totalArea + regionarea;
+        if (regionArea > 0) {
+            actualArea = totalArea + regionArea;
         }
         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.reach.limit"));
@@ -184,8 +184,8 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
         if (!admin) {
-            p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimused + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
-            p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? ChatColor.GREEN + "" + regionarea : ChatColor.RED + "- " + regionarea) + "\n" +
+            p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimUsed + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
+            p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
                     RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
         }
         p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", newRegion.getName()) + " " + newRegion.getPrior());

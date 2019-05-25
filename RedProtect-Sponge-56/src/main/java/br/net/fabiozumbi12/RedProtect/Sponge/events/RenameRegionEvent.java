@@ -84,7 +84,7 @@ public class RenameRegionEvent extends AbstractEvent implements Cancellable, Eve
 
     @Override
     public Cause getCause() {
-        return RedProtect.get().getPVHelper().getCause(player);
+        return RedProtect.get().getVersionHelper().getCause(player);
     }
 
 }

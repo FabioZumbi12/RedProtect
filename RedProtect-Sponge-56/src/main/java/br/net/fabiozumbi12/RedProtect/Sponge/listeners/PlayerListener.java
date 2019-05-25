@@ -120,7 +120,7 @@ public class PlayerListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onConsume(UseItemStackEvent.Start e, @First Player p) {
         ItemStack stack = e.getItemStackInUse().createStack();
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is UseItemStackEvent.Start event. Item: " + RedProtect.get().getPVHelper().getItemType(stack).getName());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is UseItemStackEvent.Start event. Item: " + RedProtect.get().getVersionHelper().getItemType(stack).getName());
 
         //deny potion
         List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
@@ -137,12 +137,12 @@ public class PlayerListener {
 
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
 
-        if (r != null && RedProtect.get().getPVHelper().getItemType(stack).equals(ItemTypes.POTION) && !r.usePotions(p)) {
+        if (r != null && RedProtect.get().getVersionHelper().getItemType(stack).equals(ItemTypes.POTION) && !r.usePotions(p)) {
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
         }
 
-        if (r != null && RedProtect.get().getPVHelper().getItemType(stack).getName().equals("minecraft:chorus_fruit") && !r.canTeleport(p)) {
+        if (r != null && RedProtect.get().getVersionHelper().getItemType(stack).getName().equals("minecraft:chorus_fruit") && !r.canTeleport(p)) {
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
         }
@@ -163,7 +163,7 @@ public class PlayerListener {
             l = p.getLocation();
         }
 
-        ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
+        ItemType itemInHand = RedProtect.get().getVersionHelper().getItemInHand(p);
 
         String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
         if (event instanceof InteractBlockEvent.Primary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
@@ -209,7 +209,7 @@ public class PlayerListener {
         }
 
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
-        ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
+        ItemType itemInHand = RedProtect.get().getVersionHelper().getItemInHand(p);
 
         String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
         if (event instanceof InteractBlockEvent.Secondary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
@@ -282,16 +282,16 @@ public class PlayerListener {
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         ItemType itemInHand = ItemTypes.NONE;
         ItemStack stack;
-        if (!RedProtect.get().getPVHelper().getItemMainHand(p).isEmpty()) {
-            stack = RedProtect.get().getPVHelper().getItemMainHand(p);
-            itemInHand = RedProtect.get().getPVHelper().getItemType(stack);
+        if (!RedProtect.get().getVersionHelper().getItemMainHand(p).isEmpty()) {
+            stack = RedProtect.get().getVersionHelper().getItemMainHand(p);
+            itemInHand = RedProtect.get().getVersionHelper().getItemType(stack);
             if (RedProtectUtil.removeGuiItem(stack)) {
                 p.setItemInHand(HandTypes.MAIN_HAND, ItemStack.of(ItemTypes.NONE, 1));
                 event.setCancelled(true);
             }
-        } else if (!RedProtect.get().getPVHelper().getItemOffHand(p).isEmpty()) {
-            stack = RedProtect.get().getPVHelper().getItemOffHand(p);
-            itemInHand = RedProtect.get().getPVHelper().getItemType(stack);
+        } else if (!RedProtect.get().getVersionHelper().getItemOffHand(p).isEmpty()) {
+            stack = RedProtect.get().getVersionHelper().getItemOffHand(p);
+            itemInHand = RedProtect.get().getVersionHelper().getItemType(stack);
             if (RedProtectUtil.removeGuiItem(stack)) {
                 p.setItemInHand(HandTypes.OFF_HAND, ItemStack.of(ItemTypes.NONE, 1));
                 event.setCancelled(true);
@@ -485,7 +485,7 @@ public class PlayerListener {
     }
 
     private void changeFlag(Region r, String flag, Player p, Sign s) {
-        if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, !r.getFlagBool(flag))) {
+        if (r.setFlag(RedProtect.get().getVersionHelper().getCause(p), flag, !r.getFlagBool(flag))) {
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
             s.lines().set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag))));
@@ -1624,7 +1624,7 @@ public class PlayerListener {
     public void PlayerDropItemGui(DropItemEvent.Pre e, @Root Player p) {
         e.getDroppedItems().forEach(item -> {
             if (RedProtectUtil.isGuiItem(item.createStack())) {
-                RedProtect.get().getPVHelper().removeGuiItem(p);
+                RedProtect.get().getVersionHelper().removeGuiItem(p);
                 e.setCancelled(true);
             }
         });
@@ -1647,7 +1647,7 @@ public class PlayerListener {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerMoveInv(InteractInventoryEvent.Close e, @Root Player p) {
-        RedProtect.get().getPVHelper().removeGuiItem(p);
+        RedProtect.get().getVersionHelper().removeGuiItem(p);
     }
 
     public class BossBarTimer implements Consumer<Task> {

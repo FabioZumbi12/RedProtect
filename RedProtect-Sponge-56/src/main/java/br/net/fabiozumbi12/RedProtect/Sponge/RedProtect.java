@@ -112,7 +112,7 @@ public class RedProtect {
         return instance;
     }
 
-    public VersionHelper getPVHelper() {
+    public VersionHelper getVersionHelper() {
         return rpvHelper;
     }
 

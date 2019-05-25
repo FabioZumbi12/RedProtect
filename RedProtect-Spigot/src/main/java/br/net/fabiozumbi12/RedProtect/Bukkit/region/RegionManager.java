@@ -249,7 +249,7 @@ public class RegionManager {
                 RedProtect.get().hooks.dynmapHook.removeMark(r);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
+                RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Is Dynmap updated?");
             }
         }
     }

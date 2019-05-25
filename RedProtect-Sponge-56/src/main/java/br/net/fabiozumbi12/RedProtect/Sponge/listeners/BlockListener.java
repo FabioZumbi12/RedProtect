@@ -62,8 +62,6 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.Color;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.Location;
@@ -138,12 +136,12 @@ public class BlockListener {
                         return;
                     } else {
                         RedProtect.get().lang.sendMessage(p, "blocklistener.container.notprotected");
-                        //RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
+                        //RedProtect.get().getVersionHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
                         return;
                     }
                 } else {
                     RedProtect.get().lang.sendMessage(p, "blocklistener.container.notregion");
-                    //RedProtect.get().getPVHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
+                    //RedProtect.get().getVersionHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
                     return;
                 }
             }
@@ -169,7 +167,7 @@ public class BlockListener {
                 String flag = lines.get(1).toPlain();
                 if (!(signr.getFlags().get(flag) instanceof Boolean)) {
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
-                    RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
+                    RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
                     return;
                 }
                 if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
@@ -184,10 +182,10 @@ public class BlockListener {
                     }
                 }
                 RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
-                RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
+                RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
             } else {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.invalidflag");
-                RedProtect.get().getPVHelper().digBlock(p, b.getPosition());
+                RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
             }
         }
     }
@@ -227,7 +225,7 @@ public class BlockListener {
         Location<World> bloc = b.getLocation().get();
         World w = bloc.getExtent();
 
-        ItemType m = RedProtect.get().getPVHelper().getItemInHand(p);
+        ItemType m = RedProtect.get().getVersionHelper().getItemInHand(p);
         boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
 
@@ -466,7 +464,7 @@ public class BlockListener {
 
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
         if (r != null) {
-            ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
+            ItemType itemInHand = RedProtect.get().getVersionHelper().getItemInHand(p);
             if (itemInHand.equals(ItemTypes.ARMOR_STAND) && !r.canBuild(p)) {
                 RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
                 event.setCancelled(true);

@@ -67,10 +67,10 @@ public class DoorManager {
         if (b.getRelative(BlockFace.DOWN).getType().equals(b.getType())) {
             b = b.getRelative(BlockFace.DOWN);
         }
-        RedProtect.get().getPVHelper().toggleDoor(b);
+        RedProtect.get().getVersionHelper().toggleDoor(b);
     }
 
     public static boolean isOpenable(Block b) {
-        return RedProtect.get().getPVHelper().isOpenable(b);
+        return RedProtect.get().getVersionHelper().isOpenable(b);
     }
 }

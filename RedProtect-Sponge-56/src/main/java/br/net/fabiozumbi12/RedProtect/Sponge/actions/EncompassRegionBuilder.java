@@ -258,9 +258,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         region.setPrior(RedProtectUtil.getUpdatedPrior(region));
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
-                        int claimused = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w);
+                        int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w);
                         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
-                        if (claimused >= claimLimit && claimLimit != -1) {
+                        if (claimUsed >= claimLimit && claimLimit != -1) {
                             this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.claim.limit"));
                             return;
                         }
@@ -268,10 +268,10 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
                         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
                         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
-                        int regionarea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
+                        int regionArea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
                         int actualArea = 0;
-                        if (regionarea > 0) {
-                            actualArea = totalArea + regionarea;
+                        if (regionArea > 0) {
+                            actualArea = totalArea + regionArea;
                         }
                         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
                             this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.reach.limit"));
@@ -288,7 +288,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             }
 
                             if (peco >= reco) {
-                                acc.withdraw(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getPVHelper().getCause(p));
+                                acc.withdraw(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getVersionHelper().getCause(p));
                                 p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
                             } else {
                                 this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco));
@@ -303,8 +303,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
-                        p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimused + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit)));
-                        p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionarea == 0 ? "&a" + regionarea : "&c- " + regionarea) + "\n" +
+                        p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimUsed + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit)));
+                        p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? "&a" + regionArea : "&c- " + regionArea) + "\n" +
                                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea())))));
                         p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior()));
                         p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
@@ -377,7 +377,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
             } else if (i != 0) {
                 this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.area.error").replace("{area}", "(x: " + current.getLocation().get().getBlockX() + ", y: " + current.getLocation().get().getBlockY() + ", z: " + current.getLocation().get().getBlockZ() + ")"));
                 Location<World> newbl = current.getLocation().get().getBlockRelative(Direction.UP);
-                RedProtect.get().getPVHelper().setBlock(newbl, BlockTypes.STANDING_SIGN.getDefaultState());
+                RedProtect.get().getVersionHelper().setBlock(newbl, BlockTypes.STANDING_SIGN.getDefaultState());
                 Sign errSign = (Sign) newbl.getTileEntity().get();
                 SignData data = errSign.getSignData();
                 data.get(Keys.SIGN_LINES).get().set(0, Text.of(TextColors.RED, "xxxxxxxxxxxxxx"));
@@ -414,7 +414,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
     private void remove(BlockSnapshot sign, List<BlockSnapshot> blocks, Player p) {
         //p.getWorld().digBlock(sign.getPosition(), Cause.of(NamedCause.owner(RedProtect.get().plugin)));
         for (BlockSnapshot rb : blocks) {
-            RedProtect.get().getPVHelper().removeBlock(rb.getLocation().get());
+            RedProtect.get().getVersionHelper().removeBlock(rb.getLocation().get());
         }
     }
 
@@ -426,12 +426,12 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
         //drop rejected
         for (ItemStackSnapshot bb : rejected) {
-            RedProtect.get().getPVHelper().digBlock(p, bb.createStack(), p.getLocation().getBlockPosition());
+            RedProtect.get().getVersionHelper().digBlock(p, bb.createStack(), p.getLocation().getBlockPosition());
         }
 
         //p.getWorld().digBlock(sign.getPosition(), Cause.of(NamedCause.simulated(p)));
         for (BlockSnapshot rb : blocks) {
-            RedProtect.get().getPVHelper().removeBlock(rb.getLocation().get());
+            RedProtect.get().getVersionHelper().removeBlock(rb.getLocation().get());
         }
     }
 }

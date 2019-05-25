@@ -752,7 +752,7 @@ public class CommandHandlers {
                 if (!value.equals("")) {
                     if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
                         if (objflag instanceof Boolean) {
-                            if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, objflag)) {
+                            if (r.setFlag(RedProtect.get().getVersionHelper().getCause(p), flag, objflag)) {
                                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
                                 RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                             }
@@ -768,7 +768,7 @@ public class CommandHandlers {
                             SendFlagUsageMessage(p, flag);
                             return;
                         }
-                        if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, objflag)) {
+                        if (r.setFlag(RedProtect.get().getVersionHelper().getCause(p), flag, objflag)) {
                             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagString(flag));
                             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                         }
@@ -778,7 +778,7 @@ public class CommandHandlers {
                     sendFlagHelp(p);
                 } else {
                     if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
-                        if (r.setFlag(RedProtect.get().getPVHelper().getCause(p), flag, !r.getFlagBool(flag))) {
+                        if (r.setFlag(RedProtect.get().getVersionHelper().getCause(p), flag, !r.getFlagBool(flag))) {
                             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
                             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                         }

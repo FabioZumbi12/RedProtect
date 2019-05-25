@@ -188,7 +188,7 @@ public class EntityListener {
                 Player p2 = (Player) e2;
                 if (r1 != null) {
 
-                    ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p2);
+                    ItemType itemInHand = RedProtect.get().getVersionHelper().getItemInHand(p2);
 
                     if (itemInHand.getType().equals(ItemTypes.EGG) && !r1.canProtectiles(p2)) {
                         e.setCancelled(true);
@@ -301,7 +301,7 @@ public class EntityListener {
         RedProtect.get().logger.debug(LogLevel.ENTITY, "EntityListener - InteractEntityEvent.Secondary entity " + et.getType().getName());
 
         if (r != null && !r.canInteractPassives(p) && (et instanceof Animal || et instanceof Villager || et instanceof Golem || et instanceof Ambient)) {
-            if (RedProtect.get().getPVHelper().checkHorseOwner(et, p)) {
+            if (RedProtect.get().getVersionHelper().checkHorseOwner(et, p)) {
                 return;
             }
             e.setCancelled(true);
@@ -343,7 +343,7 @@ public class EntityListener {
             return;
         }
 
-        ItemType itemInHand = RedProtect.get().getPVHelper().getItemInHand(p);
+        ItemType itemInHand = RedProtect.get().getVersionHelper().getItemInHand(p);
 
         if (!itemInHand.equals(ItemTypes.NONE) && itemInHand.getType().equals(ItemTypes.ARMOR_STAND)) {
             if (!r.canBuild(p)) {

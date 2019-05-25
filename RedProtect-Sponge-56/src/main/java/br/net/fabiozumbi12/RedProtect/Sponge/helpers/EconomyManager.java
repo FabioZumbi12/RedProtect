@@ -81,7 +81,7 @@ public class EconomyManager {
     }
 
     private static long getInvValue(Iterable<Inventory> inv) {
-        return RedProtect.get().getPVHelper().getInvValue(inv);
+        return RedProtect.get().getVersionHelper().getInvValue(inv);
     }
 
     public static String getCostMessage(Region r) {

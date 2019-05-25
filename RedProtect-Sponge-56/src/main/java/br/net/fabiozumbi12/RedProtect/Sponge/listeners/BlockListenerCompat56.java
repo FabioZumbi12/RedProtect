@@ -55,7 +55,7 @@ public class BlockListenerCompat56 {
         Location<World> block = null;
         boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
 
-        if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
+        if (RedProtect.get().getVersionHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
             if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
                 return;
             }
@@ -70,7 +70,7 @@ public class BlockListenerCompat56 {
             }
         }
 
-        if (RedProtect.get().getPVHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
+        if (RedProtect.get().getVersionHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
             if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
                 return;
             }
