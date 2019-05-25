@@ -63,7 +63,6 @@ public class CoreUtil {
             out.close();
         } catch (Exception e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }

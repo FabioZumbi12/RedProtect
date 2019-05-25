@@ -177,7 +177,6 @@ public class RedProtectUtil extends CoreUtil {
             zos.close();
         } catch (Exception e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
     }
@@ -275,8 +274,7 @@ public class RedProtectUtil extends CoreUtil {
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
+                    e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
@@ -289,6 +287,44 @@ public class RedProtectUtil extends CoreUtil {
                 }
 
                 if (!ignore && days > RedProtect.get().config.configRoot().purge.remove_oldest) {
+                    // Execute commands
+                    String c = "";
+                    try {
+                        if (!RedProtect.get().config.configRoot().purge.execute_commands.isEmpty()){
+                            RedProtect.get().config.configRoot().purge.execute_commands.forEach(cmd->{
+                                cmd = cmd
+                                        .replace("{world}", region.getWorld())
+                                        .replace("{region}", region.getName());
+                                if (cmd.contains("{leader}")){
+                                    final String[] cmdf = {cmd};
+                                    region.getLeaders().forEach(l->{
+                                        cmdf[0] = cmdf[0].replace("{leader}", l.getPlayerName());
+                                        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
+                                    });
+                                }
+                                if (cmd.contains("{admin}")){
+                                    final String[] cmdf = {cmd};
+                                    region.getAdmins().forEach(a->{
+                                        cmdf[0] = cmdf[0].replace("{admin}", a.getPlayerName());
+                                        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
+                                    });
+                                }
+                                if (cmd.contains("{member}")){
+                                    final String[] cmdf = {cmd};
+                                    region.getMembers().forEach(m->{
+                                        cmdf[0] = cmdf[0].replace("{member}", m.getPlayerName());
+                                        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
+                                    });
+                                }
+                            });
+                        }
+                    } catch (Exception e){
+                        RedProtect.get().logger.severe("There's an error on execute the command "+ c +" when purging the region " + region.getName());
+                        CoreUtil.printJarVersion();
+                        e.printStackTrace();
+                    }
+
+                    // Purge or Regen
                     if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().purge.regen.enabled) {
                         if (region.getArea() <= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
                             WEHook.regenRegion(region, Sponge.getServer().getWorld(region.getWorld()).get(), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
@@ -307,7 +343,7 @@ public class RedProtectUtil extends CoreUtil {
             }
 
 
-            //sell rergions
+            // Sell regions
             if (RedProtect.get().config.configRoot().sell.enabled && !serverRegion) {
                 Date regiondate = null;
                 try {
@@ -315,7 +351,7 @@ public class RedProtectUtil extends CoreUtil {
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     CoreUtil.printJarVersion();
-            e.printStackTrace();
+                    e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 

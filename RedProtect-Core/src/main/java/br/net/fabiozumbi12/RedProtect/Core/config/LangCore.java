@@ -103,7 +103,6 @@ public class LangCore {
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 

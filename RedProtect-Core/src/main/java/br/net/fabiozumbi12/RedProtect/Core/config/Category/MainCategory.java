@@ -247,6 +247,9 @@ public class MainCategory {
         public regenCat regen = new regenCat();
         @Setting(value = "remove-oldest", comment = "Remove regions where the leader not logged in for more than x days?")
         public int remove_oldest = 90;
+        @Setting(value = "execute-commands", comment = "Execute this commands when purging. The command will run for every leader, admin or member.\n" +
+                "Available Placeholders: {world} and {region} and {leader} or {admin} or {member}")
+        public List<String> execute_commands = new ArrayList<>();
 
         @ConfigSerializable
         public static class regenCat {

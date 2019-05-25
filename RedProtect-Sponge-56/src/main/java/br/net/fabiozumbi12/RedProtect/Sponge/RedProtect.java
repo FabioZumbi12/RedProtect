@@ -168,7 +168,6 @@ public class RedProtect {
 
         } catch (Exception e) {
             CoreUtil.printJarVersion();
-            CoreUtil.printJarVersion();
             e.printStackTrace();
 
             Sponge.getGame().getServer().setHasWhitelist(true);
