@@ -301,20 +301,22 @@ public class RedProtectUtil extends CoreUtil {
                                         cmdf[0] = cmdf[0].replace("{leader}", l.getPlayerName());
                                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
                                     });
-                                }
+                                } else
                                 if (cmd.contains("{admin}")){
                                     final String[] cmdf = {cmd};
                                     region.getAdmins().forEach(a->{
                                         cmdf[0] = cmdf[0].replace("{admin}", a.getPlayerName());
                                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
                                     });
-                                }
+                                } else
                                 if (cmd.contains("{member}")){
                                     final String[] cmdf = {cmd};
                                     region.getMembers().forEach(m->{
                                         cmdf[0] = cmdf[0].replace("{member}", m.getPlayerName());
                                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
                                     });
+                                } else {
+                                    Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmd);
                                 }
                             });
                         }

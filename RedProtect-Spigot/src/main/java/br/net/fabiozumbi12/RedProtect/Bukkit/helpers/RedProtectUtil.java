@@ -343,20 +343,22 @@ public class RedProtectUtil extends CoreUtil {
                                         cmdf[0] = cmdf[0].replace("{leader}", l.getPlayerName());
                                         RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmdf[0]);
                                     });
-                                }
+                                } else
                                 if (cmd.contains("{admin}")){
                                     final String[] cmdf = {cmd};
                                     region.getAdmins().forEach(a->{
                                         cmdf[0] = cmdf[0].replace("{admin}", a.getPlayerName());
                                         RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmdf[0]);
                                     });
-                                }
+                                } else
                                 if (cmd.contains("{member}")){
                                     final String[] cmdf = {cmd};
                                     region.getMembers().forEach(m->{
                                         cmdf[0] = cmdf[0].replace("{member}", m.getPlayerName());
                                         RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmdf[0]);
                                     });
+                                } else {
+                                    RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmd);
                                 }
                             });
                         }
