@@ -32,7 +32,7 @@
         <artifactId>RedProtect</artifactId>
         <version>7.6.0</version>
     </parent>
-    <artifactId>RedProtect-Spigot-1.13</artifactId>
+    <artifactId>RedProtect-Spigot-1.12</artifactId>
 
     <repositories>
         <repository>
@@ -65,10 +65,10 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.13.2-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.12.2-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
-        <finalName>DONT-DOWNLOAD-Spigot-1.13-Reference</finalName>
+        <finalName>DONT-DOWNLOAD-Spigot-1.12-Reference</finalName>
     </build>
 </project>

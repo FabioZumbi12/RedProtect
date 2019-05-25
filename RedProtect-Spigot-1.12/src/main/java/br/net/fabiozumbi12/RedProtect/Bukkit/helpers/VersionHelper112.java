@@ -28,21 +28,22 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Openable;
+import org.bukkit.material.Door;
 
 public class VersionHelper112 implements VersionHelper {
 
     public void toggleDoor(Block b) {
         BlockState state = b.getState();
-        Openable op = (Openable) state.getData();
-        op.setOpen(!op.isOpen());
-        state.setData((MaterialData) op);
+        Door op = (Door) state.getData();
+        if (!op.isOpen())
+            op.setOpen(true);
+        else
+            op.setOpen(false);
+        state.setData(op);
         state.update();
     }
 
     public boolean isOpenable(Block b) {
-        return b.getState().getData() instanceof Openable;
+        return b.getState().getData() instanceof Door;
     }
 }
-

@@ -28,16 +28,27 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class DoorManager {
 
+    private static Set<Block> blocks = new HashSet<>();
     public static void ChangeDoor(Block b, Region r) {
         if ((!r.flagExists("smart-door") && !RedProtect.get().config.configRoot().flags.get("smart-door")) || !r.getFlagBool("smart-door")) {
             return;
         }
+
+        if (!blocks.contains(b)){
+            blocks.add(b);
+            Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> blocks.remove(b), 1);
+        } else
+            return;
 
         if (b.getType().name().contains("IRON")) {
             b.getWorld().playEffect(b.getLocation(), Effect.DOOR_TOGGLE, 0);
