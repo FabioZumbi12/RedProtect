@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
@@ -330,6 +331,20 @@ public class CommandHandlers {
             RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(w));
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
+
+            // Handle money
+            if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+                long reco = r.getArea() * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+
+                if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
+                    reco = reco * Math.abs(r.getMaxY() - r.getMinY());
+                }
+
+                if (reco > 0) {
+                    RedProtect.get().economy.depositPlayer(p, reco);
+                    p.sendMessage(RedProtect.get().lang.get("economy.region.deleted").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name")));
+                }
+            }
         } else {
             RedProtect.get().lang.sendMessage(p, "no.permission");
         }

@@ -41,12 +41,14 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -351,6 +353,21 @@ public class CommandHandlers {
             RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(w).get());
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
+
+            // Handle money
+            if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
+                UniqueAccount acc = RedProtect.get().economy.getOrCreateAccount(p.getUniqueId()).get();
+                long reco = r.getArea() * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+
+                if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
+                    reco = reco * Math.abs(r.getMaxY() - r.getMinY());
+                }
+
+                if (reco > 0) {
+                    acc.deposit(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getVersionHelper().getCause(p));
+                    p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("economy.region.deleted").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
+                }
+            }
         } else {
             RedProtect.get().lang.sendMessage(p, "no.permission");
         }
