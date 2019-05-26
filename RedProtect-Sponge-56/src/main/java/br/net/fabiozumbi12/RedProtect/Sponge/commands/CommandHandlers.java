@@ -1092,10 +1092,10 @@ public class CommandHandlers {
                     }
                     i++;
 
-                    if (i > (page * 5) - 5 && i <= page * 5) {
+                    if (i > (page * 10) - 10 && i <= page * 10) {
                         player.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.help." + key).replace("{cmd}", getCmd(key)).replace("{alias}", getCmdAlias(key))));
                     }
-                    if (i > page * 5) {
+                    if (i > page * 10) {
                         sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         player.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.page").replace("{page}", "" + (page + 1))));
                         break;

@@ -52,7 +52,7 @@ public class MainCategory {
     @Setting(value = "flat-file", comment = "Options for flatfile database.")
     public flatFile flat_file = new flatFile();
     @Setting(comment = "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR-FR")
-    public String language = Locale.getDefault().getLanguage().toUpperCase() + "-" + Locale.getDefault().getCountry();
+    public String language = !Locale.getDefault().getLanguage().isEmpty() && !Locale.getDefault().getCountry().isEmpty() ? Locale.getDefault().getLanguage().toUpperCase() + "-" + Locale.getDefault().getCountry().toUpperCase() : "EN-US";
     @Setting(value = "log-actions", comment = "Log all redprotect commands?")
     public boolean log_actions = true;
     @Setting(comment = "Mysql options")
