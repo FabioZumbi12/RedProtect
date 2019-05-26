@@ -56,17 +56,14 @@ public class DefineRegionBuilder extends RegionBuilder {
         //filter name
         regionName = RedProtectUtil.setName(regionName);
 
-        //region name check
+        //region name conform
         if (regionName.length() < 3) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return;
-        }
-
-        //filter region name
-        regionName = RedProtectUtil.nameGen(p.getName(), p.getWorld().getName());
-        if (regionName.length() > 16) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
-            return;
+            //filter region name
+            regionName = RedProtectUtil.nameGen(p.getName(), p.getWorld().getName());
+            if (regionName.length() > 16) {
+                RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
+                return;
+            }
         }
 
         if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {

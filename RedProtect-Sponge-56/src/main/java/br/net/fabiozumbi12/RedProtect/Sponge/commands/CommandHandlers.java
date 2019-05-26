@@ -534,21 +534,21 @@ public class CommandHandlers {
         }
     }
 
-    public static void handletp(Player p, String rname, World world, Player play) {
+    public static void handletp(CommandSource source, String rname, World world, Player play) {
         Region region = RedProtect.get().rm.getRegion(rname, world);
         if (region == null) {
-            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + rname);
+            RedProtect.get().lang.sendMessage(source, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + rname);
             return;
         }
 
         if (play == null) {
-            if (!RedProtect.get().ph.hasRegionPermMember(p, "teleport", region)) {
-                RedProtect.get().lang.sendMessage(p, "no.permission");
+            if (source instanceof Player && !RedProtect.get().ph.hasRegionPermMember((Player) source, "teleport", region)) {
+                RedProtect.get().lang.sendMessage(source, "no.permission");
                 return;
             }
         } else {
-            if (!RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.teleport")) {
-                RedProtect.get().lang.sendMessage(p, "no.permission");
+            if (!RedProtect.get().ph.hasPerm(source, "redprotect.command.admin.teleport")) {
+                RedProtect.get().lang.sendMessage(source, "no.permission");
                 return;
             }
         }
@@ -576,9 +576,9 @@ public class CommandHandlers {
             if (play != null) {
                 play.setLocation(loc);
                 RedProtect.get().lang.sendMessage(play, RedProtect.get().lang.get("cmdmanager.region.teleport") + " " + rname);
-                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.tpother") + " " + rname);
-            } else {
-                tpWait(p, loc, rname);
+                RedProtect.get().lang.sendMessage(source, RedProtect.get().lang.get("cmdmanager.region.tpother") + " " + rname);
+            } else if (source instanceof Player) {
+                tpWait((Player)source, loc, rname);
             }
         }
     }
@@ -1103,30 +1103,30 @@ public class CommandHandlers {
                 }
             }
         } else {
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6kick <player> <region> <world> &3- Kicks a player from a region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6info <region> <world> &3- Info about a region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6flag <regionName> <Flag> <Value> <World> &3- Set a flag on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6flag info <region> <world> &3- Flag info for region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6addmember <player> <region> <world> &3- Add player as member on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6addadmin <player> <region> <world> &3- Add player as admin on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6addleader <player> <region> <world> &3- Add player as leader on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6removemember <player> <region> <world> &3- Remove a player as member on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6removeadmin <player> <region> <world> &3- Remove a player as admin on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6removeleader <player> <region> <world> &3- Remove a player as leader on region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6tp <player> <regionName> <World> &3- Teleport player to a region"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6blocklimit <player> &3- Area limit for player"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6claimlimit <player> [world] &3- Claim limit for player"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6list-all &3- List All regions"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6list <player> &3- List All player regions"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6list-areas &3- List All area exceeding regen limit"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6single-to-files &3- Convert single world files to regions files"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6files-to-single &3- Convert regions files to single world files"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6fileTomysql &3- Convert from File to Mysql"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6mysqlToFile &3- Convert from Mysql to File"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6save-all [-f] &3- Save all regions to database"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6load-all &3- Load all regions from database"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6reload-config &3- Reload only the config"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &cadmin &6reload &3- Reload the plugin"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &ckick &6<player> <region> <world> &3- Kicks a player from a region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cinfo &6<region> <world> &3- Info about a region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cflag &6<regionName> <Flag> <Value> <World> &3- Set a flag on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cflag &6info <region> <world> &3- Flag info for region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &caddmember &6<player> <region> <world> &3- Add player as member on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &caddadmin &6<player> <region> <world> &3- Add player as admin on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &caddleader &6<player> <region> <world> &3- Add player as leader on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cremovemember &6<player> <region> <world> &3- Remove a player as member on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cremoveadmin &6<player> <region> <world> &3- Remove a player as admin on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cremoveleader &6<player> <region> <world> &3- Remove a player as leader on region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &ctp &6<player> <regionName> <World> &3- Teleport player to a region"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cblocklimit &6<player> &3- Area limit for player"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cclaimlimit &6<player> [world] &3- Claim limit for player"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &clist-all &3- List All regions"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &clist &6<player> &3- List All player regions"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &clist-areas &3- List All area exceeding regen limit"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &csingle-to-files &3- Convert single world files to regions files"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cfiles-to-single &3- Convert regions files to single world files"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cfileTomysql &3- Convert from File to Mysql"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cmysqlToFile &3- Convert from Mysql to File"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &csave-all &6[-f] &3- Save all regions to database"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &cload-all &3- Load all regions from database"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &creload-config &3- Reload only the config"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &creload &3- Reload the plugin"));
         }
         sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
         if (RedProtect.get().ph.hasPerm(sender, "")) {

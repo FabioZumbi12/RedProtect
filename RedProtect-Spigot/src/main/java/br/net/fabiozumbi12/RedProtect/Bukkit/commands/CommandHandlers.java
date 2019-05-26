@@ -513,26 +513,26 @@ public class CommandHandlers {
         }
     }
 
-    public static void handletp(Player p, String rname, String wname, Player play) {
+    public static void handletp(CommandSender sender, String rname, String wname, Player play) {
         World w = RedProtect.get().getServer().getWorld(wname);
         if (w == null) {
-            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.invalidworld");
+            RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.invalidworld");
             return;
         }
         Region region = RedProtect.get().rm.getRegion(rname, w);
         if (region == null) {
-            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + rname);
+            RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + rname);
             return;
         }
 
         if (play == null) {
-            if (!RedProtect.get().ph.hasRegionPermMember(p, "teleport", region)) {
-                RedProtect.get().lang.sendMessage(p, "no.permission");
+            if (sender instanceof Player && !RedProtect.get().ph.hasRegionPermMember((Player) sender, "teleport", region)) {
+                RedProtect.get().lang.sendMessage(sender, "no.permission");
                 return;
             }
         } else {
-            if (!RedProtect.get().ph.hasPerm(p, "redprotect.command.admin.teleport")) {
-                RedProtect.get().lang.sendMessage(p, "no.permission");
+            if (!RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.teleport")) {
+                RedProtect.get().lang.sendMessage(sender, "no.permission");
                 return;
             }
         }
@@ -560,14 +560,14 @@ public class CommandHandlers {
 
         if (loc != null) {
             if (play != null) {
-                if (RedProtect.get().hooks.essentials) {
-                    RedProtect.get().hooks.pless.getUser(p).setLastLocation();
+                if (RedProtect.get().hooks.essentials && sender instanceof Player) {
+                    RedProtect.get().hooks.pless.getUser(sender).setLastLocation();
                 }
                 play.teleport(loc);
                 RedProtect.get().lang.sendMessage(play, RedProtect.get().lang.get("cmdmanager.region.teleport") + " " + rname);
-                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.tpother") + " " + rname);
-            } else {
-                tpWait(p, loc, rname);
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.tpother") + " " + rname);
+            } else if (sender instanceof Player){
+                tpWait((Player)sender, loc, rname);
             }
         }
     }
@@ -1148,32 +1148,32 @@ public class CommandHandlers {
                 }
             }
         } else {
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "kick <player> <region> <world> " + ChatColor.DARK_AQUA + "- Kick a player from a region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "clear-kicks " + ChatColor.DARK_AQUA + "- Clear all pendent kicks");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "info <region> <world> " + ChatColor.DARK_AQUA + "- Info about a region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "flag <regionName> <Flag> <Value> <World> " + ChatColor.DARK_AQUA + "- Set a flag on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "flag info <region> <world> " + ChatColor.DARK_AQUA + "- Flag info for region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "addmember <player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as member on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "addadmin <player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as admin on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "addleader <player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as leader on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "removemember <player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as member on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "removeadmin <player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as admin on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "removeleader <player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as leader on region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "teleport <playerName> <regionName> <World> " + ChatColor.DARK_AQUA + "- Teleport player to a region");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "blocklimit <playerName> " + ChatColor.DARK_AQUA + "- Area limit for player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "claimlimit <playerName> [world] " + ChatColor.DARK_AQUA + "- Claim limit for player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "list-areas " + ChatColor.DARK_AQUA + "- List All regions exceeding regen limit");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "list-all " + ChatColor.DARK_AQUA + "- List All regions");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "list <player> [page] " + ChatColor.DARK_AQUA + "- List All regions from player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "ymlTomysql " + ChatColor.DARK_AQUA + "- Convert from Yml to Mysql");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "mychunktorp " + ChatColor.DARK_AQUA + "- Convert from MyChunk to RedProtect");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single world files");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "save-all [-f]" + ChatColor.DARK_AQUA + "- Save all regions to world");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "load-all " + ChatColor.DARK_AQUA + "- Load all regions from world");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "reload-config " + ChatColor.DARK_AQUA + "- Reload only the config");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "admin " + ChatColor.GOLD + "reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "kick " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Kick a player from a region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "clear-kicks " + ChatColor.DARK_AQUA + "- Clear all pendent kicks");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "info " + ChatColor.GOLD + "<region> <world> " + ChatColor.DARK_AQUA + "- Info about a region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "flag " + ChatColor.GOLD + "<regionName> <Flag> <Value> <World> " + ChatColor.DARK_AQUA + "- Set a flag on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "flag " + ChatColor.GOLD + "info <region> <world> " + ChatColor.DARK_AQUA + "- Flag info for region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "addmember " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as member on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "addadmin " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as admin on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "addleader " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Add player as leader on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "removemember " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as member on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "removeadmin " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as admin on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "removeleader " + ChatColor.GOLD + "<player> <region> <world> " + ChatColor.DARK_AQUA + "- Remove a player as leader on region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "teleport " + ChatColor.GOLD + "<playerName> <regionName> <World> " + ChatColor.DARK_AQUA + "- Teleport player to a region");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "blocklimit " + ChatColor.GOLD + "<playerName> " + ChatColor.DARK_AQUA + "- Area limit for player");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "claimlimit " + ChatColor.GOLD + "<playerName> [world] " + ChatColor.DARK_AQUA + "- Claim limit for player");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list-areas " + ChatColor.DARK_AQUA + "- List All regions exceeding regen limit");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list-all " + ChatColor.DARK_AQUA + "- List All regions");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list " + ChatColor.GOLD + "<player> [page] " + ChatColor.DARK_AQUA + "- List All regions from player");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "ymlTomysql " + ChatColor.DARK_AQUA + "- Convert from Yml to Mysql");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "mychunktorp " + ChatColor.DARK_AQUA + "- Convert from MyChunk to RedProtect");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single world files");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "save-all " + ChatColor.GOLD + "[-f]" + ChatColor.DARK_AQUA + "- Save all regions to world");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "load-all " + ChatColor.DARK_AQUA + "- Load all regions from world");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "reload-config " + ChatColor.DARK_AQUA + "- Reload only the config");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
         }
         sender.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
         if (RedProtect.get().ph.hasPerm(sender, "")) {

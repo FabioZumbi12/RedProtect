@@ -42,20 +42,18 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class TeleportCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
+        if (!(sender instanceof Player) && args.length == 1) {
             CommandHandlers.HandleHelpPage(sender, 1);
             return true;
         }
 
-        Player player = (Player) sender;
-
-        if (args.length == 1) {
-            handletp(player, args[0], player.getWorld().getName(), null);
+        if (sender instanceof Player && args.length == 1) {
+            handletp(sender, args[0], ((Player)sender).getWorld().getName(), null);
             return true;
         }
 
         if (args.length == 2) {
-            handletp(player, args[0], args[1], null);
+            handletp(sender, args[0], args[1], null);
             return true;
         }
 
@@ -63,10 +61,10 @@ public class TeleportCommand implements SubCommand {
             // /rp teleport <region> <world> <player>
             Player play = RedProtect.get().getServer().getPlayer(args[2]);
             if (play != null) {
-                handletp(player, args[0], args[1], play);
+                handletp(sender, args[0], args[1], play);
                 return true;
             } else {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
                 return true;
             }
         }

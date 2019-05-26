@@ -1395,7 +1395,7 @@ public class PlayerListener implements Listener {
                 } else {
                     String[] cmds = r.getFlagString("set-portal").split(" ");
                     RedProtect.get().teleportDelay.add(p.getName());
-                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                    RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp teleport " + cmds[0] + " " + cmds[1] + " " + p.getName());
                     Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().config.configRoot().region_settings.portal_delay * 20);
                 }
             }

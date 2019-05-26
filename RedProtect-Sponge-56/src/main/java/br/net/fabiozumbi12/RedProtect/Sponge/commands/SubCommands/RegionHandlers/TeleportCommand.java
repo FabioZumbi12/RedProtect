@@ -26,12 +26,14 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handletp;
@@ -43,32 +45,31 @@ public class TeleportCommand {
                 .description(Text.of("Command to teleport to a region."))
                 .arguments(
                         GenericArguments.string(Text.of("region")),
-                        GenericArguments.optional(GenericArguments.string(Text.of("world"))),
+                        GenericArguments.optional(GenericArguments.world(Text.of("world"))),
                         GenericArguments.optional(GenericArguments.player(Text.of("player")))
                 )
                 .permission("redprotect.command.teleport")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
+                    if (!(src instanceof Player) && !args.hasAny("world") && !args.hasAny("player")){
                         HandleHelpPage(src, 1);
-                    } else {
-                        Player player = (Player) src;
+                        return CommandResult.success();
+                    }
 
-                        if (args.hasAny("player")) {
-                            Player play = args.<Player>getOne("player").get();
-                            World world = args.<World>getOne("world").get();
-                            String region = args.<String>getOne("region").get();
+                    if (args.hasAny("player")) {
+                        Player play = args.<Player>getOne("player").get();
+                        WorldProperties world = args.<WorldProperties>getOne("world").get();
+                        String region = args.<String>getOne("region").get();
 
-                            handletp(player, region, world, play);
-                        } else if (args.hasAny("world")) {
-                            String region = args.<String>getOne("region").get();
-                            World world = args.<World>getOne("world").get();
+                        handletp(src, region, Sponge.getServer().getWorld(world.getUniqueId()).get(), play);
+                    } else if (args.hasAny("world")) {
+                        String region = args.<String>getOne("region").get();
+                        WorldProperties world = args.<WorldProperties>getOne("world").get();
 
-                            handletp(player, region, world, null);
-                        } else {
-                            String region = args.<String>getOne("region").get();
+                        handletp(src, region, Sponge.getServer().getWorld(world.getUniqueId()).get(), null);
+                    } else if (src instanceof Player){
+                        String region = args.<String>getOne("region").get();
 
-                            handletp(player, region, player.getWorld(), null);
-                        }
+                        handletp(src, region, ((Player)src).getWorld(), null);
                     }
                     return CommandResult.success();
                 }).build();

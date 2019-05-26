@@ -50,7 +50,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+        if (loc1.getExtent().equals(loc2.getExtent()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
             RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, dist));
             return;

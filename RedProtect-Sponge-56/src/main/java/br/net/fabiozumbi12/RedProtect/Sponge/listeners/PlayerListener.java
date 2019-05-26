@@ -1342,7 +1342,7 @@ public class PlayerListener {
                     return;
                 } else {
                     String[] cmds = r.getFlagString("set-portal").split(" ");
-                    Sponge.getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), "rp admin teleport " + p.getName() + " " + cmds[0] + " " + cmds[1]);
+                    Sponge.getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), "rp teleport " + cmds[0] + " " + cmds[1] + " " + p.getName());
                     RedProtect.get().teleportDelay.add(p.getName());
                     Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(()->{
                         RedProtect.get().teleportDelay.remove(p.getName());

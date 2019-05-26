@@ -840,10 +840,12 @@ public class RedProtectUtil extends CoreUtil {
      * @param locs {@code List<Location>}.
      */
     public static void addBorder(final Player p, List<Location<World>> locs) {
-        for (final Location<World> loc : locs) {
-            p.sendBlockChange(loc.getBlockPosition(), RedProtect.get().config.getBorderMaterial().getDefaultState());
-
-            Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> p.resetBlockChange(loc.getBlockPosition()), RedProtect.get().config.configRoot().region_settings.border.time_showing, TimeUnit.SECONDS);
+        if (!locs.isEmpty()){
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.addingborder");
+            for (final Location<World> loc : locs) {
+                p.sendBlockChange(loc.getBlockPosition(), RedProtect.get().config.getBorderMaterial().getDefaultState());
+                Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> p.resetBlockChange(loc.getBlockPosition()), RedProtect.get().config.configRoot().region_settings.border.time_showing, TimeUnit.SECONDS);
+            }
         }
     }
 
