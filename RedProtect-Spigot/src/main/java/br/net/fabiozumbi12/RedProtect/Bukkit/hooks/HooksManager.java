@@ -56,17 +56,18 @@ public class HooksManager {
         bossBar = checkBM();
         myChunk = checkMyChunk();
         myPet = checkMyPet();
-        boolean mcMMO = checkMcMMo();
         magicCarpet = checkMagicCarpet();
         vault = checkVault();
-        boolean skillAPI = checkSkillAPI();
         pvpm = checkPvPm();
         essentials = checkEss();
         griefPrev = checkGriefPrev();
         worldEdit = checkWe();
         simpleClans = checkSC();
+        boolean infernalMobs = checkIMobs();
         boolean fac = checkFac();
         boolean placeHolderAPI = checkPHAPI();
+        boolean mcMMO = checkMcMMo();
+        boolean skillAPI = checkSkillAPI();
 
         if (vault) {
             RegisteredServiceProvider<Economy> rsp = RedProtect.get().getServer().getServicesManager().getRegistration(Economy.class);
@@ -79,6 +80,14 @@ public class HooksManager {
             }
         }
 
+        if (infernalMobs){
+            try{
+                RedProtect.get().getServer().getPluginManager().registerEvents(new InfernalMobsHook(), RedProtect.get());
+                RedProtect.get().logger.info("InfernalMobs found. Hooked.");
+            } catch (Exception ex){
+                RedProtect.get().logger.warning("Your InfernalMobs version is NOT compatible and has no API. Look for FabioZumbi12's version on Github!");
+            }
+        }
         if (pvpm) {
             RedProtect.get().logger.info("PvPManager found. Hooked.");
         }
@@ -136,7 +145,11 @@ public class HooksManager {
         }
     }
 
-    //check if plugin BossbarAPI is installed
+    private boolean checkIMobs() {
+        Plugin pIM = Bukkit.getPluginManager().getPlugin("InfernalMobs");
+        return pIM != null && pIM.isEnabled();
+    }
+
     private boolean checkBM() {
         Plugin pBM = Bukkit.getPluginManager().getPlugin("BossBarAPI");
         return pBM != null && pBM.isEnabled();

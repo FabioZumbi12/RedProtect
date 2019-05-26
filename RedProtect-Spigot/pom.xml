@@ -185,6 +185,14 @@
         </dependency>
 
         <dependency>
+            <groupId>InfernalMobs</groupId>
+            <artifactId>InfernalMobs</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/InfernalMobs-5.7.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
             <version>LATEST</version>

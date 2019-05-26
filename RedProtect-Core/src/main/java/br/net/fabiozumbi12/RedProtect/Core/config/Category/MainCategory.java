@@ -466,6 +466,17 @@ public class MainCategory {
             public boolean claim_over_rps = false;
         }
 
+        @Setting(value = "infernal-mobs", comment = "Bukkit only - Control Infernal Mobs natural spawning.")
+        public infernalCat infernal_mobs = new infernalCat();
+
+        @ConfigSerializable
+        public static class infernalCat {
+            @Setting(value = "allow-player-regions", comment = "Allow Infernal Mobs to natural spawn in player regions.")
+            public boolean allow_player_regions = false;
+            @Setting(value = "allow-server-regions", comment = "Allow Infernal Mobs to natural spawn on server regions.")
+            public boolean allow_server_regions = true;
+        }
+
         @Setting
         public dynmapCat dynmap = new dynmapCat();
 
