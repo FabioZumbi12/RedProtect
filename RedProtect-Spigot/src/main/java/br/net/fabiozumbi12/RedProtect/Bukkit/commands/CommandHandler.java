@@ -166,13 +166,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             }
             return executor.onCommand(sender, command, label, Arrays_copyOfRange(args, args.length));
         } else {
-            if (args.length == 0) {
+            if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
                 HandleHelpPage(sender, 1);
-                return true;
-            }
-
-            if (sender instanceof Player && !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
-                RedProtect.get().lang.sendMessage(sender, "cmdmanager.usefrom.player");
                 return true;
             }
 

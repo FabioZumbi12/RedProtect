@@ -72,13 +72,9 @@ public class CommandHandler {
 
                     CommandResult cmdr = CommandResult.empty();
                     String[] args = arguments.getAll("args").toArray(new String[arguments.getAll("args").size()]);
-                    
-                    if (args.length == 0){
+
+                    if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")){
                         HandleHelpPage(sender, 1);
-                        return cmdr;
-                    }
-                    if (sender instanceof Player && !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
-                        RedProtect.get().lang.sendMessage(sender, "cmdmanager.usefrom.player");
                         return cmdr;
                     }
 
