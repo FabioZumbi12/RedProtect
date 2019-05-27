@@ -1125,7 +1125,7 @@ public class CommandHandlers {
             sender.sendMessage(RedProtectUtil.toText("&6rp &cmysqlToFile &3- Convert from Mysql to File"));
             sender.sendMessage(RedProtectUtil.toText("&6rp &csave-all &6[-f] &3- Save all regions to database"));
             sender.sendMessage(RedProtectUtil.toText("&6rp &cload-all &3- Load all regions from database"));
-            sender.sendMessage(RedProtectUtil.toText("&6rp &creload-config &3- Reload only the config"));
+            sender.sendMessage(RedProtectUtil.toText("&6rp &creload-config &3- Reload only the configs"));
             sender.sendMessage(RedProtectUtil.toText("&6rp &creload &3- Reload the plugin"));
         }
         sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));

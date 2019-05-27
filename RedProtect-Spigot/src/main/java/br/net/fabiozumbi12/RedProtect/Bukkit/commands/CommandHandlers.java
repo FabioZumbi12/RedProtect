@@ -1169,9 +1169,9 @@ public class CommandHandlers {
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single world files");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "gpTorp " + ChatColor.DARK_AQUA + "- Convert from GriefPrevention to RedProtect");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "save-all " + ChatColor.GOLD + "[-f]" + ChatColor.DARK_AQUA + "- Save all regions to world");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "load-all " + ChatColor.DARK_AQUA + "- Load all regions from world");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "reload-config " + ChatColor.DARK_AQUA + "- Reload only the config");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "save-all " + ChatColor.GOLD + "[-f]" + ChatColor.DARK_AQUA + "- Save all regions to database");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "load-all " + ChatColor.DARK_AQUA + "- Load all regions from database");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "reload-config " + ChatColor.DARK_AQUA + "- Reload only the configs");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "reload " + ChatColor.DARK_AQUA + "- Reload the plugin");
         }
         sender.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
