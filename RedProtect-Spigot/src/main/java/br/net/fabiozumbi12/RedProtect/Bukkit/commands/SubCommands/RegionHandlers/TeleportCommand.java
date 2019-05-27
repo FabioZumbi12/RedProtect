@@ -27,12 +27,9 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -42,13 +39,8 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class TeleportCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player) && args.length == 1) {
-            CommandHandlers.HandleHelpPage(sender, 1);
-            return true;
-        }
-
         if (sender instanceof Player && args.length == 1) {
-            handletp(sender, args[0], ((Player)sender).getWorld().getName(), null);
+            handletp(sender, args[0], ((Player) sender).getWorld().getName(), null);
             return true;
         }
 

@@ -75,7 +75,7 @@ public class ClaimCommand {
                         if (args.hasAny("playerAdmin"))
                             addedAdmins.add(new PlayerRegion(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()), args.<String>getOne("playerAdmin").get()));
 
-                        RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name,  new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
+                        RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
                         if (rb2.ready()) {
                             Region r2 = rb2.build();
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");

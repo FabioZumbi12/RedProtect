@@ -38,18 +38,12 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.world.DimensionTypes;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.text.ParseException;
@@ -73,7 +67,7 @@ public class CommandHandler {
                     CommandResult cmdr = CommandResult.empty();
                     String[] args = arguments.getAll("args").toArray(new String[arguments.getAll("args").size()]);
 
-                    if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")){
+                    if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
                         HandleHelpPage(sender, 1);
                         return cmdr;
                     }
@@ -83,46 +77,46 @@ public class CommandHandler {
                             final boolean[] save = {false};
 
                             // Reset uuids
-                            RedProtect.get().rm.getAllRegions().forEach(r->{
-                                r.getLeaders().forEach(rp->{
-                                    if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                            RedProtect.get().rm.getAllRegions().forEach(r -> {
+                                r.getLeaders().forEach(rp -> {
+                                    if (RedProtectUtil.isUUIDs(rp.getUUID())) {
                                         rp.setUUID(rp.getPlayerName());
                                         save[0] = true;
                                     }
                                 });
-                                r.getAdmins().forEach(rp->{
-                                    if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                                r.getAdmins().forEach(rp -> {
+                                    if (RedProtectUtil.isUUIDs(rp.getUUID())) {
                                         rp.setUUID(rp.getPlayerName());
                                         save[0] = true;
                                     }
                                 });
-                                r.getMembers().forEach(rp->{
-                                    if (RedProtectUtil.isUUIDs(rp.getUUID())){
+                                r.getMembers().forEach(rp -> {
+                                    if (RedProtectUtil.isUUIDs(rp.getUUID())) {
                                         rp.setUUID(rp.getPlayerName());
                                         save[0] = true;
                                     }
                                 });
 
                                 // Set uuids for online players
-                                Sponge.getServer().getOnlinePlayers().forEach(p->{
+                                Sponge.getServer().getOnlinePlayers().forEach(p -> {
 
-                                    if (RedProtect.get().config.configRoot().online_mode){
+                                    if (RedProtect.get().config.configRoot().online_mode) {
 
                                         // Update player names based on uuids
-                                        r.getLeaders().forEach(rp->{
-                                            if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                        r.getLeaders().forEach(rp -> {
+                                            if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                                                 rp.setPlayerName(p.getName().toLowerCase());
                                                 r.setToSave(true);
                                             }
                                         });
-                                        r.getAdmins().forEach(rp->{
-                                            if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                        r.getAdmins().forEach(rp -> {
+                                            if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                                                 rp.setPlayerName(p.getName().toLowerCase());
                                                 r.setToSave(true);
                                             }
                                         });
-                                        r.getMembers().forEach(rp->{
-                                            if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                                        r.getMembers().forEach(rp -> {
+                                            if (rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString()) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                                                 rp.setPlayerName(p.getName().toLowerCase());
                                                 r.setToSave(true);
                                             }
@@ -131,20 +125,20 @@ public class CommandHandler {
                                     } else {
 
                                         // Update uuids based on player names
-                                        r.getLeaders().forEach(rp->{
-                                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                        r.getLeaders().forEach(rp -> {
+                                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                                                 rp.setUUID(p.getUniqueId().toString());
                                                 r.setToSave(true);
                                             }
                                         });
-                                        r.getAdmins().forEach(rp->{
-                                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                        r.getAdmins().forEach(rp -> {
+                                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                                                 rp.setUUID(p.getUniqueId().toString());
                                                 r.setToSave(true);
                                             }
                                         });
-                                        r.getMembers().forEach(rp->{
-                                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                                        r.getMembers().forEach(rp -> {
+                                            if (rp.getPlayerName().equalsIgnoreCase(p.getName()) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                                                 rp.setUUID(p.getUniqueId().toString());
                                                 r.setToSave(true);
                                             }
@@ -152,7 +146,7 @@ public class CommandHandler {
                                     }
                                 });
                             });
-                            if (save[0]){
+                            if (save[0]) {
                                 RedProtect.get().rm.saveAll(true);
                                 RedProtect.get().logger.success("Fixed some online players uuids!");
                             } else {
@@ -280,101 +274,7 @@ public class CommandHandler {
                         }
                     }
 
-                    if (args.length == 2) {
-
-                        //rp removeall <player>
-                        if (checkCmd(args[0], "removeall")) {
-                            int removed = RedProtect.get().rm.removeAll(args[1]);
-                            if (removed <= 0) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
-                            } else {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args[1]));
-                            }
-                            return cmdr;
-                        }
-
-                        //rp regenall <player>
-                        if (checkCmd(args[0], "regenall")) {
-                            int regen = RedProtect.get().rm.regenAll(args[1]);
-                            if (regen <= 0) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
-                            } else {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args[1]));
-                            }
-                            return cmdr;
-                        }
-
-                        //rp regen stop
-                        if (checkCmd(args[0], "regen") && args[1].equalsIgnoreCase("stop")) {
-                            if (!RedProtect.get().hooks.WE) {
-                                return cmdr;
-                            }
-                            RedProtectUtil.stopRegen = true;
-                            RedProtect.get().lang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
-                            return cmdr;
-                        }
-
-                        //rp clamilimit player
-                        if (checkCmd(args[0], "claimlimit")) {
-                            User offp = RedProtectUtil.getUser(args[1]);
-
-                            if (offp == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
-                                return cmdr;
-                            }
-                            int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
-                            if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
-                                return cmdr;
-                            }
-
-                            int currentUsed = RedProtect.get().rm.getLeaderRegions(offp.getUniqueId().toString()).size();
-                            sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
-                            return cmdr;
-                        }
-
-                        //rp limit player
-                        if (checkCmd(args[0], "blocklimit")) {
-                            User offp = RedProtectUtil.getUser(args[1]);
-
-                            if (offp == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
-                                return cmdr;
-                            }
-                            int limit = RedProtect.get().ph.getPlayerBlockLimit(offp);
-                            if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
-                                return cmdr;
-                            }
-
-                            int currentUsed = RedProtect.get().rm.getTotalRegionSize(offp.getUniqueId().toString(), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
-                            sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
-                            return cmdr;
-                        }
-
-                    }
-
                     if (args.length == 3) {
-
-                        //rp regen <region> <database>
-                        if (checkCmd(args[0], "regen")) {
-                            if (!RedProtect.get().hooks.WE) {
-                                return cmdr;
-                            }
-                            Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
-                            if (!w.isPresent()) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[1], w.get());
-                            if (r == null) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args[1]);
-                                return cmdr;
-                            }
-
-                            WEHook.regenRegion(r, w.get(), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
-                            return cmdr;
-                        }
 
                         //rp undo <region> <database>
                         if (args[0].equalsIgnoreCase("undo")) {
@@ -399,189 +299,15 @@ public class CommandHandler {
                             }
                             return cmdr;
                         }
-
-                        //rp clamilimit player world
-                        if (checkCmd(args[0], "claimlimit")) {
-                            User offp = RedProtectUtil.getUser(args[1]);
-
-                            Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
-                            if (!w.isPresent()) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
-                                return cmdr;
-                            }
-                            if (offp == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1])));
-                                return cmdr;
-                            }
-                            int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
-                            if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
-                                return cmdr;
-                            }
-
-                            int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString(), w.get()).size();
-                            sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
-                            return cmdr;
-                        }
-
-                        //rp info <region> <world>
-                        if (checkCmd(args[0], "info")) {
-                            if (Sponge.getServer().getWorld(args[2]).isPresent()) {
-                                Region r = RedProtect.get().rm.getRegion(args[1], Sponge.getServer().getWorld(args[2]).get());
-                                if (r != null) {
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
-                                    sender.sendMessage(r.info());
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
-                                } else {
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args[1]));
-                                }
-                            } else {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args[2]));
-                            }
-                            return cmdr;
-                        }
-                    }
-
-                    if (args.length == 4) {
-
-                        //rp addmember <player> <region> <world>
-                        if (checkCmd(args[0], "addmember")) {
-                            if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
-                            if (r == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
-                                return cmdr;
-                            }
-                            handleAddMember(sender, args[1], r);
-                            return cmdr;
-                        }
-
-                        //rp addadmin <player> <region> <world>
-                        if (checkCmd(args[0], "addadmin")) {
-                            if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
-                            if (r == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
-                                return cmdr;
-                            }
-                            handleAddAdmin(sender, args[1], r);
-                            return cmdr;
-                        }
-
-                        //rp addleader <player> <region> <world>
-                        if (checkCmd(args[0], "addleader")) {
-                            if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
-                            if (r == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
-                                return cmdr;
-                            }
-                            handleAddLeader(sender, args[1], r);
-                            return cmdr;
-                        }
-
-                        //rp removemember <player> <region> <world>
-                        if (checkCmd(args[0], "removemember")) {
-                            if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
-                            if (r == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
-                                return cmdr;
-                            }
-                            handleRemoveMember(sender, args[1], r);
-                            return cmdr;
-                        }
-
-                        //rp removeadmin <player> <region> <world>
-                        if (checkCmd(args[0], "removeadmin")) {
-                            if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
-                            if (r == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
-                                return cmdr;
-                            }
-                            handleRemoveAdmin(sender, args[1], r);
-                            return cmdr;
-                        }
-
-                        //rp removeleader <player> <region> <world>
-                        if (checkCmd(args[0], "removeleader")) {
-                            if (!RedProtect.get().getServer().getWorld(args[3]).isPresent()) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[2], args[3]);
-                            if (r == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[2]));
-                                return cmdr;
-                            }
-                            handleRemoveLeader(sender, args[1], r);
-                            return cmdr;
-                        }
-
-                        //rp flag info <region> <world>
-                        if (checkCmd(args[0], "flag") && checkCmd(args[1], "info")) {
-                            if (Sponge.getServer().getWorld(args[3]).isPresent()) {
-                                Region r = RedProtect.get().rm.getRegion(args[2], Sponge.getServer().getWorld(args[3]).get());
-                                if (r != null) {
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------"));
-                                    sender.sendMessage(r.getFlagInfo());
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
-                                } else {
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args[2]));
-                                }
-                            } else {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + args[3]));
-                            }
-                            return cmdr;
-                        }
-                    }
-
-                    if (args.length == 5) {
-                        /*/rp flag <regionName> <flag> <value> <world>*/
-                        if (checkCmd(args[0], "flag")) {
-                            World w = null;
-                            if (RedProtect.get().getServer().getWorld(args[4]).isPresent()) {
-                                w = RedProtect.get().getServer().getWorld(args[4]).get();
-                            }
-
-                            if (w == null) {
-                                sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + "&e rp flag <regionName> <flag> <value> <world>"));
-                                return cmdr;
-                            }
-                            Region r = RedProtect.get().rm.getRegion(args[1], w);
-                            if (r != null && (RedProtect.get().config.getDefFlags().contains(args[2]) || RedProtect.get().config.AdminFlags.contains(args[2]))) {
-                                Object objflag = RedProtectUtil.parseObject(args[3]);
-                                if (r.setFlag(RedProtect.get().getVersionHelper().getCause(sender), args[2], objflag)) {
-                                    sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[2] + "'") + " " + r.getFlagString(args[2])));
-                                    RedProtect.get().logger.addLog("Console changed flag " + args[2] + " to " + r.getFlagString(args[2]));
-                                }
-                                return cmdr;
-                            }
-                        }
                     }
 
                     if (args[0].equalsIgnoreCase("list-areas")) {
                         int Page = 1;
-                        if (args.length == 2){
+                        if (args.length == 2) {
                             try {
                                 Page = Integer.parseInt(args[1]);
-                            } catch (Exception ignored){}
+                            } catch (Exception ignored) {
+                            }
                         }
                         sender.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-------------------------------------------------"));
                         int regionsPage = RedProtect.get().config.configRoot().region_settings.region_list.region_per_page;
@@ -694,26 +420,6 @@ public class CommandHandler {
                         return cmdr;
                     }
 
-                    //rp list <player> [page]
-                    if (args.length >= 2 && checkCmd(args[0], "list")) {
-                        //rp list [player]
-                        if (args.length == 2) {
-                            getRegionforList(sender, args[1], 1);
-                            return cmdr;
-                        }
-                        //rp list [player] [page]
-                        if (args.length == 3) {
-                            try {
-                                int Page = Integer.parseInt(args[2]);
-                                getRegionforList(sender, args[1], Page);
-                                return cmdr;
-                            } catch (NumberFormatException e) {
-                                RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");
-                                return cmdr;
-                            }
-                        }
-                    }
-
                     if (args[0].equalsIgnoreCase("save-all")) {
                         RedProtect.get().logger.SaveLogs();
                         RedProtect.get().logger.success(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
@@ -738,9 +444,9 @@ public class CommandHandler {
                 .child(new LAcceptCommand().register(), getCmdKeys("laccept"))
                 .child(new LDenyCommand().register(), getCmdKeys("ldeny"))
                 .child(new NearCommand().register(), getCmdKeys("near"))
-                .child(new RegenAllCommand().register(), getCmdKeys("regen-all"))
+                .child(new RegenAllCommand().register(), getCmdKeys("regenall"))
                 .child(new RegenCommand().register(), getCmdKeys("regen"))
-                .child(new RemoveAllCommand().register(), getCmdKeys("remove-all"))
+                .child(new RemoveAllCommand().register(), getCmdKeys("removeall"))
                 .child(new StartCommand().register(), getCmdKeys("start"))
                 .child(new TutorialCommand().register(), getCmdKeys("tutorial"))
                 .child(new WandCommand().register(), getCmdKeys("wand"))

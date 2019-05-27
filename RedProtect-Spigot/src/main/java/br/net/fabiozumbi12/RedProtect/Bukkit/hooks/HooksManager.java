@@ -80,11 +80,11 @@ public class HooksManager {
             }
         }
 
-        if (infernalMobs){
-            try{
+        if (infernalMobs) {
+            try {
                 RedProtect.get().getServer().getPluginManager().registerEvents(new InfernalMobsHook(), RedProtect.get());
                 RedProtect.get().logger.info("InfernalMobs found. Hooked.");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 RedProtect.get().logger.warning("Your InfernalMobs version is NOT compatible and has no API. Look for FabioZumbi12's version on Github!");
             }
         }
@@ -134,7 +134,7 @@ public class HooksManager {
         }
     }
 
-    public void registerHooksLast(){
+    public void registerHooksLast() {
         Dyn = checkDyn();
         if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
             RedProtect.get().logger.info("Dynmap found. Hooked.");

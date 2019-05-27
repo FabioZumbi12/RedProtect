@@ -26,14 +26,19 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleInfo;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleInfoTop;
 
 public class InfoCommand {
 
@@ -45,18 +50,33 @@ public class InfoCommand {
                         GenericArguments.optional(GenericArguments.world(Text.of("world"))))
                 .permission("redprotect.command.info")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
+                    if (!(src instanceof Player) && args.hasAny("region") && args.hasAny("world")) {
+                        if (Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).isPresent()) {
+                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).get());
+                            if (r != null) {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                                src.sendMessage(r.info());
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                            } else {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args.<String>getOne("region").get()));
+                            }
+                        } else {
+                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args.<WorldProperties>getOne("world").get().getWorldName()));
+                        }
+                        return CommandResult.success();
+                    } else if (src instanceof Player) {
                         Player player = (Player) src;
                         if (args.hasAny("region") && args.hasAny("world")) {
-                            handleInfo(player, args.<String>getOne("region").get(), args.<World>getOne("world").get().getName());
+                            handleInfo(player, args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
                         } else if (args.hasAny("region")) {
                             handleInfo(player, args.<String>getOne("region").get(), "");
                         } else {
                             handleInfoTop(player);
                         }
+                        return CommandResult.success();
                     }
+
+                    RedProtect.get().lang.sendCommandHelp(src, "info", true);
                     return CommandResult.success();
                 }).build();
     }

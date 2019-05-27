@@ -26,9 +26,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.key.Keys;
@@ -89,8 +89,8 @@ public class EntityListener {
                 continue;
             }
 
-            if (e instanceof ArmorStand && RedProtect.get().config.configRoot().hooks.armor_stand_arms){
-                ArmorStand as = (ArmorStand)e;
+            if (e instanceof ArmorStand && RedProtect.get().config.configRoot().hooks.armor_stand_arms) {
+                ArmorStand as = (ArmorStand) e;
                 as.offer(Keys.ARMOR_STAND_HAS_ARMS, true);
             }
 

@@ -38,6 +38,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 
+import java.util.Optional;
+
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
 
 public class RegenCommand {
@@ -45,11 +47,30 @@ public class RegenCommand {
     public CommandSpec register() {
         return CommandSpec.builder()
                 .description(Text.of("Command to regenerate all player regions."))
+                .arguments(
+                        GenericArguments.optional(GenericArguments.string(Text.of("region"))),
+                        GenericArguments.optional(GenericArguments.string(Text.of("world")))
+                )
                 .permission("redprotect.command.regen")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
+                    if (!(src instanceof Player) && args.hasAny("region") && args.hasAny("world")) {
+                        if (!RedProtect.get().hooks.WE) {
+                            return CommandResult.success();
+                        }
+                        Optional<World> w = RedProtect.get().getServer().getWorld(args.<String>getOne("world").get());
+                        if (!w.isPresent()) {
+                            RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                            return CommandResult.success();
+                        }
+                        Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), w.get());
+                        if (r == null) {
+                            RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
+                            return CommandResult.success();
+                        }
+
+                        WEHook.regenRegion(r, w.get(), r.getMaxLocation(), r.getMinLocation(), 0, src, false);
+                        return CommandResult.success();
+                    } else if (src instanceof Player) {
                         Player player = (Player) src;
 
                         if (!RedProtect.get().hooks.WE) {
@@ -64,60 +85,23 @@ public class RegenCommand {
 
                         WEHook.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), 0, player, false);
                         return CommandResult.success();
-
                     }
+
+                    RedProtect.get().lang.sendCommandHelp(src, "regen", true);
                     return CommandResult.success();
                 })
 
                 //rp regen stop
                 .child(CommandSpec.builder()
                         .executor((src, args) -> {
-                            if (!(src instanceof Player)) {
-                                HandleHelpPage(src, 1);
-                            } else {
-                                Player player = (Player) src;
-
-                                if (!RedProtect.get().hooks.WE) {
-                                    return CommandResult.success();
-                                }
-
-                                RedProtectUtil.stopRegen = true;
-                                RedProtect.get().lang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
+                            if (!RedProtect.get().hooks.WE) {
                                 return CommandResult.success();
-
                             }
+
+                            RedProtectUtil.stopRegen = true;
+                            RedProtect.get().lang.sendMessage(src, "&aRegen will stop now. To continue reload the plugin!");
                             return CommandResult.success();
                         }).build(), "stop")
-
-                //rp regen <region> <world>
-                .child(CommandSpec.builder()
-                        .arguments(
-                                GenericArguments.string(Text.of("region")),
-                                GenericArguments.world(Text.of("world"))
-                        )
-                        .executor((src, args) -> {
-                            if (!(src instanceof Player)) {
-                                HandleHelpPage(src, 1);
-                            } else {
-                                Player player = (Player) src;
-
-                                if (!RedProtect.get().hooks.WE) {
-                                    return CommandResult.success();
-                                }
-
-                                Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<World>getOne("world").get().getName());
-                                if (r == null) {
-                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
-                                    return CommandResult.success();
-                                }
-
-                                WEHook.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), 0, player, false);
-                                return CommandResult.success();
-
-                            }
-                            return CommandResult.success();
-                        }).build())
-
                 .build();
     }
 

@@ -36,43 +36,58 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getRegionforList;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleList;
 
 public class ListCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-        //rp list
-        if (args.length == 0) {
-            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
-            return true;
-        }
-        //rp list [player|page]
-        if (args.length == 1) {
-            try {
-                int Page = Integer.parseInt(args[0]);
-                getRegionforList(sender, ((Player) sender).getUniqueId().toString(), Page);
-                return true;
-            } catch (NumberFormatException e) {
-                handleList(player, RedProtectUtil.PlayerToUUID(args[0]), 1);
+            //rp list [player]
+            if (args.length == 1) {
+                getRegionforList(sender, args[0], 1);
                 return true;
             }
-        }
-        //rp list [player] [page]
-        if (args.length == 2) {
-            try {
-                int Page = Integer.parseInt(args[1]);
-                handleList(player, RedProtectUtil.PlayerToUUID(args[0]), Page);
+            //rp list [player] [page]
+            if (args.length == 2) {
+                try {
+                    int Page = Integer.parseInt(args[1]);
+                    getRegionforList(sender, args[0], Page);
+                    return true;
+                } catch (NumberFormatException e) {
+                    RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");
+                    return true;
+                }
+            }
+        } else {
+            Player player = (Player) sender;
+
+            //rp list
+            if (args.length == 0) {
+                handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
                 return true;
-            } catch (NumberFormatException e) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");
-                return true;
+            }
+            //rp list [player|page]
+            if (args.length == 1) {
+                try {
+                    int Page = Integer.parseInt(args[0]);
+                    getRegionforList(sender, ((Player) sender).getUniqueId().toString(), Page);
+                    return true;
+                } catch (NumberFormatException e) {
+                    handleList(player, RedProtectUtil.PlayerToUUID(args[0]), 1);
+                    return true;
+                }
+            }
+            //rp list [player] [page]
+            if (args.length == 2) {
+                try {
+                    int Page = Integer.parseInt(args[1]);
+                    handleList(player, RedProtectUtil.PlayerToUUID(args[0]), Page);
+                    return true;
+                } catch (NumberFormatException e) {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");
+                    return true;
+                }
             }
         }
 

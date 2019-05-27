@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.schematics;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import org.bukkit.entity.Player;
 

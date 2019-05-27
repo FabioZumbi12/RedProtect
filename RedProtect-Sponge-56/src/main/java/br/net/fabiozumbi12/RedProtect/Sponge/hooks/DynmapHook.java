@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Sponge.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.DynmapCommonAPIListener;

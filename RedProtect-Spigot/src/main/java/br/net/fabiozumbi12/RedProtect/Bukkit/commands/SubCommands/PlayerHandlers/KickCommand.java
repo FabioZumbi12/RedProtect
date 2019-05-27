@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -39,69 +40,102 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
-
 public class KickCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-        if (args.length == 1 || args.length == 3) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-
+        if (args.length == 3 && sender instanceof ConsoleCommandSender) {
+            World w = RedProtect.get().getServer().getWorld(args[2]);
+            if (w == null) {
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                return true;
+            }
+            Region r = RedProtect.get().rm.getRegion(args[1], w);
             if (r == null) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
                 return true;
             }
 
-            if (args.length == 3) {
-                r = RedProtect.get().rm.getRegion(args[1], args[2]);
-                if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
-                    return true;
-                }
-            }
-
-            if (!RedProtect.get().ph.hasRegionPermMember(player, "kick", r)) {
-                RedProtect.get().lang.sendMessage(player, "no.permission");
-                return true;
-            }
-
-            Player visit = Bukkit.getPlayer(args[1]);
+            Player visit = Bukkit.getPlayer(args[0]);
             if (visit == null) {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.noplayer.online"));
                 return true;
             }
 
             if (r.canBuild(visit)) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.cantkick.member");
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.cantkick.member"));
                 return true;
             }
-
             Region rv = RedProtect.get().rm.getTopRegion(visit.getLocation());
             if (rv == null || !rv.getID().equals(r.getID())) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.noplayer.thisregion");
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.notonregion"));
                 return true;
             }
 
-            if (RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(r, player, visit)) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.cantkick.war");
-                return true;
-            }
+            RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
 
             String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
             if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                 RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time}", sec));
             } else {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
             }
             return true;
+        } else if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            if (args.length == 1 || args.length == 3) {
+                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+
+                if (r == null) {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                    return true;
+                }
+
+                if (args.length == 3) {
+                    r = RedProtect.get().rm.getRegion(args[1], args[2]);
+                    if (r == null) {
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                        return true;
+                    }
+                }
+
+                if (!RedProtect.get().ph.hasRegionPermMember(player, "kick", r)) {
+                    RedProtect.get().lang.sendMessage(player, "no.permission");
+                    return true;
+                }
+
+                Player visit = Bukkit.getPlayer(args[0]);
+                if (visit == null) {
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                    return true;
+                }
+
+                if (r.canBuild(visit)) {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.cantkick.member");
+                    return true;
+                }
+
+                Region rv = RedProtect.get().rm.getTopRegion(visit.getLocation());
+                if (rv == null || !rv.getID().equals(r.getID())) {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.noplayer.thisregion");
+                    return true;
+                }
+
+                if (RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(r, player, visit)) {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.cantkick.war");
+                    return true;
+                }
+
+                String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
+                if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
+                    RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
+                } else {
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
+                }
+                return true;
+            }
         }
 
         RedProtect.get().lang.sendCommandHelp(sender, "kick", true);

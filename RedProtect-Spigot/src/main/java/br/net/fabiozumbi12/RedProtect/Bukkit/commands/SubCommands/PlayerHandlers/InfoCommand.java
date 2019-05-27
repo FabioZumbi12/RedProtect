@@ -27,8 +27,10 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -36,30 +38,42 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleInfo;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleInfoTop;
 
 public class InfoCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
+        if (args.length == 2 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.info"))) {
+            if (Bukkit.getWorld(args[1]) != null) {
+                Region r = RedProtect.get().rm.getRegion(args[0], Bukkit.getWorld(args[1]));
+                if (r != null) {
+                    sender.sendMessage(RedProtect.get().lang.get("general.color") + "-----------------------------------------");
+                    sender.sendMessage(r.info());
+                    sender.sendMessage(RedProtect.get().lang.get("general.color") + "-----------------------------------------");
+                } else {
+                    RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[0]);
+                }
+            } else {
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid World: " + args[1]);
+            }
             return true;
-        }
+        } else if (sender instanceof Player) {
+            Player player = (Player) sender;
 
-        Player player = (Player) sender;
-
-        //rp info [region] [database]
-        if (args.length == 0) {
-            handleInfoTop(player);
-            return true;
-        }
-        if (args.length == 1) {
-            handleInfo(player, args[0], "");
-            return true;
-        }
-        if (args.length == 2) {
-            handleInfo(player, args[0], args[1]);
-            return true;
+            //rp info [region] [database]
+            if (args.length == 0) {
+                handleInfoTop(player);
+                return true;
+            }
+            if (args.length == 1) {
+                handleInfo(player, args[0], "");
+                return true;
+            }
+            if (args.length == 2) {
+                handleInfo(player, args[0], args[1]);
+                return true;
+            }
         }
 
         RedProtect.get().lang.sendCommandHelp(sender, "info", true);

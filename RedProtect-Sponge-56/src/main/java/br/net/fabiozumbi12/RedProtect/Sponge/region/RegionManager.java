@@ -26,12 +26,12 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.region;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldFlatFileRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldMySQLRegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.database.WorldRegionManager;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;

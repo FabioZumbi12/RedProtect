@@ -26,10 +26,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.world.ChangeWorldWeatherEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.world.World;

@@ -31,8 +31,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.PermissionHandler;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
@@ -51,10 +51,6 @@ import java.util.*;
 
 public class RedProtect extends JavaPlugin {
     private static RedProtect plugin;
-    private RedProtectAPI redProtectAPI;
-    private int autoSaveID;
-    private VersionHelper rpvHelper;
-
     public final List<String> confirmStart = new ArrayList<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public final HashMap<Player, Location> firstLocationSelections = new HashMap<>();
@@ -72,8 +68,10 @@ public class RedProtect extends JavaPlugin {
     public ConfigManager config;
     public LangManager lang;
     public LangGuiManager guiLang;
-
     public CommandHandler cmdHandler;
+    private RedProtectAPI redProtectAPI;
+    private int autoSaveID;
+    private VersionHelper rpvHelper;
 
     public static RedProtect get() {
         return plugin;

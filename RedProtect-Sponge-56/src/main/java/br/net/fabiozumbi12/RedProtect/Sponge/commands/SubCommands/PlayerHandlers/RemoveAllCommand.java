@@ -44,20 +44,14 @@ public class RemoveAllCommand {
                 .description(Text.of("Command to remove all player regions."))
                 .permission("redprotect.command.remove-all")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
+                    if (!RedProtect.get().hooks.WE) {
+                        return CommandResult.success();
+                    }
+                    int removed = RedProtect.get().rm.removeAll(args.<String>getOne("Player").get());
+                    if (removed <= 0) {
+                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
                     } else {
-                        Player player = (Player) src;
-
-                        if (!RedProtect.get().hooks.WE) {
-                            return CommandResult.success();
-                        }
-                        int removed = RedProtect.get().rm.removeAll(args.<String>getOne("Player").get());
-                        if (removed <= 0) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
-                        } else {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args.<String>getOne("Player").get()));
-                        }
+                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args.<String>getOne("Player").get()));
                     }
                     return CommandResult.success();
                 }).build();

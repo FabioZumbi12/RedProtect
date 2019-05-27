@@ -27,8 +27,9 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -36,22 +37,31 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleAddAdmin;
 
 public class AddAdminCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
+        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.addadmin"))) {
+            World w = RedProtect.get().getServer().getWorld(args[2]);
+            if (w == null) {
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                return true;
+            }
+            Region r = RedProtect.get().rm.getRegion(args[1], w);
+            if (r == null) {
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                return true;
+            }
+            handleAddAdmin(sender, args[0], r);
             return true;
-        }
+        } else if (sender instanceof Player) {
+            Player player = (Player) sender;
 
-        Player player = (Player) sender;
-
-        if (args.length == 1) {
-            handleAddAdmin(player, args[0], null);
-            return true;
+            if (args.length == 1) {
+                handleAddAdmin(player, args[0], null);
+                return true;
+            }
         }
 
         RedProtect.get().lang.sendCommandHelp(sender, "addadmin", true);

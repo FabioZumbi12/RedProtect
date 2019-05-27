@@ -28,8 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -119,7 +117,7 @@ public class FlagGui implements Listener {
                     this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                     ItemMeta guiMeta = this.guiItems[i].getItemMeta();
                     guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
-                    List<String> lore =  new ArrayList<>(Arrays.asList(
+                    List<String> lore = new ArrayList<>(Arrays.asList(
                             translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + fvalue),
                             "§0" + flag));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
@@ -135,7 +133,7 @@ public class FlagGui implements Listener {
                     this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                     this.guiItems[i].setItemMeta(guiMeta);
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 this.player.sendMessage(ChatColor.RED + "Seems RedProtect have a wrong Item Gui or a problem on guiconfig for flag " + flag);
             }
         }
@@ -215,7 +213,7 @@ public class FlagGui implements Listener {
                             applyFlag(flag, itemMeta, event);
                             RedProtectUtil.startFlagChanger(this.region.getName(), flag, player);
                         } else {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         }
                     } else {
                         applyFlag(flag, itemMeta, event);
@@ -255,7 +253,7 @@ public class FlagGui implements Listener {
             }
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        List<String> lore =  new ArrayList<>(Arrays.asList(
+        List<String> lore = new ArrayList<>(Arrays.asList(
                 translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString(String.valueOf(flagv))),
                 "§0" + flag));
         lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
@@ -280,11 +278,11 @@ public class FlagGui implements Listener {
     }
 
     public void open() {
-        for (Player player:Bukkit.getServer().getOnlinePlayers()){
-            if (player.getOpenInventory().getTopInventory().equals(this.inv)){
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().equals(this.inv)) {
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-                if (r != null && r.equals(this.region) && !player.equals(this.player)){
-                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
+                if (r != null && r.equals(this.region) && !player.equals(this.player)) {
+                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}", player.getName())});
                     return;
                 }
             }

@@ -36,57 +36,53 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
-
 public class RegenCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
-            return true;
-        }
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
 
-        Player player = (Player) sender;
-
-        if (!RedProtect.get().hooks.worldEdit) {
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.wenotloaded");
-            return true;
-        }
-
-        if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-            if (r == null) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+            if (!RedProtect.get().hooks.worldEdit) {
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.wenotloaded");
                 return true;
             }
-            WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
-            return true;
-        }
 
-        if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("undo")) {
+            if (args.length == 0) {
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r == null) {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
                     return true;
                 }
-
-                if (WEHook.undo(r.getID())) {
-                    RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
-                } else {
-                    RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
-                }
+                WEHook.regenRegion(r, Bukkit.getWorld(r.getWorld()), r.getMaxLocation(), r.getMinLocation(), 0, sender, false);
                 return true;
             }
 
+            if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("undo")) {
+                    Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                    if (r == null) {
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                        return true;
+                    }
+
+                    if (WEHook.undo(r.getID())) {
+                        RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+                    } else {
+                        RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+                    }
+                    return true;
+                }
+            }
+        }
+
+        if (args.length == 1) {
             if (args[0].equalsIgnoreCase("stop")) {
                 RedProtectUtil.stopRegen = true;
-                RedProtect.get().lang.sendMessage(player, "&aRegen will stop now. To continue reload the plugin!");
+                RedProtect.get().lang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
                 return true;
             }
         }

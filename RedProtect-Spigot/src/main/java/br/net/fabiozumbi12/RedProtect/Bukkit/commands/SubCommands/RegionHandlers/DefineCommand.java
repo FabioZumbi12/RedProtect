@@ -55,7 +55,7 @@ public class DefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader);
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
             String name = RedProtectUtil.nameGen(RedProtect.get().config.configRoot().region_settings.default_leader, player.getWorld().getName());
 
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
@@ -73,7 +73,7 @@ public class DefineCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader);
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), args[0], serverName, new HashSet<>(), true);
             if (rb2.ready()) {
                 Region r2 = rb2.build();

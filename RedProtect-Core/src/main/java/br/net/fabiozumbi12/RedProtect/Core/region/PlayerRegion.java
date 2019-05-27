@@ -62,7 +62,7 @@ public class PlayerRegion {
         this.playerName = playerName;
     }
 
-    public boolean contains(String option){
+    public boolean contains(String option) {
         return this.uuid.equalsIgnoreCase(option) || this.playerName.equalsIgnoreCase(option);
     }
 

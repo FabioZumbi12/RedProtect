@@ -458,15 +458,15 @@ public class CoreRegion implements Serializable {
         return false;
     }
 
-    public String getLeadersString(){
+    public String getLeadersString() {
         return serializeMembers(this.leaders);
     }
 
-    public String getAdminString(){
+    public String getAdminString() {
         return serializeMembers(this.admins);
     }
 
-    public String getMembersString(){
+    public String getMembersString() {
         return serializeMembers(this.members);
     }
 }

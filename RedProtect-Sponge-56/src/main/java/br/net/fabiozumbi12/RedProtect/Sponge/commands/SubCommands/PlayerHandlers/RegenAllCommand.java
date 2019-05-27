@@ -42,23 +42,16 @@ public class RegenAllCommand {
         return CommandSpec.builder()
                 .arguments(GenericArguments.string(Text.of("player")))
                 .description(Text.of("Command to regenerate all player regions."))
-                .permission("redprotect.command.regen-all")
+                .permission("redprotect.command.regenall")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
+                    if (!RedProtect.get().hooks.WE) {
+                        return CommandResult.success();
+                    }
+                    int regen = RedProtect.get().rm.regenAll(args.<String>getOne("player").get());
+                    if (regen <= 0) {
+                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
                     } else {
-                        Player player = (Player) src;
-
-                        if (!RedProtect.get().hooks.WE) {
-                            return CommandResult.success();
-                        }
-                        int regen = RedProtect.get().rm.regenAll(args.<String>getOne("player").get());
-                        if (regen <= 0) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
-                        } else {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args.<String>getOne("player").get()));
-                        }
-
+                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args.<String>getOne("player").get()));
                     }
                     return CommandResult.success();
                 }).build();

@@ -33,8 +33,6 @@ import java.util.*;
 
 @ConfigSerializable
 public class MainCategory {
-    public MainCategory(){}
-
     @Setting(value = "online-mode", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions and in offline mode)")
     public boolean online_mode = false;
     @Setting(value = "config-version", comment = "Don't touch <3")
@@ -81,9 +79,11 @@ public class MainCategory {
     public wandsCat wands = new wandsCat();
     @Setting
     public hooksCat hooks = new hooksCat();
-
     @Setting
     public schematicsCat schematics = new schematicsCat();
+
+    public MainCategory() {
+    }
 
     public MainCategory(boolean online_mode) {
         this.online_mode = online_mode;
@@ -138,6 +138,7 @@ public class MainCategory {
         public flagsDelay change_flag_delay = new flagsDelay();
         @Setting(value = "effects-duration", comment = "Delay for effects flags.")
         public int effects_duration = 5;
+
         @ConfigSerializable
         public static class flagsDelay {
             @Setting
@@ -437,6 +438,14 @@ public class MainCategory {
 
         @Setting(comment = "Bukkit only - Hook on McMMo")
         public mcmmoCat mcmmo = new mcmmoCat();
+        @Setting(comment = "Bukkit only - Hook on SimpleClans to use wars")
+        public clansCat clans = new clansCat();
+        @Setting(comment = "Bukkit only - Hook on Factions")
+        public facCat factions = new facCat();
+        @Setting(value = "infernal-mobs", comment = "Bukkit only - Control Infernal Mobs natural spawning.")
+        public infernalCat infernal_mobs = new infernalCat();
+        @Setting
+        public dynmapCat dynmap = new dynmapCat();
 
         @ConfigSerializable
         public static class mcmmoCat {
@@ -446,9 +455,6 @@ public class MainCategory {
             public boolean fix_berserk_invisibility = true;
         }
 
-        @Setting(comment = "Bukkit only - Hook on SimpleClans to use wars")
-        public clansCat clans = new clansCat();
-
         @ConfigSerializable
         public static class clansCat {
             @Setting(value = "use-war")
@@ -457,17 +463,11 @@ public class MainCategory {
             public boolean war_on_server_regions = false;
         }
 
-        @Setting(comment = "Bukkit only - Hook on Factions")
-        public facCat factions = new facCat();
-
         @ConfigSerializable
         public static class facCat {
             @Setting(value = "claim-over-rps")
             public boolean claim_over_rps = false;
         }
-
-        @Setting(value = "infernal-mobs", comment = "Bukkit only - Control Infernal Mobs natural spawning.")
-        public infernalCat infernal_mobs = new infernalCat();
 
         @ConfigSerializable
         public static class infernalCat {
@@ -476,9 +476,6 @@ public class MainCategory {
             @Setting(value = "allow-server-regions", comment = "Allow Infernal Mobs to natural spawn on server regions.")
             public boolean allow_server_regions = true;
         }
-
-        @Setting
-        public dynmapCat dynmap = new dynmapCat();
 
         @ConfigSerializable
         public static class dynmapCat {
@@ -525,8 +522,10 @@ public class MainCategory {
                 public String border_color;
                 @Setting(value = "border-weight")
                 public int border_weight;
+
                 public iconCat() {
                 }
+
                 public iconCat(String marker, double fill_op, String fill_col, double bord_op, String bord_col, int bord_weight) {
                     marker_icon = marker;
                     fill_color = fill_col;

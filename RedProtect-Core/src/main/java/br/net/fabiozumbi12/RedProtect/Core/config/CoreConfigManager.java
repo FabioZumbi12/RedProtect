@@ -41,23 +41,6 @@ import java.util.*;
 import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
-    public ConfigurationNode ecoCfgs;
-    protected ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
-    protected ConfigurationNode signCfgs;
-    protected ConfigurationLoader<CommentedConfigurationNode> signsLoader;
-    protected ConfigurationNode guiCfgRoot;
-    protected ConfigurationLoader<CommentedConfigurationNode> guiCfgLoader;
-    protected FlagGuiCategory guiRoot;
-    protected ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
-    protected ConfigurationNode gflagsRoot;
-    protected GlobalFlagsCategory globalFlagsRoot;
-    protected ConfigurationNode configRoot;
-    protected ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
-    protected MainCategory root;
-
-    public HashMap<String, String> backupGuiName = new HashMap<>();
-    public HashMap<String, String> backupGuiDescription = new HashMap<>();
-
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
@@ -105,6 +88,21 @@ public class CoreConfigManager {
             "particles",
             "dynmap",
             "deny-exit-items");
+    public ConfigurationNode ecoCfgs;
+    public HashMap<String, String> backupGuiName = new HashMap<>();
+    public HashMap<String, String> backupGuiDescription = new HashMap<>();
+    protected ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
+    protected ConfigurationNode signCfgs;
+    protected ConfigurationLoader<CommentedConfigurationNode> signsLoader;
+    protected ConfigurationNode guiCfgRoot;
+    protected ConfigurationLoader<CommentedConfigurationNode> guiCfgLoader;
+    protected FlagGuiCategory guiRoot;
+    protected ConfigurationLoader<CommentedConfigurationNode> gFlagsLoader;
+    protected ConfigurationNode gflagsRoot;
+    protected GlobalFlagsCategory globalFlagsRoot;
+    protected ConfigurationNode configRoot;
+    protected ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
+    protected MainCategory root;
 
     public HashMap<String, Object> getDefFlagsValues() {
         return new HashMap<>(root.flags);

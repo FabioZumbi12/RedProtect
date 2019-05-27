@@ -26,7 +26,6 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.helpers;
 
-import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
@@ -133,7 +132,7 @@ public class CoreUtil {
         return regionName;
     }
 
-    public static void printJarVersion(){
+    public static void printJarVersion() {
         String jarVersion = new File(CoreUtil.class.getProtectionDomain()
                 .getCodeSource()
                 .getLocation()

@@ -372,7 +372,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 if (Material.getMaterial("SIGN_POST") != null) {
                     newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
                 } else {
-                    newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m->m.name().endsWith("_SIGN")).findFirst().get());
+                    newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m -> m.name().endsWith("_SIGN")).findFirst().get());
                 }
                 Sign s = (Sign) newb.getState();
                 s.setLine(0, "§4xxxxxxxxxxxxxx");

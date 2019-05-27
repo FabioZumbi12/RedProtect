@@ -58,6 +58,8 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class GlobalListener implements Listener {
 
+    private final HashMap<World, Integer> rainCounter = new HashMap<>();
+
     public GlobalListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded GlobalListener...");
     }
@@ -140,16 +142,15 @@ public class GlobalListener implements Listener {
         return true;
     }
 
-    private final HashMap<World, Integer> rainCounter = new HashMap<>();
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onWeatherChange(WeatherChangeEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is onChangeWeather event");
-        
+
         World w = e.getWorld();
         if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather && !e.toWeatherState()) {
             e.setCancelled(true);
         }
-        
+
         int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
         if (e.toWeatherState()) {
             if (!rainCounter.containsKey(w)) {
@@ -167,7 +168,7 @@ public class GlobalListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onLeafDecay(LeavesDecayEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is LeavesDecayEvent event");
@@ -642,7 +643,7 @@ public class GlobalListener implements Listener {
                     }
                 }
                 if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                    if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getWorld().getName()).player_hurt_passives&& !p.hasPermission("redprotect.bypass.world")) {
+                    if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getWorld().getName()).player_hurt_passives && !p.hasPermission("redprotect.bypass.world")) {
                         e.setCancelled(true);
                         return;
                     }

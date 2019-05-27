@@ -523,7 +523,7 @@ public class CommandHandlers {
         }
         if (RedProtect.get().ph.hasRegionPermAdmin(p, "info", r)) {
             if (r == null) {
-                RedProtect.get().lang.sendMessage(p, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(p, "cmdmanager.region.doesntexist");
                 return;
             }
             p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "--------------- [&e" + r.getName() + RedProtect.get().lang.get("general.color") + "] ---------------"));
@@ -578,7 +578,7 @@ public class CommandHandlers {
                 RedProtect.get().lang.sendMessage(play, RedProtect.get().lang.get("cmdmanager.region.teleport") + " " + rname);
                 RedProtect.get().lang.sendMessage(source, RedProtect.get().lang.get("cmdmanager.region.tpother") + " " + rname);
             } else if (source instanceof Player) {
-                tpWait((Player)source, loc, rname);
+                tpWait((Player) source, loc, rname);
             }
         }
     }

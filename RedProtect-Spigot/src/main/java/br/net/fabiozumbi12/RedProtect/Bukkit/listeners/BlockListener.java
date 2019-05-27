@@ -185,9 +185,9 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onFallBlockPlace(EntitySpawnEvent e) {
-        if (e.getEntityType().equals(EntityType.FALLING_BLOCK)){
+        if (e.getEntityType().equals(EntityType.FALLING_BLOCK)) {
             Region r = RedProtect.get().rm.getTopRegion(e.getLocation());
-            if (r != null && !r.allowGravity()){
+            if (r != null && !r.allowGravity()) {
                 e.getEntity().remove();
             }
         }
@@ -300,9 +300,9 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if (r != null && r.canBuild(p) && b.getType().name().endsWith("_SIGN")){
+        if (r != null && r.canBuild(p) && b.getType().name().endsWith("_SIGN")) {
             Sign s = (Sign) b.getState();
-            if (s.getLine(0).equalsIgnoreCase("[flag]")){
+            if (s.getLine(0).equalsIgnoreCase("[flag]")) {
                 RedProtect.get().config.removeSign(r.getID(), b.getLocation());
                 return;
             }

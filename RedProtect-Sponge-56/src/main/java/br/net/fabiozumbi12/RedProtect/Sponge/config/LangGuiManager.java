@@ -51,7 +51,7 @@ public class LangGuiManager extends GuiLangCore {
                     RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
                 } else {
                     RedProtect.get().container.getAsset("guiEN-US.properties").get().copyToDirectory(RedProtect.get().configDir.toPath());
-                    new File(RedProtect.get().configDir,"guiEN-US.properties").renameTo(lang);
+                    new File(RedProtect.get().configDir, "guiEN-US.properties").renameTo(lang);
                 }
             } catch (IOException e) {
                 CoreUtil.printJarVersion();
@@ -64,11 +64,11 @@ public class LangGuiManager extends GuiLangCore {
         loadBaseLang();
 
         // Restore form backup
-        if (!RedProtect.get().config.backupGuiName.isEmpty()){
-            RedProtect.get().config.backupGuiName.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".name", v));
+        if (!RedProtect.get().config.backupGuiName.isEmpty()) {
+            RedProtect.get().config.backupGuiName.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".name", v));
         }
-        if (!RedProtect.get().config.backupGuiDescription.isEmpty()){
-            RedProtect.get().config.backupGuiDescription.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".description", v));
+        if (!RedProtect.get().config.backupGuiDescription.isEmpty()) {
+            RedProtect.get().config.backupGuiDescription.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".description", v));
         }
 
         updateLang();
@@ -92,7 +92,7 @@ public class LangGuiManager extends GuiLangCore {
 
     public String getFlagName(String flag) {
         String flagName = getRaw("gui.flags." + flag + ".name");
-        if (flagName == null){
+        if (flagName == null) {
             flagName = getRaw("gui.flags.default.name");
         }
         return flagName;
@@ -100,7 +100,7 @@ public class LangGuiManager extends GuiLangCore {
 
     public List<Text> getFlagDescription(String flag) {
         String flagDescription = getRaw("gui.flags." + flag + ".description");
-        if (flagDescription == null){
+        if (flagDescription == null) {
             flagDescription = getRaw("gui.flags.default.description");
         }
         return Arrays.stream(flagDescription.split("/n")).map(RedProtectUtil::toText).collect(Collectors.toList());

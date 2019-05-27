@@ -97,7 +97,7 @@ public class FlagGui {
 
                     this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
                     this.guiItems[i].offer(Keys.DISPLAY_NAME, RedProtectUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
-                    List<Text> lore =  new ArrayList<>(Arrays.asList(
+                    List<Text> lore = new ArrayList<>(Arrays.asList(
                             Text.joinWith(Text.of(" "), RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
                             RedProtectUtil.toText("&0" + flag)));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
@@ -276,11 +276,11 @@ public class FlagGui {
     }
 
     public void open() {
-        for (Player player:Sponge.getServer().getOnlinePlayers()){
-            if (player.getOpenInventory().isPresent() && player.getOpenInventory().get().getName().get().equals(this.inv.getName().get())){
+        for (Player player : Sponge.getServer().getOnlinePlayers()) {
+            if (player.getOpenInventory().isPresent() && player.getOpenInventory().get().getName().get().equals(this.inv.getName().get())) {
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
-                if (r != null && r.equals(this.region) && !player.equals(this.player)){
-                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}",player.getName())});
+                if (r != null && r.equals(this.region) && !player.equals(this.player)) {
+                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}", player.getName())});
                     return;
                 }
             }

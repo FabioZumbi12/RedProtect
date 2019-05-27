@@ -77,8 +77,8 @@ public class WEHook {
 
     private static void setSelection(SpongeWorld ws, Player p, Location pos1, Location pos2) {
         RegionSelector regs = SpongeWorldEdit.inst().getSession(p).getRegionSelector(ws);
-        regs.selectPrimary(new Vector(pos1.getX(),pos1.getY(),pos1.getZ()), null);
-        regs.selectSecondary(new Vector(pos2.getX(),pos2.getY(),pos2.getZ()), null);
+        regs.selectPrimary(new Vector(pos1.getX(), pos1.getY(), pos1.getZ()), null);
+        regs.selectSecondary(new Vector(pos2.getX(), pos2.getY(), pos2.getZ()), null);
         SpongeWorldEdit.inst().getSession(p).setRegionSelector(ws, regs);
         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.show")
                 .replace("{pos1}", pos1.getBlockX() + "," + pos1.getBlockY() + "," + pos1.getBlockZ())
@@ -120,7 +120,7 @@ public class WEHook {
         LocalSession session = SpongeWorldEdit.inst().getSession(p);
 
         Closer closer = Closer.create();
-        try  {
+        try {
             ClipboardFormat format = ClipboardFormat.findByAlias("schematic");
             FileInputStream fis = closer.register(new FileInputStream(file));
             BufferedInputStream bis = closer.register(new BufferedInputStream(fis));

@@ -50,11 +50,6 @@ public class TeleportCommand {
                 )
                 .permission("redprotect.command.teleport")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player) && !args.hasAny("world") && !args.hasAny("player")){
-                        HandleHelpPage(src, 1);
-                        return CommandResult.success();
-                    }
-
                     if (args.hasAny("player")) {
                         Player play = args.<Player>getOne("player").get();
                         WorldProperties world = args.<WorldProperties>getOne("world").get();
@@ -66,10 +61,10 @@ public class TeleportCommand {
                         WorldProperties world = args.<WorldProperties>getOne("world").get();
 
                         handletp(src, region, Sponge.getServer().getWorld(world.getUniqueId()).get(), null);
-                    } else if (src instanceof Player){
+                    } else if (src instanceof Player) {
                         String region = args.<String>getOne("region").get();
 
-                        handletp(src, region, ((Player)src).getWorld(), null);
+                        handletp(src, region, ((Player) src).getWorld(), null);
                     }
                     return CommandResult.success();
                 }).build();

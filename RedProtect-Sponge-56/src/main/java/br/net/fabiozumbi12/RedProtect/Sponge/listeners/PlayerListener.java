@@ -26,11 +26,11 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.EnterExitRegionEvent;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.DoorManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
@@ -418,7 +418,7 @@ public class PlayerListener {
                                         changeFlag(r, flag, p, sign);
                                         return;
                                     } else {
-                                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                                         return;
                                     }
                                 }
@@ -429,7 +429,7 @@ public class PlayerListener {
                     }
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
                     event.setCancelled(true);
-                } else if (!r.canSign(p)){
+                } else if (!r.canSign(p)) {
                     if (b.get(Keys.SIGN_LINES).isPresent()) {
                         List<Text> lines = b.get(Keys.SIGN_LINES).get();
                         for (String tag : RedProtect.get().config.configRoot().region_settings.allow_sign_interact_tags) {
@@ -1085,25 +1085,25 @@ public class PlayerListener {
         User p = e.getTargetUser();
         Sponge.getScheduler().createAsyncExecutor(RedProtect.get().container).execute(() -> {
 
-            if (RedProtect.get().config.configRoot().online_mode){
+            if (RedProtect.get().config.configRoot().online_mode) {
 
                 String uuid = p.getUniqueId().toString();
-                RedProtect.get().rm.getMemberRegions(uuid).forEach(r->{
+                RedProtect.get().rm.getMemberRegions(uuid).forEach(r -> {
                     // Update player names based on uuids
-                    r.getLeaders().forEach(rp->{
-                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                    r.getLeaders().forEach(rp -> {
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                             rp.setPlayerName(p.getName().toLowerCase());
                             r.setToSave(true);
                         }
                     });
-                    r.getAdmins().forEach(rp->{
-                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                    r.getAdmins().forEach(rp -> {
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                             rp.setPlayerName(p.getName().toLowerCase());
                             r.setToSave(true);
                         }
                     });
-                    r.getMembers().forEach(rp->{
-                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                    r.getMembers().forEach(rp -> {
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                             rp.setPlayerName(p.getName().toLowerCase());
                             r.setToSave(true);
                         }
@@ -1114,22 +1114,22 @@ public class PlayerListener {
             } else {
 
                 String pName = p.getName();
-                RedProtect.get().rm.getMemberRegions(pName).forEach(r->{
+                RedProtect.get().rm.getMemberRegions(pName).forEach(r -> {
                     // Update uuids based on player names
-                    r.getLeaders().forEach(rp->{
-                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                    r.getLeaders().forEach(rp -> {
+                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                             rp.setUUID(p.getUniqueId().toString());
                             r.setToSave(true);
                         }
                     });
-                    r.getAdmins().forEach(rp->{
-                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                    r.getAdmins().forEach(rp -> {
+                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                             rp.setUUID(p.getUniqueId().toString());
                             r.setToSave(true);
                         }
                     });
-                    r.getMembers().forEach(rp->{
-                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                    r.getMembers().forEach(rp -> {
+                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                             rp.setUUID(p.getUniqueId().toString());
                             r.setToSave(true);
                         }
@@ -1138,8 +1138,8 @@ public class PlayerListener {
 
             }
 
-            RedProtect.get().rm.getAdminRegions(p.getUniqueId().toString()).forEach(r->{
-                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))){
+            RedProtect.get().rm.getAdminRegions(p.getUniqueId().toString()).forEach(r -> {
+                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))) {
                     if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
                         r.setDate(RedProtectUtil.dateNow());
                     }
@@ -1337,14 +1337,14 @@ public class PlayerListener {
 
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
-                if (RedProtect.get().teleportDelay.contains(p.getName())){
+                if (RedProtect.get().teleportDelay.contains(p.getName())) {
                     //RedProtect.get().lang.sendMessage(p, "playerlistener.portal.wait");
                     return;
                 } else {
                     String[] cmds = r.getFlagString("set-portal").split(" ");
                     Sponge.getGame().getCommandManager().process(RedProtect.get().getServer().getConsole(), "rp teleport " + cmds[0] + " " + cmds[1] + " " + p.getName());
                     RedProtect.get().teleportDelay.add(p.getName());
-                    Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(()->{
+                    Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
                         RedProtect.get().teleportDelay.remove(p.getName());
                     }, RedProtect.get().config.configRoot().region_settings.portal_delay, TimeUnit.SECONDS);
                 }

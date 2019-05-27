@@ -317,7 +317,7 @@ public class PlayerListener implements Listener {
                                             changeFlag(r, flag, p, s);
                                             return;
                                         } else {
-                                            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                                            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                                             return;
                                         }
                                     }
@@ -911,7 +911,7 @@ public class PlayerListener implements Listener {
             }
 
             //enter max players flag
-            if (r.getMaxPlayers() != -1  && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.max-players")) {
+            if (r.getMaxPlayers() != -1 && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.max-players")) {
                 if (!checkMaxPlayer(p, r)) {
                     e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
@@ -1089,25 +1089,25 @@ public class PlayerListener implements Listener {
 
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
 
-            if (RedProtect.get().config.configRoot().online_mode){
+            if (RedProtect.get().config.configRoot().online_mode) {
 
                 String uuid = p.getUniqueId().toString();
-                RedProtect.get().rm.getMemberRegions(uuid).forEach(r->{
+                RedProtect.get().rm.getMemberRegions(uuid).forEach(r -> {
                     // Update player names based on uuids
-                    r.getLeaders().forEach(rp->{
-                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                    r.getLeaders().forEach(rp -> {
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                             rp.setPlayerName(p.getName().toLowerCase());
                             r.setToSave(true);
                         }
                     });
-                    r.getAdmins().forEach(rp->{
-                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                    r.getAdmins().forEach(rp -> {
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                             rp.setPlayerName(p.getName().toLowerCase());
                             r.setToSave(true);
                         }
                     });
-                    r.getMembers().forEach(rp->{
-                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())){
+                    r.getMembers().forEach(rp -> {
+                        if (rp.getUUID().equalsIgnoreCase(uuid) && !rp.getPlayerName().equalsIgnoreCase(p.getName())) {
                             rp.setPlayerName(p.getName().toLowerCase());
                             r.setToSave(true);
                         }
@@ -1118,22 +1118,22 @@ public class PlayerListener implements Listener {
             } else {
 
                 String pName = p.getName();
-                RedProtect.get().rm.getMemberRegions(pName).forEach(r->{
+                RedProtect.get().rm.getMemberRegions(pName).forEach(r -> {
                     // Update uuids based on player names
-                    r.getLeaders().forEach(rp->{
-                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                    r.getLeaders().forEach(rp -> {
+                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                             rp.setUUID(p.getUniqueId().toString());
                             r.setToSave(true);
                         }
                     });
-                    r.getAdmins().forEach(rp->{
-                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                    r.getAdmins().forEach(rp -> {
+                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                             rp.setUUID(p.getUniqueId().toString());
                             r.setToSave(true);
                         }
                     });
-                    r.getMembers().forEach(rp->{
-                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())){
+                    r.getMembers().forEach(rp -> {
+                        if (rp.getPlayerName().equalsIgnoreCase(pName) && !rp.getUUID().equalsIgnoreCase(p.getUniqueId().toString())) {
                             rp.setUUID(p.getUniqueId().toString());
                             r.setToSave(true);
                         }
@@ -1142,8 +1142,8 @@ public class PlayerListener implements Listener {
 
             }
 
-            RedProtect.get().rm.getAdminRegions(p.getUniqueId().toString()).forEach(r->{
-                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))){
+            RedProtect.get().rm.getAdminRegions(p.getUniqueId().toString()).forEach(r -> {
+                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))) {
                     if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
                         r.setDate(RedProtectUtil.dateNow());
                     }
@@ -1389,19 +1389,19 @@ public class PlayerListener implements Listener {
 
             //Check portal (/rp flag set-portal <rp> <world>
             if (r.flagExists("set-portal")) {
-                if (RedProtect.get().teleportDelay.contains(p.getName())){
+                if (RedProtect.get().teleportDelay.contains(p.getName())) {
                     //RedProtect.get().lang.sendMessage(p, "playerlistener.portal.wait");
                     return;
                 } else {
                     String[] cmds = r.getFlagString("set-portal").split(" ");
                     RedProtect.get().teleportDelay.add(p.getName());
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp teleport " + cmds[0] + " " + cmds[1] + " " + p.getName());
-                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().config.configRoot().region_settings.portal_delay * 20);
+                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().config.configRoot().region_settings.portal_delay * 20);
                 }
             }
 
             //Enter MagicCarpet
-            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet  && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.allow-magiccarpet")) {
+            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.allow-magiccarpet")) {
                 if (MagicCarpet.getCarpets().getCarpet(p) != null) {
                     MagicCarpet.getCarpets().remove(p);
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");

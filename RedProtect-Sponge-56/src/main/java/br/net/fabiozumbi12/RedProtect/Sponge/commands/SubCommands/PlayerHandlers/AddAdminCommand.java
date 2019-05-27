@@ -27,14 +27,15 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.storage.WorldProperties;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleAddAdmin;
 
 public class AddAdminCommand {
@@ -42,21 +43,34 @@ public class AddAdminCommand {
     public CommandSpec register() {
         return CommandSpec.builder()
                 .description(Text.of("Command to add admins to regions."))
-                .arguments(GenericArguments.string(Text.of("player")))
+                .arguments(
+                        GenericArguments.string(Text.of("player")),
+                        GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.string(Text.of("region")), "redprotect.command.admin.addadmin")),
+                        GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.world(Text.of("world")), "redprotect.command.admin.addadmin")))
                 .permission("redprotect.command.addadmin")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
-                        Player player = (Player) src;
+                    if (args.hasAny("region") && args.hasAny("world")) {
+                        String region = args.<String>getOne("region").get();
+                        WorldProperties worldProperties = args.<WorldProperties>getOne("world").get();
 
-                        if (args.hasAny("player")) {
-                            handleAddAdmin(player, args.<String>getOne("player").get(), null);
+                        if (!RedProtect.get().getServer().getWorld(worldProperties.getWorldName()).isPresent()) {
+                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                             return CommandResult.success();
                         }
-
-                        RedProtect.get().lang.sendCommandHelp(src, "addadmin", true);
+                        Region r = RedProtect.get().rm.getRegion(region, worldProperties.getWorldName());
+                        if (r == null) {
+                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region));
+                            return CommandResult.success();
+                        }
+                        handleAddAdmin(src, args.<String>getOne("player").get(), r);
+                        return CommandResult.success();
+                    } else if (src instanceof Player) {
+                        Player player = (Player) src;
+                        handleAddAdmin(player, args.<String>getOne("player").get(), null);
+                        return CommandResult.success();
                     }
+
+                    RedProtect.get().lang.sendCommandHelp(src, "addadmin", true);
                     return CommandResult.success();
                 }).build();
     }

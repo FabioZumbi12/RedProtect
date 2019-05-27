@@ -26,9 +26,9 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -77,6 +77,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class GlobalListener {
+
+    private final HashMap<World, Integer> rainCounter = new HashMap<>();
 
     public GlobalListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded GlobalListener...");
@@ -161,8 +163,8 @@ public class GlobalListener {
     }
 
     @Listener
-    public void onPlayerMove(MoveEntityEvent e){
-        if (e.getTargetEntity() instanceof Player){
+    public void onPlayerMove(MoveEntityEvent e) {
+        if (e.getTargetEntity() instanceof Player) {
             Player p = (Player) e.getTargetEntity();
 
             //set velocities
@@ -192,16 +194,16 @@ public class GlobalListener {
     }
 
     @Listener
-    public void onIceForm(ChangeBlockEvent e){
+    public void onIceForm(ChangeBlockEvent e) {
         Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getFinal().getLocation().get(), this.getClass().getName());
 
         if (r == null && (e.getTransactions().get(0).getOriginal().getState().getType().equals(BlockTypes.ICE) ||
-                e.getTransactions().get(0).getOriginal().getState().getType().equals(BlockTypes.FROSTED_ICE))){
-            if (e.getCause().containsType(Player.class)){
+                e.getTransactions().get(0).getOriginal().getState().getType().equals(BlockTypes.FROSTED_ICE))) {
+            if (e.getCause().containsType(Player.class)) {
                 if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getTransactions().get(0).getFinal().getLocation().get().getExtent().getName()).iceform_by.player) {
                     e.setCancelled(true);
                 }
-            } else if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getTransactions().get(0).getFinal().getLocation().get().getExtent().getName()).iceform_by.entity){
+            } else if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getTransactions().get(0).getFinal().getLocation().get().getExtent().getName()).iceform_by.entity) {
                 e.setCancelled(true);
             }
         }
@@ -219,7 +221,6 @@ public class GlobalListener {
             }
         }
     }
-
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onFlow(ChangeBlockEvent.Pre e, @First LocatableBlock locatable) {
@@ -311,7 +312,6 @@ public class GlobalListener {
         }
     }
 
-    private final HashMap<World, Integer> rainCounter = new HashMap<>();
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onChangeWeather(ChangeWorldWeatherEvent e) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onChangeWeather event");
@@ -387,7 +387,7 @@ public class GlobalListener {
                     loc.getBlock().getType().getName().contains("chorus_") ||
                     loc.getBlock().getType().getName().contains("beetroot_") ||
                     loc.getBlock().getType().getName().contains("sugar_cane"))
-                    && !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).allow_crop_trample && !p.hasPermission("redprotect.bypass.world")){
+                    && !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).allow_crop_trample && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
                 return;
             }

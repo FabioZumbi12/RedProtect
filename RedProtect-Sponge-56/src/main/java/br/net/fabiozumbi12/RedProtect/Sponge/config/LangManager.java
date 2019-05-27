@@ -30,12 +30,15 @@ import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getCmd;
@@ -54,7 +57,7 @@ public class LangManager extends LangCore {
                     RedProtect.get().container.getAsset(resLang).get().copyToDirectory(RedProtect.get().configDir.toPath());
                 } else {
                     RedProtect.get().container.getAsset("langEN-US.properties").get().copyToDirectory(RedProtect.get().configDir.toPath());
-                    new File(RedProtect.get().configDir,"langEN-US.properties").renameTo(lang);
+                    new File(RedProtect.get().configDir, "langEN-US.properties").renameTo(lang);
                 }
             } catch (IOException e) {
                 CoreUtil.printJarVersion();
@@ -124,6 +127,10 @@ public class LangManager extends LangCore {
     }
 
     public void sendCommandHelp(CommandSource sender, String cmd, boolean usage) {
+        if (sender instanceof ConsoleSource) {
+            CommandHandlers.HandleHelpPage(sender, 1);
+            return;
+        }
         if (usage) sendMessage(sender, "correct.usage");
         sender.sendMessage(RedProtectUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
     }

@@ -30,12 +30,14 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.FlagGui;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.*;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.World;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -54,9 +56,46 @@ public class FlagCommand {
                 )
                 .permission("redprotect.command.flag")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
+                    if (!(src instanceof Player) && args.hasAny("flag") && args.<String>getOne("flag").get().equalsIgnoreCase("info") && args.hasAny("value")) {
+                        String[] argsInfo = args.<String>getOne("value").get().split(" ");
+                        if (argsInfo.length == 2) {
+                            Optional<World> w = Sponge.getServer().getWorld(argsInfo[1]);
+                            if (!w.isPresent()) {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + argsInfo[1]));
+                                return CommandResult.success();
+                            }
+                            Region r = RedProtect.get().rm.getRegion(argsInfo[0], w.get());
+                            if (r == null) {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
+                                return CommandResult.success();
+                            }
+                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------"));
+                            src.sendMessage(r.getFlagInfo());
+                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+                            return CommandResult.success();
+                        }
+                    } else if (!(src instanceof Player) && args.hasAny("flag") && args.hasAny("value")) {
+                        String[] argsInfo = args.<String>getOne("value").get().split(" ");
+                        if (argsInfo.length >= 3) {
+                            String flag = argsInfo[0];
+                            Optional<World> w = Sponge.getServer().getWorld(argsInfo[2]);
+                            if (!w.isPresent()) {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + argsInfo[2]));
+                                return CommandResult.success();
+                            }
+                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("flag").get(), w.get());
+                            if (r == null) {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
+                                return CommandResult.success();
+                            }
+                            Object objflag = RedProtectUtil.parseObject(argsInfo[1]);
+                            if (r.setFlag(RedProtect.get().getVersionHelper().getCause(src), flag, objflag)) {
+                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagString(flag)));
+                                RedProtect.get().logger.addLog("Console changed flag " + flag + " to " + r.getFlagString(flag));
+                            }
+                            return CommandResult.success();
+                        }
+                    } else if (src instanceof Player) {
                         Player player = (Player) src;
 
                         Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
@@ -77,6 +116,9 @@ public class FlagCommand {
                                 value = args.<String>getOne("value").get();
                             }
 
+                            RedProtect.get().logger.severe("Flag: " + flag);
+                            RedProtect.get().logger.severe("Value: " + value);
+
                             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
@@ -89,11 +131,15 @@ public class FlagCommand {
                                 }
                             }
                             handleFlag(player, flag, value, r);
+                            return CommandResult.success();
                         } else {
                             FlagGui gui = new FlagGui(r.getName(), player, r, false, RedProtect.get().config.getGuiMaxSlot());
                             gui.open();
+                            return CommandResult.success();
                         }
                     }
+
+                    RedProtect.get().lang.sendCommandHelp(src, "flag", true);
                     return CommandResult.success();
                 }).build();
     }

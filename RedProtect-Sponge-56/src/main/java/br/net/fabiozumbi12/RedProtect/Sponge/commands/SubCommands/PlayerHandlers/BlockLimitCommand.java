@@ -42,47 +42,40 @@ public class BlockLimitCommand {
     public CommandSpec register() {
         return CommandSpec.builder()
                 .description(Text.of("Command to check block limits."))
-                .arguments(GenericArguments.optional(GenericArguments.string(Text.of("player"))))
+                .arguments(
+                        GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.string(Text.of("player")), "redprotect.command.admin.blocklimit")))
                 .permission("redprotect.command.blocklimit")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
+                    if (args.hasAny("player")) {
+                        User offp = RedProtectUtil.getUser(args.<String>getOne("player").get());
+
+                        if (offp == null) {
+                            RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get()));
+                            return CommandResult.success();
+                        }
+                        int limit = RedProtect.get().ph.getPlayerBlockLimit(offp);
+                        if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
+                            RedProtect.get().lang.sendMessage(src, "cmdmanager.nolimit");
+                            return CommandResult.success();
+                        }
+
+                        int currentUsed = RedProtect.get().rm.getTotalRegionSize(offp.getName(), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
+                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
+                        return CommandResult.success();
+                    } else if (src instanceof Player) {
                         Player player = (Player) src;
 
-                        if (!args.hasAny("player")) {
-                            int limit = RedProtect.get().ph.getPlayerBlockLimit(player);
-                            if (limit < 0 || RedProtect.get().ph.hasPerm(player, "redprotect.limits.blocks.unlimited")) {
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.nolimit");
-                                return CommandResult.success();
-                            }
-                            String uuid = player.getUniqueId().toString();
-                            int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName() : null);
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
+                        int limit = RedProtect.get().ph.getPlayerBlockLimit(player);
+                        if (limit < 0 || RedProtect.get().ph.hasPerm(player, "redprotect.limits.blocks.unlimited")) {
+                            RedProtect.get().lang.sendMessage(player, "cmdmanager.nolimit");
                             return CommandResult.success();
                         }
-
-                        if (args.hasAny("player") && RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.blocklimit")) {
-                            User offp = RedProtectUtil.getUser(args.<String>getOne("player").get());
-
-                            if (offp == null) {
-                                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get()));
-                                return CommandResult.success();
-                            }
-                            int limit = RedProtect.get().ph.getPlayerBlockLimit(offp);
-                            if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.nolimit");
-                                return CommandResult.success();
-                            }
-
-                            int currentUsed = RedProtect.get().rm.getTotalRegionSize(offp.getName(), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
-                            return CommandResult.success();
-                        }
-
-                        RedProtect.get().lang.sendCommandHelp(src, "blocklimit", true);
+                        String uuid = player.getUniqueId().toString();
+                        int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName() : null);
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
                         return CommandResult.success();
                     }
+                    RedProtect.get().lang.sendCommandHelp(src, "blocklimit", true);
                     return CommandResult.success();
                 }).build();
     }

@@ -290,28 +290,26 @@ public class RedProtectUtil extends CoreUtil {
                     // Execute commands
                     String c = "";
                     try {
-                        if (!RedProtect.get().config.configRoot().purge.execute_commands.isEmpty()){
-                            RedProtect.get().config.configRoot().purge.execute_commands.forEach(cmd->{
+                        if (!RedProtect.get().config.configRoot().purge.execute_commands.isEmpty()) {
+                            RedProtect.get().config.configRoot().purge.execute_commands.forEach(cmd -> {
                                 cmd = cmd
                                         .replace("{world}", region.getWorld())
                                         .replace("{region}", region.getName());
-                                if (cmd.contains("{leader}")){
+                                if (cmd.contains("{leader}")) {
                                     final String[] cmdf = {cmd};
-                                    region.getLeaders().forEach(l->{
+                                    region.getLeaders().forEach(l -> {
                                         cmdf[0] = cmdf[0].replace("{leader}", l.getPlayerName());
                                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
                                     });
-                                } else
-                                if (cmd.contains("{admin}")){
+                                } else if (cmd.contains("{admin}")) {
                                     final String[] cmdf = {cmd};
-                                    region.getAdmins().forEach(a->{
+                                    region.getAdmins().forEach(a -> {
                                         cmdf[0] = cmdf[0].replace("{admin}", a.getPlayerName());
                                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
                                     });
-                                } else
-                                if (cmd.contains("{member}")){
+                                } else if (cmd.contains("{member}")) {
                                     final String[] cmdf = {cmd};
-                                    region.getMembers().forEach(m->{
+                                    region.getMembers().forEach(m -> {
                                         cmdf[0] = cmdf[0].replace("{member}", m.getPlayerName());
                                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmdf[0]);
                                     });
@@ -320,8 +318,8 @@ public class RedProtectUtil extends CoreUtil {
                                 }
                             });
                         }
-                    } catch (Exception e){
-                        RedProtect.get().logger.severe("There's an error on execute the command "+ c +" when purging the region " + region.getName());
+                    } catch (Exception e) {
+                        RedProtect.get().logger.severe("There's an error on execute the command " + c + " when purging the region " + region.getName());
                         CoreUtil.printJarVersion();
                         e.printStackTrace();
                     }
@@ -673,7 +671,7 @@ public class RedProtectUtil extends CoreUtil {
                         counter++;
                     } catch (SQLException e) {
                         CoreUtil.printJarVersion();
-            e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }
@@ -713,7 +711,7 @@ public class RedProtectUtil extends CoreUtil {
                 addNewColumns(tableName);
             } catch (SQLException e) {
                 CoreUtil.printJarVersion();
-            e.printStackTrace();
+                e.printStackTrace();
                 RedProtect.get().logger.severe("There was an error while parsing SQL, redProtect will still with actual DB setting until you change the connection options or check if a Mysql service is running. Use /rp reload to try again");
             } finally {
                 if (st != null) {
@@ -840,7 +838,7 @@ public class RedProtectUtil extends CoreUtil {
      * @param locs {@code List<Location>}.
      */
     public static void addBorder(final Player p, List<Location<World>> locs) {
-        if (!locs.isEmpty()){
+        if (!locs.isEmpty()) {
             RedProtect.get().lang.sendMessage(p, "cmdmanager.addingborder");
             for (final Location<World> loc : locs) {
                 p.sendBlockChange(loc.getBlockPosition(), RedProtect.get().config.getBorderMaterial().getDefaultState());

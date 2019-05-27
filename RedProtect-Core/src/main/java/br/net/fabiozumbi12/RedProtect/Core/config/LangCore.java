@@ -97,9 +97,9 @@ public class LangCore {
 
         try {
             String header = "===================================================\n" +
-                            "   You can translate this file to your language    \n" +
-                            "     from our github: https://bit.ly/2IUMc7X       \n" +
-                            "===================================================";
+                    "   You can translate this file to your language    \n" +
+                    "     from our github: https://bit.ly/2IUMc7X       \n" +
+                    "===================================================";
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
             CoreUtil.printJarVersion();

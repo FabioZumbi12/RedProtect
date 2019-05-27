@@ -26,10 +26,10 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.actions.EncompassRegionBuilder;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionBuilder;
@@ -295,9 +295,9 @@ public class BlockListener {
             return;
         }
 
-        if (r != null && r.canBuild(p) && b.getState().getType().getName().equalsIgnoreCase("sign")){
+        if (r != null && r.canBuild(p) && b.getState().getType().getName().equalsIgnoreCase("sign")) {
             Sign s = (Sign) b.getLocation().get().getTileEntity().get();
-            if (s.lines().get(0).toPlain().equalsIgnoreCase("[flag]")){
+            if (s.lines().get(0).toPlain().equalsIgnoreCase("[flag]")) {
                 RedProtect.get().config.removeSign(r.getID(), b.getLocation().get());
                 return;
             }

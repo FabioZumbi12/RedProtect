@@ -30,7 +30,10 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.TreeSet;
 
 public class GuiLangCore {
 
@@ -84,9 +87,9 @@ public class GuiLangCore {
 
         try {
             String header = "===================================================\n" +
-                            "   You can translate this file to your language    \n" +
-                            "     from our github: https://bit.ly/2IUMc7X       \n" +
-                            "===================================================";
+                    "   You can translate this file to your language    \n" +
+                    "     from our github: https://bit.ly/2IUMc7X       \n" +
+                    "===================================================";
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
             CoreUtil.printJarVersion();

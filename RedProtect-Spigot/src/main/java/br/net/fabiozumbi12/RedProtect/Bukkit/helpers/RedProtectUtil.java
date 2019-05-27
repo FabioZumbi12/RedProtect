@@ -332,28 +332,26 @@ public class RedProtectUtil extends CoreUtil {
                     // Execute commands
                     String c = "";
                     try {
-                        if (!RedProtect.get().config.configRoot().purge.execute_commands.isEmpty()){
-                            RedProtect.get().config.configRoot().purge.execute_commands.forEach(cmd->{
+                        if (!RedProtect.get().config.configRoot().purge.execute_commands.isEmpty()) {
+                            RedProtect.get().config.configRoot().purge.execute_commands.forEach(cmd -> {
                                 cmd = cmd
                                         .replace("{world}", region.getWorld())
                                         .replace("{region}", region.getName());
-                                if (cmd.contains("{leader}")){
+                                if (cmd.contains("{leader}")) {
                                     final String[] cmdf = {cmd};
-                                    region.getLeaders().forEach(l->{
+                                    region.getLeaders().forEach(l -> {
                                         cmdf[0] = cmdf[0].replace("{leader}", l.getPlayerName());
                                         RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmdf[0]);
                                     });
-                                } else
-                                if (cmd.contains("{admin}")){
+                                } else if (cmd.contains("{admin}")) {
                                     final String[] cmdf = {cmd};
-                                    region.getAdmins().forEach(a->{
+                                    region.getAdmins().forEach(a -> {
                                         cmdf[0] = cmdf[0].replace("{admin}", a.getPlayerName());
                                         RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmdf[0]);
                                     });
-                                } else
-                                if (cmd.contains("{member}")){
+                                } else if (cmd.contains("{member}")) {
                                     final String[] cmdf = {cmd};
-                                    region.getMembers().forEach(m->{
+                                    region.getMembers().forEach(m -> {
                                         cmdf[0] = cmdf[0].replace("{member}", m.getPlayerName());
                                         RedProtectUtil.performCommand(Bukkit.getConsoleSender(), cmdf[0]);
                                     });
@@ -362,8 +360,8 @@ public class RedProtectUtil extends CoreUtil {
                                 }
                             });
                         }
-                    } catch (Exception e){
-                        RedProtect.get().logger.severe("There's an error on execute the command "+ c +" when purging the region " + region.getName());
+                    } catch (Exception e) {
+                        RedProtect.get().logger.severe("There's an error on execute the command " + c + " when purging the region " + region.getName());
                         CoreUtil.printJarVersion();
                         e.printStackTrace();
                     }
@@ -394,7 +392,7 @@ public class RedProtectUtil extends CoreUtil {
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     CoreUtil.printJarVersion();
-            e.printStackTrace();
+                    e.printStackTrace();
                 }
                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
@@ -726,7 +724,7 @@ public class RedProtectUtil extends CoreUtil {
                         counter++;
                     } catch (SQLException e) {
                         CoreUtil.printJarVersion();
-            e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }
@@ -768,7 +766,7 @@ public class RedProtectUtil extends CoreUtil {
                 throw new Exception("Couldn't connect to mysql!");
             } catch (SQLException e) {
                 CoreUtil.printJarVersion();
-            e.printStackTrace();
+                e.printStackTrace();
                 RedProtect.get().logger.severe("There was an error while parsing SQL, redProtect will still with actual DB setting until you change the connection options or check if a Mysql service is running. Use /rp reload to try again");
             } finally {
                 if (st != null) {

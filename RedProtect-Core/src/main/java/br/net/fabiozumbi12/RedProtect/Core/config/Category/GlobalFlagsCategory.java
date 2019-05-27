@@ -92,17 +92,6 @@ public class GlobalFlagsCategory {
 
         @Setting
         public weatherCat weather = new weatherCat();
-
-        @ConfigSerializable
-        public static class weatherCat {
-            @Setting(value = "allow-weather", comment = "Allow weather changes?")
-            public boolean allow_weather = true;
-            @Setting(value = "rain-time", comment = "The duration of weather rain.")
-            public int rain_time = 60;
-            @Setting(value = "attempts-before-rain", comment = "Every x attempts will rain.")
-            public int attempts_before_rain = 3;
-        }
-
         @Setting(value = "deny-item-usage", comment = "Control what items the player can use.")
         public denyItemUsage deny_item_usage = new denyItemUsage();
         @Setting(value = "on-enter-cmds", comment = "Execute this command on enter in this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
@@ -121,6 +110,10 @@ public class GlobalFlagsCategory {
         public boolean block_grow = true;
         @Setting(value = "command-ranges", comment = "Execute commands in certain coordinate ranges.")
         public Map<String, CommandRanges> command_ranges = createMap();
+        @Setting(value = "iceform-by")
+        public iceFormCat iceform_by = new iceFormCat();
+        @Setting(value = "player-velocity")
+        public playerVeloCat player_velocity = new playerVeloCat();
 
         private Map<String, CommandRanges> createMap() {
             Map<String, CommandRanges> map = new HashMap<>();
@@ -128,22 +121,26 @@ public class GlobalFlagsCategory {
             return map;
         }
 
-        @Setting(value = "iceform-by")
-        public iceFormCat iceform_by = new iceFormCat();
+        @ConfigSerializable
+        public static class weatherCat {
+            @Setting(value = "allow-weather", comment = "Allow weather changes?")
+            public boolean allow_weather = true;
+            @Setting(value = "rain-time", comment = "The duration of weather rain.")
+            public int rain_time = 60;
+            @Setting(value = "attempts-before-rain", comment = "Every x attempts will rain.")
+            public int attempts_before_rain = 3;
+        }
 
         @ConfigSerializable
-        public static class iceFormCat{
+        public static class iceFormCat {
             @Setting
             public boolean player = true;
             @Setting
             public boolean entity = true;
         }
 
-        @Setting(value = "player-velocity")
-        public playerVeloCat player_velocity = new playerVeloCat();
-
         @ConfigSerializable
-        public static class playerVeloCat{
+        public static class playerVeloCat {
             @Setting(value = "walk-speed")
             public float walk_speed = -1;
             @Setting(value = "fly-speed")

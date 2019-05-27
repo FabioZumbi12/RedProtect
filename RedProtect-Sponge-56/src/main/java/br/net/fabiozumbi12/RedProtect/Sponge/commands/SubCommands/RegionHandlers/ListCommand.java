@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -33,8 +34,8 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleList;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.getRegionforList;
 
 public class ListCommand {
 
@@ -47,9 +48,16 @@ public class ListCommand {
                 )
                 .permission("redprotect.command.list")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
+                    if (!(src instanceof Player) && args.hasAny("player|page")) {
+                        if (args.hasAny("page")) {
+                            int Page = args.<Integer>getOne("page").get();
+                            getRegionforList(src, args.<String>getOne("player|page").get(), Page);
+                            return CommandResult.success();
+                        } else {
+                            getRegionforList(src, args.<String>getOne("player|page").get(), 1);
+                            return CommandResult.success();
+                        }
+                    } else if (src instanceof Player) {
                         Player player = (Player) src;
 
                         if (args.hasAny("player|page")) {
@@ -70,8 +78,11 @@ public class ListCommand {
                             return CommandResult.success();
                         } else {
                             handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
+                            return CommandResult.success();
                         }
                     }
+
+                    RedProtect.get().lang.sendCommandHelp(src, "list", true);
                     return CommandResult.success();
                 }).build();
     }

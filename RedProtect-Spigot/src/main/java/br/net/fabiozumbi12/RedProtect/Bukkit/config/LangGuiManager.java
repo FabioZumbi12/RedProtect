@@ -55,11 +55,11 @@ public class LangGuiManager extends GuiLangCore {
         loadBaseLang();
 
         // Restore form backup
-        if (!RedProtect.get().config.backupGuiName.isEmpty()){
-            RedProtect.get().config.backupGuiName.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".name", v));
+        if (!RedProtect.get().config.backupGuiName.isEmpty()) {
+            RedProtect.get().config.backupGuiName.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".name", v));
         }
-        if (!RedProtect.get().config.backupGuiDescription.isEmpty()){
-            RedProtect.get().config.backupGuiDescription.forEach((k,v) -> loadedLang.put("gui.flags." + k + ".description", v));
+        if (!RedProtect.get().config.backupGuiDescription.isEmpty()) {
+            RedProtect.get().config.backupGuiDescription.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".description", v));
         }
 
         updateLang();
@@ -87,7 +87,7 @@ public class LangGuiManager extends GuiLangCore {
 
     public String getFlagName(String flag) {
         String flagName = getRaw("gui.flags." + flag + ".name");
-        if (flagName == null){
+        if (flagName == null) {
             flagName = getRaw("gui.flags.default.name");
         }
         return ChatColor.translateAlternateColorCodes('&', flagName);
@@ -95,7 +95,7 @@ public class LangGuiManager extends GuiLangCore {
 
     public List<String> getFlagDescription(String flag) {
         String flagDescription = getRaw("gui.flags." + flag + ".description");
-        if (flagDescription == null){
+        if (flagDescription == null) {
             flagDescription = getRaw("gui.flags.default.description");
         }
         return Arrays.asList(ChatColor.translateAlternateColorCodes('&', flagDescription).split("/n"));

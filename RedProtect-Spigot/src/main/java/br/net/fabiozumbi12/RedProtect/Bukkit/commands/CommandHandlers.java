@@ -32,7 +32,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
@@ -469,7 +468,7 @@ public class CommandHandlers {
     public static void handleInfoTop(Player p) {
         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
         if (r == null) {
-            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.todo.that");
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.doesntexist");
             return;
         }
         Map<Integer, Region> groupr = RedProtect.get().rm.getGroupRegion(p.getLocation());
@@ -566,8 +565,8 @@ public class CommandHandlers {
                 play.teleport(loc);
                 RedProtect.get().lang.sendMessage(play, RedProtect.get().lang.get("cmdmanager.region.teleport") + " " + rname);
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.tpother") + " " + rname);
-            } else if (sender instanceof Player){
-                tpWait((Player)sender, loc, rname);
+            } else if (sender instanceof Player) {
+                tpWait((Player) sender, loc, rname);
             }
         }
     }

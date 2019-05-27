@@ -53,7 +53,7 @@ public class KickCommand {
                 .permission("redprotect.command.kick")
                 .executor((src, args) -> {
                     Region r = null;
-                    if (!(src instanceof Player)){
+                    if (!(src instanceof Player)) {
                         if (!args.hasAny("region") && args.hasAny("world")) {
                             HandleHelpPage(src, 0);
                             return CommandResult.success();

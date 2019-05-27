@@ -35,16 +35,16 @@ public class HooksManager {
     public boolean WE;
     public boolean Dyn;
 
-    public void registerHooksFirst(){
+    public void registerHooksFirst() {
         WE = checkWE();
         Dyn = checkDM();
 
-        if (WE){
+        if (WE) {
             RedProtect.get().logger.info("WorldEdit found. Hooked.");
         }
     }
 
-    public void registerHooksLast(){
+    public void registerHooksLast() {
         if (Dyn) {
             RedProtect.get().logger.info("Dynmap found. Hooked.");
             RedProtect.get().logger.info("Loading Dynmap markers...");
@@ -60,7 +60,7 @@ public class HooksManager {
     }
 
     private boolean checkWE() {
-        return RedProtect.get().container.getDependencies().stream().anyMatch(d-> d.getId().equals("worldedit") &&
+        return RedProtect.get().container.getDependencies().stream().anyMatch(d -> d.getId().equals("worldedit") &&
                 Sponge.getPluginManager().getPlugin("worldedit").isPresent() &&
                 Sponge.getPluginManager().getPlugin("worldedit").get().getVersion().get().startsWith("6.1.9"));
     }

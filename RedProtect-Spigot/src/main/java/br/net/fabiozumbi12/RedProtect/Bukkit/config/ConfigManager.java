@@ -39,7 +39,10 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -48,7 +51,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.reflect.TypeToken.of;
 
@@ -91,8 +97,8 @@ public class ConfigManager extends CoreConfigManager {
             }
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Bukkit.getOnlineMode()));
 
-            if (!configRoot.getNode("flags-configuration","enabled-flags").isVirtual()){
-                configRoot.getNode("flags-configuration","enabled-flags").setValue(null);
+            if (!configRoot.getNode("flags-configuration", "enabled-flags").isVirtual()) {
+                configRoot.getNode("flags-configuration", "enabled-flags").setValue(null);
             }
 
             //Defaults per server
@@ -195,7 +201,7 @@ public class ConfigManager extends CoreConfigManager {
                     + "Strings containing the char & always need to be quoted";
 
             String guiFileName = "guiconfig" + configRoot().language + ".conf";
-            if (new File(RedProtect.get().getDataFolder(), guiFileName).exists()){
+            if (new File(RedProtect.get().getDataFolder(), guiFileName).exists()) {
                 new File(RedProtect.get().getDataFolder(), guiFileName).renameTo(new File(RedProtect.get().getDataFolder(), "guiconfig.conf"));
             }
             guiCfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "guiconfig.conf")).build();
@@ -211,28 +217,28 @@ public class ConfigManager extends CoreConfigManager {
             this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
             // Import old gui translations
-            if (guiCfgRoot.getNode("gui-strings").getValue() != null){
+            if (guiCfgRoot.getNode("gui-strings").getValue() != null) {
                 guiCfgRoot.removeChild("gui-strings");
-                for (Map.Entry<Object, ? extends ConfigurationNode> key:guiCfgRoot.getNode("gui-flags").getChildrenMap().entrySet()){
-                    if (key.getValue().getNode("name").getValue() != null){
+                for (Map.Entry<Object, ? extends ConfigurationNode> key : guiCfgRoot.getNode("gui-flags").getChildrenMap().entrySet()) {
+                    if (key.getValue().getNode("name").getValue() != null) {
                         backupGuiName.put(key.getKey().toString(), key.getValue().getNode("name").getString());
                         key.getValue().removeChild("name");
                     }
                     StringBuilder description = new StringBuilder();
-                    if (key.getValue().getNode("description").getValue() != null){
+                    if (key.getValue().getNode("description").getValue() != null) {
                         description.append(key.getValue().getNode("description").getString()).append("/n");
                         key.getValue().removeChild("description");
                     }
-                    if (key.getValue().getNode("description1").getValue() != null){
+                    if (key.getValue().getNode("description1").getValue() != null) {
                         description.append(key.getValue().getNode("description1").getString()).append("/n");
                         key.getValue().removeChild("description1");
                     }
-                    if (key.getValue().getNode("description2").getValue() != null){
+                    if (key.getValue().getNode("description2").getValue() != null) {
                         description.append(key.getValue().getNode("description2").getString()).append("/n");
                         key.getValue().removeChild("description2");
                     }
-                    if (description.length() > 0){
-                        backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length()-2));
+                    if (description.length() > 0) {
+                        backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length() - 2));
                     }
                 }
             }
@@ -273,7 +279,7 @@ public class ConfigManager extends CoreConfigManager {
                 this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("GLASS_BOTTLE", 26));
             }
 
-            for (String key: getDefFlagsValues().keySet()) {
+            for (String key : getDefFlagsValues().keySet()) {
                 this.guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag("GOLDEN_APPLE", 0));
             }
 

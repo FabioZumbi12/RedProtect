@@ -39,14 +39,15 @@ import java.util.Set;
 public class DoorManager {
 
     private static Set<Block> blocks = new HashSet<>();
+
     public static void ChangeDoor(Block b, Region r) {
         if ((!r.flagExists("smart-door") && !RedProtect.get().config.configRoot().flags.get("smart-door")) || !r.getFlagBool("smart-door")) {
             return;
         }
 
-        if (!blocks.contains(b)){
+        if (!blocks.contains(b)) {
             blocks.add(b);
-            Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> blocks.remove(b), 1);
+            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> blocks.remove(b), 1);
         } else
             return;
 

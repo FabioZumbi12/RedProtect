@@ -27,15 +27,17 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.config.LangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.*;
+import java.io.File;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmdAlias;
@@ -81,7 +83,7 @@ public class LangManager extends LangCore {
     }
 
     private void updateLang() {
-        if (updateLang(RedProtect.get().getDescription().getVersion())){
+        if (updateLang(RedProtect.get().getDescription().getVersion())) {
             RedProtect.get().logger.warning("- Removed invalid entries from language files");
         }
     }
@@ -119,6 +121,10 @@ public class LangManager extends LangCore {
     }
 
     public void sendCommandHelp(CommandSender sender, String cmd, boolean usage) {
+        if (sender instanceof ConsoleCommandSender) {
+            CommandHandlers.HandleHelpPage(sender, 1);
+            return;
+        }
         if (usage) sendMessage(sender, "correct.usage");
         sender.sendMessage(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd)));
     }

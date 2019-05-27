@@ -31,6 +31,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.FlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -41,44 +44,112 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleFlag;
 
 public class FlagCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
-            HandleHelpPage(sender, 1);
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-        if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-            if (r != null) {
-                if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")) {
-                    FlagGui gui = new FlagGui(RedProtectUtil.getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
-                    gui.open();
+        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag"))) {
+            if (Bukkit.getWorld(args[2]) != null) {
+                Region r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[2]));
+                if (r != null) {
+                    sender.sendMessage(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------");
+                    sender.sendMessage(r.getFlagInfo());
+                    sender.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
                 } else {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.flag.nopermregion");
+                    RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
                 }
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid World: " + args[2]);
             }
             return true;
-        }
+        } else if (args.length == 4 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag"))) {
+            World w = RedProtect.get().getServer().getWorld(args[3]);
+            if (w == null) {
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + ChatColor.YELLOW + " rp " + getCmd("flag") + " <regionName> <flag> <value> <database>");
+                return true;
+            }
+            Region r = RedProtect.get().rm.getRegion(args[0], w);
+            if (r != null && (RedProtect.get().config.getDefFlags().contains(args[1]) || RedProtect.get().config.AdminFlags.contains(args[1]))) {
+                Object objflag = RedProtectUtil.parseObject(args[2]);
+                r.setFlag(sender, args[1], objflag);
+                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[1] + "'") + " " + r.getFlagString(args[1]));
+                RedProtect.get().logger.addLog("Console changed flag " + args[1] + " to " + r.getFlagString(args[1]));
+                return true;
+            }
+        } else if (sender instanceof Player) {
+            Player player = (Player) sender;
 
-        if (args.length == 1) {
+            if (args.length == 0) {
+                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                if (r != null) {
+                    if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")) {
+                        FlagGui gui = new FlagGui(RedProtectUtil.getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
+                        gui.open();
+                    } else {
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.flag.nopermregion");
+                    }
+                } else {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                }
+                return true;
+            }
+
+            if (args.length == 1) {
+                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                if (r == null) {
+                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                    return true;
+                }
+
+                if (args[0].equalsIgnoreCase("gui-edit")) {
+                    if (RedProtect.get().ph.hasCommandPerm(player, "gui-edit")) {
+                        FlagGui gui = new FlagGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, RedProtect.get().config.getGuiMaxSlot());
+                        gui.open();
+                    } else {
+                        RedProtect.get().lang.sendMessage(player, "no.permission");
+                    }
+                    return true;
+                }
+
+                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                    if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[0])) {
+                        if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
+                            RedProtectUtil.startFlagChanger(r.getName(), args[0], player);
+                            handleFlag(player, args[0], "", r);
+                            return true;
+                        } else {
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                            return true;
+                        }
+                    }
+                }
+                handleFlag(player, args[0], "", r);
+                return true;
+            }
+
+
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r == null) {
                 RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
 
-            if (args[0].equalsIgnoreCase("gui-edit")) {
+            if (args.length == 2 && args[0].equalsIgnoreCase("gui-edit")) {
                 if (RedProtect.get().ph.hasCommandPerm(player, "gui-edit")) {
-                    FlagGui gui = new FlagGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, RedProtect.get().config.getGuiMaxSlot());
+                    int MaxSlot;
+                    try {
+                        MaxSlot = 9 * Integer.parseInt(args[1]);
+                        if (MaxSlot > 54 || MaxSlot < RedProtect.get().config.getGuiMaxSlot()) {
+                            RedProtect.get().lang.sendMessage(player, "gui.edit.invalid-lines");
+                            return true;
+                        }
+                    } catch (NumberFormatException e) {
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalid.number");
+                        return true;
+                    }
+                    FlagGui gui = new FlagGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, MaxSlot);
                     gui.open();
                 } else {
                     RedProtect.get().lang.sendMessage(player, "no.permission");
@@ -86,68 +157,27 @@ public class FlagCommand implements SubCommand {
                 return true;
             }
 
+            StringBuilder text = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                text.append(" ").append(args[i]);
+            }
             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
-                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[0])) {
-                    if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
-                        RedProtectUtil.startFlagChanger(r.getName(), args[0], player);
-                        handleFlag(player, args[0], "", r);
+                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[1])) {
+                    if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
+                        RedProtectUtil.startFlagChanger(r.getName(), args[1], player);
+                        handleFlag(player, args[1], text.substring(1), r);
                         return true;
                     } else {
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         return true;
                     }
                 }
             }
-            handleFlag(player, args[0], "", r);
+            handleFlag(player, args[0], text.substring(1), r);
             return true;
         }
 
-
-        Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-        if (r == null) {
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
-            return true;
-        }
-
-        if (args.length == 2 && args[0].equalsIgnoreCase("gui-edit")) {
-            if (RedProtect.get().ph.hasCommandPerm(player, "gui-edit")) {
-                int MaxSlot;
-                try {
-                    MaxSlot = 9 * Integer.parseInt(args[1]);
-                    if (MaxSlot > 54 || MaxSlot < RedProtect.get().config.getGuiMaxSlot()) {
-                        RedProtect.get().lang.sendMessage(player, "gui.edit.invalid-lines");
-                        return true;
-                    }
-                } catch (NumberFormatException e) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalid.number");
-                    return true;
-                }
-                FlagGui gui = new FlagGui(RedProtect.get().lang.get("gui.editflag"), player, r, true, MaxSlot);
-                gui.open();
-            } else {
-                RedProtect.get().lang.sendMessage(player, "no.permission");
-            }
-            return true;
-        }
-
-        //if (args.length >= 2)
-        StringBuilder text = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            text.append(" ").append(args[i]);
-        }
-        if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
-            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[1])) {
-                if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
-                    RedProtectUtil.startFlagChanger(r.getName(), args[1], player);
-                    handleFlag(player, args[1], text.substring(1), r);
-                    return true;
-                } else {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", ""+RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
-                    return true;
-                }
-            }
-        }
-        handleFlag(player, args[0], text.substring(1), r);
+        RedProtect.get().lang.sendCommandHelp(sender, "flag", true);
         return true;
     }
 

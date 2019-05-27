@@ -27,17 +27,17 @@
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.VersionData;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.PermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectLogger;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.PermissionHandler;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
@@ -77,17 +77,6 @@ import java.util.concurrent.TimeUnit;
 public class RedProtect {
 
     private static RedProtect instance;
-    private UUID autoSaveID;
-    private VersionHelper rpvHelper;
-    private RedProtectAPI redProtectAPI;
-
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    public File configDir;
-    @Inject
-    public PluginContainer container;
-    @Inject
-    public GuiceObjectMapperFactory factory;
     public final List<String> changeWait = new ArrayList<>();
     public final List<String> tpWait = new ArrayList<>();
     public final RedProtectLogger logger = new RedProtectLogger();
@@ -98,15 +87,24 @@ public class RedProtect {
     public final HashMap<Player, String> alWait = new HashMap<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public final List<String> teleportDelay = new ArrayList<>();
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    public File configDir;
+    @Inject
+    public PluginContainer container;
+    @Inject
+    public GuiceObjectMapperFactory factory;
     public RegionManager rm;
     public PermissionHandler ph;
     public ConfigManager config;
     public LangManager lang;
     public LangGuiManager guiLang;
     public EconomyService economy;
-
     public CommandManager commandManager;
     public CommandHandler commandHandler;
+    private UUID autoSaveID;
+    private VersionHelper rpvHelper;
+    private RedProtectAPI redProtectAPI;
 
     public static RedProtect get() {
         return instance;
@@ -120,7 +118,7 @@ public class RedProtect {
         return redProtectAPI;
     }
 
-    public Server getServer(){
+    public Server getServer() {
         return Sponge.getServer();
     }
 
@@ -258,7 +256,7 @@ public class RedProtect {
             }
             logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
         } catch (Exception e) {
-             CoreUtil.printJarVersion();
+            CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
