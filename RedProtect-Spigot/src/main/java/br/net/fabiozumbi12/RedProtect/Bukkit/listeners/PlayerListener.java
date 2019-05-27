@@ -63,7 +63,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.BlockIterator;
 import org.inventivetalent.bossbar.BossBarAPI;
 
 import java.util.ArrayList;
@@ -85,28 +84,6 @@ public class PlayerListener implements Listener {
 
     public PlayerListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded PlayerListener...");
-    }
-
-    private static Entity getTarget(final Player player) {
-        try {
-            BlockIterator iterator = new BlockIterator(player.getWorld(), player
-                    .getLocation().toVector(), player.getEyeLocation()
-                    .getDirection(), 0, 10);
-            while (iterator.hasNext()) {
-                Block item = iterator.next();
-                for (Entity entity : player.getNearbyEntities(10, 10, 10)) {
-                    int acc = 2;
-                    for (int y = -acc; y < acc; y++) {
-                        if (entity.getLocation().getBlock()
-                                .getRelative(0, y, 0).equals(item)) {
-                            return entity;
-                        }
-                    }
-                }
-            }
-        } catch (IllegalStateException ignored) {
-        }
-        return null;
     }
 
     @EventHandler
@@ -147,16 +124,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onConsume(PlayerItemConsumeEvent e) {
-        if (e.getItem() == null) {
-            return;
-        }
-
         Player p = e.getPlayer();
         //deny potion
-        if (p == null) {
-            return;
-        }
-
         if (RedProtectUtil.denyPotion(e.getItem(), p)) {
             e.setCancelled(true);
         }
@@ -378,7 +347,7 @@ public class PlayerListener implements Listener {
                     Sign sign = (Sign) b.getState();
                     for (String tag : RedProtect.get().config.configRoot().region_settings.allow_sign_interact_tags) {
                         //check first rule
-                        if (sign != null && tag.equalsIgnoreCase(sign.getLine(0))) {
+                        if (tag.equalsIgnoreCase(sign.getLine(0))) {
                             return;
                         }
 

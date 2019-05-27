@@ -352,9 +352,7 @@ public class BlockListener implements Listener {
     public void onEntityExplode(EntityExplodeEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - EntityExplodeEvent event");
         List<Block> toRemove = new ArrayList<>();
-        if (e.getEntity() == null) {
-            return;
-        }
+
         Region or = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
         for (Block b : e.blockList()) {
             if (b == null) {

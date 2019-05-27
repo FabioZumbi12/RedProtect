@@ -32,13 +32,13 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class ContainerManager {
 
-    @SuppressWarnings("deprecation")
     public boolean canOpen(Block b, Player p) {
         if (!RedProtect.get().config.configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
             return true;
@@ -153,7 +153,6 @@ public class ContainerManager {
         return deny;
     }
 
-    @SuppressWarnings("deprecation")
     public boolean canWorldBreak(Block b) {
         if (!RedProtect.get().config.configRoot().private_cat.use) {
             return true;
@@ -205,11 +204,10 @@ public class ContainerManager {
         return true;
     }
 
-    public Block getBlockRelative(Block block) {
+    private Block getBlockRelative(Block block) {
         if (block.getState() instanceof Sign) {
-            Sign s = (Sign) block.getState();
-            org.bukkit.material.Sign data = (org.bukkit.material.Sign) s.getData();
-            return block.getRelative(data.getAttachedFace());
+            Directional dir = (Directional)block.getBlockData();
+            return block.getRelative(dir.getFacing().getOppositeFace());
         }
         return null;
     }
@@ -227,14 +225,14 @@ public class ContainerManager {
                 line1.equalsIgnoreCase("[" + priv + "]");
     }
 
-    public boolean validatePrivateSign(Block b) {
+    private boolean validatePrivateSign(Block b) {
         Sign s = (Sign) b.getState();
         return validatePrivateSign(s.getLines());
     }
 
     private boolean validateBreakSign(Block b, Player p) {
         Sign s = (Sign) b.getState();
-        return validatePrivateSign(b) && s.getLine(1).equals(p.getName());
+        return validatePrivateSign(b) && (s.getLine(1).isEmpty() || s.getLine(1).equals(p.getName()));
     }
 
     private boolean testPrivate(Block b, Player p) {
@@ -247,7 +245,6 @@ public class ContainerManager {
         return testPrivate(b, p);
     }
 
-    @SuppressWarnings("deprecation")
     public boolean isContainer(Block b) {
         Block container = getBlockRelative(b);
         String signbtype = container.getType().name();
