@@ -42,7 +42,7 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class ListCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender) {
+        if (sender instanceof ConsoleCommandSender && args.length > 0) {
             //rp list [player]
             if (args.length == 1) {
                 getRegionforList(sender, args[0], 1);
@@ -59,22 +59,22 @@ public class ListCommand implements SubCommand {
                     return true;
                 }
             }
-        } else {
+        } else if (sender instanceof Player){
             Player player = (Player) sender;
 
             //rp list
             if (args.length == 0) {
-                handleList(player, player.getName(), 1);
+                handleList(player, ((Player) sender).getUniqueId().toString(), 1);
                 return true;
             }
             //rp list [player|page]
             if (args.length == 1) {
                 try {
                     int Page = Integer.parseInt(args[0]);
-                    getRegionforList(sender, sender.getName(), Page);
+                    getRegionforList(sender, ((Player) sender).getUniqueId().toString(), Page);
                     return true;
                 } catch (NumberFormatException e) {
-                    handleList(player, args[0], 1);
+                    handleList(player, RedProtectUtil.PlayerToUUID(args[0]), 1);
                     return true;
                 }
             }
@@ -82,7 +82,7 @@ public class ListCommand implements SubCommand {
             if (args.length == 2) {
                 try {
                     int Page = Integer.parseInt(args[1]);
-                    handleList(player, args[0], Page);
+                    handleList(player, RedProtectUtil.PlayerToUUID(args[0]), Page);
                     return true;
                 } catch (NumberFormatException e) {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");
