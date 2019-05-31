@@ -688,37 +688,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> consoleCmds = Arrays.asList("reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
-        if (sender instanceof Player) {
-            if (args.length > 0) {
-                if (hasCommand(args[0])) {
-                    TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
-                    return tabCompleter.onTabComplete(sender, command, alias, Arrays_copyOfRange(args, args.length));
-                }
-                SortedSet<String> tab = new TreeSet<>();
-                for (String admCmd : consoleCmds) {
-                    if (admCmd.startsWith(args[0]) && RedProtect.get().ph.hasCommandPerm(sender, admCmd)) {
-                        tab.add(admCmd);
-                    }
-                }
-                return new ArrayList<>(tab);
-
-            } else {
-                SortedSet<String> tab = new TreeSet<>();
-                for (List<String> cmds : commandMap.keySet()) {
-                    String key = cmds.get(0);
-                    String cmdTrans = RedProtect.get().lang.get("cmdmanager.translation." + key);
-                    if (RedProtect.get().ph.hasCommandPerm(sender, key) && !tab.contains(key)) {
-                        tab.add(cmdTrans);
-                    }
-                }
-                for (String admCmd : consoleCmds) {
-                    if (RedProtect.get().ph.hasCommandPerm(sender, admCmd)) {
-                        tab.add(admCmd);
-                    }
-                }
-                return new ArrayList<>(tab);
-            }
-        } else {
+        if (sender instanceof Player){
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
                 return tabCompleter.onTabComplete(sender, command, alias, Arrays_copyOfRange(args, args.length));
@@ -726,14 +696,30 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 SortedSet<String> tab = new TreeSet<>();
                 for (List<String> cmds : commandMap.keySet()) {
                     String key = cmds.get(0);
-                    String cmdTrans = RedProtect.get().lang.get("cmdmanager.translation." + key);
-                    if (!tab.contains(key)) {
-                        tab.add(cmdTrans);
+                    String cmdtrans = RedProtect.get().lang.get("cmdmanager.translation." + key);
+                    if (cmdtrans.startsWith(args[0]) && RedProtect.get().ph.hasCommandPerm(sender, key) && !tab.contains(key)) {
+                        tab.add(cmdtrans);
                     }
                 }
-                tab.addAll(consoleCmds);
+                for (String admCmd : consoleCmds) {
+                    if (admCmd.startsWith(args[0]) && RedProtect.get().ph.hasCommandPerm(sender, admCmd)) {
+                        tab.add(admCmd);
+                    }
+                }
                 return new ArrayList<>(tab);
             }
+        } else {
+            SortedSet<String> tab = new TreeSet<>();
+            if (args.length == 0){
+                tab.addAll(consoleCmds);
+            } else {
+                for (String admCmd : consoleCmds) {
+                    if (admCmd.startsWith(args[0])) {
+                        tab.add(admCmd);
+                    }
+                }
+            }
+            return new ArrayList<>(tab);
         }
     }
 }
