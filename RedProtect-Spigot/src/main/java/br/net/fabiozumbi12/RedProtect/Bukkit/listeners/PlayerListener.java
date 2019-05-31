@@ -727,7 +727,7 @@ public class PlayerListener implements Listener {
                 return;
             }
 
-            if (!r.isCmdAllowed(p, msg)) {
+            if (!r.isCmdAllowed(msg)) {
                 if (cmds.equalsIgnoreCase("rp") || cmds.equalsIgnoreCase("redprotect")) {
                     return;
                 }

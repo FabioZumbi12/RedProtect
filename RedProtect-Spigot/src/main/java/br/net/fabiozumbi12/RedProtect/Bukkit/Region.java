@@ -900,7 +900,7 @@ public class Region extends CoreRegion {
         return !flagExists("allow-create-portal") || getFlagBool("allow-create-portal");
     }
 
-    public boolean isCmdAllowed(Player p, String fullcmd) {
+    public boolean isCmdAllowed(String fullcmd) {
         if (!flagExists("allow-cmds")) {
             return true;
         }

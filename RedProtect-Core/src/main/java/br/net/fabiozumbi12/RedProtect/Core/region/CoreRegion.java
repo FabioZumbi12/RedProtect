@@ -327,7 +327,6 @@ public class CoreRegion implements Serializable {
      *
      * @return {@code Set<PlayerRegion<String, String>>}
      */
-    @Deprecated
     public Set<PlayerRegion> getAdmins() {
         return this.admins;
     }
@@ -339,7 +338,6 @@ public class CoreRegion implements Serializable {
      *
      * @return {@code Set<PlayerRegion<String, String>>}
      */
-    @Deprecated
     public Set<PlayerRegion> getMembers() {
         return this.members;
     }
@@ -351,7 +349,6 @@ public class CoreRegion implements Serializable {
      *
      * @return {@code Set<PlayerRegion<String, String>>}
      */
-    @Deprecated
     public Set<PlayerRegion> getLeaders() {
         return this.leaders;
     }
