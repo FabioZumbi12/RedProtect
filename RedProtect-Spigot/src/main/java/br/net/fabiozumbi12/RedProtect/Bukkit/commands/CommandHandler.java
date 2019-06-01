@@ -164,7 +164,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                     } else {
                         regionName = RedProtectUtil.UUIDtoPlayer(admin) + "_" + in;
                     }
-                    if (RedProtect.get().rm.getRegion(regionName, w) == null) {
+                    if (RedProtect.get().rm.getRegion(regionName, c.getWorldName()) == null) {
                         break;
                     }
                     ++in;
@@ -173,7 +173,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RedProtectUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
-                RedProtect.get().rm.add(r, w);
+                RedProtect.get().rm.add(r, c.getWorldName());
                 RedProtect.get().logger.warning("Region converted and named to " + r.getName());
                 i++;
             }
@@ -515,7 +515,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                         RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                         return true;
                     }
-                    Region r = RedProtect.get().rm.getRegion(args[1], w);
+                    Region r = RedProtect.get().rm.getRegion(args[1], w.getName());
                     if (r == null) {
                         RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[1]);
                         return true;
@@ -578,7 +578,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                     int count;
 
                     Set<Region> wregions = new HashSet<>();
-                    for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                    for (Region r : RedProtect.get().rm.getRegionsByWorld(w.getName())) {
                         SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
                         Date now = null;
                         try {

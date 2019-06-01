@@ -58,7 +58,7 @@ public class RedProtectAPI {
      * @return {@code Region} matching the name or {@code null} if region not found.
      */
     public Region getRegion(String regionName, World world) {
-        return RedProtect.get().rm.getRegion(regionName, world);
+        return RedProtect.get().rm.getRegion(regionName, world.getName());
     }
 
     /**
@@ -98,7 +98,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(String uuid, World world) {
-        return RedProtect.get().rm.getRegions(uuid, world);
+        return RedProtect.get().rm.getRegions(uuid, world.getName());
     }
 
     /**
@@ -109,7 +109,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(Player player) {
-        return RedProtect.get().rm.getRegions(Bukkit.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld());
+        return RedProtect.get().rm.getRegions(Bukkit.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld().getName());
     }
 
     /**
@@ -137,7 +137,7 @@ public class RedProtectAPI {
      * @return The high priority {@code Region} in a group of regions.
      */
     public Region getHighPriorityRegion(World world, int x, int y, int z) {
-        return RedProtect.get().rm.getTopRegion(world, x, y, z);
+        return RedProtect.get().rm.getTopRegion(world.getName(), x, y, z);
     }
 
     /**
@@ -151,7 +151,7 @@ public class RedProtectAPI {
      * @return The lower priority {@code Region} in a group of regions.
      */
     public Region getLowPriorytyRegion(World world, int x, int y, int z) {
-        return RedProtect.get().rm.getLowRegion(world, x, y, z);
+        return RedProtect.get().rm.getLowRegion(world.getName(), x, y, z);
     }
 
     /**
@@ -165,7 +165,7 @@ public class RedProtectAPI {
      * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
      */
     public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z) {
-        return RedProtect.get().rm.getGroupRegion(world, x, y, z);
+        return RedProtect.get().rm.getGroupRegion(world.getName(), x, y, z);
     }
 
     /**
@@ -198,7 +198,7 @@ public class RedProtectAPI {
      * @param world  {@code World} of {@code Region} to add.
      */
     public void addRegion(Region region, World world) {
-        RedProtect.get().rm.add(region, world);
+        RedProtect.get().rm.add(region, world.getName());
     }
 
     /**
@@ -208,7 +208,7 @@ public class RedProtectAPI {
      * @param region {@code Region} to remove.
      */
     public void removeRegion(Region region) {
-        RedProtect.get().rm.remove(region, RedProtect.get().getServer().getWorld(region.getWorld()));
+        RedProtect.get().rm.remove(region, region.getWorld());
     }
 
     /**

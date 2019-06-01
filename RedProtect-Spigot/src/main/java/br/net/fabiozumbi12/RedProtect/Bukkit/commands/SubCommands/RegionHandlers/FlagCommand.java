@@ -52,7 +52,7 @@ public class FlagCommand implements SubCommand {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag"))) {
             if (Bukkit.getWorld(args[2]) != null) {
-                Region r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[2]));
+                Region r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[2]).getName());
                 if (r != null) {
                     sender.sendMessage(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------");
                     sender.sendMessage(r.getFlagInfo());
@@ -70,7 +70,7 @@ public class FlagCommand implements SubCommand {
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + ChatColor.YELLOW + " rp " + getCmd("flag") + " <regionName> <flag> <value> <database>");
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[0], w);
+            Region r = RedProtect.get().rm.getRegion(args[0], w.getName());
             if (r != null && (RedProtect.get().config.getDefFlags().contains(args[1]) || RedProtect.get().config.AdminFlags.contains(args[1]))) {
                 Object objflag = RedProtectUtil.parseObject(args[2]);
                 r.setFlag(sender, args[1], objflag);

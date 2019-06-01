@@ -149,7 +149,7 @@ public class BlockListener implements Listener {
                 e.setLine(0, RedProtect.get().lang.get("blocklistener.region.signcreated"));
                 e.setLine(1, r.getName());
                 //RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.region.created").replace("{region}",  r.getName()));
-                RedProtect.get().rm.add(r, RedProtect.get().getServer().getWorld(r.getWorld()));
+                RedProtect.get().rm.add(r, r.getWorld());
             }
         } else if (RedProtect.get().config.configRoot().region_settings.enable_flag_sign && line1.equalsIgnoreCase("[flag]") && signr != null) {
             if (signr.getFlags().containsKey(lines[1])) {

@@ -156,12 +156,12 @@ public class RedProtectUtil extends CoreUtil {
     public static Location DenyEnterPlayer(World wFrom, Location from, Location to, Region r, boolean checkSec) {
         Location setTo = to;
         for (int i = 0; i < r.getArea() + 10; i++) {
-            Region r1 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() + i, from.getBlockY(), from.getBlockZ());
-            Region r2 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() - i, from.getBlockY(), from.getBlockZ());
-            Region r3 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ() + i);
-            Region r4 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX(), from.getBlockY(), from.getBlockZ() - i);
-            Region r5 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() + i, from.getBlockY(), from.getBlockZ() + i);
-            Region r6 = RedProtect.get().rm.getTopRegion(wFrom, from.getBlockX() - i, from.getBlockY(), from.getBlockZ() - i);
+            Region r1 = RedProtect.get().rm.getTopRegion(wFrom.getName(), from.getBlockX() + i, from.getBlockY(), from.getBlockZ());
+            Region r2 = RedProtect.get().rm.getTopRegion(wFrom.getName(), from.getBlockX() - i, from.getBlockY(), from.getBlockZ());
+            Region r3 = RedProtect.get().rm.getTopRegion(wFrom.getName(), from.getBlockX(), from.getBlockY(), from.getBlockZ() + i);
+            Region r4 = RedProtect.get().rm.getTopRegion(wFrom.getName(), from.getBlockX(), from.getBlockY(), from.getBlockZ() - i);
+            Region r5 = RedProtect.get().rm.getTopRegion(wFrom.getName(), from.getBlockX() + i, from.getBlockY(), from.getBlockZ() + i);
+            Region r6 = RedProtect.get().rm.getTopRegion(wFrom.getName(), from.getBlockX() - i, from.getBlockY(), from.getBlockZ() - i);
             if (r1 != r) {
                 setTo = from.add(+i, 0, 0);
                 break;
@@ -266,7 +266,6 @@ public class RedProtectUtil extends CoreUtil {
      */
     public static String nameGen(String p, String World) {
         String rname;
-        World w = RedProtect.get().getServer().getWorld(World);
         int i = 0;
         while (true) {
             int is = String.valueOf(i).length();
@@ -275,7 +274,7 @@ public class RedProtectUtil extends CoreUtil {
             } else {
                 rname = p + "_" + i;
             }
-            if (RedProtect.get().rm.getRegion(rname, w) == null) {
+            if (RedProtect.get().rm.getRegion(rname, World) == null) {
                 break;
             }
             ++i;
@@ -376,7 +375,7 @@ public class RedProtectUtil extends CoreUtil {
                             continue;
                         }
                     } else {
-                        RedProtect.get().rm.remove(region, RedProtect.get().getServer().getWorld(region.getWorld()));
+                        RedProtect.get().rm.remove(region, region.getWorld());
                         purged++;
                         RedProtect.get().logger.warning("Purging " + region.getName() + " - Days: " + days);
                     }
@@ -693,7 +692,7 @@ public class RedProtectUtil extends CoreUtil {
 
             Connection dbcon = DriverManager.getConnection(url + dbname, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
 
-            for (Region r : RedProtect.get().rm.getRegionsByWorld(world)) {
+            for (Region r : RedProtect.get().rm.getRegionsByWorld(world.getName())) {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
                     try {
                         PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
@@ -845,8 +844,8 @@ public class RedProtectUtil extends CoreUtil {
     public static int getUpdatedPrior(Region region) {
         int regionarea = region.getArea();
         int prior = region.getPrior();
-        Region topRegion = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
-        Region lowRegion = RedProtect.get().rm.getLowRegion(RedProtect.get().getServer().getWorld(region.getWorld()), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region topRegion = RedProtect.get().rm.getTopRegion(region.getWorld(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
+        Region lowRegion = RedProtect.get().rm.getLowRegion(region.getWorld(), region.getCenterX(), region.getCenterY(), region.getCenterZ());
 
         if ((topRegion != null && topRegion.getID().equals(region.getID())) || (lowRegion != null && lowRegion.getID().equals(region.getID()))) {
             return prior;
@@ -936,9 +935,9 @@ public class RedProtectUtil extends CoreUtil {
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
                         newmin, newmax, RedProtect.get().config.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), dateNow(), 0, null, true);
 
-                Region other = RedProtect.get().rm.getTopRegion(w, r.getCenterX(), r.getCenterY(), r.getCenterZ());
+                Region other = RedProtect.get().rm.getTopRegion(w.getName(), r.getCenterX(), r.getCenterY(), r.getCenterZ());
                 if (other == null || !r.getWelcome().equals(other.getWelcome())) {
-                    RedProtect.get().rm.add(r, w);
+                    RedProtect.get().rm.add(r, w.getName());
                     RedProtect.get().logger.debug(LogLevel.DEFAULT, "Region: " + r.getName());
                     claimed++;
                 }
@@ -1002,7 +1001,7 @@ public class RedProtectUtil extends CoreUtil {
     public static int SingleToFiles() {
         int saved = 0;
         for (World w : Bukkit.getWorlds()) {
-            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w);
+            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w.getName());
             for (Region r : regions) {
                 YamlConfiguration fileDB = new YamlConfiguration();
 
@@ -1034,7 +1033,7 @@ public class RedProtectUtil extends CoreUtil {
         int saved = 0;
         for (World w : Bukkit.getWorlds()) {
             File f = new File(pathData, "data_" + w.getName() + ".yml");
-            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w);
+            Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w.getName());
             YamlConfiguration fileDB = new YamlConfiguration();
             for (Region r : regions) {
                 addProps(fileDB, r);
@@ -1108,7 +1107,7 @@ public class RedProtectUtil extends CoreUtil {
         if (regionName.equals("")) {
             int i = 0;
             regionName = StripName(pRName) + "_" + 0;
-            while (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+            while (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
                 ++i;
                 regionName = StripName(pRName) + "_" + i;
             }
@@ -1124,7 +1123,7 @@ public class RedProtectUtil extends CoreUtil {
 
         //region name conform
         regionName = regionName.replace("/", "|");
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
             RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
             return null;
         }

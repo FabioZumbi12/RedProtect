@@ -60,7 +60,7 @@ public class ExpandVertCommand implements SubCommand {
                 break;
             //rp expand-vert [region]
             case 1:
-                r = RedProtect.get().rm.getRegion(args[0], player.getWorld());
+                r = RedProtect.get().rm.getRegion(args[0], player.getWorld().getName());
                 if (r == null) {
                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                     return true;
@@ -72,7 +72,7 @@ public class ExpandVertCommand implements SubCommand {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalidworld");
                     return true;
                 }
-                r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[1]));
+                r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[1]).getName());
                 if (r == null) {
                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                     return true;

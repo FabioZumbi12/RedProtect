@@ -88,7 +88,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
             return;
         }
 
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
             RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
         }
@@ -208,7 +208,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check regions inside region
-                        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+                        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld().getName())) {
                             if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
@@ -249,7 +249,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         region.setPrior(RedProtectUtil.getUpdatedPrior(region));
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
-                        int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w);
+                        int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w.getName());
                         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
                         if (claimUsed >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
                             this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.claim.limit"));
@@ -332,7 +332,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
 
-                        if (RedProtect.get().rm.getRegions(p.getUniqueId().toString(), p.getWorld()).size() == 0) {
+                        if (RedProtect.get().rm.getRegions(p.getUniqueId().toString(), p.getWorld().getName()).size() == 0) {
                             p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.firstwarning"));
                             p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
                         }

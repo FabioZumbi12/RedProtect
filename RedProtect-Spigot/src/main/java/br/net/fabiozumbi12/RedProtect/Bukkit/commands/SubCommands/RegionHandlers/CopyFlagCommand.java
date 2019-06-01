@@ -52,8 +52,8 @@ public class CopyFlagCommand implements SubCommand {
 
         if (args.length == 2) {
             World w = player.getWorld();
-            Region from = RedProtect.get().rm.getRegion(args[0], w);
-            Region to = RedProtect.get().rm.getRegion(args[1], w);
+            Region from = RedProtect.get().rm.getRegion(args[0], w.getName());
+            Region to = RedProtect.get().rm.getRegion(args[1], w.getName());
             if (from == null || !from.isLeader(player)) {
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;

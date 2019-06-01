@@ -39,7 +39,7 @@ public class PAPIHook extends PlaceholderExpansion {
             Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
             return r == null ? RedProtect.get().lang.get("region.wilderness") : r.getName();
         } else if (arg.equals("player_used_claims")) {
-            return String.valueOf(RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld()));
+            return String.valueOf(RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName()));
         } else if (arg.equals("player_used_blocks")) {
             return String.valueOf(RedProtect.get().rm.getTotalRegionSize(p.getUniqueId().toString(), p.getWorld().getName()));
         } else if (arg.equals("player_total_claims")) {

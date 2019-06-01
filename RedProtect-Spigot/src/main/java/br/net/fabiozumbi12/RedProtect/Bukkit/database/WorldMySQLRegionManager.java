@@ -49,14 +49,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private final String dbname = RedProtect.get().config.configRoot().mysql.db_name;
     private final String tableName;
     private final HashMap<String, Region> regions;
-    private final World world;
+    private final String world;
     private Connection dbcon;
 
-    public WorldMySQLRegionManager(World world) throws SQLException {
+    public WorldMySQLRegionManager(String world) throws SQLException {
         super();
         this.regions = new HashMap<>();
         this.world = world;
-        this.tableName = RedProtect.get().config.configRoot().mysql.table_prefix + world.getName();
+        this.tableName = RedProtect.get().config.configRoot().mysql.table_prefix + world;
 
         this.dbcon = null;
         try {
@@ -207,7 +207,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE name = ? AND world = ?");
             st.setString(1, rname);
-            st.setString(2, this.world.getName());
+            st.setString(2, this.world);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 String flags = rs.getString("flags");
@@ -253,7 +253,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE name = ? AND world = ?");
             st.setString(1, rname);
-            st.setString(2, this.world.getName());
+            st.setString(2, this.world);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 String flags = rs.getString("flags");
@@ -286,12 +286,12 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         }
         try {
             PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE world = ?");
-            st.setString(1, this.world.getName());
+            st.setString(1, this.world);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 String finalName = "";
                 try {
-                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world.getName());
+                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world);
                     HashMap<String, Object> flags = new HashMap<>();
 
                     String rname = rs.getString("name");
@@ -454,7 +454,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             try {
                 PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE name=? AND world=?");
                 st.setString(1, rname);
-                st.setString(2, this.world.getName());
+                st.setString(2, this.world);
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
                     Set<PlayerRegion> leaders = new HashSet<>();
@@ -605,7 +605,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         return total > 0;
     }
 
-    public World getWorld() {
+    public String getWorld() {
         return this.world;
     }
 

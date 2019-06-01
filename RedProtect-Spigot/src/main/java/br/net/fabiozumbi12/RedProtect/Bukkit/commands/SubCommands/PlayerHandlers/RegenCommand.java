@@ -93,7 +93,7 @@ public class RegenCommand implements SubCommand {
                 sender.sendMessage(RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[0], w);
+            Region r = RedProtect.get().rm.getRegion(args[0], w.getName());
             if (r == null) {
                 sender.sendMessage(RedProtect.get().lang.get("correct.usage") + " " + ChatColor.YELLOW + "Invalid region: " + args[0]);
                 return true;

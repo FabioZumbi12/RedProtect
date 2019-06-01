@@ -46,7 +46,7 @@ public class InfoCommand implements SubCommand {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 2 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.info"))) {
             if (Bukkit.getWorld(args[1]) != null) {
-                Region r = RedProtect.get().rm.getRegion(args[0], Bukkit.getWorld(args[1]));
+                Region r = RedProtect.get().rm.getRegion(args[0], Bukkit.getWorld(args[1]).getName());
                 if (r != null) {
                     sender.sendMessage(RedProtect.get().lang.get("general.color") + "-----------------------------------------");
                     sender.sendMessage(r.info());

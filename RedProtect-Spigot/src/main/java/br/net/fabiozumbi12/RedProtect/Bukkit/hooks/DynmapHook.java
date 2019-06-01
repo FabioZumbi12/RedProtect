@@ -61,7 +61,7 @@ public class DynmapHook implements Listener {
 
         //start set markers
         for (World w : RedProtect.get().getServer().getWorlds()) {
-            for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+            for (Region r : RedProtect.get().rm.getRegionsByWorld(w.getName())) {
                 if (!r.allowDynmap()) continue;
                 addMark(r);
             }
@@ -80,7 +80,7 @@ public class DynmapHook implements Listener {
         }
     }
 
-    public void removeAll(World w) {
+    public void removeAll(String w) {
         for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
             removeMark(r);
         }

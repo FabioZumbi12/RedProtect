@@ -62,7 +62,7 @@ public class DefineCommand implements SubCommand {
             if (rb2.ready()) {
                 Region r2 = rb2.build();
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                RedProtect.get().rm.add(r2, player.getWorld());
+                RedProtect.get().rm.add(r2, player.getWorld().getName());
 
                 RedProtect.get().firstLocationSelections.remove(player);
                 RedProtect.get().secondLocationSelections.remove(player);
@@ -78,7 +78,7 @@ public class DefineCommand implements SubCommand {
             if (rb2.ready()) {
                 Region r2 = rb2.build();
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                RedProtect.get().rm.add(r2, player.getWorld());
+                RedProtect.get().rm.add(r2, player.getWorld().getName());
 
                 RedProtect.get().firstLocationSelections.remove(player);
                 RedProtect.get().secondLocationSelections.remove(player);

@@ -61,7 +61,7 @@ public class CreatePortalCommand implements SubCommand {
                 sender.sendMessage(RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[1], w);
+            Region r = RedProtect.get().rm.getRegion(args[1], w.getName());
             if (r == null) {
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.warning").replace("{region}", args[1]));
             }
@@ -69,7 +69,7 @@ public class CreatePortalCommand implements SubCommand {
             PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
             String name = Normalizer.normalize(args[0].replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
-            Region r2 = RedProtect.get().rm.getRegion(name, w);
+            Region r2 = RedProtect.get().rm.getRegion(name, w.getName());
 
             if (r2 != null) {
                 if (!r2.isLeader(player) || !r2.isAdmin(player)) {
@@ -89,7 +89,7 @@ public class CreatePortalCommand implements SubCommand {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
 
                     r2.setFlag(sender, "set-portal", args[1] + " " + w.getName());
-                    RedProtect.get().rm.add(r2, player.getWorld());
+                    RedProtect.get().rm.add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);

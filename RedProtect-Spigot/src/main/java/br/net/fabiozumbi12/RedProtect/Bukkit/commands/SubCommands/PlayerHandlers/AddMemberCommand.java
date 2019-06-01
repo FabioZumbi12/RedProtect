@@ -48,7 +48,7 @@ public class AddMemberCommand implements SubCommand {
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[1], w);
+            Region r = RedProtect.get().rm.getRegion(args[1], w.getName());
             if (r == null) {
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
                 return true;

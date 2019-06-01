@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.EconomyManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
+import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
 import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.*;
@@ -620,7 +621,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isOnTop() {
-        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(this.getWorld()), this.getCenterX(), this.getCenterY(), this.getCenterZ());
+        Region newr = RedProtect.get().rm.getTopRegion(this.getWorld(), this.getCenterX(), this.getCenterY(), this.getCenterZ());
         return newr == null || newr.equals(this);
     }
 

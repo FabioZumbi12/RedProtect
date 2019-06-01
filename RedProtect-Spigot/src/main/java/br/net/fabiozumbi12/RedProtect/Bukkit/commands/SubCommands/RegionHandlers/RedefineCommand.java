@@ -51,7 +51,7 @@ public class RedefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            Region oldRect = RedProtect.get().rm.getRegion(args[0], player.getWorld());
+            Region oldRect = RedProtect.get().rm.getRegion(args[0], player.getWorld().getName());
             if (oldRect == null) {
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;
@@ -66,7 +66,7 @@ public class RedefineCommand implements SubCommand {
             if (rb.ready()) {
                 Region r2 = rb.build();
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                RedProtect.get().rm.add(r2, player.getWorld());
+                RedProtect.get().rm.add(r2, player.getWorld().getName());
 
                 RedProtect.get().firstLocationSelections.remove(player);
                 RedProtect.get().secondLocationSelections.remove(player);

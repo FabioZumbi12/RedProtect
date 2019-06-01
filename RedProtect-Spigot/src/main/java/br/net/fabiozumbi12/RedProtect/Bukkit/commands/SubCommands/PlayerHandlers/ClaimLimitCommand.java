@@ -57,7 +57,7 @@ public class ClaimLimitCommand implements SubCommand {
                 return true;
             }
 
-            int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString(), w).size();
+            int currentUsed = RedProtect.get().rm.getRegions(offp.getUniqueId().toString(), w.getName()).size();
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
             RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
             return true;
@@ -71,7 +71,7 @@ public class ClaimLimitCommand implements SubCommand {
                     return true;
                 }
 
-                int currentUsed = RedProtect.get().rm.getRegions(player.getUniqueId().toString(), player.getWorld()).size();
+                int currentUsed = RedProtect.get().rm.getRegions(player.getUniqueId().toString(), player.getWorld().getName()).size();
                 ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourclaims") + color + currentUsed + RedProtect.get().lang.get("general.color") + "/" + color + limit + RedProtect.get().lang.get("general.color"));
                 return true;

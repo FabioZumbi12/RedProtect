@@ -61,7 +61,7 @@ public class SetMinYCommand implements SubCommand {
                 break;
             //rp setminy <size> [region]
             case 2:
-                r = RedProtect.get().rm.getRegion(args[1], player.getWorld());
+                r = RedProtect.get().rm.getRegion(args[1], player.getWorld().getName());
                 if (r == null) {
                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return true;
@@ -73,7 +73,7 @@ public class SetMinYCommand implements SubCommand {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalidworld");
                     return true;
                 }
-                r = RedProtect.get().rm.getRegion(args[2], Bukkit.getWorld(args[2]));
+                r = RedProtect.get().rm.getRegion(args[2], Bukkit.getWorld(args[2]).getName());
                 if (r == null) {
                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return true;

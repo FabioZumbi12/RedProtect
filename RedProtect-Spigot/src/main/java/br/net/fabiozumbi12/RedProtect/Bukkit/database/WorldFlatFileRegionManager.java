@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,15 +46,15 @@ import java.util.stream.Collectors;
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     private final HashMap<String, Region> regions;
-    private final World world;
+    private final String world;
 
-    public WorldFlatFileRegionManager(World world) {
+    public WorldFlatFileRegionManager(String world) {
         super();
         this.regions = new HashMap<>();
         this.world = world;
     }
 
-    private static Region loadRegion(YamlConfiguration fileDB, String rname, World world) {
+    private static Region loadRegion(YamlConfiguration fileDB, String rname, String world) {
         Region newr = null;
         try {
             if (fileDB.getString(rname + ".name") == null) {
@@ -63,7 +64,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             int maxZ = fileDB.getInt(rname + ".maxZ");
             int minX = fileDB.getInt(rname + ".minX");
             int minZ = fileDB.getInt(rname + ".minZ");
-            int maxY = fileDB.getInt(rname + ".maxY", world.getMaxHeight());
+            int maxY = fileDB.getInt(rname + ".maxY", Bukkit.getWorld(world).getMaxHeight());
             int minY = fileDB.getInt(rname + ".minY", 0);
             String name = fileDB.getString(rname + ".name");
             String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
@@ -115,12 +116,12 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             Location tppoint = null;
             if (!fileDB.getString(rname + ".tppoint", "").isEmpty()) {
                 String[] tpstring = fileDB.getString(rname + ".tppoint").split(",");
-                tppoint = new Location(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
+                tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                         Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
             }
 
             fixdbFlags(fileDB, rname);
-            newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
+            newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world, date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
 
             for (String flag : RedProtect.get().config.getDefFlags()) {
                 if (fileDB.get(rname + ".flags." + flag) != null) {
@@ -156,7 +157,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     @Override
     public void load() {
         try {
-            String world = this.getWorld().getName();
             RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
             if (!RedProtect.get().config.configRoot().file_type.equals("mysql")) {
@@ -200,7 +200,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
         if (!RedProtect.get().config.configRoot().file_type.equals("mysql")) {
             YamlConfiguration fileDB = new YamlConfiguration();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: yml");
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world + ". File type: yml");
             try {
                 fileDB.load(f);
             } catch (FileNotFoundException e) {
@@ -228,7 +228,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         int saved = 0;
         try {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().config.configRoot().file_type);
-            String world = this.getWorld().getName();
+            String world = this.world;
             File datf;
 
             if (!RedProtect.get().config.configRoot().file_type.equals("mysql")) {
@@ -275,7 +275,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
                 }
 
-                if (force) RedProtect.get().logger.info("Saving " + this.world.getName() + "'s regions...");
+                if (force) RedProtect.get().logger.info("Saving " + this.world + "'s regions...");
 
                 //try backup
                 if (force && RedProtect.get().config.configRoot().flat_file.backup) {
@@ -381,7 +381,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         return ret;
     }
 
-    public World getWorld() {
+    public String getWorld() {
         return this.world;
     }
 
