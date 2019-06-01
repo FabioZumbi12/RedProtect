@@ -564,10 +564,20 @@ public class PlayerListener implements Listener {
 
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
 
-        //Exit flag
-        if (rfrom != null && !rfrom.canExit(p)) {
-            e.setTo(RedProtectUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
-            return;
+        if (rfrom != null) {
+
+            //Exit flag
+            if (!rfrom.canExit(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.exit")){
+                e.setTo(RedProtectUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
+                return;
+            }
+
+            //canMove flag
+            if (!rfrom.canMove(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.move")) {
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmove");
+                e.setCancelled(true);
+                return;
+            }
         }
 
         if (rto != null) {
@@ -846,8 +856,9 @@ public class PlayerListener implements Listener {
         Location lto = e.getTo();
 
         Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
+
         //Exit flag
-        if (rfrom != null && !rfrom.canExit(p)) {
+        if (rfrom != null && !rfrom.canExit(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.exit")) {
             e.setTo(RedProtectUtil.DenyExitPlayer(p, lfrom, e.getTo(), rfrom));
             return;
         }
@@ -876,6 +887,13 @@ public class PlayerListener implements Listener {
             if (!r.canEnter(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.enter")) {
                 e.setTo(RedProtectUtil.DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
+                return;
+            }
+
+            //canMove flag
+            if (!r.canMove(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.move")) {
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmove");
+                e.setCancelled(true);
                 return;
             }
 

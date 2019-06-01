@@ -637,6 +637,13 @@ public class Region extends CoreRegion {
 
     //---------------------- Admin Flags --------------------------//
 
+    public boolean canMove(Player p){
+        if (!flagExists("can-move")) {
+            return true;
+        }
+        return getFlagBool("can-move") || checkAllowedPlayer(p);
+    }
+
     public boolean canPickup(Player p) {
         return !flagExists("can-pickup") || getFlagBool("can-pickup") || checkAllowedPlayer(p);
     }
