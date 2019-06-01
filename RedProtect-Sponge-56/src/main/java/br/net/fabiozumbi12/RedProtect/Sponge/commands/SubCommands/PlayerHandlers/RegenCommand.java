@@ -62,7 +62,7 @@ public class RegenCommand {
                             RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                             return CommandResult.success();
                         }
-                        Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), w.get());
+                        Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), w.get().getName());
                         if (r == null) {
                             RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
                             return CommandResult.success();

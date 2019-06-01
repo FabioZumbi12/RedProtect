@@ -34,14 +34,12 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandException;
 
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("deprecation")
 public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private final String url = "jdbc:mysql://" + RedProtect.get().config.configRoot().mysql.host + "/";

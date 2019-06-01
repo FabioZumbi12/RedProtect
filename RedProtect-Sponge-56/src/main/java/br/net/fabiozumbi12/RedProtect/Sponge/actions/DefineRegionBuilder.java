@@ -66,7 +66,7 @@ public class DefineRegionBuilder extends RegionBuilder {
             }
         }
 
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld()) != null) {
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
             RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
             return;
         }
@@ -108,7 +108,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         newRegion.setPrior(RedProtectUtil.getUpdatedPrior(newRegion));
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
-        int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld());
+        int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName());
         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
         if (claimUsed >= claimLimit && claimLimit != -1) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.claim.limit"));
@@ -139,7 +139,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld())) {
+        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld().getName())) {
             if (r.getMaxMbrX() <= newRegion.getMaxMbrX() && r.getMaxY() <= newRegion.getMaxY() && r.getMaxMbrZ() <= newRegion.getMaxMbrZ() && r.getMinMbrX() >= newRegion.getMinMbrX() && r.getMinY() >= newRegion.getMinY() && r.getMinMbrZ() >= newRegion.getMinMbrZ()) {
                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                     this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
@@ -211,7 +211,7 @@ public class DefineRegionBuilder extends RegionBuilder {
             p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("region.regions") + " " + othersName));
         }
 
-        if (RedProtect.get().rm.getRegions(p.getUniqueId().toString(), p.getWorld()).size() == 0) {
+        if (RedProtect.get().rm.getRegions(p.getUniqueId().toString(), p.getWorld().getName()).size() == 0) {
             p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.firstwarning")));
             p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
         }

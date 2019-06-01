@@ -631,7 +631,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isOnTop() {
-        Region newr = RedProtect.get().rm.getTopRegion(RedProtect.get().getServer().getWorld(this.getWorld()).get(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
+        Region newr = RedProtect.get().rm.getTopRegion(this.getWorld(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
         return newr == null || newr.equals(this);
     }
 

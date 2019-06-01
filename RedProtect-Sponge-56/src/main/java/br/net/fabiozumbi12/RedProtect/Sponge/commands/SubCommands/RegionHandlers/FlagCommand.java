@@ -64,7 +64,7 @@ public class FlagCommand {
                                 src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + argsInfo[1]));
                                 return CommandResult.success();
                             }
-                            Region r = RedProtect.get().rm.getRegion(argsInfo[0], w.get());
+                            Region r = RedProtect.get().rm.getRegion(argsInfo[0], w.get().getName());
                             if (r == null) {
                                 src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
                                 return CommandResult.success();
@@ -83,7 +83,7 @@ public class FlagCommand {
                                 src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + argsInfo[2]));
                                 return CommandResult.success();
                             }
-                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("flag").get(), w.get());
+                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("flag").get(), w.get().getName());
                             if (r == null) {
                                 src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
                                 return CommandResult.success();

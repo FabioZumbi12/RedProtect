@@ -65,7 +65,7 @@ public class SetMinYCommand {
                             r = RedProtect.get().rm.getRegion(rname, world);
                         } else if (args.hasAny("regionName")) {
                             String rname = args.<String>getOne("regionName").get();
-                            r = RedProtect.get().rm.getRegion(rname, player.getWorld());
+                            r = RedProtect.get().rm.getRegion(rname, player.getWorld().getName());
                         }
 
                         if (r == null) {

@@ -50,7 +50,7 @@ public class RegionCommandElement extends CommandElement {
     @Override
     protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
         if (source instanceof Player)
-            return RedProtect.get().rm.getRegion(args.next(), ((Player) source).getWorld());
+            return RedProtect.get().rm.getRegion(args.next(), ((Player) source).getWorld().getName());
         return null;
     }
 

@@ -286,7 +286,7 @@ public class CommandHandler {
                                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
                                 return cmdr;
                             }
-                            Region r = RedProtect.get().rm.getRegion(args[1], w.get());
+                            Region r = RedProtect.get().rm.getRegion(args[1], w.get().getName());
                             if (r == null) {
                                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args[1]);
                                 return cmdr;
@@ -325,7 +325,7 @@ public class CommandHandler {
                             int count;
 
                             Set<Region> wregions = new HashSet<>();
-                            for (Region r : RedProtect.get().rm.getRegionsByWorld(w)) {
+                            for (Region r : RedProtect.get().rm.getRegionsByWorld(w.getName())) {
                                 SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
                                 Date now = null;
                                 try {

@@ -79,7 +79,7 @@ public class CommandHandlers {
 
             if (!src.hasPermission("redprotect.command.admin.addleader")) {
                 int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(pVictim);
-                int claimused = RedProtect.get().rm.getPlayerRegions(pVictim.getName(), pVictim.getWorld());
+                int claimused = RedProtect.get().rm.getPlayerRegions(pVictim.getName(), pVictim.getWorld().getName());
                 boolean claimUnlimited = RedProtect.get().ph.hasPerm(src, "redprotect.limits.claim.unlimited");
                 if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
                     RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.addleader.limit").replace("{player}", pVictim.getName()));
@@ -334,7 +334,7 @@ public class CommandHandlers {
             }
 
             int claims = RedProtect.get().config.configRoot().region_settings.can_delete_first_home_after_claims;
-            if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")) {
+            if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld().getName()) < claims) && !p.hasPermission("redprotect.bypass")) {
                 if (claims != -1) {
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", "" + claims));
                 } else {
@@ -350,7 +350,7 @@ public class CommandHandlers {
 
             String rname = r.getName();
             String w = r.getWorld();
-            RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(w).get());
+            RedProtect.get().rm.remove(r, w);
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
 
@@ -374,10 +374,10 @@ public class CommandHandlers {
     }
 
     public static void handleDeleteName(Player p, String rname, String world) {
-        Region r = RedProtect.get().rm.getRegion(rname, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(rname, p.getWorld().getName());
         if (!world.equals("")) {
             if (Sponge.getServer().getWorld(world).isPresent()) {
-                r = RedProtect.get().rm.getRegion(rname, Sponge.getServer().getWorld(world).get());
+                r = RedProtect.get().rm.getRegion(rname, world);
             } else {
                 RedProtect.get().lang.sendMessage(p, "cmdmanager.region.invalidworld");
                 return;
@@ -391,7 +391,7 @@ public class CommandHandlers {
             }
 
             int claims = RedProtect.get().config.configRoot().region_settings.can_delete_first_home_after_claims;
-            if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld()) < claims) && !p.hasPermission("redprotect.bypass")) {
+            if (!r.canDelete() && (claims == -1 || RedProtect.get().rm.getPlayerRegions(p.getName(), p.getWorld().getName()) < claims) && !p.hasPermission("redprotect.bypass")) {
                 if (claims != -1) {
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.cantdeletefirst-claims").replace("{claims}", "" + claims));
                 } else {
@@ -405,7 +405,7 @@ public class CommandHandlers {
                 return;
             }
 
-            RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(r.getWorld()).get());
+            RedProtect.get().rm.remove(r, r.getWorld());
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + world + ") Player " + p.getName() + " REMOVED region " + rname);
         } else {
@@ -439,7 +439,7 @@ public class CommandHandlers {
                 return;
             }
 
-            if (RedProtect.get().rm.getRegion(newName, p.getWorld()) != null) {
+            if (RedProtect.get().rm.getRegion(newName, p.getWorld().getName()) != null) {
                 RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
                 return;
             }
@@ -462,7 +462,7 @@ public class CommandHandlers {
 
     // TODO Other Handlers
     public static void handlePrioritySingle(Player p, int prior, String region) {
-        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(region, p.getWorld().getName());
         if (RedProtect.get().ph.hasRegionPermLeader(p, "priority", r)) {
             if (r != null) {
                 r.setPrior(prior);
@@ -512,10 +512,10 @@ public class CommandHandlers {
     }
 
     public static void handleInfo(Player p, String region, String world) {
-        Region r = RedProtect.get().rm.getRegion(region, p.getWorld());
+        Region r = RedProtect.get().rm.getRegion(region, p.getWorld().getName());
         if (!world.equals("")) {
             if (Sponge.getServer().getWorld(world).isPresent()) {
-                r = RedProtect.get().rm.getRegion(region, Sponge.getServer().getWorld(world).get());
+                r = RedProtect.get().rm.getRegion(region, world);
             } else {
                 RedProtect.get().lang.sendMessage(p, "cmdmanager.region.invalidworld");
                 return;
@@ -535,7 +535,7 @@ public class CommandHandlers {
     }
 
     public static void handletp(CommandSource source, String rname, World world, Player play) {
-        Region region = RedProtect.get().rm.getRegion(rname, world);
+        Region region = RedProtect.get().rm.getRegion(rname, world.getName());
         if (region == null) {
             RedProtect.get().lang.sendMessage(source, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + rname);
             return;
@@ -666,7 +666,7 @@ public class CommandHandlers {
                     int count;
 
                     String colorChar = RedProtect.get().config.configRoot().region_settings.world_colors.get(w.getName());
-                    Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w);
+                    Set<Region> wregions = RedProtect.get().rm.getRegions(uuid, w.getName());
                     int totalLocal = wregions.size();
                     total += totalLocal;
 

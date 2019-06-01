@@ -34,7 +34,6 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

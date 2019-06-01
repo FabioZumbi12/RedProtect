@@ -52,7 +52,7 @@ public class InfoCommand {
                 .executor((src, args) -> {
                     if (!(src instanceof Player) && args.hasAny("region") && args.hasAny("world")) {
                         if (Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).isPresent()) {
-                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).get());
+                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
                             if (r != null) {
                                 src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
                                 src.sendMessage(r.info());

@@ -51,7 +51,7 @@ public class NearCommand {
                     } else {
                         Player player = (Player) src;
 
-                        Set<Region> regions = RedProtect.get().rm.getRegionsNear(player, 60, player.getWorld());
+                        Set<Region> regions = RedProtect.get().rm.getRegionsNear(player, 60, player.getWorld().getName());
                         if (regions.size() == 0) {
                             RedProtect.get().lang.sendMessage(player, "cmdmanager.noregions.nearby");
                         } else {

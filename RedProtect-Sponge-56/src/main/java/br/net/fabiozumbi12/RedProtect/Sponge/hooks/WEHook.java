@@ -193,7 +193,7 @@ public class WEHook {
 
             if (remove) {
                 r.notifyRemove();
-                RedProtect.get().rm.remove(r, RedProtect.get().getServer().getWorld(r.getWorld()).get());
+                RedProtect.get().rm.remove(r, r.getWorld());
             }
 
             if (delayCount % 50 == 0) {

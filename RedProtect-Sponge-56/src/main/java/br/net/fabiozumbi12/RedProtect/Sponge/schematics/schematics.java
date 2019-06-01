@@ -52,7 +52,7 @@ public class schematics {
 
 
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
-            RedProtect.get().rm.add(region, p.getWorld());
+            RedProtect.get().rm.add(region, p.getWorld().getName());
         }
     }
 }

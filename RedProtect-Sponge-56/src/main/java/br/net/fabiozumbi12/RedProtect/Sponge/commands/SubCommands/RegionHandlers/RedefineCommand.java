@@ -66,7 +66,7 @@ public class RedefineCommand {
                         if (rb.ready()) {
                             Region r2 = rb.build();
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                            RedProtect.get().rm.add(r2, player.getWorld());
+                            RedProtect.get().rm.add(r2, player.getWorld().getName());
 
                             RedProtect.get().firstLocationSelections.remove(player);
                             RedProtect.get().secondLocationSelections.remove(player);

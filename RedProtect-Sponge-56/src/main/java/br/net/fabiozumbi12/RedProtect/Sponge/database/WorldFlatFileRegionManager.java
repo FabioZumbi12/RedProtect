@@ -36,6 +36,7 @@ import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -47,9 +48,9 @@ import java.util.stream.Collectors;
 public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     private final HashMap<String, Region> regions;
-    private final World world;
+    private final String world;
 
-    public WorldFlatFileRegionManager(World world) {
+    public WorldFlatFileRegionManager(String world) {
         super();
         this.regions = new HashMap<>();
         this.world = world;
@@ -144,9 +145,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public void load() {
-
         try {
-            String world = this.getWorld().getName();
             RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
             if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
@@ -177,10 +176,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     }
 
     private void load(String path) {
-        World world = this.getWorld();
 
         if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world.getName() + ". File type: conf");
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world + ". File type: conf");
 
             try {
                 File tempRegionFile = new File(path);
@@ -196,7 +194,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     if (!region.getNode(rname).hasMapChildren()) {
                         continue;
                     }
-                    Region newr = loadRegion(region, rname, world);
+                    Region newr = loadRegion(region, rname, Sponge.getServer().getWorld(world).get());
                     newr.setToSave(false);
                     regions.put(rname, newr);
                 }
@@ -212,7 +210,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         int saved = 0;
         try {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().config.configRoot().file_type);
-            String world = this.getWorld().getName();
 
             if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
 
@@ -261,7 +258,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
                 }
 
-                if (force) RedProtect.get().logger.info("Saving " + this.world.getName() + "'s regions...");
+                if (force) RedProtect.get().logger.info("Saving " + this.world + "'s regions...");
 
                 //try backup
                 if (force && RedProtect.get().config.configRoot().flat_file.backup) {
@@ -365,7 +362,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         return ret;
     }
 
-    public World getWorld() {
+    public String getWorld() {
         return this.world;
     }
 
