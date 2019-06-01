@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers.*;
@@ -39,9 +40,14 @@ import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.command.SendCommandEvent;
+import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.World;
@@ -56,6 +62,48 @@ import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
 public class CommandHandler {
 
     private final RedProtect plugin;
+    private Map<String, String> cmdConfirm = new HashMap<>();
+
+    @Listener(order = Order.PRE)
+    public void onCommand(SendCommandEvent event, @First CommandSource source){
+        String[] args = event.getArguments().split(" ");
+        if (args.length >= 1 && (event.getCommand().equals("redprotect") || event.getCommand().equals("rp"))){
+
+            List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
+            conditions.addAll(Arrays.asList(getCmd("yes"),getCmd("no")));
+            if (conditions.stream().noneMatch(cmd->checkCmd(args[0], cmd))) {
+                return;
+            }
+
+            String cmd = conditions.stream().filter(c->checkCmd(args[0], c)).findFirst().get();
+
+            if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(args[0], "yes") && !checkCmd(args[0], "no")){
+                cmdConfirm.put(source.getName(), cmd + " " + event.getArguments().substring(args[0].length()+1));
+                RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                        new Replacer[]{
+                                new Replacer("{cmd}","/rp " + event.getArguments()),
+                                new Replacer("{cmd-yes}",getCmd("yes")),
+                                new Replacer("{cmd-no}",getCmd("no"))});
+                event.setCancelled(true);
+            } else if (cmdConfirm.containsKey(source.getName())) {
+                if (cmd.equals(getCmd("yes"))){
+                    Sponge.getCommandManager().process(source, "redprotect " + cmdConfirm.get(source.getName()));
+                    cmdConfirm.remove(source.getName());
+                } else
+                if (cmd.equals(getCmd("no"))){
+                    cmdConfirm.remove(source.getName());
+                } else
+                if (cmdConfirm.get(source.getName()).split(" ")[0].equals(cmd)){
+                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                            new Replacer[]{
+                                    new Replacer("{cmd}","/rp " + cmdConfirm.get(source.getName())),
+                                    new Replacer("{cmd-yes}",getCmd("yes")),
+                                    new Replacer("{cmd-no}",getCmd("no"))});
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
 
     public CommandHandler(RedProtect plugin) {
         this.plugin = plugin;

@@ -236,6 +236,7 @@ public class RedProtect {
         commandHandler = new CommandHandler(this);
 
         logger.info("Registering listeners...");
+        Sponge.getGame().getEventManager().registerListeners(container, commandHandler);
         Sponge.getGame().getEventManager().registerListeners(container, new BlockListener());
         Sponge.getGame().getEventManager().registerListeners(container, new GlobalListener());
         Sponge.getGame().getEventManager().registerListeners(container, new PlayerListener());
