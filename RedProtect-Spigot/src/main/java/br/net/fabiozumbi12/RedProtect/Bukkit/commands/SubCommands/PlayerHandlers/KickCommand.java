@@ -107,7 +107,7 @@ public class KickCommand implements SubCommand {
 
                 Player visit = Bukkit.getPlayer(args[0]);
                 if (visit == null) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args[0]));
                     return true;
                 }
 
@@ -130,7 +130,7 @@ public class KickCommand implements SubCommand {
                 String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                     RedProtectUtil.DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", args[1]).replace("{region}", r.getName()).replace("{time}", sec));
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", args[0]).replace("{region}", r.getName()).replace("{time}", sec));
                 } else {
                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
                 }
