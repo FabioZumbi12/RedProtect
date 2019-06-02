@@ -231,7 +231,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
             if (conditions.stream().anyMatch(cmd->checkCmd(args[1], cmd))) {
                 String cmd = conditions.stream().filter(c->checkCmd(args[1], c)).findFirst().get();
-
                 if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")){
                     cmdConfirm.put(p.getName(), commandArgs);
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
@@ -240,24 +239,25 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                                     new Replacer("{cmd-yes}",getCmd("yes")),
                                     new Replacer("{cmd-no}",getCmd("no"))});
                     e.setCancelled(true);
+                }
+            }
+            if (cmdConfirm.containsKey(p.getName())){
+                if (checkCmd(args[1],"yes")){
+                    String cmd1 = cmdConfirm.get(p.getName());
+                    e.setMessage("/"+cmd1);
+                    cmdConfirm.remove(p.getName());
                 } else
-                if (cmdConfirm.containsKey(p.getName())){
-                    if (cmd.equals(getCmd("yes"))){
-                        String cmd1 = cmdConfirm.get(p.getName());
-                        e.setMessage("/"+cmd1);
-                        cmdConfirm.remove(p.getName());
-                    } else
-                        if (cmd.equals(getCmd("no"))){
-                        cmdConfirm.remove(p.getName());
-                        e.setCancelled(true);
-                    } else {
-                            RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
-                                    new Replacer[]{
-                                            new Replacer("{cmd}","/" + cmdConfirm.get(p.getName())),
-                                            new Replacer("{cmd-yes}",getCmd("yes")),
-                                            new Replacer("{cmd-no}",getCmd("no"))});
-                            e.setCancelled(true);
-                        }
+                if (checkCmd(args[1],"no")){
+                    cmdConfirm.remove(p.getName());
+                    RedProtect.get().lang.sendMessage(p, "cmdmanager.usagecancelled");
+                    e.setCancelled(true);
+                } else {
+                    RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
+                            new Replacer[]{
+                                    new Replacer("{cmd}","/" + cmdConfirm.get(p.getName())),
+                                    new Replacer("{cmd-yes}",getCmd("yes")),
+                                    new Replacer("{cmd-no}",getCmd("no"))});
+                    e.setCancelled(true);
                 }
             }
         }

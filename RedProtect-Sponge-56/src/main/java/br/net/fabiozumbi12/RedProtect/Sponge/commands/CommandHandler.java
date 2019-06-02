@@ -64,42 +64,51 @@ public class CommandHandler {
     private final RedProtect plugin;
     private Map<String, String> cmdConfirm = new HashMap<>();
 
-    @Listener(order = Order.PRE)
-    public void onCommand(SendCommandEvent event, @First CommandSource source){
-        String[] args = event.getArguments().split(" ");
-        if (args.length >= 1 && (event.getCommand().equals("redprotect") || event.getCommand().equals("rp"))){
+    @Listener(order = Order.EARLY)
+    public void onCommand(SendCommandEvent e, @First CommandSource source){
+
+        String[] args = e.getArguments().split(" ");
+
+        StringBuilder commandArgsAbr = new StringBuilder();
+        Arrays.stream(args).forEach(arg->commandArgsAbr.append(arg).append(" "));
+        String commandArgs = commandArgsAbr.substring(0, commandArgsAbr.length()-1);
+
+        RedProtect.get().logger.severe("commandArgs: "+commandArgs);
+
+        if (args.length >= 1 && (e.getCommand().equals("redprotect") || e.getCommand().equals("rp"))){
 
             List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
             conditions.addAll(Arrays.asList(getCmd("yes"),getCmd("no")));
-            if (conditions.stream().noneMatch(cmd->checkCmd(args[0], cmd))) {
-                return;
-            }
 
-            String cmd = conditions.stream().filter(c->checkCmd(args[0], c)).findFirst().get();
-
-            if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(args[0], "yes") && !checkCmd(args[0], "no")){
-                cmdConfirm.put(source.getName(), cmd + " " + event.getArguments().substring(args[0].length()+1));
-                RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
-                        new Replacer[]{
-                                new Replacer("{cmd}","/rp " + event.getArguments()),
-                                new Replacer("{cmd-yes}",getCmd("yes")),
-                                new Replacer("{cmd-no}",getCmd("no"))});
-                event.setCancelled(true);
-            } else if (cmdConfirm.containsKey(source.getName())) {
-                if (cmd.equals(getCmd("yes"))){
-                    Sponge.getCommandManager().process(source, "redprotect " + cmdConfirm.get(source.getName()));
-                    cmdConfirm.remove(source.getName());
-                } else
-                if (cmd.equals(getCmd("no"))){
-                    cmdConfirm.remove(source.getName());
-                } else
-                if (cmdConfirm.get(source.getName()).split(" ")[0].equals(cmd)){
+            if (conditions.stream().anyMatch(cmd->checkCmd(args[0], cmd))) {
+                String cmd = conditions.stream().filter(c->checkCmd(args[0], c)).findFirst().get();
+                if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")){
+                    cmdConfirm.put(source.getName(), commandArgs);
                     RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}","/rp " + cmdConfirm.get(source.getName())),
+                                    new Replacer("{cmd}","/" + e.getCommand() + " " + commandArgs),
                                     new Replacer("{cmd-yes}",getCmd("yes")),
                                     new Replacer("{cmd-no}",getCmd("no"))});
-                    event.setCancelled(true);
+                    e.setCancelled(true);
+                }
+            }
+            if (cmdConfirm.containsKey(source.getName())){
+                if (checkCmd(args[0],"yes")){
+                    String cmd1 = cmdConfirm.get(source.getName());
+                    e.setArguments(cmd1);
+                    cmdConfirm.remove(source.getName());
+                } else
+                if (checkCmd(args[0],"no")){
+                    cmdConfirm.remove(source.getName());
+                    RedProtect.get().lang.sendMessage(source, "cmdmanager.usagecancelled");
+                    e.setCancelled(true);
+                } else {
+                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                            new Replacer[]{
+                                    new Replacer("{cmd}","/" + e.getCommand() + " " + cmdConfirm.get(source.getName())),
+                                    new Replacer("{cmd-yes}",getCmd("yes")),
+                                    new Replacer("{cmd-no}",getCmd("no"))});
+                    e.setCancelled(true);
                 }
             }
         }
