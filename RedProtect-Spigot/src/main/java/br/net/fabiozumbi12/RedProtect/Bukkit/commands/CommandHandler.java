@@ -51,6 +51,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.lang.reflect.Array;
 import java.text.ParseException;
@@ -60,7 +63,7 @@ import java.util.concurrent.TimeUnit;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 
-public class CommandHandler implements CommandExecutor, TabCompleter {
+public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     private final RedProtect plugin;
     private HashMap<List<String>, SubCommand> commandMap = new HashMap<>();
@@ -212,46 +215,57 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         return this.commandMap.keySet().stream().anyMatch(k -> k.contains(cmd));
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        StringBuilder commandArgs = new StringBuilder();
-        Arrays.stream(args).forEach(arg->commandArgs.append(arg).append(" "));
+    @EventHandler
+    public void onPreCommand(PlayerCommandPreprocessEvent e){
+        Player p = e.getPlayer();
+        String[] args = e.getMessage().split(" ");
 
-        if (args.length >= 1){
+        StringBuilder commandArgsAbr = new StringBuilder();
+        Arrays.stream(args).forEach(arg->commandArgsAbr.append(arg).append(" "));
+        String commandArgs = commandArgsAbr.substring(1, commandArgsAbr.length()-1);
+
+        if (args.length >= 2 && (args[0].equals("/redprotect") || args[0].equals("/rp"))){
+
             List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
             conditions.addAll(Arrays.asList(getCmd("yes"),getCmd("no")));
-            if (conditions.stream().anyMatch(cmd->checkCmd(args[0], cmd))) {
-                String cmd = conditions.stream().filter(c->checkCmd(args[0], c)).findFirst().get();
 
-                if (!cmdConfirm.containsKey(sender.getName()) && !checkCmd(args[0], "yes") && !checkCmd(args[0], "no")){
-                    cmdConfirm.put(sender.getName(), cmd + " " + commandArgs.substring(args[0].length()+1));
-                    RedProtect.get().lang.sendMessage(sender, "cmdmanager.confirm",
+            if (conditions.stream().anyMatch(cmd->checkCmd(args[1], cmd))) {
+                String cmd = conditions.stream().filter(c->checkCmd(args[1], c)).findFirst().get();
+
+                if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")){
+                    cmdConfirm.put(p.getName(), commandArgs);
+                    RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}","/rp " + commandArgs),
+                                    new Replacer("{cmd}","/" + commandArgs),
                                     new Replacer("{cmd-yes}",getCmd("yes")),
                                     new Replacer("{cmd-no}",getCmd("no"))});
-                } else if (cmdConfirm.containsKey(sender.getName())) {
+                    e.setCancelled(true);
+                } else
+                if (cmdConfirm.containsKey(p.getName())){
                     if (cmd.equals(getCmd("yes"))){
-                        Bukkit.getServer().dispatchCommand(sender, "redprotect " + cmdConfirm.get(sender.getName()));
-                        cmdConfirm.remove(sender.getName());
+                        String cmd1 = cmdConfirm.get(p.getName());
+                        e.setMessage("/"+cmd1);
+                        cmdConfirm.remove(p.getName());
                     } else
-                    if (cmd.equals(getCmd("no"))){
-                        cmdConfirm.remove(sender.getName());
-                    } else
-                    if (cmdConfirm.get(sender.getName()).split(" ")[0].equals(cmd)){
-                        RedProtect.get().lang.sendMessage(sender, "cmdmanager.confirm",
-                                new Replacer[]{
-                                        new Replacer("{cmd}","/rp " + cmdConfirm.get(sender.getName())),
-                                        new Replacer("{cmd-yes}",getCmd("yes")),
-                                        new Replacer("{cmd-no}",getCmd("no"))});
-                    }
+                        if (cmd.equals(getCmd("no"))){
+                        cmdConfirm.remove(p.getName());
+                        e.setCancelled(true);
+                    } else {
+                            RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
+                                    new Replacer[]{
+                                            new Replacer("{cmd}","/" + cmdConfirm.get(p.getName())),
+                                            new Replacer("{cmd-yes}",getCmd("yes")),
+                                            new Replacer("{cmd-no}",getCmd("no"))});
+                            e.setCancelled(true);
+                        }
                 }
-                return true;
             }
         }
+    }
 
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0 && hasCommand(args[0])) {
-
             CommandExecutor executor = this.getCommandSubCommand(args[0]);
             if (!RedProtect.get().ph.hasCommandPerm(sender, getCmdFromAlias(args[0]))) {
                 RedProtect.get().lang.sendMessage(sender, "no.permission");

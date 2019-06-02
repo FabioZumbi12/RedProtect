@@ -165,6 +165,7 @@ public class RedProtect extends JavaPlugin {
         cmdHandler = new CommandHandler(this);
 
         logger.info("Registering listeners...");
+        getServer().getPluginManager().registerEvents(cmdHandler, this);
         getServer().getPluginManager().registerEvents(new GlobalListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
