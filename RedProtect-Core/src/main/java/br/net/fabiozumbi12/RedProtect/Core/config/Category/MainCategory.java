@@ -78,6 +78,8 @@ public class MainCategory {
     @Setting(value = "server-protection")
     public serverProtection server_protection = new serverProtection();
     @Setting
+    public updateCat update = new updateCat();
+    @Setting
     public wandsCat wands = new wandsCat();
     @Setting
     public hooksCat hooks = new hooksCat();
@@ -124,6 +126,16 @@ public class MainCategory {
         myMap.put("teleport", true);
         myMap.put("use-potions", true);
         return myMap;
+    }
+
+    @ConfigSerializable
+    public static class updateCat {
+        @Setting
+        public boolean enable = false;
+        @Setting(value = "auto-update", comment = "Not recommended, but we will do a full RedProtect backup before auto update ;)")
+        public boolean auto_update = false;
+        @Setting(value = "check-interval", comment = "In minutes.")
+        public int check_interval = 60;
     }
 
     @ConfigSerializable

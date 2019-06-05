@@ -38,6 +38,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.milkbowl.vault.economy.Economy;
@@ -72,6 +73,7 @@ public class RedProtect extends JavaPlugin {
     private RedProtectAPI redProtectAPI;
     private int autoSaveID;
     private VersionHelper rpvHelper;
+    private SpigetUpdater updater;
 
     public static RedProtect get() {
         return plugin;
@@ -83,6 +85,10 @@ public class RedProtect extends JavaPlugin {
 
     public RedProtectAPI getAPI() {
         return redProtectAPI;
+    }
+
+    public SpigetUpdater getUpdater(){
+        return this.updater;
     }
 
     public void onDisable() {
@@ -195,6 +201,17 @@ public class RedProtect extends JavaPlugin {
 
         // Load Gui lang file
         guiLang = new LangGuiManager();
+
+        // Update Manager
+        if (updater != null) {
+            Bukkit.getScheduler().cancelTask(updater.getTaskId());
+            updater = null;
+        }
+        if (config.configRoot().update.enable){
+            updater = new SpigetUpdater(this);
+            updater.setCurrentJarFile(this.getFile().getName());
+            updater.hourlyUpdateCheck(getServer().getConsoleSender(), config.configRoot().update.enable, false);
+        }
     }
 
     private void shutDown() {

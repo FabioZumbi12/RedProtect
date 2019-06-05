@@ -37,6 +37,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
+import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import me.ellbristow.mychunk.LiteChunk;
@@ -279,6 +280,20 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             }
 
             if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("update")) {
+                    if (plugin.getUpdater() == null){
+                        plugin.lang.sendMessage(sender, "&aPlugin updates is disabled on config.");
+                        return true;
+                    }
+                    if (plugin.getUpdater().getUpdateAvailable() == SpigetUpdater.UpdateStatus.AVAILABLE)
+                        plugin.getUpdater().downloadAndUpdateJar(sender);
+                    else if (plugin.getUpdater().getUpdateAvailable() == SpigetUpdater.UpdateStatus.RESTART_NEEDED)
+                        plugin.lang.sendMessage(sender, "&aPlugin updated. Restart server to complete the update.");
+                    else
+                        plugin.getUpdater().checkForUpdate(sender, false);
+                    return true;
+                }
+
                 if (args[0].equalsIgnoreCase("reset-uuids")) {
                     final boolean[] save = {false};
 
@@ -740,7 +755,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consoleCmds = Arrays.asList("reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+        List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
         if (sender instanceof Player){
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
