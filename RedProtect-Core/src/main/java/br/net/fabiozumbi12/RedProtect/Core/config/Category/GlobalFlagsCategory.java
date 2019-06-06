@@ -77,13 +77,15 @@ public class GlobalFlagsCategory {
                 "spawn-whitelist: ONLY this mobs will spawn in this world!\n\n" +
                 "You can use MONSTERS or PASSIVES groups.\n" +
                 "Check the entity types here:\n" +
-                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+                "Spigot: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html\n" +
+                "Sponge: https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
         public List<String> spawn_whitelist = new ArrayList<>();
         @Setting(value = "spawn-blacklist", comment = "" +
                 "spawn-blacklist: This mobs will NOT spawn in this world!\n\n" +
                 "You can use MONSTERS or PASSIVES groups.\n" +
                 "Check the entity types here:\n" +
-                "https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+                "Spigot: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html\n" +
+                "Sponge: https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
         public List<String> spawn_blacklist = new ArrayList<>();
         @Setting(value = "allow-elytra")
         public boolean allow_elytra = true;
@@ -112,6 +114,8 @@ public class GlobalFlagsCategory {
         public Map<String, CommandRanges> command_ranges = createMap();
         @Setting(value = "iceform-by")
         public iceFormCat iceform_by = new iceFormCat();
+        @Setting(comment = "Deny players to bypass worldborders.")
+        public borderCat border = new borderCat();
         @Setting(value = "player-velocity")
         public playerVeloCat player_velocity = new playerVeloCat();
 
@@ -119,6 +123,14 @@ public class GlobalFlagsCategory {
             Map<String, CommandRanges> map = new HashMap<>();
             map.put("home-command", new CommandRanges());
             return map;
+        }
+
+        @ConfigSerializable
+        public static class borderCat {
+            @Setting(value = "deny-bypass")
+            public boolean deny_bypass = true;
+            @Setting(value = "execute-command")
+            public String execute_command = "spawn {player}";
         }
 
         @ConfigSerializable

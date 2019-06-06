@@ -94,6 +94,17 @@ public class RedProtectUtil extends CoreUtil {
         return to;
     }
 
+    public static boolean isBypassBorder(Player p){
+        int diameter = (int) p.getWorld().getWorldBorder().getDiameter() / 2;
+        int centerZ = (int) p.getWorld().getWorldBorder().getCenter().getZ();
+        int centerX = (int) p.getWorld().getWorldBorder().getCenter().getX();
+        int playerX = (int) p.getLocation().getPosition().getX();
+        int playerZ = (int) p.getLocation().getPosition().getZ();
+        double x = playerX - centerX;
+        double z = playerZ - centerZ;
+        return ((x > diameter || (-x) > diameter) || (z > diameter || (-z) > diameter));
+    }
+
     public static Transform<World> DenyEnterPlayer(World wFrom, Transform<World> from, Transform<World> to, Region r, boolean checkSec) {
         Location<World> setFrom = from.getLocation();
         for (int i = 0; i < r.getArea() + 10; i++) {

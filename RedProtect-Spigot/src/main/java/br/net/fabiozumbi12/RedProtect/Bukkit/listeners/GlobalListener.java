@@ -297,6 +297,17 @@ public class GlobalListener implements Listener {
                 }
             }
         }
+
+        if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtectUtil.isBypassBorder(p)) {
+            RedProtect.get().lang.sendMessage(p, "globallistener.border.cantbypass");
+
+            boolean result = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.execute_command
+                    .replace("{player}", p.getName()));
+
+            // If not success, send to spawn
+            if (!result)
+                Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> e.setTo(p.getWorld().getSpawnLocation()), 1);
+        }
     }
 
     @EventHandler
@@ -319,9 +330,6 @@ public class GlobalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is BlockPlaceEvent event!");
-        if (e.getItemInHand() == null) {
-            return;
-        }
 
         Block b = e.getBlock();
         Player p = e.getPlayer();

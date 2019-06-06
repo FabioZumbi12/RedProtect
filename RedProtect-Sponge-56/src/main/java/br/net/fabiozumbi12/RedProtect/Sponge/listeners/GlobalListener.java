@@ -34,6 +34,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.property.block.MatterProperty;
@@ -162,7 +163,7 @@ public class GlobalListener {
         return true;
     }
 
-    @Listener
+    @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerMove(MoveEntityEvent e) {
         if (e.getTargetEntity() instanceof Player) {
             Player p = (Player) e.getTargetEntity();
@@ -176,6 +177,21 @@ public class GlobalListener {
                 if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_velocity.fly_speed >= 0) {
                     double vel = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_velocity.fly_speed;
                     p.offer(Keys.FLYING_SPEED, vel);
+                }
+            }
+
+            // Check Border
+            if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtectUtil.isBypassBorder(p)) {
+                RedProtect.get().lang.sendMessage(p, "globallistener.border.cantbypass");
+
+                CommandResult result = Sponge.getCommandManager().process(Sponge.getServer().getConsole(), RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.execute_command
+                        .replace("{player}", p.getName()));
+
+                // If not successful, send to spawn
+                if (!result.getSuccessCount().isPresent() || result.getSuccessCount().get() <= 0) {
+                    e.setToTransform(e.getFromTransform().setLocation(p.getWorld().getSpawnLocation()));
+                    Sponge.getScheduler().createTaskBuilder().delayTicks(1).execute(() -> e.setCancelled(true))
+                            .submit(RedProtect.get());
                 }
             }
         }

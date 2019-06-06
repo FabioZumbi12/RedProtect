@@ -73,8 +73,6 @@ public class CommandHandler {
         Arrays.stream(args).forEach(arg->commandArgsAbr.append(arg).append(" "));
         String commandArgs = commandArgsAbr.substring(0, commandArgsAbr.length()-1);
 
-        RedProtect.get().logger.severe("commandArgs: "+commandArgs);
-
         if (args.length >= 1 && (e.getCommand().equals("redprotect") || e.getCommand().equals("rp"))){
 
             List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
