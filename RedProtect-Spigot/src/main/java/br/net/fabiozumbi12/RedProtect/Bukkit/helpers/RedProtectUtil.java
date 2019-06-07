@@ -67,8 +67,6 @@ import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class RedProtectUtil extends CoreUtil {
-    private final String pathData = RedProtect.get().getDataFolder() + File.separator + "data" + File.separator;
-
     public String dateNow() {
         return dateNow(RedProtect.get().config.configRoot().region_settings.date_format);
     }
@@ -589,7 +587,7 @@ public class RedProtectUtil extends CoreUtil {
 
                 //write to yml
                 YamlConfiguration fileDB = new YamlConfiguration();
-                File datf = new File(pathData, "data_" + world.getName() + ".yml");
+                File datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + world.getName() + ".yml");
                 Set<YamlConfiguration> yamls = new HashSet<>();
                 for (Region r : regions.values()) {
                     if (r.getName() == null) {
@@ -601,7 +599,7 @@ public class RedProtectUtil extends CoreUtil {
                             continue;
                         }
                         fileDB = new YamlConfiguration();
-                        datf = new File(pathData, world.getName() + File.separator + r.getName() + ".yml");
+                        datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", world.getName() + File.separator + r.getName() + ".yml");
                     }
 
                     addProps(fileDB, r);
@@ -618,9 +616,9 @@ public class RedProtectUtil extends CoreUtil {
                     saveYaml(fileDB, datf);
                 } else {
                     //remove deleted regions
-                    File wfolder = new File(pathData + world.getName());
+                    File wfolder = new File(RedProtect.get().getDataFolder() + File.separator + "data", world.getName());
                     if (wfolder.exists()) {
-                        File[] listOfFiles = new File(pathData + world.getName()).listFiles();
+                        File[] listOfFiles = new File(RedProtect.get().getDataFolder() + File.separator + "data", world.getName()).listFiles();
                         if (listOfFiles != null) {
                             for (File region : listOfFiles) {
                                 if (region.isFile() && !regions.containsKey(region.getName().replace(".yml", ""))) {
@@ -656,12 +654,12 @@ public class RedProtectUtil extends CoreUtil {
             return;
         }
 
-        File bfolder = new File(pathData + "backups" + File.separator);
+        File bfolder = new File(RedProtect.get().getDataFolder() + File.separator + "data","backups" + File.separator);
         if (!bfolder.exists()) {
             bfolder.mkdir();
         }
 
-        File folder = new File(pathData + "backups" + File.separator + world + File.separator);
+        File folder = new File(RedProtect.get().getDataFolder() + File.separator + "data", "backups" + File.separator + world + File.separator);
         if (!folder.exists()) {
             folder.mkdir();
             RedProtect.get().logger.info("Created folder: " + folder.getPath());
@@ -984,18 +982,18 @@ public class RedProtectUtil extends CoreUtil {
             for (Region r : regions) {
                 YamlConfiguration fileDB = new YamlConfiguration();
 
-                File f = new File(pathData + w.getName());
+                File f = new File(RedProtect.get().getDataFolder() + File.separator + "data", w.getName());
                 if (!f.exists()) {
                     f.mkdir();
                 }
-                File wf = new File(pathData, w.getName() + File.separator + r.getName() + ".yml");
+                File wf = new File(RedProtect.get().getDataFolder() + File.separator + "data", w.getName() + File.separator + r.getName() + ".yml");
 
                 saved++;
                 addProps(fileDB, r);
                 saveYaml(fileDB, wf);
             }
 
-            File oldf = new File(pathData + "data_" + w.getName() + ".yml");
+            File oldf = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + w.getName() + ".yml");
             if (oldf.exists()) {
                 oldf.delete();
             }
@@ -1011,18 +1009,18 @@ public class RedProtectUtil extends CoreUtil {
     public int FilesToSingle() {
         int saved = 0;
         for (World w : Bukkit.getWorlds()) {
-            File f = new File(pathData, "data_" + w.getName() + ".yml");
+            File f = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + w.getName() + ".yml");
             Set<Region> regions = RedProtect.get().rm.getRegionsByWorld(w.getName());
             YamlConfiguration fileDB = new YamlConfiguration();
             for (Region r : regions) {
                 addProps(fileDB, r);
                 saved++;
-                File oldf = new File(pathData, w.getName() + File.separator + r.getName() + ".yml");
+                File oldf = new File(RedProtect.get().getDataFolder() + File.separator + "data", w.getName() + File.separator + r.getName() + ".yml");
                 if (oldf.exists()) {
                     oldf.delete();
                 }
             }
-            File oldf = new File(pathData, w.getName());
+            File oldf = new File(RedProtect.get().getDataFolder() + File.separator + "data", w.getName());
             if (oldf.exists()) {
                 oldf.delete();
             }
