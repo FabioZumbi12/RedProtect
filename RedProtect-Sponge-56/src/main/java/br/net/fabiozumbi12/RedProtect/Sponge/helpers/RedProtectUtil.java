@@ -849,14 +849,22 @@ public class RedProtectUtil extends CoreUtil {
                 }
             }
         }
+
+        ParticleType particle;
+        try {
+            particle = Sponge.getRegistry().getType(ParticleType.class, RedProtect.get().config.configRoot().region_settings.border.particle).get();
+        } catch (Exception ignored){
+            particle = ParticleTypes.FLAME;
+        }
         borderPlayers.add(p.getName());
+        ParticleType finalParticle = particle;
         Task task = Sponge.getScheduler().createSyncExecutor(RedProtect.get()).scheduleAtFixedRate(()->
-                locations.forEach(l->w.spawnParticles(ParticleEffect.builder().quantity(1).type(ParticleTypes.FLAME).velocity(new Vector3d(0,0,0)).build(), new Vector3d(l.getBlockX()+0.500, l.getBlockY(), l.getBlockZ()+0.500))
+                locations.forEach(l->w.spawnParticles(ParticleEffect.builder().quantity(1).type(finalParticle).velocity(new Vector3d(0,0,0)).build(), new Vector3d(l.getBlockX()+0.500, l.getBlockY(), l.getBlockZ()+0.500))
                 ),500,500,TimeUnit.MILLISECONDS).getTask();
         Sponge.getScheduler().createSyncExecutor(RedProtect.get()).schedule(()->{
             borderPlayers.remove(p.getName());
             task.cancel();
-        }, 10, TimeUnit.SECONDS);
+        }, RedProtect.get().config.configRoot().region_settings.border.time_showing, TimeUnit.SECONDS);
     }
 
     public int simuleTotalRegionSize(String player, Region r2) {

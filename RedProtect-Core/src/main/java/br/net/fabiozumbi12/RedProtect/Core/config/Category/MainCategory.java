@@ -349,10 +349,10 @@ public class MainCategory {
 
         @ConfigSerializable
         public static class borderCat {
-            @Setting
-            public String material = "";
-            @Setting(value = "time-showing")
-            public int time_showing = 5;
+            @Setting(comment = "The particle to show on region border. Customizable particles like colors is not compatible and will not work. Default: FLAME")
+            public String particle = "FLAME";
+            @Setting(value = "time-showing", comment = "Time the border will be visible in seconds.")
+            public int time_showing = 10;
         }
 
         @ConfigSerializable

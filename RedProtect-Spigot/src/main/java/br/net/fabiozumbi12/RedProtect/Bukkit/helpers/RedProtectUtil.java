@@ -877,13 +877,21 @@ public class RedProtectUtil extends CoreUtil {
                 }
             }
         }
+
+        Particle particle;
+        try {
+            particle = Particle.valueOf(RedProtect.get().config.configRoot().region_settings.border.particle);
+        } catch (Exception ignored){
+            particle = Particle.FLAME;
+        }
         borderPlayers.add(p.getName());
+        Particle finalParticle = particle;
         int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), ()->
-                locations.forEach(l->w.spawnParticle(Particle.FLAME, l.getX()+0.500, l.getY(), l.getZ()+0.500, 1, 0, 0, 0, 0)), 10, 10);
+                locations.forEach(l->w.spawnParticle(finalParticle, l.getX()+0.500, l.getY(), l.getZ()+0.500, 1, 0, 0, 0, 0)), 10, 10);
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> {
             borderPlayers.remove(p.getName());
             Bukkit.getScheduler().cancelTask(task);
-        },200);
+        },RedProtect.get().config.configRoot().region_settings.border.time_showing * 20);
     }
 
     public int convertFromGP() {

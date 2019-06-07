@@ -93,6 +93,9 @@ public class ConfigManager extends CoreConfigManager {
             configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Sponge.getServer().getOnlineMode()));
 
+            if (!configRoot.getNode("region-settings", "border", "material").isVirtual()) {
+                configRoot.getNode("region-settings", "border", "material").setValue(null);
+            }
             if (!configRoot.getNode("flags-configuration", "enabled-flags").isVirtual()) {
                 configRoot.getNode("flags-configuration", "enabled-flags").setValue(null);
             }
@@ -123,9 +126,6 @@ public class ConfigManager extends CoreConfigManager {
             }
             if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = BlockTypes.FENCE.getId();
-            }
-            if (this.root.region_settings.border.material.isEmpty()) {
-                this.root.region_settings.border.material = BlockTypes.GLOWSTONE.getId();
             }
             if (this.root.wands.adminWandID.isEmpty()) {
                 this.root.wands.adminWandID = ItemTypes.GLASS_BOTTLE.getId();
@@ -459,13 +459,6 @@ public class ConfigManager extends CoreConfigManager {
         separator.offer(Keys.ITEM_DURABILITY, guiRoot.gui_separator.data);
         separator.offer(Keys.ITEM_LORE, Arrays.asList(Text.EMPTY, RedProtect.get().guiLang.getFlagString("separator")));
         return separator;
-    }
-
-    public BlockType getBorderMaterial() {
-        if (Sponge.getRegistry().getType(BlockType.class, root.region_settings.border.material).isPresent()) {
-            return Sponge.getRegistry().getType(BlockType.class, root.region_settings.border.material).get();
-        }
-        return BlockTypes.GLOWSTONE;
     }
 
     public boolean isAllowedWorld(Player p) {

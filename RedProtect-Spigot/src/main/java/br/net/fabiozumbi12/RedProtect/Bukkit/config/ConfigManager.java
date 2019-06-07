@@ -97,6 +97,9 @@ public class ConfigManager extends CoreConfigManager {
             }
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Bukkit.getOnlineMode()));
 
+            if (!configRoot.getNode("region-settings", "border", "material").isVirtual()) {
+                configRoot.getNode("region-settings", "border", "material").setValue(null);
+            }
             if (!configRoot.getNode("flags-configuration", "enabled-flags").isVirtual()) {
                 configRoot.getNode("flags-configuration", "enabled-flags").setValue(null);
             }
@@ -140,9 +143,6 @@ public class ConfigManager extends CoreConfigManager {
             }
             if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = "FENCE";
-            }
-            if (this.root.region_settings.border.material.isEmpty()) {
-                this.root.region_settings.border.material = Material.GLOWSTONE.name();
             }
             if (this.root.wands.adminWandID.isEmpty()) {
                 this.root.wands.adminWandID = Material.GLASS_BOTTLE.name();
@@ -537,13 +537,6 @@ public class ConfigManager extends CoreConfigManager {
         meta.setLore(Arrays.asList("", RedProtect.get().guiLang.getFlagString("separator")));
         separator.setItemMeta(meta);
         return separator;
-    }
-
-    public Material getBorderMaterial() {
-        if (Material.getMaterial(root.region_settings.border.material) != null) {
-            return Material.getMaterial(root.region_settings.border.material);
-        }
-        return Material.GLOWSTONE;
     }
 
     public boolean isAllowedWorld(Player p) {
