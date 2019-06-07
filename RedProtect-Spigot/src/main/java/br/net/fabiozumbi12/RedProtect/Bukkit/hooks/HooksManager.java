@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import com.earth2me.essentials.Essentials;
 import net.milkbowl.vault.economy.Economy;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
@@ -53,95 +54,105 @@ public class HooksManager {
     public DynmapHook dynmapHook;
 
     public void registerHooksFirst() {
-        bossBar = checkBM();
-        myChunk = checkMyChunk();
-        myPet = checkMyPet();
-        magicCarpet = checkMagicCarpet();
-        vault = checkVault();
-        pvpm = checkPvPm();
-        essentials = checkEss();
-        griefPrev = checkGriefPrev();
-        worldEdit = checkWe();
-        simpleClans = checkSC();
-        boolean infernalMobs = checkIMobs();
-        boolean fac = checkFac();
-        boolean placeHolderAPI = checkPHAPI();
-        boolean mcMMO = checkMcMMo();
-        boolean skillAPI = checkSkillAPI();
+        try {
+            bossBar = checkBM();
+            myChunk = checkMyChunk();
+            myPet = checkMyPet();
+            magicCarpet = checkMagicCarpet();
+            vault = checkVault();
+            pvpm = checkPvPm();
+            essentials = checkEss();
+            griefPrev = checkGriefPrev();
+            worldEdit = checkWe();
+            simpleClans = checkSC();
+            boolean infernalMobs = checkIMobs();
+            boolean fac = checkFac();
+            boolean placeHolderAPI = checkPHAPI();
+            boolean mcMMO = checkMcMMo();
+            boolean skillAPI = checkSkillAPI();
 
-        if (vault) {
-            RegisteredServiceProvider<Economy> rsp = RedProtect.get().getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp != null) {
-                RedProtect.get().economy = rsp.getProvider();
-                RedProtect.get().logger.info("Vault found. Hooked.");
-            } else {
-                RedProtect.get().logger.warning("Could not initialize Vault hook.");
-                vault = false;
+            if (vault) {
+                RegisteredServiceProvider<Economy> rsp = RedProtect.get().getServer().getServicesManager().getRegistration(Economy.class);
+                if (rsp != null) {
+                    RedProtect.get().economy = rsp.getProvider();
+                    RedProtect.get().logger.info("Vault found. Hooked.");
+                } else {
+                    RedProtect.get().logger.warning("Could not initialize Vault hook.");
+                    vault = false;
+                }
             }
-        }
 
-        if (infernalMobs) {
-            try {
-                RedProtect.get().getServer().getPluginManager().registerEvents(new InfernalMobsHook(), RedProtect.get());
-                RedProtect.get().logger.info("InfernalMobs found. Hooked.");
-            } catch (Exception ex) {
-                RedProtect.get().logger.warning("Your InfernalMobs version is NOT compatible and has no API. Look for FabioZumbi12's version on Github!");
+            if (infernalMobs) {
+                try {
+                    RedProtect.get().getServer().getPluginManager().registerEvents(new InfernalMobsHook(), RedProtect.get());
+                    RedProtect.get().logger.info("InfernalMobs found. Hooked.");
+                } catch (Exception ex) {
+                    RedProtect.get().logger.warning("Your InfernalMobs version is NOT compatible and has no API. Look for FabioZumbi12's version on Github!");
+                }
             }
-        }
-        if (pvpm) {
-            RedProtect.get().logger.info("PvPManager found. Hooked.");
-        }
-        if (essentials) {
-            pless = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-            RedProtect.get().logger.info("Essentials found. Hooked.");
-        }
-        if (worldEdit) {
-            RedProtect.get().logger.info("WorldEdit found. Hooked.");
-        }
-        if (bossBar) {
-            RedProtect.get().logger.info("BossbarAPI found. Hooked.");
-        }
-        if (myPet) {
-            RedProtect.get().getServer().getPluginManager().registerEvents(new MyPetHook(), RedProtect.get());
-            RedProtect.get().logger.info("MyPet found. Hooked.");
-        }
-        if (mcMMO) {
-            RedProtect.get().getServer().getPluginManager().registerEvents(new McMMOHook(), RedProtect.get());
-            RedProtect.get().logger.info("mcMMo found. Hooked.");
-        }
-        if (skillAPI) {
-            RedProtect.get().getServer().getPluginManager().registerEvents(new SkillAPIHook(), RedProtect.get());
-            RedProtect.get().logger.info("SkillAPI found. Hooked.");
-        }
-        if (myChunk) {
-            RedProtect.get().logger.success("MyChunk found. Ready to convert!");
-            RedProtect.get().logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
-        }
-        if (magicCarpet) {
-            RedProtect.get().logger.info("MagicCarpet found. Hooked.");
-        }
-        if (simpleClans) {
-            clanManager = SimpleClans.getInstance().getClanManager();
-            RedProtect.get().logger.info("SimpleClans found. Hooked.");
-        }
-        if (placeHolderAPI) {
-            new PAPIHook().register();
-            RedProtect.get().logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
-        }
-        if (fac) {
-            RedProtect.get().getServer().getPluginManager().registerEvents(new FactionsHook(), RedProtect.get());
-            RedProtect.get().logger.info("Factions found. Hooked.");
+            if (pvpm) {
+                RedProtect.get().logger.info("PvPManager found. Hooked.");
+            }
+            if (essentials) {
+                pless = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+                RedProtect.get().logger.info("Essentials found. Hooked.");
+            }
+            if (worldEdit) {
+                RedProtect.get().logger.info("WorldEdit found. Hooked.");
+            }
+            if (bossBar) {
+                RedProtect.get().logger.info("BossbarAPI found. Hooked.");
+            }
+            if (myPet) {
+                RedProtect.get().getServer().getPluginManager().registerEvents(new MyPetHook(), RedProtect.get());
+                RedProtect.get().logger.info("MyPet found. Hooked.");
+            }
+            if (mcMMO) {
+                RedProtect.get().getServer().getPluginManager().registerEvents(new McMMOHook(), RedProtect.get());
+                RedProtect.get().logger.info("mcMMo found. Hooked.");
+            }
+            if (skillAPI) {
+                RedProtect.get().getServer().getPluginManager().registerEvents(new SkillAPIHook(), RedProtect.get());
+                RedProtect.get().logger.info("SkillAPI found. Hooked.");
+            }
+            if (myChunk) {
+                RedProtect.get().logger.success("MyChunk found. Ready to convert!");
+                RedProtect.get().logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
+            }
+            if (magicCarpet) {
+                RedProtect.get().logger.info("MagicCarpet found. Hooked.");
+            }
+            if (simpleClans) {
+                clanManager = SimpleClans.getInstance().getClanManager();
+                RedProtect.get().logger.info("SimpleClans found. Hooked.");
+            }
+            if (placeHolderAPI) {
+                new PAPIHook().register();
+                RedProtect.get().logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+            }
+            if (fac) {
+                RedProtect.get().getServer().getPluginManager().registerEvents(new FactionsHook(), RedProtect.get());
+                RedProtect.get().logger.info("Factions found. Hooked.");
+            }
+        } catch (Exception e){
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
         }
     }
 
     public void registerHooksLast() {
-        Dyn = checkDyn();
-        if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
-            RedProtect.get().logger.info("Dynmap found. Hooked.");
-            RedProtect.get().logger.info("Loading dynmap markers...");
-            dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
-            RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
-            RedProtect.get().logger.info("Dynmap markers loaded!");
+        try {
+            Dyn = checkDyn();
+            if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
+                RedProtect.get().logger.info("Dynmap found. Hooked.");
+                RedProtect.get().logger.info("Loading dynmap markers...");
+                dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+                RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
+                RedProtect.get().logger.info("Dynmap markers loaded!");
+            }
+        } catch (Exception e){
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
         }
     }
 

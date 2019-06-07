@@ -252,20 +252,15 @@ public class RedProtect {
         // Register hooks
         this.hooks.registerHooksFirst();
 
-        try {
-            rm = new RegionManager();
-            rm.loadAll();
+        rm = new RegionManager();
+        rm.loadAll();
 
-            RedProtect.get().getUtil().ReadAllDB(rm.getAllRegions());
+        RedProtect.get().getUtil().ReadAllDB(rm.getAllRegions());
 
-            if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
-                AutoSaveHandler();
-            }
-            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
-        } catch (Exception e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
+        if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+            AutoSaveHandler();
         }
+        logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
 
         // Register hooks
         this.hooks.registerHooksLast();

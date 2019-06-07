@@ -187,20 +187,15 @@ public class RedProtect extends JavaPlugin {
         // Register hooks
         hooks.registerHooksFirst();
 
-        try {
-            rm = new RegionManager();
-            rm.loadAll();
+        rm = new RegionManager();
+        rm.loadAll();
 
-            redProtectUtil.ReadAllDB(rm.getAllRegions());
+        redProtectUtil.ReadAllDB(rm.getAllRegions());
 
-            if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
-                startAutoSave();
-            }
-            logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
-        } catch (Exception e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
+        if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+            startAutoSave();
         }
+        logger.info("There are " + rm.getTotalRegionsNum() + " regions on (" + config.configRoot().file_type + ") database!");
 
         // Register hooks
         hooks.registerHooksLast();

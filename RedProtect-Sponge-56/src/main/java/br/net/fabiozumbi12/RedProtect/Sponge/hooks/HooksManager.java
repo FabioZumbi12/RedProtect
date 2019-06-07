@@ -36,33 +36,47 @@ public class HooksManager {
     public boolean Dyn;
 
     public void registerHooksFirst() {
-        WE = checkWE();
-        Dyn = checkDM();
+        try {
+            WE = checkWE();
+            Dyn = checkDM();
 
-        if (WE) {
-            RedProtect.get().logger.info("WorldEdit found. Hooked.");
+            if (WE) {
+                RedProtect.get().logger.info("WorldEdit found. Hooked.");
+            }
+        } catch (Exception e){
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
         }
     }
 
     public void registerHooksLast() {
-        if (Dyn) {
-            RedProtect.get().logger.info("Dynmap found. Hooked.");
-            RedProtect.get().logger.info("Loading Dynmap markers...");
-            try {
-                dynmapHook = new DynmapHook();
-                Sponge.getGame().getEventManager().registerListeners(RedProtect.get().container, dynmapHook);
-            } catch (Exception e) {
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
+        try {
+            if (Dyn) {
+                RedProtect.get().logger.info("Dynmap found. Hooked.");
+                RedProtect.get().logger.info("Loading Dynmap markers...");
+                try {
+                    dynmapHook = new DynmapHook();
+                    Sponge.getGame().getEventManager().registerListeners(RedProtect.get().container, dynmapHook);
+                } catch (Exception e) {
+                    CoreUtil.printJarVersion();
+                    e.printStackTrace();
+                }
+                RedProtect.get().logger.info("Dynmap markers loaded!");
             }
-            RedProtect.get().logger.info("Dynmap markers loaded!");
+        } catch (Exception e){
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
         }
     }
 
     private boolean checkWE() {
-        return RedProtect.get().container.getDependencies().stream().anyMatch(d -> d.getId().equals("worldedit") &&
-                Sponge.getPluginManager().getPlugin("worldedit").isPresent() &&
-                Sponge.getPluginManager().getPlugin("worldedit").get().getVersion().get().startsWith("6.1.9"));
+        try {
+            return RedProtect.get().container.getDependencies().stream().anyMatch(d -> d.getId().equals("worldedit") &&
+                    Sponge.getPluginManager().getPlugin("worldedit").isPresent() &&
+                    Sponge.getPluginManager().getPlugin("worldedit").get().getVersion().get().startsWith("6.1.9"));
+        } catch (Exception ingored){
+            return false;
+        }
     }
 
     private boolean checkDM() {
