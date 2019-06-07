@@ -100,7 +100,7 @@ public class EconomyManager {
             r.setWelcome(getCostMessage(r));
             r.setFlag(Bukkit.getConsoleSender(), "for-sale", true);
             if (RedProtect.get().config.getEcoBool("rename-region")) {
-                RedProtect.get().rm.renameRegion(RedProtectUtil.nameGen(RedProtectUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
+                RedProtect.get().rm.renameRegion(RedProtect.get().getUtil().nameGen(RedProtect.get().getUtil().UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             return true;
         } catch (Exception e) {
@@ -114,11 +114,11 @@ public class EconomyManager {
             r.clearAdmins();
             r.clearLeaders();
             r.addLeader(uuid);
-            r.setDate(RedProtectUtil.dateNow());
+            r.setDate(RedProtect.get().getUtil().dateNow());
             r.setWelcome("");
             r.setFlags(RedProtect.get().config.getDefFlagsValues());
             if (RedProtect.get().config.getEcoBool("rename-region")) {
-                RedProtect.get().rm.renameRegion(RedProtectUtil.nameGen(RedProtectUtil.UUIDtoPlayer(uuid), r.getWorld()), r);
+                RedProtect.get().rm.renameRegion(RedProtect.get().getUtil().nameGen(RedProtect.get().getUtil().UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             r.removeFlag("for-sale");
             return true;

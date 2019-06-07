@@ -38,32 +38,32 @@ public class RedProtectLogger {
     private final SortedMap<Integer, String> mainLog = new TreeMap<>();
 
     public void success(String s) {
-        Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText("[RedProtect] &a&l" + s + "&r"));
+        Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText("[RedProtect] &a&l" + s + "&r"));
     }
 
     public void info(String s) {
-        Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText("[RedProtect] " + s));
+        Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText("[RedProtect] " + s));
     }
 
     public void warning(String s) {
-        Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText("[RedProtect] &6" + s + "&r"));
+        Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText("[RedProtect] &6" + s + "&r"));
     }
 
     public void severe(String s) {
-        Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText("[RedProtect] &c&l" + s + "&r"));
+        Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText("[RedProtect] &c&l" + s + "&r"));
     }
 
     public void log(String s) {
-        Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText("[RedProtect] " + s));
+        Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText("[RedProtect] " + s));
     }
 
     public void clear(String s) {
-        Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText(s));
+        Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(s));
     }
 
     public void debug(LogLevel level, String s) {
         if (RedProtect.get().config.configRoot().debug_messages.get(level.name().toLowerCase())) {
-            Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText("[RedProtect] &b" + s + "&r"));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText("[RedProtect] &b" + s + "&r"));
         }
     }
 
@@ -72,7 +72,7 @@ public class RedProtectLogger {
             return;
         }
         int key = mainLog.keySet().size() + 1;
-        mainLog.put(key, key + " - " + RedProtectUtil.hourNow() + ": " + RedProtectUtil.toText(logLine));
+        mainLog.put(key, key + " - " + RedProtect.get().getUtil().hourNow() + ": " + RedProtect.get().getUtil().toText(logLine));
         if (key == 500) {
             SaveLogs();
             mainLog.clear();
@@ -87,8 +87,8 @@ public class RedProtectLogger {
         final StringBuilder sb = new StringBuilder();
         mainLog.forEach((key, entry) -> sb.append(entry).append('\n'));
 
-        if (RedProtectUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false) != null) {
-            RedProtectUtil.saveSBToZip(RedProtectUtil.genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false), sb);
+        if (RedProtect.get().getUtil().genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false) != null) {
+            RedProtect.get().getUtil().saveSBToZip(RedProtect.get().getUtil().genFileName(RedProtect.get().configDir + File.separator + "logs" + File.separator, false), sb);
         }
     }
 }

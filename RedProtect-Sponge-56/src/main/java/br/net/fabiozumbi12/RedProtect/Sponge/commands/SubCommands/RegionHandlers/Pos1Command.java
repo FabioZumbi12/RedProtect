@@ -57,7 +57,7 @@ public class Pos1Command {
 
                         Location<World> pl = player.getLocation();
                         RedProtect.get().firstLocationSelections.put(player, pl);
-                        player.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("playerlistener.wand1") + RedProtect.get().lang.get("general.color") + " (&6" + pl.getBlockX() + RedProtect.get().lang.get("general.color") + ", &6" + pl.getBlockY() + RedProtect.get().lang.get("general.color") + ", &6" + pl.getBlockZ() + RedProtect.get().lang.get("general.color") + ")."));
+                        player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("playerlistener.wand1") + RedProtect.get().lang.get("general.color") + " (&6" + pl.getBlockX() + RedProtect.get().lang.get("general.color") + ", &6" + pl.getBlockY() + RedProtect.get().lang.get("general.color") + ", &6" + pl.getBlockZ() + RedProtect.get().lang.get("general.color") + ")."));
 
                         //show preview border
                         if (RedProtect.get().firstLocationSelections.containsKey(player) && RedProtect.get().secondLocationSelections.containsKey(player)) {
@@ -71,7 +71,7 @@ public class Pos1Command {
                                 double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
                                 RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                             } else {
-                                RedProtectUtil.addBorder(player, RedProtectUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
+                                RedProtect.get().getUtil().addBorder(player, loc1, loc2);
                             }
                         }
                     }

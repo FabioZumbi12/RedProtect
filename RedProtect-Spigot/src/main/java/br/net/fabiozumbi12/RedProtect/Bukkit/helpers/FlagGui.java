@@ -211,7 +211,7 @@ public class FlagGui implements Listener {
                     if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                         if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                             applyFlag(flag, itemMeta, event);
-                            RedProtectUtil.startFlagChanger(this.region.getName(), flag, player);
+                            RedProtect.get().getUtil().startFlagChanger(this.region.getName(), flag, player);
                         } else {
                             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
                         }

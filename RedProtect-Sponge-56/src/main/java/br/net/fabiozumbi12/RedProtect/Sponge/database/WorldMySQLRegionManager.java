@@ -322,9 +322,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String[] pi = s.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtectUtil.isUUIDs(p[1])) {
+                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                                 String before = p[1];
-                                p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                             }
                         }
@@ -335,9 +335,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String[] pi = s.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtectUtil.isUUIDs(p[1])) {
+                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                                 String before = p[1];
-                                p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                             }
                         }
@@ -348,9 +348,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String[] pi = s.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtectUtil.isUUIDs(p[1])) {
+                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                                 String before = p[1];
-                                p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                             }
                         }
@@ -361,7 +361,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String key = flag.split(":")[0];
                         String replace = key + ":";
                         if (replace.length() <= flag.length()) {
-                            flags.put(key, RedProtectUtil.parseObject(flag.substring(replace.length())));
+                            flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring(replace.length())));
                         }
                     }
                     Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
@@ -488,9 +488,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (p[1].isEmpty()) continue;
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtectUtil.isUUIDs(p[1])) {
+                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                                 String before = p[1];
-                                p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                             }
                         }
@@ -502,9 +502,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (p[1].isEmpty()) continue;
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtectUtil.isUUIDs(p[1])) {
+                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                                 String before = p[1];
-                                p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                             }
                         }
@@ -515,9 +515,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (p[1].isEmpty()) continue;
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtectUtil.isUUIDs(p[1])) {
+                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                                 String before = p[1];
-                                p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                                 RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                             }
                         }
@@ -526,7 +526,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                     for (String flag : rs.getString("flags").split(",")) {
                         String key = flag.split(":")[0];
-                        flags.put(key, RedProtectUtil.parseObject(flag.substring((key + ":").length())));
+                        flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring((key + ":").length())));
                     }
 
                     Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
@@ -560,7 +560,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     public int getTotalRegionSize(String uuid) {
         int total = 0;
         for (Region r2 : this.getLeaderRegions(uuid)) {
-            total += RedProtectUtil.simuleTotalRegionSize(uuid, r2);
+            total += RedProtect.get().getUtil().simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }

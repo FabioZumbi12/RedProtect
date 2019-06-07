@@ -51,12 +51,12 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //filter name
-        regionName = RedProtectUtil.setName(regionName);
+        regionName = RedProtect.get().getUtil().setName(regionName);
 
         //region name conform
         if (regionName.length() < 3) {
             //filter region name
-            regionName = RedProtectUtil.nameGen(p.getName(), p.getWorld().getName());
+            regionName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
                 return;
@@ -98,8 +98,8 @@ public class DefineRegionBuilder extends RegionBuilder {
                 maxy = RedProtect.get().config.configRoot().region_settings.claim.maxy;
         }
 
-        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RedProtectUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), wmsg, 0, null, true);
-        newRegion.setPrior(RedProtectUtil.getUpdatedPrior(newRegion));
+        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), wmsg, 0, null, true);
+        newRegion.setPrior(RedProtect.get().getUtil().getUpdatedPrior(newRegion));
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
         int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName());
@@ -112,7 +112,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(leader.getUUID(), p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
-        int regionArea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), newRegion);
+        int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(p.getUniqueId().toString(), newRegion);
         int actualArea = 0;
         if (regionArea > 0) {
             actualArea = totalArea + regionArea;

@@ -47,7 +47,7 @@ public class BlockLimitCommand {
                 .permission("redprotect.command.blocklimit")
                 .executor((src, args) -> {
                     if (args.hasAny("player")) {
-                        User offp = RedProtectUtil.getUser(args.<String>getOne("player").get());
+                        User offp = RedProtect.get().getUtil().getUser(args.<String>getOne("player").get());
 
                         if (offp == null) {
                             RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get()));

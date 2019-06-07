@@ -103,10 +103,10 @@ public class LangGuiManager extends GuiLangCore {
         if (flagDescription == null) {
             flagDescription = getRaw("gui.flags.default.description");
         }
-        return Arrays.stream(flagDescription.split("/n")).map(RedProtectUtil::toText).collect(Collectors.toList());
+        return Arrays.stream(flagDescription.split("/n")).map(t->RedProtect.get().getUtil().toText(t)).collect(Collectors.toList());
     }
 
     public Text getFlagString(String key) {
-        return RedProtectUtil.toText(getRaw("gui.strings." + key));
+        return RedProtect.get().getUtil().toText(getRaw("gui.strings." + key));
     }
 }

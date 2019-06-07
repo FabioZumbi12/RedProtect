@@ -107,7 +107,7 @@ public class LangManager extends LangCore {
         }
 
         if (loadedLang.get(key) == null) {
-            sender.sendMessage(RedProtectUtil.toText(get("_redprotect.prefix") + " " + key));
+            sender.sendMessage(RedProtect.get().getUtil().toText(get("_redprotect.prefix") + " " + key));
         } else if (get(key).equalsIgnoreCase("")) {
             return;
         } else {
@@ -115,7 +115,7 @@ public class LangManager extends LangCore {
             for (Replacer replacer : replaces) {
                 message = message.replace(replacer.getPlaceholder(), replacer.getValue());
             }
-            sender.sendMessage(RedProtectUtil.toText(get("_redprotect.prefix") + " " + message));
+            sender.sendMessage(RedProtect.get().getUtil().toText(get("_redprotect.prefix") + " " + message));
         }
 
         if (sender instanceof Player) {
@@ -132,6 +132,6 @@ public class LangManager extends LangCore {
             return;
         }
         if (usage) sendMessage(sender, "correct.usage");
-        sender.sendMessage(RedProtectUtil.toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
+        sender.sendMessage(RedProtect.get().getUtil().toText(get("cmdmanager.help." + cmd).replace("{cmd}", getCmd(cmd)).replace("{alias}", getCmdAlias(cmd))));
     }
 }

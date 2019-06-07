@@ -72,7 +72,7 @@ public class FlagCommand implements SubCommand {
             }
             Region r = RedProtect.get().rm.getRegion(args[0], w.getName());
             if (r != null && (RedProtect.get().config.getDefFlags().contains(args[1]) || RedProtect.get().config.AdminFlags.contains(args[1]))) {
-                Object objflag = RedProtectUtil.parseObject(args[2]);
+                Object objflag = RedProtect.get().getUtil().parseObject(args[2]);
                 r.setFlag(sender, args[1], objflag);
                 RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[1] + "'") + " " + r.getFlagString(args[1]));
                 RedProtect.get().logger.addLog("Console changed flag " + args[1] + " to " + r.getFlagString(args[1]));
@@ -85,7 +85,7 @@ public class FlagCommand implements SubCommand {
                 Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
                 if (r != null) {
                     if (r.isLeader(player) || r.isAdmin(player) || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")) {
-                        FlagGui gui = new FlagGui(RedProtectUtil.getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
+                        FlagGui gui = new FlagGui(RedProtect.get().getUtil().getTitleName(r), player, r, false, RedProtect.get().config.getGuiMaxSlot());
                         gui.open();
                     } else {
                         RedProtect.get().lang.sendMessage(player, "cmdmanager.region.flag.nopermregion");
@@ -116,7 +116,7 @@ public class FlagCommand implements SubCommand {
                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                     if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[0])) {
                         if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
-                            RedProtectUtil.startFlagChanger(r.getName(), args[0], player);
+                            RedProtect.get().getUtil().startFlagChanger(r.getName(), args[0], player);
                             handleFlag(player, args[0], "", r);
                             return true;
                         } else {
@@ -164,7 +164,7 @@ public class FlagCommand implements SubCommand {
             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(args[1])) {
                     if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
-                        RedProtectUtil.startFlagChanger(r.getName(), args[1], player);
+                        RedProtect.get().getUtil().startFlagChanger(r.getName(), args[1], player);
                         handleFlag(player, args[1], text.substring(1), r);
                         return true;
                     } else {

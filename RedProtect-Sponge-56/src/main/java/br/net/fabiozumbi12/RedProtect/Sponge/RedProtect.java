@@ -87,6 +87,7 @@ public class RedProtect {
     public final HashMap<Player, String> alWait = new HashMap<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public final List<String> teleportDelay = new ArrayList<>();
+    private RedProtectUtil redProtectUtil = new RedProtectUtil();
     @Inject
     @ConfigDir(sharedRoot = false)
     public File configDir;
@@ -120,6 +121,10 @@ public class RedProtect {
 
     public Server getServer() {
         return Sponge.getServer();
+    }
+
+    public RedProtectUtil getUtil(){
+        return this.redProtectUtil;
     }
 
     @Listener
@@ -224,6 +229,7 @@ public class RedProtect {
     }
 
     private void startLoad() throws Exception {
+        redProtectUtil = new RedProtectUtil();
         config = new ConfigManager(this.factory);
         lang = new LangManager();
 
@@ -250,7 +256,7 @@ public class RedProtect {
             rm = new RegionManager();
             rm.loadAll();
 
-            RedProtectUtil.ReadAllDB(rm.getAllRegions());
+            RedProtect.get().getUtil().ReadAllDB(rm.getAllRegions());
 
             if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 AutoSaveHandler();

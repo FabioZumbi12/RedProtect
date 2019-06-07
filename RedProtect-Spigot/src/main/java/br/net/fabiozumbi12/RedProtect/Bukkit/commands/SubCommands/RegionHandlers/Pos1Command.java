@@ -73,7 +73,7 @@ public class Pos1Command implements SubCommand {
                     double dist = loc1.distanceSquared(loc2);
                     RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
-                    RedProtectUtil.addBorder(player, RedProtectUtil.get4Points(loc1, loc2, player.getLocation().getBlockY()));
+                    RedProtect.get().getUtil().addBorder(player, loc1, loc2);
                 }
             }
             return true;

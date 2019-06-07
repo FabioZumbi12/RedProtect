@@ -62,6 +62,7 @@ public class RedProtect extends JavaPlugin {
     public final HooksManager hooks = new HooksManager();
     public final RedProtectLogger logger = new RedProtectLogger();
     public final List<String> teleportDelay = new ArrayList<>();
+    private RedProtectUtil redProtectUtil = new RedProtectUtil();
     public int bukkitVersion;
     public Economy economy;
     public RegionManager rm;
@@ -89,6 +90,10 @@ public class RedProtect extends JavaPlugin {
 
     public SpigetUpdater getUpdater(){
         return this.updater;
+    }
+
+    public RedProtectUtil getUtil(){
+        return this.redProtectUtil;
     }
 
     public void onDisable() {
@@ -159,6 +164,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() throws Exception {
+        redProtectUtil = new RedProtectUtil();
         config = new ConfigManager();
         lang = new LangManager();
 
@@ -185,7 +191,7 @@ public class RedProtect extends JavaPlugin {
             rm = new RegionManager();
             rm.loadAll();
 
-            RedProtectUtil.ReadAllDB(rm.getAllRegions());
+            redProtectUtil.ReadAllDB(rm.getAllRegions());
 
             if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
                 startAutoSave();

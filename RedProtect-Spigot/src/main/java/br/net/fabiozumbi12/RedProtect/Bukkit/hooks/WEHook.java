@@ -76,10 +76,6 @@ public class WEHook {
         regs.selectPrimary(BlockVector3.at(pos1.getX(), pos1.getY(), pos1.getZ()), null);
         regs.selectSecondary(BlockVector3.at(pos2.getX(), pos2.getY(), pos2.getZ()), null);
         worldEdit.getSession(p).setRegionSelector(ws, regs);
-        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.show")
-                .replace("{pos1}", pos1.getBlockX() + "," + pos1.getBlockY() + "," + pos1.getBlockZ())
-                .replace("{pos2}", pos2.getBlockX() + "," + pos2.getBlockY() + "," + pos2.getBlockZ())
-        );
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
 
@@ -124,7 +120,7 @@ public class WEHook {
             Location min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
             Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
-            String regionName = RedProtectUtil.regionNameConform("", p);
+            String regionName = RedProtect.get().getUtil().regionNameConform("", p);
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, new PlayerRegion(p.getUniqueId().toString(), p.getName()), new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
@@ -151,7 +147,7 @@ public class WEHook {
 
     public static void regenRegion(final Region region, final World world, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            if (RedProtectUtil.stopRegen) {
+            if (RedProtect.get().getUtil().stopRegen) {
                 return;
             }
 

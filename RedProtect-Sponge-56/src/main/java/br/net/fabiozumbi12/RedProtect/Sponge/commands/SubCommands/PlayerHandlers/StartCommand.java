@@ -82,7 +82,7 @@ public class StartCommand {
                                 Player player = (Player) src;
 
                                 if (!RedProtect.get().confiemStart.contains(player.getName())) {
-                                    player.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
+                                    player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
                                     return CommandResult.success();
                                 }
                                 schematics.RPSchematics.pasteSchematic(player);

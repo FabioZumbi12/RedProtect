@@ -82,7 +82,7 @@ public class RedProtectLogger {
             return;
         }
         int key = mainLog.keySet().size() + 1;
-        mainLog.put(key, key + " - " + RedProtectUtil.hourNow() + ": " + translateAlternateColorCodes('&', logLine));
+        mainLog.put(key, key + " - " + RedProtect.get().getUtil().hourNow() + ": " + translateAlternateColorCodes('&', logLine));
         if (key == 500) {
             saveLogs();
             mainLog.clear();
@@ -97,8 +97,8 @@ public class RedProtectLogger {
         final StringBuilder sb = new StringBuilder();
         mainLog.forEach((key, entry) -> sb.append(entry).append('\n'));
 
-        if (RedProtectUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false) != null) {
-            RedProtectUtil.saveSBToZip(RedProtectUtil.genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false), sb);
+        if (RedProtect.get().getUtil().genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false) != null) {
+            RedProtect.get().getUtil().saveSBToZip(RedProtect.get().getUtil().genFileName(RedProtect.get().getDataFolder() + File.separator + "logs" + File.separator, false), sb);
         }
     }
 }

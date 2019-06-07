@@ -55,12 +55,12 @@ public class RemoveAdminCommand {
                         WorldProperties worldProperties = args.<WorldProperties>getOne("world").get();
 
                         if (!RedProtect.get().getServer().getWorld(worldProperties.getWorldName()).isPresent()) {
-                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
                             return CommandResult.success();
                         }
                         Region r = RedProtect.get().rm.getRegion(region, worldProperties.getWorldName());
                         if (r == null) {
-                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region));
                             return CommandResult.success();
                         }
                         handleRemoveAdmin(src, args.<String>getOne("player").get(), r);

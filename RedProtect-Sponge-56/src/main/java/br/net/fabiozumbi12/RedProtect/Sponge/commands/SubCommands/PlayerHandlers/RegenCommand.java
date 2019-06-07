@@ -98,7 +98,7 @@ public class RegenCommand {
                                 return CommandResult.success();
                             }
 
-                            RedProtectUtil.stopRegen = true;
+                            RedProtect.get().getUtil().stopRegen = true;
                             RedProtect.get().lang.sendMessage(src, "&aRegen will stop now. To continue reload the plugin!");
                             return CommandResult.success();
                         }).build(), "stop")

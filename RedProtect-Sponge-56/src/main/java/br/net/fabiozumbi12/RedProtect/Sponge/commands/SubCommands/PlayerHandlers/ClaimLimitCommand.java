@@ -51,7 +51,7 @@ public class ClaimLimitCommand {
                 .permission("redprotect.command.claimlimit")
                 .executor((src, args) -> {
                     if (args.hasAny("player") && args.hasAny("world")) {
-                        User offp = RedProtectUtil.getUser(args.<String>getOne("player").get());
+                        User offp = RedProtect.get().getUtil().getUser(args.<String>getOne("player").get());
 
                         Optional<World> w = RedProtect.get().getServer().getWorld(args.<String>getOne("world").get());
                         if (!w.isPresent()) {
@@ -59,17 +59,17 @@ public class ClaimLimitCommand {
                             return CommandResult.success();
                         }
                         if (offp == null) {
-                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get())));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get())));
                             return CommandResult.success();
                         }
                         int limit = RedProtect.get().ph.getPlayerClaimLimit(offp);
                         if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.claim.unlimited")) {
-                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.nolimit")));
                             return CommandResult.success();
                         }
 
                         int currentUsed = RedProtect.get().rm.getRegions(offp.getName(), w.get().getName()).size();
-                        src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
+                        src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.yourclaims") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color")));
                         return CommandResult.success();
                     }
                     if (src instanceof Player) {

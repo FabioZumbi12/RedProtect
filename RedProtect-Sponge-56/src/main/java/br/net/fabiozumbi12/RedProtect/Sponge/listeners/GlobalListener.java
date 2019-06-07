@@ -181,7 +181,7 @@ public class GlobalListener {
             }
 
             // Check Border
-            if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtectUtil.isBypassBorder(p)) {
+            if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtect.get().getUtil().isBypassBorder(p)) {
                 RedProtect.get().lang.sendMessage(p, "globallistener.border.cantbypass");
 
                 CommandResult result = Sponge.getCommandManager().process(Sponge.getServer().getConsole(), RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.execute_command
@@ -310,7 +310,7 @@ public class GlobalListener {
             return;
         }
 
-        if (!RedProtectUtil.canBuildNear(p, b.getLocation().get())) {
+        if (!RedProtect.get().getUtil().canBuildNear(p, b.getLocation().get())) {
             e.setCancelled(true);
             return;
         }
@@ -452,7 +452,7 @@ public class GlobalListener {
             return;
         }
 
-        if (!RedProtectUtil.canBuildNear(p, bt.getLocation().get())) {
+        if (!RedProtect.get().getUtil().canBuildNear(p, bt.getLocation().get())) {
             e.setCancelled(true);
             return;
         }

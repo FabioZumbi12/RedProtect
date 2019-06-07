@@ -385,7 +385,7 @@ public class Region extends CoreRegion {
             wMsgTemp = wMessage;
         }
 
-        if (this.date.equals(RedProtectUtil.dateNow())) {
+        if (this.date.equals(RedProtect.get().getUtil().dateNow())) {
             today.append(RedProtect.get().lang.get("region.today"));
         } else {
             today.append(this.date);
@@ -460,8 +460,8 @@ public class Region extends CoreRegion {
      */
     public void addLeader(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -479,8 +479,8 @@ public class Region extends CoreRegion {
      */
     public void addMember(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -498,8 +498,8 @@ public class Region extends CoreRegion {
      */
     public void addAdmin(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -534,8 +534,8 @@ public class Region extends CoreRegion {
      */
     public void removeAdmin(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -553,8 +553,8 @@ public class Region extends CoreRegion {
      */
     public void removeLeader(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));

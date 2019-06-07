@@ -36,21 +36,29 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class CoreUtil {
+    protected Set<String> borderPlayers;
+    protected HashMap<String, String> cachedUUIDs;
+    public boolean stopRegen;
 
-    protected static String dateNow(String format) {
+    public CoreUtil(){
+        borderPlayers = new HashSet<>();
+        cachedUUIDs = new HashMap<>();
+    }
+
+    protected String dateNow(String format) {
         DateFormat df = new SimpleDateFormat(format);
         Date today = Calendar.getInstance().getTime();
         return df.format(today);
     }
 
-    public static String hourNow() {
+    public String hourNow() {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         int min = Calendar.getInstance().get(Calendar.MINUTE);
         int sec = Calendar.getInstance().get(Calendar.SECOND);
         return "[" + hour + ":" + min + ":" + sec + "]";
     }
 
-    public static void saveSBToZip(File file, StringBuilder builder) {
+    public void saveSBToZip(File file, StringBuilder builder) {
         try {
             final ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry("RedProtectLogs.txt");
@@ -61,12 +69,12 @@ public class CoreUtil {
             out.closeEntry();
             out.close();
         } catch (Exception e) {
-            CoreUtil.printJarVersion();
+            printJarVersion();
             e.printStackTrace();
         }
     }
 
-    public static String setName(String name) {
+    public String setName(String name) {
         if (name == null || name.isEmpty()) return name;
 
         name = Normalizer.normalize(name.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
@@ -76,7 +84,7 @@ public class CoreUtil {
         return name;
     }
 
-    protected static File genFileName(String Path, Boolean isBackup, int maxbackups, String dateFormat) {
+    protected File genFileName(String Path, Boolean isBackup, int maxbackups, String dateFormat) {
         int count = 1;
         String date = dateFormat.replace("/", "-");
         File logfile = new File(Path + date + "-" + count + ".zip");
@@ -97,7 +105,7 @@ public class CoreUtil {
         return logfile;
     }
 
-    public static boolean isUUIDs(String uuid) {
+    public boolean isUUIDs(String uuid) {
         if (uuid == null) {
             return false;
         }
@@ -110,7 +118,7 @@ public class CoreUtil {
         }
     }
 
-    public static Object parseObject(String value) {
+    public Object parseObject(String value) {
         Object obj = value;
         try {
             obj = Integer.parseInt(value);
@@ -122,7 +130,7 @@ public class CoreUtil {
         return obj;
     }
 
-    protected static String StripName(String pRName) {
+    protected String StripName(String pRName) {
         String regionName;
         if (pRName.length() > 13) {
             regionName = pRName.substring(0, 13);

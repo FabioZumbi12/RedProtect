@@ -244,7 +244,7 @@ public class VersionHelper56 implements VersionHelper {
     public Inventory newInventory(int size, String name) {
         return Inventory.builder().of(InventoryArchetypes.DOUBLE_CHEST)
                 .property(InventoryDimension.PROPERTY_NAME, new InventoryDimension(9, size / 9))
-                .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(RedProtectUtil.toText(name)))
+                .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(RedProtect.get().getUtil().toText(name)))
                 .build(RedProtect.get().container);
     }
 
@@ -253,7 +253,7 @@ public class VersionHelper56 implements VersionHelper {
         p.getInventory().slots().forEach(slot -> {
             if (slot.peek().isPresent()) {
                 ItemStack pitem = slot.peek().get();
-                if (RedProtectUtil.removeGuiItem(pitem)) {
+                if (RedProtect.get().getUtil().removeGuiItem(pitem)) {
                     slot.poll().get();
                 }
             }

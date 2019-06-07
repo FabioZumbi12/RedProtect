@@ -298,7 +298,7 @@ public class GlobalListener implements Listener {
             }
         }
 
-        if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtectUtil.isBypassBorder(p)) {
+        if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtect.get().getUtil().isBypassBorder(p)) {
             RedProtect.get().lang.sendMessage(p, "globallistener.border.cantbypass");
 
             boolean result = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).border.execute_command
@@ -339,7 +339,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtectUtil.canBuildNear(p, b.getLocation())) {
+        if (!RedProtect.get().getUtil().canBuildNear(p, b.getLocation())) {
             e.setCancelled(true);
             return;
         }
@@ -367,7 +367,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtectUtil.canBuildNear(p, b.getLocation())) {
+        if (!RedProtect.get().getUtil().canBuildNear(p, b.getLocation())) {
             e.setCancelled(true);
             return;
         }
@@ -540,7 +540,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtectUtil.canBuildNear(e.getPlayer(), l)) {
+        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
             e.setCancelled(true);
             return;
         }
@@ -558,7 +558,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtectUtil.canBuildNear(e.getPlayer(), l)) {
+        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
             e.setCancelled(true);
             return;
         }

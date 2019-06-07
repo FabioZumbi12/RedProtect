@@ -80,10 +80,6 @@ public class WEHook {
         regs.selectPrimary(new Vector(pos1.getX(), pos1.getY(), pos1.getZ()), null);
         regs.selectSecondary(new Vector(pos2.getX(), pos2.getY(), pos2.getZ()), null);
         SpongeWorldEdit.inst().getSession(p).setRegionSelector(ws, regs);
-        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.show")
-                .replace("{pos1}", pos1.getBlockX() + "," + pos1.getBlockY() + "," + pos1.getBlockZ())
-                .replace("{pos2}", pos2.getBlockX() + "," + pos2.getBlockY() + "," + pos2.getBlockZ())
-        );
         SpongeWorldEdit.inst().getSession(p).dispatchCUISelection(SpongeWorldEdit.inst().wrapPlayer(p));
     }
 
@@ -137,7 +133,7 @@ public class WEHook {
             Location<World> max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
             PlayerRegion leader = new PlayerRegion(p.getUniqueId().toString(), p.getName());
-            String regionName = RedProtectUtil.regionNameConform("", p);
+            String regionName = RedProtect.get().getUtil().regionNameConform("", p);
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
@@ -157,7 +153,7 @@ public class WEHook {
 
     public static void regenRegion(final Region r, final World w, final Location<World> p1, final Location<World> p2, final int delay, final CommandSource sender, final boolean remove) {
         Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> {
-            if (RedProtectUtil.stopRegen) {
+            if (RedProtect.get().getUtil().stopRegen) {
                 return;
             }
 

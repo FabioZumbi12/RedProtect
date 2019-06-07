@@ -226,7 +226,7 @@ public class Region extends CoreRegion {
                     ListValue<Text> lines = s.lines();
                     if (lines.get(0).toPlain().equalsIgnoreCase("[flag]")) {
                         if (lines.get(1).toPlain().equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(lines.get(2).toPlain())) {
-                            lines.set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname))));
+                            lines.set(3, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname))));
                             s.offer(lines);
                             RedProtect.get().config.putSign(this.getID(), loc);
                         }
@@ -398,7 +398,7 @@ public class Region extends CoreRegion {
             wMsgTemp = wMessage;
         }
 
-        if (this.date.equals(RedProtectUtil.dateNow())) {
+        if (this.date.equals(RedProtect.get().getUtil().dateNow())) {
             today = RedProtect.get().lang.get("region.today");
         } else {
             today = this.date;
@@ -422,7 +422,7 @@ public class Region extends CoreRegion {
             dynmapInfo = RedProtect.get().lang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().lang.get("region.dynmap-showing") : RedProtect.get().lang.get("region.dynmap-hiding")) + ", " + RedProtect.get().lang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
-        return RedProtectUtil.toText(RedProtect.get().lang.get("region.name") + " " + colorChar + this.name + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.priority") + " " + this.prior + "\n" +
+        return RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.name") + " " + colorChar + this.name + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.priority") + " " + this.prior + "\n" +
                 RedProtect.get().lang.get("region.priority.top") + " " + IsTops + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.lastvalue") + " " + EconomyManager.getFormatted(this.value) + "\n" +
                 RedProtect.get().lang.get("region.world") + " " + colorChar + wName + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
                 RedProtect.get().lang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.area") + " " + this.getArea() + "\n" +
@@ -470,8 +470,8 @@ public class Region extends CoreRegion {
      */
     public void addLeader(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -489,8 +489,8 @@ public class Region extends CoreRegion {
      */
     public void addMember(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -508,8 +508,8 @@ public class Region extends CoreRegion {
      */
     public void addAdmin(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -544,8 +544,8 @@ public class Region extends CoreRegion {
      */
     public void removeAdmin(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -563,8 +563,8 @@ public class Region extends CoreRegion {
      */
     public void removeLeader(String uuid) {
         setToSave(true);
-        String name = RedProtectUtil.UUIDtoPlayer(uuid).toLowerCase();
-        PlayerRegion pInfo = new PlayerRegion(RedProtectUtil.PlayerToUUID(uuid), name);
+        String name = RedProtect.get().getUtil().UUIDtoPlayer(uuid).toLowerCase();
+        PlayerRegion pInfo = new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(uuid), name);
 
         this.members.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
@@ -627,7 +627,7 @@ public class Region extends CoreRegion {
         } else {
             flaginfo = new StringBuilder("Default");
         }
-        return RedProtectUtil.toText(flaginfo.toString());
+        return RedProtect.get().getUtil().toText(flaginfo.toString());
     }
 
     public boolean isOnTop() {

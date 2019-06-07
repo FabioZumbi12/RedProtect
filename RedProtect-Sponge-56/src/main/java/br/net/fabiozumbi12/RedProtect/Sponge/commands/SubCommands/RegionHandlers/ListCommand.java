@@ -65,19 +65,19 @@ public class ListCommand {
 
                             try {
                                 int Page = Integer.parseInt(playerPage);
-                                handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), Page);
+                                handleList(player, RedProtect.get().getUtil().PlayerToUUID(player.getName()), Page);
                             } catch (NumberFormatException e) {
 
                                 int page = 1;
                                 if (args.hasAny("page")) {
                                     page = args.<Integer>getOne("page").get();
                                 }
-                                handleList(player, RedProtectUtil.PlayerToUUID(playerPage), page);
+                                handleList(player, RedProtect.get().getUtil().PlayerToUUID(playerPage), page);
                             }
 
                             return CommandResult.success();
                         } else {
-                            handleList(player, RedProtectUtil.PlayerToUUID(player.getName()), 1);
+                            handleList(player, RedProtect.get().getUtil().PlayerToUUID(player.getName()), 1);
                             return CommandResult.success();
                         }
                     }

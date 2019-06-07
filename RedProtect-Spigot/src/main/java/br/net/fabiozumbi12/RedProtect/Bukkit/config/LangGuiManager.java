@@ -44,9 +44,9 @@ public class LangGuiManager extends GuiLangCore {
         File lang = new File(pathLang);
         if (!lang.exists()) {
             if (RedProtect.get().getResource("assets/redprotect/" + resLang) != null) {
-                RedProtectUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
+                RedProtect.get().getUtil().saveResource("/assets/redprotect/" + resLang, null, lang);
             } else {
-                RedProtectUtil.saveResource("/assets/redprotect/guiEN-US.properties", null, lang);
+                RedProtect.get().getUtil().saveResource("/assets/redprotect/guiEN-US.properties", null, lang);
             }
             RedProtect.get().logger.info("Created GUI language file: " + pathLang);
         }

@@ -81,7 +81,7 @@ public class RegenCommand implements SubCommand {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("stop")) {
-                RedProtectUtil.stopRegen = true;
+                RedProtect.get().getUtil().stopRegen = true;
                 RedProtect.get().lang.sendMessage(sender, "&aRegen will stop now. To continue reload the plugin!");
                 return true;
             }

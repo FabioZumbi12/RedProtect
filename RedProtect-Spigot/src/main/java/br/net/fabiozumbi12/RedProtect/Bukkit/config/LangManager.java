@@ -51,9 +51,9 @@ public class LangManager extends LangCore {
         File lang = new File(pathLang);
         if (!lang.exists()) {
             if (RedProtect.get().getResource("assets/redprotect/" + resLang) != null) {
-                RedProtectUtil.saveResource("/assets/redprotect/" + resLang, null, lang);
+                RedProtect.get().getUtil().saveResource("/assets/redprotect/" + resLang, null, lang);
             } else {
-                RedProtectUtil.saveResource("/assets/redprotect/langEN-US.properties", null, lang);
+                RedProtect.get().getUtil().saveResource("/assets/redprotect/langEN-US.properties", null, lang);
             }
             RedProtect.get().logger.info("Created language file: " + pathLang);
         }

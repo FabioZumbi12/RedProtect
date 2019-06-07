@@ -65,7 +65,7 @@ public class ClaimCommand {
                             return CommandResult.success();
                         }
 
-                        String name = RedProtectUtil.nameGen(player.getName(), player.getWorld().getName());
+                        String name = RedProtect.get().getUtil().nameGen(player.getName(), player.getWorld().getName());
                         if (args.hasAny("regionName")) {
                             name = args.<String>getOne("regionName").get();
                         }
@@ -73,7 +73,7 @@ public class ClaimCommand {
                         Set<PlayerRegion> addedAdmins = new HashSet<>();
 
                         if (args.hasAny("playerAdmin"))
-                            addedAdmins.add(new PlayerRegion(RedProtectUtil.PlayerToUUID(args.<String>getOne("playerAdmin").get()), args.<String>getOne("playerAdmin").get()));
+                            addedAdmins.add(new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(args.<String>getOne("playerAdmin").get()), args.<String>getOne("playerAdmin").get()));
 
                         RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
                         if (rb2.ready()) {

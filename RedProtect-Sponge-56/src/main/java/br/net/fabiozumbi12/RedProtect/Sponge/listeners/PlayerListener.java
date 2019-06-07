@@ -167,12 +167,12 @@ public class PlayerListener {
 
         String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
         if (event instanceof InteractBlockEvent.Primary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
-            if (!RedProtectUtil.canBuildNear(p, l)) {
+            if (!RedProtect.get().getUtil().canBuildNear(p, l)) {
                 event.setCancelled(true);
                 return;
             }
             RedProtect.get().firstLocationSelections.put(p, l);
-            p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("playerlistener.wand1") + RedProtect.get().lang.get("general.color") + " (&e" + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ")."));
+            p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("playerlistener.wand1") + RedProtect.get().lang.get("general.color") + " (&e" + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ")."));
             event.setCancelled(true);
 
             //show preview border
@@ -187,7 +187,7 @@ public class PlayerListener {
                     double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
                     RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
-                    RedProtectUtil.addBorder(p, RedProtectUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
+                    RedProtect.get().getUtil().addBorder(p, loc1, loc2);
                 }
             }
         }
@@ -213,12 +213,12 @@ public class PlayerListener {
 
         String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
         if (event instanceof InteractBlockEvent.Secondary.MainHand && itemInHand.getId().equalsIgnoreCase(RedProtect.get().config.configRoot().wands.adminWandID) && ((claimmode.equalsIgnoreCase("WAND") || claimmode.equalsIgnoreCase("BOTH")) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.claim"))) {
-            if (!RedProtectUtil.canBuildNear(p, l)) {
+            if (!RedProtect.get().getUtil().canBuildNear(p, l)) {
                 event.setCancelled(true);
                 return;
             }
             RedProtect.get().secondLocationSelections.put(p, l);
-            p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("playerlistener.wand2") + RedProtect.get().lang.get("general.color") + " (&e" + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ")."));
+            p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("playerlistener.wand2") + RedProtect.get().lang.get("general.color") + " (&e" + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", &e" + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ")."));
             event.setCancelled(true);
 
             //show preview border
@@ -233,7 +233,7 @@ public class PlayerListener {
                     double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
                     RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
-                    RedProtectUtil.addBorder(p, RedProtectUtil.get4Points(loc1, loc2, p.getLocation().getBlockY()));
+                    RedProtect.get().getUtil().addBorder(p, loc1, loc2);
                 }
             }
             return;
@@ -285,14 +285,14 @@ public class PlayerListener {
         if (!RedProtect.get().getVersionHelper().getItemMainHand(p).isEmpty()) {
             stack = RedProtect.get().getVersionHelper().getItemMainHand(p);
             itemInHand = RedProtect.get().getVersionHelper().getItemType(stack);
-            if (RedProtectUtil.removeGuiItem(stack)) {
+            if (RedProtect.get().getUtil().removeGuiItem(stack)) {
                 p.setItemInHand(HandTypes.MAIN_HAND, ItemStack.of(ItemTypes.NONE, 1));
                 event.setCancelled(true);
             }
         } else if (!RedProtect.get().getVersionHelper().getItemOffHand(p).isEmpty()) {
             stack = RedProtect.get().getVersionHelper().getItemOffHand(p);
             itemInHand = RedProtect.get().getVersionHelper().getItemType(stack);
-            if (RedProtectUtil.removeGuiItem(stack)) {
+            if (RedProtect.get().getUtil().removeGuiItem(stack)) {
                 p.setItemInHand(HandTypes.OFF_HAND, ItemStack.of(ItemTypes.NONE, 1));
                 event.setCancelled(true);
             }
@@ -303,11 +303,11 @@ public class PlayerListener {
             if (r == null) {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.noregion.atblock");
             } else if (RedProtect.get().ph.hasRegionPermMember(p, "infowand", r)) {
-                p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "--------------- [&e" + r.getName() + RedProtect.get().lang.get("general.color") + "] ---------------"));
+                p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "--------------- [&e" + r.getName() + RedProtect.get().lang.get("general.color") + "] ---------------"));
                 p.sendMessage(r.info());
-                p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
             } else {
-                p.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc())));
+                p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("playerlistener.region.entered").replace("{region}", r.getName()).replace("{leaders}", r.getLeadersDesc())));
             }
             event.setCancelled(true);
             return;
@@ -414,7 +414,7 @@ public class PlayerListener {
                             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
-                                        RedProtectUtil.startFlagChanger(r.getName(), flag, p);
+                                        RedProtect.get().getUtil().startFlagChanger(r.getName(), flag, p);
                                         changeFlag(r, flag, p, sign);
                                         return;
                                     } else {
@@ -459,7 +459,7 @@ public class PlayerListener {
 
                             //check if tag is player name
                             if (tag.equalsIgnoreCase("{playername}")) {
-                                if (lines.get(0).toPlain().equalsIgnoreCase(RedProtectUtil.UUIDtoPlayer(p.getName()))) {
+                                if (lines.get(0).toPlain().equalsIgnoreCase(RedProtect.get().getUtil().UUIDtoPlayer(p.getName()))) {
                                     return;
                                 }
                             }
@@ -477,7 +477,7 @@ public class PlayerListener {
                     itemInHand.equals(ItemTypes.PAINTING)) && !r.canBuild(p)) {
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.cantuse"));
                 event.setCancelled(true);
-            } else if (!r.allowMod(p) && !RedProtectUtil.isBukkitBlock(bstate)) {
+            } else if (!r.allowMod(p) && !RedProtect.get().getUtil().isBukkitBlock(bstate)) {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
@@ -488,7 +488,7 @@ public class PlayerListener {
         if (r.setFlag(RedProtect.get().getVersionHelper().getCause(p), flag, !r.getFlagBool(flag))) {
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + RedProtect.get().lang.translBool(r.getFlagString(flag)));
-            s.lines().set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag))));
+            s.lines().set(3, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(r.getFlagString(flag))));
             if (!RedProtect.get().config.getSigns(r.getID()).contains(s.getLocation())) {
                 RedProtect.get().config.putSign(r.getID(), s.getLocation());
             }
@@ -521,7 +521,7 @@ public class PlayerListener {
                 RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantenter");
                 e.setCancelled(true);
             }
-        } else if (!r.allowMod(p) && !RedProtectUtil.isBukkitEntity(ent) && (!(ent instanceof Player))) {
+        } else if (!r.allowMod(p) && !RedProtect.get().getUtil().isBukkitEntity(ent) && (!(ent instanceof Player))) {
             RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerInteractEntityEvent - Block is " + ent.getType().getName());
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
             e.setCancelled(true);
@@ -692,7 +692,7 @@ public class PlayerListener {
         //Exit flag
         Region rfrom = RedProtect.get().rm.getTopRegion(lfrom, this.getClass().getName());
         if (rfrom != null && !rfrom.canExit(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.exit")) {
-            e.setToTransform(RedProtectUtil.DenyExitPlayer(p, lfromForm, ltoForm, rfrom));
+            e.setToTransform(RedProtect.get().getUtil().DenyExitPlayer(p, lfromForm, ltoForm, rfrom));
             return;
         }
 
@@ -713,7 +713,7 @@ public class PlayerListener {
 
             //Enter flag
             if (!r.canEnter(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.enter")) {
-                e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
+                e.setToTransform(RedProtect.get().getUtil().DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantregionenter");
                 return;
             }
@@ -728,7 +728,7 @@ public class PlayerListener {
             //enter max players flag
             if (r.maxPlayers() != -1 && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.max-players")) {
                 if (!checkMaxPlayer(p, r)) {
-                    e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
+                    e.setToTransform(RedProtect.get().getUtil().DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                     RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.maxPlayers())));
                     return;
                 }
@@ -745,14 +745,14 @@ public class PlayerListener {
 
             //Allow enter with items
             if (!r.canEnterWithItens(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.deny-enter-items")) {
-                e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
+                e.setToTransform(RedProtect.get().getUtil().DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
                 return;
             }
 
             //Deny enter with item
             if (!r.denyEnterWithItens(p)) {
-                e.setToTransform(RedProtectUtil.DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
+                e.setToTransform(RedProtect.get().getUtil().DenyEnterPlayer(w, lfromForm, ltoForm, r, false));
                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.denyenter.withitems").replace("{items}", r.getFlags().get("deny-enter-items").toString()));
                 return;
             }
@@ -766,8 +766,8 @@ public class PlayerListener {
             //update region admin or leader visit
             if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")) {
                 if (r.isLeader(p) || r.isAdmin(p)) {
-                    if (r.getDate() == null || (!r.getDate().equals(RedProtectUtil.dateNow()))) {
-                        r.setDate(RedProtectUtil.dateNow());
+                    if (r.getDate() == null || (!r.getDate().equals(RedProtect.get().getUtil().dateNow()))) {
+                        r.setDate(RedProtect.get().getUtil().dateNow());
                     }
                 }
             }
@@ -845,7 +845,7 @@ public class PlayerListener {
 
         if (rfrom != null) {
             if (!rfrom.canExit(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.exit")){
-                e.setToTransform(RedProtectUtil.DenyExitPlayer(p, e.getFromTransform(), e.getToTransform(), rfrom));
+                e.setToTransform(RedProtect.get().getUtil().DenyExitPlayer(p, e.getFromTransform(), e.getToTransform(), rfrom));
                 return;
             }
 
@@ -1156,8 +1156,8 @@ public class PlayerListener {
 
             RedProtect.get().rm.getAdminRegions(p.getUniqueId().toString()).forEach(r -> {
                 if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))) {
-                    if (r.getDate() == null || !r.getDate().equals(RedProtectUtil.dateNow())) {
-                        r.setDate(RedProtectUtil.dateNow());
+                    if (r.getDate() == null || !r.getDate().equals(RedProtect.get().getUtil().dateNow())) {
+                        r.setDate(RedProtect.get().getUtil().dateNow());
                     }
                 }
             });
@@ -1216,7 +1216,7 @@ public class PlayerListener {
         if (!notify.equals("")) {
             if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 ServerBossBar boss = ServerBossBar.builder()
-                        .name(RedProtectUtil.toText(notify))
+                        .name(RedProtect.get().getUtil().toText(notify))
                         .overlay(BossBarOverlays.NOTCHED_12)
                         .color(BossBarColors.YELLOW)
                         .percent(1).build();
@@ -1228,7 +1228,7 @@ public class PlayerListener {
                         .submit(RedProtect.get().container);
             }
             if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("CHAT")) {
-                p.sendMessage(RedProtectUtil.toText(notify));
+                p.sendMessage(RedProtect.get().getUtil().toText(notify));
             }
         }
     }
@@ -1239,7 +1239,7 @@ public class PlayerListener {
         }
         if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
             ServerBossBar boss = ServerBossBar.builder()
-                    .name(RedProtectUtil.toText(wel))
+                    .name(RedProtect.get().getUtil().toText(wel))
                     .overlay(BossBarOverlays.NOTCHED_12)
                     .color(BossBarColors.GREEN)
                     .percent(1).build();
@@ -1251,7 +1251,7 @@ public class PlayerListener {
                     .submit(RedProtect.get().container);
         }
         if (RedProtect.get().config.configRoot().notify.welcome_mode.equalsIgnoreCase("CHAT")) {
-            p.sendMessage(RedProtectUtil.toText(wel));
+            p.sendMessage(RedProtect.get().getUtil().toText(wel));
         }
     }
 
@@ -1639,7 +1639,7 @@ public class PlayerListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void PlayerDropItemGui(DropItemEvent.Pre e, @Root Player p) {
         e.getDroppedItems().forEach(item -> {
-            if (RedProtectUtil.isGuiItem(item.createStack())) {
+            if (RedProtect.get().getUtil().isGuiItem(item.createStack())) {
                 RedProtect.get().getVersionHelper().removeGuiItem(p);
                 e.setCancelled(true);
             }

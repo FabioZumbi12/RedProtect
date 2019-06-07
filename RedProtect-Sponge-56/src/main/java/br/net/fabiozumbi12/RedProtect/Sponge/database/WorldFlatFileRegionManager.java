@@ -74,9 +74,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                    if (RedProtectUtil.isUUIDs(p[1])) {
+                    if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                         String before = p[1];
-                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                     }
                 }
@@ -87,9 +87,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                    if (RedProtectUtil.isUUIDs(p[1])) {
+                    if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                         String before = p[1];
-                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                     }
                 }
@@ -100,9 +100,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 String[] pi = s.split("@");
                 String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                 if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                    if (RedProtectUtil.isUUIDs(p[1])) {
+                    if (RedProtect.get().getUtil().isUUIDs(p[1])) {
                         String before = p[1];
-                        p[1] = RedProtectUtil.UUIDtoPlayer(p[1]) == null ? p[1] : RedProtectUtil.UUIDtoPlayer(p[1]).toLowerCase();
+                        p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
                         RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
                     }
                 }
@@ -231,7 +231,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         fileDB = regionManager.createEmptyNode();
                     }
 
-                    RedProtectUtil.addProps(fileDB, r);
+                    RedProtect.get().getUtil().addProps(fileDB, r);
                     saved++;
 
                     if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
@@ -263,9 +263,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 //try backup
                 if (force && RedProtect.get().config.configRoot().flat_file.backup) {
                     if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
-                        RedProtectUtil.backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
+                        RedProtect.get().getUtil().backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
                     } else {
-                        RedProtectUtil.backupRegions(dbs, world, null);
+                        RedProtect.get().getUtil().backupRegions(dbs, world, null);
                     }
                 }
             }
@@ -343,7 +343,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         }
         int total = 0;
         for (Region r2 : regionslist) {
-            total += RedProtectUtil.simuleTotalRegionSize(uuid, r2);
+            total += RedProtect.get().getUtil().simuleTotalRegionSize(uuid, r2);
         }
         return total;
     }

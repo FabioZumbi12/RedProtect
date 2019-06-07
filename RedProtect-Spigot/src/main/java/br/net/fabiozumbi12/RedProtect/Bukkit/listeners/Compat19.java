@@ -146,7 +146,7 @@ public class Compat19 implements Listener {
             return;
         }
 
-        if (RedProtectUtil.denyPotion(e.getEntity().getItem())) {
+        if (RedProtect.get().getUtil().denyPotion(e.getEntity().getItem())) {
             e.setCancelled(true);
             if (e.getEntity().getShooter() instanceof Player) {
                 RedProtect.get().lang.sendMessage((Player) e.getEntity().getShooter(), RedProtect.get().lang.get("playerlistener.denypotion"));

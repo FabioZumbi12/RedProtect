@@ -67,9 +67,7 @@ public class SpigetUpdater {
             minutes = 15;
         }
         if (updateCheck) {
-            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, ()->{
-                checkForUpdate(sender, silent);
-            }, 40L, (minutes * 60) * 20);
+            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, ()-> checkForUpdate(sender, silent), 40L, (minutes * 60) * 20);
         }
     }
 
@@ -171,7 +169,7 @@ public class SpigetUpdater {
                 public void upToDate() {
                     //// Plugin is up-to-date
                     if (!silent)
-                        sender.sendMessage(ChatColor.GOLD + "[RedProtect] " + ChatColor.RESET + "No update available.");
+                        sender.sendMessage("[RedProtect] " + ChatColor.RESET + "No update available.");
                 }
             });
         }

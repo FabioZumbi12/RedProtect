@@ -46,12 +46,12 @@ import java.util.*;
 public class EncompassRegionBuilder extends RegionBuilder {
 
     public EncompassRegionBuilder(SignChangeEvent e) {
-        String owner1 = RedProtectUtil.PlayerToUUID(e.getLine(2));
-        String owner2 = RedProtectUtil.PlayerToUUID(e.getLine(3));
+        String owner1 = RedProtect.get().getUtil().PlayerToUUID(e.getLine(2));
+        String owner2 = RedProtect.get().getUtil().PlayerToUUID(e.getLine(3));
         Block b = e.getBlock();
         World w = b.getWorld();
         Player p = e.getPlayer();
-        String pName = RedProtectUtil.PlayerToUUID(p.getName());
+        String pName = RedProtect.get().getUtil().PlayerToUUID(p.getName());
         Block last = b;
         Block current = b;
         Block next = null;
@@ -71,11 +71,11 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter name
-        regionName = RedProtectUtil.setName(regionName);
+        regionName = RedProtect.get().getUtil().setName(regionName);
 
         //filter region name
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3) {
-            regionName = RedProtectUtil.nameGen(p.getName(), p.getWorld().getName());
+            regionName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.autoname.error"));
                 return;
@@ -193,7 +193,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtectUtil.dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
+                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
                         leaders.forEach(region::addLeader);
                         Set<String> othersName = new HashSet<>();
                         Region otherrg;
@@ -246,7 +246,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             return;
                         }
 
-                        region.setPrior(RedProtectUtil.getUpdatedPrior(region));
+                        region.setPrior(RedProtect.get().getUtil().getUpdatedPrior(region));
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
                         int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w.getName());
@@ -259,7 +259,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
                         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
                         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
-                        int regionArea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
+                        int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(p.getUniqueId().toString(), region);
                         int actualArea = 0;
                         if (regionArea > 0) {
                             actualArea = totalArea + regionArea;

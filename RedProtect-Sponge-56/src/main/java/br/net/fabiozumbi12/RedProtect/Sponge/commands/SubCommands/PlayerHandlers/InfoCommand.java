@@ -54,14 +54,14 @@ public class InfoCommand {
                         if (Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).isPresent()) {
                             Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
                             if (r != null) {
-                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
                                 src.sendMessage(r.info());
-                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
                             } else {
-                                src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args.<String>getOne("region").get()));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args.<String>getOne("region").get()));
                             }
                         } else {
-                            src.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args.<WorldProperties>getOne("world").get().getWorldName()));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args.<WorldProperties>getOne("world").get().getWorldName()));
                         }
                         return CommandResult.success();
                     } else if (src instanceof Player) {

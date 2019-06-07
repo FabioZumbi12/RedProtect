@@ -74,7 +74,7 @@ public class ListCommand implements SubCommand {
                     getRegionforList(sender, ((Player) sender).getUniqueId().toString(), Page);
                     return true;
                 } catch (NumberFormatException e) {
-                    handleList(player, RedProtectUtil.PlayerToUUID(args[0]), 1);
+                    handleList(player, RedProtect.get().getUtil().PlayerToUUID(args[0]), 1);
                     return true;
                 }
             }
@@ -82,7 +82,7 @@ public class ListCommand implements SubCommand {
             if (args.length == 2) {
                 try {
                     int Page = Integer.parseInt(args[1]);
-                    handleList(player, RedProtectUtil.PlayerToUUID(args[0]), Page);
+                    handleList(player, RedProtect.get().getUtil().PlayerToUUID(args[0]), Page);
                     return true;
                 } catch (NumberFormatException e) {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");

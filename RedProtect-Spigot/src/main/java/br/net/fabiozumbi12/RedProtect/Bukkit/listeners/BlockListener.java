@@ -67,7 +67,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDispenser(BlockDispenseEvent e) {
-        if (RedProtectUtil.denyPotion(e.getItem())) {
+        if (RedProtect.get().getUtil().denyPotion(e.getItem())) {
             e.setCancelled(true);
         }
     }
@@ -273,12 +273,6 @@ public class BlockListener implements Listener {
 
         Player p = e.getPlayer();
         Block b = e.getBlock();
-
-        if (RedProtectUtil.pBorders.containsKey(p.getName()) && b.getType().equals(Material.getMaterial(RedProtect.get().config.configRoot().region_settings.border.material))) {
-            RedProtect.get().lang.sendMessage(p, "blocklistener.cantbreak.borderblock");
-            e.setCancelled(true);
-            return;
-        }
 
         boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         Region r = RedProtect.get().rm.getTopRegion(b.getLocation());

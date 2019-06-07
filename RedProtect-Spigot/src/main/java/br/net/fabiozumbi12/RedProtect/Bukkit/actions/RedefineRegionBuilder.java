@@ -71,14 +71,14 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         Region region = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
 
-        region.setPrior(RedProtectUtil.getUpdatedPrior(region));
+        region.setPrior(RedProtect.get().getUtil().getUpdatedPrior(region));
 
         String pName = p.getUniqueId().toString();
 
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
-        int regionArea = RedProtectUtil.simuleTotalRegionSize(p.getUniqueId().toString(), region);
+        int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(p.getUniqueId().toString(), region);
         int actualArea = 0;
         if (regionArea > 0) {
             actualArea = totalArea + regionArea;

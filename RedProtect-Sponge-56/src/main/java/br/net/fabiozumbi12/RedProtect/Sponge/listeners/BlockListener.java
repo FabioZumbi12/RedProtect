@@ -103,17 +103,17 @@ public class BlockListener {
         }
 
         if (RedProtect.get().config.configRoot().server_protection.sign_spy.enabled) {
-            Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
-            Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
-            Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
-            Sponge.getServer().getConsole().sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
             if (!RedProtect.get().config.configRoot().server_protection.sign_spy.only_console) {
                 for (Player play : Sponge.getServer().getOnlinePlayers()) {
                     if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/) {
-                        play.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
-                        play.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
-                        play.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
-                        play.sendMessage(RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
                     }
                 }
             }
@@ -130,7 +130,7 @@ public class BlockListener {
                         if (length > 16) {
                             length = 16;
                         }
-                        lines.set(1, RedProtectUtil.toText(p.getName().substring(0, length)));
+                        lines.set(1, RedProtect.get().getUtil().toText(p.getName().substring(0, length)));
                         e.getText().setElements(lines);
                         RedProtect.get().lang.sendMessage(p, "blocklistener.container.protected");
                         return;
@@ -157,8 +157,8 @@ public class BlockListener {
             RegionBuilder rb = new EncompassRegionBuilder(e);
             if (rb.ready()) {
                 Region r = rb.build();
-                lines.set(0, RedProtectUtil.toText(RedProtect.get().lang.get("blocklistener.region.signcreated")));
-                lines.set(1, RedProtectUtil.toText(r.getName()));
+                lines.set(0, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.region.signcreated")));
+                lines.set(1, RedProtect.get().getUtil().toText(r.getName()));
                 e.getText().setElements(lines);
                 RedProtect.get().rm.add(r, r.getWorld());
             }
@@ -172,9 +172,9 @@ public class BlockListener {
                 }
                 if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
-                        lines.set(1, RedProtectUtil.toText(flag));
-                        lines.set(2, RedProtectUtil.toText("&3&l" + signr.getName()));
-                        lines.set(3, RedProtectUtil.toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag))));
+                        lines.set(1, RedProtect.get().getUtil().toText(flag));
+                        lines.set(2, RedProtect.get().getUtil().toText("&3&l" + signr.getName()));
+                        lines.set(3, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag))));
                         e.getText().setElements(lines);
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.placed");
                         RedProtect.get().config.putSign(signr.getID(), b.getLocation().get());
@@ -192,7 +192,7 @@ public class BlockListener {
 
     void setErrorSign(ChangeSignEvent e, Player p, String error) {
         List<Text> lines = e.getTargetTile().get(Keys.SIGN_LINES).get();
-        lines.set(0, RedProtectUtil.toText(RedProtect.get().lang.get("regionbuilder.signerror")));
+        lines.set(0, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.signerror")));
         e.getTargetTile().offer(Keys.SIGN_LINES, lines);
         RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("regionbuilder.signerror") + ": " + error);
     }

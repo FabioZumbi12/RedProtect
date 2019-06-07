@@ -96,10 +96,10 @@ public class FlagGui {
                     int i = RedProtect.get().config.getGuiSlot(flag);
 
                     this.guiItems[i] = ItemStack.of(Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.guiRoot().gui_flags.get(flag).material).orElse(ItemTypes.GLASS_PANE), 1);
-                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RedProtectUtil.toText(RedProtect.get().guiLang.getFlagName(flag)));
+                    this.guiItems[i].offer(Keys.DISPLAY_NAME, RedProtect.get().getUtil().toText(RedProtect.get().guiLang.getFlagName(flag)));
                     List<Text> lore = new ArrayList<>(Arrays.asList(
                             Text.joinWith(Text.of(" "), RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
-                            RedProtectUtil.toText("&0" + flag)));
+                            RedProtect.get().getUtil().toText("&0" + flag)));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     this.guiItems[i].offer(Keys.ITEM_LORE, lore);
 
@@ -211,7 +211,7 @@ public class FlagGui {
                             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                 if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                                     applyFlag(flag, item, event);
-                                    RedProtectUtil.startFlagChanger(this.region.getName(), flag, this.player);
+                                    RedProtect.get().getUtil().startFlagChanger(this.region.getName(), flag, this.player);
                                 } else {
                                     RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     event.setCancelled(true);
@@ -246,7 +246,7 @@ public class FlagGui {
 
             List<Text> lore = new ArrayList<>(Arrays.asList(
                     Text.joinWith(Text.of(" "), RedProtect.get().guiLang.getFlagString("value"), RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString())),
-                    RedProtectUtil.toText("&0" + flag)));
+                    RedProtect.get().getUtil().toText("&0" + flag)));
             lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
             item.offer(Keys.ITEM_LORE, lore);
 
