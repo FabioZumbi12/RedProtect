@@ -158,6 +158,7 @@
         <module>RedProtect-Core</module>
         <module>RedProtect-Spigot</module>
         <module>RedProtect-Spigot-1.12</module>
+        <module>RedProtect-Spigot-1.13</module>
         <module>RedProtect-Sponge-56</module>
         <module>RedProtect-Sponge-7</module>
         <module>RedProtect-Sponge-8</module>

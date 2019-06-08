@@ -26,9 +26,24 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.projectiles.ProjectileSource;
+
+import java.util.Set;
 
 public interface VersionHelper {
+
+    Set<Location> getPortalLocations(PortalCreateEvent e);
+
+    ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e);
+
+    boolean denyEntLingPot(LingeringPotionSplashEvent e);
+
+    Entity getEntLingPot(LingeringPotionSplashEvent e);
 
     void toggleDoor(Block b);
 

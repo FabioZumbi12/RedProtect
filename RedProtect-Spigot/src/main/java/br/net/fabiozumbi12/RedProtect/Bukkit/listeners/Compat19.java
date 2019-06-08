@@ -130,12 +130,12 @@ public class Compat19 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLingerPotion(LingeringPotionSplashEvent e) {
-        if (!(e.getEntity().getShooter() instanceof Player)) {
+        if (!(RedProtect.get().getVersionHelper().getPlayerLingPot(e) instanceof Player)) {
             return;
         }
 
-        Player p = (Player) e.getEntity().getShooter();
-        Entity ent = e.getEntity();
+        Player p = (Player) RedProtect.get().getVersionHelper().getPlayerLingPot(e);
+        Entity ent = RedProtect.get().getVersionHelper().getEntLingPot(e);
 
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is LingeringPotionSplashEvent event.");
 
@@ -146,11 +146,9 @@ public class Compat19 implements Listener {
             return;
         }
 
-        if (RedProtect.get().getUtil().denyPotion(e.getEntity().getItem())) {
+        if (RedProtect.get().getVersionHelper().denyEntLingPot(e)) {
             e.setCancelled(true);
-            if (e.getEntity().getShooter() instanceof Player) {
-                RedProtect.get().lang.sendMessage((Player) e.getEntity().getShooter(), RedProtect.get().lang.get("playerlistener.denypotion"));
-            }
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.denypotion"));
         }
     }
 

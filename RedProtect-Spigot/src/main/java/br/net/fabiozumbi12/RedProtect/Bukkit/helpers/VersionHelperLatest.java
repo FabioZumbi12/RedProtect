@@ -26,10 +26,36 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Openable;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.projectiles.ProjectileSource;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class VersionHelperLatest implements VersionHelper {
+
+    public Set<Location> getPortalLocations(PortalCreateEvent e){
+        return e.getBlocks().stream().map(BlockState::getLocation).collect(Collectors.toSet());
+    }
+
+    public boolean denyEntLingPot(LingeringPotionSplashEvent e){
+        return RedProtect.get().getUtil().denyPotion(e.getEntity().getItem());
+    }
+
+    public Entity getEntLingPot(LingeringPotionSplashEvent e){
+        return e.getEntity();
+    }
+
+    public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e){
+        return e.getEntity().getShooter();
+    }
 
     public void toggleDoor(Block b) {
         Openable openable = (Openable) b.getBlockData();

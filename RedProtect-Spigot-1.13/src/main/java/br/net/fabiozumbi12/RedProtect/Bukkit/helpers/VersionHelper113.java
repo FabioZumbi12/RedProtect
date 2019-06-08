@@ -39,7 +39,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class VersionHelper112 implements VersionHelper {
+public class VersionHelper113 implements VersionHelper {
 
     public Set<Location> getPortalLocations(PortalCreateEvent e){
         return e.getBlocks().stream().map(Block::getLocation).collect(Collectors.toSet());

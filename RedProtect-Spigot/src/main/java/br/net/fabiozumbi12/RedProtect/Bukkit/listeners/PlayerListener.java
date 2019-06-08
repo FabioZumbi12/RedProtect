@@ -1064,8 +1064,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPortalCreate(PortalCreateEvent e) {
-        e.getBlocks().forEach(b -> {
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+        RedProtect.get().getVersionHelper().getPortalLocations(e).forEach(l -> {
+            Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canCreatePortal()) {
                 e.setCancelled(true);
             }

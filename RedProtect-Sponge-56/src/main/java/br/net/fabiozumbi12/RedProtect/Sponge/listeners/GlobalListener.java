@@ -211,6 +211,8 @@ public class GlobalListener {
 
     @Listener
     public void onIceForm(ChangeBlockEvent e) {
+        if (e.getTransactions().isEmpty())return;
+
         Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getFinal().getLocation().get(), this.getClass().getName());
 
         if (r == null && (e.getTransactions().get(0).getOriginal().getState().getType().equals(BlockTypes.ICE) ||
