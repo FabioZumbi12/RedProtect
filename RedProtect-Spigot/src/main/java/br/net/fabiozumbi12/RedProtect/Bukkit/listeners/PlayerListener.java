@@ -77,9 +77,6 @@ public class PlayerListener implements Listener {
     private final HashMap<String, Boolean> PvPState = new HashMap<>();
     private final HashMap<String, String> PlayertaskID = new HashMap<>();
     private final HashMap<String, HashMap<Integer, Location>> deathLocs = new HashMap<>();
-    private final HashMap<String, Integer> dmgp = new HashMap<>();
-    private final HashMap<String, Integer> trys = new HashMap<>();
-    private final HashMap<String, Integer> matchRate = new HashMap<>();
 
     public PlayerListener() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded PlayerListener...");
@@ -305,6 +302,11 @@ public class PlayerListener implements Listener {
                 } else if (b.getType().equals(Material.ENDER_CHEST)) {
                     if (!r.canEnderChest(p)) {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
+                        event.setCancelled(true);
+                    }
+                } else if (b.getType().name().contains("SPAWNER")) {
+                    if (!r.canPlaceSpawner(p)) {
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                         event.setCancelled(true);
                     }
                 } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
