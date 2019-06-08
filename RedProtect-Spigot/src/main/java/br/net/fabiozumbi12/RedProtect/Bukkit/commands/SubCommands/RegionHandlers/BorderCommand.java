@@ -53,7 +53,7 @@ public class BorderCommand implements SubCommand {
         if (args.length == 0) {
             Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
             if (r != null) {
-                RedProtect.get().getUtil().addBorder(player, r.getMinLocation(), r.getMaxLocation());
+                RedProtect.get().getUtil().addBorder(player, r);
                 return true;
             } else {
                 RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");

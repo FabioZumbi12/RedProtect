@@ -63,6 +63,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.checkerframework.checker.units.qual.min;
 import org.inventivetalent.bossbar.BossBarAPI;
 
 import java.util.ArrayList;
@@ -165,7 +166,8 @@ public class PlayerListener implements Listener {
                     RedProtect.get().secondLocationSelections.put(p, l);
                     p.sendMessage(RedProtect.get().lang.get("playerlistener.wand2") + RedProtect.get().lang.get("general.color") + " (" + ChatColor.GOLD + l.getBlockX() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockY() + RedProtect.get().lang.get("general.color") + ", " + ChatColor.GOLD + l.getBlockZ() + RedProtect.get().lang.get("general.color") + ").");
                     event.setCancelled(true);
-                } else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
+                }
+                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR)) {
                     if (!RedProtect.get().getUtil().canBuildNear(p, l)) {
                         event.setCancelled(true);
                         return;
@@ -187,7 +189,7 @@ public class PlayerListener implements Listener {
                         double dist = loc1.distanceSquared(loc2);
                         RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                     } else {
-                        RedProtect.get().getUtil().addBorder(p, loc1, loc2);
+                        RedProtect.get().getUtil().addBorder(p, new Region("", loc1, loc2, p.getWorld().getName()));
                     }
                 }
                 return;

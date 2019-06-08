@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
@@ -72,7 +73,7 @@ public class Pos2Command implements SubCommand {
                     double dist = loc1.distanceSquared(loc2);
                     RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
                 } else {
-                    RedProtect.get().getUtil().addBorder(player, loc1, loc2);
+                    RedProtect.get().getUtil().addBorder(player, new Region("", loc1, loc2, player.getWorld().getName()));
                 }
             }
             return true;

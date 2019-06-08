@@ -36,12 +36,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class CoreUtil {
-    protected Set<String> borderPlayers;
+    protected HashMap<String, Object> borderPlayers;
     protected HashMap<String, String> cachedUUIDs;
     public boolean stopRegen;
 
     public CoreUtil(){
-        borderPlayers = new HashSet<>();
+        borderPlayers = new HashMap<>();
         cachedUUIDs = new HashMap<>();
     }
 

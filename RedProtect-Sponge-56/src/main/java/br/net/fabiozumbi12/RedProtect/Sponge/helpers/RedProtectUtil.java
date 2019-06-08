@@ -834,16 +834,39 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public void addBorder(final Player p, Location<World> min, Location<World> max) {
-        if (borderPlayers.contains(p.getName())) return;
+        final String player = p.getName();
+
+        if (borderPlayers.containsKey(p.getName())){
+            Task task = (Task) borderPlayers.get(player);
+            task.cancel();
+            borderPlayers.remove(player);
+        }
 
         Set<Location> locations = new LinkedHashSet<>();
         World w = p.getWorld();
 
         int height = p.getLocation().getBlockY();
-        for (int x = (int) min.getX(); x <= (int) max.getX(); x++) {
-            for (int z = (int) min.getZ(); z <= (int) max.getZ(); z++) {
+
+        int minX = (int)min.getX();
+        int maxX = (int)max.getX();
+        int minZ = (int)min.getZ();
+        int maxZ = (int)max.getZ();
+
+        if (minX > maxX) {
+            int temp = minX;
+            minX = maxX;
+            maxX = temp;
+        }
+        if (minZ > maxZ) {
+            int temp = minZ;
+            minZ = maxZ;
+            maxZ = temp;
+        }
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
                 if(x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
-                    for (int y = height-10; y < height+10; y++){
+                    for (int y = height-10; y < height+10; y++) {
                         locations.add(new Location<>(w, x, y, z));
                     }
                 }
@@ -856,14 +879,18 @@ public class RedProtectUtil extends CoreUtil {
         } catch (Exception ignored){
             particle = ParticleTypes.FLAME;
         }
-        borderPlayers.add(p.getName());
         ParticleType finalParticle = particle;
         Task task = Sponge.getScheduler().createSyncExecutor(RedProtect.get()).scheduleAtFixedRate(()->
                 locations.forEach(l->w.spawnParticles(ParticleEffect.builder().quantity(1).type(finalParticle).velocity(new Vector3d(0,0,0)).build(), new Vector3d(l.getBlockX()+0.500, l.getBlockY(), l.getBlockZ()+0.500))
                 ),500,500,TimeUnit.MILLISECONDS).getTask();
+        borderPlayers.put(player, task);
+
         Sponge.getScheduler().createSyncExecutor(RedProtect.get()).schedule(()->{
-            borderPlayers.remove(p.getName());
-            task.cancel();
+            if (borderPlayers.containsKey(player)){
+                Task newTask = (Task) borderPlayers.get(player);
+                newTask.cancel();
+                borderPlayers.remove(player);
+            }
         }, RedProtect.get().config.configRoot().region_settings.border.time_showing, TimeUnit.SECONDS);
     }
 

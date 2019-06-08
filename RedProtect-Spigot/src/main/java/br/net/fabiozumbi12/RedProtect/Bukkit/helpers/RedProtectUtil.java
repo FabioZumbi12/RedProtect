@@ -859,17 +859,43 @@ public class RedProtectUtil extends CoreUtil {
         return prior;
     }
 
-    public void addBorder(final Player p, Location min, Location max) {
-        if (borderPlayers.contains(p.getName())) return;
+    public void addBorder(final Player p, Region r) {
+        final String player = p.getName();
+
+        if (borderPlayers.containsKey(player)){
+            int task = (int)borderPlayers.get(player);
+            Bukkit.getScheduler().cancelTask(task);
+            borderPlayers.remove(player);
+        }
+
+        Location min = r.getMinLocation();
+        Location max = r.getMaxLocation();
 
         Set<Location> locations = new LinkedHashSet<>();
         World w = p.getWorld();
 
         int height = p.getLocation().getBlockY();
-        for (int x = (int) min.getX(); x <= (int) max.getX(); x++) {
-            for (int z = (int) min.getZ(); z <= (int) max.getZ(); z++) {
+
+        int minX = (int)min.getX();
+        int maxX = (int)max.getX();
+        int minZ = (int)min.getZ();
+        int maxZ = (int)max.getZ();
+
+        if (minX > maxX) {
+            int temp = minX;
+            minX = maxX;
+            maxX = temp;
+        }
+        if (minZ > maxZ) {
+            int temp = minZ;
+            minZ = maxZ;
+            maxZ = temp;
+        }
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
                 if(x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
-                    for (int y = height-10; y < height+10; y++){
+                    for (int y = height-10; y < height+10; y++) {
                         locations.add(new Location(w, x, y, z));
                     }
                 }
@@ -882,13 +908,18 @@ public class RedProtectUtil extends CoreUtil {
         } catch (Exception ignored){
             particle = Particle.FLAME;
         }
-        borderPlayers.add(p.getName());
+
         Particle finalParticle = particle;
         int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), ()->
                 locations.forEach(l->w.spawnParticle(finalParticle, l.getX()+0.500, l.getY(), l.getZ()+0.500, 1, 0, 0, 0, 0)), 10, 10);
+        borderPlayers.put(player, task);
+
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> {
-            borderPlayers.remove(p.getName());
-            Bukkit.getScheduler().cancelTask(task);
+            if (borderPlayers.containsKey(player)){
+                int newTask = (int)borderPlayers.get(player);
+                Bukkit.getScheduler().cancelTask(newTask);
+                borderPlayers.remove(player);
+            }
         },RedProtect.get().config.configRoot().region_settings.border.time_showing * 20);
     }
 
