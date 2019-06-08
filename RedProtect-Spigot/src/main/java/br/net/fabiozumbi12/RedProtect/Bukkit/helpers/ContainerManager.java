@@ -206,7 +206,7 @@ public class ContainerManager {
 
     private Block getBlockRelative(Block block) {
         if (block.getState() instanceof Sign) {
-            Directional dir = (Directional)block.getBlockData();
+            Directional dir = (Directional) block.getBlockData();
             return block.getRelative(dir.getFacing().getOppositeFace());
         }
         return null;

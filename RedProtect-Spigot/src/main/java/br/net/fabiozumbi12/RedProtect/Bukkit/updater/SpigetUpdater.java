@@ -14,18 +14,18 @@ import java.io.File;
 
 public class SpigetUpdater {
 
+    private static SpigetUpdate spigetUpdate = null;
     private RedProtect plugin;
+    private UpdateStatus updateAvailable = UpdateStatus.UNKNOWN;
+    private String currentJarFile = "";
+    private String newDownloadVersion = "";
+    private int taskId;
 
     public SpigetUpdater(RedProtect plugin) {
         this.plugin = plugin;
         if (!new File(plugin.getDataFolder(), "backup").exists())
             new File(plugin.getDataFolder(), "backup").mkdir();
     }
-
-    private static SpigetUpdate spigetUpdate = null;
-    private UpdateStatus updateAvailable = UpdateStatus.UNKNOWN;
-    private String currentJarFile = "";
-    private String newDownloadVersion = "";
 
     public SpigetUpdate getSpigetUpdate() {
         return spigetUpdate;
@@ -55,7 +55,6 @@ public class SpigetUpdater {
         this.newDownloadVersion = newDownloadVersion;
     }
 
-    private int taskId;
     public int getTaskId() {
         return this.taskId;
     }
@@ -67,7 +66,7 @@ public class SpigetUpdater {
             minutes = 15;
         }
         if (updateCheck) {
-            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, ()-> checkForUpdate(sender, silent), 40L, (minutes * 60) * 20);
+            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> checkForUpdate(sender, silent), 40L, (minutes * 60) * 20);
         }
     }
 
@@ -136,8 +135,7 @@ public class SpigetUpdater {
      * Check is a new version is available
      *
      * @param sender
-     * @param silent
-     *            - if true the player will not get the status in Game
+     * @param silent - if true the player will not get the status in Game
      */
     public void checkForUpdate(final CommandSender sender, final boolean silent) {
         if (!silent)

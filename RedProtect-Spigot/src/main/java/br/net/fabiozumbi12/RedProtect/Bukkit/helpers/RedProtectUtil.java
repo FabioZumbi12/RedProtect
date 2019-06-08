@@ -39,7 +39,6 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,7 +47,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
-import org.checkerframework.checker.units.qual.min;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -138,7 +136,7 @@ public class RedProtectUtil extends CoreUtil {
         return setTo;
     }
 
-    public boolean isBypassBorder(Player p){
+    public boolean isBypassBorder(Player p) {
         int diameter = (int) p.getWorld().getWorldBorder().getSize() / 2;
         int centerZ = (int) p.getWorld().getWorldBorder().getCenter().getZ();
         int centerX = (int) p.getWorld().getWorldBorder().getCenter().getX();
@@ -654,7 +652,7 @@ public class RedProtectUtil extends CoreUtil {
             return;
         }
 
-        File bfolder = new File(RedProtect.get().getDataFolder() + File.separator + "data","backups" + File.separator);
+        File bfolder = new File(RedProtect.get().getDataFolder() + File.separator + "data", "backups" + File.separator);
         if (!bfolder.exists()) {
             bfolder.mkdir();
         }
@@ -862,8 +860,8 @@ public class RedProtectUtil extends CoreUtil {
     public void addBorder(final Player p, Region r) {
         final String player = p.getName();
 
-        if (borderPlayers.containsKey(player)){
-            int task = (int)borderPlayers.get(player);
+        if (borderPlayers.containsKey(player)) {
+            int task = (int) borderPlayers.get(player);
             Bukkit.getScheduler().cancelTask(task);
             borderPlayers.remove(player);
         }
@@ -876,10 +874,10 @@ public class RedProtectUtil extends CoreUtil {
 
         int height = p.getLocation().getBlockY();
 
-        int minX = (int)min.getX();
-        int maxX = (int)max.getX();
-        int minZ = (int)min.getZ();
-        int maxZ = (int)max.getZ();
+        int minX = (int) min.getX();
+        int maxX = (int) max.getX();
+        int minZ = (int) min.getZ();
+        int maxZ = (int) max.getZ();
 
         if (minX > maxX) {
             int temp = minX;
@@ -894,8 +892,8 @@ public class RedProtectUtil extends CoreUtil {
 
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
-                if(x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
-                    for (int y = height-10; y < height+10; y++) {
+                if (x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
+                    for (int y = height - 10; y < height + 10; y++) {
                         locations.add(new Location(w, x, y, z));
                     }
                 }
@@ -905,22 +903,22 @@ public class RedProtectUtil extends CoreUtil {
         Particle particle;
         try {
             particle = Particle.valueOf(RedProtect.get().config.configRoot().region_settings.border.particle);
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             particle = Particle.FLAME;
         }
 
         Particle finalParticle = particle;
-        int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), ()->
-                locations.forEach(l->w.spawnParticle(finalParticle, l.getX()+0.500, l.getY(), l.getZ()+0.500, 1, 0, 0, 0, 0)), 10, 10);
+        int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () ->
+                locations.forEach(l -> w.spawnParticle(finalParticle, l.getX() + 0.500, l.getY(), l.getZ() + 0.500, 1, 0, 0, 0, 0)), 10, 10);
         borderPlayers.put(player, task);
 
-        Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> {
-            if (borderPlayers.containsKey(player)){
-                int newTask = (int)borderPlayers.get(player);
+        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
+            if (borderPlayers.containsKey(player)) {
+                int newTask = (int) borderPlayers.get(player);
                 Bukkit.getScheduler().cancelTask(newTask);
                 borderPlayers.remove(player);
             }
-        },RedProtect.get().config.configRoot().region_settings.border.time_showing * 20);
+        }, RedProtect.get().config.configRoot().region_settings.border.time_showing * 20);
     }
 
     public int convertFromGP() {

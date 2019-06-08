@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.EconomyManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -637,7 +636,7 @@ public class Region extends CoreRegion {
 
     //---------------------- Admin Flags --------------------------//
 
-    public boolean canMove(Player p){
+    public boolean canMove(Player p) {
         if (!flagExists("can-move")) {
             return true;
         }

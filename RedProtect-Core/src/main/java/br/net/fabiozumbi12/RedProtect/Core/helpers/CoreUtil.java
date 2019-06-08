@@ -36,13 +36,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class CoreUtil {
+    public boolean stopRegen;
     protected HashMap<String, Object> borderPlayers;
     protected HashMap<String, String> cachedUUIDs;
-    public boolean stopRegen;
 
-    public CoreUtil(){
+    public CoreUtil() {
         borderPlayers = new HashMap<>();
         cachedUUIDs = new HashMap<>();
+    }
+
+    public static void printJarVersion() {
+        String jarVersion = new File(CoreUtil.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath())
+                .getName();
+        System.out.print("RedProtect jar: " + jarVersion);
     }
 
     protected String dateNow(String format) {
@@ -138,15 +147,6 @@ public class CoreUtil {
             regionName = pRName;
         }
         return regionName;
-    }
-
-    public static void printJarVersion() {
-        String jarVersion = new File(CoreUtil.class.getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .getPath())
-                .getName();
-        System.out.print("RedProtect jar: " + jarVersion);
     }
 
 }

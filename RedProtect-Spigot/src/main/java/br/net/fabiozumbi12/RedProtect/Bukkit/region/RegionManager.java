@@ -197,11 +197,12 @@ public class RegionManager {
     public Set<Region> getRegionsNear(Player player, int i) {
         return regionManagers.get(player.getWorld().getName()).getRegionsNear(player.getLocation().getBlockX(), player.getLocation().getBlockZ(), i);
     }
-/*
-    public Set<Region> getRegions(String player, World w) {
-        return this.regionManagers.get(w).getLeaderRegions(player);
-    }
-*/
+
+    /*
+        public Set<Region> getRegions(String player, World w) {
+            return this.regionManagers.get(w).getLeaderRegions(player);
+        }
+    */
     public Set<Region> getRegions(String player, String w) {
         return this.regionManagers.get(w).getLeaderRegions(player);
     }
@@ -444,7 +445,7 @@ public class RegionManager {
         }
         return total;
     }
-    
+
     public Region renameRegion(String newName, Region old) {
         Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
                 new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());

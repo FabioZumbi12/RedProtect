@@ -43,7 +43,7 @@ public class HooksManager {
             if (WE) {
                 RedProtect.get().logger.info("WorldEdit found. Hooked.");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
@@ -63,7 +63,7 @@ public class HooksManager {
                 }
                 RedProtect.get().logger.info("Dynmap markers loaded!");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
@@ -74,7 +74,7 @@ public class HooksManager {
             return RedProtect.get().container.getDependencies().stream().anyMatch(d -> d.getId().equals("worldedit") &&
                     Sponge.getPluginManager().getPlugin("worldedit").isPresent() &&
                     Sponge.getPluginManager().getPlugin("worldedit").get().getVersion().get().startsWith("6.1.9"));
-        } catch (Exception ingored){
+        } catch (Exception ingored) {
             return false;
         }
     }

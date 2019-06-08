@@ -26,7 +26,6 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper;
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3i;

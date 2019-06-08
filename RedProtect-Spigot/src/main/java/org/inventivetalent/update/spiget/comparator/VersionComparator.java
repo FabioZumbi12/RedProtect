@@ -30,57 +30,57 @@ package org.inventivetalent.update.spiget.comparator;
 
 public abstract class VersionComparator {
 
-	/**
-	 * Compares versions by checking if the version strings are equal
-	 */
-	public static final VersionComparator EQUAL = new VersionComparator() {
-		@Override
-		public boolean isNewer(String currentVersion, String checkVersion) {
-			return !currentVersion.equals(checkVersion);
-		}
-	};
+    /**
+     * Compares versions by checking if the version strings are equal
+     */
+    public static final VersionComparator EQUAL = new VersionComparator() {
+        @Override
+        public boolean isNewer(String currentVersion, String checkVersion) {
+            return !currentVersion.equals(checkVersion);
+        }
+    };
 
-	/**
-	 * Compares versions by their Sematic Version (<code>Major.Minor.Patch</code>, <a href="http://semver.org/">semver.org</a>). Removes dots and compares the resulting Integer values
-	 */
-	public static final VersionComparator SEM_VER = new VersionComparator() {
-		@Override
-		public boolean isNewer(String currentVersion, String checkVersion) {
-			currentVersion = currentVersion.replace(".", "");
-			checkVersion = checkVersion.replace(".", "");
+    /**
+     * Compares versions by their Sematic Version (<code>Major.Minor.Patch</code>, <a href="http://semver.org/">semver.org</a>). Removes dots and compares the resulting Integer values
+     */
+    public static final VersionComparator SEM_VER = new VersionComparator() {
+        @Override
+        public boolean isNewer(String currentVersion, String checkVersion) {
+            currentVersion = currentVersion.replace(".", "");
+            checkVersion = checkVersion.replace(".", "");
 
-			try {
-				int current = Integer.parseInt(currentVersion);
-				int check = Integer.parseInt(checkVersion);
+            try {
+                int current = Integer.parseInt(currentVersion);
+                int check = Integer.parseInt(checkVersion);
 
-				return check > current;
-			} catch (NumberFormatException e) {
-				System.err.println("[SpigetUpdate] Invalid SemVer versions specified [" + currentVersion + "] [" + checkVersion + "]");
-			}
-			return false;
-		}
-	};
+                return check > current;
+            } catch (NumberFormatException e) {
+                System.err.println("[SpigetUpdate] Invalid SemVer versions specified [" + currentVersion + "] [" + checkVersion + "]");
+            }
+            return false;
+        }
+    };
 
-	/**
-	 * Same as {@link VersionComparator#SEM_VER}, but supports version names with '-SNAPSHOT' suffixes
-	 */
-	public static final VersionComparator SEM_VER_SNAPSHOT = new VersionComparator() {
-		@Override
-		public boolean isNewer(String currentVersion, String checkVersion) {
-			currentVersion = currentVersion.replace("-SNAPSHOT", "");
-			checkVersion = checkVersion.replace("-SNAPSHOT", "");
+    /**
+     * Same as {@link VersionComparator#SEM_VER}, but supports version names with '-SNAPSHOT' suffixes
+     */
+    public static final VersionComparator SEM_VER_SNAPSHOT = new VersionComparator() {
+        @Override
+        public boolean isNewer(String currentVersion, String checkVersion) {
+            currentVersion = currentVersion.replace("-SNAPSHOT", "");
+            checkVersion = checkVersion.replace("-SNAPSHOT", "");
 
-			return SEM_VER.isNewer(currentVersion, checkVersion);
-		}
-	};
+            return SEM_VER.isNewer(currentVersion, checkVersion);
+        }
+    };
 
-	/**
-	 * Called to check if a version is newer
-	 *
-	 * @param currentVersion Current version of the plugin
-	 * @param checkVersion   Version to check
-	 * @return <code>true</code> if the checked version is newer
-	 */
-	public abstract boolean isNewer(String currentVersion, String checkVersion);
+    /**
+     * Called to check if a version is newer
+     *
+     * @param currentVersion Current version of the plugin
+     * @param checkVersion   Version to check
+     * @return <code>true</code> if the checked version is newer
+     */
+    public abstract boolean isNewer(String currentVersion, String checkVersion);
 
 }

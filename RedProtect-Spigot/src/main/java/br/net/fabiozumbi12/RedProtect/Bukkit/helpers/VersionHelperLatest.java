@@ -41,19 +41,19 @@ import java.util.stream.Collectors;
 
 public class VersionHelperLatest implements VersionHelper {
 
-    public Set<Location> getPortalLocations(PortalCreateEvent e){
+    public Set<Location> getPortalLocations(PortalCreateEvent e) {
         return e.getBlocks().stream().map(BlockState::getLocation).collect(Collectors.toSet());
     }
 
-    public boolean denyEntLingPot(LingeringPotionSplashEvent e){
+    public boolean denyEntLingPot(LingeringPotionSplashEvent e) {
         return RedProtect.get().getUtil().denyPotion(e.getEntity().getItem());
     }
 
-    public Entity getEntLingPot(LingeringPotionSplashEvent e){
+    public Entity getEntLingPot(LingeringPotionSplashEvent e) {
         return e.getEntity();
     }
 
-    public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e){
+    public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e) {
         return e.getEntity().getShooter();
     }
 

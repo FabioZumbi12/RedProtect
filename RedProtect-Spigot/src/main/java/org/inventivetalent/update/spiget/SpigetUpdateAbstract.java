@@ -41,49 +41,49 @@ import java.util.logging.Logger;
 
 public abstract class SpigetUpdateAbstract {
 
-	public static final String RESOURCE_INFO    = "https://api.spiget.org/v2/resources/%s?ut=%s";
-	public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
+    public static final String RESOURCE_INFO = "https://api.spiget.org/v2/resources/%s?ut=%s";
+    public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
 
-	protected final int    resourceId;
-	protected final String currentVersion;
-	protected final Logger log;
-	protected String            userAgent         = "SpigetResourceUpdater";
-	protected VersionComparator versionComparator = VersionComparator.EQUAL;
+    protected final int resourceId;
+    protected final String currentVersion;
+    protected final Logger log;
+    protected String userAgent = "SpigetResourceUpdater";
+    protected VersionComparator versionComparator = VersionComparator.EQUAL;
 
-	protected ResourceInfo latestResourceInfo;
+    protected ResourceInfo latestResourceInfo;
 
-	public SpigetUpdateAbstract(int resourceId, String currentVersion, Logger log) {
-		this.resourceId = resourceId;
-		this.currentVersion = currentVersion;
-		this.log = log;
-	}
+    public SpigetUpdateAbstract(int resourceId, String currentVersion, Logger log) {
+        this.resourceId = resourceId;
+        this.currentVersion = currentVersion;
+        this.log = log;
+    }
 
-	public SpigetUpdateAbstract setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-		return this;
-	}
+    public String getUserAgent() {
+        return userAgent;
+    }
 
-	public String getUserAgent() {
-		return userAgent;
-	}
+    public SpigetUpdateAbstract setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
 
-	public SpigetUpdateAbstract setVersionComparator(VersionComparator comparator) {
-		this.versionComparator = comparator;
-		return this;
-	}
+    public SpigetUpdateAbstract setVersionComparator(VersionComparator comparator) {
+        this.versionComparator = comparator;
+        return this;
+    }
 
-	public ResourceInfo getLatestResourceInfo() {
-		return latestResourceInfo;
-	}
+    public ResourceInfo getLatestResourceInfo() {
+        return latestResourceInfo;
+    }
 
-	protected abstract void dispatch(Runnable runnable);
+    protected abstract void dispatch(Runnable runnable);
 
-	public boolean isVersionNewer(String oldVersion, String newVersion) {
-		return versionComparator.isNewer(oldVersion, newVersion);
-	}
+    public boolean isVersionNewer(String oldVersion, String newVersion) {
+        return versionComparator.isNewer(oldVersion, newVersion);
+    }
 
-	public void checkForUpdate(final UpdateCallback callback) {
-		dispatch(() -> {
+    public void checkForUpdate(final UpdateCallback callback) {
+        dispatch(() -> {
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RESOURCE_INFO, resourceId, System.currentTimeMillis())).openConnection();
                 connection.setRequestProperty("User-Agent", getUserAgent());
@@ -96,7 +96,7 @@ public abstract class SpigetUpdateAbstract {
                 latestResourceInfo.latestVersion = new Gson().fromJson(jsonObject, ResourceVersion.class);
 
                 if (isVersionNewer(currentVersion, latestResourceInfo.latestVersion.name)) {
-                    callback.updateAvailable(latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + latestResourceInfo.file.url, !latestResourceInfo.external&&!latestResourceInfo.premium);
+                    callback.updateAvailable(latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + latestResourceInfo.file.url, !latestResourceInfo.external && !latestResourceInfo.premium);
                 } else {
                     callback.upToDate();
                 }
@@ -104,6 +104,6 @@ public abstract class SpigetUpdateAbstract {
                 log.log(Level.WARNING, "Failed to get resource info from spiget.org", e);
             }
         });
-	}
+    }
 
 }

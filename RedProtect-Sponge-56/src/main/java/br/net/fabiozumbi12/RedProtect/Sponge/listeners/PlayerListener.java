@@ -33,7 +33,6 @@ import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.EnterExitRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.helpers.DoorManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -844,7 +843,7 @@ public class PlayerListener {
         final Region rto = RedProtect.get().rm.getTopRegion(lto, this.getClass().getName());
 
         if (rfrom != null) {
-            if (!rfrom.canExit(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.exit")){
+            if (!rfrom.canExit(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.exit")) {
                 e.setToTransform(RedProtect.get().getUtil().DenyExitPlayer(p, e.getFromTransform(), e.getToTransform(), rfrom));
                 return;
             }

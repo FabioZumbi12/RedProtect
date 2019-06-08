@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -306,7 +305,7 @@ public class GlobalListener implements Listener {
 
             // If not success, send to spawn
             if (!result)
-                Bukkit.getScheduler().runTaskLater(RedProtect.get(), ()-> e.setTo(p.getWorld().getSpawnLocation()), 1);
+                Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> e.setTo(p.getWorld().getSpawnLocation()), 1);
         }
     }
 

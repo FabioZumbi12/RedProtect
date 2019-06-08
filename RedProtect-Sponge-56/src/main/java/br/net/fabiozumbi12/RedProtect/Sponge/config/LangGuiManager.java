@@ -29,7 +29,6 @@ package br.net.fabiozumbi12.RedProtect.Sponge.config;
 import br.net.fabiozumbi12.RedProtect.Core.config.GuiLangCore;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.text.Text;
 
 import java.io.File;
@@ -103,7 +102,7 @@ public class LangGuiManager extends GuiLangCore {
         if (flagDescription == null) {
             flagDescription = getRaw("gui.flags.default.description");
         }
-        return Arrays.stream(flagDescription.split("/n")).map(t->RedProtect.get().getUtil().toText(t)).collect(Collectors.toList());
+        return Arrays.stream(flagDescription.split("/n")).map(t -> RedProtect.get().getUtil().toText(t)).collect(Collectors.toList());
     }
 
     public Text getFlagString(String key) {

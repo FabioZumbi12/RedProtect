@@ -29,7 +29,6 @@ package br.net.fabiozumbi12.RedProtect.Sponge.listeners;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -211,7 +210,7 @@ public class GlobalListener {
 
     @Listener
     public void onIceForm(ChangeBlockEvent e) {
-        if (e.getTransactions().isEmpty())return;
+        if (e.getTransactions().isEmpty()) return;
 
         Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getFinal().getLocation().get(), this.getClass().getName());
 
@@ -518,18 +517,18 @@ public class GlobalListener {
         }
     }
 /*
-	@Listener(order = Order.FIRST, beforeModifications = true)	
+	@Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerInteract(InteractEntityEvent e, @Root Player p) {
 		RedProtect.get().logger.debug(LogLevel.BLOCKS,"GlobalListener - Is onPlayerInteract event");
 
         Entity ent = e.getTargetEntity();
         Location<World> l = ent.getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
-                
+
         if (!canUse(p, r)){
         	e.setCancelled(true);
         }
-        
+
         if (r != null){
 			return;
 		}

@@ -35,7 +35,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
@@ -217,47 +216,46 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     }
 
     @EventHandler
-    public void onPreCommand(PlayerCommandPreprocessEvent e){
+    public void onPreCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
         String[] args = e.getMessage().split(" ");
 
         StringBuilder commandArgsAbr = new StringBuilder();
-        Arrays.stream(args).forEach(arg->commandArgsAbr.append(arg).append(" "));
-        String commandArgs = commandArgsAbr.substring(1, commandArgsAbr.length()-1);
+        Arrays.stream(args).forEach(arg -> commandArgsAbr.append(arg).append(" "));
+        String commandArgs = commandArgsAbr.substring(1, commandArgsAbr.length() - 1);
 
-        if (args.length >= 2 && (args[0].equals("/redprotect") || args[0].equals("/rp"))){
+        if (args.length >= 2 && (args[0].equals("/redprotect") || args[0].equals("/rp"))) {
 
             List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
-            conditions.addAll(Arrays.asList(getCmd("yes"),getCmd("no")));
+            conditions.addAll(Arrays.asList(getCmd("yes"), getCmd("no")));
 
-            if (conditions.stream().anyMatch(cmd->checkCmd(args[1], cmd))) {
-                String cmd = conditions.stream().filter(c->checkCmd(args[1], c)).findFirst().get();
-                if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")){
+            if (conditions.stream().anyMatch(cmd -> checkCmd(args[1], cmd))) {
+                String cmd = conditions.stream().filter(c -> checkCmd(args[1], c)).findFirst().get();
+                if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
                     cmdConfirm.put(p.getName(), commandArgs);
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}","/" + commandArgs),
-                                    new Replacer("{cmd-yes}",getCmd("yes")),
-                                    new Replacer("{cmd-no}",getCmd("no"))});
+                                    new Replacer("{cmd}", "/" + commandArgs),
+                                    new Replacer("{cmd-yes}", getCmd("yes")),
+                                    new Replacer("{cmd-no}", getCmd("no"))});
                     e.setCancelled(true);
                 }
             }
-            if (cmdConfirm.containsKey(p.getName())){
-                if (checkCmd(args[1],"yes")){
+            if (cmdConfirm.containsKey(p.getName())) {
+                if (checkCmd(args[1], "yes")) {
                     String cmd1 = cmdConfirm.get(p.getName());
-                    e.setMessage("/"+cmd1);
+                    e.setMessage("/" + cmd1);
                     cmdConfirm.remove(p.getName());
-                } else
-                if (checkCmd(args[1],"no")){
+                } else if (checkCmd(args[1], "no")) {
                     cmdConfirm.remove(p.getName());
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.usagecancelled");
                     e.setCancelled(true);
                 } else {
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}","/" + cmdConfirm.get(p.getName())),
-                                    new Replacer("{cmd-yes}",getCmd("yes")),
-                                    new Replacer("{cmd-no}",getCmd("no"))});
+                                    new Replacer("{cmd}", "/" + cmdConfirm.get(p.getName())),
+                                    new Replacer("{cmd-yes}", getCmd("yes")),
+                                    new Replacer("{cmd-no}", getCmd("no"))});
                     e.setCancelled(true);
                 }
             }
@@ -281,7 +279,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("update")) {
-                    if (plugin.getUpdater() == null){
+                    if (plugin.getUpdater() == null) {
                         plugin.lang.sendMessage(sender, "&aPlugin updates is disabled on config.");
                         return true;
                     }
@@ -756,7 +754,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
-        if (sender instanceof Player){
+        if (sender instanceof Player) {
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
                 return tabCompleter.onTabComplete(sender, command, alias, Arrays_copyOfRange(args, args.length));
@@ -778,7 +776,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             }
         } else {
             SortedSet<String> tab = new TreeSet<>();
-            if (args.length == 0){
+            if (args.length == 0) {
                 tab.addAll(consoleCmds);
             } else {
                 for (String admCmd : consoleCmds) {

@@ -35,7 +35,6 @@ import br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers
 import br.net.fabiozumbi12.RedProtect.Sponge.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -63,54 +62,6 @@ public class CommandHandler {
 
     private final RedProtect plugin;
     private Map<String, String> cmdConfirm = new HashMap<>();
-
-    @Listener(order = Order.EARLY)
-    public void onCommand(SendCommandEvent e, @First CommandSource source){
-
-        String[] args = e.getArguments().split(" ");
-
-        StringBuilder commandArgsAbr = new StringBuilder();
-        Arrays.stream(args).forEach(arg->commandArgsAbr.append(arg).append(" "));
-        String commandArgs = commandArgsAbr.substring(0, commandArgsAbr.length()-1);
-
-        if (args.length >= 1 && (e.getCommand().equals("redprotect") || e.getCommand().equals("rp"))){
-
-            List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
-            conditions.addAll(Arrays.asList(getCmd("yes"),getCmd("no")));
-
-            if (conditions.stream().anyMatch(cmd->checkCmd(args[0], cmd))) {
-                String cmd = conditions.stream().filter(c->checkCmd(args[0], c)).findFirst().get();
-                if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")){
-                    cmdConfirm.put(source.getName(), commandArgs);
-                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
-                            new Replacer[]{
-                                    new Replacer("{cmd}","/" + e.getCommand() + " " + commandArgs),
-                                    new Replacer("{cmd-yes}",getCmd("yes")),
-                                    new Replacer("{cmd-no}",getCmd("no"))});
-                    e.setCancelled(true);
-                }
-            }
-            if (cmdConfirm.containsKey(source.getName())){
-                if (checkCmd(args[0],"yes")){
-                    String cmd1 = cmdConfirm.get(source.getName());
-                    e.setArguments(cmd1);
-                    cmdConfirm.remove(source.getName());
-                } else
-                if (checkCmd(args[0],"no")){
-                    cmdConfirm.remove(source.getName());
-                    RedProtect.get().lang.sendMessage(source, "cmdmanager.usagecancelled");
-                    e.setCancelled(true);
-                } else {
-                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
-                            new Replacer[]{
-                                    new Replacer("{cmd}","/" + e.getCommand() + " " + cmdConfirm.get(source.getName())),
-                                    new Replacer("{cmd-yes}",getCmd("yes")),
-                                    new Replacer("{cmd-no}",getCmd("no"))});
-                    e.setCancelled(true);
-                }
-            }
-        }
-    }
 
     public CommandHandler(RedProtect plugin) {
         this.plugin = plugin;
@@ -533,6 +484,53 @@ public class CommandHandler {
                 .build();
 
         plugin.commandManager.register(plugin, redProtect, Arrays.asList("redprotect", "rp"));
+    }
+
+    @Listener(order = Order.EARLY)
+    public void onCommand(SendCommandEvent e, @First CommandSource source) {
+
+        String[] args = e.getArguments().split(" ");
+
+        StringBuilder commandArgsAbr = new StringBuilder();
+        Arrays.stream(args).forEach(arg -> commandArgsAbr.append(arg).append(" "));
+        String commandArgs = commandArgsAbr.substring(0, commandArgsAbr.length() - 1);
+
+        if (args.length >= 1 && (e.getCommand().equals("redprotect") || e.getCommand().equals("rp"))) {
+
+            List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
+            conditions.addAll(Arrays.asList(getCmd("yes"), getCmd("no")));
+
+            if (conditions.stream().anyMatch(cmd -> checkCmd(args[0], cmd))) {
+                String cmd = conditions.stream().filter(c -> checkCmd(args[0], c)).findFirst().get();
+                if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
+                    cmdConfirm.put(source.getName(), commandArgs);
+                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                            new Replacer[]{
+                                    new Replacer("{cmd}", "/" + e.getCommand() + " " + commandArgs),
+                                    new Replacer("{cmd-yes}", getCmd("yes")),
+                                    new Replacer("{cmd-no}", getCmd("no"))});
+                    e.setCancelled(true);
+                }
+            }
+            if (cmdConfirm.containsKey(source.getName())) {
+                if (checkCmd(args[0], "yes")) {
+                    String cmd1 = cmdConfirm.get(source.getName());
+                    e.setArguments(cmd1);
+                    cmdConfirm.remove(source.getName());
+                } else if (checkCmd(args[0], "no")) {
+                    cmdConfirm.remove(source.getName());
+                    RedProtect.get().lang.sendMessage(source, "cmdmanager.usagecancelled");
+                    e.setCancelled(true);
+                } else {
+                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                            new Replacer[]{
+                                    new Replacer("{cmd}", "/" + e.getCommand() + " " + cmdConfirm.get(source.getName())),
+                                    new Replacer("{cmd-yes}", getCmd("yes")),
+                                    new Replacer("{cmd-no}", getCmd("no"))});
+                    e.setCancelled(true);
+                }
+            }
+        }
     }
 
     public void unregisterAll() {

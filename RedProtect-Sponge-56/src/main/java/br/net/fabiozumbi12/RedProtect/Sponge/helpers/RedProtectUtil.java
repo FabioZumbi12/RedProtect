@@ -36,7 +36,6 @@ import com.flowpowered.math.vector.Vector3d;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.checkerframework.checker.units.qual.min;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
@@ -98,7 +97,7 @@ public class RedProtectUtil extends CoreUtil {
         return to;
     }
 
-    public boolean isBypassBorder(Player p){
+    public boolean isBypassBorder(Player p) {
         int diameter = (int) p.getWorld().getWorldBorder().getDiameter() / 2;
         int centerZ = (int) p.getWorld().getWorldBorder().getCenter().getZ();
         int centerX = (int) p.getWorld().getWorldBorder().getCenter().getX();
@@ -115,7 +114,7 @@ public class RedProtectUtil extends CoreUtil {
             Region r1 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ(), RedProtectUtil.class.getName());
             Region r2 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ(), RedProtectUtil.class.getName());
             Region r3 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() + i, RedProtectUtil.class.getName());
-            Region r4 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() - i,RedProtectUtil.class.getName());
+            Region r4 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX(), setFrom.getBlockY(), setFrom.getBlockZ() - i, RedProtectUtil.class.getName());
             Region r5 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX() + i, setFrom.getBlockY(), setFrom.getBlockZ() + i, RedProtectUtil.class.getName());
             Region r6 = RedProtect.get().rm.getTopRegion(wFrom.getName(), setFrom.getBlockX() - i, setFrom.getBlockY(), setFrom.getBlockZ() - i, RedProtectUtil.class.getName());
             if (r1 != r) {
@@ -836,7 +835,7 @@ public class RedProtectUtil extends CoreUtil {
     public void addBorder(final Player p, Location<World> min, Location<World> max) {
         final String player = p.getName();
 
-        if (borderPlayers.containsKey(p.getName())){
+        if (borderPlayers.containsKey(p.getName())) {
             Task task = (Task) borderPlayers.get(player);
             task.cancel();
             borderPlayers.remove(player);
@@ -847,10 +846,10 @@ public class RedProtectUtil extends CoreUtil {
 
         int height = p.getLocation().getBlockY();
 
-        int minX = (int)min.getX();
-        int maxX = (int)max.getX();
-        int minZ = (int)min.getZ();
-        int maxZ = (int)max.getZ();
+        int minX = (int) min.getX();
+        int maxX = (int) max.getX();
+        int minZ = (int) min.getZ();
+        int maxZ = (int) max.getZ();
 
         if (minX > maxX) {
             int temp = minX;
@@ -865,8 +864,8 @@ public class RedProtectUtil extends CoreUtil {
 
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
-                if(x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
-                    for (int y = height-10; y < height+10; y++) {
+                if (x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
+                    for (int y = height - 10; y < height + 10; y++) {
                         locations.add(new Location<>(w, x, y, z));
                     }
                 }
@@ -876,17 +875,17 @@ public class RedProtectUtil extends CoreUtil {
         ParticleType particle;
         try {
             particle = Sponge.getRegistry().getType(ParticleType.class, RedProtect.get().config.configRoot().region_settings.border.particle).get();
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             particle = ParticleTypes.FLAME;
         }
         ParticleType finalParticle = particle;
-        Task task = Sponge.getScheduler().createSyncExecutor(RedProtect.get()).scheduleAtFixedRate(()->
-                locations.forEach(l->w.spawnParticles(ParticleEffect.builder().quantity(1).type(finalParticle).velocity(new Vector3d(0,0,0)).build(), new Vector3d(l.getBlockX()+0.500, l.getBlockY(), l.getBlockZ()+0.500))
-                ),500,500,TimeUnit.MILLISECONDS).getTask();
+        Task task = Sponge.getScheduler().createSyncExecutor(RedProtect.get()).scheduleAtFixedRate(() ->
+                locations.forEach(l -> w.spawnParticles(ParticleEffect.builder().quantity(1).type(finalParticle).velocity(new Vector3d(0, 0, 0)).build(), new Vector3d(l.getBlockX() + 0.500, l.getBlockY(), l.getBlockZ() + 0.500))
+                ), 500, 500, TimeUnit.MILLISECONDS).getTask();
         borderPlayers.put(player, task);
 
-        Sponge.getScheduler().createSyncExecutor(RedProtect.get()).schedule(()->{
-            if (borderPlayers.containsKey(player)){
+        Sponge.getScheduler().createSyncExecutor(RedProtect.get()).schedule(() -> {
+            if (borderPlayers.containsKey(player)) {
                 Task newTask = (Task) borderPlayers.get(player);
                 newTask.cancel();
                 borderPlayers.remove(player);

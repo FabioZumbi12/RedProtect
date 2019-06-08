@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -59,7 +58,7 @@ public class ListCommand implements SubCommand {
                     return true;
                 }
             }
-        } else if (sender instanceof Player){
+        } else if (sender instanceof Player) {
             Player player = (Player) sender;
 
             //rp list

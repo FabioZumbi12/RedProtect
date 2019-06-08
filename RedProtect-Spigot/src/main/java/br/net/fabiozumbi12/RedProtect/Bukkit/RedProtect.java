@@ -62,7 +62,6 @@ public class RedProtect extends JavaPlugin {
     public final HooksManager hooks = new HooksManager();
     public final RedProtectLogger logger = new RedProtectLogger();
     public final List<String> teleportDelay = new ArrayList<>();
-    private RedProtectUtil redProtectUtil = new RedProtectUtil();
     public int bukkitVersion;
     public Economy economy;
     public RegionManager rm;
@@ -71,6 +70,7 @@ public class RedProtect extends JavaPlugin {
     public LangManager lang;
     public LangGuiManager guiLang;
     public CommandHandler cmdHandler;
+    private RedProtectUtil redProtectUtil = new RedProtectUtil();
     private RedProtectAPI redProtectAPI;
     private int autoSaveID;
     private VersionHelper rpvHelper;
@@ -88,11 +88,11 @@ public class RedProtect extends JavaPlugin {
         return redProtectAPI;
     }
 
-    public SpigetUpdater getUpdater(){
+    public SpigetUpdater getUpdater() {
         return this.updater;
     }
 
-    public RedProtectUtil getUtil(){
+    public RedProtectUtil getUtil() {
         return this.redProtectUtil;
     }
 
@@ -211,7 +211,7 @@ public class RedProtect extends JavaPlugin {
             Bukkit.getScheduler().cancelTask(updater.getTaskId());
             updater = null;
         }
-        if (config.configRoot().update.enable){
+        if (config.configRoot().update.enable) {
             updater = new SpigetUpdater(this);
             updater.setCurrentJarFile(this.getFile().getName());
             updater.hourlyUpdateCheck(getServer().getConsoleSender(), config.configRoot().update.enable, false);

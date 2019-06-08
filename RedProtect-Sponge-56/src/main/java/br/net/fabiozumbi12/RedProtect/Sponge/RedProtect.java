@@ -87,7 +87,6 @@ public class RedProtect {
     public final HashMap<Player, String> alWait = new HashMap<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public final List<String> teleportDelay = new ArrayList<>();
-    private RedProtectUtil redProtectUtil = new RedProtectUtil();
     @Inject
     @ConfigDir(sharedRoot = false)
     public File configDir;
@@ -103,6 +102,7 @@ public class RedProtect {
     public EconomyService economy;
     public CommandManager commandManager;
     public CommandHandler commandHandler;
+    private RedProtectUtil redProtectUtil = new RedProtectUtil();
     private UUID autoSaveID;
     private VersionHelper rpvHelper;
     private RedProtectAPI redProtectAPI;
@@ -123,7 +123,7 @@ public class RedProtect {
         return Sponge.getServer();
     }
 
-    public RedProtectUtil getUtil(){
+    public RedProtectUtil getUtil() {
         return this.redProtectUtil;
     }
 

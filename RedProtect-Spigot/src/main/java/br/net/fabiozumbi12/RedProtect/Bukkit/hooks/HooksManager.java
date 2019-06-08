@@ -134,7 +134,7 @@ public class HooksManager {
                 RedProtect.get().getServer().getPluginManager().registerEvents(new FactionsHook(), RedProtect.get());
                 RedProtect.get().logger.info("Factions found. Hooked.");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
@@ -150,7 +150,7 @@ public class HooksManager {
                 RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
                 RedProtect.get().logger.info("Dynmap markers loaded!");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
