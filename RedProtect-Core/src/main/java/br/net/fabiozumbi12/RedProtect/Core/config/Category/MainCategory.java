@@ -353,6 +353,10 @@ public class MainCategory {
             public String particle = "FLAME";
             @Setting(value = "time-showing", comment = "Time the border will be visible in seconds.")
             public int time_showing = 10;
+            @Setting(comment = "Height value in blocks. This number will be 'Player Y + x' and 'Player Y - x'.")
+            public int height = 5;
+            @Setting(comment = "Set the intensity of border. This will determine the amount of the particles. Values: LOW, NORMAL, HIGH")
+            public String intensity = "NORMAL";
         }
 
         @ConfigSerializable
