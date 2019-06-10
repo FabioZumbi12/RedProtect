@@ -149,23 +149,20 @@ public class RedefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && !p.hasPermission("redprotect.eco.bypass")) {
             UniqueAccount acc = RedProtect.get().economy.getOrCreateAccount(p.getUniqueId()).get();
             double peco = acc.getBalance(RedProtect.get().economy.getDefaultCurrency()).doubleValue();
-            long reco = (region.getArea() - old.getArea()) * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+            long reco = region.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
-            if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
-                reco = reco * Math.abs((region.getMaxY() - region.getMinY()) - (old.getMaxY() - old.getMinY()));
+            if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
+                reco = reco * Math.abs(region.getMaxY() - region.getMinY());
             }
 
             if (peco >= reco) {
-                if (reco > 0)
-                    acc.withdraw(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(Math.abs(reco)), RedProtect.get().getVersionHelper().getCause(p));
-                if (reco < 0)
-                    acc.deposit(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(Math.abs(reco)), RedProtect.get().getVersionHelper().getCause(p));
-                p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
+                acc.withdraw(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getVersionHelper().getCause(p));
+                p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.ecoRoot().economy_symbol + reco + " " + RedProtect.get().config.ecoRoot().economy_name)));
             } else {
-                this.setError(p, RedProtect.get().lang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco));
+                this.setError(p, RedProtect.get().lang.get("regionbuilder.notenought.money").replace("{price}", RedProtect.get().config.ecoRoot().economy_symbol + reco));
                 return;
             }
         }

@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.EconomyCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
@@ -35,12 +36,68 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
+
+    protected CoreConfigManager(File pluginFolder){
+        if (!pluginFolder.exists()) {
+            pluginFolder.mkdir();
+        }
+        if (!new File(pluginFolder, "data").exists()) {
+            new File(pluginFolder, "data").mkdir();
+        }
+    }
+
+    protected String headerCfg = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<               RedProtect World configuration File                  > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<       This is the configuration file, feel free to edit it.        > #\n"
+            + "<        For more info about cmds and flags, check our Wiki:         > #\n"
+            + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
+            + "+--------------------------------------------------------------------+ #\n"
+            + "\n"
+            + "Notes:\n"
+            + "Lists are [object1, object2, ...]\n"
+            + "Strings containing the char & always need to be quoted";
+    protected String headerGf = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<          RedProtect Global Flags configuration File                > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<         This is the global flags configuration file.               > #\n"
+            + "<                       Feel free to edit it.                        > #\n"
+            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
+            + "+--------------------------------------------------------------------+ #\n"
+            + "\n"
+            + "Notes:\n"
+            + "Lists are [object1, object2, ...]\n"
+            + "Strings containing the char & always need to be quoted";
+    protected String headerGui = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<             RedProtect Gui Flags configuration File                > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<            This is the gui flags configuration file.               > #\n"
+            + "<                       Feel free to edit it.                        > #\n"
+            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
+            + "+--------------------------------------------------------------------+ #\n";
+    protected String headerEco = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<              RedProtect Economy configuration File                 > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<               This is the economy file configuration               > #\n"
+            + "<  This file its for '/rp value' command as a reference values only  > #\n"
+            + "<   https://github.com/FabioZumbi12/RedProtect/wiki/(03)-Commands    > #\n"
+            + "+--------------------------------------------------------------------+ #\n"
+            + "\n"
+            + "Notes:\n"
+            + "Lists are [object1, object2, ...]\n"
+            + "Strings containing the char & always need to be quoted";
+
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
@@ -88,10 +145,12 @@ public class CoreConfigManager {
             "particles",
             "dynmap",
             "deny-exit-items");
-    public ConfigurationNode ecoCfgs;
     public HashMap<String, String> backupGuiName = new HashMap<>();
     public HashMap<String, String> backupGuiDescription = new HashMap<>();
+
+    protected ConfigurationNode ecoCfgRoot;
     protected ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
+    protected EconomyCategory ecoRoot;
     protected ConfigurationNode signCfgs;
     protected ConfigurationLoader<CommentedConfigurationNode> signsLoader;
     protected ConfigurationNode guiCfgRoot;
@@ -118,6 +177,10 @@ public class CoreConfigManager {
 
     public GlobalFlagsCategory globalFlagsRoot() {
         return this.globalFlagsRoot;
+    }
+
+    public EconomyCategory ecoRoot() {
+        return this.ecoRoot;
     }
 
     public MainCategory configRoot() {
@@ -167,7 +230,7 @@ public class CoreConfigManager {
             saveConfig();
             saveGFlags();
 
-            ecoLoader.save(ecoCfgs);
+            ecoLoader.save(ecoCfgRoot);
             signsLoader.save(signCfgs);
             saveGui();
         } catch (IOException e) {
@@ -200,26 +263,6 @@ public class CoreConfigManager {
             }
         }
         return false;
-    }
-
-    public int getBlockCost(String itemName) {
-        return ecoCfgs.getNode("items", "values", itemName).getInt();
-    }
-
-    public int getEnchantCost(String enchantment) {
-        return ecoCfgs.getNode("enchantments", "values", enchantment).getInt(-1);
-    }
-
-    public String getEcoString(String key) {
-        return ecoCfgs.getNode(key).getString("&4Missing economy string for &c" + key);
-    }
-
-    public Integer getEcoInt(String key) {
-        return ecoCfgs.getNode(key).getInt();
-    }
-
-    public boolean getEcoBool(String key) {
-        return ecoCfgs.getNode(key).getBoolean();
     }
 
     public String getWorldClaimType(String w) {

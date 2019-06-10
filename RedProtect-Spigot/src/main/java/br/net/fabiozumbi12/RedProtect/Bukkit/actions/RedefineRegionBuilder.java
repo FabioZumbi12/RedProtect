@@ -137,11 +137,11 @@ public class RedefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
             double peco = RedProtect.get().economy.getBalance(p);
-            long reco = (region.getArea() - old.getArea()) * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+            long reco = (region.getArea() - old.getArea()) * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
-            if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
+            if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
                 reco = reco * Math.abs((region.getMaxY() - region.getMinY()) - (old.getMaxY() - old.getMinY()));
             }
 
@@ -150,9 +150,9 @@ public class RedefineRegionBuilder extends RegionBuilder {
                     RedProtect.get().economy.withdrawPlayer(p, Math.abs(reco));
                 if (reco < 0)
                     RedProtect.get().economy.depositPlayer(p, Math.abs(reco));
-                p.sendMessage(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name")));
+                p.sendMessage(RedProtect.get().lang.get("economy.region.claimed").replace("{price}", RedProtect.get().config.ecoRoot().economy_symbol + reco + " " + RedProtect.get().config.ecoRoot().economy_name));
             } else {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco)});
+                RedProtect.get().lang.sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().config.ecoRoot().economy_symbol + reco)});
                 return;
             }
         }

@@ -104,6 +104,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         registerCommand(getCmdKeys("deltp"), new DelTpCommand());
         registerCommand(getCmdKeys("expand-vert"), new ExpandVertCommand());
         registerCommand(getCmdKeys("flag"), new FlagCommand());
+        registerCommand(getCmdKeys("kill"), new KillCommand());
         registerCommand(getCmdKeys("list"), new ListCommand());
         registerCommand(getCmdKeys("pos1"), new Pos1Command());
         registerCommand(getCmdKeys("pos2"), new Pos2Command());
@@ -753,7 +754,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+        List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
         if (sender instanceof Player) {
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);

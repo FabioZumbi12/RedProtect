@@ -52,11 +52,11 @@ public class ValueCommand {
                         Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r != null) {
                             if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
-                                if (r.getArea() < RedProtect.get().config.getEcoInt("max-area-toget-value")) {
-                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", EconomyManager.getFormatted(EconomyManager.getRegionValue(r)) + " " + RedProtect.get().config.getEcoString("economy-name")));
+                                if (r.getArea() < RedProtect.get().config.ecoRoot().max_area_toget_value) {
+                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", EconomyManager.getFormatted(EconomyManager.getRegionValue(r)) + " " + RedProtect.get().config.ecoRoot().economy_name));
                                     RedProtect.get().logger.debug(LogLevel.PLAYER, "Region Value: " + EconomyManager.getRegionValue(r));
                                 } else {
-                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.areabig").replace("{maxarea}", RedProtect.get().config.getEcoInt("max-area-toget-value").toString()));
+                                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.areabig").replace("{maxarea}", String.valueOf(RedProtect.get().config.ecoRoot().max_area_toget_value)));
                                 }
                             } else {
                                 RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");

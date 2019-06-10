@@ -31,15 +31,17 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.event.HandlerList;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommandHandlers {
 
@@ -331,16 +333,16 @@ public class CommandHandlers {
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
 
             // Handle money
-            if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
-                long reco = r.getArea() * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+            if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+                long reco = r.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
-                if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
+                if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
                     reco = reco * Math.abs(r.getMaxY() - r.getMinY());
                 }
 
                 if (reco > 0) {
                     RedProtect.get().economy.depositPlayer(p, reco);
-                    p.sendMessage(RedProtect.get().lang.get("economy.region.deleted").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name")));
+                    p.sendMessage(RedProtect.get().lang.get("economy.region.deleted").replace("{price}", RedProtect.get().config.ecoRoot().economy_symbol + reco + " " + RedProtect.get().config.ecoRoot().economy_name));
                 }
             }
         } else {
@@ -1120,6 +1122,32 @@ public class CommandHandlers {
         return true;
     }
 
+    public static void handleKillWorld(CommandSender sender, World world, EntityType type){
+        int killed = 0;
+        int total = 0;
+        int living = 0;
+        for (Entity e : world.getEntities().stream().filter(entity ->
+                !(entity instanceof Player) &&
+                        ((entity instanceof LivingEntity && type == null) || entity.getType().equals(type))
+        ).collect(Collectors.toList())) {
+            total++;
+            if (RedProtect.get().rm.getTopRegion(e.getLocation()) == null) {
+                e.remove();
+                killed++;
+            } else if (e instanceof LivingEntity && type == null){
+                living++;
+            } else if (e.getType().equals(type)) {
+                living++;
+            }
+        }
+        RedProtect.get().lang.sendMessage(sender, "cmdmanager.kill", new Replacer[]{
+                new Replacer("{total}",String.valueOf(total)),
+                new Replacer("{living}",String.valueOf(living)),
+                new Replacer("{killed}",String.valueOf(killed)),
+                new Replacer("{world}",world.getName())
+        });
+    }
+
     public static void HandleHelpPage(CommandSender sender, int page) {
         sender.sendMessage(RedProtect.get().lang.get("_redprotect.prefix") + " " + RedProtect.get().lang.get("cmdmanager.available.cmds"));
         sender.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
@@ -1164,6 +1192,7 @@ public class CommandHandlers {
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list-all " + ChatColor.DARK_AQUA + "- List All regions");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list " + ChatColor.GOLD + "<player> [page] " + ChatColor.DARK_AQUA + "- List All regions from player");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "ymlTomysql " + ChatColor.DARK_AQUA + "- Convert from Yml to Mysql");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "kill [world] " + ChatColor.DARK_AQUA + "- Kill all entities in a world outside protected regions");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "mychunktorp " + ChatColor.DARK_AQUA + "- Convert from MyChunk to RedProtect");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "files-to-single " + ChatColor.DARK_AQUA + "- Convert regions files to single world files");

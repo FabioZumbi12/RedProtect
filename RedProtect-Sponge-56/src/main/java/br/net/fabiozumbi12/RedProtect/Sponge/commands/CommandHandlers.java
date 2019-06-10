@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
@@ -36,7 +37,9 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.ItemType;
@@ -47,9 +50,11 @@ import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import javax.swing.text.html.ListView;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class CommandHandlers {
 
@@ -354,17 +359,17 @@ public class CommandHandlers {
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
 
             // Handle money
-            if (RedProtect.get().config.getEcoBool("claim-cost-per-block.enable") && !p.hasPermission("redprotect.eco.bypass")) {
+            if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && !p.hasPermission("redprotect.eco.bypass")) {
                 UniqueAccount acc = RedProtect.get().economy.getOrCreateAccount(p.getUniqueId()).get();
-                long reco = r.getArea() * RedProtect.get().config.getEcoInt("claim-cost-per-block.cost-per-block");
+                long reco = r.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
-                if (!RedProtect.get().config.getEcoBool("claim-cost-per-block.y-is-free")) {
+                if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
                     reco = reco * Math.abs(r.getMaxY() - r.getMinY());
                 }
 
                 if (reco > 0) {
                     acc.deposit(RedProtect.get().economy.getDefaultCurrency(), BigDecimal.valueOf(reco), RedProtect.get().getVersionHelper().getCause(p));
-                    p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("economy.region.deleted").replace("{price}", RedProtect.get().config.getEcoString("economy-symbol") + reco + " " + RedProtect.get().config.getEcoString("economy-name"))));
+                    p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("economy.region.deleted").replace("{price}", RedProtect.get().config.ecoRoot().economy_symbol + reco + " " + RedProtect.get().config.ecoRoot().economy_name)));
                 }
             }
         } else {
@@ -1074,6 +1079,32 @@ public class CommandHandlers {
 
     public static boolean checkCmd(String arg, String cmd) {
         return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd)) || arg.equalsIgnoreCase(cmd);
+    }
+
+    public static void handleKillWorld(CommandSource sender, World world, EntityType type){
+        int killed = 0;
+        int total = 0;
+        int living = 0;
+        for (Entity e : world.getEntities().stream().filter(entity ->
+                !(entity instanceof Player) &&
+                        ((entity instanceof Living && type == null) || entity.getType().equals(type))
+        ).collect(Collectors.toList())) {
+            total++;
+            if (RedProtect.get().rm.getTopRegion(e.getLocation(),CommandHandlers.class.getName()) == null) {
+                e.remove();
+                killed++;
+            } else if (e instanceof Living && type == null){
+                living++;
+            } else if (e.getType().equals(type)) {
+                living++;
+            }
+        }
+        RedProtect.get().lang.sendMessage(sender, "cmdmanager.kill", new Replacer[]{
+                new Replacer("{total}",String.valueOf(total)),
+                new Replacer("{living}",String.valueOf(living)),
+                new Replacer("{killed}",String.valueOf(killed)),
+                new Replacer("{world}",world.getName())
+        });
     }
 
     public static void HandleHelpPage(CommandSource sender, int page) {

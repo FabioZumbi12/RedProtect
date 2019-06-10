@@ -121,12 +121,6 @@ public class VersionHelper56 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.spawn-monsters", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.teleport", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
-
-        for (String ench : Sponge.getRegistry().getAllOf(Enchantment.class).stream().map(Enchantment::getId).collect(Collectors.toList())) {
-            if (RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
-                RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
-            }
-        }
     }
 
     @Override
@@ -194,10 +188,10 @@ public class VersionHelper56 implements VersionHelper {
                 continue;
             }
             ItemStack stack = item.peek().get();
-            value += ((RedProtect.get().config.getBlockCost(stack.getItem().getId()) * stack.getQuantity()));
+            value += ((RedProtect.get().config.ecoRoot().items.values.get(stack.getItem().getName()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                 for (ItemEnchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
-                    value += ((RedProtect.get().config.getEnchantCost(enchant.getEnchantment().getId()) * enchant.getLevel()));
+                    value += ((RedProtect.get().config.ecoRoot().enchantments.values.get(enchant.getEnchantment().getName()) * enchant.getLevel()));
                 }
             }
         }

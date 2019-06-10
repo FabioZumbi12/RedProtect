@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.EconomyCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
@@ -62,38 +63,20 @@ public class ConfigManager extends CoreConfigManager {
 
     //init
     public ConfigManager() throws ObjectMappingException {
+        super(RedProtect.get().getDataFolder());
+
         try {
-            if (!RedProtect.get().getDataFolder().exists()) {
-                RedProtect.get().getDataFolder().mkdir();
-            }
-            if (!new File(RedProtect.get().getDataFolder(), "data").exists()) {
-                new File(RedProtect.get().getDataFolder(), "data").mkdir();
-            }
 
             /*--------------------- config.yml ---------------------------*/
-            String header = ""
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "<               RedProtect World configuration File                  > #\n"
-                    + "<--------------------------------------------------------------------> #\n"
-                    + "<       This is the configuration file, feel free to edit it.        > #\n"
-                    + "<        For more info about cmds and flags, check our Wiki:         > #\n"
-                    + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "\n"
-                    + "Notes:\n"
-                    + "Lists are [object1, object2, ...]\n"
-                    + "Strings containing the char & always need to be quoted";
-
-
             cfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "config.conf")).build();
 
             if (new File(RedProtect.get().getDataFolder(), "config.yml").exists()) {
                 File defConfig = new File(RedProtect.get().getDataFolder(), "config.yml");
                 ConfigurationLoader<ConfigurationNode> cfgLoader = YAMLConfigurationLoader.builder().setFile(defConfig).build();
-                configRoot = cfgLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(header));
+                configRoot = cfgLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerCfg));
                 defConfig.renameTo(new File(RedProtect.get().getDataFolder(), "config_BKP.yml"));
             } else {
-                configRoot = cfgLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(header));
+                configRoot = cfgLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerCfg));
             }
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Bukkit.getOnlineMode()));
 
@@ -157,49 +140,19 @@ public class ConfigManager extends CoreConfigManager {
             }
 
             /*--------------------- end config.yml ---------------------------*/
-
-            /*--------------------- globalflags.yml ---------------------------*/
-            String headerg = ""
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "<          RedProtect Global Flags configuration File                > #\n"
-                    + "<--------------------------------------------------------------------> #\n"
-                    + "<         This is the global flags configuration file.               > #\n"
-                    + "<                       Feel free to edit it.                        > #\n"
-                    + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "\n"
-                    + "Notes:\n"
-                    + "Lists are [object1, object2, ...]\n"
-                    + "Strings containing the char & always need to be quoted";
-
             gFlagsLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "globalflags.conf")).build();
 
             if (new File(RedProtect.get().getDataFolder(), "globalflags.yml").exists()) {
                 File gFlagsConfig = new File(RedProtect.get().getDataFolder(), "globalflags.yml");
                 ConfigurationLoader<ConfigurationNode> gFlagsLoader = YAMLConfigurationLoader.builder().setFile(gFlagsConfig).build();
-                gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerg));
+                gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerGf));
                 gFlagsConfig.renameTo(new File(RedProtect.get().getDataFolder(), "globalflags_BKP.yml"));
             } else {
-                gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerg));
+                gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerGf));
             }
             this.globalFlagsRoot = gflagsRoot.getValue(of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
 
-            /*--------------------- end globalflags.yml ---------------------------*/
-
             /*--------------------- guiconfig.yml ---------------------------*/
-            String headerGui = ""
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "<             RedProtect Gui Flags configuration File                > #\n"
-                    + "<--------------------------------------------------------------------> #\n"
-                    + "<            This is the gui flags configuration file.               > #\n"
-                    + "<                       Feel free to edit it.                        > #\n"
-                    + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "\n"
-                    + "Notes:\n"
-                    + "Lists are [object1, object2, ...]\n"
-                    + "Strings containing the char & always need to be quoted";
-
             String guiFileName = "guiconfig" + configRoot().language + ".conf";
             if (new File(RedProtect.get().getDataFolder(), guiFileName).exists()) {
                 new File(RedProtect.get().getDataFolder(), guiFileName).renameTo(new File(RedProtect.get().getDataFolder(), "guiconfig.conf"));
@@ -283,31 +236,32 @@ public class ConfigManager extends CoreConfigManager {
                 this.guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag("GOLDEN_APPLE", 0));
             }
 
-            //Economy file
+            /*------------------- Economy File -------------------*/
             ecoLoader = HoconConfigurationLoader.builder().setPath(new File(RedProtect.get().getDataFolder(), "economy.conf").toPath()).build();
             if (new File(RedProtect.get().getDataFolder(), "economy.yml").exists()) {
                 File ecoConfig = new File(RedProtect.get().getDataFolder(), "economy.yml");
                 ConfigurationLoader<ConfigurationNode> ecoLoader = YAMLConfigurationLoader.builder().setPath(ecoConfig.toPath()).build();
-                ecoCfgs = ecoLoader.load();
+                ecoCfgRoot = ecoLoader.load();
                 ecoConfig.renameTo(new File(RedProtect.get().getDataFolder(), "economy_BKP.yml"));
             } else {
                 if (!new File(RedProtect.get().getDataFolder(), "economy.conf").exists()) {
                     RedProtect.get().saveResource("economy.conf", false);
                 }
-                ecoCfgs = ecoLoader.load();
+                ecoCfgRoot = ecoLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerEco));
             }
+            ecoRoot = ecoCfgRoot.getValue(of(EconomyCategory.class), new EconomyCategory());
 
-            if (ecoCfgs.getNode("items", "values").getChildrenList().size() != Material.values().length) {
+            if (ecoRoot.items.values.size() < Material.values().length) {
                 for (Material mat : Material.values()) {
-                    if (ecoCfgs.getNode("items", "values", mat.name()).getValue() == null) {
-                        ecoCfgs.getNode("items", "values", mat.name()).setValue(0.0);
+                    if (!ecoRoot.items.values.containsKey(mat.name())) {
+                        ecoRoot.items.values.put(mat.name(), 10L);
                     }
                 }
             }
-            if (ecoCfgs.getNode("enchantments", "values").getChildrenList().size() != Enchantment.values().length) {
+            if (ecoRoot.enchantments.values.size() < Enchantment.values().length) {
                 for (Enchantment ench : Enchantment.values()) {
-                    if (ecoCfgs.getNode("enchantments", "values", ench.getName()).getValue() == null) {
-                        ecoCfgs.getNode("enchantments", "values", ench.getName()).setValue(0.0);
+                    if (!ecoRoot.enchantments.values.containsKey(ench.getName())) {
+                        ecoRoot.enchantments.values.put(ench.getName(), 10L);
                     }
                 }
             }

@@ -50,16 +50,6 @@ public class EconomyManager {
                 for (int z = minZ; z < maxZ; z++) {
 
                     BlockSnapshot b = w.createSnapshot(x, y, z);
-		      /*
-		      Location<World> loc = new Location<World>(w, x, y, z);		      
-		      Collection<Entity> ents = w.getEntities(ent-> ent.getLocation().getBlockPosition().equals(loc.getBlockPosition()));
-		      for (Entity ent:ents){
-		    	  if (ent instanceof Equipable){
-		    		  Equipable equip = (Equipable) ent;
-		    		  regionCost += getInvValue(equip.getInventory().slots());
-		    	  }
-		      }
-		      */
                     if (b.getState().getType().equals(BlockTypes.AIR)) {
                         continue;
                     }
@@ -71,7 +61,7 @@ public class EconomyManager {
                             regionCost += getInvValue(inv.slots());
                         }
                     } else {
-                        regionCost += RedProtect.get().config.getBlockCost(b.getState().getType().getName());
+                        regionCost += RedProtect.get().config.ecoRoot().items.values.get(b.getState().getType().getName());
                     }
                 }
             }
@@ -85,11 +75,11 @@ public class EconomyManager {
     }
 
     public static String getCostMessage(Region r) {
-        return RedProtect.get().lang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.getEcoString("economy-name");
+        return RedProtect.get().lang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.ecoRoot().economy_name;
     }
 
     public static String getFormatted(long value) {
-        return RedProtect.get().config.getEcoString("economy-symbol") + value;
+        return RedProtect.get().config.ecoRoot().economy_symbol + value;
     }
 
     public static boolean putToSell(Region r, String uuid, long value) {
@@ -99,7 +89,7 @@ public class EconomyManager {
             r.setValue(value);
             r.setWelcome(getCostMessage(r));
             r.setFlag(null, "for-sale", true);
-            if (RedProtect.get().config.getEcoBool("rename-region")) {
+            if (RedProtect.get().config.ecoRoot().rename_region) {
                 RedProtect.get().rm.renameRegion(RedProtect.get().getUtil().nameGen(RedProtect.get().getUtil().UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             return true;
@@ -107,24 +97,4 @@ public class EconomyManager {
             return false;
         }
     }
-
-    public static boolean BuyRegion(Region r, String uuid) {
-        try {
-            r.clearMembers();
-            r.clearAdmins();
-            r.clearLeaders();
-            r.addLeader(uuid);
-            r.setDate(RedProtect.get().getUtil().dateNow());
-            r.setWelcome("");
-            r.setFlags(RedProtect.get().config.getDefFlagsValues());
-            if (RedProtect.get().config.getEcoBool("rename-region")) {
-                RedProtect.get().rm.renameRegion(RedProtect.get().getUtil().nameGen(RedProtect.get().getUtil().UUIDtoPlayer(uuid), r.getWorld()), r);
-            }
-            r.removeFlag("for-sale");
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
 }

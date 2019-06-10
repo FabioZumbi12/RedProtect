@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.config;
 
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.EconomyCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
@@ -45,6 +46,7 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.Enchantment;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -66,31 +68,13 @@ public class ConfigManager extends CoreConfigManager {
 
     //init
     public ConfigManager(GuiceObjectMapperFactory factory) throws ObjectMappingException {
+        super(RedProtect.get().configDir);
+
         try {
-            if (!RedProtect.get().configDir.exists()) {
-                RedProtect.get().configDir.mkdir();
-            }
-            if (!new File(RedProtect.get().configDir, "data").exists()) {
-                new File(RedProtect.get().configDir, "data").mkdir();
-            }
-
             /*--------------------- config.conf ---------------------------*/
-            String header = ""
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "<               RedProtect World configuration File                  > #\n"
-                    + "<--------------------------------------------------------------------> #\n"
-                    + "<       This is the configuration file, feel free to edit it.        > #\n"
-                    + "<        For more info about cmds and flags, check our Wiki:         > #\n"
-                    + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "\n"
-                    + "Notes:\n"
-                    + "Lists are [object1, object2, ...]\n"
-                    + "Strings containing the char & always need to be quoted";
-
             File defConfig = new File(RedProtect.get().configDir, "config.conf");
             cfgLoader = HoconConfigurationLoader.builder().setFile(defConfig).build();
-            configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(header));
+            configRoot = cfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerCfg));
             this.root = configRoot.getValue(of(MainCategory.class), new MainCategory(Sponge.getServer().getOnlineMode()));
 
             if (!configRoot.getNode("region-settings", "border", "material").isVirtual()) {
@@ -139,25 +123,10 @@ public class ConfigManager extends CoreConfigManager {
                 }
             }
 
-            /*--------------------- end config.conf ---------------------------*/
-
             /*--------------------- globalflags.conf ---------------------------*/
-            String headerg = ""
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "<          RedProtect Global Flags configuration File                > #\n"
-                    + "<--------------------------------------------------------------------> #\n"
-                    + "<         This is the global flags configuration file.               > #\n"
-                    + "<                       Feel free to edit it.                        > #\n"
-                    + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "\n"
-                    + "Notes:\n"
-                    + "Lists are [object1, object2, ...]\n"
-                    + "Strings containing the char & always need to be quoted";
-
             File gFlagsConfig = new File(RedProtect.get().configDir, "globalflags.conf");
             gFlagsLoader = HoconConfigurationLoader.builder().setFile(gFlagsConfig).build();
-            gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerg));
+            gflagsRoot = gFlagsLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGf));
 
             //import old world values
             if (gFlagsConfig.exists() && !gflagsRoot.getNode("worlds").hasMapChildren()) {
@@ -169,25 +138,14 @@ public class ConfigManager extends CoreConfigManager {
 
             this.globalFlagsRoot = gflagsRoot.getValue(of(GlobalFlagsCategory.class), new GlobalFlagsCategory());
 
-            /*--------------------- end globalflags.conf ---------------------------*/
-
             /*--------------------- guiconfig.conf ---------------------------*/
-            String headerGui = ""
-                    + "+--------------------------------------------------------------------+ #\n"
-                    + "<             RedProtect Gui Flags configuration File                > #\n"
-                    + "<--------------------------------------------------------------------> #\n"
-                    + "<            This is the gui flags configuration file.               > #\n"
-                    + "<                       Feel free to edit it.                        > #\n"
-                    + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                    + "+--------------------------------------------------------------------+ #\n";
-
             String guiFileName = "guiconfig" + configRoot().language + ".conf";
             if (new File(RedProtect.get().configDir, guiFileName).exists()) {
                 new File(RedProtect.get().configDir, guiFileName).renameTo(new File(RedProtect.get().configDir, "guiconfig.conf"));
             }
             guiCfgLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().configDir, "guiconfig.conf")).build();
             guiCfgRoot = guiCfgLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerGui));
-            this.guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
+            guiRoot = guiCfgRoot.getValue(of(FlagGuiCategory.class), new FlagGuiCategory());
 
             // Import old gui translations
             if (guiCfgRoot.getNode("gui-strings").getValue() != null) {
@@ -256,14 +214,16 @@ public class ConfigManager extends CoreConfigManager {
                 this.guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag("golden_apple", 0));
             }
 
-            //Economy file
+            /*------------------- Economy File -------------------*/
             File ecoFile = new File(RedProtect.get().configDir, "economy.conf");
             if (!ecoFile.exists()) {
                 Asset ecoAsset = RedProtect.get().container.getAsset("economy.conf").get();
                 ecoAsset.copyToDirectory(RedProtect.get().configDir.toPath());
             }
             ecoLoader = HoconConfigurationLoader.builder().setPath(ecoFile.toPath()).build();
-            ecoCfgs = ecoLoader.load();
+
+            ecoCfgRoot = ecoLoader.load(ConfigurationOptions.defaults().setObjectMapperFactory(factory).setShouldCopyDefaults(true).setHeader(headerEco));
+            ecoRoot = ecoCfgRoot.getValue(of(EconomyCategory.class), new EconomyCategory());
 
             List<String> names = new ArrayList<>();
             Sponge.getRegistry().getAllOf(BlockType.class).forEach((type) -> names.add(type.getName()));
@@ -271,10 +231,10 @@ public class ConfigManager extends CoreConfigManager {
                 if (!names.contains(type.getName()))
                     names.add(type.getName());
             });
-            if (names.size() != ecoCfgs.getNode("items", "values").getChildrenList().size()) {
+            if (ecoRoot.items.values.size() < names.size()) {
                 for (String mat : names) {
-                    if (ecoCfgs.getNode("items", "values", mat).getValue() == null) {
-                        ecoCfgs.getNode("items", "values", mat).setValue(0.0);
+                    if (!ecoRoot.items.values.containsKey(mat)) {
+                        ecoRoot.items.values.put(mat, 10L);
                     }
                 }
             }

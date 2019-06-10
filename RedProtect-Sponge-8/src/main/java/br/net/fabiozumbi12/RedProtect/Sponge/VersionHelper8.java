@@ -126,10 +126,12 @@ public class VersionHelper8 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.teleport", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
 
-        for (String ench : Sponge.getRegistry().getAllOf(EnchantmentType.class).stream().map(EnchantmentType::getId).collect(Collectors.toList())) {
-            if (RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).getValue() == null) {
-                RedProtect.get().config.ecoCfgs.getNode("enchantments", "values", ench).setValue(0.0);
-            }
+        if (RedProtect.get().config.ecoRoot().enchantments.values.size() < Sponge.getRegistry().getAllOf(EnchantmentType.class).size()){
+            Sponge.getRegistry().getAllOf(EnchantmentType.class).forEach((type) -> {
+                if (!RedProtect.get().config.ecoRoot().enchantments.values.containsKey(type.getName())) {
+                    RedProtect.get().config.ecoRoot().enchantments.values.put(type.getName(), 10L);
+                }
+            });
         }
     }
 
@@ -200,10 +202,10 @@ public class VersionHelper8 implements VersionHelper {
                 continue;
             }
             ItemStack stack = item.peek();
-            value += ((RedProtect.get().config.getBlockCost(stack.getType().getId()) * stack.getQuantity()));
+            value += ((RedProtect.get().config.ecoRoot().items.values.get(stack.getType().getName()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                 for (Enchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
-                    value += ((RedProtect.get().config.getEnchantCost(enchant.getType().getId()) * enchant.getLevel()));
+                    value += ((RedProtect.get().config.ecoRoot().enchantments.values.get(enchant.getType().getName()) * enchant.getLevel()));
                 }
             }
         }

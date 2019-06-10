@@ -47,28 +47,12 @@ public class RPEconomyAPI {
     }
 
     /**
-     * Buy a region.
-     * <p>
-     *
-     * @param region - Region to buy.
-     * @param owner  - Owner of the region;
-     * @return {@code true} if successfull buy. {@code false} if theres an error on buy the region and the money will return to player.
-     */
-
-
-    public static boolean BuyRegion(Region region, String owner) {
-        return EconomyManager.BuyRegion(region, owner);
-    }
-
-    /**
      * Get the region value based on blocks, chests, itens inside chests and item enchantements inside chests too.
      * <p>
      *
      * @param region - Region to get value.
      * @return {@code Long} value of the region.
      */
-
-
     public static long getRegionValue(Region region) {
         return EconomyManager.getRegionValue(region);
     }

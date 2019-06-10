@@ -67,11 +67,15 @@ public class CommandHandler {
         this.plugin = plugin;
         CommandSpec redProtect = CommandSpec.builder()
                 .description(Text.of("Main command for RedProtect."))
-                .arguments(GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("args"))))
+                .arguments(
+                        GenericArguments.optional(GenericArguments.choices(Text.of("command"), getConsoleCmds())),
+                        GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("subCommands"))))
                 .executor((sender, arguments) -> {
 
                     CommandResult cmdr = CommandResult.empty();
-                    String[] args = arguments.getAll("args").toArray(new String[arguments.getAll("args").size()]);
+                    Collection<String> all = new ArrayList<>(arguments.getAll("command"));
+                    all.addAll(arguments.getAll("subCommands"));
+                    String[] args = all.toArray(new String[0]);
 
                     if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
                         HandleHelpPage(sender, 1);
@@ -467,6 +471,7 @@ public class CommandHandler {
                 .child(new DelTpCommand().register(), getCmdKeys("deltp"))
                 .child(new ExpandVertCommand().register(), getCmdKeys("expand-vert"))
                 .child(new FlagCommand().register(), getCmdKeys("flag"))
+                .child(new KillCommand().register(), getCmdKeys("kill"))
                 .child(new ListCommand().register(), getCmdKeys("list"))
                 .child(new Pos1Command().register(), getCmdKeys("pos1"))
                 .child(new Pos2Command().register(), getCmdKeys("pos2"))
@@ -541,5 +546,12 @@ public class CommandHandler {
         if (getCmd(cmd).equalsIgnoreCase(cmd))
             return new String[]{getCmd(cmd), getCmdAlias(cmd)};
         return new String[]{cmd, getCmd(cmd), getCmdAlias(cmd)};
+    }
+
+    private HashMap<String, String> getConsoleCmds(){
+        HashMap<String, String> map = new HashMap<>();
+        for (String cmd: Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "files-to-single", "single-to-files", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all"))
+            map.put(cmd, cmd);
+        return map;
     }
 }

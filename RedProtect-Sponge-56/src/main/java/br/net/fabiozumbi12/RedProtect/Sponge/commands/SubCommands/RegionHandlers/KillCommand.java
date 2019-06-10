@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 25/04/19 07:02
+ * Last Modified: 10/06/19 01:52.
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -26,9 +26,12 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
@@ -36,31 +39,33 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
 
-public class DeleteCommand {
-
+public class KillCommand {
     public CommandSpec register() {
         return CommandSpec.builder()
-                .description(Text.of("Command to delete a region."))
+                .description(Text.of("Command to kill all entities outside protected regions."))
                 .arguments(
-                        GenericArguments.optional(GenericArguments.string(Text.of("regionName"))),
-                        GenericArguments.optional(GenericArguments.world(Text.of("world")))
+                        GenericArguments.optional(GenericArguments.world(Text.of("world"))),
+                        GenericArguments.optional(GenericArguments.catalogedElement(Text.of("entityType"), EntityType.class))
                 )
-                .permission("redprotect.command.delete")
+                .permission("redprotect.command.kill")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player)) {
-                        HandleHelpPage(src, 1);
-                    } else {
-                        Player player = (Player) src;
+                    World world = src instanceof Player ? ((Player) src).getWorld() : null;
+                    EntityType entity = null;
 
-                        if (args.hasAny("regionName")) {
-                            handleDeleteName(player, args.<String>getOne("regionName").get(), "");
-                        } else if (args.hasAny("world")) {
-                            handleDeleteName(player, args.<String>getOne("regionName").get(), args.<WorldProperties>getOne("world").get().getWorldName());
-                        } else {
-                            handleDelete(player);
-                        }
-
+                    if (args.hasAny("world")) {
+                        world = Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).get();
                     }
+                    if (args.hasAny("entityType")) {
+                        world = Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).get();
+                        entity = args.<EntityType>getOne("entityType").get();
+                    }
+
+                    if (world == null){
+                        RedProtect.get().lang.sendMessage(src, "cmdmanager.region.invalidworld");
+                        return CommandResult.success();
+                    }
+
+                    handleKillWorld(src, world, entity);
                     return CommandResult.success();
                 }).build();
     }
