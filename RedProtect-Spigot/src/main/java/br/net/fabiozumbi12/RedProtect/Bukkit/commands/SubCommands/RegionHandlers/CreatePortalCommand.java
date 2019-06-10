@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,8 +40,10 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -54,7 +57,7 @@ public class CreatePortalCommand implements SubCommand {
 
         Player player = (Player) sender;
 
-        //rp createportal <regionName> <regionTo> <database>
+        //rp createportal <regionName> <regionTo> <world>
         if (args.length == 3) {
             World w = RedProtect.get().getServer().getWorld(args[2]);
             if (w == null) {
@@ -106,6 +109,13 @@ public class CreatePortalCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        List<String> tab = new ArrayList<>();
+        if (args.length == 3){
+            if (args[2].isEmpty())
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+            else
+                tab.addAll(Bukkit.getWorlds().stream().filter(e->e.getName().startsWith(args[2])).map(World::getName).collect(Collectors.toList()));
+        }
+        return tab;
     }
 }

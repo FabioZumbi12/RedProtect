@@ -32,14 +32,17 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -116,6 +119,12 @@ public class ClaimCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        List<String> tab = new ArrayList<>();
+        if (args.length == 2)
+            if (args[1].isEmpty())
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+            else
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p->p.getName().startsWith(args[1])).map(Player::getName).collect(Collectors.toList()));
+        return tab;
     }
 }

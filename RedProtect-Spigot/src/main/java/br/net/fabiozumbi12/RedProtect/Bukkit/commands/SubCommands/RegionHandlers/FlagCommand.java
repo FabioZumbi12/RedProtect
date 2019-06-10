@@ -205,6 +205,6 @@ public class FlagCommand implements SubCommand {
             }
             return new ArrayList<>(tab);
         }
-        return null;
+        return new ArrayList<>();
     }
 }

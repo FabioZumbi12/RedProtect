@@ -29,13 +29,16 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandler
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleAddMember;
 
@@ -70,6 +73,12 @@ public class AddMemberCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        List<String> tab = new ArrayList<>();
+        if (args.length == 1)
+            if (args[0].isEmpty())
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+            else
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p->p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
+        return tab;
     }
 }

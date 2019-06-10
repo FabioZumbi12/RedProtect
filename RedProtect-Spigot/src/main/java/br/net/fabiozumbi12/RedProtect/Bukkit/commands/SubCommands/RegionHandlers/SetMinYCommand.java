@@ -30,12 +30,15 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -109,6 +112,14 @@ public class SetMinYCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        List<String> tab = new ArrayList<>();
+        if (args.length == 1)
+            tab.add(sender instanceof Player ? String.valueOf(((Player) sender).getLocation().getBlockY()) : "0");
+        if (args.length == 3)
+            if (args[2].isEmpty())
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+            else
+                tab.addAll(Bukkit.getWorlds().stream().filter(w->w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+        return tab;
     }
 }

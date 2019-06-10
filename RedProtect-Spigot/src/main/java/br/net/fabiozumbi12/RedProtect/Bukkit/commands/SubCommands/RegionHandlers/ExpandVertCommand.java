@@ -30,12 +30,15 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -66,7 +69,7 @@ public class ExpandVertCommand implements SubCommand {
                     return true;
                 }
                 break;
-            //rp expand-vert [region] [database]
+            //rp expand-vert [region] [world]
             case 2:
                 if (Bukkit.getWorld(args[1]) == null) {
                     RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalidworld");
@@ -91,6 +94,13 @@ public class ExpandVertCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        List<String> tab = new ArrayList<>();
+        if (args.length == 2){
+            if (args[1].isEmpty())
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+            else
+                tab.addAll(Bukkit.getWorlds().stream().filter(e->e.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+        }
+        return tab;
     }
 }
