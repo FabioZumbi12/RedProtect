@@ -233,10 +233,18 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             if (conditions.stream().anyMatch(cmd -> checkCmd(args[1], cmd))) {
                 String cmd = conditions.stream().filter(c -> checkCmd(args[1], c)).findFirst().get();
                 if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
+
+                    // Segure delete command
+                    if (cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2){
+                        if (RedProtect.get().rm.getTopRegion(p.getLocation()) == null) return;
+
+                        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+                        commandArgs = commandArgs + " " + r.getName() + " " + r.getWorld();
+                    }
                     cmdConfirm.put(p.getName(), commandArgs);
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}", "/" + commandArgs),
+                                    new Replacer("{cmd}", args[0] + " " + cmd),
                                     new Replacer("{cmd-yes}", getCmd("yes")),
                                     new Replacer("{cmd-no}", getCmd("no"))});
                     e.setCancelled(true);
@@ -246,6 +254,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 if (checkCmd(args[1], "yes")) {
                     String cmd1 = cmdConfirm.get(p.getName());
                     e.setMessage("/" + cmd1);
+
+                    RedProtect.get().logger.severe("cmd1: " + cmd1);
+
                     cmdConfirm.remove(p.getName());
                 } else if (checkCmd(args[1], "no")) {
                     cmdConfirm.remove(p.getName());

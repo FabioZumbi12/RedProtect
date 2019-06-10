@@ -508,10 +508,18 @@ public class CommandHandler {
             if (conditions.stream().anyMatch(cmd -> checkCmd(args[0], cmd))) {
                 String cmd = conditions.stream().filter(c -> checkCmd(args[0], c)).findFirst().get();
                 if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
+
+                    // Segure delete command
+                    if (source instanceof Player && cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2){
+                        if (RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName()) == null) return;
+
+                        Region r = RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName());
+                        commandArgs = commandArgs + " " + r.getName() + " " + r.getWorld();
+                    }
                     cmdConfirm.put(source.getName(), commandArgs);
                     RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}", "/" + e.getCommand() + " " + commandArgs),
+                                    new Replacer("{cmd}", "/" + e.getCommand() + " " + cmd),
                                     new Replacer("{cmd-yes}", getCmd("yes")),
                                     new Replacer("{cmd-no}", getCmd("no"))});
                     e.setCancelled(true);
