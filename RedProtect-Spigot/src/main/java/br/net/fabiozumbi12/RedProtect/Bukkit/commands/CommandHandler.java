@@ -254,9 +254,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 if (checkCmd(args[1], "yes")) {
                     String cmd1 = cmdConfirm.get(p.getName());
                     e.setMessage("/" + cmd1);
-
-                    RedProtect.get().logger.severe("cmd1: " + cmd1);
-
                     cmdConfirm.remove(p.getName());
                 } else if (checkCmd(args[1], "no")) {
                     cmdConfirm.remove(p.getName());
