@@ -150,12 +150,12 @@ public class KickCommand implements SubCommand {
             if (args[0].isEmpty())
                 tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p->p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
         if (args.length == 3)
             if (args[2].isEmpty())
                 tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(w->w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
         return tab;
     }
 }

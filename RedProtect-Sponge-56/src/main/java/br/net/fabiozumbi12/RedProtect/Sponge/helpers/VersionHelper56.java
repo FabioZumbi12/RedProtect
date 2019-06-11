@@ -39,7 +39,6 @@ import org.spongepowered.api.entity.living.animal.Horse;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.item.Enchantment;
 import org.spongepowered.api.item.Enchantments;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
@@ -56,7 +55,6 @@ import org.spongepowered.api.world.World;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class VersionHelper56 implements VersionHelper {
 

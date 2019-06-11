@@ -37,7 +37,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleKillWorld;
 
 public class KillCommand {
     public CommandSpec register() {
@@ -60,7 +60,7 @@ public class KillCommand {
                         entity = args.<EntityType>getOne("entityType").get();
                     }
 
-                    if (world == null){
+                    if (world == null) {
                         RedProtect.get().lang.sendMessage(src, "cmdmanager.region.invalidworld");
                         return CommandResult.success();
                     }

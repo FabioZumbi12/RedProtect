@@ -36,8 +36,10 @@ import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
-import org.bukkit.event.HandlerList;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -1122,7 +1124,7 @@ public class CommandHandlers {
         return true;
     }
 
-    public static void handleKillWorld(CommandSender sender, World world, EntityType type){
+    public static void handleKillWorld(CommandSender sender, World world, EntityType type) {
         int killed = 0;
         int total = 0;
         int living = 0;
@@ -1134,17 +1136,17 @@ public class CommandHandlers {
             if (RedProtect.get().rm.getTopRegion(e.getLocation()) == null) {
                 e.remove();
                 killed++;
-            } else if (e instanceof LivingEntity && type == null){
+            } else if (e instanceof LivingEntity && type == null) {
                 living++;
             } else if (e.getType().equals(type)) {
                 living++;
             }
         }
         RedProtect.get().lang.sendMessage(sender, "cmdmanager.kill", new Replacer[]{
-                new Replacer("{total}",String.valueOf(total)),
-                new Replacer("{living}",String.valueOf(living)),
-                new Replacer("{killed}",String.valueOf(killed)),
-                new Replacer("{world}",world.getName())
+                new Replacer("{total}", String.valueOf(total)),
+                new Replacer("{living}", String.valueOf(living)),
+                new Replacer("{killed}", String.valueOf(killed)),
+                new Replacer("{world}", world.getName())
         });
     }
 

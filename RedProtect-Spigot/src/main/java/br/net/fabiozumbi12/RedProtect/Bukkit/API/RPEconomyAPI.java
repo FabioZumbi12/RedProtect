@@ -43,7 +43,7 @@ public class RPEconomyAPI {
     public static boolean SellRegion(Region region, String owner, long value) {
         return EconomyManager.putToSell(region, owner, value);
     }
-    
+
     /**
      * Get the region value based on blocks, chests, itens inside chests and item enchantements inside chests too.
      * <p>

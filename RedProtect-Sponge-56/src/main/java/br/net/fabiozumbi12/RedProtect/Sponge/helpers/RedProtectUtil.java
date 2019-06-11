@@ -866,12 +866,13 @@ public class RedProtectUtil extends CoreUtil {
         int borderHeight = RedProtect.get().config.configRoot().region_settings.border.height;
 
         for (int x = minX; x <= maxX; x++) {
-            if (x%2!=0 && intense.equalsIgnoreCase("LOW")) continue;
+            if (x % 2 != 0 && intense.equalsIgnoreCase("LOW")) continue;
             for (int z = minZ; z <= maxZ; z++) {
-                if (z%2!=0 && intense.equalsIgnoreCase("LOW")) continue;
+                if (z % 2 != 0 && intense.equalsIgnoreCase("LOW")) continue;
                 if (x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ()) {
                     for (int y = height - borderHeight; y < height + borderHeight; y++) {
-                        if (y%2!=0 && (intense.equalsIgnoreCase("LOW") || intense.equalsIgnoreCase("NORMAL"))) continue;
+                        if (y % 2 != 0 && (intense.equalsIgnoreCase("LOW") || intense.equalsIgnoreCase("NORMAL")))
+                            continue;
                         locations.add(new Location<>(w, x, y, z));
                     }
                 }

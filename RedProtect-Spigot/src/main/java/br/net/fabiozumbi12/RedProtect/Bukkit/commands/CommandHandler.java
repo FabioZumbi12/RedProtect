@@ -235,7 +235,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
 
                     // Segure delete command
-                    if (cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2){
+                    if (cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2) {
                         if (RedProtect.get().rm.getTopRegion(p.getLocation()) == null) return;
 
                         Region r = RedProtect.get().rm.getTopRegion(p.getLocation());

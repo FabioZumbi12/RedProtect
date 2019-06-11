@@ -24,15 +24,13 @@ public class KillCommand implements SubCommand {
 
         if (args.length == 0) {
             world = sender instanceof Player ? ((Player) sender).getWorld() : null;
-        } else
-        if (args.length == 1) {
+        } else if (args.length == 1) {
             world = Bukkit.getWorld(args[0]);
-        } else
-        if (args.length == 2) {
+        } else if (args.length == 2) {
             world = Bukkit.getWorld(args[0]);
             try {
                 entity = EntityType.valueOf(args[1].toUpperCase());
-            } catch (Exception ignored){
+            } catch (Exception ignored) {
                 RedProtect.get().lang.sendCommandHelp(sender, "kill", true);
                 return true;
             }
@@ -41,7 +39,7 @@ public class KillCommand implements SubCommand {
             return true;
         }
 
-        if (world == null){
+        if (world == null) {
             RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.invalidworld");
             return true;
         }
@@ -53,17 +51,17 @@ public class KillCommand implements SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> tab = new ArrayList<>();
-        if (args.length == 1){
+        if (args.length == 1) {
             if (args[0].isEmpty())
                 tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(e->e.getName().startsWith(args[0])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[0])).map(World::getName).collect(Collectors.toList()));
         }
-        if (args.length == 2){
+        if (args.length == 2) {
             if (args[1].isEmpty())
                 tab.addAll(Arrays.stream(EntityType.values()).map(EntityType::name).collect(Collectors.toList()));
             else
-                tab.addAll(Arrays.stream(EntityType.values()).filter(e->e.name().startsWith(args[1].toUpperCase())).map(EntityType::name).collect(Collectors.toList()));
+                tab.addAll(Arrays.stream(EntityType.values()).filter(e -> e.name().startsWith(args[1].toUpperCase())).map(EntityType::name).collect(Collectors.toList()));
         }
         return tab;
     }

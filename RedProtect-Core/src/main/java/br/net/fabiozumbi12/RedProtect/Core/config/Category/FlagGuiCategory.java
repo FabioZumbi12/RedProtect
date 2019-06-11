@@ -40,7 +40,8 @@ public class FlagGuiCategory {
     @Setting(value = "gui-flags")
     public Map<String, GuiFlag> gui_flags = new HashMap<>();
 
-    public FlagGuiCategory() {}
+    public FlagGuiCategory() {
+    }
 
     @ConfigSerializable
     public static class guiSeparator {

@@ -510,8 +510,9 @@ public class CommandHandler {
                 if (!cmdConfirm.containsKey(source.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
 
                     // Segure delete command
-                    if (source instanceof Player && cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2){
-                        if (RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName()) == null) return;
+                    if (source instanceof Player && cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2) {
+                        if (RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName()) == null)
+                            return;
 
                         Region r = RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName());
                         commandArgs = commandArgs + " " + r.getName() + " " + r.getWorld();
@@ -556,9 +557,9 @@ public class CommandHandler {
         return new String[]{cmd, getCmd(cmd), getCmdAlias(cmd)};
     }
 
-    private HashMap<String, String> getConsoleCmds(){
+    private HashMap<String, String> getConsoleCmds() {
         HashMap<String, String> map = new HashMap<>();
-        for (String cmd: Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "files-to-single", "single-to-files", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all"))
+        for (String cmd : Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "files-to-single", "single-to-files", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all"))
             map.put(cmd, cmd);
         return map;
     }

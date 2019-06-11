@@ -60,7 +60,6 @@ import org.spongepowered.api.world.World;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class VersionHelper8 implements VersionHelper {
 
@@ -126,7 +125,7 @@ public class VersionHelper8 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.teleport", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
 
-        if (RedProtect.get().config.ecoRoot().enchantments.values.size() < Sponge.getRegistry().getAllOf(EnchantmentType.class).size()){
+        if (RedProtect.get().config.ecoRoot().enchantments.values.size() < Sponge.getRegistry().getAllOf(EnchantmentType.class).size()) {
             Sponge.getRegistry().getAllOf(EnchantmentType.class).forEach((type) -> {
                 if (!RedProtect.get().config.ecoRoot().enchantments.values.containsKey(type.getName())) {
                     RedProtect.get().config.ecoRoot().enchantments.values.put(type.getName(), 10L);

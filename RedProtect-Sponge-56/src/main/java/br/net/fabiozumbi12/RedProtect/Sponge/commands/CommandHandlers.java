@@ -50,7 +50,6 @@ import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import javax.swing.text.html.ListView;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -1081,7 +1080,7 @@ public class CommandHandlers {
         return arg.equalsIgnoreCase(getCmd(cmd)) || arg.equalsIgnoreCase(getCmdAlias(cmd)) || arg.equalsIgnoreCase(cmd);
     }
 
-    public static void handleKillWorld(CommandSource sender, World world, EntityType type){
+    public static void handleKillWorld(CommandSource sender, World world, EntityType type) {
         int killed = 0;
         int total = 0;
         int living = 0;
@@ -1090,20 +1089,20 @@ public class CommandHandlers {
                         ((entity instanceof Living && type == null) || entity.getType().equals(type))
         ).collect(Collectors.toList())) {
             total++;
-            if (RedProtect.get().rm.getTopRegion(e.getLocation(),CommandHandlers.class.getName()) == null) {
+            if (RedProtect.get().rm.getTopRegion(e.getLocation(), CommandHandlers.class.getName()) == null) {
                 e.remove();
                 killed++;
-            } else if (e instanceof Living && type == null){
+            } else if (e instanceof Living && type == null) {
                 living++;
             } else if (e.getType().equals(type)) {
                 living++;
             }
         }
         RedProtect.get().lang.sendMessage(sender, "cmdmanager.kill", new Replacer[]{
-                new Replacer("{total}",String.valueOf(total)),
-                new Replacer("{living}",String.valueOf(living)),
-                new Replacer("{killed}",String.valueOf(killed)),
-                new Replacer("{world}",world.getName())
+                new Replacer("{total}", String.valueOf(total)),
+                new Replacer("{living}", String.valueOf(living)),
+                new Replacer("{killed}", String.valueOf(killed)),
+                new Replacer("{world}", world.getName())
         });
     }
 

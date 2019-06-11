@@ -44,60 +44,6 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
 
-    protected CoreConfigManager(File pluginFolder){
-        if (!pluginFolder.exists()) {
-            pluginFolder.mkdir();
-        }
-        if (!new File(pluginFolder, "data").exists()) {
-            new File(pluginFolder, "data").mkdir();
-        }
-    }
-
-    protected String headerCfg = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<               RedProtect World configuration File                  > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<       This is the configuration file, feel free to edit it.        > #\n"
-            + "<        For more info about cmds and flags, check our Wiki:         > #\n"
-            + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-            + "+--------------------------------------------------------------------+ #\n"
-            + "\n"
-            + "Notes:\n"
-            + "Lists are [object1, object2, ...]\n"
-            + "Strings containing the char & always need to be quoted";
-    protected String headerGf = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<          RedProtect Global Flags configuration File                > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<         This is the global flags configuration file.               > #\n"
-            + "<                       Feel free to edit it.                        > #\n"
-            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
-            + "+--------------------------------------------------------------------+ #\n"
-            + "\n"
-            + "Notes:\n"
-            + "Lists are [object1, object2, ...]\n"
-            + "Strings containing the char & always need to be quoted";
-    protected String headerGui = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<             RedProtect Gui Flags configuration File                > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<            This is the gui flags configuration file.               > #\n"
-            + "<                       Feel free to edit it.                        > #\n"
-            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
-            + "+--------------------------------------------------------------------+ #\n";
-    protected String headerEco = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<              RedProtect Economy configuration File                 > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<               This is the economy file configuration               > #\n"
-            + "<  This file its for '/rp value' command as a reference values only  > #\n"
-            + "<   https://github.com/FabioZumbi12/RedProtect/wiki/(03)-Commands    > #\n"
-            + "+--------------------------------------------------------------------+ #\n"
-            + "\n"
-            + "Notes:\n"
-            + "Lists are [object1, object2, ...]\n"
-            + "Strings containing the char & always need to be quoted";
-
     public final List<String> AdminFlags = Arrays.asList(
             "spawn-wither",
             "cropsfarm",
@@ -144,10 +90,54 @@ public class CoreConfigManager {
             "exit",
             "particles",
             "dynmap",
-            "deny-exit-items");
+            "deny-exit-items",
+            "can-move");
     public HashMap<String, String> backupGuiName = new HashMap<>();
     public HashMap<String, String> backupGuiDescription = new HashMap<>();
-
+    protected String headerCfg = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<               RedProtect World configuration File                  > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<       This is the configuration file, feel free to edit it.        > #\n"
+            + "<        For more info about cmds and flags, check our Wiki:         > #\n"
+            + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
+            + "+--------------------------------------------------------------------+ #\n"
+            + "\n"
+            + "Notes:\n"
+            + "Lists are [object1, object2, ...]\n"
+            + "Strings containing the char & always need to be quoted";
+    protected String headerGf = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<          RedProtect Global Flags configuration File                > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<         This is the global flags configuration file.               > #\n"
+            + "<                       Feel free to edit it.                        > #\n"
+            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
+            + "+--------------------------------------------------------------------+ #\n"
+            + "\n"
+            + "Notes:\n"
+            + "Lists are [object1, object2, ...]\n"
+            + "Strings containing the char & always need to be quoted";
+    protected String headerGui = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<             RedProtect Gui Flags configuration File                > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<            This is the gui flags configuration file.               > #\n"
+            + "<                       Feel free to edit it.                        > #\n"
+            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
+            + "+--------------------------------------------------------------------+ #\n";
+    protected String headerEco = ""
+            + "+--------------------------------------------------------------------+ #\n"
+            + "<              RedProtect Economy configuration File                 > #\n"
+            + "<--------------------------------------------------------------------> #\n"
+            + "<               This is the economy file configuration               > #\n"
+            + "<  This file its for '/rp value' command as a reference values only  > #\n"
+            + "<   https://github.com/FabioZumbi12/RedProtect/wiki/(03)-Commands    > #\n"
+            + "+--------------------------------------------------------------------+ #\n"
+            + "\n"
+            + "Notes:\n"
+            + "Lists are [object1, object2, ...]\n"
+            + "Strings containing the char & always need to be quoted";
     protected ConfigurationNode ecoCfgRoot;
     protected ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
     protected EconomyCategory ecoRoot;
@@ -162,6 +152,14 @@ public class CoreConfigManager {
     protected ConfigurationNode configRoot;
     protected ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
     protected MainCategory root;
+    protected CoreConfigManager(File pluginFolder) {
+        if (!pluginFolder.exists()) {
+            pluginFolder.mkdir();
+        }
+        if (!new File(pluginFolder, "data").exists()) {
+            new File(pluginFolder, "data").mkdir();
+        }
+    }
 
     public HashMap<String, Object> getDefFlagsValues() {
         return new HashMap<>(root.flags);
