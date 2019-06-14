@@ -182,7 +182,7 @@ public class MainCategory {
     public static class mysqlOptions {
         @Setting(value = "db-name")
         public String db_name = "redprotect";
-        @Setting
+        @Setting(comment = "Host example: \"localhost:3306\"")
         public String host = "localhost";
         @Setting(value = "region-cache-minutes")
         public int region_cache_minutes = 2;
