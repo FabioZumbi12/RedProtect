@@ -354,16 +354,49 @@ public class PlayerListener {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                 }
+            } else if (l.getTileEntity().isPresent() && l.getTileEntity().get() instanceof Sign && RedProtect.get().config.configRoot().region_settings.enable_flag_sign) {
+                Sign s = (Sign) l.getTileEntity().get();
+                if (s.lines().get(0).toPlain().equalsIgnoreCase("[flag]") && r.getFlags().containsKey(s.lines().get(1).toPlain())) {
+                    String flag = s.lines().get(1).toPlain();
+                    if (!(r.getFlags().get(flag) instanceof Boolean)) {
+                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
+                        return;
+                    }
+                    if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
+                        if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
+                            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                                    if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
+                                        RedProtect.get().getUtil().startFlagChanger(r.getName(), flag, p);
+                                        changeFlag(r, flag, p, s);
+                                        return;
+                                    } else {
+                                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                                        return;
+                                    }
+                                }
+                            }
+                            changeFlag(r, flag, p, s);
+                            return;
+                        }
+                    }
+                    RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
+                }
+            } else if (bstate.getType().equals(BlockTypes.ENDER_CHEST)) {
+                if (!r.canEnderChest(p)) {
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
+                    event.setCancelled(true);
+                }
+            } else if (bstate.getType().getName().contains("spawner")) {
+                if (!r.canPlaceSpawner(p)) {
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+                    event.setCancelled(true);
+                }
             } else if (b.getState() instanceof Container ||
                     RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(bstate.getType().getName()::matches)) {
-
                 if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
-                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
-                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
-                        event.setCancelled(true);
-                    } else {
-                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.opened").replace("{region}", r.getLeadersDesc()));
-                    }
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
+                    event.setCancelled(true);
                 }
             } else if (bstate.getType().getName().contains("lever")) {
                 if (!r.canLever(p)) {

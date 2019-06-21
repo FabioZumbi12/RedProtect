@@ -636,6 +636,20 @@ public class Region extends CoreRegion {
 
     //---------------------- Admin Flags --------------------------//
 
+    /**
+     * Check if the specified player can place a spawner in this region.
+     *
+     * @param p The player to check for permission.
+     * @return boolean if the player can place o not a spawner.
+     */
+    public boolean canPlaceSpawner(Player p) {
+        return getFlagBool("allow-spawner") || checkAllowedPlayer(p);
+    }
+
+    public boolean canEnderChest(Player p) {
+        return getFlagBool("ender-chest") || checkAllowedPlayer(p);
+    }
+
     public boolean canMove(Player p) {
         if (!flagExists("can-move")) {
             return true;
@@ -870,16 +884,8 @@ public class Region extends CoreRegion {
         return flagExists("treefarm") && (b.getState().getType().getName().contains("log") || b.getState().getType().getName().contains("leaves")) && getFlagBool("treefarm");
     }
 
-    public boolean canSkill(Player p) {
-        return !flagExists("up-skills") || getFlagBool("up-skills") || checkAllowedPlayer(p);
-    }
-
     public boolean canBack(Player p) {
         return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p);
-    }
-
-    public boolean isPvPArena() {
-        return flagExists("pvparena") && getFlagBool("pvparena");
     }
 
     public boolean allowMod(Player p) {
@@ -895,10 +901,6 @@ public class Region extends CoreRegion {
 
     public boolean canExitPortal(Player p) {
         return !flagExists("portal-exit") || getFlagBool("portal-exit") || checkAllowedPlayer(p);
-    }
-
-    public boolean canPet(Player p) {
-        return !flagExists("can-pet") || getFlagBool("can-pet") || checkAllowedPlayer(p);
     }
 
     public boolean canProtectiles(Player p) {
