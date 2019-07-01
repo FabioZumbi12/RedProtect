@@ -52,10 +52,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.reflect.TypeToken.of;
 
@@ -194,46 +191,6 @@ public class ConfigManager extends CoreConfigManager {
                         backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length() - 2));
                     }
                 }
-            }
-
-            if (this.guiRoot.gui_separator.material.isEmpty())
-                this.guiRoot.gui_separator.material = "WHITE_STAINED_GLASS_PANE";
-
-            if (this.guiRoot.gui_flags.isEmpty()) {
-                this.guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag("BLAZE_ROD", 16));
-                this.guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag("FEATHER", 8));
-                this.guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag("COMPASS", 2));
-                this.guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag("POTION", 26));
-                this.guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag("LEASH", 10));
-                this.guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag("GRASS", 13));
-                this.guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag("STONE_BUTTON", 6));
-                this.guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag("WHEAT", 27));
-                this.guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag("TRAPPED_CHEST", 3));
-                this.guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag("ACACIA_DOOR", 0));
-                this.guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag("ENDER_CHEST", 22));
-                this.guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag("BLAZE_POWDER", 9));
-                this.guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag("FISHING_ROD", 28));
-                this.guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag("WATER_BUCKET", 29));
-                this.guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag("LAVA_BUCKET", 30));
-                this.guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag("SAND", 7));
-                this.guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag("PACKED_ICE", 4));
-                this.guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag("ICE", 31));
-                this.guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag("LEAVES", 18));
-                this.guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag("LEVER", 5));
-                this.guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag("MINECART", 25));
-                this.guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag("MYCEL", 32));
-                this.guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag("SADDLE", 33));
-                this.guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag("GOLD_PLATE", 17));
-                this.guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag("STONE_SWORD", 20));
-                this.guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag("IRON_DOOR", 1));
-                this.guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag("EGG", 34));
-                this.guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag("PUMPKIN", 35));
-                this.guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag("ENDER_PEARL", 19));
-                this.guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag("GLASS_BOTTLE", 26));
-            }
-
-            for (String key : getDefFlagsValues().keySet()) {
-                this.guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag("GOLDEN_APPLE", 0));
             }
 
             /*------------------- Economy File -------------------*/
@@ -485,7 +442,14 @@ public class ConfigManager extends CoreConfigManager {
     }
 
     public ItemStack getGuiSeparator() {
-        ItemStack separator = new ItemStack(Material.getMaterial(guiRoot.gui_separator.material), 1, (short) guiRoot.gui_separator.data);
+        ItemStack separator;
+        try {
+            separator = new ItemStack(Material.getMaterial(guiRoot.gui_separator.material), 1, (short) guiRoot.gui_separator.data);
+        } catch (Exception ignored) {
+            Optional<Material> optMat = Arrays.stream(Material.values()).filter(m->m.name().contains("PANE") && m.isItem()).findFirst();
+            separator = optMat.map(material -> new ItemStack(material, 1, (short) guiRoot.gui_separator.data)).orElseGet(() -> new ItemStack(Material.GLASS, 1, (short) guiRoot.gui_separator.data));
+        }
+
         ItemMeta meta = separator.getItemMeta();
         meta.setDisplayName(RedProtect.get().guiLang.getFlagString("separator"));
         meta.setLore(Arrays.asList("", RedProtect.get().guiLang.getFlagString("separator")));

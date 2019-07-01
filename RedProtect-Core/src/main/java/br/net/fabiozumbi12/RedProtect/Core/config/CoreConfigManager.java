@@ -173,6 +173,11 @@ public class CoreConfigManager {
         return this.guiRoot;
     }
 
+    public void setGuiRoot(FlagGuiCategory flagGuiCategory){
+        this.guiRoot = flagGuiCategory;
+        saveGui();
+    }
+
     public GlobalFlagsCategory globalFlagsRoot() {
         return this.globalFlagsRoot;
     }

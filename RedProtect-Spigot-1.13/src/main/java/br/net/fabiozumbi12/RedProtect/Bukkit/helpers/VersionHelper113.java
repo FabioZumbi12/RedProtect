@@ -27,7 +27,9 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
@@ -70,5 +72,50 @@ public class VersionHelper113 implements VersionHelper {
 
     public boolean isOpenable(Block b) {
         return b.getState().getData() instanceof Door;
+    }
+
+    @Override
+    public FlagGuiCategory setGuiItems(FlagGuiCategory guiRoot) {
+        RedProtect.get().logger.info("Loading GuiFlags for 1.13");
+        if (guiRoot.gui_separator.material.isEmpty())
+            guiRoot.gui_separator.material = Material.WHITE_STAINED_GLASS_PANE.name();
+
+        if (guiRoot.gui_flags.isEmpty()) {
+            guiRoot.gui_flags.put("allow-effects", new FlagGuiCategory.GuiFlag(Material.BLAZE_ROD.name(), 16));
+            guiRoot.gui_flags.put("allow-fly", new FlagGuiCategory.GuiFlag(Material.FEATHER.name(), 8));
+            guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag(Material.COMPASS.name(), 2));
+            guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag(Material.POTION.name(), 26));
+            guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag(Material.LEAD.name(), 10));
+            guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag(Material.GRASS.name(), 13));
+            guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag(Material.STONE_BUTTON.name(), 6));
+            guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag(Material.WHEAT.name(), 27));
+            guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag(Material.TRAPPED_CHEST.name(), 3));
+            guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag(Material.ACACIA_DOOR.name(), 0));
+            guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag(Material.ENDER_CHEST.name(), 22));
+            guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag(Material.BLAZE_POWDER.name(), 9));
+            guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag(Material.FISHING_ROD.name(), 28));
+            guiRoot.gui_flags.put("flow", new FlagGuiCategory.GuiFlag(Material.WATER_BUCKET.name(), 29));
+            guiRoot.gui_flags.put("flow-damage", new FlagGuiCategory.GuiFlag(Material.LAVA_BUCKET.name(), 30));
+            guiRoot.gui_flags.put("gravity", new FlagGuiCategory.GuiFlag(Material.SAND.name(), 7));
+            guiRoot.gui_flags.put("iceform-player", new FlagGuiCategory.GuiFlag(Material.PACKED_ICE.name(), 4));
+            guiRoot.gui_flags.put("iceform-world", new FlagGuiCategory.GuiFlag(Material.ICE.name(), 31));
+            guiRoot.gui_flags.put("leaves-decay", new FlagGuiCategory.GuiFlag(Material.OAK_LEAVES.name(), 18));
+            guiRoot.gui_flags.put("lever", new FlagGuiCategory.GuiFlag(Material.LEVER.name(), 5));
+            guiRoot.gui_flags.put("minecart", new FlagGuiCategory.GuiFlag(Material.MINECART.name(), 25));
+            guiRoot.gui_flags.put("mob-loot", new FlagGuiCategory.GuiFlag(Material.MYCELIUM.name(), 32));
+            guiRoot.gui_flags.put("passives", new FlagGuiCategory.GuiFlag(Material.SADDLE.name(), 33));
+            guiRoot.gui_flags.put("press-plate", new FlagGuiCategory.GuiFlag(Material.LIGHT_WEIGHTED_PRESSURE_PLATE.name(), 17));
+            guiRoot.gui_flags.put("pvp", new FlagGuiCategory.GuiFlag(Material.STONE_SWORD.name(), 20));
+            guiRoot.gui_flags.put("smart-door", new FlagGuiCategory.GuiFlag(Material.IRON_DOOR.name(), 1));
+            guiRoot.gui_flags.put("spawn-animals", new FlagGuiCategory.GuiFlag(Material.EGG.name(), 34));
+            guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag(Material.PUMPKIN.name(), 35));
+            guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag(Material.ENDER_PEARL.name(), 19));
+            guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag(Material.GLASS_BOTTLE.name(), 26));
+        }
+
+        for (String key : RedProtect.get().config.getDefFlagsValues().keySet()) {
+            guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag(Material.GOLDEN_APPLE.name(), 0));
+        }
+        return guiRoot;
     }
 }

@@ -65,7 +65,7 @@ public class MainCategory {
     public notifyCat notify = new notifyCat();
     @Setting
     public performanceCat performance = new performanceCat();
-    @Setting(value = "permissions-limits", comment = "Declare here the permissions you want to use for your players and groups.")
+    @Setting(value = "permissions-limits", comment = "[Sponge Only] Declare here the permissions you want to use for your players and groups.")
     public permLimits permissions_limits = new permLimits();
     @Setting(value = "private", comment = "Private containers using signs.")
     public privateCat private_cat = new privateCat();

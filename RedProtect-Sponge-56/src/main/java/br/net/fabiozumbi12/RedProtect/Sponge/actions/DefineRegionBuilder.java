@@ -56,7 +56,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         regionName = RedProtect.get().getUtil().setName(regionName);
 
         //region name conform
-        if (regionName.length() < 3) {
+        if (regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
             //filter region name
             regionName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {

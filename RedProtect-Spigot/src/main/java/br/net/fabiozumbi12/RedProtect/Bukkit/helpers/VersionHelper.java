@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -33,6 +34,7 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
+import java.util.Map;
 import java.util.Set;
 
 public interface VersionHelper {
@@ -48,4 +50,6 @@ public interface VersionHelper {
     void toggleDoor(Block b);
 
     boolean isOpenable(Block b);
+
+    FlagGuiCategory setGuiItems(FlagGuiCategory guiItems);
 }

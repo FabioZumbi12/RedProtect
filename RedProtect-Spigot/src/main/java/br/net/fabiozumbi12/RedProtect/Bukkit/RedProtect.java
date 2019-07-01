@@ -110,26 +110,6 @@ public class RedProtect extends JavaPlugin {
             //Init config, lang, listeners and flags
             startLoad();
 
-            bukkitVersion = getBukkitVersion();
-            logger.debug(LogLevel.DEFAULT, "Version String: " + bukkitVersion);
-
-            if (bukkitVersion >= 180) {
-                getServer().getPluginManager().registerEvents(new Compat18(), this);
-            }
-            if (bukkitVersion >= 190) {
-                getServer().getPluginManager().registerEvents(new Compat19(), this);
-            }
-
-            if (bukkitVersion <= 1122) {
-                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
-            }
-            if (bukkitVersion >= 1130) {
-                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper113").newInstance();
-            }
-            if (bukkitVersion >= 1140) {
-                rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
-            }
-
             logger.info("Loading API...");
             this.redProtectAPI = new RedProtectAPI();
             logger.info("API Loaded!");
@@ -216,6 +196,29 @@ public class RedProtect extends JavaPlugin {
             updater.setCurrentJarFile(this.getFile().getName());
             updater.hourlyUpdateCheck(getServer().getConsoleSender(), config.configRoot().update.enable, false);
         }
+
+        bukkitVersion = getBukkitVersion();
+        logger.debug(LogLevel.DEFAULT, "Version String: " + bukkitVersion);
+
+        if (bukkitVersion >= 180) {
+            getServer().getPluginManager().registerEvents(new Compat18(), this);
+        }
+        if (bukkitVersion >= 190) {
+            getServer().getPluginManager().registerEvents(new Compat19(), this);
+        }
+
+        if (bukkitVersion <= 1122) {
+            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
+        }
+        if (bukkitVersion >= 1130) {
+            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper113").newInstance();
+        }
+        if (bukkitVersion >= 1140) {
+            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
+        }
+
+        // Load gui items for Minecraft version
+        config.setGuiRoot(rpvHelper.setGuiItems(config.guiRoot()));
     }
 
     private void shutDown() {
