@@ -182,9 +182,9 @@ public class PlayerListener {
                     WEHook.setSelectionRP(p, loc1, loc2);
                 }
 
-                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !p.hasPermission("redprotect.bypass.define-max-distance")) {
+                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.max_scan && !p.hasPermission("redprotect.bypass.define-max-distance")) {
                     double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                    RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
+                    RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, (int) dist));
                 } else {
                     RedProtect.get().getUtil().addBorder(p, loc1, loc2);
                 }
@@ -228,9 +228,9 @@ public class PlayerListener {
                     WEHook.setSelectionRP(p, loc1, loc2);
                 }
 
-                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.wand_max_distance && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
                     double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                    RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
+                    RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, (int) dist));
                 } else {
                     RedProtect.get().getUtil().addBorder(p, loc1, loc2);
                 }

@@ -310,8 +310,6 @@ public class MainCategory {
         public String date_format = "dd/MM/yyyy";
         @Setting(value = "default-leader", comment = "The leader for regions created using the define command.\nNormally used for server regions like spawn.")
         public String default_leader = "#server#";
-        @Setting(value = "wand-max-distance", comment = "Max distance an area can have on try to claim a region or redefine using wand tool.")
-        public int wand_max_distance = 1200;
         @Setting(value = "delay-after-kick-region", comment = "Time the player can back to region from where was kicked.")
         public int delay_after_kick_region = 60;
         @Setting(value = "deny-build-near", comment = "Deny player to build/break blocks near x block of a region.")

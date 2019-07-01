@@ -70,9 +70,9 @@ public class Pos1Command implements SubCommand {
                     WEHook.setSelectionRP(player, loc1, loc2);
                 }
 
-                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.configRoot().region_settings.wand_max_distance) {
+                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.configRoot().region_settings.max_scan) {
                     double dist = loc1.distanceSquared(loc2);
-                    RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.wand_max_distance, (int) dist));
+                    RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, (int) dist));
                 } else {
                     RedProtect.get().getUtil().addBorder(player, new Region("", loc1, loc2, player.getWorld().getName()));
                 }
