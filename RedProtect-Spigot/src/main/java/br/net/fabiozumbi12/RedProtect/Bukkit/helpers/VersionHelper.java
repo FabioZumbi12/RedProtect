@@ -34,7 +34,6 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.Map;
 import java.util.Set;
 
 public interface VersionHelper {

@@ -152,6 +152,7 @@ public class CoreConfigManager {
     protected ConfigurationNode configRoot;
     protected ConfigurationLoader<CommentedConfigurationNode> cfgLoader;
     protected MainCategory root;
+
     protected CoreConfigManager(File pluginFolder) {
         if (!pluginFolder.exists()) {
             pluginFolder.mkdir();
@@ -173,7 +174,7 @@ public class CoreConfigManager {
         return this.guiRoot;
     }
 
-    public void setGuiRoot(FlagGuiCategory flagGuiCategory){
+    public void setGuiRoot(FlagGuiCategory flagGuiCategory) {
         this.guiRoot = flagGuiCategory;
         saveGui();
     }

@@ -446,7 +446,7 @@ public class ConfigManager extends CoreConfigManager {
         try {
             separator = new ItemStack(Material.getMaterial(guiRoot.gui_separator.material), 1, (short) guiRoot.gui_separator.data);
         } catch (Exception ignored) {
-            Optional<Material> optMat = Arrays.stream(Material.values()).filter(m->m.name().contains("PANE") && m.isItem()).findFirst();
+            Optional<Material> optMat = Arrays.stream(Material.values()).filter(m -> m.name().contains("PANE") && m.isItem()).findFirst();
             separator = optMat.map(material -> new ItemStack(material, 1, (short) guiRoot.gui_separator.data)).orElseGet(() -> new ItemStack(Material.GLASS, 1, (short) guiRoot.gui_separator.data));
         }
 

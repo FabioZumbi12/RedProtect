@@ -38,7 +38,6 @@ import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
