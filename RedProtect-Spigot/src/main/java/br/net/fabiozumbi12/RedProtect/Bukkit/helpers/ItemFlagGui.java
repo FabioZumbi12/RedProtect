@@ -29,33 +29,20 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class ItemFlagGui implements Listener {
 
@@ -82,12 +69,12 @@ public class ItemFlagGui implements Listener {
 
         StringBuilder str = new StringBuilder();
         Arrays.stream(event.getInventory().getContents())
-                .filter(item->item != null && !item.getType().equals(Material.AIR))
-                .map(item->item.getType().name()).distinct()
-                .forEach(item->str.append(item).append(","));
+                .filter(item -> item != null && !item.getType().equals(Material.AIR))
+                .map(item -> item.getType().name()).distinct()
+                .forEach(item -> str.append(item).append(","));
 
-        if (str.length() > 0){
-            region.setFlag(event.getPlayer(), flag, str.toString().substring(0, str.toString().length()-1));
+        if (str.length() > 0) {
+            region.setFlag(event.getPlayer(), flag, str.toString().substring(0, str.toString().length() - 1));
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
         } else {

@@ -43,7 +43,6 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;

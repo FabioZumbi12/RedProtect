@@ -57,7 +57,7 @@ public class ItemFlagGui {
 
         this.guiItems = Arrays.stream(region.getFlagString(flag).split(",")).sorted()
                 .filter(item -> Sponge.getRegistry().getType(ItemType.class, item.toUpperCase()).isPresent())
-                .map(i ->  ItemStack.of(Sponge.getRegistry().getType(ItemType.class, i).get(), 1)).toArray(ItemStack[]::new);
+                .map(i -> ItemStack.of(Sponge.getRegistry().getType(ItemType.class, i).get(), 1)).toArray(ItemStack[]::new);
     }
 
     @Listener
@@ -68,16 +68,16 @@ public class ItemFlagGui {
 
         StringBuilder str = new StringBuilder();
 
-        event.getTargetInventory().forEach(inv->{
-            if (inv.capacity() == 54){
+        event.getTargetInventory().forEach(inv -> {
+            if (inv.capacity() == 54) {
                 StreamSupport.stream(inv.slots().spliterator(), false)
-                        .filter(i->i.peek().isPresent()).map(i->i.peek().get().getItem().getName()).distinct()
+                        .filter(i -> i.peek().isPresent()).map(i -> i.peek().get().getItem().getName()).distinct()
                         .forEach(i -> str.append(i).append(","));
             }
         });
 
-        if (str.length() > 0){
-            region.setFlag(RedProtect.get().getVersionHelper().getCause(this.player), flag, str.toString().substring(0, str.toString().length()-1));
+        if (str.length() > 0) {
+            region.setFlag(RedProtect.get().getVersionHelper().getCause(this.player), flag, str.toString().substring(0, str.toString().length() - 1));
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
         } else {
@@ -134,7 +134,7 @@ public class ItemFlagGui {
         Inventory inv = RedProtect.get().getVersionHelper().newInventory(54, "Item flag GUI");
 
         int i = 0;
-        while (i < this.guiItems.length){
+        while (i < this.guiItems.length) {
             int line = 0;
             int slot = i;
             if (i > 8) {
