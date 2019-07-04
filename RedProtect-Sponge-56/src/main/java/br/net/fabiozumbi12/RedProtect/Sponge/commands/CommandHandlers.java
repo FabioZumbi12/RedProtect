@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Sponge.events.RenameRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.ItemFlagGui;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -797,6 +798,18 @@ public class CommandHandlers {
 
                     sendFlagHelp(p);
                 } else {
+
+                    // Item flags
+                    if (flag.equalsIgnoreCase("deny-enter-items") ||
+                            flag.equalsIgnoreCase("allow-enter-items") ||
+                            flag.equalsIgnoreCase("allow-place") ||
+                            flag.equalsIgnoreCase("allow-break")) {
+
+                        ItemFlagGui itemGui = new ItemFlagGui(p, r, flag);
+                        itemGui.open();
+                        return;
+                    }
+
                     if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
                         if (r.setFlag(RedProtect.get().getVersionHelper().getCause(p), flag, !r.getFlagBool(flag))) {
                             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
@@ -968,32 +981,6 @@ public class CommandHandlers {
                 return false;
             }
         }
-
-        String[] s = value.toString().replace(" ", "").split(",");
-        if (flag.equalsIgnoreCase("deny-exit-items") || flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")) {
-            if (!(value instanceof String)) {
-                return false;
-            }
-            for (String item : s) {
-                if (Sponge.getRegistry().getType(ItemType.class, item).isPresent()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if (flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")) {
-            if (!(value instanceof String)) {
-                return false;
-            }
-            for (String item : s) {
-                if (Sponge.getRegistry().getType(EntityType.class, item).isPresent() || Sponge.getRegistry().getType(ItemType.class, item).isPresent()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         if (flag.equalsIgnoreCase("cmd-onhealth")) {
             if (!(value instanceof String)) {
                 return false;
@@ -1014,7 +1001,6 @@ public class CommandHandlers {
                 return false;
             }
         }
-
         if (flag.equalsIgnoreCase("allow-cmds") || flag.equalsIgnoreCase("deny-cmds")) {
             if (!(value instanceof String)) {
                 return false;

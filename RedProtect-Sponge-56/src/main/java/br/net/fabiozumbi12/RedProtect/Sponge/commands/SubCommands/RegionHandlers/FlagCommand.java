@@ -114,9 +114,6 @@ public class FlagCommand {
                                 value = args.<String>getOne("value").get();
                             }
 
-                            RedProtect.get().logger.severe("Flag: " + flag);
-                            RedProtect.get().logger.severe("Value: " + value);
-
                             if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
                                 if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {

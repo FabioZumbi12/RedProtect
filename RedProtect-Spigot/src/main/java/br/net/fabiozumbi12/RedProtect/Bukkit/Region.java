@@ -579,7 +579,7 @@ public class Region extends CoreRegion {
             if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
                 return (String) RedProtect.get().config.getDefFlagsValues().get(key);
             } else {
-                return RedProtect.get().config.configRoot().flags.get(key).toString();
+                return RedProtect.get().config.configRoot().flags.getOrDefault(key, false).toString();
             }
         }
         return this.flags.get(key).toString();

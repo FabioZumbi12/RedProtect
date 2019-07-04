@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ItemFlagGui;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -814,7 +815,7 @@ public class CommandHandlers {
                     sendFlagHelp(p);
                 } else {
 
-                    //flag clan
+                    // Flag clan
                     if (flag.equalsIgnoreCase("clan")) {
                         if (RedProtect.get().hooks.simpleClans) {
                             ClanPlayer clan = RedProtect.get().hooks.clanManager.getClanPlayer(p);
@@ -840,6 +841,17 @@ public class CommandHandlers {
                             sendFlagHelp(p);
                             return;
                         }
+                    }
+
+                    // Item flags
+                    if (flag.equalsIgnoreCase("deny-enter-items") ||
+                            flag.equalsIgnoreCase("allow-enter-items") ||
+                            flag.equalsIgnoreCase("allow-place") ||
+                            flag.equalsIgnoreCase("allow-break")) {
+
+                        ItemFlagGui itemGui = new ItemFlagGui(p, r, flag);
+                        itemGui.open();
+                        return;
                     }
 
                     if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
@@ -1024,34 +1036,6 @@ public class CommandHandlers {
                 return false;
             }
         }
-        String[] valida = value.toString().replace(" ", "").split(",");
-        if (flag.equalsIgnoreCase("deny-exit-items") || flag.equalsIgnoreCase("allow-enter-items") || flag.equalsIgnoreCase("deny-enter-items")) {
-            if (!(value instanceof String)) {
-                return false;
-            }
-            for (String item : valida) {
-                if (Material.getMaterial(item.toUpperCase()) == null) {
-                    return false;
-                }
-            }
-        }
-        if (flag.equalsIgnoreCase("allow-place") || flag.equalsIgnoreCase("allow-break")) {
-            if (!(value instanceof String)) {
-                return false;
-            }
-            for (String item : valida) {
-                Material mat = Material.getMaterial(item.toUpperCase());
-                try {
-                    EntityType.valueOf(item.toUpperCase());
-                } catch (Exception ex) {
-                    if (mat == null)
-                        return false;
-                }
-                if (mat == null)
-                    return false;
-            }
-        }
-
         if (flag.equalsIgnoreCase("cmd-onhealth")) {
             if (!(value instanceof String)) {
                 return false;
