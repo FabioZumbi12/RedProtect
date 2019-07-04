@@ -36,6 +36,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
+import org.bukkit.material.Openable;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Set;
@@ -71,7 +72,7 @@ public class VersionHelper113 implements VersionHelper {
     }
 
     public boolean isOpenable(Block b) {
-        return b.getState().getData() instanceof Door;
+        return b.getState().getData() instanceof Openable;
     }
 
     @Override

@@ -36,6 +36,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
+import org.bukkit.material.Openable;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Set;
@@ -71,7 +72,7 @@ public class VersionHelper112 implements VersionHelper {
     }
 
     public boolean isOpenable(Block b) {
-        return b.getState().getData() instanceof Door;
+        return b.getState().getData() instanceof Openable;
     }
 
     @Override
@@ -90,7 +91,7 @@ public class VersionHelper112 implements VersionHelper {
             guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag(Material.STONE_BUTTON.name(), 6));
             guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag(Material.WHEAT.name(), 27));
             guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag(Material.TRAPPED_CHEST.name(), 3));
-            guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag(Material.ACACIA_DOOR.name(), 0));
+            guiRoot.gui_flags.put("door", new FlagGuiCategory.GuiFlag(Material.WOOD_DOOR.name(), 0));
             guiRoot.gui_flags.put("ender-chest", new FlagGuiCategory.GuiFlag(Material.ENDER_CHEST.name(), 22));
             guiRoot.gui_flags.put("fire", new FlagGuiCategory.GuiFlag(Material.BLAZE_POWDER.name(), 9));
             guiRoot.gui_flags.put("fishing", new FlagGuiCategory.GuiFlag(Material.FISHING_ROD.name(), 28));
