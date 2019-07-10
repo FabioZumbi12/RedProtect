@@ -73,6 +73,10 @@ public class CreatePortalCommand {
                         String name = Normalizer.normalize(regionFrom.replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
                         Region r2 = RedProtect.get().rm.getRegion(name, w.getWorldName());
+                        if (r == r2) {
+                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.equals"));
+                            return CommandResult.success();
+                        }
 
                         if (r2 != null) {
                             if ((!r2.isLeader(player) || !r2.isAdmin(player)) && !r2.canBuild(player)) {

@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.DefineRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import com.massivecraft.massivecore.xlib.mongodb.CommandResult;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -73,6 +74,10 @@ public class CreatePortalCommand implements SubCommand {
             String name = Normalizer.normalize(args[0].replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
             Region r2 = RedProtect.get().rm.getRegion(name, w.getName());
+            if (r == r2) {
+                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.equals"));
+                return true;
+            }
 
             if (r2 != null) {
                 if ((!r2.isLeader(player) || !r2.isAdmin(player)) && !r2.canBuild(player)) {
