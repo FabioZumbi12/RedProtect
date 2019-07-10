@@ -75,7 +75,7 @@ public class CreatePortalCommand {
                         Region r2 = RedProtect.get().rm.getRegion(name, w.getWorldName());
 
                         if (r2 != null) {
-                            if (!r2.isLeader(player) || !r2.isAdmin(player)) {
+                            if ((!r2.isLeader(player) || !r2.isAdmin(player)) && !r2.canBuild(player)) {
                                 RedProtect.get().lang.sendMessage(player, "no.permission");
                                 return CommandResult.success();
                             }
