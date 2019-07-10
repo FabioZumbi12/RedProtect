@@ -34,12 +34,15 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.*;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.handleFlag;
 
@@ -156,7 +159,7 @@ class FlagCommandElement extends CommandElement {
     public List<String> complete(CommandSource sender, CommandArgs argss, CommandContext context) {
         if (!argss.hasNext()) return null;
 
-        String[] args = argss.getRaw().split(" ");
+        String[] args = argss.getRaw().split(" ");RedProtect.get().logger.severe("Arg: " + argss.getRaw());
         if (args.length == 1) {
             SortedSet<String> tab = new TreeSet<>(RedProtect.get().config.getDefFlags());
             for (String flag : RedProtect.get().config.AdminFlags) {

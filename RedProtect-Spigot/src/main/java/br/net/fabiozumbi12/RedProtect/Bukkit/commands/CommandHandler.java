@@ -234,7 +234,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 String cmd = conditions.stream().filter(c -> checkCmd(args[1], c)).findFirst().get();
                 if (!cmdConfirm.containsKey(p.getName()) && !checkCmd(cmd, "yes") && !checkCmd(cmd, "no")) {
 
-                    // Segure delete command
+                    // Secure delete command
                     if (cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2) {
                         if (RedProtect.get().rm.getTopRegion(p.getLocation()) == null) return;
 
@@ -624,8 +624,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                         return true;
                     } else {
                         RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.confignotset") + " " + args[1]);
-                        return true;
+
                     }
+                    return true;
                 }
             }
 

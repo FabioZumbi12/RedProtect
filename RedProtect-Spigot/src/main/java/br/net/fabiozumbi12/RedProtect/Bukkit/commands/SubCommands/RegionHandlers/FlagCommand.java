@@ -30,18 +30,17 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.FlagGui;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
+import org.apache.commons.lang.math.Range;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.awt.font.NumericShaper;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.getCmd;
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleFlag;
@@ -49,7 +48,7 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class FlagCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag"))) {
+        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.flag")) && args[2].equalsIgnoreCase("info")) {
             if (Bukkit.getWorld(args[2]) != null) {
                 Region r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[2]).getName());
                 if (r != null) {
@@ -204,6 +203,30 @@ public class FlagCommand implements SubCommand {
                 }
             }
             return new ArrayList<>(tab);
+        }
+
+        // Flag completions
+        if (args[0].equalsIgnoreCase("effects")) {
+            if (args.length == 2) {
+                if (args[1].isEmpty())
+                    return Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).collect(Collectors.toList());
+                else
+                    return Arrays.stream(PotionEffectType.values()).filter(e->e.getName().startsWith(args[1].toUpperCase())).map(PotionEffectType::getName).collect(Collectors.toList());
+            }
+            if (args.length == 3) {
+                return Collections.singletonList(String.valueOf(1));
+            }
+        }
+        if (args[0].equalsIgnoreCase("particles")) {
+            if (args.length == 2) {
+                if (args[1].isEmpty())
+                    return Arrays.stream(Particle.values()).map(Particle::name).collect(Collectors.toList());
+                else
+                    return Arrays.stream(Particle.values()).filter(p->p.name().startsWith(args[1].toUpperCase())).map(Particle::name).collect(Collectors.toList());
+            }
+            if (args.length <= 6) {
+                return Collections.singletonList(String.valueOf(10));
+            }
         }
         return new ArrayList<>();
     }
