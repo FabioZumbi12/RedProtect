@@ -56,8 +56,8 @@ public class ItemFlagGui implements Listener {
         this.region = region;
         this.flag = flag;
 
-        this.guiItems = Arrays.stream(region.getFlagString(flag).split(",")).sorted()
-                .filter(item -> Arrays.stream(Material.values()).anyMatch(i -> i.name().equals(item.toUpperCase())))
+        this.guiItems = Arrays.stream(region.getFlagString(flag).replace(" ","").toUpperCase().split(",")).sorted()
+                .filter(item -> Arrays.stream(Material.values()).anyMatch(i -> i.name().equals(item)))
                 .map(i -> new ItemStack(Material.valueOf(i))).toArray(ItemStack[]::new);
     }
 
