@@ -55,7 +55,7 @@ public class ItemFlagGui {
         this.player = player;
         this.region = region;
 
-        this.guiItems = Arrays.stream(region.getFlagString(flag).replace(" ","").toUpperCase().split(",")).sorted()
+        this.guiItems = Arrays.stream(region.getFlagString(flag).replace(" ", "").toUpperCase().split(",")).sorted()
                 .filter(item -> Sponge.getRegistry().getType(ItemType.class, item).isPresent())
                 .map(i -> ItemStack.of(Sponge.getRegistry().getType(ItemType.class, i).get(), 1)).toArray(ItemStack[]::new);
     }

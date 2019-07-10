@@ -30,15 +30,16 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.FlagGui;
-import org.apache.commons.lang.math.Range;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import java.awt.font.NumericShaper;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -211,7 +212,7 @@ public class FlagCommand implements SubCommand {
                 if (args[1].isEmpty())
                     return Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).collect(Collectors.toList());
                 else
-                    return Arrays.stream(PotionEffectType.values()).filter(e->e.getName().startsWith(args[1].toUpperCase())).map(PotionEffectType::getName).collect(Collectors.toList());
+                    return Arrays.stream(PotionEffectType.values()).filter(e -> e.getName().startsWith(args[1].toUpperCase())).map(PotionEffectType::getName).collect(Collectors.toList());
             }
             if (args.length == 3) {
                 return Collections.singletonList(String.valueOf(1));
@@ -222,7 +223,7 @@ public class FlagCommand implements SubCommand {
                 if (args[1].isEmpty())
                     return Arrays.stream(Particle.values()).map(Particle::name).collect(Collectors.toList());
                 else
-                    return Arrays.stream(Particle.values()).filter(p->p.name().startsWith(args[1].toUpperCase())).map(Particle::name).collect(Collectors.toList());
+                    return Arrays.stream(Particle.values()).filter(p -> p.name().startsWith(args[1].toUpperCase())).map(Particle::name).collect(Collectors.toList());
             }
             if (args.length <= 6) {
                 return Collections.singletonList(String.valueOf(10));
