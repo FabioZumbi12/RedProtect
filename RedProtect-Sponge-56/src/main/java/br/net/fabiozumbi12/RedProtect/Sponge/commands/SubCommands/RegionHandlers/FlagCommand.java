@@ -157,7 +157,6 @@ class FlagCommandElement extends CommandElement {
         if (!argss.hasNext()) return null;
 
         String[] args = argss.getRaw().split(" ");
-        RedProtect.get().logger.severe("Arg: " + argss.getRaw());
         if (args.length == 1) {
             SortedSet<String> tab = new TreeSet<>(RedProtect.get().config.getDefFlags());
             for (String flag : RedProtect.get().config.AdminFlags) {
