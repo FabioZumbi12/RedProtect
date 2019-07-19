@@ -114,11 +114,11 @@ public class LangCore {
     }
 
     public String translBool(String bool) {
-        return getRaw("region." + bool);
+        return getRaw("region." + bool.toLowerCase());
     }
 
     public String translBool(Boolean bool) {
-        return getRaw("region." + bool.toString());
+        return getRaw("region." + bool.toString().toLowerCase());
     }
 
     public boolean containsValue(String value) {
