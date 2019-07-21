@@ -316,7 +316,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     }
 
                     String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-                    Set<PlayerRegion> leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(", "))).stream().map(s -> {
+                    Set<PlayerRegion> leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(","))).stream().map(s -> {
                         String[] pi = s.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
@@ -329,7 +329,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         return new PlayerRegion(p[0], p[1]);
                     }).collect(Collectors.toSet());
 
-                    Set<PlayerRegion> admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(", "))).stream().map(s -> {
+                    Set<PlayerRegion> admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(","))).stream().map(s -> {
                         String[] pi = s.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
@@ -342,7 +342,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         return new PlayerRegion(p[0], p[1]);
                     }).collect(Collectors.toSet());
 
-                    Set<PlayerRegion> members = new HashSet<>(Arrays.asList(rs.getString("members").split(", "))).stream().map(s -> {
+                    Set<PlayerRegion> members = new HashSet<>(Arrays.asList(rs.getString("members").split(","))).stream().map(s -> {
                         String[] pi = s.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
@@ -481,7 +481,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                     String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
 
-                    for (String member : rs.getString("members").split(", ")) {
+                    for (String member : rs.getString("members").split(",")) {
                         String[] pi = member.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (p[1].isEmpty()) continue;
@@ -495,7 +495,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         members.add(new PlayerRegion(p[0], p[1]));
                     }
 
-                    for (String admin : rs.getString("admins").split(", ")) {
+                    for (String admin : rs.getString("admins").split(",")) {
                         String[] pi = admin.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (p[1].isEmpty()) continue;
@@ -508,7 +508,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         }
                         admins.add(new PlayerRegion(p[0], p[1]));
                     }
-                    for (String leader : rs.getString("leaders").split(", ")) {
+                    for (String leader : rs.getString("leaders").split(",")) {
                         String[] pi = leader.split("@");
                         String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
                         if (p[1].isEmpty()) continue;
