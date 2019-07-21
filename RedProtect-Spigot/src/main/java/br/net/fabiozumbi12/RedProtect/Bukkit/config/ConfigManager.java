@@ -467,7 +467,7 @@ public class ConfigManager extends CoreConfigManager {
             if (b != null && root.needed_claim_to_build.allow_only_protections_blocks &&
                     (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
                             getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))) {
-                boolean blocks = b.getType().name().contains(root.region_settings.block_id) ||
+                boolean blocks = b.getType().name().contains(root.region_settings.block_id.toUpperCase()) ||
                         root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getType().name()));
                 if (!blocks) {
                     RedProtect.get().lang.sendMessage(p, "need.claim.blockids");

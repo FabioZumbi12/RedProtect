@@ -266,7 +266,7 @@ public class GlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
 
@@ -309,7 +309,7 @@ public class GlobalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
 
