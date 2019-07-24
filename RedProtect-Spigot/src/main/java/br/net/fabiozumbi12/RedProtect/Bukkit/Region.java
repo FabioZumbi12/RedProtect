@@ -1003,7 +1003,7 @@ public class Region extends CoreRegion {
      * @return boolean
      */
     public boolean canIceForm(Player p) {
-        return getFlagBool("iceform-player") || checkAllowedPlayer(p,"iceform-player");
+        return getFlagBool("iceform-player") || p.hasPermission("redprotect.flag.iceform-player.bypass");
     }
 
     /**
