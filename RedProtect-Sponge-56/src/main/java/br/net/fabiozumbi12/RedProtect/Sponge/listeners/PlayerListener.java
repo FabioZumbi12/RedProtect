@@ -603,7 +603,7 @@ public class PlayerListener {
                 e.setCancelled(true);
                 return;
             }
-            if (e1 instanceof Player && r.flagExists("pvp") && !r.canPVP(damager)) {
+            if (e1 instanceof Player && !e1.equals(damager) && r.flagExists("pvp") && !r.canPVP(damager, (Player) e1)) {
                 RedProtect.get().lang.sendMessage(damager, "entitylistener.region.cantpvp");
                 e.setCancelled(true);
                 return;
@@ -666,7 +666,7 @@ public class PlayerListener {
             return;
         }
 
-        if (e1 instanceof Player && r.flagExists("pvp") && !r.canPVP(p)) {
+        if (e1 instanceof Player && r.flagExists("pvp") && !r.canPVP(p, (Player)e1)) {
             RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
         }

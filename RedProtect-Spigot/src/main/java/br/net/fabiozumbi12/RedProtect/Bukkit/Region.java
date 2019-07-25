@@ -1039,7 +1039,7 @@ public class Region extends CoreRegion {
         if (defender != null && RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(this, attacker, defender)) {
             return true;
         }
-        return getFlagBool("pvp") || attacker.hasPermission("redprotect.flag.pvp.bypass");
+        return getFlagBool("pvp") || (attacker.hasPermission("redprotect.flag.pvp.bypass") || (defender != null && defender.hasPermission("redprotect.flag.pvp.bypass")));
     }
 
     public boolean canEnderChest(Player p) {

@@ -44,6 +44,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Slot;
+import org.spongepowered.api.item.inventory.entity.PlayerInventory;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -1036,8 +1037,8 @@ public class Region extends CoreRegion {
         return getFlagBool("use-potions") || checkAllowedPlayer(p,"use-potions");
     }
 
-    public boolean canPVP(Player p) {
-        return getFlagBool("pvp") || p.hasPermission("redprotect.flag.pvp.bypass");
+    public boolean canPVP(Player attacker, Player defender) {
+        return getFlagBool("pvp") || (attacker.hasPermission("redprotect.flag.pvp.bypass") || (defender != null && defender.hasPermission("redprotect.flag.pvp.bypass")));
     }
 
     public boolean canChest(Player p) {
