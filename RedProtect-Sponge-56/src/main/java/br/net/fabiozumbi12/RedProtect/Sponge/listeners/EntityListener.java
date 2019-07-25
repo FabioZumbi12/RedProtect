@@ -201,15 +201,15 @@ public class EntityListener {
                             RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
                             return;
                         }
-                        if ((r1.flagExists("pvp") && !r1.canPVP(p2)) || (r1.flagExists("pvp") && !r2.canPVP(p2))) {
+                        if ((r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player) e1, p2))) {
                             e.setCancelled(true);
                             RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
                         }
-                    } else if (r1.flagExists("pvp") && !r1.canPVP(p2)) {
+                    } else if (r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) {
                         e.setCancelled(true);
                         RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
                     }
-                } else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP(p2)) {
+                } else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player) e1, p2)) {
                     e.setCancelled(true);
                     RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
                 }
@@ -281,7 +281,7 @@ public class EntityListener {
             Entity e2 = event.getTargetEntity();
             Region r = RedProtect.get().rm.getTopRegion(e2.getLocation(), this.getClass().getName());
             if (e2 instanceof Player) {
-                if (r != null && r.flagExists("pvp") && !r.canPVP(shooter)) {
+                if (r != null && r.flagExists("pvp") && !r.canPVP(shooter, (Player)e2)) {
                     event.setCancelled(true);
                 }
             } else {
