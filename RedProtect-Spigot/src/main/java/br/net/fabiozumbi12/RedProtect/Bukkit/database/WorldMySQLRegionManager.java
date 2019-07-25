@@ -334,7 +334,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         leaders = new HashSet<>();
                     }
 
-
                     Set<PlayerRegion> admins;
                     if (!rs.getString("admins").isEmpty()) {
                         admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(","))).stream().map(s -> {
