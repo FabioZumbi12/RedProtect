@@ -316,44 +316,60 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     }
 
                     String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
-                    Set<PlayerRegion> leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(", "))).stream().map(s -> {
-                        String[] pi = s.split("@");
-                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                String before = p[1];
-                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    Set<PlayerRegion> leaders;
+                    if (!rs.getString("leaders").isEmpty()) {
+                        leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(","))).stream().map(s -> {
+                            String[] pi = s.split("@");
+                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                    String before = p[1];
+                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                }
                             }
-                        }
-                        return new PlayerRegion(p[0], p[1]);
-                    }).collect(Collectors.toSet());
+                            return new PlayerRegion(p[0], p[1]);
+                        }).collect(Collectors.toSet());
+                    } else {
+                        leaders = new HashSet<>();
+                    }
 
-                    Set<PlayerRegion> admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(", "))).stream().map(s -> {
-                        String[] pi = s.split("@");
-                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                String before = p[1];
-                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                            }
-                        }
-                        return new PlayerRegion(p[0], p[1]);
-                    }).collect(Collectors.toSet());
 
-                    Set<PlayerRegion> members = new HashSet<>(Arrays.asList(rs.getString("members").split(", "))).stream().map(s -> {
-                        String[] pi = s.split("@");
-                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                String before = p[1];
-                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    Set<PlayerRegion> admins;
+                    if (!rs.getString("admins").isEmpty()) {
+                        admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(","))).stream().map(s -> {
+                            String[] pi = s.split("@");
+                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                    String before = p[1];
+                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                }
                             }
-                        }
-                        return new PlayerRegion(p[0], p[1]);
-                    }).collect(Collectors.toSet());
+                            return new PlayerRegion(p[0], p[1]);
+                        }).collect(Collectors.toSet());
+                    } else {
+                        admins = new HashSet<>();
+                    }
+
+                    Set<PlayerRegion> members;
+                    if (!rs.getString("members").isEmpty()) {
+                        members = new HashSet<>(Arrays.asList(rs.getString("members").split(","))).stream().map(s -> {
+                            String[] pi = s.split("@");
+                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                    String before = p[1];
+                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                }
+                            }
+                            return new PlayerRegion(p[0], p[1]);
+                        }).collect(Collectors.toSet());
+                    } else {
+                        members = new HashSet<>();
+                    }
 
                     for (String flag : rs.getString("flags").split(",")) {
                         String key = flag.split(":")[0];
@@ -481,45 +497,52 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
                     String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
 
-                    for (String member : rs.getString("members").split(", ")) {
-                        String[] pi = member.split("@");
-                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (p[1].isEmpty()) continue;
-                        if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                String before = p[1];
-                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    if (!rs.getString("members").isEmpty()) {
+                        for (String member : rs.getString("members").split(",")) {
+                            String[] pi = member.split("@");
+                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                            if (p[1].isEmpty()) continue;
+                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                    String before = p[1];
+                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                }
                             }
+                            members.add(new PlayerRegion(p[0], p[1]));
                         }
-                        members.add(new PlayerRegion(p[0], p[1]));
                     }
 
-                    for (String admin : rs.getString("admins").split(", ")) {
-                        String[] pi = admin.split("@");
-                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (p[1].isEmpty()) continue;
-                        if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                String before = p[1];
-                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                    if (!rs.getString("admins").isEmpty()) {
+                        for (String admin : rs.getString("admins").split(",")) {
+                            String[] pi = admin.split("@");
+                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                            if (p[1].isEmpty()) continue;
+                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                    String before = p[1];
+                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                }
                             }
+                            admins.add(new PlayerRegion(p[0], p[1]));
                         }
-                        admins.add(new PlayerRegion(p[0], p[1]));
                     }
-                    for (String leader : rs.getString("leaders").split(", ")) {
-                        String[] pi = leader.split("@");
-                        String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                        if (p[1].isEmpty()) continue;
-                        if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                            if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                String before = p[1];
-                                p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+
+                    if (!rs.getString("leaders").isEmpty()) {
+                        for (String leader : rs.getString("leaders").split(",")) {
+                            String[] pi = leader.split("@");
+                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                            if (p[1].isEmpty()) continue;
+                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                    String before = p[1];
+                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                }
                             }
+                            leaders.add(new PlayerRegion(p[0], p[1]));
                         }
-                        leaders.add(new PlayerRegion(p[0], p[1]));
                     }
 
                     for (String flag : rs.getString("flags").split(",")) {
