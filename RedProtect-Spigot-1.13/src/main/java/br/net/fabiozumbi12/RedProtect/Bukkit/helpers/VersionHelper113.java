@@ -30,6 +30,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
@@ -39,6 +41,8 @@ import org.bukkit.material.Door;
 import org.bukkit.material.Openable;
 import org.bukkit.projectiles.ProjectileSource;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -118,5 +122,38 @@ public class VersionHelper113 implements VersionHelper {
             guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag(Material.GOLDEN_APPLE.name(), 0));
         }
         return guiRoot;
+    }
+
+    public boolean existParticle(String particle) {
+        return Arrays.stream(Particle.values()).anyMatch((it) -> it.name().equalsIgnoreCase(particle));
+    }
+
+    public boolean spawnParticle​(
+            World world,
+            String particle,
+            double x,
+            double y,
+            double z,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ
+    ) {
+        Optional<Particle> optional = Arrays.stream(Particle.values())
+                .filter((it) -> it.name().equalsIgnoreCase(particle))
+                .findAny();
+        if(optional.isPresent()) {
+            world.spawnParticle(
+                    optional.get(),
+                    x,
+                    y,
+                    z,
+                    count,
+                    offsetX,
+                    offsetY,
+                    offsetZ
+            );
+            return true;
+        } else return false;
     }
 }

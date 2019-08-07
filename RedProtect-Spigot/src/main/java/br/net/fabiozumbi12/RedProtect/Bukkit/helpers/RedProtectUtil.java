@@ -65,6 +65,13 @@ import java.util.zip.ZipOutputStream;
 
 @SuppressWarnings("deprecation")
 public class RedProtectUtil extends CoreUtil {
+
+    private final RedProtect plugin;
+
+    public RedProtectUtil(RedProtect plugin) {
+        this.plugin = plugin;
+    }
+
     public String dateNow() {
         return dateNow(RedProtect.get().config.configRoot().region_settings.date_format);
     }
@@ -907,16 +914,14 @@ public class RedProtectUtil extends CoreUtil {
             }
         }
 
-        Particle particle;
-        try {
-            particle = Particle.valueOf(RedProtect.get().config.configRoot().region_settings.border.particle);
-        } catch (Exception ignored) {
-            particle = Particle.FLAME;
+        String particleName = RedProtect.get().config.configRoot().region_settings.border.particle;
+        if(!plugin.getVersionHelper().existParticle(particleName)) {
+            particleName = "FLAME";
         }
 
-        Particle finalParticle = particle;
+        final String finalParticleName = particleName;
         int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () ->
-                locations.forEach(l -> w.spawnParticle(finalParticle, l.getX() + 0.500, l.getY(), l.getZ() + 0.500, 1, 0, 0, 0, 0)), 10, 10);
+                locations.forEach(l -> plugin.getVersionHelper().spawnParticle​(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500, 1, 0, 0, 0)), 10, 10);
         borderPlayers.put(player, task);
 
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
