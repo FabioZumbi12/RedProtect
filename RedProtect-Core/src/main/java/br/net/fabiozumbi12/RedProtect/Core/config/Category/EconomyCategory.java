@@ -32,7 +32,7 @@ public class EconomyCategory {
 
         @Setting(value = "cost-per-block")
         public int cost_per_block = 10;
-        @Setting(value = "cost-per-block")
+        @Setting
         public boolean enable = false;
         @Setting(value = "y-is-free")
         public boolean y_is_free = true;

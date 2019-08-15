@@ -174,10 +174,11 @@ public class DefineRegionBuilder extends RegionBuilder {
             }
         }
 
+        long reco = 0;
         if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && !p.hasPermission("redprotect.eco.bypass")) {
             UniqueAccount acc = RedProtect.get().economy.getOrCreateAccount(p.getUniqueId()).get();
             double peco = acc.getBalance(RedProtect.get().economy.getDefaultCurrency()).doubleValue();
-            long reco = newRegion.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
+            reco = newRegion.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
             if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
                 reco = reco * Math.abs(newRegion.getMaxY() - newRegion.getMinY());
@@ -203,6 +204,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? "&a" + regionArea : "&c- " + regionArea) + "\n" +
                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea))));
         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", newRegion.getName()) + " " + newRegion.getPrior()));
+        if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable) p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.block.cost") + reco));
         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
         if (othersName.size() > 0) {
             p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));

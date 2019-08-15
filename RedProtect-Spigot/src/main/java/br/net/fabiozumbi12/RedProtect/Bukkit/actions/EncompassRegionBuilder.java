@@ -111,9 +111,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
             for (int bi = 0; bi < block.length; ++bi) {
 
-                boolean validBlock;
+                boolean validBlock = (block[bi].getType().name().contains(RedProtect.get().config.configRoot().region_settings.block_id));
 
-                validBlock = (block[bi].getType().name().contains(RedProtect.get().config.configRoot().region_settings.block_id));
                 if (validBlock && !block[bi].getLocation().equals(last.getLocation())) {
                     ++nearbyCount;
                     next = block[bi];
@@ -268,9 +267,10 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             return;
                         }
 
+                        long reco = 0;
                         if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
                             double peco = RedProtect.get().economy.getBalance(p);
-                            long reco = region.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
+                            reco = region.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
                             if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
                                 reco = reco * Math.abs(region.getMaxY() - region.getMinY());
@@ -297,6 +297,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
                                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
                         p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior());
+                        if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable) p.sendMessage(RedProtect.get().lang.get("regionbuilder.block.cost") + reco);
                         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
                         if (othersName.size() > 0) {
                             p.sendMessage(RedProtect.get().lang.get("regionbuilder.overlapping"));
@@ -387,7 +388,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
             }
             last = current;
             if (next == null) {
-                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.area.next"));
+                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.area.next") + " " + RedProtect.get().config.configRoot().region_settings.block_id);
                 return;
             }
             current = next;

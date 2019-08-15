@@ -206,7 +206,7 @@ public class ConfigManager extends CoreConfigManager {
                 }
                 ecoCfgRoot = ecoLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerEco));
             }
-            ecoRoot = ecoCfgRoot.getValue(of(EconomyCategory.class), new EconomyCategory());
+            this.ecoRoot = ecoCfgRoot.getValue(of(EconomyCategory.class), new EconomyCategory());
 
             if (ecoRoot.items.values.size() < Material.values().length) {
                 for (Material mat : Material.values()) {
