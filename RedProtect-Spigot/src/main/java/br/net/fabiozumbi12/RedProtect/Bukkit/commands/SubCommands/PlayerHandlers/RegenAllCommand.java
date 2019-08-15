@@ -61,10 +61,10 @@ public class RegenAllCommand implements SubCommand {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> tab = new ArrayList<>();
         if (args.length == 1)
-            if (args[1].isEmpty())
+            if (args[0].isEmpty())
                 tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[1])).map(Player::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
         return tab;
     }
 }

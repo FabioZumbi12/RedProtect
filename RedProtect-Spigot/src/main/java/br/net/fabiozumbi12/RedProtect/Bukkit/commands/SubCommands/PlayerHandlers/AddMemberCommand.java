@@ -73,12 +73,11 @@ public class AddMemberCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> tab = new ArrayList<>();
         if (args.length == 1)
             if (args[0].isEmpty())
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
-        return tab;
+                return Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList());
+        return new ArrayList<>();
     }
 }
