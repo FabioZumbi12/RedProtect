@@ -39,6 +39,8 @@ import java.util.Set;
 
 public interface VersionHelper {
 
+    String getVersion();
+
     Set<Location> getPortalLocations(PortalCreateEvent e);
 
     ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e);
@@ -55,15 +57,5 @@ public interface VersionHelper {
 
     boolean existParticle(String particle);
 
-    boolean spawnParticle​(
-            World world,
-            String particle,
-            double x,
-            double y,
-            double z,
-            int count,
-            double offsetX,
-            double offsetY,
-            double offsetZ
-    );
+    boolean spawnParticle​(World world, String particle, double x, double y, double z);
 }

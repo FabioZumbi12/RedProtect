@@ -921,7 +921,7 @@ public class RedProtectUtil extends CoreUtil {
 
         final String finalParticleName = particleName;
         int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () ->
-                locations.forEach(l -> plugin.getVersionHelper().spawnParticle​(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500, 1, 0, 0, 0)), 10, 10);
+                locations.forEach(l -> plugin.getVersionHelper().spawnParticle​(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500)), 10, 10);
         borderPlayers.put(player, task);
 
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {

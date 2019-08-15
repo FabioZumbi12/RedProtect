@@ -47,6 +47,11 @@ import java.util.stream.Collectors;
 
 public class VersionHelperLatest implements VersionHelper {
 
+    @Override
+    public String getVersion() {
+        return "Latest";
+    }
+
     public Set<Location> getPortalLocations(PortalCreateEvent e) {
         return e.getBlocks().stream().map(BlockState::getLocation).collect(Collectors.toSet());
     }
@@ -125,31 +130,12 @@ public class VersionHelperLatest implements VersionHelper {
     }
 
     @Override
-    public boolean spawnParticle​(
-            World world,
-            String particle,
-            double x,
-            double y,
-            double z,
-            int count,
-            double offsetX,
-            double offsetY,
-            double offsetZ
-    ) {
+    public boolean spawnParticle​(World world, String particle, double x, double y, double z) {
         Optional<Particle> optional = Arrays.stream(Particle.values())
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();
-        if(optional.isPresent()) {
-            world.spawnParticle(
-                    optional.get(),
-                    x,
-                    y,
-                    z,
-                    count,
-                    offsetX,
-                    offsetY,
-                    offsetZ
-            );
+        if (optional.isPresent()) {
+            world.spawnParticle(optional.get(), x, y, z, 1, 0, 0, 0, 0);
             return true;
         } else return false;
     }

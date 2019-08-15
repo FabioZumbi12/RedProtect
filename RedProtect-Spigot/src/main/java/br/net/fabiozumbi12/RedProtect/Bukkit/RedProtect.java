@@ -210,7 +210,7 @@ public class RedProtect extends JavaPlugin {
         if(bukkitVersion <= 189) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper18").newInstance();
         }
-        if (bukkitVersion <= 1122 && bukkitVersion >= 190) {
+        if (bukkitVersion >= 190) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
         }
         if (bukkitVersion >= 1130) {
@@ -219,6 +219,8 @@ public class RedProtect extends JavaPlugin {
         if (bukkitVersion >= 1140) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
         }
+        // Print helper version
+        logger.info("Helper version: " + rpvHelper.getVersion());
 
         // Load gui items for Minecraft version
         config.setGuiRoot(rpvHelper.setGuiItems(config.guiRoot()));

@@ -22,6 +22,11 @@ import java.util.stream.Collectors;
 
 public class VersionHelper18 implements VersionHelper {
 
+    @Override
+    public String getVersion() {
+        return "1.8";
+    }
+
     public Set<Location> getPortalLocations(PortalCreateEvent e) {
         return e.getBlocks().stream().map(Block::getLocation).collect(Collectors.toSet());
     }
@@ -102,32 +107,16 @@ public class VersionHelper18 implements VersionHelper {
         return Arrays.stream(Particle.values()).anyMatch((it) -> it.name().equalsIgnoreCase(particle));
     }
 
-    public boolean spawnParticle​(
-            World world,
-            String particle,
-            double x,
-            double y,
-            double z,
-            int count,
-            double offsetX,
-            double offsetY,
-            double offsetZ
-    ) {
-
+    @Override
+    public boolean spawnParticle​(World world, String particle, double x, double y, double z) {
         Optional<Particle> optional = Arrays.stream(Particle.values())
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();
         if (optional.isPresent()) {
-            final Object packet = ParticleReflection.createParticlePacket(
-                    optional.get(),
-                    x, y, z, count, offsetX, offsetY, offsetZ
-            );
-
+            final Object packet = ParticleReflection.createParticlePacket(optional.get(),x, y, z, 1, 0, 0, 0);
             final Location location = new Location(world, x, y, z);
-
             getNearbyPlayersInChunks(location)
                     .forEach((it) -> ParticleReflection.sendPacket(it, packet));
-
             return true;
         } else return false;
     }
