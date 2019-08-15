@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
@@ -51,4 +52,18 @@ public interface VersionHelper {
     boolean isOpenable(Block b);
 
     FlagGuiCategory setGuiItems(FlagGuiCategory guiItems);
+
+    boolean existParticle(String particle);
+
+    boolean spawnParticle​(
+            World world,
+            String particle,
+            double x,
+            double y,
+            double z,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ
+    );
 }

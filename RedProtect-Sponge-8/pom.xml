@@ -81,6 +81,12 @@
         </dependency>
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Spigot-1.8</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Spigot-1.12</artifactId>
             <version>LATEST</version>
             <scope>compile</scope>
@@ -128,6 +134,7 @@
                                 <includes>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Core</include>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.8</include>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.12</include>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.13</include>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-56</include>

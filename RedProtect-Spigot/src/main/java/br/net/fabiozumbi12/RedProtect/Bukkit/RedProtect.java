@@ -70,7 +70,7 @@ public class RedProtect extends JavaPlugin {
     public LangManager lang;
     public LangGuiManager guiLang;
     public CommandHandler cmdHandler;
-    private RedProtectUtil redProtectUtil = new RedProtectUtil();
+    private RedProtectUtil redProtectUtil = new RedProtectUtil(this);
     private RedProtectAPI redProtectAPI;
     private int autoSaveID;
     private VersionHelper rpvHelper;
@@ -147,7 +147,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() throws Exception {
-        redProtectUtil = new RedProtectUtil();
+        redProtectUtil = new RedProtectUtil(this);
         config = new ConfigManager();
         lang = new LangManager();
 
@@ -207,7 +207,10 @@ public class RedProtect extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new Compat19(), this);
         }
 
-        if (bukkitVersion <= 1122) {
+        if(bukkitVersion <= 189) {
+            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper18").newInstance();
+        }
+        if (bukkitVersion <= 1122 && bukkitVersion >= 190) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
         }
         if (bukkitVersion >= 1130) {

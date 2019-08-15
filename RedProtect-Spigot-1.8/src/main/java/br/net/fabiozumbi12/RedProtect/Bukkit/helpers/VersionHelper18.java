@@ -1,40 +1,13 @@
-/*
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 25/04/19 07:02
- *
- * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
- *  damages arising from the use of this class.
- *
- * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
- * redistribute it freely, subject to the following restrictions:
- * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
- * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
- * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
- * 3 - This notice may not be removed or altered from any source distribution.
- *
- * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
- * responsabilizados por quaisquer danos decorrentes do uso desta classe.
- *
- * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
- * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
- * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
- *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
- * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
- * classe original.
- * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
- */
-
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
@@ -42,11 +15,12 @@ import org.bukkit.material.Openable;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class VersionHelper112 implements VersionHelper {
+public class VersionHelper18 implements VersionHelper {
 
     public Set<Location> getPortalLocations(PortalCreateEvent e) {
         return e.getBlocks().stream().map(Block::getLocation).collect(Collectors.toSet());
@@ -139,22 +113,42 @@ public class VersionHelper112 implements VersionHelper {
             double offsetY,
             double offsetZ
     ) {
+
         Optional<Particle> optional = Arrays.stream(Particle.values())
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();
-        if(optional.isPresent()) {
-            world.spawnParticle(
+        if (optional.isPresent()) {
+            final Object packet = ParticleReflection.createParticlePacket(
                     optional.get(),
-                    x,
-                    y,
-                    z,
-                    count,
-                    offsetX,
-                    offsetY,
-                    offsetZ,
-                    0.0
+                    x, y, z, count, offsetX, offsetY, offsetZ
             );
+
+            final Location location = new Location(world, x, y, z);
+
+            getNearbyPlayersInChunks(location)
+                    .forEach((it) -> ParticleReflection.sendPacket(it, packet));
+
             return true;
         } else return false;
+    }
+
+    private static Set<Player> getNearbyPlayersInChunks(Location location) {
+        World world = location.getWorld();
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        int range = 3;
+
+        Set<Player> players = new HashSet<>();
+        for (int x = chunkX - range; x <= chunkX + range; x++) {
+            for (int z = chunkZ - range; z <= chunkZ + range; z++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                if(chunk.isLoaded())
+                    players.addAll(Arrays.stream(chunk.getEntities())
+                            .filter((it) -> it.getType() == EntityType.PLAYER)
+                            .map((it) -> (Player) it).collect(Collectors.toSet()));
+            }
+        }
+
+        return players;
     }
 }
