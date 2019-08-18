@@ -103,7 +103,7 @@ public class ListCommand implements SubCommand {
             if (args[0].isEmpty())
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
             else
-                return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(p->p.startsWith(args[0])).collect(Collectors.toList());
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(p->p.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }

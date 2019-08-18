@@ -80,7 +80,7 @@ public class RemoveLeaderCommand implements SubCommand {
                 if (args[0].isEmpty())
                     return r.getLeaders().stream().map(PlayerRegion::getPlayerName).collect(Collectors.toList());
                 else
-                    return r.getLeaders().stream().filter(p->p.getPlayerName().startsWith(args[0])).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
+                    return r.getLeaders().stream().filter(p->p.getPlayerName().toLowerCase().startsWith(args[0].toLowerCase())).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
             }
         }
         return new ArrayList<>();

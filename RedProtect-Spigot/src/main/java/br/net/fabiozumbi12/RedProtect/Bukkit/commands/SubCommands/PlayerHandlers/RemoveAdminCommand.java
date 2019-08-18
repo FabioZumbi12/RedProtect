@@ -82,7 +82,7 @@ public class RemoveAdminCommand implements SubCommand {
                 if (args[0].isEmpty())
                     return r.getAdmins().stream().map(PlayerRegion::getPlayerName).collect(Collectors.toList());
                 else
-                    return r.getAdmins().stream().filter(p->p.getPlayerName().startsWith(args[0])).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
+                    return r.getAdmins().stream().filter(p->p.getPlayerName().toLowerCase().startsWith(args[0].toLowerCase())).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
             }
         }
         return new ArrayList<>();
