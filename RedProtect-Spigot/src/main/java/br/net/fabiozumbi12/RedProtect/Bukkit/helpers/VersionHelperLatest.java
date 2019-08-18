@@ -69,9 +69,11 @@ public class VersionHelperLatest implements VersionHelper {
     }
 
     public void toggleDoor(Block b) {
-        Openable openable = (Openable) b.getBlockData();
-        openable.setOpen(!openable.isOpen());
-        b.setBlockData(openable);
+        if (b.getBlockData() instanceof Openable) {
+            Openable openable = (Openable) b.getBlockData();
+            openable.setOpen(!openable.isOpen());
+            b.setBlockData(openable);
+        }
     }
 
     public boolean isOpenable(Block b) {

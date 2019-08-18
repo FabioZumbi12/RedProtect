@@ -71,13 +71,15 @@ public class VersionHelper112 implements VersionHelper {
 
     public void toggleDoor(Block b) {
         BlockState state = b.getState();
-        Door op = (Door) state.getData();
-        if (!op.isOpen())
-            op.setOpen(true);
-        else
-            op.setOpen(false);
-        state.setData(op);
-        state.update();
+        if (state instanceof Door) {
+            Door op = (Door) state.getData();
+            if (!op.isOpen())
+                op.setOpen(true);
+            else
+                op.setOpen(false);
+            state.setData(op);
+            state.update();
+        }
     }
 
     public boolean isOpenable(Block b) {
