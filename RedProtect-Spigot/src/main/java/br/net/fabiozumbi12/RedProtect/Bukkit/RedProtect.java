@@ -37,6 +37,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
+import br.net.fabiozumbi12.RedProtect.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
@@ -224,6 +225,16 @@ public class RedProtect extends JavaPlugin {
 
         // Load gui items for Minecraft version
         config.setGuiRoot(rpvHelper.setGuiItems(config.guiRoot()));
+
+        // Metrics
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.addCustomChart(new Metrics.SingleLineChart("server_regions", () -> rm.getAllRegions().size()));
+            if (metrics.isEnabled())
+                logger.info("Metrics enabled! See our stats here: https://bstats.org/plugin/bukkit/RedProtect");
+        } catch (Exception ex) {
+            logger.info("Metrics not enabled due errors: " + ex.getLocalizedMessage());
+        }
     }
 
     private void shutDown() {
