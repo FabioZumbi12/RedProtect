@@ -47,6 +47,7 @@ public class HooksManager {
     public boolean essentials;
     public boolean griefPrev;
     public boolean worldEdit;
+    public boolean worldguard;
     public boolean simpleClans;
     public ClanManager clanManager;
     public Essentials pless;
@@ -64,6 +65,7 @@ public class HooksManager {
             essentials = checkEss();
             griefPrev = checkGriefPrev();
             worldEdit = checkWe();
+            worldguard = checkWG();
             simpleClans = checkSC();
             boolean infernalMobs = checkIMobs();
             boolean fac = checkFac();
@@ -154,6 +156,11 @@ public class HooksManager {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
+    }
+
+    private boolean checkWG() {
+        Plugin pWG = Bukkit.getPluginManager().getPlugin("WorldGuard");
+        return pWG != null && pWG.isEnabled();
     }
 
     private boolean checkIMobs() {

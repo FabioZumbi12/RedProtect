@@ -128,15 +128,20 @@ public class CoreUtil {
     }
 
     public Object parseObject(String value) {
-        Object obj = value;
         try {
-            obj = Integer.parseInt(value);
+            return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                obj = Boolean.parseBoolean(value);
+                return Boolean.parseBoolean(value);
+            }
+            if (value.equalsIgnoreCase("allow")) {
+                return true;
+            }
+            if (value.equalsIgnoreCase("deny")) {
+                return false;
             }
         }
-        return obj;
+        return null;
     }
 
     protected String StripName(String pRName) {

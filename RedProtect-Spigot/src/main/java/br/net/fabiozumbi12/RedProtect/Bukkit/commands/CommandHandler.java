@@ -39,13 +39,17 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionType;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -60,6 +64,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 
@@ -137,6 +143,62 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             throw new IllegalArgumentException();
         }
         throw new ArrayIndexOutOfBoundsException();
+    }
+
+    private static boolean handleWGRegions() {
+        if (!RedProtect.get().hooks.worldguard) {
+            return false;
+        }
+
+        RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        if (rc.getLoaded().isEmpty()) return false;
+
+        int i = 0;
+        for (RegionManager rm:rc.getLoaded()) {
+            if (rm.getRegions().isEmpty()) continue;
+
+            String w = rm.getName();
+            for (Map.Entry<String, ProtectedRegion> pr:rm.getRegions().entrySet()) {
+                if (!pr.getValue().getType().equals(RegionType.CUBOID)) continue;
+                if (RedProtect.get().rm.getRegion(pr.getKey(), w) != null) continue;
+
+                Set<PlayerRegion> leaders;
+                Set<PlayerRegion> members;
+
+                if (!pr.getValue().getOwners().getUniqueIds().isEmpty())
+                    leaders = pr.getValue().getOwners().getUniqueIds().stream().filter(p->Bukkit.getPlayer(p) != null).map(o->new PlayerRegion(o.toString(), Bukkit.getPlayer(o).getName())).collect(Collectors.toSet());
+                else
+                    leaders = pr.getValue().getOwners().getPlayers().stream().map(o->new PlayerRegion(o, o)).collect(Collectors.toSet());
+
+                if (!pr.getValue().getMembers().getUniqueIds().isEmpty())
+                    members = pr.getValue().getMembers().getUniqueIds().stream().filter(p->Bukkit.getPlayer(p) != null).map(o->new PlayerRegion(o.toString(), Bukkit.getPlayer(o).getName())).collect(Collectors.toSet());
+                else
+                    members = pr.getValue().getMembers().getPlayers().stream().map(o->new PlayerRegion(o, o)).collect(Collectors.toSet());
+
+                if (leaders.isEmpty()) {
+                    if (members.isEmpty())
+                        leaders.add(new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader));
+                    else
+                        leaders.addAll(members);
+                }
+
+                Location min = new Location(Bukkit.getWorld(w), pr.getValue().getMinimumPoint().getX(), pr.getValue().getMinimumPoint().getY(), pr.getValue().getMinimumPoint().getZ());
+                Location max = new Location(Bukkit.getWorld(w), pr.getValue().getMaximumPoint().getX(), pr.getValue().getMaximumPoint().getY(), pr.getValue().getMaximumPoint().getZ());
+
+                Region r = new Region(pr.getKey(), new HashSet<>(), members, leaders, min, max, RedProtect.get().config.getDefFlagsValues(), "", pr.getValue().getPriority(), w, RedProtect.get().getUtil().dateNow(), 0, null, true);
+
+                for (Map.Entry<Flag<?>, Object> flag : pr.getValue().getFlags().entrySet()) {
+                    if (r.flagExists(flag.getKey().getName()) && RedProtect.get().getUtil().parseObject(flag.getValue().toString()) != null) {
+                        r.setFlag(Bukkit.getConsoleSender(), flag.getKey().getName(), RedProtect.get().getUtil().parseObject(flag.getValue().toString()));
+                    }
+                }
+                RedProtect.get().rm.add(r, w);
+                RedProtect.get().logger.warning("Region converted and named to " + r.getName());
+                i++;
+            }
+            RedProtect.get().logger.success(i + " WorldGuard regions imported for world " + w);
+        }
+        return i > 0;
     }
 
     private static boolean handleMyChunk() {
@@ -467,15 +529,27 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 }
 
                 if (args[0].equalsIgnoreCase("mychunktorp")) {
+                    RedProtect.get().logger.success("...converting MyChunk database");
                     if (handleMyChunk()) {
                         RedProtect.get().rm.saveAll(true);
                         RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                         RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
-                        RedProtect.get().logger.success("...converting MyChunk database");
-                        RedProtect.get().logger.success("http://dev.bukkit.org/bukkit-plugins/mychunk/");
                         return true;
                     } else {
                         RedProtect.get().logger.success("The plugin MyChunk is not installed or no regions found");
+                        return true;
+                    }
+                }
+
+                if (args[0].equalsIgnoreCase("wgtorp")) {
+                    RedProtect.get().logger.success("...converting WorldGuard database");
+                    if (handleWGRegions()) {
+                        RedProtect.get().rm.saveAll(true);
+                        RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
+                        RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
+                        return true;
+                    } else {
+                        RedProtect.get().logger.success("The plugin WorldGuard is not installed or no regions found");
                         return true;
                     }
                 }
@@ -763,7 +837,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all");
+        List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp");
         if (sender instanceof Player) {
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);

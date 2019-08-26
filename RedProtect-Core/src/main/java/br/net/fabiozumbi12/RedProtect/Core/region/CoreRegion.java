@@ -88,6 +88,7 @@ public class CoreRegion implements Serializable {
         this.tppoint = tppoint;
         this.tppointYaw = tppointYaw;
         this.canDelete = candel;
+        this.date = date;
 
         if (worldName != null) {
             this.world = worldName;
