@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import com.earth2me.essentials.Essentials;
 import net.milkbowl.vault.economy.Economy;
@@ -53,6 +54,7 @@ public class HooksManager {
     public Essentials pless;
     public boolean Dyn;
     public DynmapHook dynmapHook;
+    public WorldGuardHelper worldGuardHelper;
 
     public void registerHooksFirst() {
         try {
@@ -101,6 +103,16 @@ public class HooksManager {
             }
             if (worldEdit) {
                 RedProtect.get().logger.info("WorldEdit found. Hooked.");
+            }
+            if(worldguard) {
+                RedProtect rp = RedProtect.get();
+                if (rp.bukkitVersion >= 1130) {
+                    worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest").newInstance();
+                } else {
+                    worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper112").newInstance();
+                }
+
+                rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
             }
             if (bossBar) {
                 RedProtect.get().logger.info("BossbarAPI found. Hooked.");

@@ -35,16 +35,15 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
@@ -150,15 +149,17 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             return false;
         }
 
-        RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        if (rc.getLoaded().isEmpty()) return false;
+        WorldGuardHelper helper = RedProtect.get().hooks.worldGuardHelper;
+
+        List<RegionManager> loaded = helper.getLoaded();
+        if (loaded.isEmpty()) return false;
 
         int i = 0;
-        for (RegionManager rm:rc.getLoaded()) {
+        for (RegionManager rm : loaded) {
             if (rm.getRegions().isEmpty()) continue;
 
             String w = rm.getName();
-            for (Map.Entry<String, ProtectedRegion> pr:rm.getRegions().entrySet()) {
+            for (Map.Entry<String, ProtectedRegion> pr : rm.getRegions().entrySet()) {
                 if (!pr.getValue().getType().equals(RegionType.CUBOID)) continue;
                 if (RedProtect.get().rm.getRegion(pr.getKey(), w) != null) continue;
 
@@ -182,8 +183,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                         leaders.addAll(members);
                 }
 
-                Location min = new Location(Bukkit.getWorld(w), pr.getValue().getMinimumPoint().getX(), pr.getValue().getMinimumPoint().getY(), pr.getValue().getMinimumPoint().getZ());
-                Location max = new Location(Bukkit.getWorld(w), pr.getValue().getMaximumPoint().getX(), pr.getValue().getMaximumPoint().getY(), pr.getValue().getMaximumPoint().getZ());
+                Location min = helper.getMinimumPoint(pr.getValue(), Bukkit.getWorld(w));
+                Location max = helper.getMaximumPoint(pr.getValue(), Bukkit.getWorld(w));
 
                 Region r = new Region(pr.getKey(), new HashSet<>(), members, leaders, min, max, RedProtect.get().config.getDefFlagsValues(), "", pr.getValue().getPriority(), w, RedProtect.get().getUtil().dateNow(), 0, null, true);
 
