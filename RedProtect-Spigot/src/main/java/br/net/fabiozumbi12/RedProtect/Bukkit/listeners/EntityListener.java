@@ -372,6 +372,21 @@ public class EntityListener implements Listener {
                 event.setCancelled(true);
             }
         }
+
+        if (e instanceof Boat) {
+            Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+            if (r != null) {
+                Boat boat = (Boat)e;
+                if (boat.getPassenger() instanceof Player) {
+                    Player p = (Player)boat.getPassenger();
+                    if (!r.canBuild(p)) {
+                        event.setCancelled(true);
+                    }
+                } else if (!r.canFlowDamage()) {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 
 }
