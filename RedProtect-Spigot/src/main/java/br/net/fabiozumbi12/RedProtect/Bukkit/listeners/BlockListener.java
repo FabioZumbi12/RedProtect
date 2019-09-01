@@ -45,6 +45,7 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -61,7 +62,7 @@ public class BlockListener implements Listener {
     private static final ContainerManager cont = new ContainerManager();
 
     public BlockListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded BlockListener...");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Loaded BlockListener...");
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -73,7 +74,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onSignPlace(SignChangeEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is SignChangeEvent event!");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is SignChangeEvent event!");
 
         Block b = e.getBlock();
         Player p = e.getPlayer();
@@ -194,7 +195,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockPlaceEvent event!");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPlaceEvent event!");
 
         Player p = e.getPlayer();
         Block b = e.getBlockPlaced();
@@ -268,7 +269,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockBreakEvent event!");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockBreakEvent event!");
 
         Player p = e.getPlayer();
         Block b = e.getBlock();
@@ -305,12 +306,11 @@ public class BlockListener implements Listener {
             RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         }
-
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is PlayerInteractEvent event!");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is PlayerInteractEvent event!");
 
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
@@ -341,9 +341,27 @@ public class BlockListener implements Listener {
         }
     }
 
+    @EventHandler
+    private void onChorusBreak(ProjectileHitEvent event)
+    {
+        if (!(event.getEntity().getShooter() instanceof Player)) return;
+
+        if (event.getHitBlock() != null && event.getHitBlock().getType() == Material.CHORUS_FLOWER)
+        {
+            Player p = (Player) event.getEntity().getShooter();
+            Region r = RedProtect.get().rm.getTopRegion(event.getHitBlock().getLocation());
+            if (r != null && !r.canBuild(p)) {
+                event.getEntity().remove();
+                event.getHitBlock().setType(Material.AIR);
+                Bukkit.getScheduler().runTask(RedProtect.get(), () -> event.getHitBlock().setType(Material.CHORUS_FLOWER));
+                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityExplode(EntityExplodeEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - EntityExplodeEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - EntityExplodeEvent event");
         List<Block> toRemove = new ArrayList<>();
 
         Region or = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
@@ -351,11 +369,11 @@ public class BlockListener implements Listener {
             if (b == null) {
                 continue;
             }
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Blocks: " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.BLOCKS, "Blocks: " + b.getType().name());
             Location l = b.getLocation();
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.canFire() || !cont.canWorldBreak(b)) {
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "canWorldBreak Called!");
+                RedProtect.get().logger.debug(LogLevel.BLOCKS, "canWorldBreak Called!");
                 //e.setCancelled(true);
                 toRemove.add(b);
                 continue;
@@ -381,7 +399,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onFrameBrake(HangingBreakByEntityEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - HangingBreakByEntityEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - HangingBreakByEntityEvent event");
 
         Entity remover = e.getRemover();
         Entity ent = e.getEntity();
@@ -397,7 +415,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onFrameBrake(HangingBreakEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - HangingBreakEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - HangingBreakEvent event");
 
         Entity ent = e.getEntity();
         Location l = e.getEntity().getLocation();
@@ -412,7 +430,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockStartBurn(BlockIgniteEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockIgniteEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockIgniteEvent event");
 
         Block b = e.getBlock();
         Block bignit = e.getIgnitingBlock();
@@ -448,7 +466,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockBurnEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockBurnEvent event");
 
         Block b = e.getBlock();
 
@@ -465,11 +483,11 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onFlow(BlockFromToEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockFromToEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockFromToEvent event");
 
         Block bto = e.getToBlock();
         Block bfrom = e.getBlock();
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockFromToEvent event is to " + bto.getType().name() + " from " + bfrom.getType().name());
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockFromToEvent event is to " + bto.getType().name() + " from " + bfrom.getType().name());
         Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
         Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
         boolean isLiquid = bfrom.isLiquid() || bfrom.getType().name().contains("BUBBLE_COLUMN") || bfrom.getType().name().contains("KELP");
@@ -498,7 +516,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLightning(LightningStrikeEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is LightningStrikeEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is LightningStrikeEvent event");
         Location l = e.getLightning().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
         if (r != null && !r.canFire()) {
@@ -508,11 +526,11 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onFireSpread(BlockSpreadEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockSpreadEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockSpreadEvent event");
 
         Block bfrom = e.getSource();
         Block bto = e.getBlock();
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockSpreadEvent event, source is " + bfrom.getType().name());
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockSpreadEvent event, source is " + bfrom.getType().name());
         Region rfrom = RedProtect.get().rm.getTopRegion(bfrom.getLocation());
         Region rto = RedProtect.get().rm.getTopRegion(bto.getLocation());
         if ((e.getNewState().getType().equals(Material.FIRE) || e.getNewState().getType().name().contains("LAVA")) && rfrom != null && !rfrom.canFire()) {
@@ -541,7 +559,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is StructureGrowEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is StructureGrowEvent event");
         if (!RedProtect.get().config.configRoot().region_settings.deny_structure_bypass_regions) {
             return;
         }
@@ -565,7 +583,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onVehicleBreak(VehicleDestroyEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is VehicleDestroyEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is VehicleDestroyEvent event");
 
         if (!(e.getAttacker() instanceof Player)) {
             return;
@@ -582,7 +600,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockPistonExtendEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPistonExtendEvent event");
         if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
             return;
         }
@@ -593,8 +611,8 @@ public class BlockListener implements Listener {
         Boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
         World w = e.getBlock().getWorld();
         for (Block b : blocks) {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockPistonExtendEvent event - Block: " + b.getType().name());
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockPistonExtendEvent event - Relative: " + b.getRelative(e.getDirection()).getType().name());
+            RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonExtendEvent event - Block: " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonExtendEvent event - Relative: " + b.getRelative(e.getDirection()).getType().name());
             Region br = RedProtect.get().rm.getTopRegion(b.getRelative(e.getDirection()).getLocation());
             if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                 e.setCancelled(true);
@@ -616,7 +634,7 @@ public class BlockListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockPistonRetractEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPistonRetractEvent event");
         if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
             return;
         }
@@ -626,7 +644,7 @@ public class BlockListener implements Listener {
         Block piston = e.getBlock();
         if (!Bukkit.getBukkitVersion().startsWith("1.8.") && !Bukkit.getBukkitVersion().startsWith("1.9.")) {
             Block b = e.getRetractLocation().getBlock();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockPistonRetractEvent not 1.8 event - Block: " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent not 1.8 event - Block: " + b.getType().name());
             Region pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
             Region br = RedProtect.get().rm.getTopRegion(b.getLocation());
             if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
@@ -646,7 +664,7 @@ public class BlockListener implements Listener {
             List<Block> blocks = e.getBlocks();
             Region pr = RedProtect.get().rm.getTopRegion(piston.getLocation());
             for (Block b : blocks) {
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockPistonRetractEvent 1.8 event - Block: " + b.getType().name());
+                RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent 1.8 event - Block: " + b.getType().name());
                 Region br = RedProtect.get().rm.getTopRegion(b.getLocation());
                 if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                     e.setCancelled(true);
@@ -668,7 +686,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLeafDecay(LeavesDecayEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is LeavesDecayEvent event");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is LeavesDecayEvent event");
 
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.leavesDecay()) {
@@ -678,7 +696,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockGrow(BlockGrowEvent event) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is BlockGrowEvent event: " + event.getNewState().getType().name());
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockGrowEvent event: " + event.getNewState().getType().name());
 
         Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
         if (r != null && !r.canGrow()) {
@@ -688,13 +706,13 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "BlockListener - Is Blockform event!");
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is Blockform event!");
 
         BlockState b = event.getNewState();
         if (b == null) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is Blockform event: " + b.getType().name());
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is Blockform event: " + b.getType().name());
 
         if (b.getType().equals(Material.SNOW) || b.getType().equals(Material.ICE)) {
             Region r = RedProtect.get().rm.getTopRegion(b.getLocation());

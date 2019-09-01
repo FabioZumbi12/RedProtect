@@ -79,7 +79,7 @@ public class PlayerListener implements Listener {
     private final HashMap<String, HashMap<Integer, Location>> deathLocs = new HashMap<>();
 
     public PlayerListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded PlayerListener...");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Loaded PlayerListener...");
     }
 
     @EventHandler
@@ -110,7 +110,7 @@ public class PlayerListener implements Listener {
         if (!(e.getEntity() instanceof Player)) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
         Player p = (Player) e.getEntity();
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
         if (r != null && e.getNewState().getType().name().contains("FROSTED_ICE") && !r.canIceForm(p)) {
@@ -129,7 +129,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - PlayerInteractEvent canceled? " + event.isCancelled());
 
         final Player p = event.getPlayer();
         Block b = event.getClickedBlock();
@@ -144,7 +144,7 @@ public class PlayerListener implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }
@@ -419,7 +419,7 @@ public class PlayerListener implements Listener {
         Entity e = event.getRightClicked();
         Player p = event.getPlayer();
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
         Location l = e.getLocation();
 
         if (e instanceof ItemFrame || e instanceof Painting) {
@@ -443,7 +443,7 @@ public class PlayerListener implements Listener {
         } else if (!RedProtect.get().getUtil().isBukkitEntity(e) && (!(event.getRightClicked() instanceof Player))) {
             Region r = RedProtect.get().rm.getTopRegion(l);
             if (r != null && !r.allowMod(p)) {
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
+                RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerInteractEntityEvent - Block is " + event.getRightClicked().getType().name());
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
@@ -485,7 +485,7 @@ public class PlayerListener implements Listener {
             }
             //execute on health
             if (r.cmdOnHealth(play)) {
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Cmd on healt: true");
+                RedProtect.get().logger.debug(LogLevel.PLAYER, "Cmd on healt: true");
             }
 
             if (!r.canDeath() && play.getHealth() <= 1) {
@@ -499,7 +499,7 @@ public class PlayerListener implements Listener {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
         Player p = null;
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "RPLayerListener: Is EntityDamageByEntityEvent event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "RPLayerListener: Is EntityDamageByEntityEvent event");
 
         if (e.getDamager() instanceof Player) {
             p = (Player) e.getDamager();
@@ -511,13 +511,13 @@ public class PlayerListener implements Listener {
         }
 
         if (p != null) {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Player: " + p.getName());
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "Player: " + p.getName());
         } else {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Player: is null");
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "Player: is null");
             return;
         }
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Damager: " + e.getDamager().getType().name());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Damager: " + e.getDamager().getType().name());
 
         Location l = e.getEntity().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(l);
@@ -564,7 +564,7 @@ public class PlayerListener implements Listener {
         final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
         final Region rto = RedProtect.get().rm.getTopRegion(lto);
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
 
         if (rfrom != null) {
 
@@ -825,7 +825,7 @@ public class PlayerListener implements Listener {
     }
 
     private void deathListener(Player p, int index) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Added index " + index);
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Added index " + index);
 
         HashMap<Integer, Location> loc1 = new HashMap<>();
         if (!deathLocs.containsKey(p.getName())) {
@@ -1164,7 +1164,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is ProjectileLaunchEvent event.");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is ProjectileLaunchEvent event.");
 
         Location l = e.getEntity().getLocation();
         Player p = (Player) e.getEntity().getShooter();
@@ -1178,7 +1178,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void PlayerDropItem(PlayerDropItemEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is PlayerDropItemEvent event.");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is PlayerDropItemEvent event.");
 
         Location l = e.getItemDrop().getLocation();
         Player p = e.getPlayer();
@@ -1192,7 +1192,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void PlayerPickup(PlayerPickupItemEvent e) {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is PlayerPickupItemEvent event.");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is PlayerPickupItemEvent event.");
 
         Location l = e.getItem().getLocation();
         Player p = e.getPlayer();
@@ -1213,7 +1213,7 @@ public class PlayerListener implements Listener {
         Player p = (Player) e.getPotion().getShooter();
         Entity ent = e.getEntity();
 
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is PotionSplashEvent event.");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is PotionSplashEvent event.");
 
         Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
         if (r != null && !r.usePotions(p)) {
@@ -1284,7 +1284,7 @@ public class PlayerListener implements Listener {
         }
         for (String remove : toremove) {
             PlayertaskID.remove(remove);
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed task ID: " + remove + " for player " + p.getName());
+            RedProtect.get().logger.debug(LogLevel.PLAYER, "Removed task ID: " + remove + " for player " + p.getName());
         }
         toremove.clear();
     }
@@ -1421,7 +1421,7 @@ public class PlayerListener implements Listener {
                             if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())) {
                                 Bukkit.getScheduler().cancelTask(id);
                                 removeTasks.add(taskId);
-                                RedProtect.get().logger.debug(LogLevel.DEFAULT, "(RegionFlags-eff)Removed task ID: " + taskId + " for player " + p.getName());
+                                RedProtect.get().logger.debug(LogLevel.PLAYER, "(RegionFlags-eff)Removed task ID: " + taskId + " for player " + p.getName());
                             }
                         }
                         for (String key : removeTasks) {
@@ -1448,7 +1448,7 @@ public class PlayerListener implements Listener {
                             if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())) {
                                 Bukkit.getScheduler().cancelTask(id);
                                 removeTasks.add(taskId);
-                                RedProtect.get().logger.debug(LogLevel.DEFAULT, "(RegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
+                                RedProtect.get().logger.debug(LogLevel.PLAYER, "(RegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
                             }
                         }
                         for (String key : removeTasks) {
@@ -1521,13 +1521,13 @@ public class PlayerListener implements Listener {
                                 try {
                                     this.finalize();
                                 } catch (Throwable e) {
-                                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Effects not finalized...");
+                                    RedProtect.get().logger.debug(LogLevel.PLAYER, "Effects not finalized...");
                                 }
                             }
                         }
                     }, 0, 20);
                     PlayertaskID.put(TaskId + "_" + eff + r.getName(), p.getName());
-                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Added task ID: " + TaskId + "_" + eff + " for player " + p.getName());
+                    RedProtect.get().logger.debug(LogLevel.PLAYER, "Added task ID: " + TaskId + "_" + eff + " for player " + p.getName());
                 }
             }
 
@@ -1546,13 +1546,13 @@ public class PlayerListener implements Listener {
                             try {
                                 this.finalize();
                             } catch (Throwable e) {
-                                RedProtect.get().logger.debug(LogLevel.DEFAULT, "forcefly not finalized...");
+                                RedProtect.get().logger.debug(LogLevel.PLAYER, "forcefly not finalized...");
                             }
                         }
                     }
                 }, 0, 80);
                 PlayertaskID.put(TaskId + "_" + "forcefly" + r.getName(), p.getName());
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "(RegionFlags fly)Added task ID: " + TaskId + "_" + "forcefly" + " for player " + p.getName());
+                RedProtect.get().logger.debug(LogLevel.PLAYER, "(RegionFlags fly)Added task ID: " + TaskId + "_" + "forcefly" + " for player " + p.getName());
             }
         }
     }
@@ -1592,7 +1592,7 @@ public class PlayerListener implements Listener {
                             if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())) {
                                 Bukkit.getScheduler().cancelTask(id);
                                 removeTasks.add(taskId);
-                                RedProtect.get().logger.debug(LogLevel.DEFAULT, "(noRegionFlags eff)Removed task ID: " + taskId + " for effect " + effect);
+                                RedProtect.get().logger.debug(LogLevel.PLAYER, "(noRegionFlags eff)Removed task ID: " + taskId + " for effect " + effect);
                             }
                         }
                         for (String key : removeTasks) {
@@ -1615,7 +1615,7 @@ public class PlayerListener implements Listener {
                             if (PlayertaskID.containsKey(ideff) && PlayertaskID.get(ideff).equals(p.getName())) {
                                 Bukkit.getScheduler().cancelTask(id);
                                 removeTasks.add(taskId);
-                                RedProtect.get().logger.debug(LogLevel.DEFAULT, "(noRegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
+                                RedProtect.get().logger.debug(LogLevel.PLAYER, "(noRegionFlags fly)Removed task ID: " + taskId + " for player " + p.getName());
                             }
                         }
                         for (String key : removeTasks) {
@@ -1656,7 +1656,7 @@ public class PlayerListener implements Listener {
         if (e.isCancelled()) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is PlayerListener - HangingBreakByEntityEvent event");
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "Is PlayerListener - HangingBreakByEntityEvent event");
         Entity ent = e.getRemover();
         Location loc = e.getEntity().getLocation();
         Region r = RedProtect.get().rm.getTopRegion(loc);

@@ -39,7 +39,7 @@ public class WorldListener implements Listener {
 
 
     public WorldListener() {
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded EntityListener...");
+        RedProtect.get().logger.debug(LogLevel.WORLD, "Loaded EntityListener...");
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
