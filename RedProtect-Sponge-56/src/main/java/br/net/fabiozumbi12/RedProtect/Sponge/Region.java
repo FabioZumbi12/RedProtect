@@ -1097,7 +1097,7 @@ public class Region extends CoreRegion {
     }
 
     private boolean checkAllowedPlayer(Player p, String flag) {
-        return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || p.hasPermission("redprotect.flag." + flag + ".bypass");
+        return this.isLeader(p) || this.isAdmin(p) || this.isMember(p) || p.hasPermission("redprotect.flag.bypass." + flag);
     }
 
     public List<Location<World>> getLimitLocs(int miny, int maxy, boolean define) {
