@@ -193,6 +193,8 @@ public class MainCategory {
         public String user_name = "root";
         @Setting(value = "user-pass")
         public String user_pass = "redprotect";
+        @Setting
+        public boolean ssl = false;
     }
 
     @ConfigSerializable

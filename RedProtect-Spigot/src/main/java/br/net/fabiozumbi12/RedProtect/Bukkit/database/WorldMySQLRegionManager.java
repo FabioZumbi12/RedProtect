@@ -69,7 +69,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         PreparedStatement st = null;
         try {
             if (!this.checkTableExists()) {
-                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
+                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().config.configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true":"")
+                        , RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
 
                 st = con.prepareStatement("CREATE TABLE `" + tableName + "` " +
                         "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Long not null, tppoint varchar(20), flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
@@ -798,7 +799,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void ConnectDB() {
         try {
-            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
+            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().config.configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true":"")
+                    , RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
             RedProtect.get().logger.info("Conected to " + this.tableName + " via Mysql!");
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
