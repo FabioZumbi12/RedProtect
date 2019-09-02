@@ -83,6 +83,7 @@ permissions:
       redprotect.flag.spawn-monsters: true
       redprotect.flag.teleport: true
       redprotect.flag.use-potions: true
+      redprotect.flag.redstone: true
   redprotect.command.admin:
     description: "Recommended Admin permissions."
     default: op

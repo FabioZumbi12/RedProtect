@@ -119,6 +119,7 @@ public class VersionHelper56 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.spawn-monsters", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.teleport", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.redstone", Tristate.TRUE);
     }
 
     @Override

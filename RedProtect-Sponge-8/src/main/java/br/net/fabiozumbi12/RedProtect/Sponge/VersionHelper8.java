@@ -124,6 +124,7 @@ public class VersionHelper8 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.spawn-monsters", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.teleport", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
+        permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.redstone", Tristate.TRUE);
 
         if (RedProtect.get().config.ecoRoot().enchantments.values.size() < Sponge.getRegistry().getAllOf(EnchantmentType.class).size()) {
             Sponge.getRegistry().getAllOf(EnchantmentType.class).forEach((type) -> {

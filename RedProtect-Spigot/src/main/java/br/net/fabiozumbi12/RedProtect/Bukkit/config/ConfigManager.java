@@ -391,6 +391,14 @@ public class ConfigManager extends CoreConfigManager {
             update++;
         }
 
+        if (root.config_version < 8.6D) {
+            root.config_version = 8.6D;
+            if (!root.flags.containsKey("redstone")) {
+                root.flags.put("redstone", false);
+            }
+            update++;
+        }
+
         if (update > 0) {
             RedProtect.get().logger.warning("Configuration UPDATED!");
         }

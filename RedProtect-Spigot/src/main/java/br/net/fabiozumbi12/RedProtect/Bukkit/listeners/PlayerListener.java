@@ -315,7 +315,12 @@ public class PlayerListener implements Listener {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
-                } else if (b.getType().name().contains("LEVER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
+                } else if (b.getType().name().contains("DAYLIGHT") || b.getType().name().contains("COMPARATOR") || b.getType().name().contains("REPEATER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
+                    if (!r.canRedstone(p)) {
+                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
+                        event.setCancelled(true);
+                    }
+                } else if (b.getType().name().contains("LEVER")) {
                     if (!r.canLever(p)) {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantlever");
                         event.setCancelled(true);

@@ -1049,6 +1049,10 @@ public class Region extends CoreRegion {
         return getFlagBool("lever") || checkAllowedPlayer(p,"lever");
     }
 
+    public boolean canRedstone(Player p) {
+        return getFlagBool("redstone") || checkAllowedPlayer(p, "redstone");
+    }
+
     public boolean canButton(Player p) {
         return getFlagBool("button") || checkAllowedPlayer(p,"button");
     }

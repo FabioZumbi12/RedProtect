@@ -43,6 +43,7 @@ import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.block.RedstonePoweredData;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
@@ -400,31 +401,23 @@ public class PlayerListener {
                 }
             } else if (bstate.getType().getName().contains("lever")) {
                 if (!r.canLever(p)) {
-                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
-                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantlever");
-                        event.setCancelled(true);
-                    } else {
-                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.levertoggled").replace("{region}", r.getLeadersDesc()));
-                    }
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantlever");
+                    event.setCancelled(true);
+                }
+            } else if (bstate.getType().getName().contains("redstone") || bstate.getType().getName().contains("daylight") || bstate.getType().getName().contains("comparator") || bstate.getType().getName().contains("repeater")) {
+                if (!r.canRedstone(p)) {
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
+                    event.setCancelled(true);
                 }
             } else if (bstate.getType().getName().contains("button")) {
                 if (!r.canButton(p)) {
-                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
-                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantbutton");
-                        event.setCancelled(true);
-                    } else {
-                        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.buttonactivated").replace("{region}", r.getLeadersDesc()));
-                    }
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantbutton");
+                    event.setCancelled(true);
                 }
             } else if (DoorManager.isOpenable(b)) {
                 if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
-                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
-                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantdoor");
-                        event.setCancelled(true);
-                    } else {
-                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.opendoor");
-                        DoorManager.ChangeDoor(b, r);
-                    }
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantdoor");
+                    event.setCancelled(true);
                 } else {
                     DoorManager.ChangeDoor(b, r);
                 }
