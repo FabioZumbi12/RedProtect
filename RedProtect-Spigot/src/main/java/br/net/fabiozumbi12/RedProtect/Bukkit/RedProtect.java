@@ -207,6 +207,9 @@ public class RedProtect extends JavaPlugin {
         if (bukkitVersion >= 190) {
             getServer().getPluginManager().registerEvents(new Compat19(), this);
         }
+        if (bukkitVersion >= 1110) {
+            getServer().getPluginManager().registerEvents(new Compat111(), this);
+        }
 
         if(bukkitVersion <= 189) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper18").newInstance();

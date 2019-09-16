@@ -341,24 +341,6 @@ public class BlockListener implements Listener {
         }
     }
 
-    @EventHandler
-    private void onChorusBreak(ProjectileHitEvent event)
-    {
-        if (!(event.getEntity().getShooter() instanceof Player)) return;
-
-        if (event.getHitBlock() != null && event.getHitBlock().getType() == Material.CHORUS_FLOWER)
-        {
-            Player p = (Player) event.getEntity().getShooter();
-            Region r = RedProtect.get().rm.getTopRegion(event.getHitBlock().getLocation());
-            if (r != null && !r.canBuild(p)) {
-                event.getEntity().remove();
-                event.getHitBlock().setType(Material.AIR);
-                Bukkit.getScheduler().runTask(RedProtect.get(), () -> event.getHitBlock().setType(Material.CHORUS_FLOWER));
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
-            }
-        }
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityExplode(EntityExplodeEvent e) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - EntityExplodeEvent event");
