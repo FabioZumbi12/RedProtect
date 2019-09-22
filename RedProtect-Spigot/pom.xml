@@ -149,14 +149,6 @@
         </dependency>
 
         <dependency>
-            <groupId>MagicCarpet</groupId>
-            <artifactId>MagicCarpet</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/MagicCarpet.jar</systemPath>
-        </dependency>
-
-        <dependency>
             <groupId>mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
             <version>v1</version>

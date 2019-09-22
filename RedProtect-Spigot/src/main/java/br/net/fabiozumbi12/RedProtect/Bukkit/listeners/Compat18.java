@@ -30,8 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import net.digiex.magiccarpet.Carpet;
-import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -214,23 +212,6 @@ public class Compat18 implements Listener {
         }
         if (!toRemove.isEmpty()) {
             e.blockList().removeAll(toRemove);
-        }
-    }
-
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPistonRetract(BlockPistonRetractEvent e) {
-        if (RedProtect.get().hooks.magicCarpet && RedProtect.get().config.configRoot().hooks.fix_mc_get_blocks) {
-            List<Block> blocks = e.getBlocks();
-            for (Block block : blocks) {
-                for (Carpet carpet : MagicCarpet.getCarpets().all()) {
-                    if (carpet != null && carpet.isVisible() && carpet.touches(e.getBlock())) {
-                        block.setType(Material.AIR);
-                        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Carpet touch block " + block.getType().name());
-                        e.setCancelled(true);
-                    }
-                }
-            }
         }
     }
 }

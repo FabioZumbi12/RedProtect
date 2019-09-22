@@ -39,7 +39,6 @@ import de.Keyle.MyPet.api.entity.MyPet.PetState;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
 import de.Keyle.MyPet.api.player.MyPetPlayer;
 import me.NoChance.PvPManager.PvPlayer;
-import net.digiex.magiccarpet.MagicCarpet;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -776,21 +775,6 @@ public class PlayerListener implements Listener {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().config.configRoot().flags_configuration.pvparena_nopvp_kick_cmd.replace("{player}", p.getName()));
-                    return;
-                }
-            }
-
-            if (RedProtect.get().hooks.magicCarpet && !r.getFlagBool("allow-magiccarpet") && (!r.isAdmin(p) && !r.isLeader(p))) {
-                if (cmds.equalsIgnoreCase("magiccarpet")) {
-                    e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
-                } else {
-                    for (String cmda : MagicCarpet.getPlugin(MagicCarpet.class).getCommand("MagicCarpet").getAliases()) {
-                        if (cmds.equalsIgnoreCase(cmda)) {
-                            e.setCancelled(true);
-                            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
-                        }
-                    }
                 }
             }
         }
@@ -1391,14 +1375,6 @@ public class PlayerListener implements Listener {
                     RedProtect.get().teleportDelay.add(p.getName());
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp teleport " + cmds[0] + " " + cmds[1] + " " + p.getName());
                     Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().config.configRoot().region_settings.portal_delay * 20);
-                }
-            }
-
-            //Enter MagicCarpet
-            if (r.flagExists("allow-magiccarpet") && !r.getFlagBool("allow-magiccarpet") && RedProtect.get().hooks.magicCarpet && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.admin.flag.allow-magiccarpet")) {
-                if (MagicCarpet.getCarpets().getCarpet(p) != null) {
-                    MagicCarpet.getCarpets().remove(p);
-                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantmc");
                 }
             }
         }
