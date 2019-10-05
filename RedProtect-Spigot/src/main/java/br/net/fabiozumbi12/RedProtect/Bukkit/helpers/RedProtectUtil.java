@@ -420,12 +420,17 @@ public class RedProtectUtil extends CoreUtil {
                 }
             }
 
-            //filter name
-            String rname = setName(region.getName());
-            if (rname.length() < 4) {
-                rname = nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
-                RedProtect.get().rm.renameRegion(rname, region);
-                cfm++;
+            try {
+                //filter name
+                String rname = setName(region.getName());
+                if (rname.length() < 4) {
+                    rname = nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
+                    RedProtect.get().rm.renameRegion(rname, region);
+                    cfm++;
+                }
+            } catch (Exception ex) {
+                RedProtect.get().logger.warning("&eThe region " + region.getName() + " is invalid or broken, skipping...");
+                //RedProtect.get().rm.remove(region, region.getWorld());
             }
         }
 
