@@ -238,8 +238,6 @@ public class BlockListener implements Listener {
                 return;
             }
 
-            RedProtect.get().lang.sendMessage(p, "Type: " + e.getItemInHand().getItemMeta());
-
             if (!r.canBuild(p) && !r.canPlace(b.getType())) {
                 RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
