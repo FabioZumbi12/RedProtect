@@ -200,7 +200,7 @@ public class RedProtectUtil extends CoreUtil {
 
     public boolean isGuiItem(ItemStack pitem) {
         if (pitem.get(Keys.ITEM_LORE).isPresent() &&
-                pitem.get(Keys.ITEM_LORE).get().size() >= 1 &&
+                pitem.get(Keys.ITEM_LORE).get().size() >= 2 &&
                 RedProtect.get().config.getDefFlags().contains(pitem.get(Keys.ITEM_LORE).get().get(1).toPlain().replace("§0", ""))) {
             return true;
         }
