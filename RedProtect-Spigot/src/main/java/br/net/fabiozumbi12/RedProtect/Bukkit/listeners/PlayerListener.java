@@ -59,6 +59,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Crops;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.inventivetalent.bossbar.BossBarAPI;
@@ -203,6 +204,14 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+
+            if ((itemInHand.getType().name().contains("_HOE") || (itemInHand.getType().isItem() && b != null && b.getType().name().equals("FARMLAND")))
+                    && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                Region r = RedProtect.get().rm.getTopRegion(l);
+                if (r != null && r.canCrops()) {
+                    return;
+                }
+            }
         }
 
         if (event.isCancelled()) {
@@ -294,7 +303,7 @@ public class PlayerListener implements Listener {
                         RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
                     }
                 } else if (b.getType().name().contains("LEAVES") || b.getType().name().contains("LOG") || b.getType().name().contains("_WOOD")) {
-                    if (!r.canTree(b) && !r.canBuild(p)) {
+                    if (!r.canTree() && !r.canBuild(p)) {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                         event.setCancelled(true);
                     }

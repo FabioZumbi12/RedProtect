@@ -234,6 +234,12 @@ public class BlockListener implements Listener {
                 return;
             }
 
+            if ((m.name().contains("_HOE") || r.canCrops(b)) && r.canCrops()) {
+                return;
+            }
+
+            RedProtect.get().lang.sendMessage(p, "Type: " + e.getItemInHand().getItemMeta());
+
             if (!r.canBuild(p) && !r.canPlace(b.getType())) {
                 RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
@@ -317,15 +323,17 @@ public class BlockListener implements Listener {
         Region r = RedProtect.get().rm.getTopRegion(l);
 
         Block b = p.getLocation().getBlock();
-        if (r != null &&
-                (b instanceof Crops
+        if (r != null && (b instanceof Crops
                         || b.getType().equals(Material.PUMPKIN_STEM)
                         || b.getType().equals(Material.MELON_STEM)
                         || b.getType().toString().contains("CROPS")
                         || b.getType().toString().contains("SOIL")
+                        || b.getType().toString().contains("FARMLAND")
                         || b.getType().toString().contains("CHORUS_")
                         || b.getType().toString().contains("BEETROOT_")
-                        || b.getType().toString().contains("SUGAR_CANE")) && !r.canCrops(b) && !r.canBuild(p)) {
+                        || b.getType().toString().contains("SUGAR_CANE")
+                        || p.getInventory().getItemInMainHand().getType().name().contains("_HOE"))
+                && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
             e.setCancelled(true);
             return;

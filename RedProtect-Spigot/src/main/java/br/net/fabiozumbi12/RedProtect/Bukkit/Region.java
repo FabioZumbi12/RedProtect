@@ -829,12 +829,20 @@ public class Region extends CoreRegion {
         return false;
     }
 
+    public boolean canTree() {
+        return flagExists("treefarm") && getFlagBool("treefarm");
+    }
+
+    public boolean canCrops() {
+        return flagExists("cropsfarm") && getFlagBool("cropsfarm");
+    }
+
     public boolean canTree(Block b) {
         return flagExists("treefarm") && (b.getType().toString().contains("LOG") || b.getType().toString().contains("LEAVES")) && getFlagBool("treefarm");
     }
 
     public boolean canCrops(Block b) {
-        return flagExists("cropsfarm") && (b instanceof Crops || b.getType().equals(Material.PUMPKIN_STEM) || b.getType().equals(Material.MELON_STEM) || b.getType().toString().contains("CROPS") || b.getType().toString().contains("SOIL") || b.getType().toString().contains("CHORUS_") || b.getType().toString().contains("BEETROOT_") || b.getType().toString().contains("SUGAR_CANE")) && getFlagBool("cropsfarm");
+        return flagExists("cropsfarm") && (b instanceof Crops || b.getType().equals(Material.PUMPKIN_STEM) || b.getType().equals(Material.MELON_STEM) || b.getType().toString().contains("CROPS") || b.getType().toString().contains("SOIL") || b.getType().toString().contains("CHORUS_") || b.getType().toString().contains("BEETROOT_") || b.getType().toString().contains("SUGAR_CANE") || b.getType().toString().contains("FARMLAND") || b.getType().toString().contains("WHEAT")) && getFlagBool("cropsfarm");
     }
 
     public boolean canSkill(Player p) {
