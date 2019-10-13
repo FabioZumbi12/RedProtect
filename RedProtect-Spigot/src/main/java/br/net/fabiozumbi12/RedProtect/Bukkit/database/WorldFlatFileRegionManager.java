@@ -274,15 +274,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 }
 
                 if (force) RedProtect.get().logger.info("Saving " + this.world + "'s regions...");
-
-                //try backup
-                if (force && RedProtect.get().config.configRoot().flat_file.backup) {
-                    if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
-                        RedProtect.get().getUtil().backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".yml");
-                    } else {
-                        RedProtect.get().getUtil().backupRegions(yamls, world, null);
-                    }
-                }
             }
         } catch (Exception e4) {
             e4.printStackTrace();

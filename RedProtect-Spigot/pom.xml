@@ -48,10 +48,6 @@
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
-            <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
-        </repository>
-        <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/repo/</url>
         </repository>

@@ -612,12 +612,13 @@ public class RedProtectUtil extends CoreUtil {
                 }
 
                 //try backup
-                if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
+                /*if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
                     backupRegions(Collections.singleton(fileDB), world.getName(), "data_" + world + ".conf");
                 } else {
                     backupRegions(dbs, world.getName(), null);
-                }
+                }*/
             }
+            backupRegions();
             dbcon.close();
 
             if (saved > 0) {
@@ -753,27 +754,17 @@ public class RedProtectUtil extends CoreUtil {
         }
     }
 
-    public void backupRegions(Set<CommentedConfigurationNode> fileDB, String world, String savedFile) {
-        if (!RedProtect.get().config.configRoot().flat_file.backup || fileDB.isEmpty()) {
-            return;
+    public void backupRegions(){
+        File bkpFolder = new File(RedProtect.get().configDir + File.separator + "backups" + File.separator);
+        if (!bkpFolder.exists()) {
+            bkpFolder.mkdir();
         }
 
-        File bfolder = new File(RedProtect.get().configDir + File.separator + "backups" + File.separator);
-        if (!bfolder.exists()) {
-            bfolder.mkdir();
+        try {
+            RedProtect.get().getUtil().zipFolder(RedProtect.get().configDir + File.separator + "data" , genFileName(bkpFolder.getPath() + File.separator, true).getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        File folder = new File(RedProtect.get().configDir + File.separator + "backups" + File.separator + world + File.separator);
-        if (!folder.exists()) {
-            folder.mkdir();
-            RedProtect.get().logger.info("Created folder: " + folder.getPath());
-        }
-
-        //Save backup
-        if (genFileName(folder.getPath() + File.separator, true) != null) {
-            saveToZipFile(genFileName(folder.getPath() + File.separator, true), savedFile, fileDB);
-        }
-
     }
 
     private boolean regionExists(Connection dbcon, String name, String tableName) {

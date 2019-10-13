@@ -181,21 +181,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     private void load(String path) {
 
-        try {
-            JsonElement jsonElement = new JsonParser().parse(new String(Files.readAllBytes(Paths.get(path))));
-
-            for (JsonElement elem: jsonElement.getAsJsonArray()){
-
-                RedProtect.get().logger.severe("Json String: " + elem.getAsString());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    /*
-    private void load(String path) {
-
         if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world + ". File type: conf");
 
@@ -222,7 +207,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 e.printStackTrace();
             }
         }
-    }*/
+    }
 
     @Override
     public int save(boolean force) {
@@ -278,15 +263,6 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 }
 
                 if (force) RedProtect.get().logger.info("Saving " + this.world + "'s regions...");
-
-                //try backup
-                if (force && RedProtect.get().config.configRoot().flat_file.backup) {
-                    if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
-                        RedProtect.get().getUtil().backupRegions(Collections.singleton(fileDB), world, "data_" + world + ".conf");
-                    } else {
-                        RedProtect.get().getUtil().backupRegions(dbs, world, null);
-                    }
-                }
             }
         } catch (Exception e4) {
             e4.printStackTrace();

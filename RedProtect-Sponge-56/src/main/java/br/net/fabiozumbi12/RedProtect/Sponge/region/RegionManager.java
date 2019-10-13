@@ -100,6 +100,9 @@ public class RegionManager {
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
             saved = worldRegionManager.save(force) + saved;
         }
+        if (force && RedProtect.get().config.configRoot().flat_file.backup && !RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+            RedProtect.get().getUtil().backupRegions();
+        }
         return saved;
     }
 
