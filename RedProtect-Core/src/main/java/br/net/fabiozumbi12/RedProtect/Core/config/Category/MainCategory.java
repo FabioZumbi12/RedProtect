@@ -38,7 +38,7 @@ public class MainCategory {
     @Setting(value = "config-version", comment = "Don't touch <3")
     public double config_version = 8.6;
     @Setting(value = "command-confirm", comment = "Commands who will need to \"rp yes\" or \"rp no\" before use.\nThis will accept only the command name, not alias.")
-    public List<String> command_confirm = new ArrayList<>(Arrays.asList("kill", "delete", "redefine", "regen", "undo", "rename", "ymlTomysql", "mychunktorp", "single-to-files", "files-to-single", "gpTorp"));
+    public List<String> command_confirm = new ArrayList<>(Arrays.asList("kill", "delete", "redefine", "regen", "undo", "rename", "fileToMysql", "mysqlToFile", "mychunktorp", "single-to-files", "files-to-single", "gpTorp"));
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
     public List<String> allowed_claim_worlds = new ArrayList<>();
     @Setting(value = "file-type", comment = "File type to save regions. Values: \"file\" or \"mysql\"")

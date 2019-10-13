@@ -559,7 +559,7 @@ public class CommandHandler {
 
     private HashMap<String, String> getConsoleCmds() {
         HashMap<String, String> map = new HashMap<>();
-        for (String cmd : Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "files-to-single", "single-to-files", "ymltomysql", "mysqltoyml", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all"))
+        for (String cmd : Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "files-to-single", "single-to-files", "filetomysql", "mysqltofile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all"))
             map.put(cmd, cmd);
         return map;
     }
