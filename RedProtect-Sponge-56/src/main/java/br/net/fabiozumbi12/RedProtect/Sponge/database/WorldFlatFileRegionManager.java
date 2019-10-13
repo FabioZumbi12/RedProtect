@@ -32,6 +32,9 @@ import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import jdk.nashorn.internal.parser.JSONParser;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -41,6 +44,8 @@ import org.spongepowered.api.world.World;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -176,6 +181,21 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     private void load(String path) {
 
+        try {
+            JsonElement jsonElement = new JsonParser().parse(new String(Files.readAllBytes(Paths.get(path))));
+
+            for (JsonElement elem: jsonElement.getAsJsonArray()){
+
+                RedProtect.get().logger.severe("Json String: " + elem.getAsString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /*
+    private void load(String path) {
+
         if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world + ". File type: conf");
 
@@ -202,7 +222,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     @Override
     public int save(boolean force) {
