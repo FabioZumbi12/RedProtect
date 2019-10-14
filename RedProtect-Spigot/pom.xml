@@ -36,16 +36,19 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>general-maven-repo</id>
+            <url>https://jcenter.bintray.com/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
+
         <repository>
             <id>vault-repo</id>
             <url>https://nexus.keyle.de/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>sk89q-snapshots</id>
@@ -54,14 +57,6 @@
         <repository>
             <id>EssentialsX</id>
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
-        </repository>
-        <repository>
-            <id>MyPet3.0</id>
-            <url>http://nexus.keyle.de</url>
-        </repository>
-        <repository>
-            <id>bstats</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
