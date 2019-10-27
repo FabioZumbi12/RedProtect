@@ -205,7 +205,7 @@ public class PlayerListener implements Listener {
                 return;
             }
 
-            if ((itemInHand.getType().name().contains("_HOE") || (itemInHand.getType().isItem() && b != null && b.getType().name().equals("FARMLAND")))
+            if ((itemInHand.getType().name().contains("_HOE") || (!itemInHand.getType().isBlock() && b != null && b.getType().name().equals("FARMLAND")))
                     && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 Region r = RedProtect.get().rm.getTopRegion(l);
                 if (r != null && r.canCrops()) {
