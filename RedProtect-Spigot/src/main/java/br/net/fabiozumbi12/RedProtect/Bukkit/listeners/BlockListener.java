@@ -330,7 +330,7 @@ public class BlockListener implements Listener {
                         || b.getType().toString().contains("CHORUS_")
                         || b.getType().toString().contains("BEETROOT_")
                         || b.getType().toString().contains("SUGAR_CANE")
-                        || p.getInventory().getItemInMainHand().getType().name().contains("_HOE"))
+                        || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
             e.setCancelled(true);
