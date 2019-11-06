@@ -570,8 +570,9 @@ public class Region extends CoreRegion {
             } else {
                 return RedProtect.get().config.configRoot().flags.getOrDefault(key, false);
             }
+        } else {
+            return this.flags.get(key) instanceof Boolean && (Boolean) this.flags.get(key);
         }
-        return this.flags.get(key) instanceof Boolean && (Boolean) this.flags.get(key);
     }
 
     public String getFlagString(String key) {
@@ -581,8 +582,9 @@ public class Region extends CoreRegion {
             } else {
                 return RedProtect.get().config.configRoot().flags.getOrDefault(key, false).toString();
             }
+        } else {
+            return this.flags.get(key).toString();
         }
-        return this.flags.get(key).toString();
     }
 
     public String getFlagInfo() {
