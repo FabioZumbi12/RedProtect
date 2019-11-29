@@ -334,23 +334,21 @@ public class GlobalListener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "GlobalListener - Is onChangeWeather event");
 
         World w = e.getTargetWorld();
-        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getTargetWorld().getName()).weather.allow_weather && !e.getWeather().equals(Weathers.CLEAR)) {
-            e.setCancelled(true);
-        }
-
-        int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
-        if (!e.getWeather().equals(Weathers.CLEAR)) {
-            if (!rainCounter.containsKey(w)) {
-                rainCounter.put(w, attempts);
-                e.setCancelled(true);
-            } else {
-                int acTry = rainCounter.get(w);
-                if (acTry - 1 <= 0) {
-                    Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> w.setWeather(e.getWeather(), RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time), RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time, TimeUnit.SECONDS);
+        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(e.getTargetWorld().getName()).weather.allow_weather) {
+            int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
+            if (!e.getWeather().equals(Weathers.CLEAR)) {
+                if (!rainCounter.containsKey(w)) {
                     rainCounter.put(w, attempts);
-                } else {
-                    rainCounter.put(w, acTry - 1);
                     e.setCancelled(true);
+                } else {
+                    int acTry = rainCounter.get(w);
+                    if (acTry - 1 <= 0) {
+                        Sponge.getScheduler().createSyncExecutor(RedProtect.get().container).schedule(() -> w.setWeather(e.getWeather(), RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time), RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time, TimeUnit.SECONDS);
+                        rainCounter.put(w, attempts);
+                    } else {
+                        rainCounter.put(w, acTry - 1);
+                        e.setCancelled(true);
+                    }
                 }
             }
         }

@@ -45,7 +45,10 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.weather.WeatherEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Crops;
@@ -142,27 +145,49 @@ public class GlobalListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
-    public void onWeatherChange(WeatherChangeEvent e) {
+    public void onWeatherChange(WeatherEvent ew) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is onChangeWeather event");
 
-        World w = e.getWorld();
-        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather && !e.toWeatherState()) {
-            e.setCancelled(true);
-        }
+        World w = ew.getWorld();
+        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather){
+            if (ew instanceof WeatherChangeEvent){
+                WeatherChangeEvent e = (WeatherChangeEvent)ew;
 
-        int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
-        if (e.toWeatherState()) {
-            if (!rainCounter.containsKey(w)) {
-                rainCounter.put(w, attempts);
-                e.setCancelled(true);
-            } else {
-                int acTry = rainCounter.get(w);
-                if (acTry - 1 <= 0) {
-                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
-                    rainCounter.put(w, attempts);
-                } else {
-                    rainCounter.put(w, acTry - 1);
-                    e.setCancelled(true);
+                int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
+                if (e.toWeatherState()) {
+                    if (!rainCounter.containsKey(w)) {
+                        rainCounter.put(w, attempts);
+                        e.setCancelled(true);
+                    } else {
+                        int acTry = rainCounter.get(w);
+                        if (acTry - 1 <= 0) {
+                            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
+                            rainCounter.put(w, attempts);
+                        } else {
+                            rainCounter.put(w, acTry - 1);
+                            e.setCancelled(true);
+                        }
+                    }
+                }
+            } else
+            if (ew instanceof ThunderChangeEvent){
+                ThunderChangeEvent e = (ThunderChangeEvent)ew;
+
+                int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
+                if (e.toThunderState()) {
+                    if (!rainCounter.containsKey(w)) {
+                        rainCounter.put(w, attempts);
+                        e.setCancelled(true);
+                    } else {
+                        int acTry = rainCounter.get(w);
+                        if (acTry - 1 <= 0) {
+                            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
+                            rainCounter.put(w, attempts);
+                        } else {
+                            rainCounter.put(w, acTry - 1);
+                            e.setCancelled(true);
+                        }
+                    }
                 }
             }
         }
