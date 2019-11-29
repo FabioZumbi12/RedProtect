@@ -145,48 +145,49 @@ public class GlobalListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
-    public void onWeatherChange(WeatherEvent ew) {
+    public void onWeatherChange(WeatherChangeEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is onChangeWeather event");
 
-        World w = ew.getWorld();
+        World w = e.getWorld();
         if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather){
-            if (ew instanceof WeatherChangeEvent){
-                WeatherChangeEvent e = (WeatherChangeEvent)ew;
-
-                int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
-                if (e.toWeatherState()) {
-                    if (!rainCounter.containsKey(w)) {
+            int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
+            if (e.toWeatherState()) {
+                if (!rainCounter.containsKey(w)) {
+                    rainCounter.put(w, attempts);
+                    e.setCancelled(true);
+                } else {
+                    int acTry = rainCounter.get(w);
+                    if (acTry - 1 <= 0) {
+                        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
                         rainCounter.put(w, attempts);
-                        e.setCancelled(true);
                     } else {
-                        int acTry = rainCounter.get(w);
-                        if (acTry - 1 <= 0) {
-                            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
-                            rainCounter.put(w, attempts);
-                        } else {
-                            rainCounter.put(w, acTry - 1);
-                            e.setCancelled(true);
-                        }
+                        rainCounter.put(w, acTry - 1);
+                        e.setCancelled(true);
                     }
                 }
-            } else
-            if (ew instanceof ThunderChangeEvent){
-                ThunderChangeEvent e = (ThunderChangeEvent)ew;
+            }
+        }
+    }
 
-                int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
-                if (e.toThunderState()) {
-                    if (!rainCounter.containsKey(w)) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    public void onThunderChange(ThunderChangeEvent e) {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is onThunderChange event");
+
+        World w = e.getWorld();
+        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather){
+            int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
+            if (e.toThunderState()) {
+                if (!rainCounter.containsKey(w)) {
+                    rainCounter.put(w, attempts);
+                    e.setCancelled(true);
+                } else {
+                    int acTry = rainCounter.get(w);
+                    if (acTry - 1 <= 0) {
+                        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
                         rainCounter.put(w, attempts);
-                        e.setCancelled(true);
                     } else {
-                        int acTry = rainCounter.get(w);
-                        if (acTry - 1 <= 0) {
-                            Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> w.setWeatherDuration(RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.rain_time * 20), 40);
-                            rainCounter.put(w, attempts);
-                        } else {
-                            rainCounter.put(w, acTry - 1);
-                            e.setCancelled(true);
-                        }
+                        rainCounter.put(w, acTry - 1);
+                        e.setCancelled(true);
                     }
                 }
             }
