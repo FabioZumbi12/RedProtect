@@ -145,7 +145,7 @@ public class CoreUtil {
                 return false;
             }
         }
-        return null;
+        return value;
     }
 
     protected String StripName(String pRName) {

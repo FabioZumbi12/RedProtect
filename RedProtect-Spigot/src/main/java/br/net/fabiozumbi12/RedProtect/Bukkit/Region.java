@@ -237,7 +237,9 @@ public class Region extends CoreRegion {
 
         setToSave(true);
         this.flags.put(event.getFlag(), event.getFlagValue());
-        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
+        RedProtect.get().rm.updateLiveFlags(this,
+                event.getFlag(),
+                event.getFlagValue().toString());
         updateSigns(event.getFlag());
         checkParticle();
         return true;
