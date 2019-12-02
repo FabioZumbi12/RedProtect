@@ -40,6 +40,7 @@ import org.dynmap.DynmapAPI;
 
 public class HooksManager {
     public boolean bossBar;
+    public boolean actionBar;
     public boolean myChunk;
     public boolean myPet;
     public boolean magicCarpet;
@@ -59,6 +60,7 @@ public class HooksManager {
     public void registerHooksFirst() {
         try {
             bossBar = checkBM();
+            actionBar = checkAB();
             myChunk = checkMyChunk();
             myPet = checkMyPet();
             magicCarpet = checkMagicCarpet();
@@ -113,6 +115,9 @@ public class HooksManager {
                 }
 
                 rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
+            }
+            if (actionBar) {
+                RedProtect.get().logger.info("ActionBarAPI found. Hooked.");
             }
             if (bossBar) {
                 RedProtect.get().logger.info("BossbarAPI found. Hooked.");
@@ -178,6 +183,11 @@ public class HooksManager {
     private boolean checkIMobs() {
         Plugin pIM = Bukkit.getPluginManager().getPlugin("InfernalMobs");
         return pIM != null && pIM.isEnabled();
+    }
+
+    private boolean checkAB() {
+        Plugin pAB = Bukkit.getPluginManager().getPlugin("ActionBarAPI");
+        return pAB != null && pAB.isEnabled();
     }
 
     private boolean checkBM() {

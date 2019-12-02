@@ -31,9 +31,11 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.DoorManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.SpigotHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import com.connorlinfoot.actionbarapi.ActionBarAPI;
 import de.Keyle.MyPet.MyPetApi;
 import de.Keyle.MyPet.api.entity.MyPet.PetState;
 import de.Keyle.MyPet.api.entity.MyPetBukkitEntity;
@@ -59,7 +61,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Crops;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.inventivetalent.bossbar.BossBarAPI;
@@ -1242,6 +1243,18 @@ public class PlayerListener implements Listener {
                     }
                 }
             }
+            if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
+                try{
+                    Class.forName("net.md_5.bungee.api.chat.BaseComponent");
+                    SpigotHelper.sendSpigotActionBar(p, notify);
+                } catch (Exception ignored){
+                    if (RedProtect.get().hooks.actionBar) {
+                        ActionBarAPI.sendActionBar(p, notify);
+                    } else {
+                        p.sendMessage(notify);
+                    }
+                }
+            }
             if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("CHAT")) {
                 p.sendMessage(notify);
             }
@@ -1258,6 +1271,18 @@ public class PlayerListener implements Listener {
             } else {
                 if (RedProtect.get().hooks.bossBar) {
                     BossBarAPI.setMessage(p, wel);
+                } else {
+                    p.sendMessage(wel);
+                }
+            }
+        }
+        if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
+            try{
+                Class.forName("net.md_5.bungee.api.chat.BaseComponent");
+                SpigotHelper.sendSpigotActionBar(p, wel);
+            } catch (Exception ignored){
+                if (RedProtect.get().hooks.actionBar) {
+                    ActionBarAPI.sendActionBar(p, wel);
                 } else {
                     p.sendMessage(wel);
                 }

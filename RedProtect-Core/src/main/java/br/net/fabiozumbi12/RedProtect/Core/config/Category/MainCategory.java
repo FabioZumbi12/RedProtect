@@ -217,11 +217,11 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class notifyCat {
-        @Setting(value = "region-enter-mode", comment = "Available: \"BOSSBAR\", \"OFF\" or \"CHAT\"")
+        @Setting(value = "region-enter-mode", comment = "Available: \"BOSSBAR\", \"ACTIONBAR\", \"OFF\" or \"CHAT\"")
         public String region_enter_mode = "CHAT";
         @Setting(value = "region-exit", comment = "Notify on exit region? (in most cases will be wilderness)")
         public boolean region_exit = true;
-        @Setting(value = "welcome-mode", comment = "Available: \"BOSSBAR\", \"OFF\" or \"CHAT\"")
+        @Setting(value = "welcome-mode", comment = "Available: \"BOSSBAR\", \"ACTIONBAR\", \"OFF\" or \"CHAT\"")
         public String welcome_mode = "CHAT";
     }
 
