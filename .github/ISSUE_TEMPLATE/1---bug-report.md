@@ -3,7 +3,7 @@ name: 1 - Bug report
 about: Create a report to help us improve
 title: "[BUG] "
 labels: New Issue
-assignees: FabioZumbi12
+assignees: 
 
 ---
 

@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * Get the region database from here. All functions for manage regions can be found in this variable.
+ * Get the region database from here. All functions for manage regions can be found in this class.
  */
 public class RegionManager {
 
