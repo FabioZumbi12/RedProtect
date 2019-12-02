@@ -27,6 +27,8 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.ents;
 
 
+import org.bukkit.block.data.type.TNT;
+
 public enum RPBukkitBlocks {
     ACACIA_DOOR,
     ACACIA_DOOR_ITEM,
@@ -46,6 +48,7 @@ public enum RPBukkitBlocks {
     BED,
     BED_BLOCK,
     BEDROCK,
+    BEETROOTS,
     BIRCH_DOOR,
     BIRCH_DOOR_ITEM,
     BIRCH_FENCE,
@@ -73,6 +76,7 @@ public enum RPBukkitBlocks {
     CAKE_BLOCK,
     CARPET,
     CARROT,
+    CARROTS,
     CARROT_ITEM,
     CARROT_STICK,
     CAULDRON,
@@ -157,6 +161,7 @@ public enum RPBukkitBlocks {
     EXP_BOTTLE,
     EXPLOSIVE_MINECART,
     EYE_OF_ENDER,
+    FARMLAND,
     FEATHER,
     FENCE,
     FENCE_GATE,
@@ -393,6 +398,7 @@ public enum RPBukkitBlocks {
     SUGAR_CANE,
     SUGAR_CANE_BLOCK,
     SULPHUR,
+    SWEET_BERRY_BUSH,
     THIN_GLASS,
     TNT,
     TORCH,

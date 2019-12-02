@@ -45,7 +45,6 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -324,11 +323,14 @@ public class BlockListener implements Listener {
         if (r != null && (b instanceof Crops
                         || b.getType().equals(Material.PUMPKIN_STEM)
                         || b.getType().equals(Material.MELON_STEM)
+                        || b.getType().equals(Material.CARROTS)
+                        || b.getType().toString().contains("_BERRIES")
                         || b.getType().toString().contains("CROPS")
                         || b.getType().toString().contains("SOIL")
                         || b.getType().toString().contains("FARMLAND")
                         || b.getType().toString().contains("CHORUS_")
                         || b.getType().toString().contains("BEETROOT_")
+                        || b.getType().toString().contains("BEETROOTS")
                         || b.getType().toString().contains("SUGAR_CANE")
                         || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
