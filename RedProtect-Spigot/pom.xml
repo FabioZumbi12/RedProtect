@@ -30,7 +30,7 @@
     <parent>
         <groupId>br.net.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>7.6.4</version>
+        <version>7.6.5</version>
     </parent>
     <artifactId>RedProtect-Spigot</artifactId>
 
