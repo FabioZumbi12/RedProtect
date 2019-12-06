@@ -323,7 +323,7 @@ public class BlockListener implements Listener {
         if (r != null && (b instanceof Crops
                         || b.getType().equals(Material.PUMPKIN_STEM)
                         || b.getType().equals(Material.MELON_STEM)
-                        || b.getType().equals(Material.CARROTS)
+                        || b.getType().toString().contains("CARROTS")
                         || b.getType().toString().contains("_BERRIES")
                         || b.getType().toString().contains("CROPS")
                         || b.getType().toString().contains("SOIL")
