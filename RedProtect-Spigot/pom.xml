@@ -67,8 +67,8 @@
             <url>http://repo.mikeprimm.com/</url>
         </repository>
         <repository>
-            <id>paperclip</id>
-            <url>https://papermc.io/repo/repository/maven-snapshots/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -205,12 +205,6 @@
             <version>LATEST</version>
         </dependency>
 
-        <!-- For spigotmc compatible -->
-        <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>LATEST</version>
-        </dependency>
         <!-- end of local repos -->
         <dependency>
             <groupId>org.natrolite</groupId>
@@ -258,7 +252,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.14.4-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.15-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
