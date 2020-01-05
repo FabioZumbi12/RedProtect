@@ -64,7 +64,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 
@@ -290,6 +289,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
         if (args.length >= 2 && (args[0].equals("/redprotect") || args[0].equals("/rp"))) {
 
+            // Check perms
+            if (hasCommand(args[1]) && !RedProtect.get().ph.hasCommandPerm(e.getPlayer(), getCmdFromAlias(args[1]))) {
+                RedProtect.get().lang.sendMessage(e.getPlayer(), "no.permission");
+                e.setCancelled(true);
+                return;
+            }
+
             List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
             conditions.addAll(Arrays.asList(getCmd("yes"), getCmd("no")));
 
@@ -338,10 +344,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0 && hasCommand(args[0])) {
             CommandExecutor executor = this.getCommandSubCommand(args[0]);
-            if (!RedProtect.get().ph.hasCommandPerm(sender, getCmdFromAlias(args[0]))) {
+
+            // permission checked on PreCommand for players
+            /*if (!RedProtect.get().ph.hasCommandPerm(sender, getCmdFromAlias(args[0]))) {
                 RedProtect.get().lang.sendMessage(sender, "no.permission");
                 return true;
-            }
+            }*/
+
             return executor.onCommand(sender, command, label, Arrays_copyOfRange(args, args.length));
         } else {
             if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
