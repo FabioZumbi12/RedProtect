@@ -68,6 +68,11 @@ public class ExpandVertCommand {
                             return CommandResult.success();
                         }
 
+                        if (!RedProtect.get().ph.hasRegionPermAdmin(player, "expand-vert", r)){
+                            RedProtect.get().lang.sendMessage(player, "no.permission");
+                            return CommandResult.success();
+                        }
+
                         r.setMaxY(Sponge.getServer().getWorld(r.getWorld()).get().getDimension().getHeight());
                         r.setMinY(0);
                     }

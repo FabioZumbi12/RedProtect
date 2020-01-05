@@ -86,6 +86,11 @@ public class ExpandVertCommand implements SubCommand {
                 return true;
         }
 
+        if (!RedProtect.get().ph.hasRegionPermAdmin(player, "expand-vert", r)){
+            RedProtect.get().lang.sendMessage(player, "no.permission");
+            return true;
+        }
+
         r.setMaxY(player.getWorld().getMaxHeight());
         r.setMinY(0);
         RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.expandvert.success").replace("{region}", r.getName()).replace("{miny}", String.valueOf(r.getMinY())).replace("{maxy}", String.valueOf(r.getMaxY())));
