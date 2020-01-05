@@ -34,6 +34,8 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
@@ -67,6 +69,14 @@ public class VersionHelper113 implements VersionHelper {
 
     public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e) {
         return e.getEntity().getShooter();
+    }
+
+    public Block getBlockRelative(Block block) {
+        if (block.getState() instanceof Sign) {
+            Directional dir = (Directional) block.getBlockData();
+            return block.getRelative(dir.getFacing().getOppositeFace());
+        }
+        return null;
     }
 
     public void toggleDoor(Block b) {

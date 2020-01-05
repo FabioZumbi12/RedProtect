@@ -31,6 +31,8 @@ import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -67,6 +69,14 @@ public class VersionHelper18 implements VersionHelper {
 
     public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e) {
         return e.getEntity().getShooter();
+    }
+
+    public Block getBlockRelative(Block block) {
+        if (block.getState() instanceof Sign) {
+            org.bukkit.material.Sign s = (org.bukkit.material.Sign) block.getState().getData();
+            return block.getRelative(s.getAttachedFace());
+        }
+        return null;
     }
 
     public void toggleDoor(Block b) {

@@ -39,6 +39,8 @@ import java.util.Set;
 
 public interface VersionHelper {
 
+    Block getBlockRelative(Block block);
+
     String getVersion();
 
     Set<Location> getPortalLocations(PortalCreateEvent e);

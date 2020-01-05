@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
@@ -205,11 +206,7 @@ public class ContainerManager {
     }
 
     private Block getBlockRelative(Block block) {
-        if (block.getState() instanceof Sign) {
-            Directional dir = (Directional) block.getBlockData();
-            return block.getRelative(dir.getFacing().getOppositeFace());
-        }
-        return null;
+        return RedProtect.get().getVersionHelper().getBlockRelative(block);
     }
 
     private boolean validWorldBreak(Block b) {
