@@ -41,14 +41,9 @@
 
         <!-- Sponge repo -->
         <repository>
-            <id>sponge-maven-repo</id>
-            <url>https://jcenter.bintray.com/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>sponge-repo</id>
+            <name>Sponge Maven Repository</name>
+            <url>https://repo.spongepowered.org/maven</url>
         </repository>
     </repositories>
 
