@@ -252,7 +252,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.15.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.15.2-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>

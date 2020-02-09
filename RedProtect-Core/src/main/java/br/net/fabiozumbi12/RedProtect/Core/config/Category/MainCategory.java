@@ -57,7 +57,7 @@ public class MainCategory {
     public boolean log_actions = true;
     @Setting(comment = "Mysql options")
     public mysqlOptions mysql = new mysqlOptions();
-    @Setting(value = "needed-claim-to-build", comment = "Adding world names to the list will automatically enable this on that world.")
+    @Setting(value = "needed-claim-to-build", comment = "Adding world names to the list will automatically enable this on that world.\nTo bypass this option, use the permission: redprotect.need-claim-to-build.bypass")
     public needClaim needed_claim_to_build = new needClaim();
     @Setting(value = "nether-protection")
     public netherProtection nether_protection = new netherProtection();

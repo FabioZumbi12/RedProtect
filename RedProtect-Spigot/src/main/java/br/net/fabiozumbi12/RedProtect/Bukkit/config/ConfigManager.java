@@ -470,6 +470,9 @@ public class ConfigManager extends CoreConfigManager {
     }
 
     public boolean needClaimToBuild(Player p, Block b) {
+        if (p.hasPermission("redprotect.need-claim-to-build.bypass"))
+            return false;
+
         boolean bool = root.needed_claim_to_build.worlds.contains(p.getWorld().getName());
         if (bool) {
             if (b != null && root.needed_claim_to_build.allow_only_protections_blocks &&
