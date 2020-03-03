@@ -176,7 +176,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //fire event
-        CreateRegionEvent event = new CreateRegionEvent(r, p);
+        CreateRegionEvent event = new CreateRegionEvent(newRegion, p);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;

@@ -191,11 +191,11 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             miny = 0;
                         }
 
-                        Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
-                        leaders.forEach(region::addLeader);
+                        Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
+                        leaders.forEach(newRegion::addLeader);
                         Set<String> othersName = new HashSet<>();
                         Region otherrg;
-                        Set<Location> limitlocs = region.getLimitLocs(minby, maxby, false);
+                        Set<Location> limitlocs = newRegion.getLimitLocs(minby, maxby, false);
 
                         //check retangular region
                         for (Block bkloc : blocks) {
@@ -207,7 +207,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         //check regions inside region
                         for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld().getName())) {
-                            if (r.getMaxMbrX() <= region.getMaxMbrX() && r.getMaxY() <= region.getMaxY() && r.getMaxMbrZ() <= region.getMaxMbrZ() && r.getMinMbrX() >= region.getMinMbrX() && r.getMinY() >= region.getMinY() && r.getMinMbrZ() >= region.getMinMbrZ()) {
+                            if (r.getMaxMbrX() <= newRegion.getMaxMbrX() && r.getMaxY() <= newRegion.getMaxY() && r.getMaxMbrZ() <= newRegion.getMaxMbrZ() && r.getMinMbrX() >= newRegion.getMinMbrX() && r.getMinY() >= newRegion.getMinY() && r.getMinMbrZ() >= newRegion.getMinMbrZ()) {
                                 if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
                                     this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
                                     return;
@@ -238,13 +238,13 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //check if same area
-                        otherrg = RedProtect.get().rm.getTopRegion(region.getCenterLoc());
-                        if (otherrg != null && otherrg.get4Points(current.getY()).equals(region.get4Points(current.getY())) && !p.hasPermission("redprotect.bypass")) {
+                        otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc());
+                        if (otherrg != null && otherrg.get4Points(current.getY()).equals(newRegion.get4Points(current.getY())) && !p.hasPermission("redprotect.bypass")) {
                             this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                             return;
                         }
 
-                        region.setPrior(RedProtect.get().getUtil().getUpdatedPrior(region));
+                        newRegion.setPrior(RedProtect.get().getUtil().getUpdatedPrior(newRegion));
 
                         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
                         int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), w.getName());
@@ -257,7 +257,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
                         boolean areaUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.blocks.unlimited");
                         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
-                        int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(p.getUniqueId().toString(), region);
+                        int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(p.getUniqueId().toString(), newRegion);
                         int actualArea = 0;
                         if (regionArea > 0) {
                             actualArea = totalArea + regionArea;
@@ -270,10 +270,10 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         long reco = 0;
                         if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
                             double peco = RedProtect.get().economy.getBalance(p);
-                            reco = region.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
+                            reco = newRegion.getArea() * RedProtect.get().config.ecoRoot().claim_cost_per_block.cost_per_block;
 
                             if (!RedProtect.get().config.ecoRoot().claim_cost_per_block.y_is_free) {
-                                reco = reco * Math.abs(region.getMaxY() - region.getMinY());
+                                reco = reco * Math.abs(newRegion.getMaxY() - newRegion.getMinY());
                             }
 
                             if (peco >= reco) {
@@ -286,7 +286,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //fire event
-                        CreateRegionEvent event = new CreateRegionEvent(r, p);
+                        CreateRegionEvent event = new CreateRegionEvent(newRegion, p);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             return;
@@ -296,7 +296,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimUsed + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
                         p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
                                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
-                        p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior());
+                        p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", newRegion.getName()) + " " + newRegion.getPrior());
                         if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable) p.sendMessage(RedProtect.get().lang.get("regionbuilder.block.cost") + reco);
                         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
                         if (othersName.size() > 0) {
@@ -339,11 +339,11 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
                         //wecui
                         if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.configRoot().hooks.useWECUI) {
-                            WEHook.setSelectionRP(p, region.getMinLocation(), region.getMaxLocation());
+                            WEHook.setSelectionRP(p, newRegion.getMinLocation(), newRegion.getMaxLocation());
                         }
 
-                        this.r = region;
-                        RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED region " + region.getName());
+                        this.r = newRegion;
+                        RedProtect.get().logger.addLog("(World " + newRegion.getWorld() + ") Player " + p.getName() + " CREATED region " + newRegion.getName());
                         return;
                     }
                 }
