@@ -528,7 +528,7 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS")) && ((rfrom != null && !rfrom.canGrow()) || (rto != null && !rto.canGrow()))) {
+        if ((e.getNewState().getType().equals(Material.VINE) || e.getNewState().getType().name().contains("SEAGRASS") || e.getNewState().getType().name().contains("MUSHROOM") || e.getNewState().getType().name().contains("KELP")) && ((rfrom != null && !rfrom.canGrow()) || (rto != null && !rto.canGrow()))) {
             e.setCancelled(true);
             return;
         }

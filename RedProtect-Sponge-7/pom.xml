@@ -73,7 +73,7 @@
     </dependencies>
 
     <properties>
-        <spongeVersion>7.2.0-SNAPSHOT</spongeVersion>
+        <spongeVersion>7.1.0-SNAPSHOT</spongeVersion>
     </properties>
 
     <build>
