@@ -93,6 +93,7 @@ public class ConfigManager extends CoreConfigManager {
                         "minecraft:chest",
                         "minecraft:workbench",
                         "minecraft:furnace",
+                        "minecraft:lit_furnace",
                         "minecraft:jukebox",
                         "minecraft:enchantment_table",
                         "minecraft:brewing_stand",
