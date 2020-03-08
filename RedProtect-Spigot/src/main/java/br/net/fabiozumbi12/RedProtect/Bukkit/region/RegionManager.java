@@ -61,7 +61,7 @@ public class RegionManager {
     }
 
     public void load(String w) throws Exception {
-        if (this.regionManagers.containsKey(w)) {
+        if (this.regionManagers.containsKey(w) && this.regionManagers.get(w) != null) {
             return;
         }
         WorldRegionManager mgr;
@@ -133,6 +133,14 @@ public class RegionManager {
         } else {
             for (World wr : Bukkit.getWorlds()) {
                 WorldRegionManager rms = this.regionManagers.get(wr.getName());
+                if (rms == null) {
+                    try {
+                        this.load(wr.getName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                assert rms != null;
                 size += rms.getTotalRegionSize(uuid);
             }
         }

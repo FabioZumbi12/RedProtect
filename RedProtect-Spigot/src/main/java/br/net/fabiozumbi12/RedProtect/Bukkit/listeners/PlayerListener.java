@@ -1131,7 +1131,8 @@ public class PlayerListener implements Listener {
             }
 
             RedProtect.get().rm.getAdminRegions(p.getUniqueId().toString()).forEach(r -> {
-                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN") && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))) {
+                if (RedProtect.get().config.configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-LOGIN")
+                        && (r.isAdmin(p.getUniqueId().toString()) || r.isLeader(p.getUniqueId().toString()))) {
                     if (r.getDate() == null || !r.getDate().equals(RedProtect.get().getUtil().dateNow())) {
                         r.setDate(RedProtect.get().getUtil().dateNow());
                     }
