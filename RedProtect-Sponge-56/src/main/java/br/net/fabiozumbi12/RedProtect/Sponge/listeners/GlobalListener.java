@@ -372,6 +372,13 @@ public class GlobalListener {
             return;
         }
 
+        if (e instanceof InteractBlockEvent) {
+            BlockSnapshot blockSnapshot = ((InteractBlockEvent) e).getTargetBlock();
+            if (RedProtect.get().config.needClaimToInteract(p, blockSnapshot)) {
+                e.setCancelled(true);
+                return;
+            }
+        }
         if (e instanceof InteractEntityEvent) {
             Entity ent = ((InteractEntityEvent) e).getTargetEntity();
             RedProtect.get().logger.debug(LogLevel.ENTITY, "GlobalListener - Entity: " + ent.getType().getName());

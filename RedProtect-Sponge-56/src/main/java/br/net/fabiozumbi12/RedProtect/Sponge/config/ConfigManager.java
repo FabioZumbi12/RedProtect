@@ -106,7 +106,15 @@ public class ConfigManager extends CoreConfigManager {
                         "minecraft:[a-z_]+_shulker_box"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
-                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(BlockTypes.GRASS.getId(), BlockTypes.TALLGRASS.getId());
+                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(BlockTypes.GRASS.getId(), BlockTypes.DIRT.getId(), BlockTypes.TALLGRASS.getId());
+            }
+            if (this.root.needed_claim_to_build.allow_interact_blocks.isEmpty()) {
+                this.root.needed_claim_to_build.allow_interact_blocks = Arrays.asList(
+                        BlockTypes.IRON_DOOR.getId(),
+                        BlockTypes.LEVER.getId(),
+                        BlockTypes.WOODEN_BUTTON.getId(),
+                        BlockTypes.STONE_BUTTON.getId(),
+                        BlockTypes.WOODEN_DOOR.getId());
             }
             if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = BlockTypes.FENCE.getId();
@@ -441,7 +449,7 @@ public class ConfigManager extends CoreConfigManager {
             if (b != null && root.needed_claim_to_build.allow_only_protections_blocks &&
                     (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
                             getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))) {
-                boolean blocks = b.getState().getName().contains(root.region_settings.block_id) ||
+                boolean blocks = b.getState().getId().contains(root.region_settings.block_id) ||
                         root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getState().getId()));
                 if (!blocks) {
                     RedProtect.get().lang.sendMessage(p, "need.claim.blockids");
@@ -452,6 +460,22 @@ public class ConfigManager extends CoreConfigManager {
             RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
         }
         return bool;
+    }
+
+    public boolean needClaimToInteract(Player p, BlockSnapshot b) {
+        if (p.hasPermission("redprotect.need-claim-to-build.bypass"))
+            return false;
+
+        if (root.needed_claim_to_build.worlds.contains(p.getWorld().getName())
+                && b != null
+                && root.needed_claim_to_build.allow_interact_blocks.stream().noneMatch(str -> str.equalsIgnoreCase(b.getState().getId()))
+                && root.needed_claim_to_build.allow_break_blocks.stream().noneMatch(str -> str.equalsIgnoreCase(b.getState().getId()))
+                && !b.getState().getId().contains(root.region_settings.block_id)
+                && !b.getState().getId().contains("sign")) {
+            RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
+            return true;
+        }
+        return false;
     }
 
     public List<Location> getSigns(String rid) {

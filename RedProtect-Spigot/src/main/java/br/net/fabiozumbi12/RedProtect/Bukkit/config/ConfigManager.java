@@ -119,7 +119,17 @@ public class ConfigManager extends CoreConfigManager {
                         "STONECUTTER"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
-                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name());
+                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name(), Material.TALL_GRASS.name());
+            }
+            if (this.root.needed_claim_to_build.allow_interact_blocks.isEmpty()) {
+                this.root.needed_claim_to_build.allow_interact_blocks = Arrays.asList(
+                        Arrays.stream(Material.values()).filter(m -> m.name().contains("BUTTON")).findFirst().get().name(),
+                        Arrays.stream(Material.values()).filter(m -> m.name().contains("DOOR")).findFirst().get().name(),
+                        Material.SAND.name(),
+                        Material.GRASS_BLOCK.name(),
+                        Material.IRON_DOOR.name(),
+                        Material.STONE_BUTTON.name(),
+                        Material.LEVER.name());
             }
             if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = "FENCE";
@@ -478,7 +488,7 @@ public class ConfigManager extends CoreConfigManager {
             if (b != null && root.needed_claim_to_build.allow_only_protections_blocks &&
                     (getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BLOCK") ||
                             getWorldClaimType(p.getWorld().getName()).equalsIgnoreCase("BOTH"))) {
-                boolean blocks = b.getType().name().contains(root.region_settings.block_id.toUpperCase()) ||
+                boolean blocks = (b.getType().name().contains(root.region_settings.block_id.toUpperCase()) || b.getType().name().contains("SIGN")) ||
                         root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getType().name()));
                 if (!blocks) {
                     RedProtect.get().lang.sendMessage(p, "need.claim.blockids");
@@ -489,6 +499,22 @@ public class ConfigManager extends CoreConfigManager {
             RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
         }
         return bool;
+    }
+
+    public boolean needClaimToInteract(Player p, Block b) {
+        if (p.hasPermission("redprotect.need-claim-to-build.bypass"))
+            return false;
+
+        if (root.needed_claim_to_build.worlds.contains(p.getWorld().getName())
+                && b != null
+                && root.needed_claim_to_build.allow_interact_blocks.stream().noneMatch(str -> str.equalsIgnoreCase(b.getType().name()))
+                && root.needed_claim_to_build.allow_break_blocks.stream().noneMatch(str -> str.equalsIgnoreCase(b.getType().name()))
+                && !b.getType().name().contains(root.region_settings.block_id.toUpperCase())
+                && !b.getType().name().contains("SIGN")) {
+            RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
+            return true;
+        }
+        return false;
     }
 
     public List<Location> getSigns(String rid) {

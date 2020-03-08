@@ -512,6 +512,12 @@ public class GlobalListener implements Listener {
             }
             e.setUseItemInHand(Event.Result.DENY);
             e.setCancelled(true);
+            return;
+        }
+
+        if (RedProtect.get().config.needClaimToInteract(p, b)) {
+            e.setUseItemInHand(Event.Result.DENY);
+            e.setCancelled(true);
         }
     }
 

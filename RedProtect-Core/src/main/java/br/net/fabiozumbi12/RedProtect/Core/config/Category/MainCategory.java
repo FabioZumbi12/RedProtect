@@ -199,8 +199,10 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class needClaim {
-        @Setting(value = "allow-break-blocks", comment = "Allow break only this blocks on worlds where this is enabled.")
+        @Setting(value = "allow-break-blocks", comment = "Allow break only this blocks if need claim to build.")
         public List<String> allow_break_blocks = new ArrayList<>();
+        @Setting(value = "allow-interact-blocks", comment = "Allow interact with this blocks if need claim to build.")
+        public List<String> allow_interact_blocks = new ArrayList<>();
         @Setting(value = "allow-only-protections-blocks", comment = "Allow place only protection blocks like the sign and the \"block-id\".")
         public boolean allow_only_protections_blocks = true;
         @Setting(comment = "Add your worlds here to allow players to place blocks only in your own claims.")
