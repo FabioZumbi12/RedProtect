@@ -177,15 +177,18 @@ public class PlayerListener implements Listener {
                 if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
                     Location loc1 = RedProtect.get().firstLocationSelections.get(p);
                     Location loc2 = RedProtect.get().secondLocationSelections.get(p);
+
+                    Region reference = new Region("", loc1, loc2, p.getWorld().getName());
+                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.distance") + reference.getArea());
+
                     if (RedProtect.get().hooks.worldEdit && RedProtect.get().config.configRoot().hooks.useWECUI) {
                         WEHook.setSelectionRP(p, loc1, loc2);
                     }
 
-                    if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-                        double dist = loc1.distanceSquared(loc2);
-                        RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, (int) dist));
+                    if (loc1.getWorld().equals(loc2.getWorld()) && reference.getArea() > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+                        RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, reference.getArea()));
                     } else {
-                        RedProtect.get().getUtil().addBorder(p, new Region("", loc1, loc2, p.getWorld().getName()));
+                        RedProtect.get().getUtil().addBorder(p, reference);
                     }
                 }
                 return;

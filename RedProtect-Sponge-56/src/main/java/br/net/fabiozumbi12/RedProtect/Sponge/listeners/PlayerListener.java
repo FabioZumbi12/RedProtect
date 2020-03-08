@@ -176,20 +176,7 @@ public class PlayerListener {
             event.setCancelled(true);
 
             //show preview border
-            if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
-                Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
-                Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
-                if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().hooks.useWECUI) {
-                    WEHook.setSelectionRP(p, loc1, loc2);
-                }
-
-                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.max_scan && !p.hasPermission("redprotect.bypass.define-max-distance")) {
-                    double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                    RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, (int) dist));
-                } else {
-                    RedProtect.get().getUtil().addBorder(p, loc1, loc2);
-                }
-            }
+            previewSelection(p);
         }
     }
 
@@ -222,20 +209,7 @@ public class PlayerListener {
             event.setCancelled(true);
 
             //show preview border
-            if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
-                Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
-                Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
-                if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().hooks.useWECUI) {
-                    WEHook.setSelectionRP(p, loc1, loc2);
-                }
-
-                if (loc1.getPosition().distanceSquared(loc2.getPosition()) > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
-                    double dist = loc1.getPosition().distanceSquared(loc2.getPosition());
-                    RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, (int) dist));
-                } else {
-                    RedProtect.get().getUtil().addBorder(p, loc1, loc2);
-                }
-            }
+            previewSelection(p);
             return;
         }
 
@@ -261,6 +235,26 @@ public class PlayerListener {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setUseItemResult(Tristate.FALSE);
                 event.setCancelled(true);
+            }
+        }
+    }
+
+    private void previewSelection(Player p) {
+        if (RedProtect.get().firstLocationSelections.containsKey(p) && RedProtect.get().secondLocationSelections.containsKey(p)) {
+            Location<World> loc1 = RedProtect.get().firstLocationSelections.get(p);
+            Location<World> loc2 = RedProtect.get().secondLocationSelections.get(p);
+
+            int area = new Region("", loc1, loc2, p.getWorld().getName()).getArea();
+            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.distance") + area);
+
+            if (RedProtect.get().hooks.WE && RedProtect.get().config.configRoot().hooks.useWECUI) {
+                WEHook.setSelectionRP(p, loc1, loc2);
+            }
+
+            if (area > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+                RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, area));
+            } else {
+                RedProtect.get().getUtil().addBorder(p, loc1, loc2);
             }
         }
     }
