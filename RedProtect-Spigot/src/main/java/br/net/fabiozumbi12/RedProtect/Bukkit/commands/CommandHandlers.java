@@ -406,7 +406,7 @@ public class CommandHandlers {
             newName = RedProtect.get().getUtil().setName(newName);
 
             //filter region name
-            if (newName.isEmpty() || newName.length() < 4) {
+            if (newName.isEmpty() || newName.length() < 3) {
                 newName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
                 if (newName.length() > 16) {
                     RedProtect.get().lang.sendMessage(p, "cmdmanager.region.rename.invalid");

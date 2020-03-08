@@ -149,7 +149,7 @@ public class Region extends CoreRegion {
                     particleID = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () -> {
                         if (this.flags.containsKey("particles")) {
                             String[] part = flags.get("particles").toString().split(" ");
-                            for (int i = 0; i < Integer.valueOf(part[1]); i++) {
+                            for (int i = 0; i < Integer.parseInt(part[1]); i++) {
                                 Vector max = Vector.getMaximum(getMinLocation().toVector(), getMaxLocation().toVector());
                                 Vector min = Vector.getMinimum(getMinLocation().toVector(), getMaxLocation().toVector());
 
