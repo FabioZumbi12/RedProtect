@@ -58,7 +58,7 @@ public class NearCommand implements SubCommand {
             } else {
                 Iterator<Region> i = regions.iterator();
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("general.color") + "------------------------------------");
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.near"));
+                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.near");
                 RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("general.color") + "------------------------------------");
                 while (i.hasNext()) {
                     Region r = i.next();
