@@ -44,8 +44,8 @@ public class SetMaxYCommand {
                 .description(Text.of("Command to set the max height of a region."))
                 .arguments(
                         GenericArguments.integer(Text.of("size")),
-                        GenericArguments.string(Text.of("regionName")),
-                        GenericArguments.world(Text.of("world"))
+                        GenericArguments.optional(GenericArguments.string(Text.of("regionName"))),
+                        GenericArguments.optional(GenericArguments.world(Text.of("world")))
                 )
                 .permission("redprotect.command.setmaxy")
                 .executor((src, args) -> {
