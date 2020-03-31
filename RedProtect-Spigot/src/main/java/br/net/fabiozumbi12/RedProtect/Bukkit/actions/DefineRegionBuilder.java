@@ -182,6 +182,8 @@ public class DefineRegionBuilder extends RegionBuilder {
             return;
         }
 
+        newRegion = event.getRegion();
+
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
         if (!admin) {
             p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimUsed + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));

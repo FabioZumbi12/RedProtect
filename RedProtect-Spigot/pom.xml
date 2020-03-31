@@ -139,7 +139,7 @@
             <artifactId>dynmap-2.5</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Dynmap-3.0-SNAPSHOT-spigot.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.TechFortress</groupId>

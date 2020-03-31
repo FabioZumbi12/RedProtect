@@ -292,6 +292,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             return;
                         }
 
+                        newRegion = event.getRegion();
+
                         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
                         p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimUsed + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
                         p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
