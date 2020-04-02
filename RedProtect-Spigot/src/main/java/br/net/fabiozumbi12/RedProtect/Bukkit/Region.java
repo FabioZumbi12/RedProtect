@@ -987,6 +987,10 @@ public class Region extends CoreRegion {
 
 
     //---------------------- Player Flags --------------------------//
+    public boolean blockTransform() {
+        return getFlagBool("block-transform");
+    }
+
     public boolean canFish(Player p) {
         return getFlagBool("fishing") || checkAllowedPlayer(p,"fishing");
     }

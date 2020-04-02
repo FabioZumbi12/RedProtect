@@ -133,6 +133,8 @@ public class VersionHelper18 implements VersionHelper {
             guiRoot.gui_flags.put("spawn-monsters", new FlagGuiCategory.GuiFlag(Material.PUMPKIN.name(), 35));
             guiRoot.gui_flags.put("teleport", new FlagGuiCategory.GuiFlag(Material.ENDER_PEARL.name(), 19));
             guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag(Material.GLASS_BOTTLE.name(), 26));
+            guiRoot.gui_flags.put("redstone", new FlagGuiCategory.GuiFlag(Material.REDSTONE.name(), 14));
+            guiRoot.gui_flags.put("block-transform", new FlagGuiCategory.GuiFlag(Material.BOOKSHELF.name(), 12));
         }
 
         for (String key : RedProtect.get().config.getDefFlagsValues().keySet()) {

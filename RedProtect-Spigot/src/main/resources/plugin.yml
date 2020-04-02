@@ -84,6 +84,7 @@ permissions:
       redprotect.flag.teleport: true
       redprotect.flag.use-potions: true
       redprotect.flag.redstone: true
+      redprotect.flag.block-transform: true
   redprotect.command.admin:
     description: "Recommended Admin permissions."
     default: op

@@ -36,7 +36,7 @@ public class MainCategory {
     @Setting(value = "online-mode", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions and in offline mode)")
     public boolean online_mode = false;
     @Setting(value = "config-version", comment = "Don't touch <3")
-    public double config_version = 8.6;
+    public double config_version = 8.7;
     @Setting(value = "command-confirm", comment = "Commands who will need to \"rp yes\" or \"rp no\" before use.\nThis will accept only the command name, not alias.")
     public List<String> command_confirm = new ArrayList<>(Arrays.asList("kill", "delete", "redefine", "regen", "undo", "rename", "fileToMysql", "mysqlToFile", "mychunktorp", "single-to-files", "files-to-single", "gpTorp"));
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")
@@ -126,6 +126,7 @@ public class MainCategory {
         myMap.put("teleport", true);
         myMap.put("use-potions", true);
         myMap.put("redstone", false);
+        myMap.put("allow-physics", true);
         return myMap;
     }
 

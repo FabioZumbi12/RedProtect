@@ -256,6 +256,8 @@ public class RedProtect extends JavaPlugin {
         logger.info("Unregistering listeners...");
         HandlerList.unregisterAll(this);
 
+        getServer().getScheduler().cancelTasks(this);
+
         logger.info(getDescription().getFullName() + " turned off...");
     }
 

@@ -97,6 +97,7 @@ public class ConfigManager extends CoreConfigManager {
                         "CHEST",
                         "CRAFTING_TABLE",
                         "FURNACE",
+                        "LIT_FURNACE",
                         "JUKEBOX",
                         "ENCHANTING_TABLE",
                         "BREWING_STAND",
@@ -405,6 +406,14 @@ public class ConfigManager extends CoreConfigManager {
             root.config_version = 8.6D;
             if (!root.flags.containsKey("redstone")) {
                 root.flags.put("redstone", false);
+            }
+            update++;
+        }
+
+        if (root.config_version < 8.7D) {
+            root.config_version = 8.7D;
+            if (!root.flags.containsKey("block-transform")) {
+                root.flags.put("block-transform", true);
             }
             update++;
         }
