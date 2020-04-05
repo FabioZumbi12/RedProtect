@@ -150,7 +150,7 @@
                                 </filter>
                             </filters>
                             <outputFile>
-                                ${project.basedir}/target/RedProtect-${project.version}-b$CIRCLE_BUILD_NUM-Universal.jar
+                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Universal.jar
                             </outputFile>
                         </configuration>
                     </execution>
