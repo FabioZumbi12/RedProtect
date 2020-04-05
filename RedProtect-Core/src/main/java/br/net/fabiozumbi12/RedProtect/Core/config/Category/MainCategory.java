@@ -51,7 +51,7 @@ public class MainCategory {
     public flagsConfig flags_configuration = new flagsConfig();
     @Setting(value = "flat-file", comment = "Options for flatfile database.")
     public flatFile flat_file = new flatFile();
-    @Setting(comment = "Available: EN-US, PT-BR, ZH-CN, DE-DE, RU-RU, FR-FR")
+    @Setting(comment = "Available: DE-DE, EN-US, ES-ES, FR-FR, PL-PL, PT-BR, RU-RU, ZH-CN")
     public String language = !Locale.getDefault().getLanguage().isEmpty() && !Locale.getDefault().getCountry().isEmpty() ? Locale.getDefault().getLanguage().toUpperCase() + "-" + Locale.getDefault().getCountry().toUpperCase() : "EN-US";
     @Setting(value = "log-actions", comment = "Log all redprotect commands?")
     public boolean log_actions = true;
@@ -126,7 +126,7 @@ public class MainCategory {
         myMap.put("teleport", true);
         myMap.put("use-potions", true);
         myMap.put("redstone", false);
-        myMap.put("allow-physics", true);
+        myMap.put("block-transform", true);
         return myMap;
     }
 

@@ -54,6 +54,7 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         //filter name
         regionName = RedProtect.get().getUtil().fixRegionName(p, regionName);
+        if (regionName == null) return;
 
         //region leader
         String pUUID = p.getUniqueId().toString();

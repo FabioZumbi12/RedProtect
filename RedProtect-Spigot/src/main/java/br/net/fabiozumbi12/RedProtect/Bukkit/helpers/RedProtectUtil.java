@@ -1116,6 +1116,7 @@ public class RedProtectUtil extends CoreUtil {
     public String fixRegionName(Player p, String regionName) {
         //filter region name
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
+            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.rename.exists");
             regionName = nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
                 return null;
@@ -1128,7 +1129,7 @@ public class RedProtectUtil extends CoreUtil {
                 .replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
-        if (regionName.length() < 3) {
+        if (regionName.length() < 3 || regionName.length() > 16) {
             RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
             return null;
         }

@@ -51,6 +51,7 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         // filter name
         regionName = RedProtect.get().getUtil().fixRegionName(p, regionName);
+        if (regionName == null) return;
 
         String wmsg = "";
         if (leader.contains(RedProtect.get().config.configRoot().region_settings.default_leader)) {
