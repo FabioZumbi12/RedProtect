@@ -49,23 +49,8 @@ public class DefineRegionBuilder extends RegionBuilder {
             return;
         }
 
-        //filter name
-        regionName = RedProtect.get().getUtil().setName(regionName);
-
-        //region name conform
-        if (regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            //filter region name
-            regionName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
-            if (regionName.length() > 16) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
-                return;
-            }
-        }
-
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
-            return;
-        }
+        // filter name
+        regionName = RedProtect.get().getUtil().fixRegionName(p, regionName);
 
         String wmsg = "";
         if (leader.contains(RedProtect.get().config.configRoot().region_settings.default_leader)) {

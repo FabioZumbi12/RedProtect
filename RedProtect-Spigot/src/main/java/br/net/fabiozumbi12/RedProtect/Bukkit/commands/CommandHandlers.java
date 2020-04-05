@@ -403,27 +403,7 @@ public class CommandHandlers {
             }
 
             //filter name
-            newName = RedProtect.get().getUtil().setName(newName);
-
-            //filter region name
-            if (newName.isEmpty() || newName.length() < 3) {
-                newName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
-                if (newName.length() > 16) {
-                    RedProtect.get().lang.sendMessage(p, "cmdmanager.region.rename.invalid");
-                    return;
-                }
-            }
-
-            //region name conform
-            if (newName.length() < 3) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
-                return;
-            }
-
-            if (RedProtect.get().rm.getRegion(newName, p.getWorld().getName()) != null) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
-                return;
-            }
+            newName = RedProtect.get().getUtil().fixRegionName(p, newName);
 
             RenameRegionEvent event = new RenameRegionEvent(r, newName, r.getName(), p);
             Bukkit.getPluginManager().callEvent(event);

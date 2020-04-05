@@ -425,39 +425,19 @@ public class CommandHandlers {
             }
 
             //filter name
-            newName = RedProtect.get().getUtil().setName(newName);
-
-            //filter region name
-            if (newName.isEmpty() || newName.length() < 3) {
-                newName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
-                if (newName.length() > 16) {
-                    RedProtect.get().lang.sendMessage(p, "cmdmanager.region.rename.invalid");
-                    return;
-                }
-            }
-
-            //region name conform
-            if (newName.length() < 3) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
-                return;
-            }
-
-            if (RedProtect.get().rm.getRegion(newName, p.getWorld().getName()) != null) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
-                return;
-            }
+            newName = RedProtect.get().getUtil().fixRegionName(p, newName);
 
             RenameRegionEvent event = new RenameRegionEvent(r, newName, r.getName(), p);
             if (Sponge.getEventManager().post(event)) {
                 return;
             }
 
-            String oldname = event.getOldName();
+            String oldName = event.getOldName();
             newName = event.getNewName();
 
             Region newRegion = RedProtect.get().rm.renameRegion(newName, r);
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.rename.newname") + " " + newRegion.getName());
-            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " RENAMED region " + oldname + " to " + newRegion.getName());
+            RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " RENAMED region " + oldName + " to " + newRegion.getName());
         } else {
             RedProtect.get().lang.sendMessage(p, "no.permission");
         }

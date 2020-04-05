@@ -63,6 +63,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -219,33 +220,6 @@ public class RedProtectUtil extends CoreUtil {
         return dateNow(RedProtect.get().config.configRoot().region_settings.date_format);
     }
 
-    /**
-     * Generate a friendly and unique name for a region based on player name.
-     *
-     * @param p     Player
-     * @param World World
-     * @return Name of region
-     */
-    public String nameGen(String p, String World) {
-        String rname;
-        World w = RedProtect.get().getServer().getWorld(World).get();
-        int i = 0;
-        while (true) {
-            int is = String.valueOf(i).length();
-            if (p.length() > 13) {
-                rname = p.substring(0, 14 - is) + "_" + i;
-            } else {
-                rname = p + "_" + i;
-            }
-
-            if (RedProtect.get().rm.getRegion(rname, w.getName()) == null) {
-                break;
-            }
-            ++i;
-        }
-        return rname;
-    }
-
     //TODO read all db
     public void ReadAllDB(Set<Region> regions) {
         int purged = 0;
@@ -372,12 +346,10 @@ public class RedProtectUtil extends CoreUtil {
                     EconomyManager.putToSell(region, RedProtect.get().config.configRoot().region_settings.default_leader, EconomyManager.getRegionValue(region));
                     sell++;
                     RedProtect.get().rm.saveAll(false);
-                    continue;
                 }
             }
 
-
-            try {
+            /* try {
                 //filter name
                 String rname = setName(region.getName());
                 if (rname.length() < 4) {
@@ -388,7 +360,7 @@ public class RedProtectUtil extends CoreUtil {
             } catch (Exception ex) {
                 RedProtect.get().logger.warning("&eThe region " + region.getName() + " is invalid or broken, skipping...");
                 //RedProtect.get().rm.remove(region, region.getWorld());
-            }
+            } */
         }
 
         if (delay > 0) {
@@ -1046,36 +1018,56 @@ public class RedProtectUtil extends CoreUtil {
         return true;
     }
 
-    public String regionNameConform(String regionName, Player p) {
-        String pRName = p.getName();
-        if (regionName.equals("")) {
-            int i = 0;
-            regionName = StripName(pRName) + "_" + 0;
-            while (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-                ++i;
-                regionName = StripName(pRName) + "_" + i;
-            }
+    public String fixRegionName(Player p, String regionName) {
+        //filter region name
+        if (regionName == null || regionName.isEmpty() || regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
+            regionName = nameGen(p.getName(), p.getWorld().getName());
             if (regionName.length() > 16) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
                 return null;
             }
         }
-        if (regionName.contains("@")) {
-            p.sendMessage(toText(RedProtect.get().lang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@")));
-            return null;
-        }
+
+        regionName = Normalizer.normalize(regionName.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("[ -]", "_")
+                .replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
-        regionName = regionName.replace("/", "|");
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
-            return null;
-        }
-        if (regionName.length() < 3 || regionName.length() > 16) {
+        if (regionName.length() < 3) {
             RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
             return null;
         }
 
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
+            return null;
+        }
+
         return regionName;
+    }
+
+    /**
+     * Generate a friendly and unique name for a region based on player name.
+     *
+     * @param p     Player
+     * @param World World
+     * @return Name of region
+     */
+    public String nameGen(String p, String World) {
+        String rname;
+        int i = 0;
+        while (true) {
+            int is = String.valueOf(i).length();
+            if (p.length() > 13) {
+                rname = p.substring(0, 14 - is) + "_" + i;
+            } else {
+                rname = p + "_" + i;
+            }
+            if (RedProtect.get().rm.getRegion(rname, World) == null) {
+                break;
+            }
+            ++i;
+        }
+        return rname;
     }
 }

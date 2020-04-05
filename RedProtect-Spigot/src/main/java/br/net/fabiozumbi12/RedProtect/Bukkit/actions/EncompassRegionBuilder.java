@@ -70,25 +70,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
         }
 
         //filter name
-        regionName = RedProtect.get().getUtil().setName(regionName);
-
-        //filter region name
-        if (regionName == null || regionName.isEmpty() || regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            regionName = RedProtect.get().getUtil().nameGen(p.getName(), p.getWorld().getName());
-            if (regionName.length() > 16) {
-                this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.autoname.error"));
-                return;
-            }
-        }
-
-        //region name conform
-        if (regionName.length() < 3) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return;
-        }
-
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
+        regionName = RedProtect.get().getUtil().fixRegionName(p, regionName);
+        if (regionName == null) {
+            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.error"));
             return;
         }
 

@@ -54,6 +54,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -258,43 +259,17 @@ public class RedProtectUtil extends CoreUtil {
         return genFileName(Path, isBackup, RedProtect.get().config.configRoot().flat_file.max_backups, dateNow());
     }
 
-    /**
-     * Generate a friendly and unique name for a region based on player name.
-     *
-     * @param p     Player
-     * @param World World
-     * @return Name of region
-     */
-    public String nameGen(String p, String World) {
-        String rname;
-        int i = 0;
-        while (true) {
-            int is = String.valueOf(i).length();
-            if (p.length() > 13) {
-                rname = p.substring(0, 14 - is) + "_" + i;
-            } else {
-                rname = p + "_" + i;
-            }
-            if (RedProtect.get().rm.getRegion(rname, World) == null) {
-                break;
-            }
-            ++i;
-        }
-        return rname;
-    }
-
     //TODO read all db
     public void ReadAllDB(Set<Region> regions) {
         int purged = 0;
         int sell = 0;
-        int cfm = 0;
         int skipped = 0;
         int delay = 0;
         Date now = null;
-        SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
 
         try {
-            now = dateformat.parse(dateNow());
+            now = dateFormat.parse(dateNow());
         } catch (ParseException e1) {
             RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
         }
@@ -312,7 +287,7 @@ public class RedProtectUtil extends CoreUtil {
             if (RedProtect.get().config.configRoot().purge.enabled && !serverRegion) {
                 Date regionDate = null;
                 try {
-                    regionDate = dateformat.parse(region.getDate());
+                    regionDate = dateFormat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     printJarVersion();
@@ -388,7 +363,7 @@ public class RedProtectUtil extends CoreUtil {
             if (RedProtect.get().config.configRoot().sell.enabled && !serverRegion) {
                 Date regiondate = null;
                 try {
-                    regiondate = dateformat.parse(region.getDate());
+                    regiondate = dateFormat.parse(region.getDate());
                 } catch (ParseException e) {
                     RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
                     printJarVersion();
@@ -420,7 +395,7 @@ public class RedProtectUtil extends CoreUtil {
                 }
             }
 
-            try {
+            /* try {
                 //filter name
                 String rname = setName(region.getName());
                 if (rname.length() < 4) {
@@ -431,7 +406,7 @@ public class RedProtectUtil extends CoreUtil {
             } catch (Exception ex) {
                 RedProtect.get().logger.warning("&eThe region " + region.getName() + " is invalid or broken, skipping...");
                 //RedProtect.get().rm.remove(region, region.getWorld());
-            }
+            } */
         }
 
         if (delay > 0) {
@@ -440,10 +415,6 @@ public class RedProtectUtil extends CoreUtil {
                 Bukkit.getServer().setWhitelist(true);
                 RedProtect.get().logger.warning("&eEnabled whitelist until regen!");
             }
-        }
-
-        if (cfm > 0) {
-            RedProtect.get().logger.success("[" + cfm + "] Region names conformed!");
         }
 
         if (skipped > 0) {
@@ -1140,5 +1111,58 @@ public class RedProtectUtil extends CoreUtil {
         }
 
         return regionName;
+    }
+
+    public String fixRegionName(Player p, String regionName) {
+        //filter region name
+        if (regionName == null || regionName.isEmpty() || regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
+            regionName = nameGen(p.getName(), p.getWorld().getName());
+            if (regionName.length() > 16) {
+                return null;
+            }
+        }
+
+        regionName = Normalizer.normalize(regionName.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("[ -]", "_")
+                .replaceAll("[^\\p{L}_0-9]", "");
+
+        //region name conform
+        if (regionName.length() < 3) {
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
+            return null;
+        }
+
+        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
+            return null;
+        }
+
+        return regionName;
+    }
+
+    /**
+     * Generate a friendly and unique name for a region based on player name.
+     *
+     * @param p     Player
+     * @param World World
+     * @return Name of region
+     */
+    public String nameGen(String p, String World) {
+        String rname;
+        int i = 0;
+        while (true) {
+            int is = String.valueOf(i).length();
+            if (p.length() > 13) {
+                rname = p.substring(0, 14 - is) + "_" + i;
+            } else {
+                rname = p + "_" + i;
+            }
+            if (RedProtect.get().rm.getRegion(rname, World) == null) {
+                break;
+            }
+            ++i;
+        }
+        return rname;
     }
 }
