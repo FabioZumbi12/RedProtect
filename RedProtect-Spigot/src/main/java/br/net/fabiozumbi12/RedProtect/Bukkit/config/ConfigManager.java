@@ -120,17 +120,24 @@ public class ConfigManager extends CoreConfigManager {
                         "STONECUTTER"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
-                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name(), Material.TALL_GRASS.name());
+                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name());
+                // Compat
+                try{
+                    this.root.needed_claim_to_build.allow_break_blocks.add(Material.TALL_GRASS.name());
+                } catch (Exception ignored) {}
             }
             if (this.root.needed_claim_to_build.allow_interact_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_interact_blocks = Arrays.asList(
                         Arrays.stream(Material.values()).filter(m -> m.name().contains("BUTTON")).findFirst().get().name(),
                         Arrays.stream(Material.values()).filter(m -> m.name().contains("DOOR")).findFirst().get().name(),
                         Material.SAND.name(),
-                        Material.GRASS_BLOCK.name(),
                         Material.IRON_DOOR.name(),
                         Material.STONE_BUTTON.name(),
                         Material.LEVER.name());
+                // Compat
+                try {
+                    this.root.needed_claim_to_build.allow_interact_blocks.add(Material.GRASS_BLOCK.name());
+                } catch (Exception ignored) {}
             }
             if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = "FENCE";
@@ -473,7 +480,7 @@ public class ConfigManager extends CoreConfigManager {
         try {
             separator = new ItemStack(Material.getMaterial(guiRoot.gui_separator.material), 1, (short) guiRoot.gui_separator.data);
         } catch (Exception ignored) {
-            Optional<Material> optMat = Arrays.stream(Material.values()).filter(m -> m.name().contains("PANE") && m.isItem()).findFirst();
+            Optional<Material> optMat = Arrays.stream(Material.values()).filter(m -> m.name().contains("PANE") && !m.isBlock()).findFirst();
             separator = optMat.map(material -> new ItemStack(material, 1, (short) guiRoot.gui_separator.data)).orElseGet(() -> new ItemStack(Material.GLASS, 1, (short) guiRoot.gui_separator.data));
         }
 
