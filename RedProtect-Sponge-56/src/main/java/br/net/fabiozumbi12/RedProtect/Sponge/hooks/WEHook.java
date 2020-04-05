@@ -132,8 +132,7 @@ public class WEHook {
             Location<World> max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
 
             PlayerRegion leader = new PlayerRegion(p.getUniqueId().toString(), p.getName());
-            String regionName = RedProtect.get().getUtil().fixRegionName(p, "");
-            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, leader, new HashSet<>(), false);
+            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, "", leader, new HashSet<>(), false);
             if (rb2.ready() && rb2.build().getArea() > 1) {
                 r = rb2.build();
             }

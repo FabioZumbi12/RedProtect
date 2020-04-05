@@ -404,6 +404,7 @@ public class CommandHandlers {
 
             //filter name
             newName = RedProtect.get().getUtil().fixRegionName(p, newName);
+            if (newName == null) return;
 
             RenameRegionEvent event = new RenameRegionEvent(r, newName, r.getName(), p);
             Bukkit.getPluginManager().callEvent(event);
