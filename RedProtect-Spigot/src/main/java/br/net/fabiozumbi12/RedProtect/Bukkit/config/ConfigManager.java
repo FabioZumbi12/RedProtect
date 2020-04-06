@@ -121,10 +121,6 @@ public class ConfigManager extends CoreConfigManager {
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name());
-                // Compat
-                try{
-                    this.root.needed_claim_to_build.allow_break_blocks.add(Material.TALL_GRASS.name());
-                } catch (Exception ignored) {}
             }
             if (this.root.needed_claim_to_build.allow_interact_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_interact_blocks = Arrays.asList(
@@ -134,10 +130,6 @@ public class ConfigManager extends CoreConfigManager {
                         Material.IRON_DOOR.name(),
                         Material.STONE_BUTTON.name(),
                         Material.LEVER.name());
-                // Compat
-                try {
-                    this.root.needed_claim_to_build.allow_interact_blocks.add(Material.GRASS_BLOCK.name());
-                } catch (Exception ignored) {}
             }
             if (this.root.region_settings.block_id.isEmpty()) {
                 this.root.region_settings.block_id = "FENCE";
