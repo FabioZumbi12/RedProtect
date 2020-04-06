@@ -39,7 +39,6 @@ public class schematics {
         public static void pasteSchematic(Player p) {
             File file = new File(RedProtect.get().configDir, "schematics" + File.separator + RedProtect.get().config.configRoot().schematics.first_house_file);
 
-
             Region region = WEHook.pasteWithWE(p, file);
             if (region == null) return;
 
@@ -52,6 +51,7 @@ public class schematics {
 
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
             RedProtect.get().rm.add(region, p.getWorld().getName());
+            RedProtect.get().getUtil().addBorder(p, region.getMinLocation(), region.getMaxLocation());
         }
     }
 }

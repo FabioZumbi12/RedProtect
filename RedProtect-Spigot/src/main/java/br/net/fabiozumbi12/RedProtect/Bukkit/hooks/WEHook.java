@@ -39,9 +39,14 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.mask.ExistingBlockMask;
+import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.function.mask.Masks;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Bukkit;
@@ -105,42 +110,75 @@ public class WEHook {
             return null;
         }
 
+        Clipboard clipboard = null;
         ClipboardFormat format = ClipboardFormats.findByFile(file);
         if (format == null) {
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.copyfail");
             return null;
         }
+
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
-            Clipboard clipboard = reader.read();
-
-            BlockVector3 bmin = clipboard.getMinimumPoint();
-            BlockVector3 bmax = clipboard.getMaximumPoint();
-
-            Location min = loc.add(bmin.getX(), bmin.getY(), bmin.getZ());
-            Location max = loc.add(bmax.getX(), bmax.getY(), bmax.getZ());
-
-            String regionName = RedProtect.get().getUtil().regionNameConform("", p);
-            RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, regionName, new PlayerRegion(p.getUniqueId().toString(), p.getName()), new HashSet<>(), false);
-            if (rb2.ready() && rb2.build().getArea() > 1) {
-                r = rb2.build();
-            }
-
-            try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
-                Operation operation = new ClipboardHolder(clipboard)
-                        .createPaste(editSession)
-                        .to(BlockVector3.at(loc.getX(), loc.getY(), loc.getZ()))
-                        .ignoreAirBlocks(false)
-                        .build();
-                Operations.complete(operation);
-            } catch (WorldEditException e) {
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
-            }
+            clipboard = reader.read();
         } catch (IOException e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
 
+        if (clipboard != null) {
+            try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+                BlockVector3 to = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
+
+                // Rotate to player looking direction
+                float yaw = loc.getYaw();
+                if (yaw < 0) {
+                    yaw += 360;
+                }
+                int rotate = 0;
+                if (yaw >= 315 || yaw < 45) {
+                    rotate = 180;
+                } else if (yaw < 135) {
+                    rotate = 270;
+                } else if (yaw < 225) {
+                    rotate = 0;
+                } else if (yaw < 315) {
+                    rotate = 90;
+                }
+                ClipboardHolder holder = new ClipboardHolder(clipboard);
+                AffineTransform transform = new AffineTransform();
+                transform = transform.rotateY(-rotate);
+                holder.setTransform(holder.getTransform().combine(transform));
+
+                Operation operation = holder.createPaste(editSession)
+                        .to(to)
+                        .ignoreAirBlocks(false).build();
+                Operations.complete(operation);
+
+                // Select the region min and max
+                BlockVector3 clipboardOffset = clipboard.getRegion().getMinimumPoint().subtract(clipboard.getOrigin());
+                Vector3 realTo = to.toVector3().add(holder.getTransform().apply(clipboardOffset.toVector3()));
+                Vector3 locMax = realTo.add(holder.getTransform().apply(clipboard.getRegion().getMaximumPoint().subtract(clipboard.getRegion().getMinimumPoint()).toVector3()));
+
+                Location min = new Location(world, realTo.getX(), realTo.getY(), realTo.getZ());
+                Location max = new Location(world, locMax.getX(), locMax.getY(), locMax.getZ());
+
+                if (RedProtect.get().config.configRoot().region_settings.autoexpandvert_ondefine) {
+                    min.setY(0);
+                    max.setY(p.getWorld().getMaxHeight());
+                    if (RedProtect.get().config.configRoot().region_settings.claim.miny != -1)
+                        min.setY(RedProtect.get().config.configRoot().region_settings.claim.miny);
+                    if (RedProtect.get().config.configRoot().region_settings.claim.maxy != -1)
+                        max.setY(RedProtect.get().config.configRoot().region_settings.claim.maxy);
+                }
+                RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, "", new PlayerRegion(p.getUniqueId().toString(), p.getName()), new HashSet<>(), false);
+                if (rb2.ready()) {
+                    r = rb2.build();
+                }
+            } catch (WorldEditException e) {
+                CoreUtil.printJarVersion();
+                e.printStackTrace();
+                r = null;
+            }
+        }
         return r;
     }
 
@@ -162,43 +200,44 @@ public class WEHook {
                 return;
             }
 
-            EditSession eSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1);
+            try (EditSession eSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)){
+                eSessions.put(region.getID(), eSession);
+                int delayCount = 1 + delay / 10;
 
-            eSessions.put(region.getID(), eSession);
-            int delayCount = 1 + delay / 10;
+                com.sk89q.worldedit.world.World wRegWorld = wReg.getWorld();
+                if (wRegWorld == null) return;
 
-            com.sk89q.worldedit.world.World wRegWorld = wReg.getWorld();
-            if (wRegWorld == null) return;
-
-            if (sender != null) {
-                if (wReg.getWorld().regenerate(wReg, eSession)) {
-                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
+                if (sender != null) {
+                    if (wRegWorld.regenerate(wReg, eSession)) {
+                        RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
+                    } else {
+                        RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
+                    }
                 } else {
-                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
+                    if (wRegWorld.regenerate(wReg, eSession)) {
+                        eSession.setMask(null);
+                        RedProtect.get().logger.warning("[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
+                    } else {
+                        RedProtect.get().logger.warning("[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
+                    }
                 }
-            } else {
-                if (wReg.getWorld().regenerate(wReg, eSession)) {
-                    RedProtect.get().logger.warning("[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
-                } else {
-                    RedProtect.get().logger.warning("[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
+
+                if (remove) {
+                    region.notifyRemove();
+                    RedProtect.get().rm.remove(region, region.getWorld());
                 }
-            }
 
-            if (remove) {
-                region.notifyRemove();
-                RedProtect.get().rm.remove(region, region.getWorld());
-            }
+                if (delayCount % 50 == 0) {
+                    RedProtect.get().rm.saveAll(true);
+                }
 
-            if (delayCount % 50 == 0) {
-                RedProtect.get().rm.saveAll(true);
-            }
+                if (RedProtect.get().config.configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().config.configRoot().purge.regen.stop_server_every) {
 
-            if (RedProtect.get().config.configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().config.configRoot().purge.regen.stop_server_every) {
+                    Bukkit.getScheduler().cancelTasks(RedProtect.get());
+                    RedProtect.get().rm.saveAll(false);
 
-                Bukkit.getScheduler().cancelTasks(RedProtect.get());
-                RedProtect.get().rm.saveAll(false);
-
-                Bukkit.getServer().shutdown();
+                    Bukkit.getServer().shutdown();
+                }
             }
         }, delay);
     }

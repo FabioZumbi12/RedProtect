@@ -133,7 +133,7 @@ public class WEHook {
 
             PlayerRegion leader = new PlayerRegion(p.getUniqueId().toString(), p.getName());
             RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, "", leader, new HashSet<>(), false);
-            if (rb2.ready() && rb2.build().getArea() > 1) {
+            if (rb2.ready()) {
                 r = rb2.build();
             }
 

@@ -1080,39 +1080,6 @@ public class RedProtectUtil extends CoreUtil {
         return total;
     }
 
-    public String regionNameConform(String regionName, Player p) {
-        String pRName = p.getName();
-        if (regionName.equals("")) {
-            int i = 0;
-            regionName = StripName(pRName) + "_" + 0;
-            while (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-                ++i;
-                regionName = StripName(pRName) + "_" + i;
-            }
-            if (regionName.length() > 16) {
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.autoname.error");
-                return null;
-            }
-        }
-        if (regionName.contains("@")) {
-            p.sendMessage(RedProtect.get().lang.get("regionbuilder.regionname.invalid.charac").replace("{charac}", "@"));
-            return null;
-        }
-
-        //region name conform
-        regionName = regionName.replace("/", "|");
-        if (RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.existis");
-            return null;
-        }
-        if (regionName.length() < 3 || regionName.length() > 16) {
-            RedProtect.get().lang.sendMessage(p, "regionbuilder.regionname.invalid");
-            return null;
-        }
-
-        return regionName;
-    }
-
     public String fixRegionName(Player p, String regionName) {
         //filter region name
         if (regionName == null || regionName.isEmpty() || regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {

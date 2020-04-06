@@ -57,8 +57,7 @@ public class StartCommand {
                             return CommandResult.success();
                         }
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), player.getWorld().getName());
-                        if (r != null && r.isMember(player)) {
+                        if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0){
                             RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                             return CommandResult.success();
                         }

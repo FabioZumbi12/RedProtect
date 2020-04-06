@@ -51,5 +51,6 @@ public class RPSchematics {
 
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
         RedProtect.get().rm.add(region, p.getWorld().getName());
+        RedProtect.get().getUtil().addBorder(p, region);
     }
 }

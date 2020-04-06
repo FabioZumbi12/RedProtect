@@ -57,14 +57,15 @@ public class StartCommand implements SubCommand {
                 return true;
             }
 
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
-            if (r != null && r.isMember(player)) {
+            if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0){
                 RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                 return true;
             }
 
             RedProtect.get().confirmStart.add(player.getName());
-            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.confirm").replace("{cmd}", getCmd("start")));
+            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.start.confirm")
+                    .replace("{cmd}", getCmd("start"))
+                    .replace("{confirm}", getCmd("confirm")));
 
             Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().confirmStart.remove(player.getName()), 600);
             return true;
