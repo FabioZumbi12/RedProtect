@@ -65,6 +65,14 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onBlockFade(BlockFadeEvent e) {
+        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        if (r != null && !r.blockTransform()) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onDispenser(BlockDispenseEvent e) {
         if (RedProtect.get().getUtil().denyPotion(e.getItem())) {
             e.setCancelled(true);
