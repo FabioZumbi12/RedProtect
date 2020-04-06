@@ -27,6 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +37,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
@@ -48,6 +51,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VersionHelper112 implements VersionHelper {
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPhysics(BlockPhysicsEvent event) {
+        Material source = event.getChangedType();
+        Block b = event.getBlock();
+        if (source.equals(b.getType())){
+            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            if (r != null && !r.blockTransform()){
+                event.setCancelled(true);
+            }
+        }
+    }
 
     @Override
     public String getVersion() {

@@ -65,18 +65,6 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPhysics(BlockPhysicsEvent event) {
-        Block source = event.getSourceBlock();
-        Block b = event.getBlock();
-        if (source.equals(b)){
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
-            if (r != null && !r.blockTransform()){
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
     public void onDispenser(BlockDispenseEvent e) {
         if (RedProtect.get().getUtil().denyPotion(e.getItem())) {
             e.setCancelled(true);

@@ -497,7 +497,7 @@ public class GlobalListener implements Listener {
                     return;
                 }
             }
-            if (itemInHand.getType().equals(Material.BONE_MEAL)) {
+            if (itemInHand.getType().name().contains("BONE_MEAL")) {
                 if (!bypassBuild(p, null, 0)) {
                     e.setUseItemInHand(Event.Result.DENY);
                     e.setCancelled(true);
