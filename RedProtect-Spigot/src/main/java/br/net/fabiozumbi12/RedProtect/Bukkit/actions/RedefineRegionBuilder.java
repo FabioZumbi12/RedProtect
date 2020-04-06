@@ -179,13 +179,13 @@ public class RedefineRegionBuilder extends RegionBuilder {
         p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimused + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
         p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
-        p.sendMessage(RedProtect.get().lang.get("cmdmanager.newRegion.priority.set").replace("{newRegion}", newRegion.getName()) + " " + newRegion.getPrior());
+        p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{newRegion}", newRegion.getName()) + " " + newRegion.getPrior());
         if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable) p.sendMessage(RedProtect.get().lang.get("regionbuilder.block.cost") + reco);
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
         if (othersName.size() > 0) {
             p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
             p.sendMessage(RedProtect.get().lang.get("regionbuilder.overlapping"));
-            p.sendMessage(RedProtect.get().lang.get("newRegion.regions") + " " + othersName);
+            p.sendMessage(RedProtect.get().lang.get("region.regions") + " " + othersName);
         }
 
         this.r = newRegion;
