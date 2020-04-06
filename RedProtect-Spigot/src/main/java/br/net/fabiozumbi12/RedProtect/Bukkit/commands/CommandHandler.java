@@ -57,6 +57,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Array;
 import java.text.ParseException;
@@ -344,13 +345,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0 && hasCommand(args[0])) {
             CommandExecutor executor = this.getCommandSubCommand(args[0]);
-
-            // permission checked on PreCommand for players
-            /*if (!RedProtect.get().ph.hasCommandPerm(sender, getCmdFromAlias(args[0]))) {
-                RedProtect.get().lang.sendMessage(sender, "no.permission");
-                return true;
-            }*/
-
             return executor.onCommand(sender, command, label, Arrays_copyOfRange(args, args.length));
         } else {
             if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
@@ -359,6 +353,20 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             }
 
             if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("debug-item")) {
+                    if (sender instanceof Player) {
+                        ItemStack hand = ((Player)sender).getItemInHand();
+                        if (hand != null){
+                            plugin.lang.sendMessage(sender, "&aMaterial name: " + hand.getType().name());
+                        } else {
+                            plugin.lang.sendMessage(sender, "&cInvalid item in your hand!");
+                        }
+                    } else {
+                        plugin.lang.sendMessage(sender, "&cThis command can be used only by online players holding an item!");
+                    }
+                    return true;
+                }
+
                 if (args[0].equalsIgnoreCase("update")) {
                     if (plugin.getUpdater() == null) {
                         plugin.lang.sendMessage(sender, "&aPlugin updates is disabled on config.");
@@ -847,7 +855,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consoleCmds = Arrays.asList("update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "fileToMysql", "mysqlToFile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp");
+        List<String> consoleCmds = Arrays.asList("debug-item" ,"update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "fileToMysql", "mysqlToFile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp");
         if (sender instanceof Player) {
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
