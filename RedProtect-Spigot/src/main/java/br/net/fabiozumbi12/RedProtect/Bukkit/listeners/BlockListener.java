@@ -67,7 +67,14 @@ public class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent e) {
         Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
-        if (r != null && !r.blockTransform()) {
+        Material type = e.getBlock().getType();
+        if (r != null && !r.blockTransform() && (
+                type.name().contains("SNOW") ||
+                type.name().contains("ICE") ||
+                type.name().contains("FIRE") ||
+                type.name().contains("CORAL") ||
+                type.name().contains("POWDER")
+        )) {
             e.setCancelled(true);
         }
     }
