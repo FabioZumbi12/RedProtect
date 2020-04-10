@@ -385,8 +385,7 @@ public class CoreRegion implements Serializable {
     public int getArea() {
         int areaX = (Math.abs(this.maxMbrX - this.minMbrX) + 1);
         int areaZ = (Math.abs(this.maxMbrZ - this.minMbrZ) + 1);
-        int area = areaX * areaZ;
-        return Math.abs(area);
+        return areaX * areaZ;
     }
 
     public boolean isLeaderByUUID(String player) {

@@ -9,7 +9,7 @@ assignees:
 
 **Antes de abrir um problema, verifique estas etapas:**
 * Se você estiver executando o plug-in na primeira vez, tente executar novamente para ver se o problema persiste.
-* Verifique se a sua compilação é a mais recente do nosso Jenkins. Clique aqui: <https://host.areaz12server.net.br:8080/job/RedProtect>
+* Verifique se a sua compilação é a mais recente do nosso Jenkins. Clique aqui: <https://host.areaz12server.net.br:8081/job/RedProtect>
 * É importante você incluir o nome do jar do plug-in, porque as informações de versão e construção estão nele.
 
 **Descreva o bug**
