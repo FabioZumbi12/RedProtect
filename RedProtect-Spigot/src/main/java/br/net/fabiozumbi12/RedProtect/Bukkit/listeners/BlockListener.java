@@ -253,10 +253,9 @@ public class BlockListener implements Listener {
             }
 
             Material type = b.getType();
-            if (!r.blockTransform() && (
+            if (!r.blockTransform() && type.isBlock() && (
                     type.name().contains("SNOW") ||
                     type.name().contains("ICE") ||
-                    type.name().contains("FIRE") ||
                     type.name().contains("CORAL") ||
                     type.name().contains("POWDER"))) {
                 b.setType(m);
