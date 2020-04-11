@@ -9,7 +9,7 @@ assignees:
 
 **Before open an issue, checkout this steps:**
 * If you are running the plugin at first time, try to run again to see if the problem persists.
-* Check if your build is the latest on our Jenkins. Click Here: <https://host.areaz12server.net.br:8081/job/RedProtect>
+* Check if your build is the latest on our Jenkins. Click Here: <http://host.areaz12server.net.br:8081/job/RedProtect>
 * Its important to you include the plugin jar name, because version and build info.
 
 **Describe the bug**
