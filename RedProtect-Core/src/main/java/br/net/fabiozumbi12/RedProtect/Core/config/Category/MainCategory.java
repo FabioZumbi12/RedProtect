@@ -238,6 +238,8 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class permLimits {
+        @Setting(value = "use-valtapi", comment = "* Bukkit/Spigot option. Use vault as permissions handler, not needed if not using permissions per world.")
+        public boolean useVault = true;
         @Setting
         public List<String> blocks = Collections.singletonList("redprotect.limits.blocks.8000");
         @Setting

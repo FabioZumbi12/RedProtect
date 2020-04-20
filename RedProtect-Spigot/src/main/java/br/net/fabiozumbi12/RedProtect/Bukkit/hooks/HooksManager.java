@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import com.earth2me.essentials.Essentials;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.Bukkit;
@@ -78,13 +79,21 @@ public class HooksManager {
             boolean skillAPI = checkSkillAPI();
 
             if (vault) {
+                // Economy
                 RegisteredServiceProvider<Economy> rsp = RedProtect.get().getServer().getServicesManager().getRegistration(Economy.class);
                 if (rsp != null) {
                     RedProtect.get().economy = rsp.getProvider();
-                    RedProtect.get().logger.info("Vault found. Hooked.");
+                    RedProtect.get().logger.info("Vault Economy found. Hooked.");
                 } else {
-                    RedProtect.get().logger.warning("Could not initialize Vault hook.");
-                    vault = false;
+                    RedProtect.get().logger.warning("Could not initialize Vault Economy hook.");
+                }
+                // Permissions
+                RegisteredServiceProvider<Permission> perm = RedProtect.get().getServer().getServicesManager().getRegistration(Permission.class);
+                if (perm != null) {
+                    RedProtect.get().permission = perm.getProvider();
+                    RedProtect.get().logger.info("Vault Permissions found. Hooked.");
+                } else {
+                    RedProtect.get().logger.warning("Could not initialize Vault Permissions hook.");
                 }
             }
 

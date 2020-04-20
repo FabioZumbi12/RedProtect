@@ -52,15 +52,15 @@ public class PermissionHandler {
     }
 
     public boolean hasPermOrBypass(Player p, String perm) {
-        return p.hasPermission(perm) || p.hasPermission(perm + ".bypass");
+        return hasPerm(p, perm) || hasPerm(p, perm + ".bypass");
     }
 
     public boolean hasPerm(Player player, String perm) {
-        return player != null && (player.hasPermission(perm) || player.hasPermission("redprotect.command.admin"));
+        return player != null && (hasVaultPerm(player, perm) || hasVaultPerm(player, "redprotect.command.admin"));
     }
 
     public boolean hasPerm(CommandSender sender, String perm) {
-        return sender != null && (sender.hasPermission(perm) || sender.hasPermission("redprotect.command.admin"));
+        return sender != null && (hasVaultPerm(sender, perm) || hasVaultPerm(sender, "redprotect.command.admin"));
     }
 
     public boolean hasRegionPermMember(Player p, String s, Region poly) {
@@ -118,6 +118,13 @@ public class PermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p) || poly.isMember(p)));
     }
 
+    private boolean hasVaultPerm(CommandSender player, String perm){
+        if (RedProtect.get().config.configRoot().permissions_limits.useVault && player instanceof Player && RedProtect.get().permission != null) {
+            return RedProtect.get().permission.playerHas(((Player)player).getWorld().getName(), (Player)player, perm);
+        }
+        return player.hasPermission(perm);
+    }
+
     private int getBlockLimit(Player player) {
         int limit = RedProtect.get().config.configRoot().region_settings.limit_amount;
         List<Integer> limits = new ArrayList<>();
@@ -126,6 +133,8 @@ public class PermissionHandler {
             if (!player.hasPermission("redprotect.limits.blocks.unlimited")) {
                 for (PermissionAttachmentInfo perm : perms) {
                     if (perm.getPermission().startsWith("redprotect.limits.blocks.")) {
+                        if (RedProtect.get().config.configRoot().region_settings.blocklimit_per_world && !hasVaultPerm(player, perm.getPermission()))
+                            continue;
                         String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
                         if (!pStr.isEmpty()) {
                             limits.add(Integer.parseInt(pStr));
@@ -150,6 +159,8 @@ public class PermissionHandler {
             if (!player.hasPermission("redprotect.limits.claim.unlimited")) {
                 for (PermissionAttachmentInfo perm : perms) {
                     if (perm.getPermission().startsWith("redprotect.limits.claim.")) {
+                        if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world && !hasVaultPerm(player, perm.getPermission()))
+                            continue;
                         String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
                         if (!pStr.isEmpty()) {
                             limits.add(Integer.parseInt(pStr));

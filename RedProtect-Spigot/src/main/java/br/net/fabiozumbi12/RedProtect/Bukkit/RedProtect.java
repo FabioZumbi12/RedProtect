@@ -43,6 +43,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -65,6 +66,7 @@ public class RedProtect extends JavaPlugin {
     public final List<String> teleportDelay = new ArrayList<>();
     public int bukkitVersion;
     public Economy economy;
+    public Permission permission;
     public RegionManager rm;
     public PermissionHandler ph;
     public ConfigManager config;
