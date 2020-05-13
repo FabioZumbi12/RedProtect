@@ -47,9 +47,9 @@ public class WorldListener implements Listener {
         World w = e.getWorld();
         try {
             RedProtect.get().rm.load(w.getName());
-            RedProtect.get().config.addWorldProperties(w);
+            // RedProtect.get().config.addWorldProperties(w);
 
-            RedProtect.get().reload();
+            RedProtect.get().reloadConfigs();
             RedProtect.get().logger.warning("World loaded: " + w.getName());
         } catch (Exception ex) {
             RedProtect.get().logger.severe("RedProtect problem on load world:");
@@ -63,7 +63,7 @@ public class WorldListener implements Listener {
         try {
             RedProtect.get().rm.unload(w.getName());
 
-            RedProtect.get().reload();
+            RedProtect.get().reloadConfigs();
             RedProtect.get().logger.warning("World unloaded: " + w.getName());
         } catch (Exception ex) {
             RedProtect.get().logger.severe("RedProtect problem on unload world:");

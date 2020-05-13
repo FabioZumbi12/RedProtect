@@ -44,6 +44,7 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -147,6 +148,25 @@ public class RedProtect extends JavaPlugin {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
+    }
+
+    public void reloadConfigs() {
+        cmdHandler.unregisterAll();
+
+        try {
+            config = new ConfigManager();
+        } catch (ObjectMappingException e) {
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
+        }
+
+        logger.info("Loading language files...");
+        lang = new LangManager();
+        guiLang = new LangGuiManager();
+
+        logger.info("Re-registering commands...");
+        cmdHandler = new CommandHandler(this);
+
     }
 
     private void startLoad() throws Exception {

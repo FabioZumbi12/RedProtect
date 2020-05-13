@@ -593,22 +593,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 }
 
                 if (args[0].equalsIgnoreCase("reload-config")) {
-                    RedProtect.get().cmdHandler.unregisterAll();
-
-                    try {
-                        RedProtect.get().config = new ConfigManager();
-                    } catch (ObjectMappingException e) {
-                        CoreUtil.printJarVersion();
-                        e.printStackTrace();
-                    }
-
-                    RedProtect.get().logger.info("Loading language files...");
-                    RedProtect.get().lang = new LangManager();
-                    RedProtect.get().guiLang = new LangGuiManager();
-
-                    RedProtect.get().logger.info("Re-registering commands...");
-                    RedProtect.get().cmdHandler = new CommandHandler(RedProtect.get());
-
+                    RedProtect.get().reloadConfigs();
                     RedProtect.get().lang.sendMessage(sender, "RedProtect configs reloaded!");
                     return true;
                 }

@@ -130,7 +130,7 @@ public class PermissionHandler {
         List<Integer> limits = new ArrayList<>();
         Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {
-            if (!player.hasPermission("redprotect.limits.blocks.unlimited")) {
+            if (!hasVaultPerm(player, "redprotect.limits.blocks.unlimited")) {
                 for (PermissionAttachmentInfo perm : perms) {
                     if (perm.getPermission().startsWith("redprotect.limits.blocks.")) {
                         if (RedProtect.get().config.configRoot().region_settings.blocklimit_per_world && !hasVaultPerm(player, perm.getPermission()))
@@ -156,7 +156,7 @@ public class PermissionHandler {
         List<Integer> limits = new ArrayList<>();
         Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
         if (limit > 0) {
-            if (!player.hasPermission("redprotect.limits.claim.unlimited")) {
+            if (!hasVaultPerm(player, "redprotect.limits.claim.unlimited")) {
                 for (PermissionAttachmentInfo perm : perms) {
                     if (perm.getPermission().startsWith("redprotect.limits.claim.")) {
                         if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world && !hasVaultPerm(player, perm.getPermission()))
