@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 
 public class VersionHelperLatest implements VersionHelper {
 
-    @EventHandler(ignoreCancelled = true)
+    /*@EventHandler(ignoreCancelled = true)
     public void onPhysics(BlockPhysicsEvent event) {
         Block source = event.getSourceBlock();
         Block b = event.getBlock();
@@ -62,7 +62,7 @@ public class VersionHelperLatest implements VersionHelper {
                 event.setCancelled(true);
             }
         }
-    }
+    }*/
 
     @Override
     public String getVersion() {
