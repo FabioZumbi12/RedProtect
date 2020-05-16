@@ -337,6 +337,7 @@ public class PlayerListener implements Listener {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantlever");
                         event.setCancelled(true);
                     }
+                } else if (b.getType().name().contains("LECTERN")) { // Do nothing to allow read books
                 } else if (b.getType().name().contains("BUTTON")) {
                     if (!r.canButton(p)) {
                         RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantbutton");
