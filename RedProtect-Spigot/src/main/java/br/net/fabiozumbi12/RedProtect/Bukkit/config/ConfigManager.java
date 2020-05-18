@@ -436,29 +436,34 @@ public class ConfigManager extends CoreConfigManager {
     }
 
     public void addWorldProperties(World w) {
-        //add worlds to claim types list
-        if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
-            root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
-            RedProtect.get().logger.warning("Added world to claim types list " + w.getName());
-        }
-        //add worlds to color list
-        if (!root.region_settings.world_colors.containsKey(w.getName())) {
-            switch (w.getEnvironment()) {
-                case NORMAL:
-                    root.region_settings.world_colors.put(w.getName(), "&a&l");
-                case NETHER:
-                    root.region_settings.world_colors.put(w.getName(), "&c&l");
-                case THE_END:
-                    root.region_settings.world_colors.put(w.getName(), "&5&l");
-                default:
-                    root.region_settings.world_colors.put(w.getName(), "&a&l");
+        try {
+            //add worlds to claim types list
+            if (!root.region_settings.claim.world_types.containsKey(w.getName())) {
+                root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
+                RedProtect.get().logger.warning("Added world to claim types list " + w.getName());
             }
-            RedProtect.get().logger.warning("Added world to colors list " + w.getName());
-        }
-        //add world to globalflags
-        if (!globalFlagsRoot.worlds.containsKey(w.getName())) {
-            globalFlagsRoot.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
-            saveGFlags();
+            //add worlds to color list
+            if (!root.region_settings.world_colors.containsKey(w.getName()) && w.getEnvironment() != null) {
+                switch (w.getEnvironment()) {
+                    case NORMAL:
+                        root.region_settings.world_colors.put(w.getName(), "&a&l");
+                    case NETHER:
+                        root.region_settings.world_colors.put(w.getName(), "&c&l");
+                    case THE_END:
+                        root.region_settings.world_colors.put(w.getName(), "&5&l");
+                    default:
+                        root.region_settings.world_colors.put(w.getName(), "&a&l");
+                }
+                RedProtect.get().logger.warning("Added world to colors list " + w.getName());
+            }
+            //add world to globalflags
+            if (!globalFlagsRoot.worlds.containsKey(w.getName())) {
+                globalFlagsRoot.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
+                saveGFlags();
+            }
+        } catch (Exception ex){
+            RedProtect.get().logger.severe("Error on add config properties for world " + w.getName() +": " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
