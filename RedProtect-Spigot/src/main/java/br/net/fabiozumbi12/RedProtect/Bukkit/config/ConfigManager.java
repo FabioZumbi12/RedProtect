@@ -442,6 +442,10 @@ public class ConfigManager extends CoreConfigManager {
                 root.region_settings.claim.world_types.put(w.getName(), "BLOCK");
                 RedProtect.get().logger.warning("Added world to claim types list " + w.getName());
             }
+            //add world to globalflags
+            if (!globalFlagsRoot.worlds.containsKey(w.getName())) {
+                globalFlagsRoot.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
+            }
             //add worlds to color list
             if (!root.region_settings.world_colors.containsKey(w.getName()) && w.getEnvironment() != null) {
                 switch (w.getEnvironment()) {
@@ -456,15 +460,11 @@ public class ConfigManager extends CoreConfigManager {
                 }
                 RedProtect.get().logger.warning("Added world to colors list " + w.getName());
             }
-            //add world to globalflags
-            if (!globalFlagsRoot.worlds.containsKey(w.getName())) {
-                globalFlagsRoot.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
-                saveGFlags();
-            }
         } catch (Exception ex){
             RedProtect.get().logger.severe("Error on add config properties for world " + w.getName() +": " + ex.getMessage());
             ex.printStackTrace();
         }
+        saveGFlags();
     }
 
     public void setGuiSlot(/*String mat, */String flag, int slot) {
