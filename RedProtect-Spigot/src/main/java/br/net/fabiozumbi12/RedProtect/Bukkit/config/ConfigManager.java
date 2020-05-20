@@ -461,7 +461,7 @@ public class ConfigManager extends CoreConfigManager {
                 RedProtect.get().logger.warning("Added world to colors list " + w.getName());
             }
         } catch (Exception ex){
-            RedProtect.get().logger.severe("Error on add config properties for world " + w.getName() +": " + ex.getMessage());
+            RedProtect.get().logger.warning("Error on add config properties for world " + w.getName() +": " + ex.getMessage());
             ex.printStackTrace();
         }
         saveGFlags();

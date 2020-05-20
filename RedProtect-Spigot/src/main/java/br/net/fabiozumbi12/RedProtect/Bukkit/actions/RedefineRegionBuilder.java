@@ -43,7 +43,6 @@ import java.util.Set;
 
 public class RedefineRegionBuilder extends RegionBuilder {
 
-    @SuppressWarnings("deprecation")
     public RedefineRegionBuilder(Player p, Region old, Location loc1, Location loc2) {
         if (loc1 == null || loc2 == null) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.selection.notset"));
@@ -179,7 +178,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         p.sendMessage(RedProtect.get().lang.get("regionbuilder.claim.left") + (claimused + 1) + RedProtect.get().lang.get("general.color") + "/" + (claimUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : claimLimit));
         p.sendMessage(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? ChatColor.GREEN + "" + regionArea : ChatColor.RED + "- " + regionArea) + "\n" +
                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - actualArea)));
-        p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{newRegion}", newRegion.getName()) + " " + newRegion.getPrior());
+        p.sendMessage(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", newRegion.getName()) + " " + newRegion.getPrior());
         if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable) p.sendMessage(RedProtect.get().lang.get("regionbuilder.block.cost") + reco);
         p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
         if (othersName.size() > 0) {

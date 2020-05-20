@@ -1,4 +1,4 @@
-![Logo](https://media-elerium.cursecdn.com/attachments/123/815/red-protect-plus1.png)  
+![Logo](https://media.forgecdn.net/attachments/123/815/red-protect-plus1.png)  
 RedProtect World is an area protection plugin made for users. No longer do you need to have an admin worldguard a region for you. The user can take care of themselves now.
 
 Chat with the developer online on Discord: https://discord.gg/RyEVJC3
