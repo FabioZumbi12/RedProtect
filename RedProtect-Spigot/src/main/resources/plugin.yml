@@ -146,3 +146,4 @@ permissions:
       redprotect.eco.bypass: true
       redprotect.use-claim-modes: true
       redprotect.need-claim-to-build.bypass: true
+      redprotect.allowed-claim-world.*: true

@@ -489,7 +489,7 @@ public class ConfigManager extends CoreConfigManager {
     }
 
     public boolean isAllowedWorld(Player p) {
-        return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
+        return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.allowed-claim-world." + p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
     }
 
     public boolean needClaimToBuild(Player p, Block b) {
