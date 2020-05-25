@@ -245,7 +245,7 @@ public class RedProtectUtil extends CoreUtil {
             }
 
             //purge regions
-            if (RedProtect.get().config.configRoot().purge.enabled && !serverRegion) {
+            if (RedProtect.get().config.configRoot().purge.enabled && !serverRegion && region.canPurge() && region.isOnTop()) {
                 Date regiondate = null;
                 try {
                     regiondate = dateformat.parse(region.getDate());
@@ -348,19 +348,6 @@ public class RedProtectUtil extends CoreUtil {
                     RedProtect.get().rm.saveAll(false);
                 }
             }
-
-            /* try {
-                //filter name
-                String rname = setName(region.getName());
-                if (rname.length() < 4) {
-                    rname = nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
-                    RedProtect.get().rm.renameRegion(rname, region);
-                    cfm++;
-                }
-            } catch (Exception ex) {
-                RedProtect.get().logger.warning("&eThe region " + region.getName() + " is invalid or broken, skipping...");
-                //RedProtect.get().rm.remove(region, region.getWorld());
-            } */
         }
 
         if (delay > 0) {
@@ -369,10 +356,6 @@ public class RedProtectUtil extends CoreUtil {
                 Sponge.getServer().setHasWhitelist(true);
                 RedProtect.get().logger.warning("&eEnabled whitelist until regen!");
             }
-        }
-
-        if (cfm > 0) {
-            RedProtect.get().logger.success("[" + cfm + "] Region names conformed!");
         }
 
         if (skipped > 0) {
@@ -498,6 +481,8 @@ public class RedProtectUtil extends CoreUtil {
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
                     long value = rs.getLong("value");
+                    boolean candelete = rs.getBoolean("candelete");
+                    boolean canPurge = rs.getBoolean("canpurge");
 
                     Location<World> tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
@@ -532,7 +517,7 @@ public class RedProtectUtil extends CoreUtil {
                             flags.put(key, parseObject(flag.substring(replace.length())));
                         }
                     }
-                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
+                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, candelete, canPurge);
                     regions.put(rname, newr);
                 }
                 st.close();
@@ -624,7 +609,7 @@ public class RedProtectUtil extends CoreUtil {
             for (Region r : RedProtect.get().rm.getRegionsByWorld(world.getName())) {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
                     try {
-                        PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
+                        PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
                                 + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                         st.setString(1, r.getName());
                         st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
@@ -646,6 +631,7 @@ public class RedProtectUtil extends CoreUtil {
                         st.setString(18, r.getTPPointString());
                         st.setInt(19, r.canDelete() ? 1 : 0);
                         st.setString(20, r.getFlagStrings());
+                        st.setInt(21, r.canPurge() ? 1 : 0);
 
                         st.executeUpdate();
                         st.close();
@@ -683,7 +669,7 @@ public class RedProtectUtil extends CoreUtil {
                     //create db
                     Connection con = DriverManager.getConnection(url + RedProtect.get().config.configRoot().mysql.db_name + reconnect, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
                     st = con.prepareStatement("CREATE TABLE `" + tableName + "` "
-                            + "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
+                            + "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(36), admins longtext, members longtext, maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel longtext, prior int, world varchar(100), value Long not null, tppoint mediumtext, rent longtext, flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
                     st.executeUpdate();
                     st.close();
                     st = null;
@@ -713,9 +699,9 @@ public class RedProtectUtil extends CoreUtil {
                 st.executeUpdate();
             }
             rs.close();
-            rs = md.getColumns(null, null, tableName, "rent");
+            rs = md.getColumns(null, null, tableName, "canpurge");
             if (!rs.next()) {
-                PreparedStatement st = con.prepareStatement("ALTER TABLE `" + tableName + "` ADD `rent` longtext");
+                PreparedStatement st = con.prepareStatement("ALTER TABLE `" + tableName + "` ADD `canpurge` tinyint(1) NOT NULL default '1'");
                 st.executeUpdate();
             }
             rs.close();

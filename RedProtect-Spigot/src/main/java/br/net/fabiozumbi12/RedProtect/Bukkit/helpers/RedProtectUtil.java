@@ -284,7 +284,7 @@ public class RedProtectUtil extends CoreUtil {
             }
 
             //purge regions
-            if (RedProtect.get().config.configRoot().purge.enabled && !serverRegion) {
+            if (RedProtect.get().config.configRoot().purge.enabled && !serverRegion && region.canPurge() && region.isOnTop()) {
                 Date regionDate = null;
                 try {
                     regionDate = dateFormat.parse(region.getDate());
@@ -394,19 +394,6 @@ public class RedProtectUtil extends CoreUtil {
                     region.setFlag(Bukkit.getConsoleSender(), "clan", "");
                 }
             }
-
-            /* try {
-                //filter name
-                String rname = setName(region.getName());
-                if (rname.length() < 4) {
-                    rname = nameGen(region.getLeaders().stream().findFirst().get().getPlayerName(), region.getWorld());
-                    RedProtect.get().rm.renameRegion(rname, region);
-                    cfm++;
-                }
-            } catch (Exception ex) {
-                RedProtect.get().logger.warning("&eThe region " + region.getName() + " is invalid or broken, skipping...");
-                //RedProtect.get().rm.remove(region, region.getWorld());
-            } */
         }
 
         if (delay > 0) {
@@ -526,6 +513,8 @@ public class RedProtectUtil extends CoreUtil {
                     String date = rs.getString("date");
                     String wel = rs.getString("wel");
                     long value = rs.getLong("value");
+                    boolean candel = rs.getBoolean("candelete");
+                    boolean canPurge = rs.getBoolean("canpurge");
 
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
@@ -560,7 +549,7 @@ public class RedProtectUtil extends CoreUtil {
                             flags.put(key, parseObject(flag.substring(replace.length())));
                         }
                     }
-                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, true);
+                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world.getName(), date, value, tppoint, candel, canPurge);
                     regions.put(rname, newr);
                 }
                 st.close();
@@ -569,7 +558,6 @@ public class RedProtectUtil extends CoreUtil {
                 //write to yml
                 YamlConfiguration fileDB = new YamlConfiguration();
                 File datf = new File(RedProtect.get().getDataFolder() + File.separator + "data", "data_" + world.getName() + ".yml");
-                Set<YamlConfiguration> yamls = new HashSet<>();
                 for (Region r : regions.values()) {
                     if (r.getName() == null) {
                         continue;
@@ -587,7 +575,6 @@ public class RedProtectUtil extends CoreUtil {
                     saved++;
 
                     if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
-                        yamls.add(fileDB);
                         saveYaml(fileDB, datf);
                         r.setToSave(false);
                     }
@@ -656,7 +643,7 @@ public class RedProtectUtil extends CoreUtil {
             for (Region r : RedProtect.get().rm.getRegionsByWorld(world.getName())) {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
                     try {
-                        PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
+                        PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
                                 + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                         st.setString(1, r.getName());
                         st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
@@ -678,6 +665,7 @@ public class RedProtectUtil extends CoreUtil {
                         st.setString(18, r.getTPPointString());
                         st.setInt(19, r.canDelete() ? 1 : 0);
                         st.setString(20, r.getFlagStrings());
+                        st.setInt(21, r.canPurge() ? 1 : 0);
 
                         st.executeUpdate();
                         st.close();
@@ -744,6 +732,12 @@ public class RedProtectUtil extends CoreUtil {
             ResultSet rs = md.getColumns(null, null, tableName, "candelete");
             if (!rs.next()) {
                 PreparedStatement st = con.prepareStatement("ALTER TABLE `" + tableName + "` ADD `candelete` tinyint(1) NOT NULL default '1'");
+                st.executeUpdate();
+            }
+            rs.close();
+            rs = md.getColumns(null, null, tableName, "canpurge");
+            if (!rs.next()) {
+                PreparedStatement st = con.prepareStatement("ALTER TABLE `" + tableName + "` ADD `canpurge` tinyint(1) NOT NULL default '1'");
                 st.executeUpdate();
             }
             rs.close();
@@ -911,7 +905,7 @@ public class RedProtectUtil extends CoreUtil {
                 newmax.setY(w.getMaxHeight());
 
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
-                        newmin, newmax, RedProtect.get().config.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), dateNow(), 0, null, true);
+                        newmin, newmax, RedProtect.get().config.getDefFlagsValues(), "GriefPrevention region", 0, w.getName(), dateNow(), 0, null, true, true);
 
                 Region other = RedProtect.get().rm.getTopRegion(w.getName(), r.getCenterX(), r.getCenterY(), r.getCenterZ());
                 if (other == null || !r.getWelcome().equals(other.getWelcome())) {
@@ -962,6 +956,7 @@ public class RedProtectUtil extends CoreUtil {
         fileDB.set(rname + ".value", r.getValue());
         fileDB.set(rname + ".flags", r.getFlags());
         fileDB.set(rname + ".candelete", r.canDelete());
+        fileDB.set(rname + ".canpurge", r.canPurge());
 
         Location loc = r.getTPPoint();
         if (loc != null) {

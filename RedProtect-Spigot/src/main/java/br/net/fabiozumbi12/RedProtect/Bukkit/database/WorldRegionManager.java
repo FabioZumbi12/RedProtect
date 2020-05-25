@@ -77,4 +77,6 @@ public interface WorldRegionManager {
 
     void removeLiveFlags(String rname, String flag);
 
+    long getCanPurgeCount(String uuid, boolean canpurge);
+
 }

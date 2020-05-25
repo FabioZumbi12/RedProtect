@@ -110,6 +110,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String date = fileDB.getString(rname + ".lastvisit", "");
             long value = fileDB.getLong(rname + ".value", 0);
             boolean candel = fileDB.getBoolean(rname + ".candelete", true);
+            boolean canPurge = fileDB.getBoolean(rname + ".canpurge", true);
 
             Location tppoint = null;
             if (!fileDB.getString(rname + ".tppoint", "").isEmpty()) {
@@ -119,7 +120,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             }
 
             fixdbFlags(fileDB, rname);
-            newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world, date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
+            newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world, date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel, canPurge);
 
             for (String flag : RedProtect.get().config.getDefFlags()) {
                 if (fileDB.get(rname + ".flags." + flag) != null) {
@@ -505,5 +506,10 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public void removeLiveFlags(String rname, String flag) {
+    }
+
+    @Override
+    public long getCanPurgeCount(String uuid, boolean canpurge) {
+        return regions.values().stream().filter(r -> r.canPurge() == canpurge && r.isLeader(uuid)).count();
     }
 }

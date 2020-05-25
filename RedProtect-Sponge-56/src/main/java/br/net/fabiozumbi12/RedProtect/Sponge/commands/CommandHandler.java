@@ -61,7 +61,7 @@ import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
 public class CommandHandler {
 
     private final RedProtect plugin;
-    private Map<String, String> cmdConfirm = new HashMap<>();
+    private final Map<String, String> cmdConfirm = new HashMap<>();
 
     public CommandHandler(RedProtect plugin) {
         this.plugin = plugin;
@@ -463,6 +463,7 @@ public class CommandHandler {
 
                 //region handlers
                 .child(new BorderCommand().register(), getCmdKeys("border"))
+                .child(new CanPurgeCommand().register(), getCmdKeys("can-purge"))
                 .child(new ClaimCommand().register(), getCmdKeys("claim"))
                 .child(new CopyFlagCommand().register(), getCmdKeys("copyflag"))
                 .child(new CreatePortalCommand().register(), getCmdKeys("createportal"))
@@ -475,6 +476,7 @@ public class CommandHandler {
                 .child(new ListCommand().register(), getCmdKeys("list"))
                 .child(new Pos1Command().register(), getCmdKeys("pos1"))
                 .child(new Pos2Command().register(), getCmdKeys("pos2"))
+                .child(new PurgeLimitCommand().register(), getCmdKeys("purge-limit"))
                 .child(new PriorityCommand().register(), getCmdKeys("priority"))
                 .child(new RedefineCommand().register(), getCmdKeys("redefine"))
                 .child(new RenameCommand().register(), getCmdKeys("rename"))

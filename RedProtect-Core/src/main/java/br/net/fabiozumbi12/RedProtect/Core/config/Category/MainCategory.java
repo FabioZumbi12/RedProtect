@@ -262,6 +262,11 @@ public class MainCategory {
     public static class purgeCat {
         @Setting
         public boolean enabled = false;
+        @Setting(value = "canpurge-limit", comment = "The amount of regions the player can set to NOT purge.\n" +
+                "The permission \"redprotect.canpurge-limit.<number>\" overwrites this option.")
+        public int canpurge_limit = 10;
+        @Setting(value = "purge-limit-perworld")
+        public boolean purge_limit_perworld = true;
         @Setting(value = "ignore-regions-from-players", comment = "Names or UUIDs if in online mode, to bypass purge and regen." +
                 "\n*That default uuid its a random one and you can remove*")
         public List<String> ignore_regions_from_players = Collections.singletonList(UUID.randomUUID().toString());

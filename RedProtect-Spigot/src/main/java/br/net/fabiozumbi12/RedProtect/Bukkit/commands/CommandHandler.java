@@ -30,9 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers.*;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper;
@@ -47,7 +44,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import me.ellbristow.mychunk.LiteChunk;
 import me.ellbristow.mychunk.MyChunkChunk;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -71,8 +67,8 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     private final RedProtect plugin;
-    private HashMap<List<String>, SubCommand> commandMap = new HashMap<>();
-    private Map<String, String> cmdConfirm = new HashMap<>();
+    private final HashMap<List<String>, SubCommand> commandMap = new HashMap<>();
+    private final Map<String, String> cmdConfirm = new HashMap<>();
 
     public CommandHandler(RedProtect plugin) {
         this.plugin = plugin;
@@ -102,6 +98,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         //region handlers
         registerCommand(getCmdKeys("border"), new BorderCommand());
         registerCommand(getCmdKeys("claim"), new ClaimCommand());
+        registerCommand(getCmdKeys("can-purge"), new CanPurgeCommand());
         registerCommand(getCmdKeys("copyflag"), new CopyFlagCommand());
         registerCommand(getCmdKeys("createportal"), new CreatePortalCommand());
         registerCommand(getCmdKeys("define"), new DefineCommand());
@@ -113,6 +110,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         registerCommand(getCmdKeys("list"), new ListCommand());
         registerCommand(getCmdKeys("pos1"), new Pos1Command());
         registerCommand(getCmdKeys("pos2"), new Pos2Command());
+        registerCommand(getCmdKeys("purge-limit"), new PurgeLimitCommand());
         registerCommand(getCmdKeys("priority"), new PriorityCommand());
         registerCommand(getCmdKeys("redefine"), new RedefineCommand());
         registerCommand(getCmdKeys("rename"), new RenameCommand());
@@ -186,7 +184,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 Location min = helper.getMinimumPoint(pr.getValue(), Bukkit.getWorld(w));
                 Location max = helper.getMaximumPoint(pr.getValue(), Bukkit.getWorld(w));
 
-                Region r = new Region(pr.getKey(), new HashSet<>(), members, leaders, min, max, RedProtect.get().config.getDefFlagsValues(), "", pr.getValue().getPriority(), w, RedProtect.get().getUtil().dateNow(), 0, null, true);
+                Region r = new Region(pr.getKey(), new HashSet<>(), members, leaders, min, max, RedProtect.get().config.getDefFlagsValues(), "", pr.getValue().getPriority(), w, RedProtect.get().getUtil().dateNow(), 0, null, true, true);
 
                 for (Map.Entry<Flag<?>, Object> flag : pr.getValue().getFlags().entrySet()) {
                     if (r.flagExists(flag.getKey().getName()) && RedProtect.get().getUtil().parseObject(flag.getValue().toString()) != null) {
@@ -239,7 +237,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), "", 0, null, true, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().rm.add(r, c.getWorldName());
@@ -356,11 +354,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 if (args[0].equalsIgnoreCase("debug-item")) {
                     if (sender instanceof Player) {
                         ItemStack hand = ((Player)sender).getItemInHand();
-                        if (hand != null){
-                            plugin.lang.sendMessage(sender, "&aMaterial name: " + hand.getType().name());
-                        } else {
-                            plugin.lang.sendMessage(sender, "&cInvalid item in your hand!");
-                        }
+                        plugin.lang.sendMessage(sender, "&aMaterial name: " + hand.getType().name());
                     } else {
                         plugin.lang.sendMessage(sender, "&cThis command can be used only by online players holding an item!");
                     }

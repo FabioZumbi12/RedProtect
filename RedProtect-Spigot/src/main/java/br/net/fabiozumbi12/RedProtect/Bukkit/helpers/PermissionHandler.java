@@ -125,6 +125,26 @@ public class PermissionHandler {
         return player.hasPermission(perm);
     }
 
+    public int getPurgeLimit(Player player) {
+        int limit = RedProtect.get().config.configRoot().purge.canpurge_limit;
+        List<Integer> limits = new ArrayList<>();
+        Set<PermissionAttachmentInfo> perms = player.getEffectivePermissions();
+        if (limit > 0) {
+            for (PermissionAttachmentInfo perm : perms) {
+                if (perm.getPermission().startsWith("redprotect.canpurge-limit.")) {
+                    String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
+                    if (!pStr.isEmpty()) {
+                        limits.add(Integer.parseInt(pStr));
+                    }
+                }
+            }
+        }
+        if (limits.size() > 0) {
+            limit = Collections.max(limits);
+        }
+        return limit;
+    }
+
     private int getBlockLimit(Player player) {
         int limit = RedProtect.get().config.configRoot().region_settings.limit_amount;
         List<Integer> limits = new ArrayList<>();

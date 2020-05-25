@@ -207,6 +207,18 @@ public class RegionManager {
         return size;
     }
 
+    public long getCanPurgePlayer(String player, String world) {
+        if (RedProtect.get().config.configRoot().purge.purge_limit_perworld) {
+            return regionManagers.get(world).getCanPurgeCount(player, false);
+        } else {
+            long total = 0;
+            for (World wr : Sponge.getServer().getWorlds()) {
+                total += regionManagers.get(wr.getName()).getCanPurgeCount(player, false);
+            }
+            return total;
+        }
+    }
+
     public void add(Region r, String w) {
         this.regionManagers.get(w).add(r);
         if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
@@ -419,7 +431,7 @@ public class RegionManager {
 
     public Region renameRegion(String newName, Region old) {
         Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
-                new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+                new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete(), old.canPurge());
 
         this.add(newr, newr.getWorld());
         this.remove(old, old.getWorld());

@@ -24,57 +24,39 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.database;
+package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandlers;
 
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
 
-import java.util.Map;
-import java.util.Set;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
 
-public interface WorldRegionManager {
+public class PurgeLimitCommand {
 
-    void load();
+    public CommandSpec register() {
+        return CommandSpec.builder()
+                .description(Text.of("Command to check purge limit."))
+                .permission("redprotect.command.purge-limit")
+                .executor((src, args) -> {
+                    if (!(src instanceof Player) || !RedProtect.get().config.configRoot().purge.enabled) {
+                        HandleHelpPage(src, 1);
+                    } else {
+                        Player player = (Player) src;
 
-    int save(boolean force);
-
-    Region getRegion(String rname);
-
-    int getTotalRegionSize(String p0);
-
-    Set<Region> getRegionsNear(int px, int pz, int p1);
-
-    void add(Region p0);
-
-    void remove(Region p0);
-
-    Set<Region> getRegions(int x, int y, int z);
-
-    Region getTopRegion(int x, int y, int z);
-
-    Region getLowRegion(int x, int y, int z);
-
-    Map<Integer, Region> getGroupRegion(int x, int y, int z);
-
-    Set<Region> getAllRegions();
-
-    void clearRegions();
-
-    Set<Region> getLeaderRegions(String uuid);
-
-    Set<Region> getMemberRegions(String uuid);
-
-    Set<Region> getAdminRegions(String uuid);
-
-    void updateLiveRegion(String rname, String column, Object value);
-
-    void closeConn();
-
-    int getTotalRegionNum();
-
-    void updateLiveFlags(String rname, String flag, String value);
-
-    void removeLiveFlags(String rname, String flag);
-
-    long getCanPurgeCount(String uuid, boolean canpurge);
-
+                        int limit = RedProtect.get().ph.getPurgeLimit(player);
+                        long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
+                        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[] {
+                                new Replacer("{limit}", String.valueOf(limit)),
+                                new Replacer("{total}", String.valueOf(amount))
+                        });
+                    }
+                    return CommandResult.success();
+                }).build();
+    }
 }

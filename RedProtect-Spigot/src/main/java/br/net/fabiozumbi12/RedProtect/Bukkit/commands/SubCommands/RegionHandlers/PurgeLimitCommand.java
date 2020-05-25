@@ -24,57 +24,43 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.database;
+package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-public interface WorldRegionManager {
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
-    void load();
+public class PurgeLimitCommand implements SubCommand {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof ConsoleCommandSender || !RedProtect.get().config.configRoot().purge.enabled) {
+            HandleHelpPage(sender, 1);
+            return true;
+        }
 
-    int save(boolean force);
+        Player player = (Player) sender;
 
-    Region getRegion(String rname);
+        int limit = RedProtect.get().ph.getPurgeLimit(player);
+        long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
+        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[] {
+                new Replacer("{limit}", String.valueOf(limit)),
+                new Replacer("{total}", String.valueOf(amount))
+        });
+        return true;
+    }
 
-    int getTotalRegionSize(String p0);
-
-    Set<Region> getRegionsNear(int px, int pz, int p1);
-
-    void add(Region p0);
-
-    void remove(Region p0);
-
-    Set<Region> getRegions(int x, int y, int z);
-
-    Region getTopRegion(int x, int y, int z);
-
-    Region getLowRegion(int x, int y, int z);
-
-    Map<Integer, Region> getGroupRegion(int x, int y, int z);
-
-    Set<Region> getAllRegions();
-
-    void clearRegions();
-
-    Set<Region> getLeaderRegions(String uuid);
-
-    Set<Region> getMemberRegions(String uuid);
-
-    Set<Region> getAdminRegions(String uuid);
-
-    void updateLiveRegion(String rname, String column, Object value);
-
-    void closeConn();
-
-    int getTotalRegionNum();
-
-    void updateLiveFlags(String rname, String flag, String value);
-
-    void removeLiveFlags(String rname, String flag);
-
-    long getCanPurgeCount(String uuid, boolean canpurge);
-
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return new ArrayList<>();
+    }
 }

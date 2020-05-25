@@ -933,6 +933,7 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("minecart") ||
                 flag.equalsIgnoreCase("forcepvp") ||
                 flag.equalsIgnoreCase("dynmap") ||
+                flag.equalsIgnoreCase("can-purge") ||
                 flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)) {
             return false;
         }

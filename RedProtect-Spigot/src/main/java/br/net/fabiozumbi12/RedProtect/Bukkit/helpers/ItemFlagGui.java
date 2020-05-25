@@ -46,9 +46,9 @@ import java.util.Arrays;
 
 public class ItemFlagGui implements Listener {
 
-    private String flag;
+    private final String flag;
     private ItemStack[] guiItems;
-    private Player player;
+    private final Player player;
     private Region region;
 
     public ItemFlagGui(Player player, Region region, String flag) {
@@ -63,7 +63,7 @@ public class ItemFlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+        if (!event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
             return;
         }
 

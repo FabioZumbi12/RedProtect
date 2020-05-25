@@ -122,6 +122,10 @@ public class PermissionHandler {
         return this.hasPerm(player, adminperm) || (this.hasPerm(player, userperm) && (poly.isLeader(player) || poly.isAdmin(player) || poly.isMember(player)));
     }
 
+    public int getPurgeLimit(User user) {
+        return RedProtect.get().config.configRoot().purge.canpurge_limit;
+    }
+
     private int getBlockLimit(User user) {
         int limit = RedProtect.get().config.configRoot().region_settings.limit_amount;
         List<Integer> limits = new ArrayList<>();

@@ -51,6 +51,7 @@ public class CoreRegion implements Serializable {
     protected int[] tppoint;
     protected float[] tppointYaw;
     protected boolean canDelete;
+    protected boolean canPurge;
     private boolean tosave = true;
 
     /**
@@ -71,7 +72,7 @@ public class CoreRegion implements Serializable {
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
      */
-    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] minLoc, int[] maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
+    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] minLoc, int[] maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel, boolean canPurge) {
         this.name = name;
         this.maxMbrX = maxLoc[0];
         this.minMbrX = minLoc[0];
@@ -88,6 +89,7 @@ public class CoreRegion implements Serializable {
         this.tppoint = tppoint;
         this.tppointYaw = tppointYaw;
         this.canDelete = candel;
+        this.canPurge = canPurge;
         this.date = date;
 
         if (worldName != null) {
@@ -123,7 +125,7 @@ public class CoreRegion implements Serializable {
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
      */
-    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
+    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, int[] tppoint, float[] tppointYaw, boolean candel, boolean canPurge) {
         this.name = name;
         this.maxMbrX = maxMbrX;
         this.minMbrX = minMbrX;
@@ -139,6 +141,7 @@ public class CoreRegion implements Serializable {
         this.tppoint = tppoint;
         this.tppointYaw = tppointYaw;
         this.canDelete = candel;
+        this.canPurge = canPurge;
         this.date = date;
         this.prior = prior;
 
@@ -174,7 +177,7 @@ public class CoreRegion implements Serializable {
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
      */
-    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, int[] tppoint, float[] tppointYaw, boolean candel) {
+    public CoreRegion(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, int[] tppoint, float[] tppointYaw, boolean candel, boolean canPurge) {
         this.name = name;
         this.prior = prior;
         this.world = worldName;
@@ -185,6 +188,7 @@ public class CoreRegion implements Serializable {
         this.tppoint = tppoint;
         this.tppointYaw = tppointYaw;
         this.canDelete = candel;
+        this.canPurge = canPurge;
 
         this.admins = admins;
         this.members = members;
@@ -232,6 +236,7 @@ public class CoreRegion implements Serializable {
         this.leaders = Collections.singleton(new PlayerRegion(defLeader, defLeader));
         this.flags = defFlags;
         this.canDelete = true;
+        this.canPurge = true;
         this.world = world;
         this.wMessage = "";
     }
@@ -242,6 +247,10 @@ public class CoreRegion implements Serializable {
 
     public void setFlags(Map<String, Object> flags) {
         this.flags = flags;
+    }
+
+    public boolean canPurge() {
+        return this.canPurge;
     }
 
     public boolean canDelete() {

@@ -213,11 +213,6 @@ public class RegionManager {
         return regionManagers.get(player.getWorld().getName()).getRegionsNear(player.getLocation().getBlockX(), player.getLocation().getBlockZ(), i);
     }
 
-    /*
-        public Set<Region> getRegions(String player, World w) {
-            return this.regionManagers.get(w).getLeaderRegions(player);
-        }
-    */
     public Set<Region> getRegions(String player, String w) {
         return this.regionManagers.get(w).getLeaderRegions(player);
     }
@@ -241,6 +236,18 @@ public class RegionManager {
                 ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
             }
+        }
+    }
+
+    public long getCanPurgePlayer(String player, String world) {
+        if (RedProtect.get().config.configRoot().purge.purge_limit_perworld) {
+            return regionManagers.get(world).getCanPurgeCount(player, false);
+        } else {
+            long total = 0;
+            for (World wr : Bukkit.getWorlds()) {
+                total += regionManagers.get(wr.getName()).getCanPurgeCount(player, false);
+            }
+            return total;
         }
     }
 
@@ -463,7 +470,7 @@ public class RegionManager {
 
     public Region renameRegion(String newName, Region old) {
         Region newr = new Region(newName, old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{old.getMinMbrX(), old.getMinMbrX(), old.getMaxMbrX(), old.getMaxMbrX()},
-                new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete());
+                new int[]{old.getMinMbrZ(), old.getMinMbrZ(), old.getMaxMbrZ(), old.getMaxMbrZ()}, old.getMinY(), old.getMaxY(), old.getPrior(), old.getWorld(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete(), old.canPurge());
 
         this.add(newr, newr.getWorld());
         this.remove(old, old.getWorld());

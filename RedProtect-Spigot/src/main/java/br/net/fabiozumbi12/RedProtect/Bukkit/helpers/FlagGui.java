@@ -61,9 +61,9 @@ public class FlagGui implements Listener {
     private final boolean allowEnchant;
     private final boolean editable;
     private String name;
-    private int size;
+    private final int size;
     private ItemStack[] guiItems;
-    private Player player;
+    private final Player player;
     private Region region;
     private Inventory inv;
 
@@ -147,7 +147,7 @@ public class FlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+        if (!event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
             return;
         }
         if (this.editable) {
@@ -193,7 +193,7 @@ public class FlagGui implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     void onInventoryClick(InventoryClickEvent event) {
-        if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+        if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
             return;
         }
 

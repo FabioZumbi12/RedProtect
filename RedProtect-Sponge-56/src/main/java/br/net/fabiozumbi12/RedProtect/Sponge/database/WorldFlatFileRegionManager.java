@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
+import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
@@ -118,6 +119,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String date = region.getNode(rname, "lastvisit").getString("");
             long value = region.getNode(rname, "value").getLong(0);
             boolean candel = region.getNode(rname, "candelete").getBoolean(true);
+            boolean canPurge = region.getNode(rname, "canpurge").getBoolean(true);
 
             Location<World> tppoint = null;
             if (!region.getNode(rname, "tppoint").getString("").isEmpty()) {
@@ -125,7 +127,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
             }
 
-            newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel);
+            newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel, canPurge);
 
             for (String flag : RedProtect.get().config.getDefFlags()) {
                 if (region.getNode(rname, "flags", flag) != null) {
@@ -471,6 +473,11 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public void removeLiveFlags(String rname, String flag) {
+    }
+
+    @Override
+    public long getCanPurgeCount(String uuid, boolean canpurge) {
+        return regions.values().stream().filter(r -> r.canPurge() == canpurge && r.isLeader(uuid)).count();
     }
 
 }

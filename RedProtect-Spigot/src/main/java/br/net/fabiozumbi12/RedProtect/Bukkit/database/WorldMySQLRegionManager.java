@@ -73,7 +73,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         , RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
 
                 st = con.prepareStatement("CREATE TABLE `" + tableName + "` " +
-                        "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Long not null, tppoint varchar(20), flags longtext, candelete tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
+                        "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Long not null, tppoint varchar(20), flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
                 st.executeUpdate();
                 st.close();
                 st = null;
@@ -169,7 +169,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private void addLiveRegion(Region r) {
         if (!this.regionExists(r.getName())) {
             try {
-                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags) "
+                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
                         + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 st.setString(1, r.getName());
                 st.setString(2, r.getLeadersString());
@@ -191,6 +191,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(18, r.getTPPointString());
                 st.setInt(19, r.canDelete() ? 1 : 0);
                 st.setString(20, r.getFlagStrings());
+                st.setInt(21, r.canPurge() ? 1 : 0);
 
                 st.executeUpdate();
                 st.close();
@@ -308,6 +309,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     String wel = rs.getString("wel");
                     long value = rs.getLong("value");
                     boolean candel = rs.getBoolean("candelete");
+                    boolean canPurge = rs.getBoolean("canpurge");
 
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
@@ -378,7 +380,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                             flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring(replace.length())));
                         }
                     }
-                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel, canPurge);
                     regions.put(newr.getName(), newr);
                 } catch (Exception e) {
                     RedProtect.get().logger.severe("Error on load region " + finalName);
@@ -488,6 +490,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     String wel = rs.getString("wel");
                     long value = rs.getLong("value");
                     boolean candel = rs.getBoolean("candelete");
+                    boolean canPurge = rs.getBoolean("canpurge");
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
                         String[] tpstring = rs.getString("tppoint").split(",");
@@ -550,7 +553,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring((key + ":").length())));
                     }
 
-                    Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel);
+                    Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel, canPurge);
                     regions.put(rname, reg);
                 } else {
                     return null;
@@ -828,4 +831,26 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         return total;
     }
 
+
+    @Override
+    public long getCanPurgeCount(String uuid, boolean canpurge) {
+        long total = 0;
+        try {
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE leader LIKE ? AND canpurge = ?");
+            st.setString(1, "%" + uuid + "%");
+            st.setBoolean(2, canpurge);
+
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt("COUNT(*)");
+            }
+            st.close();
+            rs.close();
+        } catch (SQLException e) {
+            RedProtect.get().logger.severe("Error on get total of regions for " + tableName + "!");
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
+        }
+        return total;
+    }
 }

@@ -130,6 +130,8 @@ permissions:
       redprotect.command.select-we: true
       redprotect.command.addleader.bypass: true
       redprotect.command.regen: true
+      redprotect.command.purge-limit: true
+      redprotect.command.can-purge: true
       redprotect.limits.claim.unlimited: true
       redprotect.limits.blocks.unlimited: true
       redprotect.command-range-bypass: true
