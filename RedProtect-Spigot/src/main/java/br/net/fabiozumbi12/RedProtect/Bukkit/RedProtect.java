@@ -199,6 +199,8 @@ public class RedProtect extends JavaPlugin {
 
         redProtectUtil.ReadAllDB(rm.getAllRegions());
 
+        rm.saveAll(false);
+
         if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
             startAutoSave();
         }

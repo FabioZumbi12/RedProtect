@@ -257,6 +257,8 @@ public class RedProtect {
 
         RedProtect.get().getUtil().ReadAllDB(rm.getAllRegions());
 
+        rm.saveAll(false);
+
         if (!config.configRoot().file_type.equalsIgnoreCase("mysql")) {
             AutoSaveHandler();
         }

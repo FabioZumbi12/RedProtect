@@ -383,7 +383,6 @@ public class RedProtectUtil extends CoreUtil {
                     RedProtect.get().logger.warning("Selling " + region.getName() + " - Days: " + days);
                     EconomyManager.putToSell(region, RedProtect.get().config.configRoot().region_settings.default_leader, EconomyManager.getRegionValue(region));
                     sell++;
-                    RedProtect.get().rm.saveAll(false);
                     continue;
                 }
             }
