@@ -57,6 +57,7 @@ public class HooksManager {
     public boolean Dyn;
     public DynmapHook dynmapHook;
     public WorldGuardHelper worldGuardHelper;
+    public TransAPI transAPI;
 
     public void registerHooksFirst() {
         try {
@@ -72,6 +73,7 @@ public class HooksManager {
             worldEdit = checkWe();
             worldguard = checkWG();
             simpleClans = checkSC();
+            boolean translationApi = checkTAPI();
             boolean infernalMobs = checkIMobs();
             boolean fac = checkFac();
             boolean placeHolderAPI = checkPHAPI();
@@ -162,6 +164,10 @@ public class HooksManager {
                 RedProtect.get().getServer().getPluginManager().registerEvents(new FactionsHook(), RedProtect.get());
                 RedProtect.get().logger.info("Factions found. Hooked.");
             }
+            if (translationApi) {
+                this.transAPI = new TransAPI();
+                RedProtect.get().logger.info("TranslationAPI found. Hooked.");
+            }
         } catch (Exception e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
@@ -182,6 +188,11 @@ public class HooksManager {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
+    }
+
+    private boolean checkTAPI() {
+        Plugin pTAPI = Bukkit.getPluginManager().getPlugin("TranslationAPI");
+        return pTAPI != null && pTAPI.isEnabled();
     }
 
     private boolean checkWG() {

@@ -24,7 +24,7 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
+package br.net.fabiozumbi12.RedProtect.Bukkit.guis;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
@@ -56,7 +56,7 @@ public class ItemFlagGui implements Listener {
         this.region = region;
         this.flag = flag;
 
-        this.guiItems = Arrays.stream(region.getFlagString(flag).replace(" ", "").toUpperCase().split(",")).sorted()
+        this.guiItems = Arrays.stream(region.getFlagString(flag).trim().toUpperCase().split(",")).sorted()
                 .filter(item -> Arrays.stream(Material.values()).anyMatch(i -> i.name().equals(item)))
                 .map(i -> new ItemStack(Material.valueOf(i))).toArray(ItemStack[]::new);
     }
@@ -114,7 +114,7 @@ public class ItemFlagGui implements Listener {
 
         // Check for items
         this.player.updateInventory();
-        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
+        Bukkit.getScheduler().runTaskLater(RedProtect.get(), this.player::updateInventory, 1);
         if (close) this.player.closeInventory();
 
         this.guiItems = null;

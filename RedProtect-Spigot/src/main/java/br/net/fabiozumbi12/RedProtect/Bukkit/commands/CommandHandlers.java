@@ -31,16 +31,15 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ItemFlagGui;
+import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ItemFlagGui;
+import br.net.fabiozumbi12.RedProtect.Bukkit.guis.MobFlagGui;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -745,7 +744,7 @@ public class CommandHandlers {
                 }
 
                 if (!value.equals("")) {
-                    if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
+                    if (RedProtect.get().config.getDefFlagsValues().containsKey(flag) && !RedProtect.get().config.AdminFlags.contains(flag)) {
 
                         //flag clan
                         if (flag.equalsIgnoreCase("clan")) {
@@ -774,11 +773,10 @@ public class CommandHandlers {
                                 RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
                                 RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                             }
-                            return;
                         } else {
                             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.usage") + " <true/false>");
-                            return;
                         }
+                        return;
                     }
 
                     if (RedProtect.get().config.AdminFlags.contains(flag)) {
@@ -825,14 +823,28 @@ public class CommandHandlers {
                     }
 
                     // Item flags
-                    if (flag.equalsIgnoreCase("deny-enter-items") ||
-                            flag.equalsIgnoreCase("allow-enter-items") ||
-                            flag.equalsIgnoreCase("allow-place") ||
-                            flag.equalsIgnoreCase("allow-break")) {
+                    if (RedProtect.get().ph.hasPerm(p, "redprotect.flag.item-gui")) {
+                        if (flag.equalsIgnoreCase("deny-enter-items") ||
+                                flag.equalsIgnoreCase("allow-enter-items") ||
+                                flag.equalsIgnoreCase("allow-place") ||
+                                flag.equalsIgnoreCase("allow-break")) {
 
-                        ItemFlagGui itemGui = new ItemFlagGui(p, r, flag);
-                        itemGui.open();
-                        return;
+                            ItemFlagGui itemGui = new ItemFlagGui(p, r, flag);
+                            itemGui.open();
+                            return;
+                        }
+                    }
+
+
+                    // Mob flags
+                    if (RedProtect.get().ph.hasPerm(p, "redprotect.flag.spawn-mobgui")) {
+                        if (flag.equalsIgnoreCase("spawn-animals") ||
+                                flag.equalsIgnoreCase("spawn-monsters")) {
+
+                            MobFlagGui mobFlagGui = new MobFlagGui(p, r, flag);
+                            mobFlagGui.open();
+                            return;
+                        }
                     }
 
                     if (RedProtect.get().config.getDefFlagsValues().containsKey(flag)) {
@@ -871,6 +883,8 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("allow-place") ||
                 flag.equalsIgnoreCase("set-portal") ||
                 flag.equalsIgnoreCase("particles") ||
+                flag.equalsIgnoreCase("spawn-animals") ||
+                flag.equalsIgnoreCase("spawn-monsters") ||
                 flag.equalsIgnoreCase("cmd-onhealth")) {
             message = RedProtect.get().lang.get("cmdmanager.region.flag.usage" + flag);
         } else {
@@ -928,14 +942,58 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("smart-door") ||
                 flag.equalsIgnoreCase("allow-magiccarpet") ||
                 flag.equalsIgnoreCase("allow-home") ||
-                flag.equalsIgnoreCase("spawn-monsters") ||
-                flag.equalsIgnoreCase("spawn-animals") ||
                 flag.equalsIgnoreCase("minecart") ||
                 flag.equalsIgnoreCase("forcepvp") ||
                 flag.equalsIgnoreCase("dynmap") ||
                 flag.equalsIgnoreCase("can-purge") ||
                 flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)) {
             return false;
+        }
+
+        final String[] split = value.toString().trim().split(",");
+        if (flag.equalsIgnoreCase("spawn-monsters")) {
+            if (value instanceof Boolean) return true;
+
+            if (!(value instanceof String)) {
+                return false;
+            }
+
+            for (String val : split) {
+                try {
+                    EntityType entityType = EntityType.valueOf(val.toUpperCase());
+                    if (!Monster.class.isAssignableFrom(entityType.getEntityClass())) {
+                        return false;
+                    }
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (flag.equalsIgnoreCase("spawn-animals")) {
+            if (value instanceof Boolean) return true;
+
+            if (!(value instanceof String)) {
+                return false;
+            }
+
+            for (String val : split) {
+                try {
+                    EntityType entityType = EntityType.valueOf(val.toUpperCase());
+                    Class entityClass = entityType.getEntityClass();
+                    if (!((!Monster.class.isAssignableFrom(entityClass) &&
+                            !Player.class.isAssignableFrom(entityClass)) &&
+                            (RedProtect.get().bukkitVersion >= 180 && !ArmorStand.class.isAssignableFrom(entityClass)) &&
+                            LivingEntity.class.isAssignableFrom(entityClass))) {
+                        return false;
+                    }
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         if (flag.equalsIgnoreCase("particles")) {
@@ -1029,7 +1087,7 @@ public class CommandHandlers {
                         return false;
                     }
                     //test health
-                    int health = Integer.valueOf(arg.split(" ")[0].substring(7));
+                    int health = Integer.parseInt(arg.split(" ")[0].substring(7));
                     if (health < 0 || health > 20) {
                         return false;
                     }

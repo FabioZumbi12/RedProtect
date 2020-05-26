@@ -35,8 +35,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Crops;
 import org.bukkit.util.Vector;
@@ -1109,12 +1108,52 @@ public class Region extends CoreRegion {
         return getFlagBool("door") || checkAllowedPlayer(p, "door");
     }
 
-    public boolean canSpawnMonsters() {
-        return getFlagBool("spawn-monsters");
+    public boolean canSpawnMonsters(Entity entity) {
+        if (!flagExists("spawn-monsters")) {
+            return true;
+        }
+
+        if (!(entity instanceof Monster)) {
+            return true;
+        }
+
+        if (getFlagString("spawn-monsters").equalsIgnoreCase("true"))
+            return true;
+
+        if (getFlagString("spawn-monsters").equalsIgnoreCase("false"))
+            return false;
+
+        String[] entities = getFlagString("spawn-monsters").trim().split(",");
+        for (String ent : entities) {
+            if (ent.toUpperCase().equals(entity.getType().name())) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean canSpawnPassives() {
-        return getFlagBool("spawn-animals");
+    public boolean canSpawnPassives(Entity entity) {
+        if (!flagExists("spawn-animals")) {
+            return true;
+        }
+
+        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(entity instanceof ArmorStand)) && entity instanceof LivingEntity)){
+            return true;
+        }
+
+        if (getFlagString("spawn-animals").equalsIgnoreCase("true"))
+            return true;
+
+        if (getFlagString("spawn-animals").equalsIgnoreCase("false"))
+            return false;
+
+        String[] entities = getFlagString("spawn-animals").trim().split(",");
+        for (String ent : entities) {
+            if (ent.toUpperCase().equals(entity.getType().name())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean canMinecart(Player p) {

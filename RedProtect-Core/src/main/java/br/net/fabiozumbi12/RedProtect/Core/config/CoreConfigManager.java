@@ -91,6 +91,8 @@ public class CoreConfigManager {
             "particles",
             "dynmap",
             "deny-exit-items",
+            "spawn-animals",
+            "spawn-monsters",
             "can-move");
     public HashMap<String, String> backupGuiName = new HashMap<>();
     public HashMap<String, String> backupGuiDescription = new HashMap<>();

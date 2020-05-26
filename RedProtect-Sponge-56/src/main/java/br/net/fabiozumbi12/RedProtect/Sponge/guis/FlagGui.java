@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 25/04/19 07:02
+ * Copyright (c) 2020 - @FabioZumbi12
+ * Last Modified: 07/06/2019 02:40.
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -24,7 +24,7 @@
  * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
-package br.net.fabiozumbi12.RedProtect.Sponge.helpers;
+package br.net.fabiozumbi12.RedProtect.Sponge.guis;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;

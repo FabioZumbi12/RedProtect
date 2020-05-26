@@ -69,10 +69,6 @@ public class EntityListener implements Listener {
     public void onCreatureSpawn(CreatureSpawnEvent event) {
 
         Entity e = event.getEntity();
-        if (e == null) {
-            return;
-        }
-
         RedProtect.get().logger.debug(LogLevel.ENTITY, "Spawn monster " + event.getEntityType().name());
 
         if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)) {
@@ -84,22 +80,17 @@ public class EntityListener implements Listener {
             }
         }
 
-        if (e instanceof Monster) {
-            Location l = event.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
-            if (r != null && !r.canSpawnMonsters()) {
-                RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of monster " + event.getEntityType().name());
-                event.setCancelled(true);
-            }
+        Location l = event.getLocation();
+        Region r = RedProtect.get().rm.getTopRegion(l);
+
+        if (r != null && !r.canSpawnMonsters(e)) {
+            RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of monster " + event.getEntityType().name());
+            event.setCancelled(true);
         }
 
-        if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && !(e instanceof Hanging)) {
-            Location l = event.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
-            if (r != null && !r.canSpawnPassives()) {
-                RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of animal " + event.getEntityType().name());
-                event.setCancelled(true);
-            }
+        if (r != null && !r.canSpawnPassives(e)) {
+            RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of animal " + event.getEntityType().name());
+            event.setCancelled(true);
         }
     }
 
@@ -108,12 +99,7 @@ public class EntityListener implements Listener {
         Entity e1 = e.getEntity();
         Entity e2 = e.getCombuster();
 
-        if (e2 == null) {
-            return;
-        }
-
         RedProtect.get().logger.debug(LogLevel.ENTITY, "EntityCombustByEntityEvent - Is EntityCombustByEntityEvent event.");
-
 
         if (e2 instanceof Projectile) {
             Projectile a = (Projectile) e2;

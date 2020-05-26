@@ -30,7 +30,7 @@
     <parent>
         <groupId>br.net.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>7.6.6</version>
+        <version>7.6.7</version>
     </parent>
     <artifactId>RedProtect-Spigot</artifactId>
 
@@ -69,6 +69,11 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>Translation-API</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
         </repository>
     </repositories>
 
@@ -249,6 +254,14 @@
             <artifactId>mypet</artifactId>
             <version>3.5</version>
         </dependency>
+
+        <dependency>
+            <groupId>br.net.fabiozumbi12</groupId>
+            <artifactId>TranslationAPI</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <properties>

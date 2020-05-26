@@ -31,7 +31,7 @@
     <artifactId>RedProtect</artifactId>
     <packaging>pom</packaging>
     <name>RedProtect</name>
-    <version>7.6.6</version>
+    <version>7.6.7</version>
 
     <scm>
         <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>

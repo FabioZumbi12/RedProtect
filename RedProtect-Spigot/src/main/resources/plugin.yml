@@ -85,6 +85,7 @@ permissions:
       redprotect.flag.use-potions: true
       redprotect.flag.redstone: true
       redprotect.flag.block-transform: true
+      redprotect.flag.spawn-mobgui: true
   redprotect.command.admin:
     description: "Recommended Admin permissions."
     default: op
@@ -149,3 +150,4 @@ permissions:
       redprotect.use-claim-modes: true
       redprotect.need-claim-to-build.bypass: true
       redprotect.allowed-claim-world.*: true
+      redprotect.flag.item-gui: true

@@ -36,6 +36,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.TransAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
