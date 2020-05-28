@@ -82,6 +82,10 @@ public class EncompassRegionBuilder extends RegionBuilder {
 
         //filter name
         regionName = RedProtect.get().getUtil().fixRegionName(p, regionName);
+        if (regionName == null) {
+            this.setErrorSign(e, RedProtect.get().lang.get("regionbuilder.error"));
+            return;
+        }
 
         int maxby = current.getLocation().get().getBlockY();
         int minby = current.getLocation().get().getBlockY();

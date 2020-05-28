@@ -150,8 +150,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private void removeLiveRegion(Region r) {
         if (this.regionExists(r.getName())) {
             try {
-                PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM `" + tableName + "` WHERE name = ?");
-                st.setString(1, r.getName());
+                PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM `" + tableName + "` WHERE LOWER(name) = ?");
+                st.setString(1, r.getName().toLowerCase());
                 st.executeUpdate();
                 st.close();
             } catch (SQLException e) {
@@ -205,8 +205,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public void removeLiveFlags(String rname, String flag) {
         try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE name = ? AND world = ?");
-            st.setString(1, rname);
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE LOWER(name) = ? AND world = ?");
+            st.setString(1, rname.toLowerCase());
             st.setString(2, this.world);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
@@ -216,9 +216,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     String key = flago.split(":")[0];
                     if (key.equals(flag)) {
                         flagsStrings = flagsStrings.replace(flago, "").replace(",,", ",");
-                        st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE name = ?");
+                        st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?");
                         st.setString(1, flagsStrings);
-                        st.setString(2, rname);
+                        st.setString(2, rname.toLowerCase());
                         st.executeUpdate();
                         break;
                     }
@@ -236,9 +236,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public void updateLiveRegion(String rname, String column, Object value) {
         try {
-            PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE name = ? ");
+            PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE LOWER(name) = ? ");
             st.setObject(1, value);
-            st.setString(2, rname);
+            st.setString(2, rname.toLowerCase());
             st.executeUpdate();
             st.close();
         } catch (SQLException e) {
@@ -251,8 +251,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public void updateLiveFlags(String rname, String flag, String value) {
         try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE name = ? AND world = ?");
-            st.setString(1, rname);
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE LOWER(name) = ? AND world = ?");
+            st.setString(1, rname.toLowerCase());
             st.setString(2, this.world);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
@@ -262,9 +262,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     String key = flago.split(":")[0];
                     if (key.equals(flag)) {
                         flagsStrings = flagsStrings.replace(flago, key + ":" + value);
-                        st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE name = ?");
+                        st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?");
                         st.setString(1, flagsStrings);
-                        st.setString(2, rname);
+                        st.setString(2, rname.toLowerCase());
                         st.executeUpdate();
                         break;
                     }
@@ -468,8 +468,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 return null;
             }
             try {
-                PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE name=? AND world=?");
-                st.setString(1, rname);
+                PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE LOWER(name) = ? AND world=?");
+                st.setString(1, rname.toLowerCase());
                 st.setString(2, this.world);
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
@@ -614,8 +614,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private boolean regionExists(String name) {
         int total = 0;
         try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE name = ?");
-            st.setString(1, name);
+            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE LOWER(name) = ?");
+            st.setString(1, name.toLowerCase());
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");

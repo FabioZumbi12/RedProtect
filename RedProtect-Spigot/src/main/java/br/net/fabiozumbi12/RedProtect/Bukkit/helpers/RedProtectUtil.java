@@ -750,8 +750,8 @@ public class RedProtectUtil extends CoreUtil {
     private boolean regionExists(Connection dbcon, String name, String tableName) {
         int total = 0;
         try {
-            PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE name = ?");
-            st.setString(1, name);
+            PreparedStatement st = dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE LOWER(name) = ?");
+            st.setString(1, name.toLowerCase());
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 total = rs.getInt("COUNT(*)");
@@ -1075,13 +1075,10 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public String fixRegionName(Player p, String regionName) {
+        
         //filter region name
-        if (regionName == null || regionName.isEmpty() || regionName.length() < 3 || RedProtect.get().rm.getRegion(regionName, p.getWorld().getName()) != null) {
-            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.rename.exists");
+        if (regionName == null || regionName.isEmpty()) {
             regionName = nameGen(p.getName(), p.getWorld().getName());
-            if (regionName.length() > 16) {
-                return null;
-            }
         }
 
         regionName = Normalizer.normalize(regionName.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)

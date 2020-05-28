@@ -110,7 +110,7 @@ public class LangCore {
     }
 
     protected String getRaw(String key) {
-        return loadedLang.getProperty(key, "&c&oMissing language string for &4" + key).replace("/n", "\n");
+        return loadedLang.getProperty(key, "&c&oMissing language string for &4" + key).replace("\\n", "\n");
     }
 
     public String translBool(String bool) {
