@@ -29,11 +29,15 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
+import com.sk89q.worldedit.world.block.BlockTypes;
+import me.ryanhamshire.GriefPrevention.BlockSnapshot;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -58,7 +62,7 @@ public class ContainerManager {
             for (int sx = -1; sx <= 1; sx++) {
                 for (int sz = -1; sz <= 1; sz++) {
                     Block bs = w.getBlockAt(x + sx, y, z + sz);
-                    if (bs.getState() instanceof Sign && (validatePrivateSign(bs))) {
+                    if (isSign(bs) && (validatePrivateSign(bs))) {
                         deny = false;
                         if (validateOpenBlock(bs, p)) {
                             return true;
@@ -74,7 +78,7 @@ public class ContainerManager {
                         for (int ux = -1; ux <= 1; ux++) {
                             for (int uz = -1; uz <= 1; uz++) {
                                 Block bu = w.getBlockAt(x2 + ux, y2, z2 + uz);
-                                if (bu.getState() instanceof Sign && (validatePrivateSign(bu))) {
+                                if (isSign(bu) && (validatePrivateSign(bu))) {
                                     deny = false;
                                     if (validateOpenBlock(bu, p)) {
                                         return true;
@@ -104,7 +108,7 @@ public class ContainerManager {
 
         boolean deny = true;
 
-        if (b.getState() instanceof Sign && validatePrivateSign(b)) {
+        if (isSign(b) && validatePrivateSign(b)) {
             deny = false;
             if (validateBreakSign(b, p)) {
                 return true;
@@ -119,7 +123,7 @@ public class ContainerManager {
                 for (int sy = -1; sy <= 1; sy++) {
                     for (int sz = -1; sz <= 1; sz++) {
                         Block bs = w.getBlockAt(x + sx, y + sy, z + sz);
-                        if (bs.getState() instanceof Sign && (validatePrivateSign(bs))) {
+                        if (isSign(bs) && (validatePrivateSign(bs))) {
                             deny = false;
                             if (validateBreakSign(bs, p)) {
                                 return true;
@@ -137,7 +141,7 @@ public class ContainerManager {
                                 for (int uy = -1; uy <= 1; uy++) {
                                     for (int uz = -1; uz <= 1; uz++) {
                                         Block bu = w.getBlockAt(x2 + ux, y2 + uy, z2 + uz);
-                                        if (bu.getState() instanceof Sign && (validatePrivateSign(bu))) {
+                                        if (isSign(bu) && (validatePrivateSign(bu))) {
                                             deny = false;
                                             if (validateBreakSign(bu, p)) {
                                                 return true;
@@ -167,7 +171,7 @@ public class ContainerManager {
         int z = b.getZ();
         World w = b.getWorld();
 
-        if (b.getState() instanceof Sign && validWorldBreak(b)) {
+        if (isSign(b) && validWorldBreak(b)) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Valid Sign on canWorldBreak!");
             return false;
         }
@@ -179,7 +183,7 @@ public class ContainerManager {
             for (int sx = -1; sx <= 1; sx++) {
                 for (int sz = -1; sz <= 1; sz++) {
                     Block bs = w.getBlockAt(x + sx, y, z + sz);
-                    if (bs.getState() instanceof Sign && validWorldBreak(bs)) {
+                    if (isSign(bs) && validWorldBreak(bs)) {
                         return false;
                     }
 
@@ -193,7 +197,7 @@ public class ContainerManager {
                         for (int ux = -1; ux <= 1; ux++) {
                             for (int uz = -1; uz <= 1; uz++) {
                                 Block bu = w.getBlockAt(x2 + ux, y2, z2 + uz);
-                                if (bu.getState() instanceof Sign && validWorldBreak(bu)) {
+                                if (isSign(bu) && validWorldBreak(bu)) {
                                     return false;
                                 }
                             }
@@ -246,6 +250,10 @@ public class ContainerManager {
         Block container = getBlockRelative(b);
         String signbtype = container.getType().name();
         return RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(signbtype::matches);
+    }
+
+    public boolean isSign(Block b) {
+        return b.getType().name().contains("WALL_SIGN");
     }
 
 }

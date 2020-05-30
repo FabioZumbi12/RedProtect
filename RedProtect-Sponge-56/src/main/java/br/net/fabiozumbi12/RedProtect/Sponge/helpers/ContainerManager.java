@@ -217,6 +217,6 @@ public class ContainerManager {
     }
 
     public boolean isSign(BlockSnapshot b) {
-        return (b.getState().getType().equals(BlockTypes.STANDING_SIGN) || b.getState().getType().equals(BlockTypes.WALL_SIGN)) && b.getLocation().get().get(Keys.SIGN_LINES).isPresent();
+        return b.getState().getType().equals(BlockTypes.WALL_SIGN) && b.getLocation().get().get(Keys.SIGN_LINES).isPresent();
     }
 }
