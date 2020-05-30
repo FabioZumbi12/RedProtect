@@ -93,7 +93,7 @@ public class FlagGui implements Listener {
 
         for (String flag : RedProtect.get().config.getDefFlags()) {
             try {
-                if (!RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
+                if (!(this.region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
                 if (RedProtect.get().ph.hasFlagPerm(player, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
