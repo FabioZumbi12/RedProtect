@@ -132,7 +132,7 @@ public class MobFlagGui implements Listener {
                         str.append(lore.get(1).replace("§0", "")).append(",");
                 });
 
-        String value = "false";
+        String value = this.region.getFlagString(flag);
         if (str.length() > 0) {
             value = str.toString().substring(0, str.toString().length() - 1);
         }
