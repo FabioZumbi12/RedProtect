@@ -837,7 +837,7 @@ public class CommandHandlers {
 
 
                     // Mob flags
-                    if (RedProtect.get().ph.hasPerm(p, "redprotect.flag.spawn-mobgui")) {
+                    if (RedProtect.get().ph.hasPerm(p, "redprotect.flag.spawn-mob-gui")) {
                         if (flag.equalsIgnoreCase("spawn-animals") ||
                                 flag.equalsIgnoreCase("spawn-monsters")) {
 

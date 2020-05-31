@@ -77,7 +77,7 @@ public class MobFlagGui implements Listener {
         allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
         if (flag.equalsIgnoreCase("spawn-monsters")) {
-            this.name = "Monsters Flag Gui";
+            this.name = "Spawn Monsters Gui";
             List<String> entities = Arrays.stream(EntityType.values())
                     .filter(ent -> ent.getEntityClass() != null && Monster.class.isAssignableFrom(ent.getEntityClass()))
                     .map(EntityType::name).sorted().collect(toList());
@@ -85,7 +85,7 @@ public class MobFlagGui implements Listener {
         }
 
         if (flag.equalsIgnoreCase("spawn-animals")) {
-            this.name = "Animals Flag Gui";
+            this.name = "Spawn Animals Gui";
             List<String> entities = Arrays.stream(EntityType.values())
                     .filter(ent -> {
                         Class entityClass = ent.getEntityClass();

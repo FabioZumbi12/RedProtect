@@ -94,7 +94,7 @@ public class FlagGui implements Listener {
 
         for (String flag : RedProtect.get().config.getDefFlags()) {
             try {
-                if (!(this.region.getFlags().get(flag) instanceof Boolean) || !RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
+                if (!RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
                 if (RedProtect.get().ph.hasFlagPerm(player, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
@@ -104,27 +104,33 @@ public class FlagGui implements Listener {
 
                     int i = RedProtect.get().config.getGuiSlot(flag);
 
-                    String fvalue;
-                    if (flag.equalsIgnoreCase("clan")) {
-                        if (region.getFlags().get(flag).toString().equals("")) {
-                            fvalue = RedProtect.get().guiLang.getFlagString("false");
-                        } else {
-                            fvalue = RedProtect.get().guiLang.getFlagString("true");
-                        }
+                    Object flagValue = region.getFlags().get(flag);
+
+                    String flagString;
+                    if (flagValue instanceof Boolean) {
+                        flagString = RedProtect.get().guiLang.getFlagString(flagValue.toString());
                     } else {
-                        fvalue = RedProtect.get().guiLang.getFlagString(region.getFlags().get(flag).toString());
+                        flagString = RedProtect.get().guiLang.getFlagString("list");
+                    }
+
+                    if (flag.equalsIgnoreCase("clan")) {
+                        if (flagValue.toString().equals("")) {
+                            flagString = RedProtect.get().guiLang.getFlagString("false");
+                        } else {
+                            flagString = RedProtect.get().guiLang.getFlagString("true");
+                        }
                     }
 
                     this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                     ItemMeta guiMeta = this.guiItems[i].getItemMeta();
                     guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
                     List<String> lore = new ArrayList<>(Arrays.asList(
-                            translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + fvalue),
+                            translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + flagString),
                             "§0" + flag));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     guiMeta.setLore(lore);
                     if (allowEnchant) {
-                        if (this.region.getFlagBool(flag)) {
+                        if (flagValue.toString().equalsIgnoreCase("true")) {
                             guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
                         } else {
                             guiMeta.removeEnchant(Enchantment.DURABILITY);
@@ -229,41 +235,60 @@ public class FlagGui implements Listener {
     }
 
     private void applyFlag(String flag, ItemMeta itemMeta, InventoryClickEvent event) {
-        boolean flagv = false;
+        Object flagValue = RedProtect.get().getUtil().parseObject(this.region.getFlagString(flag));
+
         if (flag.equalsIgnoreCase("clan")) {
-            Player p = (Player) event.getInventory().getHolder();
-            ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(p);
+            ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(this.player);
             if (this.region.getFlagString(flag).equals("")) {
                 if (this.region.setFlag(this.player, flag, cp.getTag())) {
-                    flagv = true;
-                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
+                    RedProtect.get().lang.sendMessage(this.player, RedProtect.get().lang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
                 }
             } else {
-                RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
+                RedProtect.get().lang.sendMessage(this.player, RedProtect.get().lang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
             }
         } else {
-            flagv = !this.region.getFlagBool(flag);
-            if (this.region.setFlag(this.player, flag, flagv)) {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + flagv);
+            if ((flag.equalsIgnoreCase("spawn-animals") ||
+                    flag.equalsIgnoreCase("spawn-monsters")) &&
+                    RedProtect.get().ph.hasPerm(this.player, "redprotect.flag.spawn-mob-gui")) {
+                close(true);
+                new MobFlagGui(this.player, this.region, flag).open();
+                return;
+            }
+            if ((flag.equalsIgnoreCase("deny-enter-items") ||
+                    flag.equalsIgnoreCase("allow-enter-items") ||
+                    flag.equalsIgnoreCase("allow-place") ||
+                    flag.equalsIgnoreCase("allow-break")) &&
+                    RedProtect.get().ph.hasPerm(this.player, "redprotect.flag.item-gui")) {
+                close(true);
+                new ItemFlagGui(this.player, this.region, flag).open();
+                return;
+            }
+            if (flagValue instanceof Boolean) {
+                if (this.region.setFlag(this.player, flag, !this.region.getFlagBool(flag))) {
+                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
+                }
             }
         }
 
         if (allowEnchant) {
-            if (flagv) {
+            if (this.region.getFlagBool(flag)) {
                 itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             } else {
                 itemMeta.removeEnchant(Enchantment.DURABILITY);
             }
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
+
+        String flagString = RedProtect.get().guiLang.getFlagString(this.region.getFlagString(flag));
+
         List<String> lore = new ArrayList<>(Arrays.asList(
-                translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString(String.valueOf(flagv))),
+                translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + flagString),
                 "§0" + flag));
         lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
         itemMeta.setLore(lore);
         event.getCurrentItem().setItemMeta(itemMeta);
 
-        RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagv);
+        RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagString);
     }
 
     private void close(boolean close) {
@@ -272,12 +297,8 @@ public class FlagGui implements Listener {
 
         // Check for items
         this.player.updateInventory();
-        Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> this.player.updateInventory(), 1);
+        Bukkit.getScheduler().runTaskLater(RedProtect.get(), this.player::updateInventory, 1);
         if (close) this.player.closeInventory();
-
-        this.guiItems = null;
-        this.name = null;
-        this.region = null;
     }
 
     public void open() {
