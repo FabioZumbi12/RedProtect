@@ -82,8 +82,6 @@ public class EntityListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     @IsCancelled(Tristate.FALSE)
     public void onCreatureSpawn(SpawnEntityEvent event) {
-
-
         for (Entity e : event.getEntities()) {
             if (e == null) {
                 continue;

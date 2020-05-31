@@ -214,7 +214,9 @@ public class RegionManager {
     }
 
     public Set<Region> getRegions(String player, String w) {
-        return this.regionManagers.get(w).getLeaderRegions(player);
+        if (regionManagers.containsKey(w))
+            return this.regionManagers.get(w).getLeaderRegions(player);
+        return new HashSet<>();
     }
 
     public int getPlayerRegions(String player, String w) {
