@@ -45,6 +45,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -118,7 +119,7 @@ public class MobFlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
+        if (!event.getView().getPlayer().equals(this.player)) {
             return;
         }
 
@@ -136,46 +137,49 @@ public class MobFlagGui implements Listener {
             value = str.toString().substring(0, str.toString().length() - 1);
         }
 
-        setFlagValue(value, false);
+        setFlagValue(value);
+        close(false);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof Player) || !event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
-            return;
-        }
+        InventoryHolder holder = event.getInventory().getHolder();
+        if (holder instanceof Player && holder.equals(this.player)) {
 
-        if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
-            event.setCancelled(true);
+            if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+                event.setCancelled(true);
 
-            if (event.getRawSlot() == 0) {
-                setFlagValue(true, true);
-                return;
-            }
-
-            if (event.getRawSlot() == 1) {
-                setFlagValue(false, true);
-                return;
-            }
-
-            ItemStack item = event.getCurrentItem();
-            if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
-                ItemMeta itemMeta = item.getItemMeta();
-                List<String> lore = itemMeta.getLore();
-                if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
-                    lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("false")));
-                    if (allowEnchant) {
-                        itemMeta.removeEnchant(Enchantment.DURABILITY);
-                    }
-                } else {
-                    lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")));
-                    if (allowEnchant) {
-                        itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-                        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    }
+                if (event.getRawSlot() == 0) {
+                    setFlagValue(true);
+                    close(true);
+                    return;
                 }
-                itemMeta.setLore(lore);
-                item.setItemMeta(itemMeta);
+
+                if (event.getRawSlot() == 1) {
+                    setFlagValue(false);
+                    close(true);
+                    return;
+                }
+
+                ItemStack item = event.getCurrentItem();
+                if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
+                    ItemMeta itemMeta = item.getItemMeta();
+                    List<String> lore = itemMeta.getLore();
+                    if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
+                        lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("false")));
+                        if (allowEnchant) {
+                            itemMeta.removeEnchant(Enchantment.DURABILITY);
+                        }
+                    } else {
+                        lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")));
+                        if (allowEnchant) {
+                            itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+                            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                        }
+                    }
+                    itemMeta.setLore(lore);
+                    item.setItemMeta(itemMeta);
+                }
             }
         }
     }
@@ -224,19 +228,17 @@ public class MobFlagGui implements Listener {
         player.openInventory(inv);
     }
 
-    private void setFlagValue(Object value, boolean close) {
+    private void setFlagValue(Object value) {
         region.setFlag(this.player, flag, value);
         RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
-
-        close(close);
     }
 
     private ItemStack[] getItemList(List<String> entities, String flagValue, Material material) {
         List<String> split = Arrays.asList(flagValue.trim().split(","));
         List<ItemStack> items = new ArrayList<>();
 
-        ItemStack greenWool = new ItemStack(Material.LIME_WOOL);
+        ItemStack greenWool = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta greenMeta = greenWool.getItemMeta();
         if (flagValue.equalsIgnoreCase("true") && allowEnchant) {
             greenMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -246,7 +248,7 @@ public class MobFlagGui implements Listener {
         greenWool.setItemMeta(greenMeta);
         items.add(greenWool);
 
-        ItemStack redWool = new ItemStack(Material.RED_WOOL);
+        ItemStack redWool = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta redMeta = redWool.getItemMeta();
         if (flagValue.equalsIgnoreCase("false") && allowEnchant) {
             redMeta.addEnchant(Enchantment.DURABILITY, 0, true);
@@ -257,7 +259,6 @@ public class MobFlagGui implements Listener {
         items.add(redWool);
 
         for (String ent : entities) {
-
             ItemStack head = new ItemStack(material);
             ItemMeta itemMeta = head.getItemMeta();
             String valueStr = RedProtect.get().guiLang.getFlagString("false");

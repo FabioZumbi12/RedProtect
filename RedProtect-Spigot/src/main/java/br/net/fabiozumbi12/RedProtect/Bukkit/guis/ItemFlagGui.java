@@ -63,7 +63,7 @@ public class ItemFlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
+        if (!event.getView().getPlayer().equals(this.player)) {
             return;
         }
 
@@ -88,14 +88,14 @@ public class ItemFlagGui implements Listener {
 
     @EventHandler
     void onDeath(PlayerDeathEvent event) {
-        if (event.getEntity().getName().equals(this.player.getName())) {
+        if (event.getEntity().equals(this.player)) {
             close(true);
         }
     }
 
     @EventHandler
     void onPlayerLogout(PlayerQuitEvent event) {
-        if (event.getPlayer().getName().equals(this.player.getName())) {
+        if (event.getPlayer().equals(this.player)) {
             close(true);
         }
     }

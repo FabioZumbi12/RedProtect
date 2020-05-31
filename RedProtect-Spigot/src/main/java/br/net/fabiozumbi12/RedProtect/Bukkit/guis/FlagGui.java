@@ -46,6 +46,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -147,9 +148,10 @@ public class FlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
+        if (!event.getPlayer().equals(this.player)) {
             return;
         }
+
         if (this.editable) {
             for (int i = 0; i < this.size; i++) {
                 try {
@@ -166,19 +168,20 @@ public class FlagGui implements Listener {
             RedProtect.get().config.saveGui();
             RedProtect.get().lang.sendMessage(this.player, "gui.edit.ok");
         }
+
         close(false);
     }
 
     @EventHandler
     void onDeath(PlayerDeathEvent event) {
-        if (event.getEntity().getName().equals(this.player.getName())) {
+        if (event.getEntity().equals(this.player)) {
             close(true);
         }
     }
 
     @EventHandler
     void onPlayerLogout(PlayerQuitEvent event) {
-        if (event.getPlayer().getName().equals(this.player.getName())) {
+        if (event.getPlayer().equals(this.player)) {
             close(true);
         }
     }
@@ -191,35 +194,35 @@ public class FlagGui implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     void onInventoryClick(InventoryClickEvent event) {
-        if (event.isCancelled() || !(event.getInventory().getHolder() instanceof Player) || !event.getView().getTitle().equals(this.player.getOpenInventory().getTitle())) {
-            return;
-        }
+        InventoryHolder holder = event.getInventory().getHolder();
+        if (holder instanceof Player && holder.equals(this.player)) {
 
-        if (this.editable) {
-            return;
-        }
+            if (this.editable) {
+                return;
+            }
 
-        if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
-            event.setCancelled(true);
-            ItemStack item = event.getCurrentItem();
-            if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
-                ItemMeta itemMeta = item.getItemMeta();
-                String flag = itemMeta.getLore().get(1).replace("§0", "");
-                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
-                    if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
-                        if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
-                            applyFlag(flag, itemMeta, event);
-                            RedProtect.get().getUtil().startFlagChanger(this.region.getName(), flag, player);
+            if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+                event.setCancelled(true);
+                ItemStack item = event.getCurrentItem();
+                if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
+                    ItemMeta itemMeta = item.getItemMeta();
+                    String flag = itemMeta.getLore().get(1).replace("§0", "");
+                    if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
+                        if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                            if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
+                                applyFlag(flag, itemMeta, event);
+                                RedProtect.get().getUtil().startFlagChanger(this.region.getName(), flag, player);
+                            } else {
+                                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                            }
                         } else {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                            applyFlag(flag, itemMeta, event);
                         }
                     } else {
                         applyFlag(flag, itemMeta, event);
                     }
-                } else {
-                    applyFlag(flag, itemMeta, event);
                 }
             }
         }
