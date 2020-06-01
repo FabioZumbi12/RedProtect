@@ -170,7 +170,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         if (!this.regionExists(r.getName())) {
             try {
                 PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 st.setString(1, r.getName());
                 st.setString(2, r.getLeadersString());
                 st.setString(3, r.getAdminString());
