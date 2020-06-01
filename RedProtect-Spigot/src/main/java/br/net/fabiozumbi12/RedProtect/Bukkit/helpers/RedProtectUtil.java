@@ -643,7 +643,7 @@ public class RedProtectUtil extends CoreUtil {
                 if (!regionExists(dbcon, r.getName(), tableName)) {
                     try {
                         PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
-                                + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                                + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                         st.setString(1, r.getName());
                         st.setString(2, r.getLeaders().toString().replace("[", "").replace("]", ""));
                         st.setString(3, r.getAdmins().toString().replace("[", "").replace("]", ""));
