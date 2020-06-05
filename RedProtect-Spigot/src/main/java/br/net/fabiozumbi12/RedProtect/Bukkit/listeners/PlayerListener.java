@@ -414,6 +414,7 @@ public class PlayerListener implements Listener {
                 } else if (!r.allowMod(p) && !RedProtect.get().getUtil().isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
+                    event.setUseItemInHand(Event.Result.DENY);
                     event.setUseInteractedBlock(Event.Result.DENY);
                 }
             }
@@ -948,6 +949,9 @@ public class PlayerListener implements Listener {
             //Deny Fly
             if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.isFlying() && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
                 p.setFlying(false);
+                if (!p.isOnGround()) { // Prevent glitch
+                    e.setTo(e.getFrom());
+                }
                 //p.setAllowFlight(false);
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantfly");
             }

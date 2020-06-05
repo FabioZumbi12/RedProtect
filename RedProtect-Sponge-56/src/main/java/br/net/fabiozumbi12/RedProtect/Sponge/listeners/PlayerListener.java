@@ -779,6 +779,9 @@ public class PlayerListener {
             //Deny Fly
             if (!p.get(Keys.GAME_MODE).get().getName().equalsIgnoreCase("SPECTATOR") && !r.canFly(p) && p.get(Keys.IS_FLYING).get() && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
                 p.offer(Keys.IS_FLYING, false);
+                if (!p.isOnGround()) {
+                    e.setToTransform(e.getFromTransform());
+                }
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantfly");
             }
 
