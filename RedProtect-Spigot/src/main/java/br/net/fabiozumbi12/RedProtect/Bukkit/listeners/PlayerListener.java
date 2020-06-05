@@ -1178,10 +1178,23 @@ public class PlayerListener implements Listener {
         Player p = (Player) e.getEntity().getShooter();
         Region r = RedProtect.get().rm.getTopRegion(l);
 
-        if (r != null && !r.canProtectiles(p)) {
-            e.setCancelled(true);
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+        ItemStack hand = p.getItemInHand();
+        if (r != null) {
+            if (hand.getType().equals(Material.FISHING_ROD)) {
+                if (!r.canFish(p)) {
+                    e.setCancelled(true);
+                    RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+                }
+                return;
+            }
+
+            if (!r.canProtectiles(p)) {
+                e.setCancelled(true);
+                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+            }
         }
+
+
     }
 
     @EventHandler
