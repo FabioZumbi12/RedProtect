@@ -40,6 +40,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.TransAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
+import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.RPSchematics;
 import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
@@ -66,6 +67,7 @@ public class RedProtect extends JavaPlugin {
     public final HooksManager hooks = new HooksManager();
     public final RedProtectLogger logger = new RedProtectLogger();
     public final List<String> teleportDelay = new ArrayList<>();
+    public RPSchematics schematic;
     public int bukkitVersion;
     public Economy economy;
     public Permission permission;
@@ -111,6 +113,9 @@ public class RedProtect extends JavaPlugin {
 
             ph = new PermissionHandler();
             rm = new RegionManager();
+
+            // Init schematic
+            schematic = new RPSchematics();
 
             //Init config, lang, listeners and flags
             startLoad();

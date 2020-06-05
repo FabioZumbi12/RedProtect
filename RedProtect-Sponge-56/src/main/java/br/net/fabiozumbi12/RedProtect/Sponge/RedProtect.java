@@ -41,6 +41,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
+import br.net.fabiozumbi12.RedProtect.Sponge.schematics.RPSchematics;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.spongepowered.api.Platform.Component;
@@ -87,6 +88,7 @@ public class RedProtect {
     public final HashMap<Player, String> alWait = new HashMap<>();
     public final HashMap<String, List<String>> denyEnter = new HashMap<>();
     public final List<String> teleportDelay = new ArrayList<>();
+    public RPSchematics schematic;
     @Inject
     @ConfigDir(sharedRoot = false)
     public File configDir;
@@ -142,6 +144,9 @@ public class RedProtect {
 
             ph = new PermissionHandler();
             rm = new RegionManager();
+
+            // Init schematic
+            schematic = new RPSchematics();
 
             //Init config, lang, listeners and flags
             startLoad();

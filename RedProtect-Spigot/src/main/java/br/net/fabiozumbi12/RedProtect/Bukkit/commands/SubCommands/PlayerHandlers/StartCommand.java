@@ -57,14 +57,15 @@ public class StartCommand implements SubCommand {
                 return true;
             }
 
-            if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0){
+            if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
+                    !RedProtect.get().ph.hasPermOrBypass(player, "redprotect.command.start")){
                 RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                 return true;
             }
 
             RedProtect.get().confirmStart.add(player.getName());
             RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.start.confirm")
-                    .replace("{cmd}", getCmd("start"))
+                    .replace("{cmd}", label)
                     .replace("{confirm}", getCmd("confirm")));
 
             Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().confirmStart.remove(player.getName()), 600);
@@ -76,7 +77,7 @@ public class StartCommand implements SubCommand {
                 player.sendMessage(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
                 return true;
             }
-            RPSchematics.pasteSchematic(player);
+            RedProtect.get().schematic.pasteSchematic(player);
             return true;
         }
 

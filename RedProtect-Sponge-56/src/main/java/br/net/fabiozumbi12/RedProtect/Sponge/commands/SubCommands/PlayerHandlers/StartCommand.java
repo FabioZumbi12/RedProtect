@@ -27,8 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
-import br.net.fabiozumbi12.RedProtect.Sponge.schematics.schematics;
+import br.net.fabiozumbi12.RedProtect.Sponge.schematics.RPSchematics;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -57,13 +56,16 @@ public class StartCommand {
                             return CommandResult.success();
                         }
 
-                        if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0){
+                        if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
+                                !RedProtect.get().ph.hasPermOrBypass(player, "redprotect.command.start")){
                             RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                             return CommandResult.success();
                         }
 
                         RedProtect.get().confiemStart.add(player.getName());
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.confirm").replace("{cmd}", getCmd("start")));
+                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.start.confirm")
+                                .replace("{cmd}", getCmd("start"))
+                                .replace("{confirm}", getCmd("confirm")));
 
                         Sponge.getScheduler().createSyncExecutor(RedProtect.get()).schedule(() -> RedProtect.get().confiemStart.remove(player.getName()), 30, TimeUnit.SECONDS);
                     }
@@ -83,7 +85,7 @@ public class StartCommand {
                                     player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
                                     return CommandResult.success();
                                 }
-                                schematics.RPSchematics.pasteSchematic(player);
+                                RedProtect.get().schematic.pasteSchematic(player);
                             }
                             return CommandResult.success();
                         }).build(), getCmd("confirm"))

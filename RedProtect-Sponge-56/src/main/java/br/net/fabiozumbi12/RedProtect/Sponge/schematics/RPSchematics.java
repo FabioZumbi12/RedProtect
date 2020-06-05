@@ -29,29 +29,42 @@ package br.net.fabiozumbi12.RedProtect.Sponge.schematics;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import br.net.fabiozumbi12.RedProtect.Sponge.hooks.WEHook;
+import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.io.File;
+import java.io.IOException;
 
-public class schematics {
-    public static class RPSchematics {
+public class RPSchematics {
+    public RPSchematics() {
 
-        public static void pasteSchematic(Player p) {
-            File file = new File(RedProtect.get().configDir, "schematics" + File.separator + RedProtect.get().config.configRoot().schematics.first_house_file);
-
-            Region region = WEHook.pasteWithWE(p, file);
-            if (region == null) return;
-
-            p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.startdone");
-            p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
-            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.firstwarning");
-            p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
-
-
-            RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
-            RedProtect.get().rm.add(region, p.getWorld().getName());
-            RedProtect.get().getUtil().addBorder(p, region.getMinLocation(), region.getMaxLocation());
+        File file = new File(RedProtect.get().configDir, "schematics");
+        if (!file.exists()) {
+            file.mkdir();
+            try {
+                Asset schemAsset = RedProtect.get().container.getAsset("schematics/house1.schem").get();
+                schemAsset.copyToDirectory(new File(RedProtect.get().configDir, "schematics").toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public void pasteSchematic(Player p) {
+        File file = new File(RedProtect.get().configDir, "schematics" + File.separator + RedProtect.get().config.configRoot().schematics.first_house_file);
+
+        Region region = WEHook.pasteWithWE(p, file);
+        if (region == null) return;
+
+        p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+        RedProtect.get().lang.sendMessage(p, "playerlistener.region.startdone");
+        p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+        RedProtect.get().lang.sendMessage(p, "cmdmanager.region.firstwarning");
+        p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+
+
+        RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
+        RedProtect.get().rm.add(region, p.getWorld().getName());
+        RedProtect.get().getUtil().addBorder(p, region.getMinLocation(), region.getMaxLocation());
     }
 }

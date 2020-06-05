@@ -106,6 +106,7 @@
                     <encoding>UTF-8</encoding>
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>schematic</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>schem</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>

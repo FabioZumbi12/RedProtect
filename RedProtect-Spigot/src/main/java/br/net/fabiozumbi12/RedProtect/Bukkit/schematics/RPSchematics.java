@@ -34,10 +34,17 @@ import org.bukkit.entity.Player;
 import java.io.File;
 
 public class RPSchematics {
+    public RPSchematics() {
 
-    public static void pasteSchematic(Player p) {
+        File file = new File(RedProtect.get().getDataFolder(), "schematics");
+        if (!file.exists()) {
+            file.mkdir();
+            RedProtect.get().saveResource("schematics/house1.schem", false);
+        }
+    }
+
+    public void pasteSchematic(Player p) {
         File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RedProtect.get().config.configRoot().schematics.first_house_file);
-
 
         Region region = WEHook.pasteWithWE(p, file);
         if (region == null) return;
