@@ -1355,7 +1355,7 @@ public class PlayerListener implements Listener {
         } else {
             String wel = ChatColor.translateAlternateColorCodes('&',
                     r.getWelcome().replace("{r}", r.getName())
-                            .replace("{p}", p.getName()));
+                            .replace("{player}", p.getName()));
             SendWelcomeMsg(p, RedProtect.get().lang.get("playerlistener.region.welcome")
                     .replace("{region}", r.getName()).replace("{message}", wel));
         }
