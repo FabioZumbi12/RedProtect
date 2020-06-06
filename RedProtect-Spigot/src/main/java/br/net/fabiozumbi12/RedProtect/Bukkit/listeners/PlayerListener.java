@@ -400,11 +400,12 @@ public class PlayerListener implements Listener {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract.signs");
                     event.setUseItemInHand(Event.Result.DENY);
                     event.setCancelled(true);
-                } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) &&
+                } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) && !r.canBreak(itemInHand.getType()) &&
                         (itemInHand.getType().equals(Material.FLINT_AND_STEEL) ||
                                 itemInHand.getType().equals(Material.BUCKET) ||
                                 itemInHand.getType().equals(Material.LAVA_BUCKET) ||
                                 itemInHand.getType().equals(Material.ITEM_FRAME) ||
+                                itemInHand.getType().equals(Material.END_CRYSTAL) ||
                                 (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                 itemInHand.getType().equals(Material.PAINTING))) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");

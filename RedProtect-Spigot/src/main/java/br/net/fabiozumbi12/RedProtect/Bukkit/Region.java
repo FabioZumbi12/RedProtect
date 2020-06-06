@@ -825,8 +825,14 @@ public class Region extends CoreRegion {
         }
         String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
         for (String block : blocks) {
-            if (block.toUpperCase().equals(e.name())) {
-                return true;
+            try {
+                if (block.toUpperCase().equals(e.getKey().getKey().toUpperCase())) {
+                    return true;
+                }
+            } catch (Exception ignored) {
+                if (block.toUpperCase().equals(e.name().toUpperCase())) {
+                    return true;
+                }
             }
         }
         return false;

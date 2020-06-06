@@ -189,7 +189,7 @@ public class Compat18 implements Listener {
         }
 
         if (m.equals(Material.ARMOR_STAND) || m.equals(Material.END_CRYSTAL)) {
-            if (r != null && !r.canBuild(p) && !r.canPlace(m)) {
+            if (r != null && !r.canBuild(p) && !r.canPlace(m) && !r.canBreak(m)) {
                 e.setCancelled(true);
                 RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
             }
