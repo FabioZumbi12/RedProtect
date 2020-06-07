@@ -130,6 +130,12 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.executeUpdate();
             }
             rs.close();
+            rs = md.getColumns(null, null, tableName, "canpurge");
+            if (!rs.next()) {
+                PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `canpurge` tinyint(1) not null default '1'");
+                st.executeUpdate();
+            }
+            rs.close();
             con.close();
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
