@@ -57,7 +57,7 @@ public class StartCommand {
                         }
 
                         if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
-                                !RedProtect.get().ph.hasPermOrBypass(player, "redprotect.command.start")){
+                                !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")){
                             RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                             return CommandResult.success();
                         }
