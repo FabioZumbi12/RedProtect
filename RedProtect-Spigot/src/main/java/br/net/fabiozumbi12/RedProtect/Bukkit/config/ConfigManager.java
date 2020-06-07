@@ -113,6 +113,7 @@ public class ConfigManager extends CoreConfigManager {
                         "LOOM",
                         "SMOKER",
                         "BLAST_FURNACE",
+                        "BURNING_FURNACE",
                         "CARTOGRAPHY_TABLE",
                         "FLETCHING_TABLE",
                         "GRINDSTONE",
