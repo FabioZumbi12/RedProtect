@@ -42,11 +42,14 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.data.type.HandType;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.World;
@@ -83,6 +86,19 @@ public class CommandHandler {
                     }
 
                     if (args.length == 1) {
+                        if (args[0].equalsIgnoreCase("debug-item")) {
+                            if (sender instanceof Player) {
+                                Optional<ItemStack> hand = ((Player)sender).getItemInHand(HandTypes.MAIN_HAND);
+                                if (hand.isPresent())
+                                    plugin.lang.sendMessage(sender, "&aMaterial name: " + hand.get().getItem().getName());
+                                else
+                                    plugin.lang.sendMessage(sender, "&aMaterial name: AIR");
+                            } else {
+                                plugin.lang.sendMessage(sender, "&cThis command can be used only by online players holding an item!");
+                            }
+                            return cmdr;
+                        }
+
                         if (args[0].equalsIgnoreCase("reset-uuids")) {
                             final boolean[] save = {false};
 
