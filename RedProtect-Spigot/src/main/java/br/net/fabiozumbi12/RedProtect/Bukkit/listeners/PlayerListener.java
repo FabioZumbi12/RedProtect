@@ -405,7 +405,7 @@ public class PlayerListener implements Listener {
                                 itemInHand.getType().equals(Material.BUCKET) ||
                                 itemInHand.getType().equals(Material.LAVA_BUCKET) ||
                                 itemInHand.getType().equals(Material.ITEM_FRAME) ||
-                                itemInHand.getType().equals(Material.END_CRYSTAL) ||
+                                itemInHand.getType().name().equals("END_CRYSTAL") ||
                                 (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                 itemInHand.getType().equals(Material.PAINTING))) {
                     RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
