@@ -117,7 +117,7 @@ public class HooksManager {
             if (worldEdit) {
                 RedProtect.get().logger.info("WorldEdit found. Hooked.");
             }
-            if(worldguard) {
+            if (worldguard) {
                 RedProtect rp = RedProtect.get();
                 if (rp.bukkitVersion >= 1130) {
                     worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest").newInstance();

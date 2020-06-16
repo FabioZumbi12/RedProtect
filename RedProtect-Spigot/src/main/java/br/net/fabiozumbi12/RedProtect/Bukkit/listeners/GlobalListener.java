@@ -45,10 +45,8 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.event.weather.WeatherEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Crops;
@@ -149,7 +147,7 @@ public class GlobalListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is onChangeWeather event");
 
         World w = e.getWorld();
-        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather){
+        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather) {
             int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
             if (e.toWeatherState()) {
                 if (!rainCounter.containsKey(w)) {
@@ -174,7 +172,7 @@ public class GlobalListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is onThunderChange event");
 
         World w = e.getWorld();
-        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather){
+        if (!RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.allow_weather) {
             int attempts = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).weather.attempts_before_rain;
             if (e.toThunderState()) {
                 if (!rainCounter.containsKey(w)) {

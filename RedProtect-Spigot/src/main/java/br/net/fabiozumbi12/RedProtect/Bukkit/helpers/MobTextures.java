@@ -30,7 +30,7 @@ import org.bukkit.entity.EntityType;
 
 public class MobTextures {
     public static String getTexture(EntityType ent) {
-        switch (ent.name()){
+        switch (ent.name()) {
             case "ELDER_GUARDIAN":
                 return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM3OTc0ODJhMTRiZmNiODc3MjU3Y2IyY2ZmMWI2ZTZhOGI4NDEzMzM2ZmZiNGMyOWE2MTM5Mjc4YjQzNmIifX19";
             case "WITHER_SKELETON":

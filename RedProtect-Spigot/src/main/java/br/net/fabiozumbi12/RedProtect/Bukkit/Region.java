@@ -645,7 +645,7 @@ public class Region extends CoreRegion {
         if (!flagExists("can-move")) {
             return true;
         }
-        return getFlagBool("can-move") || checkAllowedPlayer(p,"can-move");
+        return getFlagBool("can-move") || checkAllowedPlayer(p, "can-move");
     }
 
     public boolean canSpawnWhiter() {
@@ -710,24 +710,24 @@ public class Region extends CoreRegion {
 
     public boolean canSign(Player p) {
         if (!flagExists("sign")) {
-            return checkAllowedPlayer(p,"sign");
+            return checkAllowedPlayer(p, "sign");
         }
-        return getFlagBool("sign") || checkAllowedPlayer(p,"sign");
+        return getFlagBool("sign") || checkAllowedPlayer(p, "sign");
     }
 
     public boolean canExit(Player p) {
         if (!canExitWithItens(p)) {
             return false;
         }
-        return !flagExists("exit") || getFlagBool("exit") || p.hasPermission("redprotect.region-exit." + this.name) || checkAllowedPlayer(p,"exit");
+        return !flagExists("exit") || getFlagBool("exit") || p.hasPermission("redprotect.region-exit." + this.name) || checkAllowedPlayer(p, "exit");
     }
 
     public boolean canEnter(Player p) {
         if (RedProtect.get().denyEnter.containsKey(p.getName()) && RedProtect.get().denyEnter.get(p.getName()).contains(this.getID())) {
-            return checkAllowedPlayer(p,"enter");
+            return checkAllowedPlayer(p, "enter");
         }
 
-        return !flagExists("enter") || getFlagBool("enter") || p.hasPermission("redprotect.region-enter." + this.name) || checkAllowedPlayer(p,"enter");
+        return !flagExists("enter") || getFlagBool("enter") || p.hasPermission("redprotect.region-enter." + this.name) || checkAllowedPlayer(p, "enter");
     }
 
     public boolean canExitWithItens(Player p) {
@@ -735,7 +735,7 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (checkAllowedPlayer(p,"deny-exit-items")) {
+        if (checkAllowedPlayer(p, "deny-exit-items")) {
             return true;
         }
 
@@ -757,7 +757,7 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (checkAllowedPlayer(p,"allow-enter-items")) {
+        if (checkAllowedPlayer(p, "allow-enter-items")) {
             return true;
         }
 
@@ -777,7 +777,7 @@ public class Region extends CoreRegion {
         if (!flagExists("deny-enter-items")) {
             return true;
         }
-        if (checkAllowedPlayer(p,"deny-enter-items")) {
+        if (checkAllowedPlayer(p, "deny-enter-items")) {
             return true;
         }
 
@@ -796,9 +796,9 @@ public class Region extends CoreRegion {
 
     public boolean canTeleport(Player p) {
         if (!flagExists("teleport")) {
-            return checkAllowedPlayer(p,"teleport");
+            return checkAllowedPlayer(p, "teleport");
         }
-        return getFlagBool("teleport") || checkAllowedPlayer(p,"teleport");
+        return getFlagBool("teleport") || checkAllowedPlayer(p, "teleport");
     }
 
 
@@ -882,11 +882,11 @@ public class Region extends CoreRegion {
     }
 
     public boolean canSkill(Player p) {
-        return !flagExists("up-skills") || getFlagBool("up-skills") || checkAllowedPlayer(p,"up-skills");
+        return !flagExists("up-skills") || getFlagBool("up-skills") || checkAllowedPlayer(p, "up-skills");
     }
 
     public boolean canBack(Player p) {
-        return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p,"can-back");
+        return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p, "can-back");
     }
 
     public boolean isPvPArena() {
@@ -895,33 +895,33 @@ public class Region extends CoreRegion {
 
     public boolean allowMod(Player p) {
         if (!flagExists("allow-mod")) {
-            return checkAllowedPlayer(p,"allow-mod");
+            return checkAllowedPlayer(p, "allow-mod");
         }
-        return getFlagBool("allow-mod") || checkAllowedPlayer(p,"allow-mod");
+        return getFlagBool("allow-mod") || checkAllowedPlayer(p, "allow-mod");
     }
 
     public boolean canEnterPortal(Player p) {
-        return !flagExists("portal-enter") || getFlagBool("portal-enter") || checkAllowedPlayer(p,"portal-enter");
+        return !flagExists("portal-enter") || getFlagBool("portal-enter") || checkAllowedPlayer(p, "portal-enter");
     }
 
     public boolean canExitPortal(Player p) {
-        return !flagExists("portal-exit") || getFlagBool("portal-exit") || checkAllowedPlayer(p,"portal-exit");
+        return !flagExists("portal-exit") || getFlagBool("portal-exit") || checkAllowedPlayer(p, "portal-exit");
     }
 
     public boolean canPet(Player p) {
-        return !flagExists("can-pet") || getFlagBool("can-pet") || checkAllowedPlayer(p,"can-pet");
+        return !flagExists("can-pet") || getFlagBool("can-pet") || checkAllowedPlayer(p, "can-pet");
     }
 
     public boolean canProtectiles(Player p) {
-        return !flagExists("can-projectiles") || getFlagBool("can-projectiles") || checkAllowedPlayer(p,"can-projectiles");
+        return !flagExists("can-projectiles") || getFlagBool("can-projectiles") || checkAllowedPlayer(p, "can-projectiles");
     }
 
     public boolean canDrop(Player p) {
-        return !flagExists("can-drop") || getFlagBool("can-drop") || checkAllowedPlayer(p,"can-crop");
+        return !flagExists("can-drop") || getFlagBool("can-drop") || checkAllowedPlayer(p, "can-crop");
     }
 
     public boolean canPickup(Player p) {
-        return !flagExists("can-pickup") || getFlagBool("can-pickup") || checkAllowedPlayer(p,"can-pickup");
+        return !flagExists("can-pickup") || getFlagBool("can-pickup") || checkAllowedPlayer(p, "can-pickup");
     }
 
     public boolean canCreatePortal() {
@@ -1010,15 +1010,15 @@ public class Region extends CoreRegion {
     }
 
     public boolean canFish(Player p) {
-        return getFlagBool("fishing") || checkAllowedPlayer(p,"fishing");
+        return getFlagBool("fishing") || checkAllowedPlayer(p, "fishing");
     }
 
     public boolean canPressPlate(Player p) {
-        return getFlagBool("press-plate") || checkAllowedPlayer(p,"press-plate");
+        return getFlagBool("press-plate") || checkAllowedPlayer(p, "press-plate");
     }
 
     public boolean canBuild(Player p) {
-        return (getFlagBool("build") || checkAllowedPlayer(p,"build"));
+        return (getFlagBool("build") || checkAllowedPlayer(p, "build"));
     }
 
     public boolean leavesDecay() {
@@ -1032,7 +1032,7 @@ public class Region extends CoreRegion {
      * @return boolean if the player can place o not a spawner.
      */
     public boolean canPlaceSpawner(Player p) {
-        return getFlagBool("allow-spawner") || checkAllowedPlayer(p,"allow-spawner");
+        return getFlagBool("allow-spawner") || checkAllowedPlayer(p, "allow-spawner");
     }
 
     /**
@@ -1042,7 +1042,7 @@ public class Region extends CoreRegion {
      * @return boolean if the player can fly or not.
      */
     public boolean canFly(Player p) {
-        return getFlagBool("allow-fly") || checkAllowedPlayer(p,"allow-fly");
+        return getFlagBool("allow-fly") || checkAllowedPlayer(p, "allow-fly");
     }
 
     /**
@@ -1143,7 +1143,7 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(entity instanceof ArmorStand)) && entity instanceof LivingEntity)){
+        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(entity instanceof ArmorStand)) && entity instanceof LivingEntity)) {
             return true;
         }
 

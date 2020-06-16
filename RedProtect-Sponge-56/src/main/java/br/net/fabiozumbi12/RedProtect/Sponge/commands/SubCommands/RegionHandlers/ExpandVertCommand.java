@@ -68,7 +68,7 @@ public class ExpandVertCommand {
                             return CommandResult.success();
                         }
 
-                        if (!RedProtect.get().ph.hasRegionPermAdmin(player, "expand-vert", r)){
+                        if (!RedProtect.get().ph.hasRegionPermAdmin(player, "expand-vert", r)) {
                             RedProtect.get().lang.sendMessage(player, "no.permission");
                             return CommandResult.success();
                         }

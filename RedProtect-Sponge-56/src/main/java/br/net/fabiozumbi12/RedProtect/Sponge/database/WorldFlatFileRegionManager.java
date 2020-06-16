@@ -28,14 +28,10 @@ package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import com.google.common.reflect.TypeToken;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import jdk.nashorn.internal.parser.JSONParser;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -45,8 +41,6 @@ import org.spongepowered.api.world.World;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -327,7 +321,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public Region getRegion(String rname) {
-        Optional<Map.Entry<String, Region>> optional =  regions.entrySet().stream().filter(r -> r.getKey().toLowerCase().equals(rname.toLowerCase())).findFirst();
+        Optional<Map.Entry<String, Region>> optional = regions.entrySet().stream().filter(r -> r.getKey().toLowerCase().equals(rname.toLowerCase())).findFirst();
         return optional.map(Map.Entry::getValue).orElse(null);
     }
 

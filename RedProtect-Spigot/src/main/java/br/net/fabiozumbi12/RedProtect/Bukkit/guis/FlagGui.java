@@ -61,10 +61,10 @@ public class FlagGui implements Listener {
 
     private final boolean allowEnchant;
     private final boolean editable;
-    private String name;
     private final int size;
-    private ItemStack[] guiItems;
     private final Player player;
+    private String name;
+    private ItemStack[] guiItems;
     private Region region;
     private Inventory inv;
 

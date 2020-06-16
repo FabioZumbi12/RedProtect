@@ -35,7 +35,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.HandleHelpPage;
 
 public class CanPurgeCommand {
 
@@ -73,7 +73,7 @@ public class CanPurgeCommand {
                         int limit = RedProtect.get().ph.getPurgeLimit(player);
                         long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
                         if (!value && amount >= limit) {
-                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-nolimit", new Replacer[] {
+                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-nolimit", new Replacer[]{
                                     new Replacer("{limit}", String.valueOf(limit)),
                                     new Replacer("{total}", String.valueOf(amount))
                             });
@@ -81,7 +81,7 @@ public class CanPurgeCommand {
                         }
 
                         r.setCanPurge(value);
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.canpurge.set", new Replacer[] { new Replacer("{value}", String.valueOf(value))});
+                        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.canpurge.set", new Replacer[]{new Replacer("{value}", String.valueOf(value))});
                         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " CANPURGE " + r.getName() + " to " + value);
                     }
                     return CommandResult.success();

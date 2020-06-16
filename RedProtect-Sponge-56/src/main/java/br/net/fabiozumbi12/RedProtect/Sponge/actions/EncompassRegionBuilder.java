@@ -291,7 +291,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.area.used") + " " + (regionArea == 0 ? "&a" + regionArea : "&c- " + regionArea) + "\n" +
                                 RedProtect.get().lang.get("regionbuilder.area.left") + " " + (areaUnlimited ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : (pLimit - (totalArea + region.getArea())))));
                         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.priority.set").replace("{region}", region.getName()) + " " + region.getPrior()));
-                        if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable) p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.block.cost") + reco));
+                        if (RedProtect.get().config.ecoRoot().claim_cost_per_block.enable)
+                            p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.block.cost") + reco));
                         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
                         if (othersName.size() > 0) {
                             p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.overlapping")));

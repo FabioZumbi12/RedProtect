@@ -50,6 +50,10 @@
             <id>dynmap</id>
             <url>http://repo.mikeprimm.com/</url>
         </repository>
+        <repository>
+            <id>sk89q-snapshots</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -79,12 +83,14 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
             <version>6.1.4-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-sponge</artifactId>
             <version>6.1.7-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

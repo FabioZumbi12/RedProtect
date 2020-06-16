@@ -27,7 +27,6 @@
 package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.schematics.RPSchematics;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -57,7 +56,7 @@ public class StartCommand {
                         }
 
                         if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
-                                !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")){
+                                !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")) {
                             RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                             return CommandResult.success();
                         }

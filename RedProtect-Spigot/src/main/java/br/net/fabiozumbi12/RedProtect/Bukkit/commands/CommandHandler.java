@@ -165,18 +165,18 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 Set<PlayerRegion> members;
 
                 if (!pr.getValue().getOwners().getUniqueIds().isEmpty())
-                    leaders = pr.getValue().getOwners().getUniqueIds().stream().filter(p->Bukkit.getPlayer(p) != null).map(o->new PlayerRegion(o.toString(), Bukkit.getPlayer(o).getName())).collect(Collectors.toSet());
+                    leaders = pr.getValue().getOwners().getUniqueIds().stream().filter(p -> Bukkit.getPlayer(p) != null).map(o -> new PlayerRegion(o.toString(), Bukkit.getPlayer(o).getName())).collect(Collectors.toSet());
                 else
-                    leaders = pr.getValue().getOwners().getPlayers().stream().map(o->new PlayerRegion(o, o)).collect(Collectors.toSet());
+                    leaders = pr.getValue().getOwners().getPlayers().stream().map(o -> new PlayerRegion(o, o)).collect(Collectors.toSet());
 
                 if (!pr.getValue().getMembers().getUniqueIds().isEmpty())
-                    members = pr.getValue().getMembers().getUniqueIds().stream().filter(p->Bukkit.getPlayer(p) != null).map(o->new PlayerRegion(o.toString(), Bukkit.getPlayer(o).getName())).collect(Collectors.toSet());
+                    members = pr.getValue().getMembers().getUniqueIds().stream().filter(p -> Bukkit.getPlayer(p) != null).map(o -> new PlayerRegion(o.toString(), Bukkit.getPlayer(o).getName())).collect(Collectors.toSet());
                 else
-                    members = pr.getValue().getMembers().getPlayers().stream().map(o->new PlayerRegion(o, o)).collect(Collectors.toSet());
+                    members = pr.getValue().getMembers().getPlayers().stream().map(o -> new PlayerRegion(o, o)).collect(Collectors.toSet());
 
                 if (leaders.isEmpty()) {
                     if (members.isEmpty())
-                        leaders.add(new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader,RedProtect.get().config.configRoot().region_settings.default_leader));
+                        leaders.add(new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader));
                     else
                         leaders.addAll(members);
                 }
@@ -353,7 +353,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("debug-item")) {
                     if (sender instanceof Player) {
-                        ItemStack hand = ((Player)sender).getItemInHand();
+                        ItemStack hand = ((Player) sender).getItemInHand();
                         plugin.lang.sendMessage(sender, "&aMaterial name: " + hand.getType().name());
                     } else {
                         plugin.lang.sendMessage(sender, "&cThis command can be used only by online players holding an item!");
@@ -834,7 +834,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consoleCmds = Arrays.asList("debug-item" ,"update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "fileToMysql", "mysqlToFile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp");
+        List<String> consoleCmds = Arrays.asList("debug-item", "update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "fileToMysql", "mysqlToFile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp");
         if (sender instanceof Player) {
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);

@@ -27,7 +27,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,8 +38,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.world.PortalCreateEvent;
@@ -75,7 +72,7 @@ public class VersionHelperLatest implements VersionHelper {
     }
 
     public boolean denyEntLingPot(ProjectileHitEvent e) {
-        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent)e).getEntity().getItem());
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem());
     }
 
     public Entity getEntLingPot(ProjectileHitEvent e) {

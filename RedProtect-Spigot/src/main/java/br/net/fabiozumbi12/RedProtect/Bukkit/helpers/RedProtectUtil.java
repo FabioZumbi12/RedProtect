@@ -620,7 +620,7 @@ public class RedProtectUtil extends CoreUtil {
         }
 
         try {
-            RedProtect.get().getUtil().zipFolder(RedProtect.get().getDataFolder() + File.separator + "data" , genFileName(bkpFolder.getPath() + File.separator, true).getPath());
+            RedProtect.get().getUtil().zipFolder(RedProtect.get().getDataFolder() + File.separator + "data", genFileName(bkpFolder.getPath() + File.separator, true).getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -872,7 +872,7 @@ public class RedProtectUtil extends CoreUtil {
         }
 
         String particleName = RedProtect.get().config.configRoot().region_settings.border.particle;
-        if(!plugin.getVersionHelper().existParticle(particleName)) {
+        if (!plugin.getVersionHelper().existParticle(particleName)) {
             particleName = "FLAME";
         }
 
@@ -1079,7 +1079,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public String fixRegionName(Player p, String regionName) {
-        
+
         //filter region name
         if (regionName == null || regionName.isEmpty()) {
             regionName = nameGen(p.getName(), p.getWorld().getName());
@@ -1135,7 +1135,7 @@ public class RedProtectUtil extends CoreUtil {
         if (mat != null) {
             s = new ItemStack(mat);
         } else {
-            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short)3);
+            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
         }
         SkullMeta sm = (SkullMeta) s.getItemMeta();
         GameProfile gm = new GameProfile(UUID.randomUUID(), null);

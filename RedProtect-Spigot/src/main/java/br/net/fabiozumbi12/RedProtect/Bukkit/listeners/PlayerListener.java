@@ -1267,10 +1267,10 @@ public class PlayerListener implements Listener {
                 }
             }
             if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
-                try{
+                try {
                     Class.forName("net.md_5.bungee.api.chat.BaseComponent");
                     SpigotHelper.sendSpigotActionBar(p, notify);
-                } catch (Exception ignored){
+                } catch (Exception ignored) {
                     if (RedProtect.get().hooks.actionBar) {
                         ActionBarAPI.sendActionBar(p, notify);
                     } else {
@@ -1300,10 +1300,10 @@ public class PlayerListener implements Listener {
             }
         }
         if (RedProtect.get().config.configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
-            try{
+            try {
                 Class.forName("net.md_5.bungee.api.chat.BaseComponent");
                 SpigotHelper.sendSpigotActionBar(p, wel);
-            } catch (Exception ignored){
+            } catch (Exception ignored) {
                 if (RedProtect.get().hooks.actionBar) {
                     ActionBarAPI.sendActionBar(p, wel);
                 } else {

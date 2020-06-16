@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
-import com.massivecraft.massivecore.xlib.mongodb.CommandResult;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -39,7 +38,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
+import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class CanPurgeCommand implements SubCommand {
     @Override
@@ -71,7 +70,7 @@ public class CanPurgeCommand implements SubCommand {
         int limit = RedProtect.get().ph.getPurgeLimit(player);
         long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
         if (!value && amount >= limit) {
-            RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-nolimit", new Replacer[] {
+            RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-nolimit", new Replacer[]{
                     new Replacer("{limit}", String.valueOf(limit)),
                     new Replacer("{total}", String.valueOf(amount))
             });
@@ -79,7 +78,7 @@ public class CanPurgeCommand implements SubCommand {
         }
 
         r.setCanPurge(value);
-        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.canpurge.set", new Replacer[] { new Replacer("{value}", String.valueOf(value))});
+        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.canpurge.set", new Replacer[]{new Replacer("{value}", String.valueOf(value))});
         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " CANPURGE " + r.getName() + " to " + value);
         return true;
     }

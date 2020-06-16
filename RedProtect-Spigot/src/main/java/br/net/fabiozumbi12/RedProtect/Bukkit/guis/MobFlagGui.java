@@ -29,11 +29,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.guis;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MobTextures;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import jdk.nashorn.internal.runtime.PropertyMap;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -51,9 +48,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
@@ -61,12 +60,12 @@ import static org.bukkit.ChatColor.translateAlternateColorCodes;
 public class MobFlagGui implements Listener {
 
     private final String flag;
-    private ItemStack[] guiItems = new ItemStack[0];
     private final Player player;
-    private Region region;
     private final int size;
-    private String name;
     private final boolean allowEnchant;
+    private ItemStack[] guiItems = new ItemStack[0];
+    private Region region;
+    private String name;
 
     public MobFlagGui(Player player, Region region, String flag) {
         this.player = player;
@@ -238,7 +237,7 @@ public class MobFlagGui implements Listener {
             greenMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        greenMeta.setDisplayName(translateAlternateColorCodes('&',RedProtect.get().lang.get("gui.selectall")));
+        greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().lang.get("gui.selectall")));
         greenWool.setItemMeta(greenMeta);
         items.add(greenWool);
 
@@ -248,7 +247,7 @@ public class MobFlagGui implements Listener {
             redMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        redMeta.setDisplayName(translateAlternateColorCodes('&',RedProtect.get().lang.get("gui.selectnone")));
+        redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().lang.get("gui.selectnone")));
         redWool.setItemMeta(redMeta);
         items.add(redWool);
 

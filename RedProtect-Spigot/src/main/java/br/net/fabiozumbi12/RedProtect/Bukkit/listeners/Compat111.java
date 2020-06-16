@@ -60,12 +60,10 @@ public class Compat111 implements Listener {
     }
 
     @EventHandler
-    private void onChorusBreak(ProjectileHitEvent event)
-    {
+    private void onChorusBreak(ProjectileHitEvent event) {
         if (!(event.getEntity().getShooter() instanceof Player)) return;
 
-        if (event.getHitBlock() != null && event.getHitBlock().getType() == Material.CHORUS_FLOWER)
-        {
+        if (event.getHitBlock() != null && event.getHitBlock().getType() == Material.CHORUS_FLOWER) {
             Player p = (Player) event.getEntity().getShooter();
             Region r = RedProtect.get().rm.getTopRegion(event.getHitBlock().getLocation());
             if (r != null && !r.canBuild(p)) {

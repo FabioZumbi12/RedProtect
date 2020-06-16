@@ -27,9 +27,7 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.schematics.RPSchematics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -58,7 +56,7 @@ public class StartCommand implements SubCommand {
             }
 
             if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
-                    !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")){
+                    !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")) {
                 RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
                 return true;
             }

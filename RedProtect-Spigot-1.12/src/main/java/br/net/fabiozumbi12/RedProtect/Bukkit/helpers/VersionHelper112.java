@@ -60,7 +60,7 @@ public class VersionHelper112 implements VersionHelper {
     }
 
     public boolean denyEntLingPot(ProjectileHitEvent e) {
-        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent)e).getEntity().getItem());
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem());
     }
 
     public Entity getEntLingPot(ProjectileHitEvent e) {

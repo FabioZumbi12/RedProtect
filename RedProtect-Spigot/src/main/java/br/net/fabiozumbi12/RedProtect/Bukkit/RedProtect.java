@@ -36,7 +36,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectLogger;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.TransAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.metrics.Metrics;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionManager;
@@ -244,7 +243,7 @@ public class RedProtect extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new Compat114(), this);
         }
 
-        if(bukkitVersion <= 189) {
+        if (bukkitVersion <= 189) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper18").newInstance();
         }
         if (bukkitVersion >= 190) {

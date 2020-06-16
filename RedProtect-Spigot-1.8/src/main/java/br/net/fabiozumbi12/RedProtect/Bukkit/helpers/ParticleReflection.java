@@ -191,7 +191,7 @@ public class ParticleReflection {
 
             Object packet = packetParticleConstructor.newInstance();
 
-            if(getServerVersionNumber() >= 8) {
+            if (getServerVersionNumber() >= 8) {
                 setValue(packetParticleTypeField, packet, getParticleById(particle.getId()));
             } else {
                 setValue(packetParticleTypeField, packet, particle.getClientName());

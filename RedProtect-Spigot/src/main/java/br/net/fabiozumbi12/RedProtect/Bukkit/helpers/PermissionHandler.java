@@ -118,9 +118,9 @@ public class PermissionHandler {
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p) || poly.isMember(p)));
     }
 
-    private boolean hasVaultPerm(CommandSender player, String perm){
+    private boolean hasVaultPerm(CommandSender player, String perm) {
         if (RedProtect.get().config.configRoot().permissions_limits.useVault && player instanceof Player && RedProtect.get().permission != null) {
-            return RedProtect.get().permission.playerHas(((Player)player).getWorld().getName(), (Player)player, perm);
+            return RedProtect.get().permission.playerHas(((Player) player).getWorld().getName(), (Player) player, perm);
         }
         return player.hasPermission(perm);
     }

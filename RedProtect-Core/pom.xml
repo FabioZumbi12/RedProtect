@@ -106,7 +106,8 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.typesafe.config</pattern>
-                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.Core.libs.com.typesafe.config</shadedPattern>
+                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.Core.libs.com.typesafe.config
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

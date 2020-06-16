@@ -78,9 +78,9 @@ public class RegionManager {
         for (String w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
             if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
-                try{
+                try {
                     RedProtect.get().hooks.dynmapHook.removeAll(w);
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }

@@ -38,7 +38,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
@@ -52,6 +51,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VersionHelper18 implements VersionHelper {
+
+    private static Set<Player> getNearbyPlayersInChunks(Location location) {
+        World world = location.getWorld();
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        int range = 3;
+
+        Set<Player> players = new HashSet<>();
+        for (int x = chunkX - range; x <= chunkX + range; x++) {
+            for (int z = chunkZ - range; z <= chunkZ + range; z++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                if (chunk.isLoaded())
+                    players.addAll(Arrays.stream(chunk.getEntities())
+                            .filter((it) -> it.getType() == EntityType.PLAYER)
+                            .map((it) -> (Player) it).collect(Collectors.toSet()));
+            }
+        }
+
+        return players;
+    }
 
     @Override
     public String getVersion() {
@@ -156,31 +175,11 @@ public class VersionHelper18 implements VersionHelper {
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();
         if (optional.isPresent()) {
-            final Object packet = ParticleReflection.createParticlePacket(optional.get(),x, y, z, 1, 0, 0, 0);
+            final Object packet = ParticleReflection.createParticlePacket(optional.get(), x, y, z, 1, 0, 0, 0);
             final Location location = new Location(world, x, y, z);
             getNearbyPlayersInChunks(location)
                     .forEach((it) -> ParticleReflection.sendPacket(it, packet));
             return true;
         } else return false;
-    }
-
-    private static Set<Player> getNearbyPlayersInChunks(Location location) {
-        World world = location.getWorld();
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
-        int range = 3;
-
-        Set<Player> players = new HashSet<>();
-        for (int x = chunkX - range; x <= chunkX + range; x++) {
-            for (int z = chunkZ - range; z <= chunkZ + range; z++) {
-                Chunk chunk = world.getChunkAt(x, z);
-                if(chunk.isLoaded())
-                    players.addAll(Arrays.stream(chunk.getEntities())
-                            .filter((it) -> it.getType() == EntityType.PLAYER)
-                            .map((it) -> (Player) it).collect(Collectors.toSet()));
-            }
-        }
-
-        return players;
     }
 }

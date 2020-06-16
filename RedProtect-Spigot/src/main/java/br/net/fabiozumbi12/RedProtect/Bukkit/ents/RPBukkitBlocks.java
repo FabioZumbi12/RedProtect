@@ -27,8 +27,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.ents;
 
 
-import org.bukkit.block.data.type.TNT;
-
 public enum RPBukkitBlocks {
     ACACIA_DOOR,
     ACACIA_DOOR_ITEM,

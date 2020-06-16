@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,10 +37,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleRemoveAdmin;
 
@@ -76,13 +73,13 @@ public class RemoveAdminCommand implements SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (sender instanceof Player){
+        if (sender instanceof Player) {
             Region r = RedProtect.get().rm.getTopRegion(((Player) sender).getLocation());
-            if (r != null && args.length == 1){
+            if (r != null && args.length == 1) {
                 if (args[0].isEmpty())
                     return r.getAdmins().stream().map(PlayerRegion::getPlayerName).collect(Collectors.toList());
                 else
-                    return r.getAdmins().stream().filter(p->p.getPlayerName().toLowerCase().startsWith(args[0].toLowerCase())).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
+                    return r.getAdmins().stream().filter(p -> p.getPlayerName().toLowerCase().startsWith(args[0].toLowerCase())).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
             }
         }
         return new ArrayList<>();

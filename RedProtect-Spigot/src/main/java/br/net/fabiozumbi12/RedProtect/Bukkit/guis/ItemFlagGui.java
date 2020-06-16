@@ -47,8 +47,8 @@ import java.util.Arrays;
 public class ItemFlagGui implements Listener {
 
     private final String flag;
-    private ItemStack[] guiItems;
     private final Player player;
+    private ItemStack[] guiItems;
     private Region region;
 
     public ItemFlagGui(Player player, Region region, String flag) {

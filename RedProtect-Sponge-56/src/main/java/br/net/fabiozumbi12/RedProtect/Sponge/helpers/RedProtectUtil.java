@@ -711,14 +711,14 @@ public class RedProtectUtil extends CoreUtil {
         }
     }
 
-    public void backupRegions(){
+    public void backupRegions() {
         File bkpFolder = new File(RedProtect.get().configDir + File.separator + "backups" + File.separator);
         if (!bkpFolder.exists()) {
             bkpFolder.mkdir();
         }
 
         try {
-            RedProtect.get().getUtil().zipFolder(RedProtect.get().configDir + File.separator + "data" , genFileName(bkpFolder.getPath() + File.separator, true).getPath());
+            RedProtect.get().getUtil().zipFolder(RedProtect.get().configDir + File.separator + "data", genFileName(bkpFolder.getPath() + File.separator, true).getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }

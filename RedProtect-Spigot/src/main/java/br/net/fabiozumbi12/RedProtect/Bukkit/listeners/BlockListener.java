@@ -70,10 +70,10 @@ public class BlockListener implements Listener {
         Material type = e.getBlock().getType();
         if (r != null && !r.blockTransform() && (
                 type.name().contains("SNOW") ||
-                type.name().contains("ICE") ||
-                type.name().contains("FIRE") ||
-                type.name().contains("CORAL") ||
-                type.name().contains("POWDER")
+                        type.name().contains("ICE") ||
+                        type.name().contains("FIRE") ||
+                        type.name().contains("CORAL") ||
+                        type.name().contains("POWDER")
         )) {
             e.setCancelled(true);
         }
@@ -255,9 +255,9 @@ public class BlockListener implements Listener {
             Material type = b.getType();
             if (!r.blockTransform() && type.isBlock() && (
                     type.name().contains("SNOW") ||
-                    type.name().contains("ICE") ||
-                    type.name().contains("CORAL") ||
-                    type.name().contains("POWDER"))) {
+                            type.name().contains("ICE") ||
+                            type.name().contains("CORAL") ||
+                            type.name().contains("POWDER"))) {
                 b.setType(m);
             }
 
@@ -345,18 +345,18 @@ public class BlockListener implements Listener {
 
         Block b = p.getLocation().getBlock();
         if (r != null && (b instanceof Crops
-                        || b.getType().equals(Material.PUMPKIN_STEM)
-                        || b.getType().equals(Material.MELON_STEM)
-                        || b.getType().toString().contains("CARROTS")
-                        || b.getType().toString().contains("_BERRIES")
-                        || b.getType().toString().contains("CROPS")
-                        || b.getType().toString().contains("SOIL")
-                        || b.getType().toString().contains("FARMLAND")
-                        || b.getType().toString().contains("CHORUS_")
-                        || b.getType().toString().contains("BEETROOT_")
-                        || b.getType().toString().contains("BEETROOTS")
-                        || b.getType().toString().contains("SUGAR_CANE")
-                        || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
+                || b.getType().equals(Material.PUMPKIN_STEM)
+                || b.getType().equals(Material.MELON_STEM)
+                || b.getType().toString().contains("CARROTS")
+                || b.getType().toString().contains("_BERRIES")
+                || b.getType().toString().contains("CROPS")
+                || b.getType().toString().contains("SOIL")
+                || b.getType().toString().contains("FARMLAND")
+                || b.getType().toString().contains("CHORUS_")
+                || b.getType().toString().contains("BEETROOT_")
+                || b.getType().toString().contains("BEETROOTS")
+                || b.getType().toString().contains("SUGAR_CANE")
+                || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
             e.setCancelled(true);

@@ -61,7 +61,7 @@ public class VersionHelper113 implements VersionHelper {
     }
 
     public boolean denyEntLingPot(ProjectileHitEvent e) {
-        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent)e).getEntity().getItem());
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem());
     }
 
     public Entity getEntLingPot(ProjectileHitEvent e) {
@@ -154,7 +154,7 @@ public class VersionHelper113 implements VersionHelper {
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();
         if (optional.isPresent()) {
-            world.spawnParticle(optional.get(), x, y, z, 1, 0,0, 0, 0);
+            world.spawnParticle(optional.get(), x, y, z, 1, 0, 0, 0, 0);
             return true;
         } else return false;
     }

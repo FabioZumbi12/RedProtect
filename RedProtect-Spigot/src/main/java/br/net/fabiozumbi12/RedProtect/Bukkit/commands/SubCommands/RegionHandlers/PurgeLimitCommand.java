@@ -27,7 +27,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.command.Command;
@@ -52,7 +51,7 @@ public class PurgeLimitCommand implements SubCommand {
 
         int limit = RedProtect.get().ph.getPurgeLimit(player);
         long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
-        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[] {
+        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[]{
                 new Replacer("{limit}", String.valueOf(limit)),
                 new Replacer("{total}", String.valueOf(amount))
         });

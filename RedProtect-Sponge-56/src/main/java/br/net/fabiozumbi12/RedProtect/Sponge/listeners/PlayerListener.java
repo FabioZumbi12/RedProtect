@@ -43,7 +43,6 @@ import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.mutable.block.RedstonePoweredData;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
@@ -653,7 +652,7 @@ public class PlayerListener {
             return;
         }
 
-        if (e1 instanceof Player && r.flagExists("pvp") && !r.canPVP(p, (Player)e1)) {
+        if (e1 instanceof Player && r.flagExists("pvp") && !r.canPVP(p, (Player) e1)) {
             RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
         }

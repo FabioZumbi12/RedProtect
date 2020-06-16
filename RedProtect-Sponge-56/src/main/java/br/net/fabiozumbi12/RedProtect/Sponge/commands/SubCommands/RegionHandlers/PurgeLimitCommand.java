@@ -28,9 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Sponge.Region;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -51,7 +49,7 @@ public class PurgeLimitCommand {
 
                         int limit = RedProtect.get().ph.getPurgeLimit(player);
                         long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
-                        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[] {
+                        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[]{
                                 new Replacer("{limit}", String.valueOf(limit)),
                                 new Replacer("{total}", String.valueOf(amount))
                         });

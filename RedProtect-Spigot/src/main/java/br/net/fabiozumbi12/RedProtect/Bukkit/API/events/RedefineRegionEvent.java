@@ -27,7 +27,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.API.events;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

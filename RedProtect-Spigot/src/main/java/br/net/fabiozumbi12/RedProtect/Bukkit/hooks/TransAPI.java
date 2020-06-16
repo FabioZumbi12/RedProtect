@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.translationapi.TranslationCore;
 public class TransAPI {
 
     private final TranslationCore api;
+
     public TransAPI() {
         this.api = TranslationAPI.getAPI();
     }

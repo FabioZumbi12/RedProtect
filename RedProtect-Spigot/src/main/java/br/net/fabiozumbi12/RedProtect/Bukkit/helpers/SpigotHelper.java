@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 
 public class SpigotHelper {
 
-    public static void sendSpigotActionBar(Player player, String message){
+    public static void sendSpigotActionBar(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
     }
 }
