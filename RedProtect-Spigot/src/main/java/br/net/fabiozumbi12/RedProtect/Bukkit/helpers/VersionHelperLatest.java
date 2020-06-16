@@ -42,6 +42,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -73,15 +74,15 @@ public class VersionHelperLatest implements VersionHelper {
         return e.getBlocks().stream().map(BlockState::getLocation).collect(Collectors.toSet());
     }
 
-    public boolean denyEntLingPot(LingeringPotionSplashEvent e) {
-        return RedProtect.get().getUtil().denyPotion(e.getEntity().getItem());
+    public boolean denyEntLingPot(ProjectileHitEvent e) {
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent)e).getEntity().getItem());
     }
 
-    public Entity getEntLingPot(LingeringPotionSplashEvent e) {
+    public Entity getEntLingPot(ProjectileHitEvent e) {
         return e.getEntity();
     }
 
-    public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e) {
+    public ProjectileSource getPlayerLingPot(ProjectileHitEvent e) {
         return e.getEntity().getShooter();
     }
 

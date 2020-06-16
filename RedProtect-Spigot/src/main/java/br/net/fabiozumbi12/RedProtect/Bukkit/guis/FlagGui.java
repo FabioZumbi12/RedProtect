@@ -136,6 +136,12 @@ public class FlagGui implements Listener {
                             guiMeta.removeEnchant(Enchantment.DURABILITY);
                         }
                         guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    } else {
+                        if (flagValue.toString().equalsIgnoreCase("true")) {
+                            this.guiItems[i].setAmount(2);
+                        } else {
+                            this.guiItems[i].setAmount(1);
+                        }
                     }
                     this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
                     this.guiItems[i].setItemMeta(guiMeta);
@@ -277,6 +283,12 @@ public class FlagGui implements Listener {
                 itemMeta.removeEnchant(Enchantment.DURABILITY);
             }
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        } else {
+            if (this.region.getFlagBool(flag)) {
+                event.getCurrentItem().setAmount(2);
+            } else {
+                event.getCurrentItem().setAmount(1);
+            }
         }
 
         String flagString = RedProtect.get().guiLang.getFlagString(this.region.getFlagString(flag));

@@ -27,7 +27,6 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,9 +37,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.material.Door;
 import org.bukkit.material.Openable;
@@ -53,18 +51,6 @@ import java.util.stream.Collectors;
 
 public class VersionHelper113 implements VersionHelper {
 
-    /*@EventHandler(ignoreCancelled = true)
-    public void onPhysics(BlockPhysicsEvent event) {
-        Block source = event.getSourceBlock();
-        Block b = event.getBlock();
-        if (source.equals(b)){
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
-            if (r != null && !r.blockTransform()){
-                event.setCancelled(true);
-            }
-        }
-    }*/
-
     @Override
     public String getVersion() {
         return "1.13";
@@ -74,15 +60,15 @@ public class VersionHelper113 implements VersionHelper {
         return e.getBlocks().stream().map(Block::getLocation).collect(Collectors.toSet());
     }
 
-    public boolean denyEntLingPot(LingeringPotionSplashEvent e) {
-        return RedProtect.get().getUtil().denyPotion(e.getEntity().getItem());
+    public boolean denyEntLingPot(ProjectileHitEvent e) {
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent)e).getEntity().getItem());
     }
 
-    public Entity getEntLingPot(LingeringPotionSplashEvent e) {
+    public Entity getEntLingPot(ProjectileHitEvent e) {
         return e.getEntity();
     }
 
-    public ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e) {
+    public ProjectileSource getPlayerLingPot(ProjectileHitEvent e) {
         return e.getEntity().getShooter();
     }
 

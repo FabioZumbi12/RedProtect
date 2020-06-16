@@ -28,6 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.guis;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MobTextures;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import jdk.nashorn.internal.runtime.PropertyMap;
 import org.bukkit.Bukkit;
@@ -51,10 +53,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
@@ -78,15 +77,15 @@ public class MobFlagGui implements Listener {
 
         if (flag.equalsIgnoreCase("spawn-monsters")) {
             this.name = "Spawn Monsters Gui";
-            List<String> entities = Arrays.stream(EntityType.values())
+            List<EntityType> entities = Arrays.stream(EntityType.values())
                     .filter(ent -> ent.getEntityClass() != null && Monster.class.isAssignableFrom(ent.getEntityClass()))
-                    .map(EntityType::name).sorted().collect(toList());
-            this.guiItems = getItemList(entities, region.getFlagString(flag), Material.MAGMA_CREAM);
+                    .sorted(Comparator.comparing(EntityType::name)).collect(toList());
+            this.guiItems = getItemList(entities, region.getFlagString(flag), true);
         }
 
         if (flag.equalsIgnoreCase("spawn-animals")) {
             this.name = "Spawn Animals Gui";
-            List<String> entities = Arrays.stream(EntityType.values())
+            List<EntityType> entities = Arrays.stream(EntityType.values())
                     .filter(ent -> {
                         Class entityClass = ent.getEntityClass();
                         if (entityClass == null) return false;
@@ -95,8 +94,8 @@ public class MobFlagGui implements Listener {
                                 (RedProtect.get().bukkitVersion >= 180 && !ArmorStand.class.isAssignableFrom(entityClass)) &&
                                 LivingEntity.class.isAssignableFrom(entityClass));
                     })
-                    .map(EntityType::name).sorted().collect(toList());
-            this.guiItems = getItemList(entities, region.getFlagString(flag), Material.BONE);
+                    .sorted(Comparator.comparing(EntityType::name)).collect(toList());
+            this.guiItems = getItemList(entities, region.getFlagString(flag), false);
         }
 
         int maxSlots = this.guiItems.length;
@@ -167,15 +166,10 @@ public class MobFlagGui implements Listener {
                     List<String> lore = itemMeta.getLore();
                     if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
                         lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("false")));
-                        if (allowEnchant) {
-                            itemMeta.removeEnchant(Enchantment.DURABILITY);
-                        }
+                        item.setAmount(1);
                     } else {
                         lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")));
-                        if (allowEnchant) {
-                            itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-                            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                        }
+                        item.setAmount(2);
                     }
                     itemMeta.setLore(lore);
                     item.setItemMeta(itemMeta);
@@ -234,7 +228,7 @@ public class MobFlagGui implements Listener {
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
     }
 
-    private ItemStack[] getItemList(List<String> entities, String flagValue, Material material) {
+    private ItemStack[] getItemList(List<EntityType> entities, String flagValue, boolean monster) {
         List<String> split = Arrays.asList(flagValue.trim().split(","));
         List<ItemStack> items = new ArrayList<>();
 
@@ -258,26 +252,31 @@ public class MobFlagGui implements Listener {
         redWool.setItemMeta(redMeta);
         items.add(redWool);
 
-        for (String ent : entities) {
-            ItemStack head = new ItemStack(material);
-            ItemMeta itemMeta = head.getItemMeta();
-            String valueStr = RedProtect.get().guiLang.getFlagString("false");
-            if (split.contains(ent)) {
-                valueStr = RedProtect.get().guiLang.getFlagString("true");
-                if (allowEnchant) {
-                    itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-                    itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                }
+        for (EntityType ent : entities) {
+            ItemStack head;
+            try {
+                head = RedProtect.get().getUtil().createSkull(MobTextures.getTexture(ent));
+            } catch (Exception ignored) {
+                head = new ItemStack(monster ? Material.MAGMA_CREAM : Material.BONE);
             }
 
-            String display = translateAlternateColorCodes('&', "&6" + ent);
+            ItemMeta itemMeta = head.getItemMeta();
+            String valueStr = RedProtect.get().guiLang.getFlagString("false");
+            if (split.contains(ent.name())) {
+                valueStr = RedProtect.get().guiLang.getFlagString("true");
+                head.setAmount(2);
+            }
+
+            // Item name
+            String display = translateAlternateColorCodes('&', "&6" + ent.name());
             if (RedProtect.get().hooks.transAPI != null) {
-                display = translateAlternateColorCodes('&', "&6" + RedProtect.get().hooks.transAPI.getApi().translateEntity(EntityType.valueOf(ent.toUpperCase()), "en-us", true));
+                display = translateAlternateColorCodes('&', "&6" + RedProtect.get().hooks.transAPI.getApi().translateEntity(ent, "en-us", true));
             }
             itemMeta.setDisplayName(display);
+
             List<String> lore = new ArrayList<>(Arrays.asList(
                     translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + valueStr),
-                    "§0" + ent));
+                    "§0" + ent.name()));
             itemMeta.setLore(lore);
             head.setItemMeta(itemMeta);
             items.add(head);

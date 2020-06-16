@@ -35,6 +35,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
@@ -46,6 +48,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.Potion;
 
 import javax.annotation.Nonnull;
@@ -53,6 +56,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.text.Normalizer;
 import java.text.ParseException;
@@ -1123,5 +1127,34 @@ public class RedProtectUtil extends CoreUtil {
             ++i;
         }
         return rname;
+    }
+
+    public ItemStack createSkull(String texture) {
+        Material mat = Material.getMaterial("PLAYER_HEAD");
+        ItemStack s;
+        if (mat != null) {
+            s = new ItemStack(mat);
+        } else {
+            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short)3);
+        }
+        SkullMeta sm = (SkullMeta) s.getItemMeta();
+        GameProfile gm = new GameProfile(UUID.randomUUID(), null);
+        gm.getProperties().put("textures", new Property("texture", texture));
+
+        Field profileField = null;
+        try {
+            profileField = sm.getClass().getDeclaredField("profile");
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+        }
+        profileField.setAccessible(true);
+        try {
+            profileField.set(sm, gm);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        // sm.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayname));
+        s.setItemMeta(sm);
+        return s;
     }
 }

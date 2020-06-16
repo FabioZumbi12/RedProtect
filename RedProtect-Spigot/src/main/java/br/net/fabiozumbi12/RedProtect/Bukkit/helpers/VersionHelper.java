@@ -33,6 +33,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -46,11 +47,11 @@ public interface VersionHelper extends Listener {
 
     Set<Location> getPortalLocations(PortalCreateEvent e);
 
-    ProjectileSource getPlayerLingPot(LingeringPotionSplashEvent e);
+    ProjectileSource getPlayerLingPot(ProjectileHitEvent e);
 
-    boolean denyEntLingPot(LingeringPotionSplashEvent e);
+    boolean denyEntLingPot(ProjectileHitEvent e);
 
-    Entity getEntLingPot(LingeringPotionSplashEvent e);
+    Entity getEntLingPot(ProjectileHitEvent e);
 
     void toggleDoor(Block b);
 
