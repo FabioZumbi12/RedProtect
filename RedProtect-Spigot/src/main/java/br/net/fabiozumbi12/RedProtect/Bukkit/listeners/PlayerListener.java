@@ -811,9 +811,11 @@ public class PlayerListener implements Listener {
         if (r != null) {
             if (r.isKeepInventory()) {
                 e.setKeepInventory(true);
+                e.getDrops().clear();
             }
             if (r.isKeepLevels()) {
                 e.setKeepLevel(true);
+                e.setDroppedExp(0);
             }
         }
 

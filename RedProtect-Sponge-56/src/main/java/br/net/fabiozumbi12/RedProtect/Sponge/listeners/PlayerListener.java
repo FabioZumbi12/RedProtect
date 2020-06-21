@@ -1085,14 +1085,8 @@ public class PlayerListener {
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
-    public void onPlayerDie(DestructEntityEvent.Death e) {
-        if (!(e.getTargetEntity() instanceof Player)) {
-            return;
-        }
-
+    public void onPlayerDie(DestructEntityEvent.Death e, @First Player p) {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "RPLayerListener: Is DestructEntityEvent.Death");
-
-        Player p = (Player) e.getTargetEntity();
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
