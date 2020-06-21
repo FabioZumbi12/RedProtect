@@ -280,4 +280,14 @@ public class RedProtectAPI {
     public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
         return RedProtect.get().config.addFlag(flag, defaultValue, isAdmin);
     }
+
+    /**
+     *
+     * @param flag    The name of flag.
+     * @param isAdmin Is Admin flag?
+     * @return true if the flag was found and has been removed, false otherwise.
+     */
+    public boolean removeFlag(String flag, boolean isAdmin) {
+        return RedProtect.get().config.removeFlag(flag, isAdmin);
+    }
 }

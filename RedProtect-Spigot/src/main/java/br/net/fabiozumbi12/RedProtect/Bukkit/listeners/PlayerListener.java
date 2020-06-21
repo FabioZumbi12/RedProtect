@@ -854,9 +854,9 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMovement(PlayerMoveEvent e) {
-        if (e.isCancelled() || RedProtect.get().config.configRoot().performance.disable_onPlayerMoveEvent_handler) {
+        if (RedProtect.get().config.configRoot().performance.disable_onPlayerMoveEvent_handler) {
             return;
         }
 

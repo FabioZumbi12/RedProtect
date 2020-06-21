@@ -271,6 +271,14 @@ public class CoreConfigManager {
         return false;
     }
 
+    public boolean removeFlag(String flag, boolean isAdmin) {
+        if (isAdmin) {
+            return AdminFlags.remove(flag);
+        } else {
+            return root.flags.remove(flag) != null;
+        }
+    }
+
     public String getWorldClaimType(String w) {
         return root.region_settings.claim.world_types.getOrDefault(w, "");
     }
