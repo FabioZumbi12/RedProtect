@@ -98,8 +98,8 @@ public class RedProtectUtil extends CoreUtil {
         }
     }
 
-    public boolean denyPotion(ItemStack result) {
-        List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
+    public boolean denyPotion(ItemStack result, World world) {
+        List<String> Pots = RedProtect.get().config.globalFlagsRoot().worlds.get(world.getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             String potname = "";
             if (RedProtect.get().bukkitVersion >= 190) {
@@ -115,7 +115,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public boolean denyPotion(ItemStack result, Player p) {
-        List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
+        List<String> Pots = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             String potname = "";
             if (RedProtect.get().bukkitVersion >= 190) {

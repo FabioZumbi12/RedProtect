@@ -71,8 +71,8 @@ public class VersionHelperLatest implements VersionHelper {
         return e.getBlocks().stream().map(BlockState::getLocation).collect(Collectors.toSet());
     }
 
-    public boolean denyEntLingPot(ProjectileHitEvent e) {
-        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem());
+    public boolean denyEntLingPot(ProjectileHitEvent e, World world) {
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem(), world);
     }
 
     public Entity getEntLingPot(ProjectileHitEvent e) {

@@ -81,7 +81,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDispenser(BlockDispenseEvent e) {
-        if (RedProtect.get().getUtil().denyPotion(e.getItem())) {
+        if (RedProtect.get().getUtil().denyPotion(e.getItem(), e.getBlock().getWorld())) {
             e.setCancelled(true);
         }
     }

@@ -422,14 +422,6 @@ public class MainCategory {
     public static class serverProtection {
         @Setting(value = "deny-command-on-worlds", comment = "Deny a command in specific world.")
         public Map<String, List<String>> deny_commands_on_worlds = createMapCmdWorld();
-        @Setting(value = "deny-playerdeath-by", comment = "Deny player death or get damage by this types of damage. List of types:\n" +
-                "Sponge: https://jd.spongepowered.org/7.1.0/org/spongepowered/api/event/cause/entity/damage/DamageTypes.html\n" +
-                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html")
-        public List<String> deny_playerdeath_by = new ArrayList<>();
-        @Setting(value = "deny-potions", comment = "Deny this types of potions to be used on server. \n" +
-                "Sponge: https://jd.spongepowered.org/7.1.0/org/spongepowered/api/effect/potion/PotionEffectTypes.html \n" +
-                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionType.html")
-        public List<String> deny_potions = new ArrayList<>();
         @Setting(value = "sign-spy", comment = "Show every placed sign for who have the permission \"redprotect.signspy\" and for console.")
         public signSpy sign_spy = new signSpy();
 

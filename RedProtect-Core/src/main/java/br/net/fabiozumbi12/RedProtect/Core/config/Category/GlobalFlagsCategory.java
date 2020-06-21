@@ -78,23 +78,31 @@ public class GlobalFlagsCategory {
                 "You can use MONSTERS or PASSIVES groups.\n" +
                 "Check the entity types here:\n" +
                 "Spigot: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html\n" +
-                "Sponge: https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+                "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/entity/EntityTypes.html")
         public List<String> spawn_whitelist = new ArrayList<>();
         @Setting(value = "spawn-blacklist", comment = "" +
                 "spawn-blacklist: This mobs will NOT spawn in this world!\n\n" +
                 "You can use MONSTERS or PASSIVES groups.\n" +
                 "Check the entity types here:\n" +
                 "Spigot: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html\n" +
-                "Sponge: https://jd.spongepowered.org/7.0.0/org/spongepowered/api/entity/EntityTypes.html")
+                "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/entity/EntityTypes.html")
         public List<String> spawn_blacklist = new ArrayList<>();
         @Setting(value = "allow-elytra")
         public boolean allow_elytra = true;
         @Setting(value = "allow-crops-trample")
         public boolean allow_crop_trample = true;
+        @Setting(value = "deny-death-by", comment = "Deny player death or get damage by this types of damage. List of types:\n" +
+                "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/event/cause/entity/damage/DamageTypes.html\n" +
+                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html")
+        public List<String> deny_death_by = new ArrayList<>();
+        @Setting(value = "deny-potions", comment = "Deny this types of potions to be used on this world.\n" +
+                "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/effect/potion/PotionEffectTypes.html\n" +
+                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionType.html")
+        public List<String> deny_potions = Collections.singletonList("INVISIBILITY");
 
         @Setting
         public weatherCat weather = new weatherCat();
-        @Setting(value = "deny-item-usage", comment = "Control what items the player can use.")
+        @Setting(value = "deny-item-usage", comment = "Control what items the player can use. Use '/rp debug-item' with the item in your hand to get the type.")
         public denyItemUsage deny_item_usage = new denyItemUsage();
         @Setting(value = "on-enter-cmds", comment = "Execute this command on enter in this world.\nYou can use this placeholders: {world-from}, {world-to} and {player}")
         public List<String> on_enter_cmds = new ArrayList<>();

@@ -81,7 +81,7 @@ public class VersionHelper18 implements VersionHelper {
         return e.getBlocks().stream().map(Block::getLocation).collect(Collectors.toSet());
     }
 
-    public boolean denyEntLingPot(ProjectileHitEvent e) {
+    public boolean denyEntLingPot(ProjectileHitEvent e, World world) {
         return false;
     }
 

@@ -122,7 +122,7 @@ public class PlayerListener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is UseItemStackEvent.Start event. Item: " + RedProtect.get().getVersionHelper().getItemType(stack).getName());
 
         //deny potion
-        List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
+        List<String> Pots = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
 
         if (stack.get(Keys.POTION_EFFECTS).isPresent() && Pots.size() > 0) {
             List<PotionEffect> pot = stack.get(Keys.POTION_EFFECTS).get();
@@ -622,7 +622,7 @@ public class PlayerListener {
         }
 
         //deny damagecauses
-        List<String> Causes = RedProtect.get().config.configRoot().server_protection.deny_playerdeath_by;
+        List<String> Causes = RedProtect.get().config.globalFlagsRoot().worlds.get(play.getWorld().getName()).deny_death_by;
         if (Causes.size() > 0) {
             DamageType damagec = null;
             if (e.getCause().containsType(EntityDamageSource.class)) {
@@ -638,7 +638,6 @@ public class PlayerListener {
                 e.setCancelled(true);
             }
         }
-
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
@@ -1214,7 +1213,7 @@ public class PlayerListener {
 
             List<PotionEffect> pottypes = potion.get(Keys.POTION_EFFECTS).get();
             //deny potion
-            List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
+            List<String> Pots = RedProtect.get().config.globalFlagsRoot().worlds.get(ent.getWorld().getName()).deny_potions;
             if (!Pots.isEmpty()) {
                 for (PotionEffect t : pottypes) {
                     if (Pots.contains(t.getType().getName().toUpperCase())) {

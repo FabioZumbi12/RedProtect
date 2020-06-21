@@ -59,8 +59,8 @@ public class VersionHelper112 implements VersionHelper {
         return e.getBlocks().stream().map(Block::getLocation).collect(Collectors.toSet());
     }
 
-    public boolean denyEntLingPot(ProjectileHitEvent e) {
-        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem());
+    public boolean denyEntLingPot(ProjectileHitEvent e, World world) {
+        return RedProtect.get().getUtil().denyPotion(((LingeringPotionSplashEvent) e).getEntity().getItem(), world);
     }
 
     public Entity getEntLingPot(ProjectileHitEvent e) {
@@ -83,10 +83,7 @@ public class VersionHelper112 implements VersionHelper {
         BlockState state = b.getState();
         if (state instanceof Door) {
             Door op = (Door) state.getData();
-            if (!op.isOpen())
-                op.setOpen(true);
-            else
-                op.setOpen(false);
+            op.setOpen(!op.isOpen());
             state.setData(op);
             state.update();
         }

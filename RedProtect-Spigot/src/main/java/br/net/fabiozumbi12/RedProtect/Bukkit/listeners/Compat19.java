@@ -116,7 +116,7 @@ public class Compat19 implements Listener {
 
         Player p = (Player) e.getEntity();
         Entity proj = e.getProjectile();
-        List<String> Pots = RedProtect.get().config.configRoot().server_protection.deny_potions;
+        List<String> Pots = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
 
         if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;
@@ -145,7 +145,7 @@ public class Compat19 implements Listener {
             return;
         }
 
-        if (RedProtect.get().getVersionHelper().denyEntLingPot(e)) {
+        if (RedProtect.get().getVersionHelper().denyEntLingPot(e, e.getEntity().getWorld())) {
             e.setCancelled(true);
             RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.denypotion"));
         }

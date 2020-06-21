@@ -87,7 +87,7 @@ public class PlayerListener implements Listener {
     public void onBrewing(BrewEvent e) {
         ItemStack[] cont = e.getContents().getContents();
         for (int i = 0; i < cont.length; i++) {
-            if (RedProtect.get().getUtil().denyPotion(cont[i])) {
+            if (RedProtect.get().getUtil().denyPotion(cont[i], e.getBlock().getWorld())) {
                 e.getContents().setItem(i, new ItemStack(Material.AIR));
             }
         }
@@ -484,7 +484,7 @@ public class PlayerListener implements Listener {
         }
 
         //deny damagecauses
-        List<String> Causes = RedProtect.get().config.configRoot().server_protection.deny_playerdeath_by;
+        List<String> Causes = RedProtect.get().config.globalFlagsRoot().worlds.get(play.getWorld().getName()).deny_death_by;
         if (Causes.size() > 0) {
             for (String cause : Causes) {
                 cause = cause.toUpperCase();
@@ -493,7 +493,7 @@ public class PlayerListener implements Listener {
                         e.setCancelled(true);
                     }
                 } catch (IllegalArgumentException ex) {
-                    RedProtect.get().logger.severe("The config 'deny-playerdeath-by' have an unknow damage cause type. Change to a valid damage cause type.");
+                    RedProtect.get().logger.severe("The config 'deny_death_by' have an unknown damage cause type. Change to a valid damage cause type.");
                 }
             }
         }

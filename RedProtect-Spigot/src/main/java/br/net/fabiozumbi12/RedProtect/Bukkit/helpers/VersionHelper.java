@@ -48,7 +48,7 @@ public interface VersionHelper extends Listener {
 
     ProjectileSource getPlayerLingPot(ProjectileHitEvent e);
 
-    boolean denyEntLingPot(ProjectileHitEvent e);
+    boolean denyEntLingPot(ProjectileHitEvent e, World world);
 
     Entity getEntLingPot(ProjectileHitEvent e);
 
