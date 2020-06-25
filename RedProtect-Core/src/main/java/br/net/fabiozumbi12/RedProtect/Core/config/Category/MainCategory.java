@@ -424,11 +424,31 @@ public class MainCategory {
         public Map<String, List<String>> deny_commands_on_worlds = createMapCmdWorld();
         @Setting(value = "sign-spy", comment = "Show every placed sign for who have the permission \"redprotect.signspy\" and for console.")
         public signSpy sign_spy = new signSpy();
+        @Setting(value = "mods-permissions", comment = "Deny players to join with one of this mods or use in your server.\n" +
+                "The permission 'redprotect.mods.<mod-name>.bypass' bypass this configurations.\n" +
+                "Some mods like World Downloader and Schematica have your actions blocked, others only execute the command.")
+        public Map<String, ModActions> mods_permissions = createModMap();
 
+        // Create world map
         private Map<String, List<String>> createMapCmdWorld() {
             Map<String, List<String>> myMap = new HashMap<>();
             myMap.put("world", Collections.singletonList("command"));
             return myMap;
+        }
+
+        // Create mods list config
+        private Map<String, ModActions> createModMap() {
+            Map<String, ModActions> map = new HashMap<>();
+            map.put("5zig", new ModActions());
+            map.put("bettersprinting", new ModActions());
+            map.put("fabric", new ModActions());
+            map.put("forge", new ModActions());
+            map.put("liteloader", new ModActions());
+            map.put("rift", new ModActions());
+            map.put("schematica", new ModActions());
+            map.put("litematica", new ModActions());
+            map.put("worlddownloader", new ModActions());
+            return map;
         }
 
         @ConfigSerializable
@@ -437,6 +457,14 @@ public class MainCategory {
             public boolean enabled = true;
             @Setting(value = "only-console")
             public boolean only_console = true;
+        }
+
+        @ConfigSerializable
+        public static class ModActions {
+            @Setting(comment = "Block this mod on server?")
+            public boolean block = false;
+            @Setting(comment = "Use {p} for player name and {mod} for mod name.\nLeave blank to don't execute commands.")
+            public String action = "kick {p} The mod {mod} is not allowed in this server!";
         }
     }
 

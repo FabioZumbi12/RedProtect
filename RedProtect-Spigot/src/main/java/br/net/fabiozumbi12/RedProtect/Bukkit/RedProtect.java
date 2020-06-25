@@ -81,6 +81,7 @@ public class RedProtect extends JavaPlugin {
     private int autoSaveID;
     private VersionHelper rpvHelper;
     private SpigetUpdater updater;
+    private ModListener modListener;
 
     public static RedProtect get() {
         return plugin;
@@ -264,6 +265,9 @@ public class RedProtect extends JavaPlugin {
         // Load gui items for Minecraft version
         config.setGuiRoot(rpvHelper.setGuiItems(config.guiRoot()));
 
+        // Load mob permissions
+        modListener = new ModListener(this);
+
         // Metrics
         try {
             Metrics metrics = new Metrics(this);
@@ -276,6 +280,9 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void shutDown() {
+        // Unload messages listener
+        modListener.unload();
+
         // Unregister commands
         cmdHandler.unregisterAll();
 
