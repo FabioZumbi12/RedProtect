@@ -603,7 +603,7 @@ public class RedProtectUtil extends CoreUtil {
             dbcon.close();
 
             if (saved > 0) {
-                RedProtect.get().logger.success((saved - 1) + " regions converted to Yml with success!");
+                RedProtect.get().logger.success((saved - 1) + " regions converted to File with success!");
             }
         } catch (SQLException e) {
             printJarVersion();

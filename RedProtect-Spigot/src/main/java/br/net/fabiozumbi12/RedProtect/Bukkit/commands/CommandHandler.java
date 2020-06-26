@@ -476,7 +476,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 if (args[0].equalsIgnoreCase("fileToMysql")) {
                     try {
                         if (!RedProtect.get().getUtil().fileToMysql()) {
-                            RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'yml' before convert from YML to Mysql.");
+                            RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'file' before convert from FILE to Mysql.");
                             return true;
                         } else {
                             RedProtect.get().getConfig().set("file-type", "mysql");
@@ -496,14 +496,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 if (args[0].equalsIgnoreCase("mysqlToFile")) {
                     try {
                         if (!RedProtect.get().getUtil().mysqlToFile()) {
-                            RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to Yml.");
+                            RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to FILE.");
                             return true;
                         } else {
                             RedProtect.get().getConfig().set("file-type", "file");
                             RedProtect.get().saveConfig();
                             RedProtect.get().getServer().getPluginManager().disablePlugin(RedProtect.get());
                             RedProtect.get().getServer().getPluginManager().enablePlugin(RedProtect.get());
-                            RedProtect.get().logger.success("RedProtect reloaded with Yml as database! Ready to use!");
+                            RedProtect.get().logger.success("RedProtect reloaded with File as database! Ready to use!");
                             return true;
                         }
                     } catch (Exception e) {

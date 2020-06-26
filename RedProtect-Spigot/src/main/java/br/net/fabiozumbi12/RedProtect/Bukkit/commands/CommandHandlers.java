@@ -1216,7 +1216,7 @@ public class CommandHandlers {
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list-areas " + ChatColor.DARK_AQUA + "- List All regions exceeding regen limit");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list-all " + ChatColor.DARK_AQUA + "- List All regions");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "list " + ChatColor.GOLD + "<player> [page] " + ChatColor.DARK_AQUA + "- List All regions from player");
-            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "ymlTomysql " + ChatColor.DARK_AQUA + "- Convert from Yml to Mysql");
+            sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "fileTomysql " + ChatColor.DARK_AQUA + "- Convert from File to Mysql");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "kill [world] " + ChatColor.DARK_AQUA + "- Kill all entities in a world outside protected regions");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "mychunktorp " + ChatColor.DARK_AQUA + "- Convert from MyChunk to RedProtect");
             sender.sendMessage(ChatColor.GOLD + "rp " + ChatColor.RED + "single-to-files " + ChatColor.DARK_AQUA + "- Convert single world files to regions files");
