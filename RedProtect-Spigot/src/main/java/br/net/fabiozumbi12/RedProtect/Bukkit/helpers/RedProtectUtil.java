@@ -1153,7 +1153,6 @@ public class RedProtectUtil extends CoreUtil {
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        // sm.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayname));
         s.setItemMeta(sm);
         return s;
     }
