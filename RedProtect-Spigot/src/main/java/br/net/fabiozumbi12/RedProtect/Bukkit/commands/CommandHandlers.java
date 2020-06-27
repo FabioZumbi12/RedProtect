@@ -30,7 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.FancyMessage;
+import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.UltimateFancy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ItemFlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.MobFlagGui;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
@@ -656,7 +656,7 @@ public class CommandHandlers {
                         if (max >= it.size()) max = (it.size() - 1);
                         //-------------
                         if (RedProtect.get().config.configRoot().region_settings.region_list.hover_and_click_teleport && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
-                            FancyMessage fancy = new FancyMessage();
+                            UltimateFancy fancy = new UltimateFancy();
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
@@ -669,10 +669,10 @@ public class CommandHandlers {
                                 if (count == max) {
                                     rname = rname + RedProtect.get().lang.get("general.color") + ".";
                                 }
-                                fancy.text(rname).color(ChatColor.DARK_GRAY)
-                                        .tooltip(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
-                                        .command("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
-                                        .then(" ");
+                                fancy.text(rname)/*.color(ChatColor.DARK_GRAY)*/
+                                        .hoverShowText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
+                                        .clickRunCmd("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
+                                        .next();
                                 lastLocal = count;
                             }
                             last += lastLocal + 1;

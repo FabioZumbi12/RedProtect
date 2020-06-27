@@ -40,7 +40,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Crops;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -258,7 +257,7 @@ public class Region extends CoreRegion {
         return new Location(Bukkit.getWorld(this.world), this.tppoint[0], this.tppoint[1], this.tppoint[2]);
     }
 
-    public void setTPPoint(@Nullable Location loc) {
+    public void setTPPoint(Location loc) {
         setToSave(true);
         if (loc != null) {
             this.tppoint = new int[]{loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()};

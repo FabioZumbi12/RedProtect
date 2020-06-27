@@ -39,7 +39,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -110,13 +109,13 @@ public class RegionManager {
         return saved;
     }
 
-    public @Nullable
+    public
     Region getRegionById(String rid) {
         if (rid == null) return null;
         return this.regionManagers.get(rid.split("@")[1]).getRegion(rid.split("@")[0]);
     }
 
-    public @Nullable
+    public
     Region getRegion(String rname, String w) {
         return this.regionManagers.get(w).getRegion(rname);
     }
@@ -323,7 +322,7 @@ public class RegionManager {
      * @param loc Location
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
+    public
     Region getTopRegion(Location loc) {
         if (bLoc.containsKey(loc.getBlock().getLocation())) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from cache");
@@ -357,7 +356,7 @@ public class RegionManager {
      * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
+    public
     Region getTopRegion(String w, int x, int y, int z) {
         return getTopRegion(new Location(Bukkit.getWorld(w), x, y, z));
     }
@@ -371,7 +370,7 @@ public class RegionManager {
      * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
+    public
     Region getLowRegion(String w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
@@ -385,7 +384,7 @@ public class RegionManager {
      *
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
+    public
     Region getLowRegion(Location loc) {
         if (!this.regionManagers.containsKey(loc.getWorld().getName())) {
             return null;
