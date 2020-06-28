@@ -157,14 +157,23 @@ public class BlockListener implements Listener {
                 return;
             }
 
-            RegionBuilder rb = new EncompassRegionBuilder(e);
-            if (rb.ready()) {
-                Region r = rb.build();
-                e.setLine(0, RedProtect.get().lang.get("blocklistener.region.signcreated"));
-                e.setLine(1, r.getName());
-                //RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("blocklistener.region.created").replace("{region}",  r.getName()));
-                RedProtect.get().rm.add(r, r.getWorld());
-            }
+            RedProtect.get().lang.sendMessage(p, "regionbuilder.creating");
+
+            // Run claim async
+            Sign sign = (Sign) e.getBlock().getState();
+            Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+                RegionBuilder rb = new EncompassRegionBuilder(e);
+                if (rb.ready()) {
+                    Region r = rb.build();
+                    Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
+                        sign.setLine(0, RedProtect.get().lang.get("blocklistener.region.signcreated"));
+                        sign.setLine(1, r.getName());
+                        sign.update();
+                        return true;
+                    });
+                    RedProtect.get().rm.add(r, r.getWorld());
+                }
+            });
         } else if (RedProtect.get().config.configRoot().region_settings.enable_flag_sign && line1.equalsIgnoreCase("[flag]") && signr != null) {
             if (signr.getFlags().containsKey(lines[1])) {
                 String flag = lines[1];
@@ -184,11 +193,10 @@ public class BlockListener implements Listener {
                     }
                 }
                 RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
-                b.breakNaturally();
             } else {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.invalidflag");
-                b.breakNaturally();
             }
+            b.breakNaturally();
         }
     }
 

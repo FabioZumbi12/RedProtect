@@ -100,7 +100,7 @@ public class WEHook {
     public static Region pasteWithWE(Player p, File file) {
         World world = p.getWorld();
         Location loc = p.getLocation();
-        Region r = null;
+        final Region[] r = {null};
 
         if (!p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
             RedProtect.get().lang.sendMessage(p, "playerlistener.region.needground");
@@ -166,17 +166,22 @@ public class WEHook {
                     if (RedProtect.get().config.configRoot().region_settings.claim.maxy != -1)
                         max.setY(RedProtect.get().config.configRoot().region_settings.claim.maxy);
                 }
-                RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, "", new PlayerRegion(p.getUniqueId().toString(), p.getName()), new HashSet<>(), false);
-                if (rb2.ready()) {
-                    r = rb2.build();
-                }
+                RedProtect.get().lang.sendMessage(p, "regionbuilder.creating");
+
+                // Run claim async
+                Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+                    RegionBuilder rb2 = new DefineRegionBuilder(p, min, max, "", new PlayerRegion(p.getUniqueId().toString(), p.getName()), new HashSet<>(), false);
+                    if (rb2.ready()) {
+                        r[0] = rb2.build();
+                    }
+                });
             } catch (WorldEditException e) {
                 CoreUtil.printJarVersion();
                 e.printStackTrace();
-                r = null;
+                r[0] = null;
             }
         }
-        return r;
+        return r[0];
     }
 
     public static void regenRegion(final Region region, final World world, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {

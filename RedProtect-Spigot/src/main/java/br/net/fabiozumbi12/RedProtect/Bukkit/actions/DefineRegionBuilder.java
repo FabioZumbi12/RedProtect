@@ -39,13 +39,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class DefineRegionBuilder extends RegionBuilder {
 
     public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, PlayerRegion leader, Set<PlayerRegion> leaders, boolean admin) {
         if (!RedProtect.get().config.isAllowedWorld(p)) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.region.worldnotallowed"));
+            setError(p, RedProtect.get().lang.get("regionbuilder.region.worldnotallowed"));
             return;
         }
 
@@ -64,7 +66,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+        if (Objects.equals(loc1.getWorld(), loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
             RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, dist));
             return;
@@ -84,13 +86,51 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), leaders, new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, 0, p.getWorld().getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().config.getDefFlagsValues(), wmsg, 0, null, true, true);
+
+        Set<String> othersName = new HashSet<>();
+        Region otherrg;
+
+        //check regions inside region
+        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld().getName())) {
+            if (r.getMaxMbrX() <= newRegion.getMaxMbrX() && r.getMaxY() <= newRegion.getMaxY() && r.getMaxMbrZ() <= newRegion.getMaxMbrZ() && r.getMinMbrX() >= newRegion.getMinMbrX() && r.getMinY() >= newRegion.getMinY() && r.getMinMbrZ() >= newRegion.getMinMbrZ()) {
+                if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
+                    setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
+                    return;
+                }
+                othersName.add(r.getName());
+            }
+        }
+
+        //check borders for other regions
+        Set<Location> limitlocs = newRegion.getLimitLocs(newRegion.getMinY(), newRegion.getMaxY(), true);
+        for (Location loc : limitlocs) {
+
+            otherrg = RedProtect.get().rm.getTopRegion(loc);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "protection Block is: " + loc.getBlock().getType().name());
+
+            if (otherrg != null) {
+                if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
+                    setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+                    return;
+                }
+                othersName.add(otherrg.getName());
+            }
+        }
+
+        //check if same area
+        otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc());
+        if (otherrg != null && otherrg.get4Points(newRegion.getCenterY()).equals(newRegion.get4Points(newRegion.getCenterY()))) {
+            setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+            return;
+        }
+
         newRegion.setPrior(RedProtect.get().getUtil().getUpdatedPrior(newRegion));
 
         int claimLimit = RedProtect.get().ph.getPlayerClaimLimit(p);
         int claimUsed = RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName());
         boolean claimUnlimited = RedProtect.get().ph.hasPerm(p, "redprotect.limits.claim.unlimited");
         if (claimUsed >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.claim.limit"));
+            setError(p, RedProtect.get().lang.get("regionbuilder.claim.limit"));
             return;
         }
 
@@ -103,44 +143,8 @@ public class DefineRegionBuilder extends RegionBuilder {
             actualArea = totalArea + regionArea;
         }
         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.reach.limit"));
+            setError(p, RedProtect.get().lang.get("regionbuilder.reach.limit"));
             return;
-        }
-
-        Set<String> othersName = new HashSet<>();
-        Region otherrg;
-
-        //check if same area
-        otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc());
-        if (otherrg != null && otherrg.get4Points(newRegion.getCenterY()).equals(newRegion.get4Points(newRegion.getCenterY()))) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
-            return;
-        }
-
-        //check regions inside region
-        for (Region r : RedProtect.get().rm.getRegionsByWorld(p.getWorld().getName())) {
-            if (r.getMaxMbrX() <= newRegion.getMaxMbrX() && r.getMaxY() <= newRegion.getMaxY() && r.getMaxMbrZ() <= newRegion.getMaxMbrZ() && r.getMinMbrX() >= newRegion.getMinMbrX() && r.getMinY() >= newRegion.getMinY() && r.getMinMbrZ() >= newRegion.getMinMbrZ()) {
-                if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                    this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
-                    return;
-                }
-                othersName.add(r.getName());
-            }
-        }
-
-        //check borders for other regions
-        Set<Location> limitlocs = newRegion.getLimitLocs(newRegion.getMinY(), newRegion.getMaxY(), true);
-        for (Location loc : limitlocs) {
-            otherrg = RedProtect.get().rm.getTopRegion(loc);
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "protection Block is: " + loc.getBlock().getType().name());
-
-            if (otherrg != null) {
-                if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                    this.setError(p, RedProtect.get().lang.get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
-                    return;
-                }
-                othersName.add(otherrg.getName());
-            }
         }
 
         long reco = 0;
@@ -163,7 +167,15 @@ public class DefineRegionBuilder extends RegionBuilder {
 
         //fire event
         CreateRegionEvent event = new CreateRegionEvent(newRegion, p);
-        Bukkit.getPluginManager().callEvent(event);
+        try {
+            CreateRegionEvent finalEvent = event;
+            event = Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
+                Bukkit.getPluginManager().callEvent(finalEvent);
+                return finalEvent;
+            }).get();
+        } catch (InterruptedException | ExecutionException interruptedException) {
+            interruptedException.printStackTrace();
+        }
         if (event.isCancelled()) {
             return;
         }

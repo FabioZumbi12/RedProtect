@@ -26,6 +26,7 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 
+import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RedefineRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
@@ -39,7 +40,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class RedefineRegionBuilder extends RegionBuilder {
 
@@ -50,7 +53,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
 
         //check if distance allowed
-        if (loc1.getWorld().equals(loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
+        if (Objects.equals(loc1.getWorld(), loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().config.configRoot().region_settings.max_scan && !RedProtect.get().ph.hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
             RedProtect.get().lang.sendMessage(p, String.format(RedProtect.get().lang.get("regionbuilder.selection.maxdefine"), RedProtect.get().config.configRoot().region_settings.max_scan, dist));
             return;
@@ -71,9 +74,19 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         Region newRegion = new Region(old.getName(), old.getAdmins(), old.getMembers(), old.getLeaders(), new int[]{loc1.getBlockX(), loc1.getBlockX(), loc2.getBlockX(), loc2.getBlockX()}, new int[]{loc1.getBlockZ(), loc1.getBlockZ(), loc2.getBlockZ(), loc2.getBlockZ()}, miny, maxy, old.getPrior(), w.getName(), old.getDate(), old.getFlags(), old.getWelcome(), old.getValue(), old.getTPPoint(), old.canDelete(), old.canPurge());
 
-        newRegion.setPrior(RedProtect.get().getUtil().getUpdatedPrior(newRegion));
+        Set<String> othersName = new HashSet<>();
+        Region otherrg;
 
         String pName = p.getUniqueId().toString();
+
+        //check if same area
+        otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc());
+        if (otherrg != null && !checkID(newRegion, otherrg) && otherrg.get4Points(newRegion.getCenterY()).equals(newRegion.get4Points(newRegion.getCenterY()))) {
+            this.setError(p, RedProtect.get().lang.get("regionbuilder.newRegion.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+            return;
+        }
+
+        newRegion.setPrior(RedProtect.get().getUtil().getUpdatedPrior(newRegion));
 
         int pLimit = RedProtect.get().ph.getPlayerBlockLimit(p);
         int totalArea = RedProtect.get().rm.getTotalRegionSize(pName, p.getWorld().getName());
@@ -85,16 +98,6 @@ public class RedefineRegionBuilder extends RegionBuilder {
         }
         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
             this.setError(p, RedProtect.get().lang.get("regionbuilder.reach.limit"));
-            return;
-        }
-
-        Set<String> othersName = new HashSet<>();
-        Region otherrg;
-
-        //check if same area
-        otherrg = RedProtect.get().rm.getTopRegion(newRegion.getCenterLoc());
-        if (otherrg != null && !checkID(newRegion, otherrg) && otherrg.get4Points(newRegion.getCenterY()).equals(newRegion.get4Points(newRegion.getCenterY()))) {
-            this.setError(p, RedProtect.get().lang.get("regionbuilder.newRegion.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
             return;
         }
 
@@ -161,7 +164,15 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
         //fire event
         RedefineRegionEvent event = new RedefineRegionEvent(old, newRegion, p);
-        Bukkit.getPluginManager().callEvent(event);
+        try {
+            RedefineRegionEvent finalEvent = event;
+            event = Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
+                Bukkit.getPluginManager().callEvent(finalEvent);
+                return finalEvent;
+            }).get();
+        } catch (InterruptedException | ExecutionException interruptedException) {
+            interruptedException.printStackTrace();
+        }
         if (event.isCancelled()) {
             return;
         }

@@ -28,6 +28,8 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.region;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import org.bukkit.Bukkit;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
@@ -48,8 +50,13 @@ public abstract class RegionBuilder {
     }
 
     protected void setErrorSign(SignChangeEvent e, String error) {
-        e.setLine(0, RedProtect.get().lang.get("regionbuilder.signerror"));
-        this.setError(e.getPlayer(), error);
+        Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
+            Sign sign = (Sign) e.getBlock().getState();
+            sign.setLine(0, RedProtect.get().lang.get("regionbuilder.signerror"));
+            sign.update();
+            setError(e.getPlayer(), error);
+            return true;
+        });
     }
 
     protected void setError(Player p, String error) {
