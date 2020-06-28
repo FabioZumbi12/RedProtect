@@ -302,21 +302,10 @@ public class GlobalListener implements Listener {
             if (RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_velocity.fly_speed >= 0) {
                 p.setFlySpeed(RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_velocity.fly_speed);
             }
-        }
-
-        if (RedProtect.get().bukkitVersion >= 191) {
-            if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).allow_elytra) {
-                ItemStack item = p.getInventory().getChestplate();
-                if (item != null && item.getType().name().equals("ELYTRA")) {
-                    PlayerInventory inv = p.getInventory();
-                    inv.setChestplate(new ItemStack(Material.AIR));
-                    if (inv.firstEmpty() == -1) {
-                        p.getWorld().dropItem(p.getLocation(), item);
-                    } else {
-                        inv.setItem(inv.firstEmpty(), item);
-                    }
-                    p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1);
-                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantequip");
+            if (!p.getGameMode().toString().equalsIgnoreCase("SPECTATOR") && !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_velocity.allow_fly && p.isFlying()) {
+                p.setFlying(false);
+                if (!p.isOnGround()) { // Prevent glitch
+                    e.setTo(e.getFrom());
                 }
             }
         }
@@ -331,23 +320,6 @@ public class GlobalListener implements Listener {
             if (!result)
                 Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> e.setTo(p.getWorld().getSpawnLocation()), 1);
         }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerTeleport(PlayerTeleportEvent e) {
-        Player p = e.getPlayer();
-
-        if (RedProtect.get().bukkitVersion >= 190) {
-            Location to = e.getTo();
-            if (p.getInventory().getChestplate() != null &&
-                    p.getInventory().getChestplate().getType().name().equals("ELYTRA") &&
-                    !RedProtect.get().config.globalFlagsRoot().worlds.get(to.getWorld().getName()).allow_elytra) {
-                RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantworld");
-                e.setCancelled(true);
-            }
-        }
-
-        RedProtect.get().logger.debug(LogLevel.DEFAULT, "TeleportCause: " + e.getCause().name());
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

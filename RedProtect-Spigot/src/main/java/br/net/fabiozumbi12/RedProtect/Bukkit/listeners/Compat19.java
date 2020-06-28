@@ -31,7 +31,9 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TippedArrow;
@@ -39,13 +41,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -56,6 +59,47 @@ public class Compat19 implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void onGliding(EntityToggleGlideEvent event) {
+        if(event.getEntity().hasMetadata("swimming") || event.getEntity().hasMetadata("falling")) return;
+
+        if (event.getEntity() instanceof Player && event.isGliding()) {
+            Player p = (Player) event.getEntity();
+            Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+            if (r == null) {
+                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_glide) {
+                    event.setCancelled(true);
+                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantglide");
+                }
+            } else if (!r.canFly(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+
+        // Glide options
+        if (!p.hasPermission("redprotect.bypass.glide")) {
+            if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_elytra) {
+                ItemStack item = p.getInventory().getChestplate();
+                if (item != null && item.getType().equals(Material.ELYTRA)) {
+                    PlayerInventory inv = p.getInventory();
+                    inv.setChestplate(new ItemStack(Material.AIR));
+                    if (inv.firstEmpty() == -1) {
+                        p.getWorld().dropItem(p.getLocation(), item);
+                    } else {
+                        inv.setItem(inv.firstEmpty(), item);
+                    }
+                    p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1);
+                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantequip");
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         Block b = event.getClickedBlock();
@@ -78,10 +122,36 @@ public class Compat19 implements Listener {
         if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)) {
             Material hand = itemInHand.getType();
             Region r = RedProtect.get().rm.getTopRegion(l);
+            // Deny chorus teleport
             if (r != null && hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true);
                 event.setUseItemInHand(Event.Result.DENY);
+            }
+            // Deny glide boost
+            if (r == null && p.isGliding() && itemInHand.getType().name().contains("FIREWORK") && !p.hasPermission("redprotect.bypass.glide") &&
+                    !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
+                event.setUseItemInHand(Event.Result.DENY);
+                event.setCancelled(true);
+                RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantboost");
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+        // Deny arrow booster
+        Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+        if (r == null && e.getEntity() instanceof Player && e.getDamager() instanceof Arrow) {
+            Player p = (Player) e.getEntity();
+            Arrow arrow = (Arrow)e.getDamager();
+            if (arrow.getShooter() instanceof Player && p.isGliding()) {
+                if (arrow.getShooter().equals(p) && !p.hasPermission("redprotect.bypass.glide") &&
+                        !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
+                    e.setCancelled(true);
+                    arrow.remove();
+                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantboost");
+                }
             }
         }
     }
@@ -105,6 +175,13 @@ public class Compat19 implements Listener {
                 RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
+        }
+
+        if (p.getInventory().getChestplate() != null &&
+                p.getInventory().getChestplate().getType().equals(Material.ELYTRA) &&
+                !RedProtect.get().config.globalFlagsRoot().worlds.get(lto.getWorld().getName()).player_glide.allow_elytra) {
+            RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantworld");
+            e.setCancelled(true);
         }
     }
 

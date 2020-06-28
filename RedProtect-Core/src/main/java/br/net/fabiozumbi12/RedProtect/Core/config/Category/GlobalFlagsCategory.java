@@ -87,8 +87,6 @@ public class GlobalFlagsCategory {
                 "Spigot: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html\n" +
                 "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/entity/EntityTypes.html")
         public List<String> spawn_blacklist = new ArrayList<>();
-        @Setting(value = "allow-elytra")
-        public boolean allow_elytra = true;
         @Setting(value = "allow-crops-trample")
         public boolean allow_crop_trample = true;
         @Setting(value = "deny-death-by", comment = "Deny player death or get damage by this types of damage. List of types:\n" +
@@ -126,6 +124,8 @@ public class GlobalFlagsCategory {
         public borderCat border = new borderCat();
         @Setting(value = "player-velocity")
         public playerVeloCat player_velocity = new playerVeloCat();
+        @Setting(value = "player-glide")
+        public playerGlide player_glide = new playerGlide();
 
         private Map<String, CommandRanges> createMap() {
             Map<String, CommandRanges> map = new HashMap<>();
@@ -160,10 +160,22 @@ public class GlobalFlagsCategory {
         }
 
         @ConfigSerializable
+        public static class playerGlide {
+            @Setting(value = "allow-elytra", comment = "Deny player to equip elytra.")
+            public boolean allow_elytra = true;
+            @Setting(value = "allow-glide", comment = "Deny player to glide.")
+            public boolean allow_glide = true;
+            @Setting(value = "allow-boost", comment = "Deny player boost using arrow and fireworks.")
+            public boolean allow_boost = true;
+        }
+
+        @ConfigSerializable
         public static class playerVeloCat {
-            @Setting(value = "walk-speed")
+            @Setting(value = "allow-fly")
+            public boolean allow_fly = true;
+            @Setting(value = "walk-speed", comment = "Walk speed from 0.0 to 1. Default -1 to disable")
             public float walk_speed = -1;
-            @Setting(value = "fly-speed")
+            @Setting(value = "fly-speed", comment = "Fly speed from 0.0 to 1. Default -1 to disable")
             public float fly_speed = -1;
         }
 
