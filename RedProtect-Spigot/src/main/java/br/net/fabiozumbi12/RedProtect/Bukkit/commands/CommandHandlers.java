@@ -669,7 +669,7 @@ public class CommandHandlers {
                                 if (count == max) {
                                     rname = rname + RedProtect.get().lang.get("general.color") + ".";
                                 }
-                                fancy.text(rname)/*.color(ChatColor.DARK_GRAY)*/
+                                fancy.text(rname)
                                         .hoverShowText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
                                         .clickRunCmd("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
                                         .next();
