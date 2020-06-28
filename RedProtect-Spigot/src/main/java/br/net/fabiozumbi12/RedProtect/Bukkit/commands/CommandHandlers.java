@@ -629,6 +629,7 @@ public class CommandHandlers {
                 int total = 0;
                 int last = 0;
 
+                UltimateFancy fancy = new UltimateFancy();
                 for (World w : Bukkit.getWorlds()) {
                     boolean first = true;
 
@@ -655,8 +656,8 @@ public class CommandHandlers {
                         }
                         if (max >= it.size()) max = (it.size() - 1);
                         //-------------
+                        UltimateFancy tempFancy = new UltimateFancy();
                         if (RedProtect.get().config.configRoot().region_settings.region_list.hover_and_click_teleport && RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
-                            UltimateFancy fancy = new UltimateFancy();
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
@@ -669,41 +670,47 @@ public class CommandHandlers {
                                 if (count == max) {
                                     rname = rname + RedProtect.get().lang.get("general.color") + ".";
                                 }
-                                fancy.text(rname)
+                                tempFancy.text(rname)
                                         .hoverShowText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))
                                         .clickRunCmd("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())
                                         .next();
                                 lastLocal = count;
                             }
-                            last += lastLocal + 1;
-                            sender.sendMessage("-----");
-                            sender.sendMessage(RedProtect.get().lang.get("general.color") + RedProtect.get().lang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
-                            fancy.send(sender);
                         } else {
-                            StringBuilder worldregions = new StringBuilder();
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
                                 String area = RedProtect.get().config.configRoot().region_settings.region_list.shpw_area ? "(" + RedProtect.get().getUtil().simuleTotalRegionSize(RedProtect.get().getUtil().PlayerToUUID(uuid), r) + ")" : "";
-                                worldregions.append(RedProtect.get().lang.get("general.color")).append(", ").append(ChatColor.GRAY).append(r.getName()).append(area);
+                                String rname = RedProtect.get().lang.get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
+                                if (first) {
+                                    rname = rname.substring(3);
+                                    first = false;
+                                }
+                                if (count == max) {
+                                    rname = rname + RedProtect.get().lang.get("general.color") + ".";
+                                }
+                                tempFancy.textAndNext(rname);
                                 lastLocal = count;
                             }
-                            last += lastLocal + 1;
-                            sender.sendMessage("-----");
-                            sender.sendMessage(RedProtect.get().lang.get("general.color") + RedProtect.get().lang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ": ");
-                            sender.sendMessage(worldregions.substring(3) + RedProtect.get().lang.get("general.color") + ".");
                         }
-                        //-----------
+                        last += lastLocal + 1;
+                        fancy.textAndNext("\n" + RedProtect.get().lang.get("general.color") + "-----");
+                        fancy.textAndNext("\n"+RedProtect.get().lang.get("general.color") + RedProtect.get().lang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ":");
+                        fancy.appendFancy(tempFancy);
+                        fancy.next();
                     }
                 }
-                sender.sendMessage(RedProtect.get().lang.get("general.color") + "---------------- " + last + "/" + total + " -----------------");
+                fancy.textAndNext("\n"+RedProtect.get().lang.get("general.color") + "---------------- " + last + "/" + total + " -----------------");
                 if (last < total) {
-                    sender.sendMessage(RedProtect.get().lang.get("cmdmanager.region.listpage.more").replace("{player}", RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1)));
+                    fancy.text("\n"+RedProtect.get().lang.get("cmdmanager.region.listpage.more").replace("{player}", RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1)))
+                    .clickRunCmd("/rp list " + RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1))
+                    .hoverShowText(RedProtect.get().lang.get("general.color") + "/rp list " + RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1));
                 } else {
                     if (Page != 1) {
-                        sender.sendMessage(RedProtect.get().lang.get("cmdmanager.region.listpage.nomore"));
+                        fancy.textAndNext("\n"+RedProtect.get().lang.get("cmdmanager.region.listpage.nomore"));
                     }
                 }
+                fancy.send(sender);
             }
         });
     }
