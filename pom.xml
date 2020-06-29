@@ -164,5 +164,7 @@
         <module>RedProtect-Sponge-56</module>
         <module>RedProtect-Sponge-7</module>
         <module>RedProtect-Sponge-8</module>
+        <!-- Addons -->
+        <module>Addons/KillerProjectiles</module>
     </modules>
 </project>
