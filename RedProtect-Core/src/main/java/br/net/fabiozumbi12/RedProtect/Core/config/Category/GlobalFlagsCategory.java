@@ -107,7 +107,6 @@ public class GlobalFlagsCategory {
         private Map<String, String> createCmdMap() {
             Map<String, String> map = new HashMap<>();
             map.put("VOID", "spawn {player}");
-            map.put("CUSTOM", "spawn {player}");
             return map;
         }
 
