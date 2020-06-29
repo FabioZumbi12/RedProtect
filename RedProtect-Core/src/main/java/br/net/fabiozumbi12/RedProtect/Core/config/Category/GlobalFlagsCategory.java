@@ -91,12 +91,25 @@ public class GlobalFlagsCategory {
         public boolean allow_crop_trample = true;
         @Setting(value = "deny-death-by", comment = "Deny player death or get damage by this types of damage. List of types:\n" +
                 "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/event/cause/entity/damage/DamageTypes.html\n" +
-                "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html")
+                "Spigot: https://hub.spigotmc.org/javadocs/spigot/index.html?overview-summary.html")
         public List<String> deny_death_by = new ArrayList<>();
         @Setting(value = "deny-potions", comment = "Deny this types of potions to be used on this world.\n" +
                 "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/effect/potion/PotionEffectTypes.html\n" +
                 "Spigot: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/potion/PotionType.html")
         public List<String> deny_potions = Collections.singletonList("INVISIBILITY");
+        @Setting(value = "command-on-damage", comment = "Execute commands when a player get damaged by a specific type.\n" +
+                "Placeholders: {player} to player name and {damage} to damage type.\n" +
+                "List of types:\n" +
+                "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/event/cause/entity/damage/DamageTypes.html\n" +
+                "Spigot: https://hub.spigotmc.org/javadocs/spigot/index.html?overview-summary.html")
+        public Map<String, String> command_on_damage = createCmdMap();
+
+        private Map<String, String> createCmdMap() {
+            Map<String, String> map = new HashMap<>();
+            map.put("VOID", "spawn {player}");
+            map.put("CUSTOM", "spawn {player}");
+            return map;
+        }
 
         @Setting
         public weatherCat weather = new weatherCat();

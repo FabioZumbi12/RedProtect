@@ -68,6 +68,7 @@ import org.inventivetalent.bossbar.BossBarAPI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class PlayerListener implements Listener {
@@ -498,6 +499,15 @@ public class PlayerListener implements Listener {
             }
         }
 
+        Map<String, String> causeCommand = RedProtect.get().config.globalFlagsRoot().worlds.get(play.getWorld().getName()).command_on_damage;
+        if (causeCommand.containsKey(e.getCause().name())) {
+            String cmd = causeCommand.get(e.getCause().name())
+                    .replace("{player}", play.getName())
+                    .replace("{damage}", e.getCause().name());
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+            RedProtect.get().logger.info("Player " + play.getName() + " damaged by " + e.getCause().name() + " - Running command:\n - Command: " + cmd);
+        }
+
         Region r = RedProtect.get().rm.getTopRegion(play.getLocation());
         if (r != null) {
             if (!r.canPlayerDamage()) {
@@ -512,7 +522,6 @@ public class PlayerListener implements Listener {
                 e.setCancelled(true);
             }
         }
-
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
