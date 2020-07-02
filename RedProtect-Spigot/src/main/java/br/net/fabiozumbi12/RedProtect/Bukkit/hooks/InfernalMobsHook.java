@@ -40,12 +40,12 @@ public class InfernalMobsHook implements Listener {
 
     @EventHandler
     public void onInfernalSpawn(InfernalSpawnEvent event) {
-        Region r = RedProtect.get().rm.getTopRegion(event.getEntity().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(event.getEntity().getLocation());
         if (r != null) {
-            if (r.isLeader(RedProtect.get().config.configRoot().region_settings.default_leader)) {
-                if (!RedProtect.get().config.configRoot().hooks.infernal_mobs.allow_server_regions)
+            if (r.isLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
+                if (!RedProtect.get().getConfigManager().configRoot().hooks.infernal_mobs.allow_server_regions)
                     event.setCancelled(true);
-            } else if (!RedProtect.get().config.configRoot().hooks.infernal_mobs.allow_player_regions) {
+            } else if (!RedProtect.get().getConfigManager().configRoot().hooks.infernal_mobs.allow_player_regions) {
                 event.setCancelled(true);
             }
         }

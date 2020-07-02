@@ -70,7 +70,7 @@ public class RedProtectLogger {
     }
 
     public void debug(LogLevel level, String s) {
-        if (RedProtect.get().config.configRoot().debug_messages.get(level.name().toLowerCase())) {
+        if (RedProtect.get().getConfigManager().configRoot().debug_messages.get(level.name().toLowerCase())) {
             Bukkit.getConsoleSender()
                     .sendMessage(translateAlternateColorCodes('&', "[RedProtect] &b" + s + "&r"));
         }
@@ -78,7 +78,7 @@ public class RedProtectLogger {
 
     public void addLog(String logLine) {
         // If log is not enabled return
-        if (!RedProtect.get().config.configRoot().log_actions) {
+        if (!RedProtect.get().getConfigManager().configRoot().log_actions) {
             return;
         }
         int key = mainLog.keySet().size() + 1;
@@ -90,7 +90,7 @@ public class RedProtectLogger {
     }
 
     public void saveLogs() {
-        if (!RedProtect.get().config.configRoot().log_actions) {
+        if (!RedProtect.get().getConfigManager().configRoot().log_actions) {
             return;
         }
 

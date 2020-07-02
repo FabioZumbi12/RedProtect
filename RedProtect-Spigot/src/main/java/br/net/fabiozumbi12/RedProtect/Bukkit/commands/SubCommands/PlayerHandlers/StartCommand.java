@@ -50,19 +50,19 @@ public class StartCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            if (!RedProtect.get().config.isAllowedWorld(player)) {
-                RedProtect.get().lang.sendMessage(player, "regionbuilder.region.worldnotallowed");
+            if (!RedProtect.get().getConfigManager().isAllowedWorld(player)) {
+                RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.region.worldnotallowed");
                 return true;
             }
 
-            if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
-                    !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")) {
-                RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
+            if (RedProtect.get().getRegionManager().getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
+                    !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.start.bypass")) {
+                RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.claimlimit.start");
                 return true;
             }
 
             RedProtect.get().confirmStart.add(player.getName());
-            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.start.confirm")
+            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.start.confirm")
                     .replace("{cmd}", label)
                     .replace("{confirm}", getCmd("confirm")));
 
@@ -72,14 +72,14 @@ public class StartCommand implements SubCommand {
 
         if (args.length == 1 && checkCmd(args[0], "confirm")) {
             if (!RedProtect.get().confirmStart.contains(player.getName())) {
-                player.sendMessage(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
+                player.sendMessage(RedProtect.get().getLanguageManager().get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start")));
                 return true;
             }
             RedProtect.get().schematic.pasteSchematic(player);
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "start", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "start", true);
         return true;
     }
 

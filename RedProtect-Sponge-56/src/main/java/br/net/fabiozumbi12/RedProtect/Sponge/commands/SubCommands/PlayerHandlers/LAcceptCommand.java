@@ -54,26 +54,26 @@ public class LAcceptCommand {
                             String info = RedProtect.get().alWait.get(player);
 
                             Optional<Player> lsender = Sponge.getServer().getPlayer(info.split("@")[2]);
-                            Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
+                            Region r = RedProtect.get().getRegionManager().getRegion(info.split("@")[0], info.split("@")[1]);
 
                             String VictimUUID = player.getUniqueId().toString();
 
                             if (r != null) {
 
-                                if (RedProtect.get().ph.getPlayerClaimLimit(player) == (RedProtect.get().rm.getRegions(VictimUUID, r.getWorld()).size() + 1)) {
-                                    RedProtect.get().lang.sendMessage(player, "regionbuilder.claim.limit");
+                                if (RedProtect.get().getPermissionHandler().getPlayerClaimLimit(player) == (RedProtect.get().getRegionManager().getRegions(VictimUUID, r.getWorld()).size() + 1)) {
+                                    RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.claim.limit");
                                     return CommandResult.success();
                                 }
 
                                 r.addLeader(VictimUUID);
-                                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + info.split("@")[2]);
-                                lsender.ifPresent(value -> RedProtect.get().lang.sendMessage(value, RedProtect.get().lang.get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName())));
+                                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + info.split("@")[2]);
+                                lsender.ifPresent(value -> RedProtect.get().getLanguageManager().sendMessage(value, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName())));
                             } else {
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                             }
                             RedProtect.get().alWait.remove(player);
                         } else {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.norequests");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.norequests");
                         }
                     }
                     return CommandResult.success();

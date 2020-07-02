@@ -55,25 +55,25 @@ public class ClaimCommand implements SubCommand {
         }
 
         Player player = (Player) sender;
-        String claimmode = RedProtect.get().config.getWorldClaimType(player.getWorld().getName());
+        String claimmode = RedProtect.get().getConfigManager().getWorldClaimType(player.getWorld().getName());
 
-        if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH") && !RedProtect.get().ph.hasCommandPerm(player, "claim")) {
-            RedProtect.get().lang.sendMessage(player, "blocklistener.region.blockmode");
+        if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH") && !RedProtect.get().getPermissionHandler().hasCommandPerm(player, "claim")) {
+            RedProtect.get().getLanguageManager().sendMessage(player, "blocklistener.region.blockmode");
             return true;
         }
 
         if (args.length == 0) {
             String name = RedProtect.get().getUtil().nameGen(player.getName(), player.getWorld().getName());
 
-            RedProtect.get().lang.sendMessage(player, "regionbuilder.creating");
+            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
 
             // Run claim async
             Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, new PlayerRegion(player.getUniqueId().toString(), player.getName()), new HashSet<>(), false);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                    RedProtect.get().rm.add(r2, player.getWorld().getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
@@ -87,15 +87,15 @@ public class ClaimCommand implements SubCommand {
         if (args.length == 1) {
             String name = args[0];
 
-            RedProtect.get().lang.sendMessage(player, "regionbuilder.creating");
+            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
 
             // Run claim async
             Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, new PlayerRegion(player.getUniqueId().toString(), player.getName()), new HashSet<>(), false);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                    RedProtect.get().rm.add(r2, player.getWorld().getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
@@ -111,15 +111,15 @@ public class ClaimCommand implements SubCommand {
             Set<PlayerRegion> addedAdmins = new HashSet<>();
             addedAdmins.add(new PlayerRegion(RedProtect.get().getUtil().PlayerToUUID(args[1]), args[1]));
 
-            RedProtect.get().lang.sendMessage(player, "regionbuilder.creating");
+            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
 
             // Run claim async
             Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                    RedProtect.get().rm.add(r2, player.getWorld().getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
@@ -130,7 +130,7 @@ public class ClaimCommand implements SubCommand {
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "claim", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "claim", true);
         return true;
     }
 

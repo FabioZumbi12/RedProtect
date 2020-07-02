@@ -61,7 +61,7 @@ public class KillCommand {
                     }
 
                     if (world == null) {
-                        RedProtect.get().lang.sendMessage(src, "cmdmanager.region.invalidworld");
+                        RedProtect.get().getLanguageManager().sendMessage(src, "cmdmanager.region.invalidworld");
                         return CommandResult.success();
                     }
 

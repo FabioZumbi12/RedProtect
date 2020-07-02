@@ -46,7 +46,7 @@ import static br.net.fabiozumbi12.RedProtect.Sponge.commands.CommandHandlers.get
 public class LangManager extends LangCore {
 
     public LangManager() {
-        String resLang = "lang" + RedProtect.get().config.configRoot().language + ".properties";
+        String resLang = "lang" + RedProtect.get().getConfigManager().configRoot().language + ".properties";
         pathLang = RedProtect.get().configDir + File.separator + resLang;
 
         File lang = new File(pathLang);
@@ -69,7 +69,7 @@ public class LangManager extends LangCore {
         loadBaseLang();
         updateLang();
 
-        RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().config.configRoot().language);
+        RedProtect.get().logger.info("Language file loaded - Using: " + RedProtect.get().getConfigManager().configRoot().language);
     }
 
     private void loadLang() {

@@ -46,11 +46,11 @@ public class BorderCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r != null) {
                             RedProtect.get().getUtil().addBorder(player, r.getMinLocation(), r.getMaxLocation());
                         } else {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                         }
                     }
                     return CommandResult.success();

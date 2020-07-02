@@ -47,16 +47,16 @@ public class DelTpCommand {
                     } else {
                         Player player = (Player) src;
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r != null) {
-                            if (RedProtect.get().ph.hasRegionPermLeader(player, "deltp", r)) {
+                            if (RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "deltp", r)) {
                                 r.setTPPoint(null);
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.removed");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.settp.removed");
                             } else {
-                                RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                             }
                         } else {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                         }
                     }
                     return CommandResult.success();

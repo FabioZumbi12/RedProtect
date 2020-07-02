@@ -50,18 +50,18 @@ public class NearCommand {
                     } else {
                         Player player = (Player) src;
 
-                        Set<Region> regions = RedProtect.get().rm.getRegionsNear(player, 60, player.getWorld().getName());
+                        Set<Region> regions = RedProtect.get().getRegionManager().getRegionsNear(player, 60, player.getWorld().getName());
                         if (regions.size() == 0) {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.noregions.nearby");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.noregions.nearby");
                         } else {
                             Iterator<Region> i = regions.iterator();
-                            player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.regionwith40")));
-                            player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+                            player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.regionwith40")));
+                            player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------"));
                             while (i.hasNext()) {
                                 Region r = i.next();
-                                player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.name") + r.getName() + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.center") + " (&6X,Z" + RedProtect.get().lang.get("general.color") + "): &6" + r.getCenterX() + ", " + r.getCenterZ()));
+                                player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.name") + r.getName() + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.center") + " (&6X,Z" + RedProtect.get().getLanguageManager().get("general.color") + "): &6" + r.getCenterX() + ", " + r.getCenterZ()));
                             }
-                            player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+                            player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------"));
                         }
                     }
                     return CommandResult.success();

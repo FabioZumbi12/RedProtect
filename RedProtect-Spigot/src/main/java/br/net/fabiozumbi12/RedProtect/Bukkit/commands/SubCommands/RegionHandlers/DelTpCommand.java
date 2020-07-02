@@ -50,24 +50,24 @@ public class DelTpCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
 
             if (r != null) {
-                if (RedProtect.get().ph.hasRegionPermLeader(player, "deltp", r)) {
+                if (RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "deltp", r)) {
                     r.setTPPoint(null);
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.removed");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.settp.removed");
                     return true;
                 } else {
-                    RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                     return true;
                 }
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "deltp", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "deltp", true);
         return true;
     }
 

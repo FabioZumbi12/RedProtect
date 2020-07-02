@@ -50,14 +50,14 @@ public class RegionCommandElement extends CommandElement {
     @Override
     protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
         if (source instanceof Player)
-            return RedProtect.get().rm.getRegion(args.next(), ((Player) source).getWorld().getName());
+            return RedProtect.get().getRegionManager().getRegion(args.next(), ((Player) source).getWorld().getName());
         return null;
     }
 
     @Override
     public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
         if (src instanceof Player)
-            return RedProtect.get().rm.getAdminRegions(src.getName()).stream().map(Region::getName).collect(Collectors.toList());
+            return RedProtect.get().getRegionManager().getAdminRegions(src.getName()).stream().map(Region::getName).collect(Collectors.toList());
         return null;
     }
 }

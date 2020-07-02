@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Region extends CoreRegion {
 
-    private String dynmapSet = RedProtect.get().config.configRoot().hooks.dynmap.marks_groupname;
+    private String dynmapSet = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname;
     private Task task;
 
     /**
@@ -145,7 +145,7 @@ public class Region extends CoreRegion {
      * @param world World name.
      */
     public Region(String name, Location min, Location max, String world) {
-        super(name, new int[]{min.getBlockX(), min.getBlockY(), min.getBlockZ()}, new int[]{max.getBlockX(), max.getBlockY(), max.getBlockZ()}, world, RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.getDefFlagsValues());
+        super(name, new int[]{min.getBlockX(), min.getBlockY(), min.getBlockZ()}, new int[]{max.getBlockX(), max.getBlockY(), max.getBlockZ()}, world, RedProtect.get().getConfigManager().configRoot().region_settings.default_leader, RedProtect.get().getConfigManager().getDefFlagsValues());
         checkParticle();
     }
 
@@ -214,10 +214,10 @@ public class Region extends CoreRegion {
     }
 
     private void updateSigns(String fname) {
-        if (!RedProtect.get().config.configRoot().region_settings.enable_flag_sign) {
+        if (!RedProtect.get().getConfigManager().configRoot().region_settings.enable_flag_sign) {
             return;
         }
-        List<Location> locs = RedProtect.get().config.getSigns(this.getID());
+        List<Location> locs = RedProtect.get().getConfigManager().getSigns(this.getID());
         if (locs.size() > 0) {
             for (Location loc : locs) {
                 if (loc.getTileEntity().isPresent() && loc.getTileEntity().get() instanceof Sign) {
@@ -225,15 +225,15 @@ public class Region extends CoreRegion {
                     ListValue<Text> lines = s.lines();
                     if (lines.get(0).toPlain().equalsIgnoreCase("[flag]")) {
                         if (lines.get(1).toPlain().equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(lines.get(2).toPlain())) {
-                            lines.set(3, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(getFlagString(fname))));
+                            lines.set(3, RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("region.value") + " " + RedProtect.get().getLanguageManager().translBool(getFlagString(fname))));
                             s.offer(lines);
-                            RedProtect.get().config.putSign(this.getID(), loc);
+                            RedProtect.get().getConfigManager().putSign(this.getID(), loc);
                         }
                     } else {
-                        RedProtect.get().config.removeSign(this.getID(), loc);
+                        RedProtect.get().getConfigManager().removeSign(this.getID(), loc);
                     }
                 } else {
-                    RedProtect.get().config.removeSign(this.getID(), loc);
+                    RedProtect.get().getConfigManager().removeSign(this.getID(), loc);
                 }
             }
         }
@@ -245,7 +245,7 @@ public class Region extends CoreRegion {
 
         setToSave(true);
         this.flags.put(event.getFlag(), event.getFlagValue());
-        RedProtect.get().rm.updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
+        RedProtect.get().getRegionManager().updateLiveFlags(this, event.getFlag(), event.getFlagValue().toString());
         updateSigns(event.getFlag());
         checkParticle();
         return true;
@@ -255,7 +255,7 @@ public class Region extends CoreRegion {
         setToSave(true);
         if (this.flags.containsKey(Name)) {
             this.flags.remove(Name);
-            RedProtect.get().rm.removeLiveFlags(this, Name);
+            RedProtect.get().getRegionManager().removeLiveFlags(this, Name);
         }
         checkParticle();
     }
@@ -273,10 +273,10 @@ public class Region extends CoreRegion {
             double y = loc.getY();
             double z = loc.getZ();
             String pos = loc.getPosition().toString();
-            RedProtect.get().rm.updateLiveRegion(this, "tppoint", x + "," + y + "," + z + "," + pos);
+            RedProtect.get().getRegionManager().updateLiveRegion(this, "tppoint", x + "," + y + "," + z + "," + pos);
         } else {
             this.tppoint = null;
-            RedProtect.get().rm.updateLiveRegion(this, "tppoint", "");
+            RedProtect.get().getRegionManager().updateLiveRegion(this, "tppoint", "");
         }
     }
 
@@ -291,25 +291,25 @@ public class Region extends CoreRegion {
     public void setCanPurge(boolean purge) {
         setToSave(true);
         this.canPurge = purge;
-        RedProtect.get().rm.updateLiveRegion(this, "canpurge", purge);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "canpurge", purge);
     }
 
     public void setDate(String value) {
         setToSave(true);
         this.date = value;
-        RedProtect.get().rm.updateLiveRegion(this, "date", value);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "date", value);
     }
 
     public void setMaxY(int y) {
         setToSave(true);
         this.maxY = y;
-        RedProtect.get().rm.updateLiveRegion(this, "maxy", y);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "maxy", y);
     }
 
     public void setMinY(int y) {
         setToSave(true);
         this.minY = y;
-        RedProtect.get().rm.updateLiveRegion(this, "miny", y);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "miny", y);
     }
 
     public Location<World> getMaxLocation() {
@@ -323,19 +323,19 @@ public class Region extends CoreRegion {
     public void setWorld(String w) {
         setToSave(true);
         this.world = w;
-        RedProtect.get().rm.updateLiveRegion(this, "world", w);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "world", w);
     }
 
     public void setPrior(int prior) {
         setToSave(true);
         this.prior = prior;
-        RedProtect.get().rm.updateLiveRegion(this, "prior", prior);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "prior", prior);
     }
 
     public void setWelcome(String s) {
         setToSave(true);
         this.wMessage = s;
-        RedProtect.get().rm.updateLiveRegion(this, "wel", s);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "wel", s);
     }
 
     public String getDynmapSet() {
@@ -345,19 +345,19 @@ public class Region extends CoreRegion {
     public void setAdmins(Set<PlayerRegion> admins) {
         setToSave(true);
         this.admins = admins;
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
     }
 
     public void setMembers(Set<PlayerRegion> members) {
         setToSave(true);
         this.members = members;
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     public void setLeaders(Set<PlayerRegion> leaders) {
         setToSave(true);
         this.leaders = leaders;
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
     }
 
     public Text info() {
@@ -369,14 +369,14 @@ public class Region extends CoreRegion {
         String memberString = "None";
 
         String wMsgTemp;
-        String IsTops = RedProtect.get().lang.translBool(isOnTop());
+        String IsTops = RedProtect.get().getLanguageManager().translBool(isOnTop());
         String today;
         String wName = this.world;
         String colorChar = "";
         String dynmapInfo = "";
 
-        if (RedProtect.get().config.configRoot().region_settings.world_colors.containsKey(this.world)) {
-            colorChar = RedProtect.get().config.configRoot().region_settings.world_colors.get(this.world);
+        if (RedProtect.get().getConfigManager().configRoot().region_settings.world_colors.containsKey(this.world)) {
+            colorChar = RedProtect.get().getConfigManager().configRoot().region_settings.world_colors.get(this.world);
         }
 
         leaders.removeIf(Objects::isNull);
@@ -398,69 +398,69 @@ public class Region extends CoreRegion {
             memberString = memberStringBuilder.delete(0, 2).toString();
         }
         if (this.wMessage == null || this.wMessage.equals("")) {
-            wMsgTemp = RedProtect.get().lang.get("region.welcome.notset");
+            wMsgTemp = RedProtect.get().getLanguageManager().get("region.welcome.notset");
         } else {
             wMsgTemp = wMessage;
         }
 
         if (this.date.equals(RedProtect.get().getUtil().dateNow())) {
-            today = RedProtect.get().lang.get("region.today");
+            today = RedProtect.get().getLanguageManager().get("region.today");
         } else {
             today = this.date;
         }
         for (PlayerRegion pname : this.leaders) {
             Optional<Player> play = Sponge.getServer().getPlayer(pname.getPlayerName());
-            if (play.isPresent() && !pname.getPlayerName().equalsIgnoreCase(RedProtect.get().config.configRoot().region_settings.default_leader)) {
+            if (play.isPresent() && !pname.getPlayerName().equalsIgnoreCase(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
                 today = "&aOnline!";
                 break;
             }
         }
         for (PlayerRegion pname : this.admins) {
             Optional<Player> play = Sponge.getServer().getPlayer(pname.getPlayerName());
-            if (play.isPresent() && !pname.getPlayerName().equalsIgnoreCase(RedProtect.get().config.configRoot().region_settings.default_leader)) {
+            if (play.isPresent() && !pname.getPlayerName().equalsIgnoreCase(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
                 today = "&aOnline!";
                 break;
             }
         }
 
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
-            dynmapInfo = RedProtect.get().lang.get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().lang.get("region.dynmap-showing") : RedProtect.get().lang.get("region.dynmap-hiding")) + ", " + RedProtect.get().lang.get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
+            dynmapInfo = RedProtect.get().getLanguageManager().get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().getLanguageManager().get("region.dynmap-showing") : RedProtect.get().getLanguageManager().get("region.dynmap-hiding")) + ", " + RedProtect.get().getLanguageManager().get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
-        boolean purgeEnabled = RedProtect.get().config.configRoot().purge.enabled;
-        String canPurge = RedProtect.get().lang.translBool(canPurge());
+        boolean purgeEnabled = RedProtect.get().getConfigManager().configRoot().purge.enabled;
+        String canPurge = RedProtect.get().getLanguageManager().translBool(canPurge());
         String purgeString = "";
         if (purgeEnabled) {
-            purgeString = "&b | " + RedProtect.get().lang.get("region.purge") + " " + canPurge;
+            purgeString = "&b | " + RedProtect.get().getLanguageManager().get("region.purge") + " " + canPurge;
         }
 
-        return RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.name") + " " + colorChar + this.name + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.priority") + " " + this.prior + "\n" +
-                RedProtect.get().lang.get("region.priority.top") + " " + IsTops + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.lastvalue") + " " + EconomyManager.getFormatted(this.value) + "\n" +
-                RedProtect.get().lang.get("region.world") + " " + colorChar + wName + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
-                RedProtect.get().lang.get("region.ysize") + " " + this.minY + " - " + this.maxY + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.area") + " " + this.getArea() + "\n" +
-                RedProtect.get().lang.get("region.leaders") + " " + leaderString + "\n" +
-                RedProtect.get().lang.get("region.admins") + " " + adminString + RedProtect.get().lang.get("general.color") + " | " + RedProtect.get().lang.get("region.members") + " " + memberString + "\n" +
-                RedProtect.get().lang.get("region.date") + " " + today + purgeString + "\n" +
+        return RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("region.name") + " " + colorChar + this.name + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.priority") + " " + this.prior + "\n" +
+                RedProtect.get().getLanguageManager().get("region.priority.top") + " " + IsTops + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.lastvalue") + " " + EconomyManager.getFormatted(this.value) + "\n" +
+                RedProtect.get().getLanguageManager().get("region.world") + " " + colorChar + wName + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.center") + " " + this.getCenterX() + ", " + this.getCenterZ() + "\n" +
+                RedProtect.get().getLanguageManager().get("region.ysize") + " " + this.minY + " - " + this.maxY + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.area") + " " + this.getArea() + "\n" +
+                RedProtect.get().getLanguageManager().get("region.leaders") + " " + leaderString + "\n" +
+                RedProtect.get().getLanguageManager().get("region.admins") + " " + adminString + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.members") + " " + memberString + "\n" +
+                RedProtect.get().getLanguageManager().get("region.date") + " " + today + purgeString + "\n" +
                 dynmapInfo +
-                RedProtect.get().lang.get("region.welcome.msg") + " " + wMsgTemp);
+                RedProtect.get().getLanguageManager().get("region.welcome.msg") + " " + wMsgTemp);
     }
 
     public void clearLeaders() {
         setToSave(true);
         this.leaders.clear();
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", "");
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", "");
     }
 
     public void clearAdmins() {
         setToSave(true);
         this.admins.clear();
-        RedProtect.get().rm.updateLiveRegion(this, "admins", "");
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", "");
     }
 
     public void clearMembers() {
         setToSave(true);
         this.members.clear();
-        RedProtect.get().rm.updateLiveRegion(this, "members", "");
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", "");
     }
 
     public boolean isLeader(Player player) {
@@ -489,9 +489,9 @@ public class Region extends CoreRegion {
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.add(pInfo);
 
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -508,9 +508,9 @@ public class Region extends CoreRegion {
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.members.add(pInfo);
 
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -527,9 +527,9 @@ public class Region extends CoreRegion {
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.add(pInfo);
 
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -544,9 +544,9 @@ public class Region extends CoreRegion {
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
 
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -563,9 +563,9 @@ public class Region extends CoreRegion {
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.members.add(pInfo);
 
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     /**
@@ -582,17 +582,17 @@ public class Region extends CoreRegion {
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.add(pInfo);
 
-        RedProtect.get().rm.updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().rm.updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().rm.updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
     }
 
     public boolean getFlagBool(String key) {
         if (!flagExists(key)) {
-            if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
-                return (Boolean) RedProtect.get().config.getDefFlagsValues().get(key);
+            if (RedProtect.get().getConfigManager().getDefFlagsValues().get(key) != null) {
+                return (Boolean) RedProtect.get().getConfigManager().getDefFlagsValues().get(key);
             } else {
-                return (Boolean) RedProtect.get().config.configRoot().flags.getOrDefault(key, false);
+                return (Boolean) RedProtect.get().getConfigManager().configRoot().flags.getOrDefault(key, false);
             }
         }
         return this.flags.get(key) instanceof Boolean && (Boolean) this.flags.get(key);
@@ -600,10 +600,10 @@ public class Region extends CoreRegion {
 
     public String getFlagString(String key) {
         if (!flagExists(key)) {
-            if (RedProtect.get().config.getDefFlagsValues().get(key) != null) {
-                return (String) RedProtect.get().config.getDefFlagsValues().get(key);
+            if (RedProtect.get().getConfigManager().getDefFlagsValues().get(key) != null) {
+                return (String) RedProtect.get().getConfigManager().getDefFlagsValues().get(key);
             } else {
-                return RedProtect.get().config.configRoot().flags.getOrDefault(key, false).toString();
+                return RedProtect.get().getConfigManager().configRoot().flags.getOrDefault(key, false).toString();
             }
         }
         return this.flags.get(key).toString();
@@ -612,10 +612,10 @@ public class Region extends CoreRegion {
     public Text getFlagInfo() {
         StringBuilder flaginfo = new StringBuilder();
         for (String flag : this.flags.keySet()) {
-            if (RedProtect.get().config.getDefFlags().contains(flag)) {
+            if (RedProtect.get().getConfigManager().getDefFlags().contains(flag)) {
                 String flagValue = this.flags.get(flag).toString();
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo.append(", &b").append(flag).append(": ").append(RedProtect.get().lang.translBool(flagValue));
+                    flaginfo.append(", &b").append(flag).append(": ").append(RedProtect.get().getLanguageManager().translBool(flagValue));
                 } else {
                     flaginfo.append(", &b").append(flag).append(": &8").append(flagValue);
                 }
@@ -625,10 +625,10 @@ public class Region extends CoreRegion {
                 continue;
             }
 
-            if (RedProtect.get().config.AdminFlags.contains(flag)) {
+            if (RedProtect.get().getConfigManager().AdminFlags.contains(flag)) {
                 String flagValue = this.flags.get(flag).toString();
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
-                    flaginfo.append(", &b").append(flag).append(": ").append(RedProtect.get().lang.translBool(flagValue));
+                    flaginfo.append(", &b").append(flag).append(": ").append(RedProtect.get().getLanguageManager().translBool(flagValue));
                 } else {
                     flaginfo.append(", &b").append(flag).append(": &8").append(flagValue);
                 }
@@ -643,7 +643,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isOnTop() {
-        Region newr = RedProtect.get().rm.getTopRegion(this.getWorld(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
+        Region newr = RedProtect.get().getRegionManager().getTopRegion(this.getWorld(), this.getCenterX(), this.getCenterY(), this.getCenterZ(), this.getClass().getName());
         return newr == null || newr.equals(this);
     }
 
@@ -753,7 +753,7 @@ public class Region extends CoreRegion {
         if (!canExitWithItens(p)) {
             return false;
         }
-        return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().ph.hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p, "exit");
+        return !flagExists("exit") || getFlagBool("exit") || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.region-exit." + this.name) || checkAllowedPlayer(p, "exit");
     }
 
     public boolean canEnter(Player p) {
@@ -761,7 +761,7 @@ public class Region extends CoreRegion {
             return checkAllowedPlayer(p, "enter");
         }
 
-        return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().ph.hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p, "enter");
+        return !flagExists("enter") || getFlagBool("enter") || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.region-enter." + this.name) || checkAllowedPlayer(p, "enter");
     }
 
     public boolean canExitWithItens(Player p) {
@@ -1108,7 +1108,7 @@ public class Region extends CoreRegion {
 
     public void setValue(long value) {
         setToSave(true);
-        RedProtect.get().rm.updateLiveRegion(this, "value", value);
+        RedProtect.get().getRegionManager().updateLiveRegion(this, "value", value);
         this.value = value;
     }
 
@@ -1127,7 +1127,7 @@ public class Region extends CoreRegion {
                 for (int y = miny; y <= maxy; ++y) {
                     if ((z == loc1.getBlockZ() || z == loc2.getBlockZ() ||
                             x == loc1.getBlockX() || x == loc2.getBlockX())
-                            && (define || new Location<>(w, x, y, z).getBlock().getType().getName().contains(RedProtect.get().config.configRoot().region_settings.block_id))) {
+                            && (define || new Location<>(w, x, y, z).getBlock().getType().getName().contains(RedProtect.get().getConfigManager().configRoot().region_settings.block_id))) {
                         locBlocks.add(new Location<>(w, x, y, z));
                     }
                 }
@@ -1151,7 +1151,7 @@ public class Region extends CoreRegion {
 
     public String getAdminDesc() {
         if (this.admins.size() == 0) {
-            return RedProtect.get().lang.get("region.none");
+            return RedProtect.get().getLanguageManager().get("region.none");
         }
         StringBuilder adminsList = new StringBuilder();
         for (PlayerRegion admin : this.admins) {
@@ -1162,7 +1162,7 @@ public class Region extends CoreRegion {
 
     public String getLeadersDesc() {
         if (this.leaders.size() == 0) {
-            addLeader(RedProtect.get().config.configRoot().region_settings.default_leader);
+            addLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader);
         }
         StringBuilder leaderList = new StringBuilder();
         for (PlayerRegion leader : this.leaders) {

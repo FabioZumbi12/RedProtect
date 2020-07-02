@@ -49,9 +49,9 @@ public class SelectWECommand {
                         Player player = (Player) src;
 
                         if (RedProtect.get().hooks.WE) {
-                            Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                            Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                             if (r == null) {
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                                 return CommandResult.success();
                             }
                             WEHook.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());

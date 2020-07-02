@@ -45,15 +45,15 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class RemoveMemberCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.removemember"))) {
+        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.removemember"))) {
             World w = RedProtect.get().getServer().getWorld(args[2]);
             if (w == null) {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[1], w.getName());
+            Region r = RedProtect.get().getRegionManager().getRegion(args[1], w.getName());
             if (r == null) {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                 return true;
             }
             handleRemoveMember(sender, args[0], r);
@@ -67,14 +67,14 @@ public class RemoveMemberCommand implements SubCommand {
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "removemember", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "removemember", true);
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (sender instanceof Player) {
-            Region r = RedProtect.get().rm.getTopRegion(((Player) sender).getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(((Player) sender).getLocation());
             if (r != null && args.length == 1) {
                 if (args[0].isEmpty())
                     return r.getMembers().stream().map(PlayerRegion::getPlayerName).collect(Collectors.toList());

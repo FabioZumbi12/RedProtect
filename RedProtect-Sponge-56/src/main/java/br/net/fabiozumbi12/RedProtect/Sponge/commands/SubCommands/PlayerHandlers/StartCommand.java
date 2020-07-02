@@ -50,19 +50,19 @@ public class StartCommand {
                     } else {
                         Player player = (Player) src;
 
-                        if (!RedProtect.get().config.isAllowedWorld(player)) {
-                            RedProtect.get().lang.sendMessage(player, "regionbuilder.region.worldnotallowed");
+                        if (!RedProtect.get().getConfigManager().isAllowedWorld(player)) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.region.worldnotallowed");
                             return CommandResult.success();
                         }
 
-                        if (RedProtect.get().rm.getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
-                                !RedProtect.get().ph.hasPerm(player, "redprotect.command.start.bypass")) {
-                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.claimlimit.start");
+                        if (RedProtect.get().getRegionManager().getPlayerRegions(player.getName(), player.getWorld().getName()) > 0 &&
+                                !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.start.bypass")) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.claimlimit.start");
                             return CommandResult.success();
                         }
 
                         RedProtect.get().confiemStart.add(player.getName());
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.start.confirm")
+                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.start.confirm")
                                 .replace("{cmd}", getCmd("start"))
                                 .replace("{confirm}", getCmd("confirm")));
 
@@ -81,7 +81,7 @@ public class StartCommand {
                                 Player player = (Player) src;
 
                                 if (!RedProtect.get().confiemStart.contains(player.getName())) {
-                                    player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
+                                    player.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.noconfirm").replace("{cmd}", getCmd("start"))));
                                     return CommandResult.success();
                                 }
                                 RedProtect.get().schematic.pasteSchematic(player);

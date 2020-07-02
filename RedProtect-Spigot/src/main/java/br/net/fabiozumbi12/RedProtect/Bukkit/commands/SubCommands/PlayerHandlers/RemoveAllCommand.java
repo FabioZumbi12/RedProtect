@@ -41,16 +41,16 @@ public class RemoveAllCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            int removed = RedProtect.get().rm.removeAll(args[0]);
+            int removed = RedProtect.get().getRegionManager().removeAll(args[0]);
             if (removed <= 0) {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.noneremoved"));
             } else {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args[0]));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args[0]));
             }
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "removeall", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "removeall", true);
         return true;
     }
 

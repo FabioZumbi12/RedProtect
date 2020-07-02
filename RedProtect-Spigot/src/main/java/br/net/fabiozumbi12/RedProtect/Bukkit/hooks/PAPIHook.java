@@ -36,27 +36,27 @@ public class PAPIHook extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player p, String arg) {
         if (arg.equals("player_in_region")) {
-            Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
-            return r == null ? RedProtect.get().lang.get("region.wilderness") : r.getName();
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            return r == null ? RedProtect.get().getLanguageManager().get("region.wilderness") : r.getName();
         } else if (arg.equals("player_used_claims")) {
-            return String.valueOf(RedProtect.get().rm.getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName()));
+            return String.valueOf(RedProtect.get().getRegionManager().getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName()));
         } else if (arg.equals("player_used_blocks")) {
-            return String.valueOf(RedProtect.get().rm.getTotalRegionSize(p.getUniqueId().toString(), p.getWorld().getName()));
+            return String.valueOf(RedProtect.get().getRegionManager().getTotalRegionSize(p.getUniqueId().toString(), p.getWorld().getName()));
         } else if (arg.equals("player_total_claims")) {
-            int l = RedProtect.get().ph.getPlayerClaimLimit(p);
-            return l == -1 ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : String.valueOf(l);
+            int l = RedProtect.get().getPermissionHandler().getPlayerClaimLimit(p);
+            return l == -1 ? RedProtect.get().getLanguageManager().get("regionbuilder.area.unlimited") : String.valueOf(l);
         } else if (arg.equals("player_total_blocks")) {
-            int l = RedProtect.get().ph.getPlayerBlockLimit(p);
-            return l == -1 ? RedProtect.get().lang.get("regionbuilder.area.unlimited") : String.valueOf(l);
+            int l = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(p);
+            return l == -1 ? RedProtect.get().getLanguageManager().get("regionbuilder.area.unlimited") : String.valueOf(l);
         } else if (arg.startsWith("region_flag_value_")) {
-            Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r != null) {
                 String value = r.getFlagString(arg.replace("region_flag_value_", ""));
                 if (value == null) {
                     return null;
                 }
                 if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                    return RedProtect.get().lang.translBool(value);
+                    return RedProtect.get().getLanguageManager().translBool(value);
                 }
                 return value;
             } else {

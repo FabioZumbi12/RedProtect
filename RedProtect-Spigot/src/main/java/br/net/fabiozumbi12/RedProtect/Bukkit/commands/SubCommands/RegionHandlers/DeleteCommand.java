@@ -64,7 +64,7 @@ public class DeleteCommand implements SubCommand {
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "delete", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "delete", true);
         return true;
     }
 

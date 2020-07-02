@@ -54,7 +54,7 @@ public class RPBlockListener8 {
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onPlayerDie(DestructEntityEvent.Death e, @First Player p) {
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation(), this.getClass().getName());
         if (r != null && !r.keepInventory()) {
             e.setKeepInventory(true);
         }
@@ -72,15 +72,15 @@ public class RPBlockListener8 {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "sourceLoc");
 
             if (context.containsKey(EventContextKeys.PISTON_EXTEND) || context.containsKey(EventContextKeys.PISTON_RETRACT)) {
-                if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
+                if (RedProtect.get().getConfigManager().configRoot().performance.disable_PistonEvent_handler) {
                     return;
                 }
 
-                Region r = RedProtect.get().rm.getTopRegion(sourceLoc.getLocation(), this.getClass().getName());
+                Region r = RedProtect.get().getRegionManager().getTopRegion(sourceLoc.getLocation(), this.getClass().getName());
                 for (Location<World> pistonLoc : e.getLocations()) {
-                    Region targetr = RedProtect.get().rm.getTopRegion(pistonLoc, this.getClass().getName());
+                    Region targetr = RedProtect.get().getRegionManager().getTopRegion(pistonLoc, this.getClass().getName());
 
-                    boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
+                    boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
                     RedProtect.get().logger.debug(LogLevel.BLOCKS, "getLocations");
 
                     if (targetr != null && (r == null || r != targetr)) {

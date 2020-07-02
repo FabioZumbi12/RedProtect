@@ -41,9 +41,9 @@ import java.util.stream.Collectors;
 
 public class WorldMySQLRegionManager implements WorldRegionManager {
 
-    private final String url = "jdbc:mysql://" + RedProtect.get().config.configRoot().mysql.host + "/";
+    private final String url = "jdbc:mysql://" + RedProtect.get().getConfigManager().configRoot().mysql.host + "/";
     private final String reconnect = "?autoReconnect=true";
-    private final String dbname = RedProtect.get().config.configRoot().mysql.db_name;
+    private final String dbname = RedProtect.get().getConfigManager().configRoot().mysql.db_name;
     private final String tableName;
     private final HashMap<String, Region> regions;
     private final String world;
@@ -53,7 +53,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         super();
         this.regions = new HashMap<>();
         this.world = world;
-        this.tableName = RedProtect.get().config.configRoot().mysql.table_prefix + world;
+        this.tableName = RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world;
 
         this.dbcon = null;
         try {
@@ -69,8 +69,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         PreparedStatement st = null;
         try {
             if (!this.checkTableExists()) {
-                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().config.configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true" : "")
-                        , RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
+                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().getConfigManager().configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true" : "")
+                        , RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
 
                 st = con.prepareStatement("CREATE TABLE `" + tableName + "` " +
                         "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Long not null, tppoint varchar(20), flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
@@ -97,7 +97,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private boolean checkTableExists() {
         try {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
+            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
             DatabaseMetaData meta = con.getMetaData();
             ResultSet rs = meta.getTables(null, null, tableName, null);
             if (rs.next()) {
@@ -116,7 +116,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void addNewColumns() {
         try {
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
+            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
             DatabaseMetaData md = con.getMetaData();
             ResultSet rs = md.getColumns(null, null, tableName, "candelete");
             if (!rs.next()) {
@@ -324,7 +324,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                                 Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                     }
 
-                    String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+                    String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
                     Set<PlayerRegion> leaders;
                     if (!rs.getString("leaders").isEmpty()) {
                         leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(","))).stream().map(s -> {
@@ -504,7 +504,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                                 Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                     }
 
-                    String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+                    String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
 
                     if (!rs.getString("members").isEmpty()) {
                         for (String member : rs.getString("members").split(",")) {
@@ -572,7 +572,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         regions.remove(rname);
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed cached region: " + rname);
                     }
-                }, (20 * 60) * RedProtect.get().config.configRoot().mysql.region_cache_minutes);
+                }, (20 * 60) * RedProtect.get().getConfigManager().configRoot().mysql.region_cache_minutes);
             } catch (SQLException e) {
                 CoreUtil.printJarVersion();
                 e.printStackTrace();
@@ -808,8 +808,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     private void ConnectDB() {
         try {
-            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().config.configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true" : "")
-                    , RedProtect.get().config.configRoot().mysql.user_name, RedProtect.get().config.configRoot().mysql.user_pass);
+            this.dbcon = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().getConfigManager().configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true" : "")
+                    , RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
             RedProtect.get().logger.info("Conected to " + this.tableName + " via Mysql!");
         } catch (SQLException e) {
             CoreUtil.printJarVersion();

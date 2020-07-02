@@ -44,6 +44,7 @@ import br.net.fabiozumbi12.RedProtect.Sponge.region.RegionManager;
 import br.net.fabiozumbi12.RedProtect.Sponge.schematics.RPSchematics;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
@@ -96,10 +97,6 @@ public class RedProtect {
     public PluginContainer container;
     @Inject
     public GuiceObjectMapperFactory factory;
-    public RegionManager rm;
-    public PermissionHandler ph;
-    public ConfigManager config;
-    public LangManager lang;
     public LangGuiManager guiLang;
     public EconomyService economy;
     public CommandManager commandManager;
@@ -108,9 +105,29 @@ public class RedProtect {
     private UUID autoSaveID;
     private VersionHelper rpvHelper;
     private RedProtectAPI redProtectAPI;
+    private RegionManager rm;
+    private PermissionHandler ph;
+    private ConfigManager config;
+    private LangManager lang;
 
     public static RedProtect get() {
         return instance;
+    }
+
+    public RegionManager getRegionManager() {
+        return this.rm;
+    }
+
+    public PermissionHandler getPermissionHandler() {
+        return this.ph;
+    }
+
+    public LangManager getLanguageManager() {
+        return this.lang;
+    }
+
+    public ConfigManager getConfigManager() {
+        return this.config;
     }
 
     public VersionHelper getVersionHelper() {
@@ -187,6 +204,23 @@ public class RedProtect {
         }
     }
 
+    public void reloadConfigs() {
+        commandHandler.unregisterAll();
+
+        try {
+            config = new ConfigManager(factory);
+        } catch (ObjectMappingException e) {
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
+        }
+        logger.info("Loading language files...");
+        lang = new LangManager();
+        guiLang = new LangGuiManager();
+
+        logger.info("Re-registering commands...");
+        commandHandler = new CommandHandler(this);
+    }
+
     public boolean denyEnterRegion(String rid, String player) {
         if (denyEnter.containsKey(player)) {
             if (denyEnter.get(player).contains(rid)) {
@@ -238,7 +272,7 @@ public class RedProtect {
         config = new ConfigManager(this.factory);
         lang = new LangManager();
 
-        if (RedProtect.get().config.configRoot().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()) {
+        if (RedProtect.get().getConfigManager().configRoot().purge.regen.enable_whitelist_regen && Sponge.getServer().hasWhitelist()) {
             Sponge.getServer().setHasWhitelist(false);
             RedProtect.get().logger.success("Whitelist disabled!");
         }

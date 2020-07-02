@@ -48,7 +48,7 @@ public class MyPetHook implements Listener {
 
         Entity ent = e.getEntity();
         if (ent instanceof MyPetBukkitEntity) {
-            Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(ent.getLocation());
             if (r != null && r.flagExists("invincible")) {
                 if (r.getFlagBool("invincible")) {
                     e.setCancelled(true);
@@ -63,7 +63,7 @@ public class MyPetHook implements Listener {
             Entity e2 = de.getDamager();
 
             Location loc = e1.getLocation();
-            Region r1 = RedProtect.get().rm.getTopRegion(loc);
+            Region r1 = RedProtect.get().getRegionManager().getTopRegion(loc);
             if (r1 == null) {
                 return;
             }
@@ -83,7 +83,7 @@ public class MyPetHook implements Listener {
                         for (PotionEffect ef : liv.getActivePotionEffects()) {
                             liv.removePotionEffect(ef.getType());
                         }
-                        p2.sendMessage(RedProtect.get().lang.get("mplistener.cantattack.passives"));
+                        p2.sendMessage(RedProtect.get().getLanguageManager().get("mplistener.cantattack.passives"));
                         return;
                     }
                 }
@@ -103,7 +103,7 @@ public class MyPetHook implements Listener {
                         for (PotionEffect ef : p2.getActivePotionEffects()) {
                             p2.removePotionEffect(ef.getType());
                         }
-                        p2.sendMessage(RedProtect.get().lang.get("mplistener.cantattack.players"));
+                        p2.sendMessage(RedProtect.get().getLanguageManager().get("mplistener.cantattack.players"));
                     }
                 }
             }

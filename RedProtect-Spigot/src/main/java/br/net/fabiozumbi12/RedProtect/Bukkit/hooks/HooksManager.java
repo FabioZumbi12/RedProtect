@@ -177,7 +177,7 @@ public class HooksManager {
     public void registerHooksLast() {
         try {
             Dyn = checkDyn();
-            if (Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
+            if (Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
                 RedProtect.get().logger.info("Dynmap found. Hooked.");
                 RedProtect.get().logger.info("Loading dynmap markers...");
                 dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));

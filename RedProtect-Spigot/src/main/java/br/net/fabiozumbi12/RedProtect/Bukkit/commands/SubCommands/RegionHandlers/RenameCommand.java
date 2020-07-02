@@ -54,7 +54,7 @@ public class RenameCommand implements SubCommand {
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "rename", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "rename", true);
         return true;
     }
 

@@ -59,7 +59,7 @@ public class EntityListener implements Listener {
             return;
         }
         RedProtect.get().logger.debug(LogLevel.ENTITY, "EntityListener - EntityBlockFormEvent");
-        Region r = RedProtect.get().rm.getTopRegion(e.getBlock().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(e.getBlock().getLocation());
         if (r != null && !r.canIceForm()) {
             e.setCancelled(true);
         }
@@ -73,7 +73,7 @@ public class EntityListener implements Listener {
 
         if (e instanceof Wither && event.getSpawnReason().equals(SpawnReason.BUILD_WITHER)) {
             Location l = event.getLocation();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
             if (r != null && !r.canSpawnWhiter()) {
                 event.setCancelled(true);
                 return;
@@ -81,7 +81,7 @@ public class EntityListener implements Listener {
         }
 
         Location l = event.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
         if (r != null && !r.canSpawnMonsters(e)) {
             RedProtect.get().logger.debug(LogLevel.ENTITY, "Cancelled spawn of monster " + event.getEntityType().name());
@@ -111,8 +111,8 @@ public class EntityListener implements Listener {
             }
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
-        Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
+        Region r1 = RedProtect.get().getRegionManager().getTopRegion(e1.getLocation());
+        Region r2 = RedProtect.get().getRegionManager().getTopRegion(e2.getLocation());
 
         if (r1 != null && !r1.canFire() && !(e2 instanceof Player)) {
             e.setCancelled(true);
@@ -126,15 +126,15 @@ public class EntityListener implements Listener {
                     if (r2 != null) {
                         if ((r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player) e1, p2))) {
                             e.setCancelled(true);
-                            RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
+                            RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                         }
                     } else if (r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) {
                         e.setCancelled(true);
-                        RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
+                        RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                     }
                 } else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player) e1, p2)) {
                     e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
+                    RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                 }
             }
         } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem || e1 instanceof WaterMob) {
@@ -143,19 +143,19 @@ public class EntityListener implements Listener {
                 if (e1 instanceof WaterMob && r1.canFish(p2)) return;
                 if (!r1.canInteractPassives(p2)) {
                     e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpassive");
+                    RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpassive");
                 }
             }
         } else if (e1 instanceof Hanging && e2 instanceof Player) {
             Player p2 = (Player) e2;
             if (r1 != null && !r1.canBuild(p2) && !r1.canBreak(e1.getType())) {
                 e.setCancelled(true);
-                RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
+                RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");
                 return;
             }
             if (r2 != null && !r2.canBuild(p2) && !r2.canBreak(e1.getType())) {
                 e.setCancelled(true);
-                RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
+                RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");
             }
         } else if (e1 instanceof Hanging && e2 instanceof Monster) {
             if (r1 != null || r2 != null) {
@@ -174,7 +174,7 @@ public class EntityListener implements Listener {
     public void onEntityDamage(EntityDamageEvent e) {
 
         Entity ent = e.getEntity();
-        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(ent.getLocation());
 
         if (ent instanceof LivingEntity && !(ent instanceof Monster)) {
             if (r != null && r.flagExists("invincible")) {
@@ -208,8 +208,8 @@ public class EntityListener implements Listener {
             RedProtect.get().logger.debug(LogLevel.ENTITY, "EntityDamageByEntityEvent event. Damager Player: " + e2.getType().name());
             RedProtect.get().logger.debug(LogLevel.ENTITY, "Cause: " + de.getCause().name());
 
-            Region r1 = RedProtect.get().rm.getTopRegion(e1.getLocation());
-            Region r2 = RedProtect.get().rm.getTopRegion(e2.getLocation());
+            Region r1 = RedProtect.get().getRegionManager().getTopRegion(e1.getLocation());
+            Region r2 = RedProtect.get().getRegionManager().getTopRegion(e2.getLocation());
 
             if (de.getCause().equals(DamageCause.LIGHTNING) || de.getCause().equals(DamageCause.BLOCK_EXPLOSION) || de.getCause().equals(DamageCause.FIRE) || de.getCause().equals(DamageCause.WITHER) || de.getCause().equals(DamageCause.CUSTOM) || de.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
                 if (r1 != null && !r1.canFire() && !(e2 instanceof Player)) {
@@ -232,26 +232,26 @@ public class EntityListener implements Listener {
                         }
                         if (mp2.equals(Material.EGG) && !r1.canProtectiles(p2)) {
                             e.setCancelled(true);
-                            RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
+                            RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");
                             return;
                         }
                         if (r2 != null) {
                             if (mp2.equals(Material.EGG) && !r2.canProtectiles(p2)) {
                                 e.setCancelled(true);
-                                RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
+                                RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");
                                 return;
                             }
                             if ((r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player) e1, p2))) {
                                 e.setCancelled(true);
-                                RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
+                                RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                             }
                         } else if (r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) {
                             e.setCancelled(true);
-                            RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
+                            RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                         }
                     } else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player) e1, p2)) {
                         e.setCancelled(true);
-                        RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpvp");
+                        RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                     }
                 }
             } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem || e1 instanceof WaterMob) {
@@ -260,19 +260,19 @@ public class EntityListener implements Listener {
                     if (e1 instanceof WaterMob && r1.canFish(p2)) return;
                     if (!r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
-                        RedProtect.get().lang.sendMessage(p2, "entitylistener.region.cantpassive");
+                        RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpassive");
                     }
                 }
             } else if (e1 instanceof Hanging && e2 instanceof Player) {
                 Player p2 = (Player) e2;
                 if (r1 != null && !r1.canBuild(p2) && !r1.canBreak(e1.getType())) {
                     e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
+                    RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");
                     return;
                 }
                 if (r2 != null && !r2.canBuild(p2) && !r2.canBreak(e1.getType())) {
                     e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(p2, "playerlistener.region.cantuse");
+                    RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");
                 }
             } else if (e1 instanceof Hanging && e2 instanceof Monster) {
                 if (r1 != null || r2 != null) {
@@ -305,7 +305,7 @@ public class EntityListener implements Listener {
             return;
         }
         for (Entity e2 : event.getAffectedEntities()) {
-            Region r = RedProtect.get().rm.getTopRegion(e2.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(e2.getLocation());
             if (event.getEntity() instanceof Player) {
                 if (r != null && r.flagExists("pvp") && !r.canPVP((Player) event.getEntity(), shooter)) {
                     event.setCancelled(true);
@@ -329,7 +329,7 @@ public class EntityListener implements Listener {
             return;
         }
         Location l = e.getRightClicked().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         Entity et = e.getRightClicked();
         if (r != null && !r.canInteractPassives(p) && (et instanceof Animals || et instanceof Villager || et instanceof Golem || (et instanceof WaterMob && !r.canFish(p)))) {
             if (et instanceof Tameable) {
@@ -339,7 +339,7 @@ public class EntityListener implements Listener {
                 }
             }
             e.setCancelled(true);
-            RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantinteract");
+            RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantinteract");
         }
     }
 
@@ -349,7 +349,7 @@ public class EntityListener implements Listener {
 
         Entity e = event.getEntity();
         if (e instanceof Monster) {
-            Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(event.getBlock().getLocation());
             if (!cont.canWorldBreak(event.getBlock())) {
                 event.setCancelled(true);
                 return;
@@ -360,7 +360,7 @@ public class EntityListener implements Listener {
         }
 
         if (e instanceof Boat) {
-            Region r = RedProtect.get().rm.getTopRegion(event.getBlock().getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(event.getBlock().getLocation());
             if (r != null) {
                 Boat boat = (Boat) e;
                 if (boat.getPassenger() instanceof Player) {

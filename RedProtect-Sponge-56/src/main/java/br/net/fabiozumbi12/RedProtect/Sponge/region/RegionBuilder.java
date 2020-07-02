@@ -51,11 +51,11 @@ public abstract class RegionBuilder {
 
     protected void setErrorSign(ChangeSignEvent e, String error) {
         SignData sign = e.getText();
-        sign.set(sign.getValue(Keys.SIGN_LINES).get().set(0, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.signerror"))));
+        sign.set(sign.getValue(Keys.SIGN_LINES).get().set(0, RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("regionbuilder.signerror"))));
         this.setError(e.getCause().first(Player.class).get(), error);
     }
 
     protected void setError(Player p, String error) {
-        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("regionbuilder.error") + "(" + error + ")");
+        RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("regionbuilder.error") + "(" + error + ")");
     }
 }

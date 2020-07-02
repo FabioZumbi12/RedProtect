@@ -57,46 +57,46 @@ public class KickCommand {
                         }
                     } else {
                         Player player = (Player) src;
-                        r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                     }
 
                     if (args.hasAny("region") && args.hasAny("world")) {
-                        r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
+                        r = RedProtect.get().getRegionManager().getRegion(args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(src, "cmdmanager.region.todo.that");
+                            RedProtect.get().getLanguageManager().sendMessage(src, "cmdmanager.region.todo.that");
                             return CommandResult.success();
                         }
                     }
 
                     if (r == null) {
-                        RedProtect.get().lang.sendMessage(src, "cmdmanager.region.todo.that");
+                        RedProtect.get().getLanguageManager().sendMessage(src, "cmdmanager.region.todo.that");
                         return CommandResult.success();
                     }
 
-                    if (src instanceof Player && !RedProtect.get().ph.hasRegionPermMember((Player) src, "kick", r)) {
-                        RedProtect.get().lang.sendMessage(src, "no.permission");
+                    if (src instanceof Player && !RedProtect.get().getPermissionHandler().hasRegionPermMember((Player) src, "kick", r)) {
+                        RedProtect.get().getLanguageManager().sendMessage(src, "no.permission");
                         return CommandResult.success();
                     }
 
                     Player visit = args.<Player>getOne("player").get();
 
                     if (r.canBuild(visit)) {
-                        RedProtect.get().lang.sendMessage(src, "cmdmanager.cantkick.member");
+                        RedProtect.get().getLanguageManager().sendMessage(src, "cmdmanager.cantkick.member");
                         return CommandResult.success();
                     }
 
-                    Region rv = RedProtect.get().rm.getTopRegion(visit.getLocation(), this.getClass().getName());
+                    Region rv = RedProtect.get().getRegionManager().getTopRegion(visit.getLocation(), this.getClass().getName());
                     if (rv == null || !rv.getID().equals(r.getID())) {
-                        RedProtect.get().lang.sendMessage(src, "cmdmanager.noplayer.thisregion");
+                        RedProtect.get().getLanguageManager().sendMessage(src, "cmdmanager.noplayer.thisregion");
                         return CommandResult.success();
                     }
 
-                    String sec = String.valueOf(RedProtect.get().config.configRoot().region_settings.delay_after_kick_region);
+                    String sec = String.valueOf(RedProtect.get().getConfigManager().configRoot().region_settings.delay_after_kick_region);
                     if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
                         RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), new Transform<>(visit.getLocation()), new Transform<>(visit.getLocation()), r, true);
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time}", sec));
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time}", sec));
                     } else {
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.already.cantenter").replace("{time}", sec));
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.already.cantenter").replace("{time}", sec));
                     }
                     return CommandResult.success();
                 }).build();

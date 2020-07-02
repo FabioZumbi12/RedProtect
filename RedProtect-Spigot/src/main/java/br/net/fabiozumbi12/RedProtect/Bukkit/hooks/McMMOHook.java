@@ -57,7 +57,7 @@ public class McMMOHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO McMMOPlayerXpGainEvent event. Skill " + event.getSkill().name());
 
         Player player = event.getPlayer();
-        Region region = RedProtect.get().rm.getTopRegion(player.getLocation());
+        Region region = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
         if (region == null) {
             return;
         }
@@ -66,7 +66,7 @@ public class McMMOHook implements Listener {
             event.setCancelled(true);
         }
 
-        if (RedProtect.get().config.configRoot().hooks.mcmmo.fix_acrobatics_fire_leveling && event.getSkill().equals(PrimarySkillType.ACROBATICS) && (!region.canFire() || !region.canDeath())) {
+        if (RedProtect.get().getConfigManager().configRoot().hooks.mcmmo.fix_acrobatics_fire_leveling && event.getSkill().equals(PrimarySkillType.ACROBATICS) && (!region.canFire() || !region.canDeath())) {
             event.setCancelled(true);
         }
     }
@@ -82,7 +82,7 @@ public class McMMOHook implements Listener {
         Player p = e.getPlayer();
 
         //try to fix invisibility on bersek
-        if (RedProtect.get().config.configRoot().hooks.mcmmo.fix_berserk_invisibility && e.getAbility().equals(SuperAbilityType.BERSERK)) {
+        if (RedProtect.get().getConfigManager().configRoot().hooks.mcmmo.fix_berserk_invisibility && e.getAbility().equals(SuperAbilityType.BERSERK)) {
             p.damage(0);
             for (Entity ent : p.getNearbyEntities(10, 10, 10)) {
                 if (ent instanceof LivingEntity) {
@@ -91,13 +91,13 @@ public class McMMOHook implements Listener {
             }
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r == null) {
             return;
         }
 
         if (!r.canSkill(p)) {
-            p.sendMessage(RedProtect.get().lang.get("mcmmolistener.notallowed"));
+            p.sendMessage(RedProtect.get().getLanguageManager().get("mcmmolistener.notallowed"));
             e.setCancelled(true);
         }
         if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED))) {
@@ -110,7 +110,7 @@ public class McMMOHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO SubSkillRandomCheckEvent event.");
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r == null) {
             return;
         }
@@ -128,7 +128,7 @@ public class McMMOHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO McMMOPlayerDisarmEvent event.");
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(e.getDefender().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(e.getDefender().getLocation());
         if (r == null) {
             return;
         }
@@ -146,7 +146,7 @@ public class McMMOHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO SecondaryAbilityEvent event.");
 
         Player p = e.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(e.getPlayer().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(e.getPlayer().getLocation());
         if (r == null) {
             return;
         }
@@ -164,18 +164,18 @@ public class McMMOHook implements Listener {
 
         if (e.getDamager() instanceof Player) {
             Player p = (Player) e.getDamager();
-            Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
 
             if (e.getEntity() instanceof Animals) {
                 if (r != null && !r.canInteractPassives(p)) {
-                    RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpassive");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantpassive");
                     e.setCancelled(true);
                 }
             }
 
             if (e.getEntity() instanceof Player) {
                 if (r != null && !r.canPVP(p, (Player) e.getEntity())) {
-                    RedProtect.get().lang.sendMessage(p, "entitylistener.region.cantpvp");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantpvp");
                     e.setCancelled(true);
                 }
             }
@@ -186,7 +186,7 @@ public class McMMOHook implements Listener {
     public void onFakeEntityDamageEvent(FakeEntityDamageEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO FakeEntityDamageEvent event.");
 
-        Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
 
         if (e.getEntity() instanceof Animals) {
             if (r != null && !r.getFlagBool("passives")) {

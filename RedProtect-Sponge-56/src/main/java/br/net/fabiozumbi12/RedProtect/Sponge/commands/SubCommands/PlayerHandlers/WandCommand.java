@@ -55,18 +55,18 @@ public class WandCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
-                        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK") && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.wand"))
+                        if (RedProtect.get().getConfigManager().getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK") && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.admin.wand"))
                             return CommandResult.success();
 
                         Inventory inv = player.getInventory();
-                        ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().config.configRoot().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
+                        ItemType mat = Sponge.getRegistry().getType(ItemType.class, RedProtect.get().getConfigManager().configRoot().wands.adminWandID).orElse(ItemTypes.GLASS_BOTTLE);
                         ItemStack item = ItemStack.of(mat, 1);
                         item.offer(Keys.ITEM_ENCHANTMENTS, new ArrayList<>());
 
                         if (inv.query(Hotbar.class).offer(item).getType().equals(InventoryTransactionResult.Type.SUCCESS)) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.given").replace("{item}", mat.getName()));
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.wand.given").replace("{item}", mat.getName()));
                         } else {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.wand.nospace").replace("{item}", mat.getName()));
                         }
                     }
                     return CommandResult.success();

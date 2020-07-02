@@ -38,13 +38,13 @@ public class Compat114 implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onTakeBookLectern(PlayerTakeLecternBookEvent event) {
         Player p = event.getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(event.getLectern().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(event.getLectern().getLocation());
         if (r != null) {
             if (!r.canBuild(p)) {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantremove");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantremove");
                 event.setCancelled(true);
             }
-        } else if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).build && !p.hasPermission("redprotect.bypass.world")) {
+        } else if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).build && !p.hasPermission("redprotect.bypass.world")) {
             event.setCancelled(true);
         }
     }

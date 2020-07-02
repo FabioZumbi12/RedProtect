@@ -52,20 +52,20 @@ public class RedefineCommand {
 
                         Region oldRect = args.<Region>getOne("region").get();
                         /*if (oldRect == null) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region);
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + region);
                             return CommandResult.success();
                         }*/
 
-                        if (!RedProtect.get().ph.hasRegionPermLeader(player, "redefine", oldRect)) {
-                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                        if (!RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "redefine", oldRect)) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                             return CommandResult.success();
                         }
 
                         RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
                         if (rb.ready()) {
                             Region r2 = rb.build();
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                            RedProtect.get().rm.add(r2, player.getWorld().getName());
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
+                            RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                             RedProtect.get().firstLocationSelections.remove(player);
                             RedProtect.get().secondLocationSelections.remove(player);

@@ -92,7 +92,7 @@ public class WEHook {
             setSelection(ws, p, pos1, pos2);
         } else {
             worldEdit.getSession(p).getRegionSelector(ws).clear();
-            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.hide"));
+            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.select-we.hide"));
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
@@ -103,14 +103,14 @@ public class WEHook {
         final Region[] r = {null};
 
         if (!p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) {
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.needground");
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.needground");
             return null;
         }
 
         Clipboard clipboard = null;
         ClipboardFormat format = ClipboardFormats.findByFile(file);
         if (format == null) {
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.copyfail");
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.copyfail");
             return null;
         }
 
@@ -158,15 +158,15 @@ public class WEHook {
                 Location min = new Location(world, realTo.getX(), realTo.getY(), realTo.getZ());
                 Location max = new Location(world, locMax.getX(), locMax.getY(), locMax.getZ());
 
-                if (RedProtect.get().config.configRoot().region_settings.autoexpandvert_ondefine) {
+                if (RedProtect.get().getConfigManager().configRoot().region_settings.autoexpandvert_ondefine) {
                     min.setY(0);
                     max.setY(p.getWorld().getMaxHeight());
-                    if (RedProtect.get().config.configRoot().region_settings.claim.miny != -1)
-                        min.setY(RedProtect.get().config.configRoot().region_settings.claim.miny);
-                    if (RedProtect.get().config.configRoot().region_settings.claim.maxy != -1)
-                        max.setY(RedProtect.get().config.configRoot().region_settings.claim.maxy);
+                    if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny != -1)
+                        min.setY(RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny);
+                    if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.maxy != -1)
+                        max.setY(RedProtect.get().getConfigManager().configRoot().region_settings.claim.maxy);
                 }
-                RedProtect.get().lang.sendMessage(p, "regionbuilder.creating");
+                RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.creating");
 
                 // Run claim async
                 Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
@@ -211,9 +211,9 @@ public class WEHook {
 
                 if (sender != null) {
                     if (wRegWorld.regenerate(wReg, eSession)) {
-                        RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
+                        RedProtect.get().getLanguageManager().sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + region.getID().split("@")[0] + " regenerated with success!");
                     } else {
-                        RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
+                        RedProtect.get().getLanguageManager().sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + region.getID().split("@")[0] + "!");
                     }
                 } else {
                     if (wRegWorld.regenerate(wReg, eSession)) {
@@ -226,17 +226,17 @@ public class WEHook {
 
                 if (remove) {
                     region.notifyRemove();
-                    RedProtect.get().rm.remove(region, region.getWorld());
+                    RedProtect.get().getRegionManager().remove(region, region.getWorld());
                 }
 
                 if (delayCount % 50 == 0) {
-                    RedProtect.get().rm.saveAll(true);
+                    RedProtect.get().getRegionManager().saveAll(true);
                 }
 
-                if (RedProtect.get().config.configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().config.configRoot().purge.regen.stop_server_every) {
+                if (RedProtect.get().getConfigManager().configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().getConfigManager().configRoot().purge.regen.stop_server_every) {
 
                     Bukkit.getScheduler().cancelTasks(RedProtect.get());
-                    RedProtect.get().rm.saveAll(false);
+                    RedProtect.get().getRegionManager().saveAll(false);
 
                     Bukkit.getServer().shutdown();
                 }

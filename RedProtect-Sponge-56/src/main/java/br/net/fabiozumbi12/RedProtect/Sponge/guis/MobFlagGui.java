@@ -78,11 +78,11 @@ public class MobFlagGui {
 
         if (str.length() > 0) {
             region.setFlag(RedProtect.get().getVersionHelper().getCause(this.player), flag, str.toString().substring(0, str.toString().length() - 1));
-            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
+            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
         } else {
             region.removeFlag(flag);
-            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", region.getName()));
+            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", region.getName()));
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " REMOVED FLAG " + flag + " of region " + region.getName());
         }
 

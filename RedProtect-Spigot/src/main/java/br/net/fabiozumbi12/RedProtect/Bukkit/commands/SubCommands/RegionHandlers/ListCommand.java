@@ -57,7 +57,7 @@ public class ListCommand implements SubCommand {
                     getRegionforList(sender, args[0], Page);
                     return true;
                 } catch (NumberFormatException e) {
-                    RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.listpage.error");
+                    RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.listpage.error");
                     return true;
                 }
             }
@@ -87,19 +87,19 @@ public class ListCommand implements SubCommand {
                     handleList(player, RedProtect.get().getUtil().PlayerToUUID(args[0]), Page);
                     return true;
                 } catch (NumberFormatException e) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.listpage.error");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.listpage.error");
                     return true;
                 }
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "list", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "list", true);
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1 && RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.list")) {
+        if (args.length == 1 && RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.list")) {
             if (args[0].isEmpty())
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
             else

@@ -54,7 +54,7 @@ public class PriorityCommand implements SubCommand {
             try {
                 prior = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.notnumber");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.notnumber");
                 return true;
             }
             handlePriority(player, prior);
@@ -65,14 +65,14 @@ public class PriorityCommand implements SubCommand {
             try {
                 prior = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.notnumber");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.notnumber");
                 return true;
             }
             handlePrioritySingle(player, prior, args[0]);
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "priority", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "priority", true);
         return true;
     }
 

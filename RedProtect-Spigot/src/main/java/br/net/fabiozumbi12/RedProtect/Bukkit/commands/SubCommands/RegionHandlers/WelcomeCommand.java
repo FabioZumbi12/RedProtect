@@ -63,7 +63,7 @@ public class WelcomeCommand implements SubCommand {
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "welcome", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "welcome", true);
         return true;
     }
 

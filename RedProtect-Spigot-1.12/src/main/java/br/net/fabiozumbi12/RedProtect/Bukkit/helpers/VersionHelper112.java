@@ -134,7 +134,7 @@ public class VersionHelper112 implements VersionHelper {
             guiRoot.gui_flags.put("block-transform", new FlagGuiCategory.GuiFlag(Material.BOOKSHELF.name(), 12));
         }
 
-        for (String key : RedProtect.get().config.getDefFlagsValues().keySet()) {
+        for (String key : RedProtect.get().getConfigManager().getDefFlagsValues().keySet()) {
             guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag(Material.GOLDEN_APPLE.name(), 0));
         }
         return guiRoot;

@@ -42,14 +42,14 @@ public class PurgeLimitCommand {
                 .description(Text.of("Command to check purge limit."))
                 .permission("redprotect.command.purge-limit")
                 .executor((src, args) -> {
-                    if (!(src instanceof Player) || !RedProtect.get().config.configRoot().purge.enabled) {
+                    if (!(src instanceof Player) || !RedProtect.get().getConfigManager().configRoot().purge.enabled) {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
 
-                        int limit = RedProtect.get().ph.getPurgeLimit(player);
-                        long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
-                        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[]{
+                        int limit = RedProtect.get().getPermissionHandler().getPurgeLimit(player);
+                        long amount = RedProtect.get().getRegionManager().getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
+                        RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.purge-limit", new Replacer[]{
                                 new Replacer("{limit}", String.valueOf(limit)),
                                 new Replacer("{total}", String.valueOf(amount))
                         });

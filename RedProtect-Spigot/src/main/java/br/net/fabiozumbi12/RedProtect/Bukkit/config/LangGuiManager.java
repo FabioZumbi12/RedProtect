@@ -37,7 +37,7 @@ import java.util.List;
 public class LangGuiManager extends GuiLangCore {
 
     public LangGuiManager() {
-        String resLang = "gui" + RedProtect.get().config.configRoot().language + ".properties";
+        String resLang = "gui" + RedProtect.get().getConfigManager().configRoot().language + ".properties";
         pathLang = RedProtect.get().getDataFolder() + File.separator + resLang;
 
         File lang = new File(pathLang);
@@ -54,11 +54,11 @@ public class LangGuiManager extends GuiLangCore {
         loadBaseLang();
 
         // Restore form backup
-        if (!RedProtect.get().config.backupGuiName.isEmpty()) {
-            RedProtect.get().config.backupGuiName.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".name", v));
+        if (!RedProtect.get().getConfigManager().backupGuiName.isEmpty()) {
+            RedProtect.get().getConfigManager().backupGuiName.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".name", v));
         }
-        if (!RedProtect.get().config.backupGuiDescription.isEmpty()) {
-            RedProtect.get().config.backupGuiDescription.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".description", v));
+        if (!RedProtect.get().getConfigManager().backupGuiDescription.isEmpty()) {
+            RedProtect.get().getConfigManager().backupGuiDescription.forEach((k, v) -> loadedLang.put("gui.flags." + k + ".description", v));
         }
 
         updateLang();

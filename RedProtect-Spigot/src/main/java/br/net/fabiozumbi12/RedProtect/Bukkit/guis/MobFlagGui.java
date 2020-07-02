@@ -160,7 +160,7 @@ public class MobFlagGui implements Listener {
                 }
 
                 ItemStack item = event.getCurrentItem();
-                if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
+                if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
                     ItemMeta itemMeta = item.getItemMeta();
                     List<String> lore = itemMeta.getLore();
                     if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
@@ -223,7 +223,7 @@ public class MobFlagGui implements Listener {
 
     private void setFlagValue(Object value) {
         region.setFlag(this.player, flag, value);
-        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
+        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
     }
 
@@ -237,7 +237,7 @@ public class MobFlagGui implements Listener {
             greenMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().lang.get("gui.selectall")));
+        greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectall")));
         greenWool.setItemMeta(greenMeta);
         items.add(greenWool);
 
@@ -247,7 +247,7 @@ public class MobFlagGui implements Listener {
             redMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().lang.get("gui.selectnone")));
+        redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectnone")));
         redWool.setItemMeta(redMeta);
         items.add(redWool);
 

@@ -47,32 +47,32 @@ public class BlockLimitCommand {
                         User offp = RedProtect.get().getUtil().getUser(args.<String>getOne("player").get());
 
                         if (offp == null) {
-                            RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get()));
+                            RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.noplayer.thisname").replace("{player}", args.<String>getOne("player").get()));
                             return CommandResult.success();
                         }
-                        int limit = RedProtect.get().ph.getPlayerBlockLimit(offp);
-                        if (limit < 0 || RedProtect.get().ph.hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
-                            RedProtect.get().lang.sendMessage(src, "cmdmanager.nolimit");
+                        int limit = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(offp);
+                        if (limit < 0 || RedProtect.get().getPermissionHandler().hasPerm(offp, "redprotect.limits.blocks.unlimited")) {
+                            RedProtect.get().getLanguageManager().sendMessage(src, "cmdmanager.nolimit");
                             return CommandResult.success();
                         }
 
-                        int currentUsed = RedProtect.get().rm.getTotalRegionSize(offp.getName(), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
+                        int currentUsed = RedProtect.get().getRegionManager().getTotalRegionSize(offp.getName(), offp.getPlayer().isPresent() ? offp.getPlayer().get().getWorld().getName() : null);
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.yourarea") + currentUsed + RedProtect.get().getLanguageManager().get("general.color") + "/&e" + limit + RedProtect.get().getLanguageManager().get("general.color"));
                         return CommandResult.success();
                     } else if (src instanceof Player) {
                         Player player = (Player) src;
 
-                        int limit = RedProtect.get().ph.getPlayerBlockLimit(player);
-                        if (limit < 0 || RedProtect.get().ph.hasPerm(player, "redprotect.limits.blocks.unlimited")) {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.nolimit");
+                        int limit = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(player);
+                        if (limit < 0 || RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.limits.blocks.unlimited")) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.nolimit");
                             return CommandResult.success();
                         }
                         String uuid = player.getUniqueId().toString();
-                        int currentUsed = RedProtect.get().rm.getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName() : null);
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.yourarea") + currentUsed + RedProtect.get().lang.get("general.color") + "/&e" + limit + RedProtect.get().lang.get("general.color"));
+                        int currentUsed = RedProtect.get().getRegionManager().getTotalRegionSize(uuid, player.getPlayer().isPresent() ? player.getPlayer().get().getWorld().getName() : null);
+                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.yourarea") + currentUsed + RedProtect.get().getLanguageManager().get("general.color") + "/&e" + limit + RedProtect.get().getLanguageManager().get("general.color"));
                         return CommandResult.success();
                     }
-                    RedProtect.get().lang.sendCommandHelp(src, "blocklimit", true);
+                    RedProtect.get().getLanguageManager().sendCommandHelp(src, "blocklimit", true);
                     return CommandResult.success();
                 }).build();
     }

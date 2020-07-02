@@ -41,28 +41,28 @@ public class FactionsHook implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCreateFac(EventFactionsChunksChange event) {
-        if (RedProtect.get().config.configRoot().hooks.factions.claim_over_rps) {
+        if (RedProtect.get().getConfigManager().configRoot().hooks.factions.claim_over_rps) {
             return;
         }
         for (PS chunk : event.getChunks()) {
             Player p = event.getMPlayer().getPlayer();
-            Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(chunk.asBukkitChunk());
+            Set<Region> regs = RedProtect.get().getRegionManager().getRegionsForChunk(chunk.asBukkitChunk());
             if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
                 event.setCancelled(true);
-                RedProtect.get().lang.sendMessage(p, "rpfactions.cantclaim");
+                RedProtect.get().getLanguageManager().sendMessage(p, "rpfactions.cantclaim");
             }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onExpandFac(EventFactionsExpansions event) {
-        if (RedProtect.get().config.configRoot().hooks.factions.claim_over_rps) {
+        if (RedProtect.get().getConfigManager().configRoot().hooks.factions.claim_over_rps) {
             return;
         }
         Player p = event.getMPlayer().getPlayer();
-        Set<Region> regs = RedProtect.get().rm.getRegionsForChunk(p.getLocation().getChunk());
+        Set<Region> regs = RedProtect.get().getRegionManager().getRegionsForChunk(p.getLocation().getChunk());
         if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
-            RedProtect.get().lang.sendMessage(p, "rpfactions.cantclaim");
+            RedProtect.get().getLanguageManager().sendMessage(p, "rpfactions.cantclaim");
             event.setCancelled(true);
         }
     }

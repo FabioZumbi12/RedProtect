@@ -52,30 +52,30 @@ public class ValueCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
             if (r != null) {
-                if (RedProtect.get().ph.hasRegionPermLeader(player, "value", r)) {
-                    if (r.getArea() <= RedProtect.get().config.ecoRoot().max_area_toget_value) {
+                if (RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "value", r)) {
+                    if (r.getArea() <= RedProtect.get().getConfigManager().ecoRoot().max_area_toget_value) {
                         r.setValue(EconomyManager.getRegionValue(r));
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.is").replace("{value}", EconomyManager.getFormatted(r.getValue()) + " " + RedProtect.get().config.ecoRoot().economy_name));
+                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.value.is").replace("{value}", EconomyManager.getFormatted(r.getValue()) + " " + RedProtect.get().getConfigManager().ecoRoot().economy_name));
 
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Region Value: " + r.getValue());
                         return true;
                     } else {
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.value.areabig").replace("{maxarea}", String.valueOf(RedProtect.get().config.ecoRoot().max_area_toget_value)));
+                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.value.areabig").replace("{maxarea}", String.valueOf(RedProtect.get().getConfigManager().ecoRoot().max_area_toget_value)));
                         return true;
                     }
                 } else {
-                    RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                     return true;
                 }
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "value", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "value", true);
         return true;
     }
 

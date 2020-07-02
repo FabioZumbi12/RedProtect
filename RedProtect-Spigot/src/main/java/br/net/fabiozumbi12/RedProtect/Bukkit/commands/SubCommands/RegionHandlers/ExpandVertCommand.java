@@ -55,45 +55,45 @@ public class ExpandVertCommand implements SubCommand {
         Region r;
         switch (args.length) {
             case 0:
-                r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                     return true;
                 }
                 break;
             //rp expand-vert [region]
             case 1:
-                r = RedProtect.get().rm.getRegion(args[0], player.getWorld().getName());
+                r = RedProtect.get().getRegionManager().getRegion(args[0], player.getWorld().getName());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                     return true;
                 }
                 break;
             //rp expand-vert [region] [world]
             case 2:
                 if (Bukkit.getWorld(args[1]) == null) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalidworld");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.invalidworld");
                     return true;
                 }
-                r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[1]).getName());
+                r = RedProtect.get().getRegionManager().getRegion(args[1], Bukkit.getWorld(args[1]).getName());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                     return true;
                 }
                 break;
             default:
-                RedProtect.get().lang.sendCommandHelp(sender, "expand-vert", true);
+                RedProtect.get().getLanguageManager().sendCommandHelp(sender, "expand-vert", true);
                 return true;
         }
 
-        if (!RedProtect.get().ph.hasRegionPermAdmin(player, "expand-vert", r)) {
-            RedProtect.get().lang.sendMessage(player, "no.permission");
+        if (!RedProtect.get().getPermissionHandler().hasRegionPermAdmin(player, "expand-vert", r)) {
+            RedProtect.get().getLanguageManager().sendMessage(player, "no.permission");
             return true;
         }
 
         r.setMaxY(player.getWorld().getMaxHeight());
         r.setMinY(0);
-        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.expandvert.success").replace("{region}", r.getName()).replace("{miny}", String.valueOf(r.getMinY())).replace("{maxy}", String.valueOf(r.getMaxY())));
+        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.expandvert.success").replace("{region}", r.getName()).replace("{miny}", String.valueOf(r.getMinY())).replace("{maxy}", String.valueOf(r.getMaxY())));
         return true;
     }
 

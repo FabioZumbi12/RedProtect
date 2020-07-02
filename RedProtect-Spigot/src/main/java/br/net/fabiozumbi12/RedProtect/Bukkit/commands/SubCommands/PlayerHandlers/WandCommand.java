@@ -50,23 +50,23 @@ public class WandCommand implements SubCommand {
         }
 
         Player player = (Player) sender;
-        if (RedProtect.get().config.getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK") && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.wand"))
+        if (RedProtect.get().getConfigManager().getWorldClaimType(player.getWorld().getName()).equalsIgnoreCase("BLOCK") && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.admin.wand"))
             return true;
 
         if (args.length == 0) {
             Inventory inv = player.getInventory();
-            Material mat = Material.getMaterial(RedProtect.get().config.configRoot().wands.adminWandID);
+            Material mat = Material.getMaterial(RedProtect.get().getConfigManager().configRoot().wands.adminWandID);
             ItemStack item = new ItemStack(mat);
             if (!inv.contains(mat) && inv.firstEmpty() != -1) {
                 inv.addItem(item);
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.given").replace("{item}", item.getType().name()));
+                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.wand.given").replace("{item}", item.getType().name()));
             } else {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.wand.nospace").replace("{item}", item.getType().name()));
+                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.wand.nospace").replace("{item}", item.getType().name()));
             }
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "wand", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "wand", true);
         return true;
     }
 

@@ -57,16 +57,16 @@ public class KillCommand implements SubCommand {
             try {
                 entity = EntityType.valueOf(args[1].toUpperCase());
             } catch (Exception ignored) {
-                RedProtect.get().lang.sendCommandHelp(sender, "kill", true);
+                RedProtect.get().getLanguageManager().sendCommandHelp(sender, "kill", true);
                 return true;
             }
         } else {
-            RedProtect.get().lang.sendCommandHelp(sender, "kill", true);
+            RedProtect.get().getLanguageManager().sendCommandHelp(sender, "kill", true);
             return true;
         }
 
         if (world == null) {
-            RedProtect.get().lang.sendMessage(sender, "cmdmanager.region.invalidworld");
+            RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalidworld");
             return true;
         }
 

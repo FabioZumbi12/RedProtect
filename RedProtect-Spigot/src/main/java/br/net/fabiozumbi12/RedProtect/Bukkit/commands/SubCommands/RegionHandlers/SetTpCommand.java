@@ -50,23 +50,23 @@ public class SetTpCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
             if (r != null) {
-                if (RedProtect.get().ph.hasRegionPermLeader(player, "settp", r)) {
+                if (RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "settp", r)) {
                     r.setTPPoint(player.getLocation());
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.ok");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.settp.ok");
                     return true;
                 } else {
-                    RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                     return true;
                 }
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                 return true;
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "settp", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "settp", true);
         return true;
     }
 

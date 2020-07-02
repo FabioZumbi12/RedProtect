@@ -65,12 +65,12 @@ public class Compat111 implements Listener {
 
         if (event.getHitBlock() != null && event.getHitBlock().getType() == Material.CHORUS_FLOWER) {
             Player p = (Player) event.getEntity().getShooter();
-            Region r = RedProtect.get().rm.getTopRegion(event.getHitBlock().getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(event.getHitBlock().getLocation());
             if (r != null && !r.canBuild(p)) {
                 event.getEntity().remove();
                 event.getHitBlock().setType(Material.AIR);
                 Bukkit.getScheduler().runTask(RedProtect.get(), () -> event.getHitBlock().setType(Material.CHORUS_FLOWER));
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
             }
         }
     }

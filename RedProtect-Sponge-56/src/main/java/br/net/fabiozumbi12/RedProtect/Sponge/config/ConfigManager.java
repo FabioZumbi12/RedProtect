@@ -452,12 +452,12 @@ public class ConfigManager extends CoreConfigManager {
                 boolean blocks = b.getState().getId().contains(root.region_settings.block_id) ||
                         root.needed_claim_to_build.allow_break_blocks.stream().anyMatch(str -> str.equalsIgnoreCase(b.getState().getId()));
                 if (!blocks) {
-                    RedProtect.get().lang.sendMessage(p, "need.claim.blockids");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "need.claim.blockids");
                 } else {
                     return false;
                 }
             }
-            RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
+            RedProtect.get().getLanguageManager().sendMessage(p, "need.claim.tobuild");
         }
         return bool;
     }
@@ -472,7 +472,7 @@ public class ConfigManager extends CoreConfigManager {
                 && root.needed_claim_to_build.allow_break_blocks.stream().noneMatch(str -> str.equalsIgnoreCase(b.getState().getId()))
                 && !b.getState().getId().contains(root.region_settings.block_id)
                 && !b.getState().getId().contains("sign")) {
-            RedProtect.get().lang.sendMessage(p, "need.claim.tobuild");
+            RedProtect.get().getLanguageManager().sendMessage(p, "need.claim.tobuild");
             return true;
         }
         return false;

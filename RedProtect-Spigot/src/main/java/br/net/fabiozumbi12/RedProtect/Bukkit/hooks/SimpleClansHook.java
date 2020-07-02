@@ -38,10 +38,10 @@ public class SimpleClansHook {
     }
 
     public static boolean inWar(Region r, Player attack, Player defend) {
-        if (!RedProtect.get().config.configRoot().hooks.clans.use_war) {
+        if (!RedProtect.get().getConfigManager().configRoot().hooks.clans.use_war) {
             return false;
         }
-        if (!RedProtect.get().config.configRoot().hooks.clans.war_on_server_regions && r.isLeader(RedProtect.get().config.configRoot().region_settings.default_leader)) {
+        if (!RedProtect.get().getConfigManager().configRoot().hooks.clans.war_on_server_regions && r.isLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
             return false;
         }
         ClanPlayer atClan = RedProtect.get().hooks.clanManager.getClanPlayer(attack);

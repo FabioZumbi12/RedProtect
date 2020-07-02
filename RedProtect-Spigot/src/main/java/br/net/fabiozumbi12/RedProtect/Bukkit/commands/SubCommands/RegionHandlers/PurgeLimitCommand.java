@@ -42,16 +42,16 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.Han
 public class PurgeLimitCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender || !RedProtect.get().config.configRoot().purge.enabled) {
+        if (sender instanceof ConsoleCommandSender || !RedProtect.get().getConfigManager().configRoot().purge.enabled) {
             HandleHelpPage(sender, 1);
             return true;
         }
 
         Player player = (Player) sender;
 
-        int limit = RedProtect.get().ph.getPurgeLimit(player);
-        long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
-        RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-limit", new Replacer[]{
+        int limit = RedProtect.get().getPermissionHandler().getPurgeLimit(player);
+        long amount = RedProtect.get().getRegionManager().getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
+        RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.purge-limit", new Replacer[]{
                 new Replacer("{limit}", String.valueOf(limit)),
                 new Replacer("{total}", String.valueOf(amount))
         });

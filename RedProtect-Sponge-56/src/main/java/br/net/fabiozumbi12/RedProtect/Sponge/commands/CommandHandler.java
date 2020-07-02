@@ -79,7 +79,7 @@ public class CommandHandler {
                     all.addAll(arguments.getAll("subCommands"));
                     String[] args = all.toArray(new String[0]);
 
-                    if (args.length == 0 || !RedProtect.get().ph.hasCommandPerm(sender, "admin")) {
+                    if (args.length == 0 || !RedProtect.get().getPermissionHandler().hasCommandPerm(sender, "admin")) {
                         HandleHelpPage(sender, 1);
                         return cmdr;
                     }
@@ -89,11 +89,11 @@ public class CommandHandler {
                             if (sender instanceof Player) {
                                 Optional<ItemStack> hand = ((Player) sender).getItemInHand(HandTypes.MAIN_HAND);
                                 if (hand.isPresent())
-                                    plugin.lang.sendMessage(sender, "&aMaterial name: " + hand.get().getItem().getName());
+                                    plugin.getLanguageManager().sendMessage(sender, "&aMaterial name: " + hand.get().getItem().getName());
                                 else
-                                    plugin.lang.sendMessage(sender, "&aMaterial name: AIR");
+                                    plugin.getLanguageManager().sendMessage(sender, "&aMaterial name: AIR");
                             } else {
-                                plugin.lang.sendMessage(sender, "&cThis command can be used only by online players holding an item!");
+                                plugin.getLanguageManager().sendMessage(sender, "&cThis command can be used only by online players holding an item!");
                             }
                             return cmdr;
                         }
@@ -102,7 +102,7 @@ public class CommandHandler {
                             final boolean[] save = {false};
 
                             // Reset uuids
-                            RedProtect.get().rm.getAllRegions().forEach(r -> {
+                            RedProtect.get().getRegionManager().getAllRegions().forEach(r -> {
                                 r.getLeaders().forEach(rp -> {
                                     if (RedProtect.get().getUtil().isUUIDs(rp.getUUID())) {
                                         rp.setUUID(rp.getPlayerName());
@@ -125,7 +125,7 @@ public class CommandHandler {
                                 // Set uuids for online players
                                 Sponge.getServer().getOnlinePlayers().forEach(p -> {
 
-                                    if (RedProtect.get().config.configRoot().online_mode) {
+                                    if (RedProtect.get().getConfigManager().configRoot().online_mode) {
 
                                         // Update player names based on uuids
                                         r.getLeaders().forEach(rp -> {
@@ -172,7 +172,7 @@ public class CommandHandler {
                                 });
                             });
                             if (save[0]) {
-                                RedProtect.get().rm.saveAll(true);
+                                RedProtect.get().getRegionManager().saveAll(true);
                                 RedProtect.get().logger.success("Fixed some online players uuids!");
                             } else {
                                 RedProtect.get().logger.success("No uuids fixed!");
@@ -202,8 +202,8 @@ public class CommandHandler {
                                     RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'file' before convert from FILE to Mysql.");
                                     return cmdr;
                                 } else {
-                                    RedProtect.get().config.configRoot().file_type = "mysql";
-                                    RedProtect.get().config.save();
+                                    RedProtect.get().getConfigManager().configRoot().file_type = "mysql";
+                                    RedProtect.get().getConfigManager().save();
                                     RedProtect.get().reload();
                                     RedProtect.get().logger.success("Redprotect reloaded with Mysql as database! Ready to use!");
                                     return cmdr;
@@ -221,8 +221,8 @@ public class CommandHandler {
                                     RedProtect.get().logger.severe("ERROR: Check if your 'file-type' configuration is set to 'mysql' before convert from MYSQL to File.");
                                     return cmdr;
                                 } else {
-                                    RedProtect.get().config.configRoot().file_type = "file";
-                                    RedProtect.get().config.save();
+                                    RedProtect.get().getConfigManager().configRoot().file_type = "file";
+                                    RedProtect.get().getConfigManager().save();
                                     RedProtect.get().reload();
                                     RedProtect.get().logger.success("Redprotect reloaded with File as database! Ready to use!");
                                     return cmdr;
@@ -235,17 +235,17 @@ public class CommandHandler {
                         }
 
                         if (args[0].isEmpty()) {
-                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
-                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().lang.get("general.color") + "."));
-                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "For more information about the commands, type [&e/rp ?" + RedProtect.get().lang.get("general.color") + "]."));
-                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "For a tutorial, type [&e/rp tutorial" + RedProtect.get().lang.get("general.color") + "]."));
-                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "---------------------------------------------------"));
+                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "---------------- " + RedProtect.get().container.getName() + " ----------------"));
+                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "Developed by &eFabioZumbi12" + RedProtect.get().getLanguageManager().get("general.color") + "."));
+                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "For more information about the commands, type [&e/rp ?" + RedProtect.get().getLanguageManager().get("general.color") + "]."));
+                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "For a tutorial, type [&e/rp tutorial" + RedProtect.get().getLanguageManager().get("general.color") + "]."));
+                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "---------------------------------------------------"));
                             return cmdr;
                         }
 
                         if (args[0].equalsIgnoreCase("list-all")) {
                             int total = 0;
-                            for (Region r : RedProtect.get().rm.getAllRegions()) {
+                            for (Region r : RedProtect.get().getRegionManager().getAllRegions()) {
                                 RedProtect.get().logger.info("&a[" + total + "]" + "Region: " + r.getName() + "&r | &3World: " + r.getWorld() + "&r");
                                 total++;
                             }
@@ -254,16 +254,16 @@ public class CommandHandler {
                         }
 
                         if (args[0].equalsIgnoreCase("load-all")) {
-                            RedProtect.get().rm.clearDB();
+                            RedProtect.get().getRegionManager().clearDB();
                             try {
-                                RedProtect.get().rm.loadAll();
-                                RedProtect.get().getUtil().ReadAllDB(RedProtect.get().rm.getAllRegions());
+                                RedProtect.get().getRegionManager().loadAll();
+                                RedProtect.get().getUtil().ReadAllDB(RedProtect.get().getRegionManager().getAllRegions());
                             } catch (Exception e) {
                                 RedProtect.get().logger.severe("Error on load all regions from database files:");
                                 CoreUtil.printJarVersion();
                                 e.printStackTrace();
                             }
-                            RedProtect.get().logger.success(RedProtect.get().rm.getAllRegions().size() + " regions has been loaded from database files!");
+                            RedProtect.get().logger.success(RedProtect.get().getRegionManager().getAllRegions().size() + " regions has been loaded from database files!");
                             return cmdr;
                         }
 
@@ -278,23 +278,8 @@ public class CommandHandler {
                         }
 
                         if (args[0].equalsIgnoreCase("reload-config")) {
-                            try {
-                                RedProtect.get().commandHandler.unregisterAll();
-
-                                RedProtect.get().config = new ConfigManager(RedProtect.get().factory);
-
-                                RedProtect.get().lang = new LangManager();
-                                RedProtect.get().guiLang = new LangGuiManager();
-
-                                RedProtect.get().logger.info("Re-registering commands...");
-                                RedProtect.get().commandHandler = new CommandHandler(RedProtect.get());
-
-                                RedProtect.get().logger.success("Redprotect Plus configs reloaded!");
-                            } catch (ObjectMappingException e) {
-                                RedProtect.get().logger.severe("Redprotect Plus configs NOT reloaded!");
-                                CoreUtil.printJarVersion();
-                                e.printStackTrace();
-                            }
+                            RedProtect.get().reloadConfigs();
+                            RedProtect.get().logger.success("Redprotect configs reloaded!");
                             return cmdr;
                         }
                     }
@@ -308,19 +293,19 @@ public class CommandHandler {
                             }
                             Optional<World> w = RedProtect.get().getServer().getWorld(args[2]);
                             if (!w.isPresent()) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.invalidworld"));
                                 return cmdr;
                             }
-                            Region r = RedProtect.get().rm.getRegion(args[1], w.get().getName());
+                            Region r = RedProtect.get().getRegionManager().getRegion(args[1], w.get().getName());
                             if (r == null) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args[1]);
+                                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("correct.usage") + " &eInvalid region: " + args[1]);
                                 return cmdr;
                             }
 
                             if (WEHook.undo(r.getID())) {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
+                                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.regen.undo.sucess").replace("{region}", r.getName()));
                             } else {
-                                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
+                                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.regen.undo.none").replace("{region}", r.getName()));
                             }
                             return cmdr;
                         }
@@ -334,8 +319,8 @@ public class CommandHandler {
                             } catch (Exception ignored) {
                             }
                         }
-                        sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "-------------------------------------------------"));
-                        int regionsPage = RedProtect.get().config.configRoot().region_settings.region_list.region_per_page;
+                        sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "-------------------------------------------------"));
+                        int regionsPage = RedProtect.get().getConfigManager().configRoot().region_settings.region_list.region_per_page;
                         int total = 0;
                         int last = 0;
 
@@ -350,8 +335,8 @@ public class CommandHandler {
                             int count;
 
                             Set<Region> wregions = new HashSet<>();
-                            for (Region r : RedProtect.get().rm.getRegionsByWorld(w.getName())) {
-                                SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().config.configRoot().region_settings.date_format);
+                            for (Region r : RedProtect.get().getRegionManager().getRegionsByWorld(w.getName())) {
+                                SimpleDateFormat dateformat = new SimpleDateFormat(RedProtect.get().getConfigManager().configRoot().region_settings.date_format);
                                 Date now = null;
                                 try {
                                     now = dateformat.parse(RedProtect.get().getUtil().dateNow());
@@ -367,12 +352,12 @@ public class CommandHandler {
                                     e.printStackTrace();
                                 }
                                 long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
-                                for (String play : RedProtect.get().config.configRoot().purge.ignore_regions_from_players) {
+                                for (String play : RedProtect.get().getConfigManager().configRoot().purge.ignore_regions_from_players) {
                                     if (r.isLeader(play) || r.isAdmin(play)) {
                                         break;
                                     }
                                 }
-                                if (!r.isLeader(RedProtect.get().config.configRoot().region_settings.default_leader) && days > RedProtect.get().config.configRoot().purge.remove_oldest && r.getArea() >= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
+                                if (!r.isLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader) && days > RedProtect.get().getConfigManager().configRoot().purge.remove_oldest && r.getArea() >= RedProtect.get().getConfigManager().configRoot().purge.regen.max_area_regen) {
                                     wregions.add(r);
                                 }
                             }
@@ -380,7 +365,7 @@ public class CommandHandler {
                                 continue;
                             }
 
-                            String colorChar = RedProtect.get().config.configRoot().region_settings.world_colors.get(w.getName());
+                            String colorChar = RedProtect.get().getConfigManager().configRoot().region_settings.world_colors.get(w.getName());
 
                             int totalLocal = wregions.size();
                             total += totalLocal;
@@ -401,17 +386,17 @@ public class CommandHandler {
                                     count = i;
                                     Region r = it.get(i);
 
-                                    if (RedProtect.get().ph.hasRegionPermAdmin(sender, "teleport", null)) {
+                                    if (RedProtect.get().getPermissionHandler().hasRegionPermAdmin(sender, "teleport", null)) {
                                         if (first) {
                                             first = false;
                                             worldregions.append(Text.builder()
                                                     .append(RedProtect.get().getUtil().toText("&8" + r.getName() + "(" + r.getArea() + ")"))
-                                                    .onHover(TextActions.showText(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                                    .onHover(TextActions.showText(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                                     .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                                         } else {
                                             worldregions.append(Text.builder()
-                                                    .append(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + "(" + r.getArea() + ")"))
-                                                    .onHover(TextActions.showText(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.list.hover").replace("{region}", r.getName()))))
+                                                    .append(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + ", &8" + r.getName() + "(" + r.getArea() + ")"))
+                                                    .onHover(TextActions.showText(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.list.hover").replace("{region}", r.getName()))))
                                                     .onClick(TextActions.runCommand("/rp " + getCmd("teleport") + " " + r.getName() + " " + r.getWorld())).build());
                                         }
                                     } else {
@@ -421,7 +406,7 @@ public class CommandHandler {
                                                     .append(RedProtect.get().getUtil().toText("&8" + r.getName() + r.getArea())).build());
                                         } else {
                                             worldregions.append(Text.builder()
-                                                    .append(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + ", &8" + r.getName() + r.getArea())).build());
+                                                    .append(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + ", &8" + r.getName() + r.getArea())).build());
                                         }
                                     }
                                     lastLocal = count;
@@ -430,16 +415,16 @@ public class CommandHandler {
 
                                 last += lastLocal + 1;
                                 sender.sendMessage(RedProtect.get().getUtil().toText("-----"));
-                                sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + RedProtect.get().lang.get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]&r: "));
-                                sender.sendMessages(worldregions.append(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + ".")).build());
+                                sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + RedProtect.get().getLanguageManager().get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]&r: "));
+                                sender.sendMessages(worldregions.append(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + ".")).build());
                             }
                         }
-                        sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
+                        sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "---------------- " + last + "/" + total + " -----------------"));
                         if (last < total) {
-                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.listpage.more").replace("{player}", "" + (Page + 1))));
+                            sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.listpage.more").replace("{player}", "" + (Page + 1))));
                         } else {
                             if (Page != 1) {
-                                sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.listpage.nomore")));
+                                sender.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.listpage.nomore")));
                             }
                         }
                         return cmdr;
@@ -447,7 +432,7 @@ public class CommandHandler {
 
                     if (args[0].equalsIgnoreCase("save-all")) {
                         RedProtect.get().logger.SaveLogs();
-                        RedProtect.get().logger.success(RedProtect.get().rm.saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
+                        RedProtect.get().logger.success(RedProtect.get().getRegionManager().saveAll(args.length == 2 && args[1].equalsIgnoreCase("-f")) + " regions saved with success!");
                         return cmdr;
                     }
 
@@ -519,7 +504,7 @@ public class CommandHandler {
 
         if (args.length >= 1 && (e.getCommand().equals("redprotect") || e.getCommand().equals("rp"))) {
 
-            List<String> conditions = RedProtect.get().config.configRoot().command_confirm;
+            List<String> conditions = RedProtect.get().getConfigManager().configRoot().command_confirm;
             conditions.addAll(Arrays.asList(getCmd("yes"), getCmd("no")));
 
             if (conditions.stream().anyMatch(cmd -> checkCmd(args[0], cmd))) {
@@ -528,14 +513,14 @@ public class CommandHandler {
 
                     // Segure delete command
                     if (source instanceof Player && cmd.equalsIgnoreCase("delete") && commandArgs.split(" ").length == 2) {
-                        if (RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName()) == null)
+                        if (RedProtect.get().getRegionManager().getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName()) == null)
                             return;
 
-                        Region r = RedProtect.get().rm.getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(((Player) source).getLocation(), CommandHandler.class.getName());
                         commandArgs = commandArgs + " " + r.getName() + " " + r.getWorld();
                     }
                     cmdConfirm.put(source.getName(), commandArgs);
-                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                    RedProtect.get().getLanguageManager().sendMessage(source, "cmdmanager.confirm",
                             new Replacer[]{
                                     new Replacer("{cmd}", "/" + e.getCommand() + " " + cmd),
                                     new Replacer("{cmd-yes}", getCmd("yes")),
@@ -550,10 +535,10 @@ public class CommandHandler {
                     cmdConfirm.remove(source.getName());
                 } else if (checkCmd(args[0], "no")) {
                     cmdConfirm.remove(source.getName());
-                    RedProtect.get().lang.sendMessage(source, "cmdmanager.usagecancelled");
+                    RedProtect.get().getLanguageManager().sendMessage(source, "cmdmanager.usagecancelled");
                     e.setCancelled(true);
                 } else {
-                    RedProtect.get().lang.sendMessage(source, "cmdmanager.confirm",
+                    RedProtect.get().getLanguageManager().sendMessage(source, "cmdmanager.confirm",
                             new Replacer[]{
                                     new Replacer("{cmd}", "/" + e.getCommand() + " " + cmdConfirm.get(source.getName())),
                                     new Replacer("{cmd-yes}", getCmd("yes")),

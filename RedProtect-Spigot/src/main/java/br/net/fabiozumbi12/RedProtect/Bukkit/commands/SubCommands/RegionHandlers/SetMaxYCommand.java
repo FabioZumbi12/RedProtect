@@ -56,34 +56,34 @@ public class SetMaxYCommand implements SubCommand {
         //rp setmaxy <size>
         switch (args.length) {
             case 1:
-                r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                     return true;
                 }
                 break;
             //rp setmaxy <size> [region]
             case 2:
-                r = RedProtect.get().rm.getRegion(args[1], player.getWorld().getName());
+                r = RedProtect.get().getRegionManager().getRegion(args[1], player.getWorld().getName());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return true;
                 }
                 break;
             //rp setmaxy <size> [region] [world]
             case 3:
                 if (Bukkit.getWorld(args[2]) == null) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalidworld");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.invalidworld");
                     return true;
                 }
-                r = RedProtect.get().rm.getRegion(args[1], Bukkit.getWorld(args[2]).getName());
+                r = RedProtect.get().getRegionManager().getRegion(args[1], Bukkit.getWorld(args[2]).getName());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return true;
                 }
                 break;
             default:
-                RedProtect.get().lang.sendCommandHelp(sender, "setmaxy", true);
+                RedProtect.get().getLanguageManager().sendCommandHelp(sender, "setmaxy", true);
                 return true;
         }
 
@@ -92,21 +92,21 @@ public class SetMaxYCommand implements SubCommand {
         try {
             int size = Integer.parseInt(args[0]);
             if ((size - r.getMinY()) <= 1) {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.ysiszesmatch");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.ysiszesmatch");
                 return true;
             }
 
-            if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.setmaxy")) {
-                RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+            if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.admin.setmaxy")) {
+                RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                 return true;
             }
 
             r.setMaxY(size);
-            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.setmaxy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
+            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.setmaxy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " SETMAXY of region " + r.getName() + " to " + args[0]);
             return true;
         } catch (NumberFormatException e) {
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.invalid.number");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.invalid.number");
             return true;
         }
     }

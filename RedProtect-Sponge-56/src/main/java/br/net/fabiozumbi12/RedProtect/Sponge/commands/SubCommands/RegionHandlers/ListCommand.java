@@ -81,7 +81,7 @@ public class ListCommand {
                         }
                     }
 
-                    RedProtect.get().lang.sendCommandHelp(src, "list", true);
+                    RedProtect.get().getLanguageManager().sendCommandHelp(src, "list", true);
                     return CommandResult.success();
                 }).build();
     }

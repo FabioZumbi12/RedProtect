@@ -70,21 +70,37 @@ public class RedProtect extends JavaPlugin {
     public int bukkitVersion;
     public Economy economy;
     public Permission permission;
-    public RegionManager rm;
-    public PermissionHandler ph;
-    public ConfigManager config;
-    public LangManager lang;
     public LangGuiManager guiLang;
-    public CommandHandler cmdHandler;
+    protected CommandHandler cmdHandler;
     private RedProtectUtil redProtectUtil = new RedProtectUtil(this);
     private RedProtectAPI redProtectAPI;
     private int autoSaveID;
     private VersionHelper rpvHelper;
     private SpigetUpdater updater;
     private ModListener modListener;
+    private RegionManager rm;
+    private PermissionHandler ph;
+    private LangManager lang;
+    private ConfigManager config;
 
     public static RedProtect get() {
         return plugin;
+    }
+
+    public RegionManager getRegionManager() {
+        return this.rm;
+    }
+
+    public PermissionHandler getPermissionHandler() {
+        return this.ph;
+    }
+
+    public LangManager getLanguageManager() {
+        return this.lang;
+    }
+
+    public ConfigManager getConfigManager() {
+        return this.config;
     }
 
     public VersionHelper getVersionHelper() {
@@ -172,7 +188,6 @@ public class RedProtect extends JavaPlugin {
 
         logger.info("Re-registering commands...");
         cmdHandler = new CommandHandler(this);
-
     }
 
     private void startLoad() throws Exception {

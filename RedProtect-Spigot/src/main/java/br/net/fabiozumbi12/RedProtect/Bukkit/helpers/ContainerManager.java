@@ -39,12 +39,12 @@ import java.util.List;
 public class ContainerManager {
 
     public boolean canOpen(Block b, Player p) {
-        if (!RedProtect.get().config.configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
+        if (!RedProtect.get().getConfigManager().configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
             return true;
         }
 
         String blocktype = b.getType().name();
-        List<String> blocks = RedProtect.get().config.configRoot().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks;
 
         boolean deny = true;
         if (blocks.stream().anyMatch(blocktype::matches)) {
@@ -88,11 +88,11 @@ public class ContainerManager {
     }
 
     public boolean canBreak(Player p, Block b) {
-        if (!RedProtect.get().config.configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
+        if (!RedProtect.get().getConfigManager().configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
             return true;
         }
-        Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
-        if (reg == null && !RedProtect.get().config.configRoot().private_cat.allow_outside) {
+        Region reg = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
+        if (reg == null && !RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside) {
             return true;
         }
         int x = b.getX();
@@ -110,7 +110,7 @@ public class ContainerManager {
         }
 
         String signbtype = b.getType().name();
-        List<String> blocks = RedProtect.get().config.configRoot().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks;
 
         if (blocks.stream().anyMatch(signbtype::matches)) {
             for (int sx = -1; sx <= 1; sx++) {
@@ -153,11 +153,11 @@ public class ContainerManager {
     }
 
     public boolean canWorldBreak(Block b) {
-        if (!RedProtect.get().config.configRoot().private_cat.use) {
+        if (!RedProtect.get().getConfigManager().configRoot().private_cat.use) {
             return true;
         }
-        Region reg = RedProtect.get().rm.getTopRegion(b.getLocation());
-        if (reg == null && !RedProtect.get().config.configRoot().private_cat.allow_outside) {
+        Region reg = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
+        if (reg == null && !RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside) {
             return true;
         }
         int x = b.getX();
@@ -171,7 +171,7 @@ public class ContainerManager {
         }
 
         String signbtype = b.getType().name();
-        List<String> blocks = RedProtect.get().config.configRoot().private_cat.allowed_blocks;
+        List<String> blocks = RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks;
 
         if (blocks.stream().anyMatch(signbtype::matches)) {
             for (int sx = -1; sx <= 1; sx++) {
@@ -212,7 +212,7 @@ public class ContainerManager {
     }
 
     public boolean validatePrivateSign(String[] lines) {
-        String priv = RedProtect.get().lang.get("blocklistener.container.signline");
+        String priv = RedProtect.get().getLanguageManager().get("blocklistener.container.signline");
         String line1 = lines[0];
         return line1.equalsIgnoreCase("[private]") ||
                 line1.equalsIgnoreCase("private") ||
@@ -243,7 +243,7 @@ public class ContainerManager {
     public boolean isContainer(Block b) {
         Block container = getBlockRelative(b);
         String signbtype = container.getType().name();
-        return RedProtect.get().config.configRoot().private_cat.allowed_blocks.stream().anyMatch(signbtype::matches);
+        return RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(signbtype::matches);
     }
 
     public boolean isSign(Block b) {

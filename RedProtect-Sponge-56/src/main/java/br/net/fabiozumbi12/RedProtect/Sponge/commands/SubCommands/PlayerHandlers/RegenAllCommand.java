@@ -43,11 +43,11 @@ public class RegenAllCommand {
                     if (!RedProtect.get().hooks.WE) {
                         return CommandResult.success();
                     }
-                    int regen = RedProtect.get().rm.regenAll(args.<String>getOne("player").get());
+                    int regen = RedProtect.get().getRegionManager().regenAll(args.<String>getOne("player").get());
                     if (regen <= 0) {
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.noneregenerated"));
                     } else {
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args.<String>getOne("player").get()));
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args.<String>getOne("player").get()));
                     }
                     return CommandResult.success();
                 }).build();

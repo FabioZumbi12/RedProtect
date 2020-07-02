@@ -64,27 +64,27 @@ public class CreatePortalCommand {
                         String regionFrom = args.<String>getOne("regionNameFrom").get();
                         String regionTo = args.<String>getOne("regionNameTo").get();
 
-                        Region r = RedProtect.get().rm.getRegion(regionTo, w.getWorldName());
+                        Region r = RedProtect.get().getRegionManager().getRegion(regionTo, w.getWorldName());
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.warning").replace("{region}", regionTo));
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.createportal.warning").replace("{region}", regionTo));
                         }
 
-                        PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
+                        PlayerRegion serverName = new PlayerRegion(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader, RedProtect.get().getConfigManager().configRoot().region_settings.default_leader);
                         String name = Normalizer.normalize(regionFrom.replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
 
-                        Region r2 = RedProtect.get().rm.getRegion(name, w.getWorldName());
+                        Region r2 = RedProtect.get().getRegionManager().getRegion(name, w.getWorldName());
                         if (r == r2) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.createportal.equals"));
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.createportal.equals"));
                             return CommandResult.success();
                         }
 
                         if (r2 != null) {
                             if ((!r2.isLeader(player) || !r2.isAdmin(player)) && !r2.canBuild(player)) {
-                                RedProtect.get().lang.sendMessage(player, "no.permission");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "no.permission");
                                 return CommandResult.success();
                             }
-                            RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getWorldName()));
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
+                            RedProtect.get().getLanguageManager().sendMessage(player, String.format(RedProtect.get().getLanguageManager().get("cmdmanager.region.portalcreated"), name, regionTo, w.getWorldName()));
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.portalhint");
                             r2.setFlag(RedProtect.get().getVersionHelper().getCause(src), "set-portal", regionTo + " " + w.getWorldName());
 
                             RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " CREATED A PORTAL " + r2.getName() + " to " + regionTo + " world " + w.getWorldName());
@@ -92,11 +92,11 @@ public class CreatePortalCommand {
                             RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
                             if (rb2.ready()) {
                                 r2 = rb2.build();
-                                RedProtect.get().lang.sendMessage(player, String.format(RedProtect.get().lang.get("cmdmanager.region.portalcreated"), name, regionTo, w.getWorldName()));
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.portalhint");
+                                RedProtect.get().getLanguageManager().sendMessage(player, String.format(RedProtect.get().getLanguageManager().get("cmdmanager.region.portalcreated"), name, regionTo, w.getWorldName()));
+                                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.portalhint");
 
                                 r2.setFlag(RedProtect.get().getVersionHelper().getCause(src), "set-portal", regionTo + " " + w.getWorldName());
-                                RedProtect.get().rm.add(r2, player.getWorld().getName());
+                                RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                                 RedProtect.get().firstLocationSelections.remove(player);
                                 RedProtect.get().secondLocationSelections.remove(player);

@@ -126,10 +126,10 @@ public class VersionHelper7 implements VersionHelper {
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.use-potions", Tristate.TRUE);
         permissionService.getDefaults().getTransientSubjectData().setPermission(new HashSet<>(), "redprotect.flag.redstone", Tristate.TRUE);
 
-        if (RedProtect.get().config.ecoRoot().enchantments.values.size() < Sponge.getRegistry().getAllOf(EnchantmentType.class).size()) {
+        if (RedProtect.get().getConfigManager().ecoRoot().enchantments.values.size() < Sponge.getRegistry().getAllOf(EnchantmentType.class).size()) {
             Sponge.getRegistry().getAllOf(EnchantmentType.class).forEach((type) -> {
-                if (!RedProtect.get().config.ecoRoot().enchantments.values.containsKey(type.getName())) {
-                    RedProtect.get().config.ecoRoot().enchantments.values.put(type.getName(), 10L);
+                if (!RedProtect.get().getConfigManager().ecoRoot().enchantments.values.containsKey(type.getName())) {
+                    RedProtect.get().getConfigManager().ecoRoot().enchantments.values.put(type.getName(), 10L);
                 }
             });
         }
@@ -202,10 +202,10 @@ public class VersionHelper7 implements VersionHelper {
                 continue;
             }
             ItemStack stack = item.peek().get();
-            value += ((RedProtect.get().config.ecoRoot().items.values.get(stack.getType().getName()) * stack.getQuantity()));
+            value += ((RedProtect.get().getConfigManager().ecoRoot().items.values.get(stack.getType().getName()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                 for (Enchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
-                    value += ((RedProtect.get().config.ecoRoot().enchantments.values.get(enchant.getType().getName()) * enchant.getLevel()));
+                    value += ((RedProtect.get().getConfigManager().ecoRoot().enchantments.values.get(enchant.getType().getName()) * enchant.getLevel()));
                 }
             }
         }

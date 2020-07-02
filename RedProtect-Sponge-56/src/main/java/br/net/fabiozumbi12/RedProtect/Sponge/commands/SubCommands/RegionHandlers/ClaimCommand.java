@@ -58,9 +58,9 @@ public class ClaimCommand {
                     } else {
                         Player player = (Player) src;
 
-                        String claimmode = RedProtect.get().config.getWorldClaimType(player.getWorld().getName());
+                        String claimmode = RedProtect.get().getConfigManager().getWorldClaimType(player.getWorld().getName());
                         if (!claimmode.equalsIgnoreCase("WAND") && !claimmode.equalsIgnoreCase("BOTH")) {
-                            RedProtect.get().lang.sendMessage(player, "blocklistener.region.blockmode");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "blocklistener.region.blockmode");
                             return CommandResult.success();
                         }
 
@@ -77,8 +77,8 @@ public class ClaimCommand {
                         RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, new PlayerRegion(player.getUniqueId().toString(), player.getName()), addedAdmins, false);
                         if (rb2.ready()) {
                             Region r2 = rb2.build();
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                            RedProtect.get().rm.add(r2, player.getWorld().getName());
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                            RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                             RedProtect.get().firstLocationSelections.remove(player);
                             RedProtect.get().secondLocationSelections.remove(player);

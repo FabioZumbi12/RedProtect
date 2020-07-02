@@ -86,10 +86,10 @@ public class BlockListener {
         World w = p.getWorld();
         BlockSnapshot b = loc.createSnapshot();
 
-        Region signr = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+        Region signr = RedProtect.get().getRegionManager().getTopRegion(loc, this.getClass().getName());
 
         if (signr != null && !signr.canSign(p)) {
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantinteract");
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
             e.setCancelled(true);
             return;
         }
@@ -97,30 +97,30 @@ public class BlockListener {
         Text line1 = lines.get(0);
 
         if (lines.size() != 4) {
-            this.setErrorSign(e, p, RedProtect.get().lang.get("blocklistener.sign.wronglines"));
+            this.setErrorSign(e, p, RedProtect.get().getLanguageManager().get("blocklistener.sign.wronglines"));
             return;
         }
 
-        if (RedProtect.get().config.configRoot().server_protection.sign_spy.enabled) {
-            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
-            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
-            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
-            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
-            if (!RedProtect.get().config.configRoot().server_protection.sign_spy.only_console) {
+        if (RedProtect.get().getConfigManager().configRoot().server_protection.sign_spy.enabled) {
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.player").replace("{player}", p.getName())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
+            Sponge.getServer().getConsole().sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
+            if (!RedProtect.get().getConfigManager().configRoot().server_protection.sign_spy.only_console) {
                 for (Player play : Sponge.getServer().getOnlinePlayers()) {
                     if (play.hasPermission("redprotect.signspy")/* && !play.equals(p)*/) {
-                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
-                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.player").replace("{player}", p.getName())));
-                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
-                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.location").replace("{x}", "" + loc.getX()).replace("{y}", "" + loc.getY()).replace("{z}", "" + loc.getZ()).replace("{world}", w.getName())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.player").replace("{player}", p.getName())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.lines12").replace("{line1}", lines.get(0).toPlain()).replace("{line2}", lines.get(1).toPlain())));
+                        play.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.signspy.lines34").replace("{line3}", lines.get(2).toPlain()).replace("{line4}", lines.get(3).toPlain())));
                     }
                 }
             }
         }
 
-        if ((RedProtect.get().config.configRoot().private_cat.use && s.getType().equals(TileEntityTypes.SIGN))) {
-            Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
-            boolean out = RedProtect.get().config.configRoot().private_cat.allow_outside;
+        if ((RedProtect.get().getConfigManager().configRoot().private_cat.use && s.getType().equals(TileEntityTypes.SIGN))) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(loc, this.getClass().getName());
+            boolean out = RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside;
             //private sign
             if (cont.validatePrivateSign(lines.get(0).toPlain())) {
                 if (out || r != null) {
@@ -131,15 +131,15 @@ public class BlockListener {
                         }
                         lines.set(1, RedProtect.get().getUtil().toText(p.getName().substring(0, length)));
                         e.getText().setElements(lines);
-                        RedProtect.get().lang.sendMessage(p, "blocklistener.container.protected");
+                        RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.protected");
                         return;
                     } else {
-                        RedProtect.get().lang.sendMessage(p, "blocklistener.container.notprotected");
+                        RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notprotected");
                         //RedProtect.get().getVersionHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
                         return;
                     }
                 } else {
-                    RedProtect.get().lang.sendMessage(p, "blocklistener.container.notregion");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notregion");
                     //RedProtect.get().getVersionHelper().digBlock(p, ItemStack.of(ItemTypes.SIGN,1), s.getLocation().getBlockPosition());
                     return;
                 }
@@ -147,43 +147,43 @@ public class BlockListener {
         }
 
         if (line1.toPlain().equalsIgnoreCase("[rp]")) {
-            String claimmode = RedProtect.get().config.getWorldClaimType(p.getWorld().getName());
-            if ((!claimmode.equalsIgnoreCase("BLOCK") && !claimmode.equalsIgnoreCase("BOTH")) && !RedProtect.get().ph.hasPerm(p, "redprotect.admin.create")) {
-                this.setErrorSign(e, p, RedProtect.get().lang.get("blocklistener.region.claimmode"));
+            String claimmode = RedProtect.get().getConfigManager().getWorldClaimType(p.getWorld().getName());
+            if ((!claimmode.equalsIgnoreCase("BLOCK") && !claimmode.equalsIgnoreCase("BOTH")) && !RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.create")) {
+                this.setErrorSign(e, p, RedProtect.get().getLanguageManager().get("blocklistener.region.claimmode"));
                 return;
             }
 
             RegionBuilder rb = new EncompassRegionBuilder(e);
             if (rb.ready()) {
                 Region r = rb.build();
-                lines.set(0, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("blocklistener.region.signcreated")));
+                lines.set(0, RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("blocklistener.region.signcreated")));
                 lines.set(1, RedProtect.get().getUtil().toText(r.getName()));
                 e.getText().setElements(lines);
-                RedProtect.get().rm.add(r, r.getWorld());
+                RedProtect.get().getRegionManager().add(r, r.getWorld());
             }
-        } else if (RedProtect.get().config.configRoot().region_settings.enable_flag_sign && line1.toPlain().equalsIgnoreCase("[flag]") && signr != null) {
+        } else if (RedProtect.get().getConfigManager().configRoot().region_settings.enable_flag_sign && line1.toPlain().equalsIgnoreCase("[flag]") && signr != null) {
             if (signr.getFlags().containsKey(lines.get(1).toPlain())) {
                 String flag = lines.get(1).toPlain();
                 if (!(signr.getFlags().get(flag) instanceof Boolean)) {
-                    RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.region.sign.cantflag"));
+                    RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.sign.cantflag"));
                     RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
                     return;
                 }
-                if (RedProtect.get().ph.hasFlagPerm(p, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
-                    if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().ph.hasPerm(p, "redprotect.admin.flag." + flag)) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) {
+                    if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag." + flag)) {
                         lines.set(1, RedProtect.get().getUtil().toText(flag));
                         lines.set(2, RedProtect.get().getUtil().toText("&3&l" + signr.getName()));
-                        lines.set(3, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("region.value") + " " + RedProtect.get().lang.translBool(signr.getFlagString(flag))));
+                        lines.set(3, RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("region.value") + " " + RedProtect.get().getLanguageManager().translBool(signr.getFlagString(flag))));
                         e.getText().setElements(lines);
-                        RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.placed");
-                        RedProtect.get().config.putSign(signr.getID(), b.getLocation().get());
+                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.sign.placed");
+                        RedProtect.get().getConfigManager().putSign(signr.getID(), b.getLocation().get());
                         return;
                     }
                 }
-                RedProtect.get().lang.sendMessage(p, "cmdmanager.region.flag.nopermregion");
+                RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.flag.nopermregion");
                 RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
             } else {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.sign.invalidflag");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.sign.invalidflag");
                 RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
             }
         }
@@ -191,28 +191,28 @@ public class BlockListener {
 
     void setErrorSign(ChangeSignEvent e, Player p, String error) {
         List<Text> lines = e.getTargetTile().get(Keys.SIGN_LINES).get();
-        lines.set(0, RedProtect.get().getUtil().toText(RedProtect.get().lang.get("regionbuilder.signerror")));
+        lines.set(0, RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("regionbuilder.signerror")));
         e.getTargetTile().offer(Keys.SIGN_LINES, lines);
-        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("regionbuilder.signerror") + ": " + error);
+        RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("regionbuilder.signerror") + ": " + error);
     }
 
     private boolean canPlaceList(World w, String type) {
         //blacklist
-        List<String> blt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
+        List<String> blt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
-        List<String> wlt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
+        List<String> wlt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
         return wlt.isEmpty() || wlt.stream().anyMatch(type::matches);
     }
 
     private boolean canBreakList(World w, String type) {
         //blacklist
-        List<String> blt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
+        List<String> blt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
         if (blt.stream().anyMatch(type::matches)) return false;
 
         //whitelist
-        List<String> wlt = RedProtect.get().config.globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
+        List<String> wlt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
         return wlt.isEmpty() || wlt.stream().anyMatch(type::matches);
     }
 
@@ -225,8 +225,8 @@ public class BlockListener {
         World w = bloc.getExtent();
 
         ItemType m = RedProtect.get().getVersionHelper().getItemInHand(p);
-        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+        boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
+        Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation().get(), this.getClass().getName());
 
         if (r == null && canPlaceList(w, b.getState().getType().getName())) {
             return;
@@ -235,7 +235,7 @@ public class BlockListener {
         if (r != null) {
 
             if (!r.canMinecart(p) && m.getName().contains("minecart")) {
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantplace");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantplace");
                 e.setCancelled(true);
                 return;
             }
@@ -246,17 +246,17 @@ public class BlockListener {
 
             try {
                 if (!r.canBuild(p) && !r.canPlace(b)) {
-                    RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
                     e.setCancelled(true);
                 } else {
-                    if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass") && antih &&
+                    if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass") && antih &&
                             (m.equals(ItemTypes.HOPPER) || m.getName().contains("rail"))) {
                         int x = bloc.getBlockX();
                         int y = bloc.getBlockY();
                         int z = bloc.getBlockZ();
                         BlockSnapshot ib = w.createSnapshot(x, y + 1, z);
                         if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)) {
-                            RedProtect.get().lang.sendMessage(p, "blocklistener.container.chestinside");
+                            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.chestinside");
                             e.setCancelled(true);
                         }
                     }
@@ -274,13 +274,13 @@ public class BlockListener {
         BlockSnapshot b = e.getTransactions().get(0).getOriginal();
         Location<World> bloc = b.getLocation().get();
 
-        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
-        Region r = RedProtect.get().rm.getTopRegion(bloc, this.getClass().getName());
+        boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
+        Region r = RedProtect.get().getRegionManager().getTopRegion(bloc, this.getClass().getName());
 
-        if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
+        if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass")) {
             BlockSnapshot ib = bloc.getBlockRelative(Direction.UP).createSnapshot();
             if ((antih && !cont.canBreak(p, ib)) || !cont.canBreak(p, b)) {
-                RedProtect.get().lang.sendMessage(p, "blocklistener.container.breakinside");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.breakinside");
                 e.setCancelled(true);
                 return;
             }
@@ -297,13 +297,13 @@ public class BlockListener {
         if (r != null && r.canBuild(p) && b.getState().getType().getName().equalsIgnoreCase("sign")) {
             Sign s = (Sign) b.getLocation().get().getTileEntity().get();
             if (s.lines().get(0).toPlain().equalsIgnoreCase("[flag]")) {
-                RedProtect.get().config.removeSign(r.getID(), b.getLocation().get());
+                RedProtect.get().getConfigManager().removeSign(r.getID(), b.getLocation().get());
                 return;
             }
         }
 
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b)) {
-            RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         }
     }
@@ -315,7 +315,7 @@ public class BlockListener {
         BlockState sourceState = locatable.getBlockState();
 
         if (sourceState.getType() == BlockTypes.FIRE || sourceState.getType() == BlockTypes.LAVA || sourceState.getType() == BlockTypes.FLOWING_LAVA) {
-            Region r = RedProtect.get().rm.getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(e.getTransactions().get(0).getOriginal().getLocation().get(), this.getClass().getName());
             if (r != null && !r.canFire()) {
                 RedProtect.get().logger.debug(LogLevel.BLOCKS, "Tryed to PLACE FIRE!");
                 e.setCancelled(true);
@@ -331,7 +331,7 @@ public class BlockListener {
 
         if (sourceState.getType() == BlockTypes.FIRE) {
             BlockSnapshot b = e.getTransactions().get(0).getOriginal();
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation().get(), this.getClass().getName());
             if (r != null && !r.canFire() && b.getState().getType() != BlockTypes.FIRE) {
                 RedProtect.get().logger.debug(LogLevel.BLOCKS, "Tryed to break from FIRE!");
                 e.setCancelled(true);
@@ -344,7 +344,7 @@ public class BlockListener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is ChangeBlockEvent.Grow event");
 
         BlockSnapshot b = e.getTransactions().get(0).getOriginal();
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation().get(), this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation().get(), this.getClass().getName());
         if (r != null && !r.canGrow()) {
             e.setCancelled(true);
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "Cancel grow " + b.getState().getName());
@@ -358,7 +358,7 @@ public class BlockListener {
         Entity ent = e.getTargetEntity();
         Location<World> l = e.getTargetEntity().getLocation();
 
-        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l, this.getClass().getName());
         if (r == null) return;
 
         if (ent instanceof Hanging && e.getCause().first(Monster.class).isPresent()) {
@@ -371,7 +371,7 @@ public class BlockListener {
         if ((ent instanceof Boat || ent instanceof Minecart) && e.getCause().first(Player.class).isPresent()) {
             Player p = e.getCause().first(Player.class).get();
             if (!r.canMinecart(p)) {
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
                 e.setCancelled(true);
             }
         }
@@ -385,12 +385,12 @@ public class BlockListener {
 
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockIgniteEvent event.");
 
-        Region r = RedProtect.get().rm.getTopRegion(b.getLocation(), this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation(), this.getClass().getName());
         if (r != null && !r.canFire()) {
             if (ignit.first(Player.class).isPresent()) {
                 Player p = ignit.first(Player.class).get();
                 if (!r.canBuild(p)) {
-                    RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantplace");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantplace");
                     e.setCancelled(true);
                     return;
                 }
@@ -419,7 +419,7 @@ public class BlockListener {
         MatterProperty mat = sourceState.getProperty(MatterProperty.class).orElse(null);
         if (mat != null && mat.getValue() == MatterProperty.Matter.LIQUID) {
             e.getLocations().forEach(loc -> {
-                Region r = RedProtect.get().rm.getTopRegion(loc, this.getClass().getName());
+                Region r = RedProtect.get().getRegionManager().getTopRegion(loc, this.getClass().getName());
                 if (r != null && !r.canFlow()) {
                     e.setCancelled(true);
                 }
@@ -431,7 +431,7 @@ public class BlockListener {
     public void onLightning(LightningEvent.Pre e, @First Lightning light) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is LightningStrikeEvent event");
         Location<World> l = light.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l, this.getClass().getName());
         if (r != null && !r.canFire()) {
             e.setCancelled(true);
         }
@@ -441,7 +441,7 @@ public class BlockListener {
     public void onDecay(ChangeBlockEvent.Decay e) {
         BlockSnapshot bfrom = e.getTransactions().get(0).getOriginal();
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockFromToEvent.Decay event is to " + bfrom.getState().getType().getName() + " from " + bfrom.getState().getType().getName());
-        Region r = RedProtect.get().rm.getTopRegion(bfrom.getLocation().get(), this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(bfrom.getLocation().get(), this.getClass().getName());
         if (r != null && !r.leavesDecay()) {
             e.setCancelled(true);
         }
@@ -461,11 +461,11 @@ public class BlockListener {
             l = p.getLocation();
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(l, this.getClass().getName());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l, this.getClass().getName());
         if (r != null) {
             ItemType itemInHand = RedProtect.get().getVersionHelper().getItemInHand(p);
             if (itemInHand.equals(ItemTypes.ARMOR_STAND) && !r.canBuild(p)) {
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
                 event.setCancelled(true);
             }
         }
@@ -477,9 +477,9 @@ public class BlockListener {
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "BlockListener - Is InteractBlockEvent.Primary event");
 
-        if (!RedProtect.get().ph.hasPerm(p, "redprotect.bypass")) {
+        if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass")) {
             if (b.getState().getType().getName().contains("sign") && !cont.canBreak(p, b)) {
-                RedProtect.get().lang.sendMessage(p, "blocklistener.container.breakinside");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.breakinside");
                 event.setCancelled(true);
             }
         }

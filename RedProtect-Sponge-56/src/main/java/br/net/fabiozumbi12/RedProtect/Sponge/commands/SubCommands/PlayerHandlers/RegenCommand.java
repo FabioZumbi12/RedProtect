@@ -56,12 +56,12 @@ public class RegenCommand {
                         }
                         Optional<World> w = RedProtect.get().getServer().getWorld(args.<String>getOne("world").get());
                         if (!w.isPresent()) {
-                            RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                            RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.invalidworld"));
                             return CommandResult.success();
                         }
-                        Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), w.get().getName());
+                        Region r = RedProtect.get().getRegionManager().getRegion(args.<String>getOne("region").get(), w.get().getName());
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
+                            RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("correct.usage") + " &eInvalid region: " + args.<String>getOne("region").get());
                             return CommandResult.success();
                         }
 
@@ -74,9 +74,9 @@ public class RegenCommand {
                             return CommandResult.success();
                         }
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                             return CommandResult.success();
                         }
 
@@ -84,7 +84,7 @@ public class RegenCommand {
                         return CommandResult.success();
                     }
 
-                    RedProtect.get().lang.sendCommandHelp(src, "regen", true);
+                    RedProtect.get().getLanguageManager().sendCommandHelp(src, "regen", true);
                     return CommandResult.success();
                 })
 
@@ -96,7 +96,7 @@ public class RegenCommand {
                             }
 
                             RedProtect.get().getUtil().stopRegen = true;
-                            RedProtect.get().lang.sendMessage(src, "&aRegen will stop now. To continue reload the plugin!");
+                            RedProtect.get().getLanguageManager().sendMessage(src, "&aRegen will stop now. To continue reload the plugin!");
                             return CommandResult.success();
                         }).build(), "stop")
                 .build();

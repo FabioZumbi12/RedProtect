@@ -43,11 +43,11 @@ public class RemoveAllCommand {
                     if (!RedProtect.get().hooks.WE) {
                         return CommandResult.success();
                     }
-                    int removed = RedProtect.get().rm.removeAll(args.<String>getOne("Player").get());
+                    int removed = RedProtect.get().getRegionManager().removeAll(args.<String>getOne("Player").get());
                     if (removed <= 0) {
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.noneremoved"));
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.noneremoved"));
                     } else {
-                        RedProtect.get().lang.sendMessage(src, RedProtect.get().lang.get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args.<String>getOne("Player").get()));
+                        RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.removed").replace("{regions}", removed + "").replace("{player}", args.<String>getOne("Player").get()));
                     }
                     return CommandResult.success();
                 }).build();

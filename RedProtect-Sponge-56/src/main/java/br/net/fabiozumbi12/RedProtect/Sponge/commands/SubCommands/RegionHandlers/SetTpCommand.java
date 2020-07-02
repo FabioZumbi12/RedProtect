@@ -47,16 +47,16 @@ public class SetTpCommand {
                     } else {
                         Player player = (Player) src;
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r != null) {
-                            if (RedProtect.get().ph.hasRegionPermLeader(player, "settp", r)) {
+                            if (RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "settp", r)) {
                                 r.setTPPoint(player.getLocation());
-                                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.settp.ok");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.settp.ok");
                             } else {
-                                RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                                RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                             }
                         } else {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                         }
                     }
                     return CommandResult.success();

@@ -68,15 +68,15 @@ public class EconomyManager {
                             if (item == null || item.getAmount() == 0) {
                                 continue;
                             }
-                            regionCost = regionCost + ((RedProtect.get().config.ecoRoot().items.values.getOrDefault(item.getType().name(), 0L) * item.getAmount()) / factor);
+                            regionCost = regionCost + ((RedProtect.get().getConfigManager().ecoRoot().items.values.getOrDefault(item.getType().name(), 0L) * item.getAmount()) / factor);
                             if (item.getEnchantments().size() > 0) {
                                 for (Enchantment enchant : item.getEnchantments().keySet()) {
-                                    regionCost = regionCost + ((RedProtect.get().config.ecoRoot().enchantments.values.getOrDefault(enchant.getName(), 0L) * item.getEnchantments().get(enchant)) / factor);
+                                    regionCost = regionCost + ((RedProtect.get().getConfigManager().ecoRoot().enchantments.values.getOrDefault(enchant.getName(), 0L) * item.getEnchantments().get(enchant)) / factor);
                                 }
                             }
                         }
                     } else {
-                        regionCost = regionCost + RedProtect.get().config.ecoRoot().items.values.getOrDefault(b.getType().name(), 0L);
+                        regionCost = regionCost + RedProtect.get().getConfigManager().ecoRoot().items.values.getOrDefault(b.getType().name(), 0L);
                     }
                 }
             }
@@ -85,11 +85,11 @@ public class EconomyManager {
     }
 
     public static String getCostMessage(Region r) {
-        return RedProtect.get().lang.get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().config.ecoRoot().economy_name;
+        return RedProtect.get().getLanguageManager().get("economy.forsale") + " &6" + getFormatted(r.getValue()) + " &2" + RedProtect.get().getConfigManager().ecoRoot().economy_name;
     }
 
     public static String getFormatted(long value) {
-        return RedProtect.get().config.ecoRoot().economy_symbol + value;
+        return RedProtect.get().getConfigManager().ecoRoot().economy_symbol + value;
     }
 
     public static boolean putToSell(Region r, String uuid, long value) {
@@ -99,8 +99,8 @@ public class EconomyManager {
             r.setValue(value);
             r.setWelcome(getCostMessage(r));
             r.setFlag(Bukkit.getConsoleSender(), "for-sale", true);
-            if (RedProtect.get().config.ecoRoot().rename_region) {
-                RedProtect.get().rm.renameRegion(RedProtect.get().getUtil().nameGen(RedProtect.get().getUtil().UUIDtoPlayer(uuid), r.getWorld()), r);
+            if (RedProtect.get().getConfigManager().ecoRoot().rename_region) {
+                RedProtect.get().getRegionManager().renameRegion(RedProtect.get().getUtil().nameGen(RedProtect.get().getUtil().UUIDtoPlayer(uuid), r.getWorld()), r);
             }
             return true;
         } catch (Exception e) {

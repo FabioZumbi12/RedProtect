@@ -61,17 +61,17 @@ public class CopyFlagCommand {
                         Region from = args.<Region>getOne("region1").get();
                         Region to = args.<Region>getOne("region2").get();
                         /*if (from == null) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region1);
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + region1);
                             return CommandResult.success();
                         }
                         if (to == null) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region2);
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + region2);
                             return CommandResult.success();
                         }*/
                         for (Map.Entry<String, Object> key : from.getFlags().entrySet()) {
                             to.setFlag(RedProtect.get().getVersionHelper().getCause(src), key.getKey(), key.getValue());
                         }
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.copied") + from.getName() + " > " + to.getName());
+                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.copied") + from.getName() + " > " + to.getName());
                         RedProtect.get().logger.addLog("Player " + player.getName() + " Copied FLAGS from " + from.getName() + " to " + to.getName());
                     }
                     return CommandResult.success();

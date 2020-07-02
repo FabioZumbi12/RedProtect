@@ -49,17 +49,17 @@ public class TutorialCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial");
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial1");
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial2");
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial3");
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial4");
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial5");
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial6");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial1");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial2");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial3");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial4");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial5");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial6");
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "tutorial", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "tutorial", true);
         return true;
     }
 

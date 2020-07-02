@@ -64,13 +64,13 @@ public class Compat19 implements Listener {
 
         if (event.getEntity() instanceof Player && event.isGliding()) {
             Player p = (Player) event.getEntity();
-            Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
-                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_glide) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_glide) {
                     event.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantglide");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantglide");
                 }
-            } else if (!r.canFly(p) && !RedProtect.get().ph.hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
+            } else if (!r.canFly(p) && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
                 event.setCancelled(true);
             }
         }
@@ -82,7 +82,7 @@ public class Compat19 implements Listener {
 
         // Glide options
         if (!p.hasPermission("redprotect.bypass.glide")) {
-            if (!RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_elytra) {
+            if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_elytra) {
                 ItemStack item = p.getInventory().getChestplate();
                 if (item != null && item.getType().equals(Material.ELYTRA)) {
                     PlayerInventory inv = p.getInventory();
@@ -93,7 +93,7 @@ public class Compat19 implements Listener {
                         inv.setItem(inv.firstEmpty(), item);
                     }
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1);
-                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantequip");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantequip");
                 }
             }
         }
@@ -116,24 +116,24 @@ public class Compat19 implements Listener {
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
-            RedProtect.get().lang.sendMessage(p, "cmdmanager.region.tpcancelled");
+            RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.tpcancelled");
         }
 
         if (itemInHand != null && (event.getAction().name().equals("RIGHT_CLICK_BLOCK") || b == null)) {
             Material hand = itemInHand.getType();
-            Region r = RedProtect.get().rm.getTopRegion(l);
+            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
             // Deny chorus teleport
             if (r != null && hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true);
                 event.setUseItemInHand(Event.Result.DENY);
             }
             // Deny glide boost
             if (r == null && p.isGliding() && itemInHand.getType().name().contains("FIREWORK") && !p.hasPermission("redprotect.bypass.glide") &&
-                    !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
+                    !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
                 event.setUseItemInHand(Event.Result.DENY);
                 event.setCancelled(true);
-                RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantboost");
+                RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantboost");
             }
         }
     }
@@ -141,16 +141,16 @@ public class Compat19 implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         // Deny arrow booster
-        Region r = RedProtect.get().rm.getTopRegion(e.getEntity().getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
         if (r == null && e.getEntity() instanceof Player && e.getDamager() instanceof Arrow) {
             Player p = (Player) e.getEntity();
             Arrow arrow = (Arrow)e.getDamager();
             if (arrow.getShooter() instanceof Player && p.isGliding()) {
                 if (arrow.getShooter().equals(p) && !p.hasPermission("redprotect.bypass.glide") &&
-                        !RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
+                        !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
                     e.setCancelled(true);
                     arrow.remove();
-                    RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantboost");
+                    RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantboost");
                 }
             }
         }
@@ -164,23 +164,23 @@ public class Compat19 implements Listener {
         Location lto = e.getTo();
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
-            final Region rfrom = RedProtect.get().rm.getTopRegion(lfrom);
-            final Region rto = RedProtect.get().rm.getTopRegion(lto);
+            final Region rfrom = RedProtect.get().getRegionManager().getTopRegion(lfrom);
+            final Region rto = RedProtect.get().getRegionManager().getTopRegion(lto);
 
             if (rfrom != null && !rfrom.canTeleport(p)) {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
             if (rto != null && !rto.canTeleport(p)) {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
         }
 
         if (p.getInventory().getChestplate() != null &&
                 p.getInventory().getChestplate().getType().equals(Material.ELYTRA) &&
-                !RedProtect.get().config.globalFlagsRoot().worlds.get(lto.getWorld().getName()).player_glide.allow_elytra) {
-            RedProtect.get().lang.sendMessage(p, "globallistener.elytra.cantworld");
+                !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(lto.getWorld().getName()).player_glide.allow_elytra) {
+            RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantworld");
             e.setCancelled(true);
         }
     }
@@ -193,12 +193,12 @@ public class Compat19 implements Listener {
 
         Player p = (Player) e.getEntity();
         Entity proj = e.getProjectile();
-        List<String> Pots = RedProtect.get().config.globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
+        List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
 
         if ((proj instanceof TippedArrow)) {
             TippedArrow arr = (TippedArrow) proj;
             if (Pots.contains(arr.getBasePotionData().getType().name())) {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.denypotion");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.denypotion");
                 e.setCancelled(true);
             }
         }
@@ -215,16 +215,16 @@ public class Compat19 implements Listener {
 
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is LingeringPotionSplashEvent event.");
 
-        Region r = RedProtect.get().rm.getTopRegion(ent.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(ent.getLocation());
         if (r != null && !r.canGetEffects(p)) {
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
             return;
         }
 
         if (RedProtect.get().getVersionHelper().denyEntLingPot(e, e.getEntity().getWorld())) {
             e.setCancelled(true);
-            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("playerlistener.denypotion"));
+            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.denypotion"));
         }
     }
 
@@ -240,9 +240,9 @@ public class Compat19 implements Listener {
             return;
         }
 
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r != null && e.getItem().getType().equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantuse");
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
         }
     }
@@ -253,9 +253,9 @@ public class Compat19 implements Listener {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
             Block b = e.getBlock();
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
             if (r != null && !r.canBuild(p)) {
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbreak");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
                 e.setCancelled(true);
             }
         }

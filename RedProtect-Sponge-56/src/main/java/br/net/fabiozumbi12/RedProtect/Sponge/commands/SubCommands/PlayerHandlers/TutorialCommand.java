@@ -45,12 +45,12 @@ public class TutorialCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial");
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial1");
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial2");
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial3");
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial4");
-                        RedProtect.get().lang.sendMessage(player, "cmdmanager.tutorial5");
+                        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial");
+                        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial1");
+                        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial2");
+                        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial3");
+                        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial4");
+                        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.tutorial5");
                     }
                     return CommandResult.success();
                 }).build();

@@ -48,7 +48,7 @@ public class RedProtectAPI {
      * @return {@code Region} matching the name or {@code null} if region not found.
      */
     public Region getRegion(String regionName, World world) {
-        return RedProtect.get().rm.getRegion(regionName, world.getName());
+        return RedProtect.get().getRegionManager().getRegion(regionName, world.getName());
     }
 
     /**
@@ -71,7 +71,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(String uuid) {
-        return RedProtect.get().rm.getLeaderRegions(uuid);
+        return RedProtect.get().getRegionManager().getLeaderRegions(uuid);
     }
 
     /**
@@ -84,7 +84,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(String uuid, World world) {
-        return RedProtect.get().rm.getRegions(uuid, world.getName());
+        return RedProtect.get().getRegionManager().getRegions(uuid, world.getName());
     }
 
     /**
@@ -95,7 +95,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(Player player) {
-        return RedProtect.get().rm.getRegions(Sponge.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld().getName());
+        return RedProtect.get().getRegionManager().getRegions(Sponge.getServer().getOnlineMode() ? player.getName() : player.getUniqueId().toString(), player.getWorld().getName());
     }
 
     /**
@@ -109,7 +109,7 @@ public class RedProtectAPI {
      * @return {@code set<Region>} with all regions created by given player.
      */
     public Set<Region> getPlayerRegions(Player player, int x, int y, int z) {
-        return RedProtect.get().rm.getRegions(player, x, y, z);
+        return RedProtect.get().getRegionManager().getRegions(player, x, y, z);
     }
 
     /**
@@ -123,7 +123,7 @@ public class RedProtectAPI {
      * @return The high priority {@code Region} in a group of regions.
      */
     public Region getHighPriorityRegion(World world, int x, int y, int z) {
-        return RedProtect.get().rm.getTopRegion(world.getName(), x, y, z, this.getClass().getName());
+        return RedProtect.get().getRegionManager().getTopRegion(world.getName(), x, y, z, this.getClass().getName());
     }
 
     /**
@@ -137,7 +137,7 @@ public class RedProtectAPI {
      * @return The lower priority {@code Region} in a group of regions.
      */
     public Region getLowPriorytyRegion(World world, int x, int y, int z) {
-        return RedProtect.get().rm.getLowRegion(world.getName(), x, y, z);
+        return RedProtect.get().getRegionManager().getLowRegion(world.getName(), x, y, z);
     }
 
     /**
@@ -151,7 +151,7 @@ public class RedProtectAPI {
      * @return {@code Map<Integer, Region>} with {@code Integer} as priority and the corresponding {@code Region}.
      */
     public Map<Integer, Region> getGroupRegions(World world, int x, int y, int z) {
-        return RedProtect.get().rm.getGroupRegion(world.getName(), x, y, z);
+        return RedProtect.get().getRegionManager().getGroupRegion(world.getName(), x, y, z);
     }
 
     /**
@@ -217,7 +217,7 @@ public class RedProtectAPI {
      * @param world  {@code World} of {@code Region} to add.
      */
     public void addRegion(Region region, World world) {
-        RedProtect.get().rm.add(region, world.getName());
+        RedProtect.get().getRegionManager().add(region, world.getName());
     }
 
     /**
@@ -227,7 +227,7 @@ public class RedProtectAPI {
      * @param region {@code Region} to remove.
      */
     public void removeRegion(Region region) {
-        RedProtect.get().rm.remove(region, region.getWorld());
+        RedProtect.get().getRegionManager().remove(region, region.getWorld());
     }
 
     /**
@@ -240,7 +240,7 @@ public class RedProtectAPI {
      * @param flag Admin Flag to add
      */
     public void addAdminFlag(String flag) {
-        RedProtect.get().config.AdminFlags.add(flag);
+        RedProtect.get().getConfigManager().AdminFlags.add(flag);
     }
 
     /**
@@ -255,7 +255,7 @@ public class RedProtectAPI {
      */
     public void addPlayerFlag(String flag, Object defValue) {
         if (defValue instanceof Boolean)
-            RedProtect.get().config.configRoot().flags.put(flag, (Boolean) defValue);
+            RedProtect.get().getConfigManager().configRoot().flags.put(flag, (Boolean) defValue);
     }
 
     /**
@@ -266,7 +266,7 @@ public class RedProtectAPI {
      * @param newName New name of region;
      */
     public void renameRegion(Region region, String newName) {
-        RedProtect.get().rm.renameRegion(newName, region);
+        RedProtect.get().getRegionManager().renameRegion(newName, region);
     }
 
     /**
@@ -278,7 +278,7 @@ public class RedProtectAPI {
      * @return true if added or false if the flag already exists.
      */
     public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
-        return RedProtect.get().config.addFlag(flag, defaultValue, isAdmin);
+        return RedProtect.get().getConfigManager().addFlag(flag, defaultValue, isAdmin);
     }
 
     /**
@@ -288,6 +288,6 @@ public class RedProtectAPI {
      * @return true if the flag was found and has been removed, false otherwise.
      */
     public boolean removeFlag(String flag, boolean isAdmin) {
-        return RedProtect.get().config.removeFlag(flag, isAdmin);
+        return RedProtect.get().getConfigManager().removeFlag(flag, isAdmin);
     }
 }

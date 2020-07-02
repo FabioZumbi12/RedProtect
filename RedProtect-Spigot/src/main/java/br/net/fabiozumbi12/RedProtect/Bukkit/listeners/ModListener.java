@@ -83,15 +83,15 @@ public class ModListener implements PluginMessageListener {
     public void onPluginMessageReceived(String channel, Player player, byte[] value) {
         if (channel.equalsIgnoreCase(MCBRAND)) {
             String brand = new String(value, StandardCharsets.UTF_8);
-            if (plugin.config.configRoot().server_protection.mods_permissions.get("fabric").block) denyFabric(player, brand);
-            if (plugin.config.configRoot().server_protection.mods_permissions.get("forge").block) denyForge(player, brand);
-            if (plugin.config.configRoot().server_protection.mods_permissions.get("liteloader").block) denyLiteLoader(player, brand);
-            if (plugin.config.configRoot().server_protection.mods_permissions.get("rift").block) denyRift(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("fabric").block) denyFabric(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("forge").block) denyForge(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("liteloader").block) denyLiteLoader(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("rift").block) denyRift(player, brand);
         }
-        if (plugin.config.configRoot().server_protection.mods_permissions.get("5zig").block) deny5Zig(player, channel);
-        if (plugin.config.configRoot().server_protection.mods_permissions.get("bettersprinting").block) denyBSM(player, channel);
-        if (plugin.config.configRoot().server_protection.mods_permissions.get("schematica").block) denySchematica(player);
-        if (plugin.config.configRoot().server_protection.mods_permissions.get("worlddownloader").block) denyWDL(player, channel);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("5zig").block) deny5Zig(player, channel);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("bettersprinting").block) denyBSM(player, channel);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("schematica").block) denySchematica(player);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("worlddownloader").block) denyWDL(player, channel);
     }
 
     /* Packets */
@@ -198,7 +198,7 @@ public class ModListener implements PluginMessageListener {
     }
 
     private void executeAction(Player player, String mod) {
-        String action = plugin.config.configRoot().server_protection.mods_permissions.get(mod).action;
+        String action = plugin.getConfigManager().configRoot().server_protection.mods_permissions.get(mod).action;
         if (!action.isEmpty()) {
             action = action
                     .replace("{p}", player.getName())

@@ -55,7 +55,7 @@ public class VersionHelperLatest implements VersionHelper {
         Block source = event.getSourceBlock();
         Block b = event.getBlock();
         if (source.equals(b)){
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
             if (r != null && !r.blockTransform()){
                 event.setCancelled(true);
             }
@@ -145,7 +145,7 @@ public class VersionHelperLatest implements VersionHelper {
             guiRoot.gui_flags.put("block-transform", new FlagGuiCategory.GuiFlag(Material.BOOKSHELF.name(), 12));
         }
 
-        for (String key : RedProtect.get().config.getDefFlagsValues().keySet()) {
+        for (String key : RedProtect.get().getConfigManager().getDefFlagsValues().keySet()) {
             guiRoot.gui_flags.putIfAbsent(key, new FlagGuiCategory.GuiFlag(Material.GOLDEN_APPLE.name(), 0));
         }
         return guiRoot;

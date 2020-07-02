@@ -45,15 +45,15 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class AddLeaderCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().ph.hasPerm(sender, "redprotect.command.admin.addleader"))) {
+        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.addleader"))) {
             World w = RedProtect.get().getServer().getWorld(args[2]);
             if (w == null) {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.invalidworld"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.invalidworld"));
                 return true;
             }
-            Region r = RedProtect.get().rm.getRegion(args[1], w.getName());
+            Region r = RedProtect.get().getRegionManager().getRegion(args[1], w.getName());
             if (r == null) {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                 return true;
             }
             handleAddLeader(sender, args[0], r);
@@ -67,7 +67,7 @@ public class AddLeaderCommand implements SubCommand {
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "addleader", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "addleader", true);
         return true;
     }
 

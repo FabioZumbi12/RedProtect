@@ -61,7 +61,7 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
         if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
 
             Projectile projectile = (Projectile) event.getDamager();
-            Region r = RedProtect.get().rm.getTopRegion(projectile.getLocation());
+            Region r = RedProtect.get().getAPI().getRegion(projectile.getLocation());
 
             if (r != null && r.getFlagBool("killer-projectiles") && getConfig().getStringList("allowed-types").contains(projectile.getType().name())) {
                 // Set damage from projectile to 0
@@ -77,7 +77,7 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
 
             Player player = (Player) event.getHitEntity();
             Projectile projectile = event.getEntity();
-            Region r = RedProtect.get().rm.getTopRegion(projectile.getLocation());
+            Region r = RedProtect.get().getAPI().getRegion(projectile.getLocation());
 
             double damage;
             if (getConfig().getString("projectile-damage").endsWith("%")) {

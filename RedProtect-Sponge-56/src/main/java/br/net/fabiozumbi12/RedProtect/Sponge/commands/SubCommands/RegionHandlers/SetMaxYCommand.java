@@ -55,36 +55,36 @@ public class SetMaxYCommand {
                         Player player = (Player) src;
 
                         int size = args.<Integer>getOne("size").get();
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
 
                         if (args.hasAny("world")) {
                             String rname = args.<String>getOne("regionName").get();
                             String world = args.<World>getOne("world").get().getName();
-                            r = RedProtect.get().rm.getRegion(rname, world);
+                            r = RedProtect.get().getRegionManager().getRegion(rname, world);
                         } else if (args.hasAny("regionName")) {
                             String rname = args.<String>getOne("regionName").get();
-                            r = RedProtect.get().rm.getRegion(rname, player.getWorld().getName());
+                            r = RedProtect.get().getRegionManager().getRegion(rname, player.getWorld().getName());
                         }
 
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist"));
+                            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist"));
                             return CommandResult.success();
                         }
 
-                        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.setmaxy")) {
-                            RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+                        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.admin.setmaxy")) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                             return CommandResult.success();
                         }
 
                         if ((size - r.getMinY()) <= 1) {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.ysiszesmatch");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.ysiszesmatch");
                             return CommandResult.success();
                         }
 
                         String from = String.valueOf(r.getMaxY());
 
                         r.setMaxY(size);
-                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.setmaxy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
+                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.setmaxy.success").replace("{region}", r.getName()).replace("{fromsize}", from).replace("{size}", String.valueOf(size)));
                         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " SETMAXY of region " + r.getName() + " to " + size);
                     }
                     return CommandResult.success();

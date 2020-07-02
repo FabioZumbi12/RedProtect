@@ -53,23 +53,23 @@ public class ExpandVertCommand {
                         HandleHelpPage(src, 1);
                     } else {
                         Player player = (Player) src;
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
 
                         if (args.hasAny("regionName")) {
-                            r = RedProtect.get().rm.getRegion(args.<String>getOne("regionName").get(), player.getWorld().getName());
+                            r = RedProtect.get().getRegionManager().getRegion(args.<String>getOne("regionName").get(), player.getWorld().getName());
                         }
 
                         if (args.hasAny("world")) {
-                            r = RedProtect.get().rm.getRegion(args.<String>getOne("regionName").get(), args.<World>getOne("world").get().getName());
+                            r = RedProtect.get().getRegionManager().getRegion(args.<String>getOne("regionName").get(), args.<World>getOne("world").get().getName());
                         }
 
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                             return CommandResult.success();
                         }
 
-                        if (!RedProtect.get().ph.hasRegionPermAdmin(player, "expand-vert", r)) {
-                            RedProtect.get().lang.sendMessage(player, "no.permission");
+                        if (!RedProtect.get().getPermissionHandler().hasRegionPermAdmin(player, "expand-vert", r)) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "no.permission");
                             return CommandResult.success();
                         }
 

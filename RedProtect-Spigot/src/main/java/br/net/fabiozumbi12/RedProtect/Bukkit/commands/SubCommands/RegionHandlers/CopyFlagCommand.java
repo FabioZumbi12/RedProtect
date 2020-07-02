@@ -53,25 +53,25 @@ public class CopyFlagCommand implements SubCommand {
 
         if (args.length == 2) {
             World w = player.getWorld();
-            Region from = RedProtect.get().rm.getRegion(args[0], w.getName());
-            Region to = RedProtect.get().rm.getRegion(args[1], w.getName());
+            Region from = RedProtect.get().getRegionManager().getRegion(args[0], w.getName());
+            Region to = RedProtect.get().getRegionManager().getRegion(args[1], w.getName());
             if (from == null || !from.isLeader(player)) {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
+                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;
             }
             if (to == null || !to.isLeader(player)) {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[1]);
+                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                 return true;
             }
             for (Map.Entry<String, Object> key : from.getFlags().entrySet()) {
                 to.setFlag(sender, key.getKey(), key.getValue());
             }
-            RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.copied") + args[0] + " > " + args[1]);
+            RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.copied") + args[0] + " > " + args[1]);
             RedProtect.get().logger.addLog("Player " + player.getName() + " Copied FLAGS from " + args[0] + " to " + args[1]);
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "copyflag", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "copyflag", true);
         return true;
     }
 

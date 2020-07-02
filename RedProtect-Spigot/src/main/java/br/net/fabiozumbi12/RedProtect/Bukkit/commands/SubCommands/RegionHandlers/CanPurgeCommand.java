@@ -43,21 +43,21 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.Han
 public class CanPurgeCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender || !RedProtect.get().config.configRoot().purge.enabled) {
+        if (sender instanceof ConsoleCommandSender || !RedProtect.get().getConfigManager().configRoot().purge.enabled) {
             HandleHelpPage(sender, 1);
             return true;
         }
 
         Player player = (Player) sender;
-        Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
 
         if (r == null) {
-            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesntexist");
+            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesntexist");
             return true;
         }
 
-        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.canpurge")) {
-            RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.admin.canpurge")) {
+            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
             return true;
         }
 
@@ -67,10 +67,10 @@ public class CanPurgeCommand implements SubCommand {
         }
 
         // Purge limit
-        int limit = RedProtect.get().ph.getPurgeLimit(player);
-        long amount = RedProtect.get().rm.getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
+        int limit = RedProtect.get().getPermissionHandler().getPurgeLimit(player);
+        long amount = RedProtect.get().getRegionManager().getCanPurgePlayer(player.getUniqueId().toString(), player.getWorld().getName());
         if (!value && amount >= limit) {
-            RedProtect.get().lang.sendMessage(player, "playerlistener.region.purge-nolimit", new Replacer[]{
+            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.purge-nolimit", new Replacer[]{
                     new Replacer("{limit}", String.valueOf(limit)),
                     new Replacer("{total}", String.valueOf(amount))
             });
@@ -78,7 +78,7 @@ public class CanPurgeCommand implements SubCommand {
         }
 
         r.setCanPurge(value);
-        RedProtect.get().lang.sendMessage(player, "cmdmanager.region.canpurge.set", new Replacer[]{new Replacer("{value}", String.valueOf(value))});
+        RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.canpurge.set", new Replacer[]{new Replacer("{value}", String.valueOf(value))});
         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + player.getName() + " CANPURGE " + r.getName() + " to " + value);
         return true;
     }

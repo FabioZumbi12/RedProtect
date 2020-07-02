@@ -42,7 +42,7 @@ public class DoorManager {
 
     public static void ChangeDoor(Block b, Region r) {
         try {
-            if ((!r.flagExists("smart-door") && !RedProtect.get().config.configRoot().flags.get("smart-door")) || !r.getFlagBool("smart-door")) {
+            if ((!r.flagExists("smart-door") && !RedProtect.get().getConfigManager().configRoot().flags.get("smart-door")) || !r.getFlagBool("smart-door")) {
                 return;
             }
         } catch (Exception ignored) {

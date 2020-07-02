@@ -51,16 +51,16 @@ public class InfoCommand {
                 .executor((src, args) -> {
                     if (!(src instanceof Player) && args.hasAny("region") && args.hasAny("world")) {
                         if (Sponge.getServer().getWorld(args.<WorldProperties>getOne("world").get().getWorldName()).isPresent()) {
-                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
+                            Region r = RedProtect.get().getRegionManager().getRegion(args.<String>getOne("region").get(), args.<WorldProperties>getOne("world").get().getWorldName());
                             if (r != null) {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "-----------------------------------------"));
                                 src.sendMessage(r.info());
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "-----------------------------------------"));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "-----------------------------------------"));
                             } else {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + "&eInvalid region: " + args.<String>getOne("region").get()));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("correct.usage") + "&eInvalid region: " + args.<String>getOne("region").get()));
                             }
                         } else {
-                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + " " + "&eInvalid World: " + args.<WorldProperties>getOne("world").get().getWorldName()));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("correct.usage") + " " + "&eInvalid World: " + args.<WorldProperties>getOne("world").get().getWorldName()));
                         }
                         return CommandResult.success();
                     } else if (src instanceof Player) {
@@ -75,7 +75,7 @@ public class InfoCommand {
                         return CommandResult.success();
                     }
 
-                    RedProtect.get().lang.sendCommandHelp(src, "info", true);
+                    RedProtect.get().getLanguageManager().sendCommandHelp(src, "info", true);
                     return CommandResult.success();
                 }).build();
     }

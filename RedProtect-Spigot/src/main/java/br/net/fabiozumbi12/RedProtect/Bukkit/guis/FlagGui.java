@@ -92,17 +92,17 @@ public class FlagGui implements Listener {
 
         allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
-        for (String flag : RedProtect.get().config.getDefFlags()) {
+        for (String flag : RedProtect.get().getConfigManager().getDefFlags()) {
             try {
-                if (!RedProtect.get().config.guiRoot().gui_flags.containsKey(flag)) {
+                if (!RedProtect.get().getConfigManager().guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
-                if (RedProtect.get().ph.hasFlagPerm(player, flag) && (RedProtect.get().config.configRoot().flags.containsKey(flag) || RedProtect.get().config.AdminFlags.contains(flag))) {
-                    if (flag.equals("pvp") && !RedProtect.get().config.configRoot().flags.containsKey("pvp")) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm(player, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) {
+                    if (flag.equals("pvp") && !RedProtect.get().getConfigManager().configRoot().flags.containsKey("pvp")) {
                         continue;
                     }
 
-                    int i = RedProtect.get().config.getGuiSlot(flag);
+                    int i = RedProtect.get().getConfigManager().getGuiSlot(flag);
 
                     Object flagValue = region.getFlags().get(flag);
 
@@ -121,7 +121,7 @@ public class FlagGui implements Listener {
                         }
                     }
 
-                    this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
+                    this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material));
                     ItemMeta guiMeta = this.guiItems[i].getItemMeta();
                     guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
                     List<String> lore = new ArrayList<>(Arrays.asList(
@@ -143,7 +143,7 @@ public class FlagGui implements Listener {
                             this.guiItems[i].setAmount(1);
                         }
                     }
-                    this.guiItems[i].setType(Material.getMaterial(RedProtect.get().config.guiRoot().gui_flags.get(flag).material));
+                    this.guiItems[i].setType(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material));
                     this.guiItems[i].setItemMeta(guiMeta);
                 }
             } catch (Exception e) {
@@ -153,7 +153,7 @@ public class FlagGui implements Listener {
 
         for (int slotc = 0; slotc < this.size; slotc++) {
             if (this.guiItems[slotc] == null) {
-                this.guiItems[slotc] = RedProtect.get().config.getGuiSeparator();
+                this.guiItems[slotc] = RedProtect.get().getConfigManager().getGuiSeparator();
             }
         }
     }
@@ -168,17 +168,17 @@ public class FlagGui implements Listener {
             for (int i = 0; i < this.size; i++) {
                 try {
                     String flag = this.inv.getItem(i).getItemMeta().getLore().get(1).replace("§0", "");
-                    if (RedProtect.get().config.getDefFlags().contains(flag)) {
-                        RedProtect.get().config.setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
+                    if (RedProtect.get().getConfigManager().getDefFlags().contains(flag)) {
+                        RedProtect.get().getConfigManager().setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
                     }
                 } catch (Exception e) {
-                    RedProtect.get().lang.sendMessage(this.player, "gui.edit.error");
+                    RedProtect.get().getLanguageManager().sendMessage(this.player, "gui.edit.error");
                     close(false);
                     return;
                 }
             }
-            RedProtect.get().config.saveGui();
-            RedProtect.get().lang.sendMessage(this.player, "gui.edit.ok");
+            RedProtect.get().getConfigManager().saveGui();
+            RedProtect.get().getLanguageManager().sendMessage(this.player, "gui.edit.ok");
         }
 
         close(false);
@@ -218,16 +218,16 @@ public class FlagGui implements Listener {
             if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
                 event.setCancelled(true);
                 ItemStack item = event.getCurrentItem();
-                if (item != null && !item.equals(RedProtect.get().config.getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
+                if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
                     ItemMeta itemMeta = item.getItemMeta();
                     String flag = itemMeta.getLore().get(1).replace("§0", "");
-                    if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
-                        if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                    if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.enable) {
+                        if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                             if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
                                 applyFlag(flag, itemMeta, event);
                                 RedProtect.get().getUtil().startFlagChanger(this.region.getName(), flag, player);
                             } else {
-                                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds));
+                                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds));
                             }
                         } else {
                             applyFlag(flag, itemMeta, event);
@@ -247,15 +247,15 @@ public class FlagGui implements Listener {
             ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(this.player);
             if (this.region.getFlagString(flag).equals("")) {
                 if (this.region.setFlag(this.player, flag, cp.getTag())) {
-                    RedProtect.get().lang.sendMessage(this.player, RedProtect.get().lang.get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
+                    RedProtect.get().getLanguageManager().sendMessage(this.player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
                 }
             } else {
-                RedProtect.get().lang.sendMessage(this.player, RedProtect.get().lang.get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
+                RedProtect.get().getLanguageManager().sendMessage(this.player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
             }
         } else {
             if ((flag.equalsIgnoreCase("spawn-animals") ||
                     flag.equalsIgnoreCase("spawn-monsters")) &&
-                    RedProtect.get().ph.hasPerm(this.player, "redprotect.flag.spawn-mob-gui")) {
+                    RedProtect.get().getPermissionHandler().hasPerm(this.player, "redprotect.flag.spawn-mob-gui")) {
                 close(true);
                 new MobFlagGui(this.player, this.region, flag).open();
                 return;
@@ -264,14 +264,14 @@ public class FlagGui implements Listener {
                     flag.equalsIgnoreCase("allow-enter-items") ||
                     flag.equalsIgnoreCase("allow-place") ||
                     flag.equalsIgnoreCase("allow-break")) &&
-                    RedProtect.get().ph.hasPerm(this.player, "redprotect.flag.item-gui")) {
+                    RedProtect.get().getPermissionHandler().hasPerm(this.player, "redprotect.flag.item-gui")) {
                 close(true);
                 new ItemFlagGui(this.player, this.region, flag).open();
                 return;
             }
             if (flagValue instanceof Boolean) {
                 if (this.region.setFlag(this.player, flag, !this.region.getFlagBool(flag))) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
                 }
             }
         }
@@ -316,9 +316,9 @@ public class FlagGui implements Listener {
     public void open() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             if (player.getOpenInventory().getTopInventory().equals(this.inv)) {
-                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r != null && r.equals(this.region) && !player.equals(this.player)) {
-                    RedProtect.get().lang.sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}", player.getName())});
+                    RedProtect.get().getLanguageManager().sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}", player.getName())});
                     return;
                 }
             }

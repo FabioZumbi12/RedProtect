@@ -55,34 +55,34 @@ public class LAcceptCommand implements SubCommand {
                 String info = RedProtect.get().alWait.get(player);
 
                 Player lsender = Bukkit.getPlayer(info.split("@")[2]);
-                Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
+                Region r = RedProtect.get().getRegionManager().getRegion(info.split("@")[0], info.split("@")[1]);
 
                 String VictimUUID = player.getUniqueId().toString();
 
                 if (r != null) {
 
-                    if (RedProtect.get().ph.getPlayerClaimLimit(player) == (RedProtect.get().rm.getRegions(VictimUUID, r.getWorld()).size() + 1)) {
-                        RedProtect.get().lang.sendMessage(player, "regionbuilder.claim.limit");
+                    if (RedProtect.get().getPermissionHandler().getPlayerClaimLimit(player) == (RedProtect.get().getRegionManager().getRegions(VictimUUID, r.getWorld()).size() + 1)) {
+                        RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.claim.limit");
                         return true;
                     }
 
                     r.addLeader(VictimUUID);
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + lsender.getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + lsender.getName());
                     if (lsender.isOnline()) {
-                        RedProtect.get().lang.sendMessage(lsender, RedProtect.get().lang.get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName()));
+                        RedProtect.get().getLanguageManager().sendMessage(lsender, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName()));
                     }
                 } else {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                 }
                 RedProtect.get().alWait.remove(player);
                 return true;
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.norequests");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.norequests");
                 return true;
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "laccept", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "laccept", true);
         return true;
     }
 

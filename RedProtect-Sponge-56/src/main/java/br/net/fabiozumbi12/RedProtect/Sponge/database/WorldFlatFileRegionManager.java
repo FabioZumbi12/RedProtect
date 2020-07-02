@@ -67,7 +67,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             int minZ = region.getNode(rname, "minZ").getInt();
             int maxY = region.getNode(rname, "maxY").getInt(world.getBlockMax().getY());
             int minY = region.getNode(rname, "minY").getInt(0);
-            String serverName = RedProtect.get().config.configRoot().region_settings.default_leader;
+            String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
 
             Set<PlayerRegion> leaders = new HashSet<>(region.getNode(rname, "leaders").getList(TypeToken.of(String.class))).stream().filter(s -> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
                 String[] pi = s.split("@");
@@ -121,16 +121,16 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                 tppoint = new Location<>(world, Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]));
             }
 
-            newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().config.getDefFlagsValues(), welcome, value, tppoint, candel, canPurge);
+            newr = new Region(rname, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world.getName(), date, RedProtect.get().getConfigManager().getDefFlagsValues(), welcome, value, tppoint, candel, canPurge);
 
-            for (String flag : RedProtect.get().config.getDefFlags()) {
+            for (String flag : RedProtect.get().getConfigManager().getDefFlags()) {
                 if (region.getNode(rname, "flags", flag) != null) {
                     newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
                 } else {
-                    newr.getFlags().put(flag, RedProtect.get().config.getDefFlagsValues().get(flag));
+                    newr.getFlags().put(flag, RedProtect.get().getConfigManager().getDefFlagsValues().get(flag));
                 }
             }
-            for (String flag : RedProtect.get().config.AdminFlags) {
+            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
                 if (region.getNode(rname, "flags", flag).getString() != null) {
                     newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
                 }
@@ -148,8 +148,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
         try {
             RedProtect.get().logger.info("- Loading " + world + "'s regions...");
 
-            if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
-                if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
+            if (!RedProtect.get().getConfigManager().configRoot().file_type.equalsIgnoreCase("mysql")) {
+                if (RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
                     File f = new File(RedProtect.get().configDir, "data" + File.separator + world);
                     if (!f.exists()) {
                         f.mkdir();
@@ -177,7 +177,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     private void load(String path) {
 
-        if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+        if (!RedProtect.get().getConfigManager().configRoot().file_type.equalsIgnoreCase("mysql")) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load world " + this.world + ". File type: conf");
 
             try {
@@ -209,9 +209,9 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public int save(boolean force) {
         int saved = 0;
         try {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().config.configRoot().file_type);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "RegionManager.Save(): File type is " + RedProtect.get().getConfigManager().configRoot().file_type);
 
-            if (!RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+            if (!RedProtect.get().getConfigManager().configRoot().file_type.equalsIgnoreCase("mysql")) {
 
                 File datf = new File(RedProtect.get().configDir + File.separator + "data", "data_" + world + ".conf");
                 ConfigurationLoader<CommentedConfigurationNode> regionManager = HoconConfigurationLoader.builder().setPath(datf.toPath()).build();
@@ -222,7 +222,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         continue;
                     }
 
-                    if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
+                    if (RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
                         if (!r.toSave() && !force) {
                             continue;
                         }
@@ -234,14 +234,14 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     RedProtect.get().getUtil().addProps(fileDB, r);
                     saved++;
 
-                    if (RedProtect.get().config.configRoot().flat_file.region_per_file) {
+                    if (RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
                         dbs.add(fileDB);
                         saveConf(fileDB, regionManager);
                         r.setToSave(false);
                     }
                 }
 
-                if (!RedProtect.get().config.configRoot().flat_file.region_per_file) {
+                if (!RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
                     saveConf(fileDB, regionManager);
                 } else {
                     //remove deleted regions

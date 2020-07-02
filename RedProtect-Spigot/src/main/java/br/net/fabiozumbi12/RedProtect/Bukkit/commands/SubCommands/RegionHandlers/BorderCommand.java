@@ -50,16 +50,16 @@ public class BorderCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
             if (r != null) {
                 RedProtect.get().getUtil().addBorder(player, r);
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
             }
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "border", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "border", true);
         return true;
     }
 

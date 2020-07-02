@@ -53,10 +53,10 @@ public class BlockListenerCompat56 {
 
         Location<World> piston = null;
         Location<World> block = null;
-        boolean antih = RedProtect.get().config.configRoot().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
 
         if (RedProtect.get().getVersionHelper().checkCause(e.getCause(), "PISTON_EXTEND")) {
-            if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
+            if (RedProtect.get().getConfigManager().configRoot().performance.disable_PistonEvent_handler) {
                 return;
             }
 
@@ -71,7 +71,7 @@ public class BlockListenerCompat56 {
         }
 
         if (RedProtect.get().getVersionHelper().checkCause(e.getCause(), "PISTON_RETRACT")) {
-            if (RedProtect.get().config.configRoot().performance.disable_PistonEvent_handler) {
+            if (RedProtect.get().getConfigManager().configRoot().performance.disable_PistonEvent_handler) {
                 return;
             }
 
@@ -87,8 +87,8 @@ public class BlockListenerCompat56 {
 
         //process
         if (piston != null && block != null) {
-            Region rPi = RedProtect.get().rm.getTopRegion(piston, this.getClass().getName());
-            Region rB = RedProtect.get().rm.getTopRegion(block, this.getClass().getName());
+            Region rPi = RedProtect.get().getRegionManager().getTopRegion(piston, this.getClass().getName());
+            Region rB = RedProtect.get().getRegionManager().getTopRegion(block, this.getClass().getName());
             if (rPi == null && rB != null || (rPi != null && rB != null && rPi != rB && !rPi.sameLeaders(rB))) {
                 e.setCancelled(true);
                 return;

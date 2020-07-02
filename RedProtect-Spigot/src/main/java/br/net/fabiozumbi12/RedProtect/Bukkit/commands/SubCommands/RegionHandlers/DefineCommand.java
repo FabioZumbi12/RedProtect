@@ -56,18 +56,18 @@ public class DefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
-            String name = RedProtect.get().getUtil().nameGen(RedProtect.get().config.configRoot().region_settings.default_leader, player.getWorld().getName());
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader, RedProtect.get().getConfigManager().configRoot().region_settings.default_leader);
+            String name = RedProtect.get().getUtil().nameGen(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader, player.getWorld().getName());
 
-            RedProtect.get().lang.sendMessage(player, "regionbuilder.creating");
+            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
 
             // Run claim async
             Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), name, serverName, new HashSet<>(), true);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                    RedProtect.get().rm.add(r2, player.getWorld().getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
@@ -79,16 +79,16 @@ public class DefineCommand implements SubCommand {
         }
 
         if (args.length == 1) {
-            PlayerRegion serverName = new PlayerRegion(RedProtect.get().config.configRoot().region_settings.default_leader, RedProtect.get().config.configRoot().region_settings.default_leader);
-            RedProtect.get().lang.sendMessage(player, "regionbuilder.creating");
+            PlayerRegion serverName = new PlayerRegion(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader, RedProtect.get().getConfigManager().configRoot().region_settings.default_leader);
+            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
 
             // Run claim async
             Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
                 RegionBuilder rb2 = new DefineRegionBuilder(player, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player), args[0], serverName, new HashSet<>(), true);
                 if (rb2.ready()) {
                     Region r2 = rb2.build();
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.created") + " " + r2.getName() + ".");
-                    RedProtect.get().rm.add(r2, player.getWorld().getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.created") + " " + r2.getName() + ".");
+                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
@@ -99,7 +99,7 @@ public class DefineCommand implements SubCommand {
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "define", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "define", true);
         return true;
     }
 

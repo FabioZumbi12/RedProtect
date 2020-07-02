@@ -52,7 +52,7 @@ public abstract class RegionBuilder {
     protected void setErrorSign(SignChangeEvent e, String error) {
         Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
             Sign sign = (Sign) e.getBlock().getState();
-            sign.setLine(0, RedProtect.get().lang.get("regionbuilder.signerror"));
+            sign.setLine(0, RedProtect.get().getLanguageManager().get("regionbuilder.signerror"));
             sign.update();
             setError(e.getPlayer(), error);
             return true;
@@ -60,6 +60,6 @@ public abstract class RegionBuilder {
     }
 
     protected void setError(Player p, String error) {
-        RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("regionbuilder.error") + "(" + error + ")");
+        RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("regionbuilder.error") + "(" + error + ")");
     }
 }

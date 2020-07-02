@@ -53,12 +53,12 @@ public class AddLeaderCommand {
                         WorldProperties worldProperties = args.<WorldProperties>getOne("world").get();
 
                         if (!RedProtect.get().getServer().getWorld(worldProperties.getWorldName()).isPresent()) {
-                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.invalidworld")));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.invalidworld")));
                             return CommandResult.success();
                         }
-                        Region r = RedProtect.get().rm.getRegion(region, worldProperties.getWorldName());
+                        Region r = RedProtect.get().getRegionManager().getRegion(region, worldProperties.getWorldName());
                         if (r == null) {
-                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + region));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + region));
                             return CommandResult.success();
                         }
                         handleAddLeader(src, args.<String>getOne("player").get(), r);
@@ -69,7 +69,7 @@ public class AddLeaderCommand {
                         return CommandResult.success();
                     }
 
-                    RedProtect.get().lang.sendCommandHelp(src, "addleader", true);
+                    RedProtect.get().getLanguageManager().sendCommandHelp(src, "addleader", true);
                     return CommandResult.success();
                 }).build();
     }

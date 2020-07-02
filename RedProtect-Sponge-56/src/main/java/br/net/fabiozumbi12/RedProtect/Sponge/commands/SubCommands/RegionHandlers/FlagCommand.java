@@ -59,17 +59,17 @@ public class FlagCommand {
                         if (argsInfo.length == 2) {
                             Optional<World> w = Sponge.getServer().getWorld(argsInfo[1]);
                             if (!w.isPresent()) {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + argsInfo[1]));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("correct.usage") + " &eInvalid World: " + argsInfo[1]));
                                 return CommandResult.success();
                             }
-                            Region r = RedProtect.get().rm.getRegion(argsInfo[0], w.get().getName());
+                            Region r = RedProtect.get().getRegionManager().getRegion(argsInfo[0], w.get().getName());
                             if (r == null) {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
                                 return CommandResult.success();
                             }
-                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------[" + RedProtect.get().lang.get("cmdmanager.region.flag.values") + "]------------"));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "------------[" + RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.values") + "]------------"));
                             src.sendMessage(r.getFlagInfo());
-                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("general.color") + "------------------------------------"));
+                            src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------"));
                             return CommandResult.success();
                         }
                     } else if (!(src instanceof Player) && args.hasAny("flag") && args.hasAny("value")) {
@@ -78,17 +78,17 @@ public class FlagCommand {
                             String flag = argsInfo[0];
                             Optional<World> w = Sponge.getServer().getWorld(argsInfo[2]);
                             if (!w.isPresent()) {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid World: " + argsInfo[2]));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("correct.usage") + " &eInvalid World: " + argsInfo[2]));
                                 return CommandResult.success();
                             }
-                            Region r = RedProtect.get().rm.getRegion(args.<String>getOne("flag").get(), w.get().getName());
+                            Region r = RedProtect.get().getRegionManager().getRegion(args.<String>getOne("flag").get(), w.get().getName());
                             if (r == null) {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("correct.usage") + " &eInvalid region: " + argsInfo[0]));
                                 return CommandResult.success();
                             }
                             Object objflag = RedProtect.get().getUtil().parseObject(argsInfo[1]);
                             if (r.setFlag(RedProtect.get().getVersionHelper().getCause(src), flag, objflag)) {
-                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().lang.get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagString(flag)));
+                                src.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagString(flag)));
                                 RedProtect.get().logger.addLog("Console changed flag " + flag + " to " + r.getFlagString(flag));
                             }
                             return CommandResult.success();
@@ -96,14 +96,14 @@ public class FlagCommand {
                     } else if (src instanceof Player) {
                         Player player = (Player) src;
 
-                        Region r = RedProtect.get().rm.getTopRegion(player.getLocation(), this.getClass().getName());
+                        Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation(), this.getClass().getName());
                         if (r == null) {
-                            RedProtect.get().lang.sendMessage(player, "cmdmanager.region.todo.that");
+                            RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                             return CommandResult.success();
                         }
 
-                        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().ph.hasPerm(player, "redprotect.command.admin.flag")) {
-                            RedProtect.get().lang.sendMessage(player, "no.permission");
+                        if (!r.isLeader(player) && !r.isAdmin(player) && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.command.admin.flag")) {
+                            RedProtect.get().getLanguageManager().sendMessage(player, "no.permission");
                             return CommandResult.success();
                         }
 
@@ -114,13 +114,13 @@ public class FlagCommand {
                                 value = args.<String>getOne("value").get();
                             }
 
-                            if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.enable) {
-                                if (RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                            if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.enable) {
+                                if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                     if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
                                         RedProtect.get().getUtil().startFlagChanger(r.getName(), flag, player);
                                         handleFlag(player, flag, value, r);
                                     } else {
-                                        RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().config.configRoot().flags_configuration.change_flag_delay.seconds + ""));
+                                        RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds + ""));
                                     }
                                     return CommandResult.success();
                                 }
@@ -128,13 +128,13 @@ public class FlagCommand {
                             handleFlag(player, flag, value, r);
                             return CommandResult.success();
                         } else {
-                            FlagGui gui = new FlagGui(r.getName(), player, r, false, RedProtect.get().config.getGuiMaxSlot());
+                            FlagGui gui = new FlagGui(r.getName(), player, r, false, RedProtect.get().getConfigManager().getGuiMaxSlot());
                             gui.open();
                             return CommandResult.success();
                         }
                     }
 
-                    RedProtect.get().lang.sendCommandHelp(src, "flag", true);
+                    RedProtect.get().getLanguageManager().sendCommandHelp(src, "flag", true);
                     return CommandResult.success();
                 }).build();
     }
@@ -158,9 +158,9 @@ class FlagCommandElement extends CommandElement {
 
         String[] args = argss.getRaw().split(" ");
         if (args.length == 1) {
-            SortedSet<String> tab = new TreeSet<>(RedProtect.get().config.getDefFlags());
-            for (String flag : RedProtect.get().config.AdminFlags) {
-                if (RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
+            SortedSet<String> tab = new TreeSet<>(RedProtect.get().getConfigManager().getDefFlags());
+            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
             }
@@ -168,13 +168,13 @@ class FlagCommandElement extends CommandElement {
         }
         if (args.length == 2) {
             SortedSet<String> tab = new TreeSet<>();
-            for (String flag : RedProtect.get().config.getDefFlags()) {
+            for (String flag : RedProtect.get().getConfigManager().getDefFlags()) {
                 if (flag.startsWith(args[1])) {
                     tab.add(flag);
                 }
             }
-            for (String flag : RedProtect.get().config.AdminFlags) {
-                if (flag.startsWith(args[1]) && RedProtect.get().ph.hasFlagPerm((Player) sender, flag)) {
+            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+                if (flag.startsWith(args[1]) && RedProtect.get().getPermissionHandler().hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
             }

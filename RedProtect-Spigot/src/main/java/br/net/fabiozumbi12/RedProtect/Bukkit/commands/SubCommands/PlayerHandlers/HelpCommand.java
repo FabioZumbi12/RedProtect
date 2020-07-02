@@ -59,7 +59,7 @@ public class HelpCommand implements SubCommand {
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "help", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "help", true);
         return true;
     }
 

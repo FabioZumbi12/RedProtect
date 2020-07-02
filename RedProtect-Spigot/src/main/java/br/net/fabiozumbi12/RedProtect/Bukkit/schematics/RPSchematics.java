@@ -44,20 +44,20 @@ public class RPSchematics {
     }
 
     public void pasteSchematic(Player p) {
-        File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RedProtect.get().config.configRoot().schematics.first_house_file);
+        File file = new File(RedProtect.get().getDataFolder(), "schematics" + File.separator + RedProtect.get().getConfigManager().configRoot().schematics.first_house_file);
 
         Region region = WEHook.pasteWithWE(p, file);
         if (region == null) return;
 
-        p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
-        RedProtect.get().lang.sendMessage(p, "playerlistener.region.startdone");
-        p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
-        RedProtect.get().lang.sendMessage(p, "cmdmanager.region.firstwarning");
-        p.sendMessage(RedProtect.get().lang.get("general.color") + "------------------------------------");
+        p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
+        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.startdone");
+        p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
+        RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.firstwarning");
+        p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
 
 
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + p.getName() + " CREATED(SCHEMATIC) region " + region.getName());
-        RedProtect.get().rm.add(region, p.getWorld().getName());
+        RedProtect.get().getRegionManager().add(region, p.getWorld().getName());
         RedProtect.get().getUtil().addBorder(p, region);
     }
 }

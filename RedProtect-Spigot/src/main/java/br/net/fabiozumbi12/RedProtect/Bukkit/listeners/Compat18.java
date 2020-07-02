@@ -65,7 +65,7 @@ public class Compat18 implements Listener {
         Entity e = event.getEntity();
 
         //spawn arms on armor stands
-        if (e instanceof ArmorStand && RedProtect.get().config.configRoot().hooks.armor_stand_arms) {
+        if (e instanceof ArmorStand && RedProtect.get().getConfigManager().configRoot().hooks.armor_stand_arms) {
             ArmorStand as = (ArmorStand) e;
             as.setArms(true);
         }
@@ -76,12 +76,12 @@ public class Compat18 implements Listener {
 
         Entity ent = e.getRightClicked();
         Location l = ent.getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         Player p = e.getPlayer();
         if (r == null) {
             //global flags
             if (ent instanceof ArmorStand) {
-                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(l.getWorld().getName()).build) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(l.getWorld().getName()).build) {
                     e.setCancelled(true);
                     return;
                 }
@@ -91,7 +91,7 @@ public class Compat18 implements Listener {
 
         if (ent instanceof ArmorStand) {
             if (!r.canBuild(p)) {
-                RedProtect.get().lang.sendMessage(p, "playerlistener.region.cantedit");
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantedit");
                 e.setCancelled(true);
             }
         }
@@ -114,12 +114,12 @@ public class Compat18 implements Listener {
             }
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(loc);
+        Region r1 = RedProtect.get().getRegionManager().getTopRegion(loc);
 
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
                     e.setCancelled(true);
                 }
             }
@@ -127,7 +127,7 @@ public class Compat18 implements Listener {
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
                 if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
                     e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(e2, "blocklistener.region.cantbreak");
+                    RedProtect.get().getLanguageManager().sendMessage(e2, "blocklistener.region.cantbreak");
                 }
             }
         }
@@ -150,12 +150,12 @@ public class Compat18 implements Listener {
             }
         }
 
-        Region r1 = RedProtect.get().rm.getTopRegion(loc);
+        Region r1 = RedProtect.get().getRegionManager().getTopRegion(loc);
 
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().config.globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
                     e.setCancelled(true);
                 }
             }
@@ -163,7 +163,7 @@ public class Compat18 implements Listener {
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
                 if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
                     e.setCancelled(true);
-                    RedProtect.get().lang.sendMessage(e2, "blocklistener.region.cantbreak");
+                    RedProtect.get().getLanguageManager().sendMessage(e2, "blocklistener.region.cantbreak");
                 }
             }
         }
@@ -180,7 +180,7 @@ public class Compat18 implements Listener {
         }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
-        Region r = RedProtect.get().rm.getTopRegion(l);
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         Material m = p.getItemInHand().getType();
 
         if (RedProtect.get().bukkitVersion >= 190 && e.getItem() != null) {
@@ -190,7 +190,7 @@ public class Compat18 implements Listener {
         if (m.equals(Material.ARMOR_STAND) || m.equals(Material.END_CRYSTAL)) {
             if (r != null && !r.canBuild(p) && !r.canPlace(m) && !r.canBreak(m)) {
                 e.setCancelled(true);
-                RedProtect.get().lang.sendMessage(p, "blocklistener.region.cantbuild");
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
             }
         }
     }
@@ -200,7 +200,7 @@ public class Compat18 implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockListener - BlockExplodeEvent event");
         List<Block> toRemove = new ArrayList<>();
         for (Block b : e.blockList()) {
-            Region r = RedProtect.get().rm.getTopRegion(b.getLocation());
+            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
             if (!cont.canWorldBreak(b)) {
                 toRemove.add(b);
                 continue;

@@ -94,7 +94,7 @@ public class WEHook {
             setSelection(ws, p, pos1, pos2);
         } else {
             worldEdit.getSession(p).getRegionSelector(ws).clear();
-            RedProtect.get().lang.sendMessage(p, RedProtect.get().lang.get("cmdmanager.region.select-we.hide"));
+            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.select-we.hide"));
         }
         worldEdit.getSession(p).dispatchCUISelection(worldEdit.wrapPlayer(p));
     }
@@ -105,7 +105,7 @@ public class WEHook {
 
         if (p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.WATER) ||
                 p.getLocation().getBlockRelative(Direction.DOWN).getBlock().getType().equals(BlockTypes.FLOWING_WATER)) {
-            RedProtect.get().lang.sendMessage(p, "playerlistener.region.needground");
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.needground");
             return null;
         }
 
@@ -173,9 +173,9 @@ public class WEHook {
 
             if (sender != null) {
                 if (wreg.getWorld().regenerate(wreg, esession)) {
-                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + r.getID().split("@")[0] + " regenerated with success!");
+                    RedProtect.get().getLanguageManager().sendMessage(sender, "[" + delayCount + "]" + " &aRegion " + r.getID().split("@")[0] + " regenerated with success!");
                 } else {
-                    RedProtect.get().lang.sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + r.getID().split("@")[0] + "!");
+                    RedProtect.get().getLanguageManager().sendMessage(sender, "[" + delayCount + "]" + " &cTheres an error when regen the region " + r.getID().split("@")[0] + "!");
                 }
             } else {
                 if (wreg.getWorld().regenerate(wreg, esession)) {
@@ -187,16 +187,16 @@ public class WEHook {
 
             if (remove) {
                 r.notifyRemove();
-                RedProtect.get().rm.remove(r, r.getWorld());
+                RedProtect.get().getRegionManager().remove(r, r.getWorld());
             }
 
             if (delayCount % 50 == 0) {
-                RedProtect.get().rm.saveAll(true);
+                RedProtect.get().getRegionManager().saveAll(true);
             }
 
-            if (RedProtect.get().config.configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().config.configRoot().purge.regen.stop_server_every) {
+            if (RedProtect.get().getConfigManager().configRoot().purge.regen.stop_server_every > 0 && delayCount > RedProtect.get().getConfigManager().configRoot().purge.regen.stop_server_every) {
                 Sponge.getScheduler().getScheduledTasks(RedProtect.get().container).forEach(Task::cancel);
-                RedProtect.get().rm.saveAll(false);
+                RedProtect.get().getRegionManager().saveAll(false);
 
                 Sponge.getServer().shutdown();
             }

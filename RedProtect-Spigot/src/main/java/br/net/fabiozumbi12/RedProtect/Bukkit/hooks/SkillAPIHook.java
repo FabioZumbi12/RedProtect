@@ -48,7 +48,7 @@ public class SkillAPIHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "SkillAPI PlayerExperienceGainEvent event.");
 
         Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r != null && !r.canSkill(p)) {
             e.setCancelled(true);
         }
@@ -63,7 +63,7 @@ public class SkillAPIHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "SkillAPI PlayerGainSkillPointsEvent event.");
 
         Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
 
         if (r != null && !r.canSkill(p)) {
             e.setCancelled(true);
@@ -79,7 +79,7 @@ public class SkillAPIHook implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "SkillAPI PlayerManaGainEvent event.");
 
         Player p = e.getPlayerData().getPlayer();
-        Region r = RedProtect.get().rm.getTopRegion(p.getLocation());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
 
         if (r != null && !r.canSkill(p)) {
             e.setCancelled(true);

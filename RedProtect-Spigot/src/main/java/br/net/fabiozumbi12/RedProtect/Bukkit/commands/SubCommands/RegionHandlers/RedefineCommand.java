@@ -53,26 +53,26 @@ public class RedefineCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 1) {
-            Region oldRect = RedProtect.get().rm.getRegion(args[0], player.getWorld().getName());
+            Region oldRect = RedProtect.get().getRegionManager().getRegion(args[0], player.getWorld().getName());
             if (oldRect == null) {
-                RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.doesntexist") + ": " + args[0]);
+                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;
             }
 
-            if (!RedProtect.get().ph.hasRegionPermLeader(player, "redefine", oldRect)) {
-                RedProtect.get().lang.sendMessage(player, "playerlistener.region.cantuse");
+            if (!RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "redefine", oldRect)) {
+                RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
                 return true;
             }
 
-            RedProtect.get().lang.sendMessage(player, "regionbuilder.creating");
+            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
 
             // Run claim async
             Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
                 RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
                 if (rb.ready()) {
                     Region r2 = rb.build();
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                    RedProtect.get().rm.add(r2, player.getWorld().getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
+                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
 
                     RedProtect.get().firstLocationSelections.remove(player);
                     RedProtect.get().secondLocationSelections.remove(player);
@@ -83,7 +83,7 @@ public class RedefineCommand implements SubCommand {
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "redefine", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "redefine", true);
         return true;
     }
 

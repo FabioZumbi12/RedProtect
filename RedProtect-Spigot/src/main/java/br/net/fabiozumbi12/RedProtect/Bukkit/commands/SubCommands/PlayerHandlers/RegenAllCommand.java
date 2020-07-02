@@ -44,16 +44,16 @@ public class RegenAllCommand implements SubCommand {
             if (!RedProtect.get().hooks.worldEdit) {
                 return true;
             }
-            int regen = RedProtect.get().rm.regenAll(args[0]);
+            int regen = RedProtect.get().getRegionManager().regenAll(args[0]);
             if (regen <= 0) {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.noneregenerated"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.noneregenerated"));
             } else {
-                RedProtect.get().lang.sendMessage(sender, RedProtect.get().lang.get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args[0]));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.regenerated").replace("{regions}", regen + "").replace("{player}", args[0]));
             }
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "regenall", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "regenall", true);
         return true;
     }
 

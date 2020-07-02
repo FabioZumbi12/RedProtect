@@ -56,25 +56,25 @@ public class LDenyCommand implements SubCommand {
                 String info = RedProtect.get().alWait.get(player);
 
                 Player lsender = Bukkit.getPlayer(info.split("@")[2]);
-                Region r = RedProtect.get().rm.getRegion(info.split("@")[0], info.split("@")[1]);
+                Region r = RedProtect.get().getRegionManager().getRegion(info.split("@")[0], info.split("@")[1]);
 
                 if (r != null) {
-                    RedProtect.get().lang.sendMessage(player, RedProtect.get().lang.get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));
                     if (lsender.isOnline()) {
-                        RedProtect.get().lang.sendMessage(lsender, RedProtect.get().lang.get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName()));
+                        RedProtect.get().getLanguageManager().sendMessage(lsender, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName()));
                     }
                 } else {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                 }
                 RedProtect.get().alWait.remove(player);
                 return true;
             } else {
-                RedProtect.get().lang.sendMessage(player, "cmdmanager.norequests");
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.norequests");
                 return true;
             }
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "ldeny", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "ldeny", true);
         return true;
     }
 

@@ -65,7 +65,7 @@ public class RegionManager {
             return;
         }
         WorldRegionManager mgr;
-        if (RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+        if (RedProtect.get().getConfigManager().configRoot().file_type.equalsIgnoreCase("mysql")) {
             mgr = new WorldMySQLRegionManager(w);
         } else {
             mgr = new WorldFlatFileRegionManager(w);
@@ -77,7 +77,7 @@ public class RegionManager {
     public void unloadAll() {
         for (String w : this.regionManagers.keySet()) {
             regionManagers.get(w).clearRegions();
-            if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
+            if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
                 RedProtect.get().hooks.dynmapHook.removeAll(w);
             }
         }
@@ -100,7 +100,7 @@ public class RegionManager {
         for (WorldRegionManager worldRegionManager : this.regionManagers.values()) {
             saved = worldRegionManager.save(force) + saved;
         }
-        if (force && RedProtect.get().config.configRoot().flat_file.backup && !RedProtect.get().config.configRoot().file_type.equalsIgnoreCase("mysql")) {
+        if (force && RedProtect.get().getConfigManager().configRoot().flat_file.backup && !RedProtect.get().getConfigManager().configRoot().file_type.equalsIgnoreCase("mysql")) {
             RedProtect.get().getUtil().backupRegions();
         }
         return saved;
@@ -121,7 +121,7 @@ public class RegionManager {
     public int getTotalRegionSize(String uuid, String world) {
         Optional<World> w = Sponge.getServer().getWorld(world);
         int size = 0;
-        if (RedProtect.get().config.configRoot().region_settings.blocklimit_per_world && w.isPresent()) {
+        if (RedProtect.get().getConfigManager().configRoot().region_settings.blocklimit_per_world && w.isPresent()) {
             WorldRegionManager rms = this.regionManagers.get(w.get().getName());
             size = rms.getTotalRegionSize(uuid);
         } else {
@@ -201,7 +201,7 @@ public class RegionManager {
 
     public int getPlayerRegions(String player, String w) {
         int size;
-        if (RedProtect.get().config.configRoot().region_settings.claim.claimlimit_per_world) {
+        if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.claimlimit_per_world) {
             size = getRegions(player, w).size();
         } else {
             size = getLeaderRegions(player).size();
@@ -210,7 +210,7 @@ public class RegionManager {
     }
 
     public long getCanPurgePlayer(String player, String world) {
-        if (RedProtect.get().config.configRoot().purge.purge_limit_perworld) {
+        if (RedProtect.get().getConfigManager().configRoot().purge.purge_limit_perworld) {
             return regionManagers.get(world).getCanPurgeCount(player, false);
         } else {
             long total = 0;
@@ -223,7 +223,7 @@ public class RegionManager {
 
     public void add(Region r, String w) {
         this.regionManagers.get(w).add(r);
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
             try {
                 RedProtect.get().hooks.dynmapHook.addMark(r);
             } catch (Exception ex) {
@@ -242,7 +242,7 @@ public class RegionManager {
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
         removeCache(r);
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().config.configRoot().hooks.dynmap.enable) {
+        if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
             try {
                 RedProtect.get().hooks.dynmapHook.removeMark(r);
             } catch (Exception ex) {
@@ -337,7 +337,7 @@ public class RegionManager {
     public int regenAll(String player) {
         int delay = 0;
         for (Region r : getLeaderRegions(player)) {
-            if (r.getArea() <= RedProtect.get().config.configRoot().purge.regen.max_area_regen) {
+            if (r.getArea() <= RedProtect.get().getConfigManager().configRoot().purge.regen.max_area_regen) {
                 WEHook.regenRegion(r, Sponge.getServer().getWorld(r.getWorld()).get(), r.getMaxLocation(), r.getMinLocation(), delay, null, true);
                 delay = delay + 10;
             }

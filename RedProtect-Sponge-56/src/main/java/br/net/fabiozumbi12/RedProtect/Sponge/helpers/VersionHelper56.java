@@ -187,10 +187,10 @@ public class VersionHelper56 implements VersionHelper {
                 continue;
             }
             ItemStack stack = item.peek().get();
-            value += ((RedProtect.get().config.ecoRoot().items.values.get(stack.getItem().getName()) * stack.getQuantity()));
+            value += ((RedProtect.get().getConfigManager().ecoRoot().items.values.get(stack.getItem().getName()) * stack.getQuantity()));
             if (stack.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
                 for (ItemEnchantment enchant : stack.get(Keys.ITEM_ENCHANTMENTS).get()) {
-                    value += ((RedProtect.get().config.ecoRoot().enchantments.values.get(enchant.getEnchantment().getName()) * enchant.getLevel()));
+                    value += ((RedProtect.get().getConfigManager().ecoRoot().enchantments.values.get(enchant.getEnchantment().getName()) * enchant.getLevel()));
                 }
             }
         }

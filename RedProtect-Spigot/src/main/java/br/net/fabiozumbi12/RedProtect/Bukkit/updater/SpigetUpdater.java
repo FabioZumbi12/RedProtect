@@ -86,7 +86,7 @@ public class SpigetUpdater {
     }
 
     public void hourlyUpdateCheck(final CommandSender sender, boolean updateCheck, final boolean silent) {
-        long minutes = plugin.config.configRoot().update.check_interval;
+        long minutes = plugin.getConfigManager().configRoot().update.check_interval;
         if (minutes < 15) {
             plugin.logger.warning("[Warning] check-interval in your config.yml is too low. A low number can cause server crashes. The number is raised to 15 minutes.");
             minutes = 15;
@@ -181,7 +181,7 @@ public class SpigetUpdater {
                     if (updateAvailable == UpdateStatus.AVAILABLE) {
                         newDownloadVersion = newVersion;
                         sender.sendMessage(ChatColor.GOLD + "[RedProtect] New update found: " + ChatColor.GREEN + newVersion);
-                        if (plugin.config.configRoot().update.auto_update) {
+                        if (plugin.getConfigManager().configRoot().update.auto_update) {
                             downloadAndUpdateJar(sender);
                             sender.sendMessage(ChatColor.GOLD + "[RedProtect] " + ChatColor.GREEN + "Plugin updated. Restart server to complete the update.");
                         } else

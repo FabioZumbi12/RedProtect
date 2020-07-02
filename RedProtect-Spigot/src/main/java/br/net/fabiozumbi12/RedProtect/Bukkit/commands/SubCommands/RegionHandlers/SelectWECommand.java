@@ -43,7 +43,7 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.Han
 public class SelectWECommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof ConsoleCommandSender || !RedProtect.get().ph.hasCommandPerm(sender, "select-we")) {
+        if (sender instanceof ConsoleCommandSender || !RedProtect.get().getPermissionHandler().hasCommandPerm(sender, "select-we")) {
             HandleHelpPage(sender, 1);
             return true;
         }
@@ -52,9 +52,9 @@ public class SelectWECommand implements SubCommand {
 
         if (args.length == 0) {
             if (RedProtect.get().hooks.worldEdit) {
-                Region r = RedProtect.get().rm.getTopRegion(player.getLocation());
+                Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r == null) {
-                    RedProtect.get().lang.sendMessage(player, "cmdmanager.region.doesexists");
+                    RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                     return true;
                 }
                 WEHook.setSelectionFromRP(player, r.getMinLocation(), r.getMaxLocation());
@@ -62,7 +62,7 @@ public class SelectWECommand implements SubCommand {
             return true;
         }
 
-        RedProtect.get().lang.sendCommandHelp(sender, "select-we", true);
+        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "select-we", true);
         return true;
     }
 
