@@ -106,7 +106,7 @@ public class RedProtectUtil extends CoreUtil {
                 PotionMeta pot = (PotionMeta) result.getItemMeta();
                 potname = pot.getBasePotionData().getType().name();
             }
-            if (RedProtect.get().bukkitVersion < 190) {
+            if (RedProtect.get().bukkitVersion < 190 && Potion.fromItemStack(result) != null) {
                 potname = Potion.fromItemStack(result).getType().name();
             }
             return Pots.contains(potname);
