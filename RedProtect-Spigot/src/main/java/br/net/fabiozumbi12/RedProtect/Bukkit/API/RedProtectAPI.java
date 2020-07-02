@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.API;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -38,6 +39,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class RedProtectAPI {
+
+    /**
+     * Return language api to send messages using RedProtect language;
+     * <p>
+     *
+     * @return {@code LangManager} with language api.
+     */
+    public LangManager getMessageApi() {
+        return RedProtect.get().getLanguageManager();
+    }
 
     /**
      * Return all regions for all loaded worlds;

@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Sponge.API;
 
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.config.LangManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
@@ -38,6 +39,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class RedProtectAPI {
+
+    /**
+     * Return language api to send messages using RedProtect language;
+     * <p>
+     *
+     * @return {@code LangManager} with language api.
+     */
+    public LangManager getMessageApi() {
+        return RedProtect.get().getLanguageManager();
+    }
 
     /**
      * Give the Region based on given name and world.
