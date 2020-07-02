@@ -1,0 +1,273 @@
+<!--
+  ~ Copyright (c) 2019 - @FabioZumbi12
+  ~ Last Modified: 25/04/19 07:02
+  ~
+  ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+  ~  damages arising from the use of this class.
+  ~
+  ~ Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+  ~ redistribute it freely, subject to the following restrictions:
+  ~ 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+  ~ use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+  ~ 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+  ~ 3 - This notice may not be removed or altered from any source distribution.
+  ~
+  ~ Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+  ~ responsabilizados por quaisquer danos decorrentes do uso desta classe.
+  ~
+  ~ É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+  ~ alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+  ~ 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+  ~  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+  ~ 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+  ~ classe original.
+  ~ 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+        <artifactId>RedProtect</artifactId>
+        <version>7.7.2</version>
+    </parent>
+    <artifactId>RedProtect-Spigot</artifactId>
+
+    <repositories>
+        <repository>
+            <id>general-maven-repo</id>
+            <url>https://jcenter.bintray.com/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>vault-repo</id>
+            <url>https://nexus.keyle.de/content/groups/public/</url>
+        </repository>
+
+        <repository>
+            <id>sk89q-snapshots</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+
+        <repository>
+            <id>EssentialsX</id>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>dynmap</id>
+            <url>http://repo.mikeprimm.com/</url>
+        </repository>
+
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+
+        <repository>
+            <id>Translation-API</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/TranslationAPI/mvn-repo/</url>
+        </repository>
+
+        <repository>
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${mineVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${mineVersion}</version>
+            <classifier>javadoc</classifier>
+        </dependency>
+
+        <!-- start of local repos -->
+        <dependency>
+            <groupId>SimpleClans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>MassiveCore</groupId>
+            <artifactId>MassiveCore</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MassiveCore.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Factions</groupId>
+            <artifactId>Factions</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Factions.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>BossBarAPI_v2.4.1</groupId>
+            <artifactId>BossBarAPI_v2.4.1</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/BossBarAPI_v2.4.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>ActionBarAPI-1.5.4.jar</groupId>
+            <artifactId>ActionBarAPI-1.5.4.jar</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ActionBarAPI-1.5.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>dynmap-2.5</groupId>
+            <artifactId>dynmap-2.5</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>MyChunk</groupId>
+            <artifactId>MyChunk</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MyChunk.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>PvPManager</groupId>
+            <artifactId>PvPManager</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/PvPManager.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>SkillAPI</groupId>
+            <artifactId>SkillAPI</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SkillAPI.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>InfernalMobs</groupId>
+            <artifactId>InfernalMobs</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/InfernalMobs-5.7.jar</systemPath>
+        </dependency>
+        <!-- end of local repos -->
+
+        <dependency>
+            <groupId>org.natrolite</groupId>
+            <artifactId>vault-api</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.17.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>BOSEconomy</groupId>
+                    <artifactId>BOSEconomy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>iConomy</groupId>
+                    <artifactId>iConomy5</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>iConomy</groupId>
+                    <artifactId>iConomy6</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>MultiCurrency</groupId>
+                    <artifactId>MultiCurrency</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TechFortress</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.21</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12</groupId>
+            <artifactId>TranslationAPI</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.keyle</groupId>
+            <artifactId>mypet</artifactId>
+            <version>3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <mineVersion>1.16.1-R0.1-SNAPSHOT</mineVersion>
+    </properties>
+
+    <build>
+        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+    </build>
+</project>
