@@ -43,6 +43,10 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>redprotect-repo</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
