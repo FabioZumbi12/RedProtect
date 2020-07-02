@@ -137,7 +137,13 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         //check borders for other regions
-        List<Location<World>> limitlocs = newRegion.getLimitLocs(newRegion.getMinY(), newRegion.getMaxY(), true);
+        int newMiny = newRegion.getMinY();
+        int newMaxy = newRegion.getMaxY();
+        if (RedProtect.get().config.configRoot().region_settings.autoexpandvert_ondefine) {
+            newMiny = newRegion.getMaxY() / 2;
+            newMaxy = newRegion.getMaxY() / 2;
+        }
+        List<Location<World>> limitlocs = newRegion.getLimitLocs(newMiny, newMaxy, true);
         for (Location<World> loc : limitlocs) {
         	
         	/*
