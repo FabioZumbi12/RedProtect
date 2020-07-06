@@ -53,32 +53,12 @@ public class SpigetUpdater {
             new File(plugin.getDataFolder(), "backup").mkdir();
     }
 
-    public SpigetUpdate getSpigetUpdate() {
-        return spigetUpdate;
-    }
-
     public UpdateStatus getUpdateAvailable() {
         return updateAvailable;
     }
 
-    public void setUpdateAvailable(UpdateStatus b) {
-        updateAvailable = b;
-    }
-
-    public String getCurrentJarFile() {
-        return currentJarFile;
-    }
-
     public void setCurrentJarFile(String name) {
         currentJarFile = name;
-    }
-
-    public String getNewDownloadVersion() {
-        return newDownloadVersion;
-    }
-
-    public void setNewDownloadVersion(String newDownloadVersion) {
-        this.newDownloadVersion = newDownloadVersion;
     }
 
     public int getTaskId() {
@@ -96,13 +76,6 @@ public class SpigetUpdater {
         }
     }
 
-    /**
-     * Download a new version, add version number to the downloaded filename
-     * (filename-n.n.n) , and the rename the old version to ???.jar.oldnnn
-     *
-     * @param sender
-     * @return
-     */
     public boolean downloadAndUpdateJar(CommandSender sender) {
         final String OS = System.getProperty("os.name");
         boolean success = spigetUpdate.downloadUpdate();
@@ -157,12 +130,6 @@ public class SpigetUpdater {
         return true;
     }
 
-    /**
-     * Check is a new version is available
-     *
-     * @param sender
-     * @param silent - if true the player will not get the status in Game
-     */
     public void checkForUpdate(final CommandSender sender, final boolean silent) {
         if (!silent)
             sender.sendMessage("[RedProtect] Checking for updates ...");
@@ -199,12 +166,6 @@ public class SpigetUpdater {
         }
     }
 
-    /**
-     * Check if "newVersion" is newer than plugin's current version
-     *
-     * @param newVersion
-     * @return
-     */
     public UpdateStatus isUpdateNewerVersion(String newVersion) {
         // Version format on Spigot.org & Spiget.org: "n.n.n"
         // Version format in jar file: "n.n.n" | "n.n.n-SNAPSHOT-Bn"

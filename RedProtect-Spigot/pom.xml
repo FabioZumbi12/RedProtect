@@ -85,6 +85,11 @@
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
+
+        <repository>
+            <id>ultimatechat-repo</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -260,6 +265,18 @@
             <artifactId>placeholderapi</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>LATEST</version>
+            <classifier>javadoc</classifier>
         </dependency>
     </dependencies>
 

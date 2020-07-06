@@ -106,15 +106,13 @@ public class RegionManager {
         return saved;
     }
 
-    public @Nullable
-    Region getRegionById(String rid) {
+    public Region getRegionById(String rid) {
         if (rid == null) return null;
         World w = Sponge.getServer().getWorld(rid.split("@")[1]).get();
         return this.regionManagers.get(w.getName()).getRegion(rid.split("@")[0]);
     }
 
-    public @Nullable
-    Region getRegion(String rname, String w) {
+    public Region getRegion(String rname, String w) {
         return this.regionManagers.get(w).getRegion(rname);
     }
 
@@ -142,12 +140,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Leader;
+     * Return a set of regions by player UUID or Name if this player is Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      *
      * @param uuid the UUID of the player.
-     * @return {{@link Set<Region>}
+     * @return {@code Set<Region>} with the regions
      */
     public Set<Region> getLeaderRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -158,12 +156,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Admin or Leader;
+     * Return a set of regions by player UUID or Name if this player is Admin or Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
      * @param uuid the UUID of the player.
-     * @return {@link Set<Region>}
+     * @return {@code Set<Region>} with the regions
      */
     public Set<Region> getAdminRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -174,12 +172,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Member, Admin or Leader;
+     * Return a set of regions by player UUID or Name if this player is Member, Admin or Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
      * @param uuid the UUID of the player.
-     * @return {@link Set<Region>}
+     * @return {@code Set<Region>} with the regions
      */
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -270,12 +268,13 @@ public class RegionManager {
     }
 
     /**
-     * Get the hight priority region in a group region. If no other regions, return the unique region on location.
+     * Get the high priority region in a group region. If no other regions, return the unique region on location.
      *
+     * @param loc The location
+     * @param caller class calling this method
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
-    Region getTopRegion(Location<World> loc, String caller) {
+    public Region getTopRegion(Location<World> loc, String caller) {
         if (bLoc.containsKey(loc.getBlockPosition())) {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "Get from cache: " + loc.getBlockPosition().toString() + " - [" + caller + "]");
             return bLoc.get(loc.getBlockPosition());
@@ -300,20 +299,27 @@ public class RegionManager {
     /**
      * Get the hight priority region in a group region. If no other regions, return the unique region on location.
      *
+     * @param w      World
+     * @param x      X coordinate
+     * @param y      Y coordinate
+     * @param z      Z coordinate
+     * @param caller Class calling this method
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
-    Region getTopRegion(String w, int x, int y, int z, String caller) {
+    public Region getTopRegion(String w, int x, int y, int z, String caller) {
         return getTopRegion(new Location<>(Sponge.getServer().getWorld(w).get(), x, y, z), caller);
     }
 
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
+     * @param w      World
+     * @param x      X coordinate
+     * @param y      Y coordinate
+     * @param z      Z coordinate
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public @Nullable
-    Region getLowRegion(String w, int x, int y, int z) {
+    public Region getLowRegion(String w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -348,6 +354,7 @@ public class RegionManager {
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
+     * @param loc Location
      * @return {@code Region} - Or null if no regions on this location.
      */
     public @Nullable
@@ -361,7 +368,10 @@ public class RegionManager {
 
     /**
      * Get regions in a group region. If no other regions, return the unique region on location.
-     *
+     * @param w      World
+     * @param x      X coordinate
+     * @param y      Y coordinate
+     * @param z      Z coordinate
      * @return {@code Map<Integer,Region>} - Indexed by priority
      */
     public Map<Integer, Region> getGroupRegion(String w, int x, int y, int z) {
@@ -375,6 +385,7 @@ public class RegionManager {
     /**
      * Get regions in a group region. If no other regions, return the unique region on location.
      *
+     * @param loc Location
      * @return {@code Map<Integer,Region>} - Indexed by priority
      */
     public Map<Integer, Region> getGroupRegion(Location<World> loc) {
@@ -439,5 +450,4 @@ public class RegionManager {
         this.remove(old, old.getWorld());
         return newr;
     }
-
 }

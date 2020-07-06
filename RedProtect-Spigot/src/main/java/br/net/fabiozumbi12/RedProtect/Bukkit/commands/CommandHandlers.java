@@ -30,10 +30,10 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.DeleteRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.UltimateFancy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ItemFlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.MobFlagGui;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
@@ -629,7 +629,7 @@ public class CommandHandlers {
                 int total = 0;
                 int last = 0;
 
-                UltimateFancy fancy = new UltimateFancy();
+                UltimateFancy fancy = new UltimateFancy(RedProtect.get());
                 for (World w : Bukkit.getWorlds()) {
                     boolean first = true;
 
@@ -656,7 +656,7 @@ public class CommandHandlers {
                         }
                         if (max >= it.size()) max = (it.size() - 1);
                         //-------------
-                        UltimateFancy tempFancy = new UltimateFancy();
+                        UltimateFancy tempFancy = new UltimateFancy(RedProtect.get());
                         if (RedProtect.get().getConfigManager().configRoot().region_settings.region_list.hover_and_click_teleport && RedProtect.get().getPermissionHandler().hasRegionPermAdmin(sender, "teleport", null)) {
                             for (int i = min; i <= max; i++) {
                                 count = i;

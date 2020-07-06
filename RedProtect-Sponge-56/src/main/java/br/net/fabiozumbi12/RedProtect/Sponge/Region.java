@@ -78,6 +78,7 @@ public class Region extends CoreRegion {
      * @param value     Last playername of this region.
      * @param tppoint   Teleport Point
      * @param candel    Can delete?
+     * @param canPurge  Can be purged?
      */
     public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] minLoc, int[] maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, minLoc, maxLoc, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{0, 0}, candel, canPurge);
@@ -105,6 +106,7 @@ public class Region extends CoreRegion {
      * @param value     Last playername of this region.
      * @param tppoint   Teleport Point
      * @param candel    Can delete?
+     * @param canPurge  Can be purged?
      */
     public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location<World> tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{0, 0}, candel, canPurge);
@@ -130,6 +132,7 @@ public class Region extends CoreRegion {
      * @param value     A playername in server economy.
      * @param tppoint   Teleport Point
      * @param candel    Can delete?
+     * @param canPurge  Can be purged?
      */
     public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location<World> tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, x, z, miny, maxy, prior, worldName, date, flags, welcome, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{0, 0}, candel, canPurge);
@@ -1014,7 +1017,8 @@ public class Region extends CoreRegion {
     /**
      * Allow non members of this region to break/place spawners.
      *
-     * @return boolean
+     * @param p the player
+     * @return boolean if player can iceform
      */
     public boolean allowSpawner(Player p) {
         return getFlagBool("allow-spawner") || checkAllowedPlayer(p, "");
@@ -1027,7 +1031,8 @@ public class Region extends CoreRegion {
     /**
      * Allow players with fly enabled fly on this region.
      *
-     * @return boolean
+     * @param p the player
+     * @return boolean if player can fly
      */
     public boolean canFly(Player p) {
         return getFlagBool("allow-fly") || checkAllowedPlayer(p, "allow-fly");

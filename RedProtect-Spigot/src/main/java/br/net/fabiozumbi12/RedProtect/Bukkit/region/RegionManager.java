@@ -147,12 +147,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Leader;
+     * Return a set of regions by player UUID or Name if this player is Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      *
      * @param uuid the UUID of the player.
-     * @return {{@link Set<Region>}
+     * @return {@code Set<Region>} with regions
      */
     public Set<Region> getLeaderRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -163,12 +163,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Admin or Leader;
+     * Return a set of regions by player UUID or Name if this player is Admin or Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
      * @param uuid the UUID of the player.
-     * @return {@link Set<Region>}
+     * @return {@code Set<Region>} with regions
      */
     public Set<Region> getAdminRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -179,12 +179,12 @@ public class RegionManager {
     }
 
     /**
-     * Return a {@link Set<Region>} of regions by player UUID or Name if this player is Member, Admin or Leader;
+     * Return a set of regions by player UUID or Name if this player is Member, Admin or Leader;
      * <p>
      * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
      * @param uuid the UUID of the player.
-     * @return {@link Set<Region>}
+     * @return {@code Set<Region>} with regions
      */
     public Set<Region> getMemberRegions(String uuid) {
         Set<Region> ret = new HashSet<>();
@@ -382,6 +382,7 @@ public class RegionManager {
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
+     * @param loc location to get region.
      * @return {@code Region} - Or null if no regions on this location.
      */
     public

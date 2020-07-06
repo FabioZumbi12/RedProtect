@@ -48,6 +48,10 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>ultimatechat-repo</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -109,6 +113,12 @@
             <version>LATEST</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -139,11 +149,18 @@
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.13</include>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-56</include>
                                     <include>br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-7</include>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
                                 </includes>
                             </artifactSet>
                             <filters>
                                 <filter>
                                     <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>br.net.fabiozumbi12.UltimateChat:UltimateFancy</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>

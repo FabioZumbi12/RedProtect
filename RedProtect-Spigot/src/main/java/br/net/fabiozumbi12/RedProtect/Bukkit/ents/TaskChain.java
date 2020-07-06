@@ -32,31 +32,15 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * Facilitates Control Flow for the Bukkit Scheduler to easily jump between
- * Async and Sync tasks without deeply nested callbacks, passing the response of the
- * previous task to the next task to use.
- * <p>
- * Usage example: TaskChain.newChain()
- * .add(new TaskChain.AsyncTask {})
- * .add(new TaskChain.Task {})
- * .add(new AsyncTask {})
- * .execute();
- */
 @SuppressWarnings("rawtypes")
 public class TaskChain {
-    /**
-     * Utility helpers for Task returns. Changes the behavior of the Chain when these are returned.
-     */
+
     // Tells a task it will perform call back later.
     public static final Object ASYNC = new Object();
     // Abort executing the chain
     public static final Object ABORT = new Object();
 
 
-    /**
-     * =============================================================================================
-     */
     final ConcurrentLinkedQueue<BaseTask> chainQueue = new ConcurrentLinkedQueue<>();
     private final Plugin plugin;
     boolean executed = false;
@@ -71,22 +55,10 @@ public class TaskChain {
       =============================================================================================
      */
 
-    /**
-     * Starts a new chain.
-     *
-     * @return
-     */
     public static TaskChain newChain() {
         return new TaskChain();
     }
 
-    /**
-     * Adds a step to the chain execution. Async*Task will run off of main thread,
-     * *Task will run sync with main thread
-     *
-     * @param task
-     * @return
-     */
     public TaskChain add(BaseTask task) {
         synchronized (this) {
             if (executed) {
@@ -98,9 +70,6 @@ public class TaskChain {
         return this;
     }
 
-    /**
-     * Finished adding tasks, begins executing them.
-     */
     public void execute() {
         synchronized (this) {
             if (executed) {
@@ -111,9 +80,6 @@ public class TaskChain {
         nextTask();
     }
 
-    /**
-     * Fires off the next task, and switches between Async/Sync as necessary.
-     */
     private void nextTask() {
         final TaskChain chain = this;
         final BaseTask task = chainQueue.poll();
@@ -143,31 +109,13 @@ public class TaskChain {
 
     }
 
-    /**
-     * Provides foundation of a task with what the previous task type should return
-     * to pass to this and what this task will return.
-     *
-     * @param <R> Return Type
-     * @param <A> Argument Type Expected
-     */
     private abstract static class BaseTask<R, A> {
         TaskChain chain = null;
         boolean async = false;
         boolean executed = false;
 
-        /**
-         * Task Type classes will implement this
-         *
-         * @param arg
-         * @return
-         */
         protected abstract R runTask(A arg);
 
-        /**
-         * Called internally by Task Chain to facilitate executing the task and then the next task.
-         *
-         * @param chain
-         */
         private void run(TaskChain chain) {
             final Object arg = chain.previous;
             chain.previous = null;
@@ -185,28 +133,15 @@ public class TaskChain {
             }
         }
 
-        /**
-         * Tells the TaskChain to abort processing any more tasks.
-         */
         public R abort() {
             chain.previous = ABORT;
             return null;
         }
 
-        /**
-         * Tells the TaskChain you will manually invoke the next task manually using task.next(response);
-         */
         public void async() {
             chain.previous = ASYNC;
         }
 
-        /**
-         * Only to be used when paired with return this.async(); Must be called to execute the next task.
-         * <p>
-         * To be used inside a callback of another operation that is performed async.
-         *
-         * @param resp
-         */
         public void next(R resp) {
             synchronized (this) {
                 if (executed) {
@@ -220,20 +155,6 @@ public class TaskChain {
         }
     }
 
-    /**
-     * General abstract classes to be used for various tasks in the chain.
-     * <p>
-     * First Tasks are for when you do not have or do not care about the return
-     * value of a previous task.
-     * <p>
-     * Last Tasks are for when you do not need to use a return type.
-     * <p>
-     * A Generic task simply does not care about Previous Return or return
-     * anything itself.
-     * <p>
-     * Async Tasks will not run on the Minecraft Thread and should not use the
-     * Bukkit API unless it is thread safe.
-     */
     public abstract static class Task<R, A> extends BaseTask<R, A> {
         protected abstract R run(A arg);
 

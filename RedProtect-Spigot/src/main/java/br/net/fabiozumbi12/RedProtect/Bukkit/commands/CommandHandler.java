@@ -30,7 +30,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers.*;
-import br.net.fabiozumbi12.RedProtect.Bukkit.fanciful.UltimateFancy;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
@@ -38,6 +37,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.updater.SpigetUpdater;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -772,7 +772,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                         if (max > it.size()) max = (it.size() - 1);
                         //-------------
                         if (RedProtect.get().getConfigManager().configRoot().region_settings.region_list.hover_and_click_teleport && RedProtect.get().getPermissionHandler().hasRegionPermAdmin(sender, "teleport", null)) {
-                            UltimateFancy fancy = new UltimateFancy();
+                            UltimateFancy fancy = new UltimateFancy(RedProtect.get());
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);

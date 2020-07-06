@@ -21,31 +21,38 @@ Available on jenkins: [![Build Status](http://host.areaz12server.net.br:8081/bui
 Now you can hook with uchat using maven repository (from Github) to use in your projects.
 
 **Repository:**  
-```
+```xml
 <repositories>  
-  <repository>  
-    <id>redprotect-repo</id>  
-    <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>  
-  </repository>  
+    <repository>  
+        <id>redprotect-repo</id>  
+        <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>  
+    </repository>  
 </repositories>  
 ```
 
 **Dependency:**  
-```
+```xml
 <dependencies>  
-  <dependency>  
-    //Core is needed
-    <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
-    <artifactId>RedProtect-Core</artifactId>  
-    <version>LATEST</version>  
-    <scope>provided</scope>  
-  </dependency>  
-  <dependency>  
-    <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
-    <artifactId>RedProtect-[Check below for dependency names]</artifactId>  
-    <version>LATEST</version>  
-    <scope>provided</scope>  
-  </dependency>   
+    <dependency>  
+        //Core is needed
+        <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
+        <artifactId>RedProtect-Core</artifactId>  
+        <version>LATEST</version>  
+        <scope>provided</scope>  
+    </dependency>
+
+    <dependency>  
+        <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
+        <artifactId>RedProtect-[Check below for dependency names]</artifactId>  
+        <version>LATEST</version>  
+        <scope>provided</scope>  
+    </dependency>
+    <dependency>  
+        <groupId>br.net.fabiozumbi12.RedProtect</groupId>  
+        <artifactId>RedProtect-[Check below for dependency names]</artifactId>  
+        <version>LATEST</version>
+        <classifier>javadoc</classifier>
+    </dependency>   
 </dependencies>  
 ```
 **Check the dependency names and APIs:** [Click here](https://github.com/FabioZumbi12/RedProtect/tree/mvn-repo/br/net/fabiozumbi12/RedProtect)

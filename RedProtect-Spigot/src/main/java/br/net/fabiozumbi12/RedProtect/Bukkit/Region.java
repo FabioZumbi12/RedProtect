@@ -68,6 +68,7 @@ public class Region extends CoreRegion {
      * @param value     Last value of this region.
      * @param tppoint   Teleport Point
      * @param candel    Can delete?
+     * @param canPurge  Can be purged?
      */
     public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, Location minLoc, Location maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, new int[]{minLoc.getBlockX(), minLoc.getBlockY(), minLoc.getBlockZ()}, new int[]{maxLoc.getBlockX(), maxLoc.getBlockY(), maxLoc.getBlockZ()}, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{tppoint.getPitch(), tppoint.getYaw()}, candel, canPurge);
@@ -95,6 +96,7 @@ public class Region extends CoreRegion {
      * @param value     Last playername of this region.
      * @param tppoint   Teleport Point
      * @param candel    Can delete?
+     * @param canPurge  Can br purged?
      */
     public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{tppoint.getPitch(), tppoint.getYaw()}, candel, canPurge);
@@ -120,6 +122,7 @@ public class Region extends CoreRegion {
      * @param value     A playername in server economy.
      * @param tppoint   Teleport Point
      * @param candel    Can delete?
+     * @param canPurge  Can be purged?
      */
     public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int[] x, int[] z, int miny, int maxy, int prior, String worldName, String date, Map<String, Object> flags, String welcome, long value, Location tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, x, z, miny, maxy, prior, worldName, date, flags, welcome, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{tppoint.getPitch(), tppoint.getYaw()}, candel, canPurge);
@@ -1047,7 +1050,8 @@ public class Region extends CoreRegion {
     /**
      * Allow ice form by players.
      *
-     * @return boolean
+     * @param p the player
+     * @return boolean if player can iceform
      */
     public boolean canIceForm(Player p) {
         return getFlagBool("iceform-player") || p.hasPermission("redprotect.flag.iceform-player.bypass");
@@ -1056,7 +1060,7 @@ public class Region extends CoreRegion {
     /**
      * Allow ice form by entity and by world.
      *
-     * @return boolean
+     * @return boolean if can iceform
      */
     public boolean canIceForm() {
         return getFlagBool("iceform-world");
