@@ -270,13 +270,7 @@
             <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
             <version>LATEST</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-            <artifactId>UltimateFancy</artifactId>
-            <version>LATEST</version>
-            <classifier>javadoc</classifier>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
