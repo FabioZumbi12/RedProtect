@@ -132,7 +132,7 @@ Days: d, day, days
 
 ### License/About Dev:
 This plugin was originally on Spigot in this link: https://www.spigotmc.org/resources/buyregion-1-13.60189/ by **Luke199** and **GentleGravel**.  
-People using this add-on w/ RedProtect can move all rentedRegions from ``plugins/BuyRegion`` folder to new ``plugins/BuyRentRegion`` of this add-on.  
+People using the previous plugin w/ RedProtect can move all rentedRegions from ``plugins/BuyRegion`` folder to new ``plugins/BuyRentRegion`` of this add-on to migrate rents and configs.  
 
 ### Download:
 Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
