@@ -11,6 +11,16 @@ Spigot: https://www.spigotmc.org/resources/redprotect.15841/
 Bukkit: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/  
 Sponge: https://ore.spongepowered.org/FabioZumbi12/RedProtect
 
+## RedProtect Add-ons:
+This add-ons extends RedProtect flags, functions and more.  
+### Killer Projectiles: 
+> How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/KillerProjectiles
+> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+
+### BuyRent Regions: 
+> How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/BuyRentRegion
+> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+
 ## Source:
 The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
 

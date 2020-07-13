@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 25/04/19 07:02
+ * Copyright (c) 2020 - @FabioZumbi12
+ * Last Modified: 09/07/2020 00:53.
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -740,9 +740,6 @@ public class GlobalListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is CreatureSpawnEvent event!");
 
         Entity e = event.getEntity();
-        if (e == null) {
-            return;
-        }
 
         Location l = event.getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);

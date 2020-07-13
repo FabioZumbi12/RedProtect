@@ -1,6 +1,5 @@
-## RedProtect ADD-ON
+## RedProtect ADD-ON: Killer Projectiles
 This plugin adds the flag `killer-projectiles` making any projectile launcher inside regions with this flag damage the amount set on the configuration.
-
 
 ### Commands: 
 Reload command: `/killerprojectiles reload` or the alias `/kp reload`  
@@ -11,4 +10,4 @@ Reload command: `killerprojectiles.cmd.reload`
 To use the flag: `redprotect.flag.killer-projectiles`
 
 ### Download:
-Available on jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon?job=RedProtect)](http://host.areaz12server.net.br:8081/job/RedProtect/)
+Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons

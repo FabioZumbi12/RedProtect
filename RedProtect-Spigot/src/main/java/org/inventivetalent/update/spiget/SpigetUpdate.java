@@ -1,29 +1,27 @@
 /*
- * Copyright 2016 inventivetalent. All rights reserved.
+ * Copyright (c) 2020 - @FabioZumbi12
+ * Last Modified: 25/10/2019 22:04.
  *
- *  Redistribution and use in source and binary forms, with or without modification, are
- *  permitted provided that the following conditions are met:
+ * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
+ *  damages arising from the use of this class.
  *
- *     1. Redistributions of source code must retain the above copyright notice, this list of
- *        conditions and the following disclaimer.
+ * Permission is granted to anyone to use this class for any purpose, including commercial plugins, and to alter it and
+ * redistribute it freely, subject to the following restrictions:
+ * 1 - The origin of this class must not be misrepresented; you must not claim that you wrote the original software. If you
+ * use this class in other plugins, an acknowledgment in the plugin documentation would be appreciated but is not required.
+ * 2 - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original class.
+ * 3 - This notice may not be removed or altered from any source distribution.
  *
- *     2. Redistributions in binary form must reproduce the above copyright notice, this list
- *        of conditions and the following disclaimer in the documentation and/or other materials
- *        provided with the distribution.
+ * Esta classe é fornecida "como está", sem qualquer garantia expressa ou implícita. Em nenhum caso os autores serão
+ * responsabilizados por quaisquer danos decorrentes do uso desta classe.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- *  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
- *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- *  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- *  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  The views and conclusions contained in the software and documentation are those of the
- *  authors and contributors and should not be interpreted as representing official policies,
- *  either expressed or implied, of anybody else.
+ * É concedida permissão a qualquer pessoa para usar esta classe para qualquer finalidade, incluindo plugins pagos, e para
+ * alterá-lo e redistribuí-lo livremente, sujeito às seguintes restrições:
+ * 1 - A origem desta classe não deve ser deturpada; você não deve afirmar que escreveu a classe original. Se você usar esta
+ *  classe em um plugin, uma confirmação de autoria na documentação do plugin será apreciada, mas não é necessária.
+ * 2 - Versões de origem alteradas devem ser claramente marcadas como tal e não devem ser deturpadas como sendo a
+ * classe original.
+ * 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
  */
 
 package org.inventivetalent.update.spiget;

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2019 - @FabioZumbi12
- * Last Modified: 15/08/2019 18:03.
+ * Copyright (c) 2020 - @FabioZumbi12
+ * Last Modified: 27/10/2019 02:17.
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
