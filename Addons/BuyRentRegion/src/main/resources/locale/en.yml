@@ -1,0 +1,39 @@
+InvalidPriceTime: Invalid sign. Invalid price or timespan!
+RegionNoExist: Invalid sign. Region doesn't exist!
+EvictedFrom: You have been evicted from %s
+InvalidArg: "Invalid argument. Accepted values: true, false, yes, no, off, on"
+RenewTurnOff: Auto-Renew has been turned OFF for you.
+RenewTurnOn: Auto-Renew has been turned ON for you.
+RenewOff: Auto-Renew is off!
+RenewOn: Auto-Renew is on!
+InvalidRenewArgs: "Invalid args: /buyrentregion renew <region>"
+BuyModeExit: You have exited Buy Mode.
+BuyModeEnter: You are now in Buy Mode - right-click the BuyRentRegion sign!
+ToEnterBuyMode: "To enter Buy Mode type: /buyrentregion"
+BuyModeRent: You must be in Buy Mode to rent this region!
+BuyModeBuy: You must be in Buy Mode to buy this region!
+NotEnoughRent: Not enough money to rent this region!
+NotEnoughBuy: Not enough money to buy this region!
+TransFailed: Transaction Failed!
+Rented: Congrats! You have rented %s
+NewBalance: Your new balance is $%s
+RentMax: You are not allowed to rent more regions. Max %s
+RentPerms: You do not have permission to rent regions.
+Balance: Your balance is $%s
+Purchased: Congrats! You have purchased
+BuyMax: You are not allowed to buy more regions. Max %s
+BuyPerms: You do not have permission to buy regions.
+NotRented: "%s is not currently rented."
+NotOwner: You is not owner of this region!
+CantSelf: "You can't buy or rent your own regions!"
+NotRenting: You are not renting this region. You cannot renew it!
+NotEnoughRenew: Not enough money to renew rental for this region!
+Renewed: Congrats! You have renewed %s until %s
+Expired: Your rental has expired for region %s
+SignUntil: "Until:"
+SignSold: "&c## SOLD ##"
+SignSoldTo: "Sold To:"
+Help1: BuyRentRegion Commands [Alias - /rpbuy]
+Help2: /buyrentregion - toggles buy mode
+Help3: /buyrentregion renew <region> - renews rental of <region>
+Help4: /buyrentregion autorenew <true/false> - sets auto-renew for all rented regions

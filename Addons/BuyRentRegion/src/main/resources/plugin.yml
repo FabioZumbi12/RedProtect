@@ -1,0 +1,12 @@
+name: BuyRentRegion
+version: ${project.version}
+main: br.net.fabiozumbi12.buyrentregion.BuyRentRegion
+api-version: 1.13
+depend: [RedProtect, Vault]
+authors: [FabioZumbi12]
+description: Buy, rent or sell redprotect regions
+commands:
+  buyrentregion:
+    description: "Main command for BuyRentRegion"
+    usage: "/buyrentregion <arguments>"
+    aliases: ["rpbuy"]

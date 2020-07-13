@@ -1,0 +1,13 @@
+Locale: en
+
+SignHeaderBuy: '[BuyRegion]'
+SignHeaderRent: '[RentRegion]'
+BuyRegionMax: 0
+CheckExpirationsInMins: 5
+RequireBuyMode: true
+RentRegionMax: 0
+RequireBuyPerms: false
+RequireRentPerms: false
+PayRentOwners: true
+# DateFormat values: Default, US or EU
+DateFormat: Default

@@ -1,0 +1,36 @@
+InvalidPriceTime: Placa inválida. Preço ou data incorretos!
+RegionNoExist: Placa inválida.. Região não existe!
+EvictedFrom: Você foi despejado de %s
+InvalidArg: "Argumento inválido. Valores aceitáveis: true, false, yes, no, off, on"
+RenewTurnOff: Aluguel Automático desativado por você.
+RenewTurnOn: Aluguel Automático ativado por você.
+RenewOff: Aluguel Automático está desligado!
+RenewOn: Aluguel Automático está ligado!
+InvalidRenewArgs: "Args inválido: /buyrentregion renew <region>"
+BuyModeExit: Você saiu do modo de compra de terrenos.
+BuyModeEnter: Você entrou no modo de compra de terreno - clique-direito na placa para comprar!
+ToEnterBuyMode: "Para entrar no modo de compra use: /buyrentregion"
+BuyModeRent: Você precisa estar no modo de compra para alugar esta região!
+BuyModeBuy: Você precisa estar no modo de compra para comprar esta região!
+NotEnoughRent: Sem dinheiro suficiente para alugar esta região!
+NotEnoughBuy: Sem dinheiro suficiente para comprar esta região!
+TransFailed: A negociação falhou!
+Rented: Parabens! Você alugou %s
+NewBalance: Seu novo saldo é $%s
+RentMax: Você não pode alugar mais regiões. O max é %s
+RentPerms: Você não tem permissão para alugar regiões.
+Balance: Seu saldo é $%s
+Purchased: Parabens! Você comrpou
+BuyMax: Você não pode comprar mais regiões. O max é %s
+BuyPerms: Você não tem permissão para comprar regiões.
+NotRented: "%s não esta alugada."
+NotOwner: Você não é o dono desta região!
+CantSelf: "Você não pode comprar ou vender regiões para você mesmo!"
+NotRenting: Você não esta alugando esta região. Você não pode renovar!
+NotEnoughRenew: Sem dinheiro suficiente para renovar o aluguel desta região!
+Renewed: Parabens! Você renovou o aluguel de %s até %s
+Expired: O alguel da região %s expirou
+Help1: Comandos do BuyRentRegion [Atalho - /rpbuy]
+Help2: /buyrentregion - troca o modo de compra
+Help3: /buyrentregion renew <region> - renova o aluguel de <region>
+Help4: /buyrentregion autorenew <true/false> - define auto-renovar o alguel para todas regiões
