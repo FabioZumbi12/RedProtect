@@ -148,9 +148,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public void remove(Region r) {
         removeLiveRegion(r);
-        if (this.regions.containsValue(r)) {
-            this.regions.remove(r.getName());
-        }
+        this.regions.remove(r.getName());
     }
 
     private void removeLiveRegion(Region r) {
@@ -567,7 +565,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.close();
                 rs.close();
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "Adding region to cache: " + rname);
-                Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(RedProtect.get(), () -> {
                     if (regions.containsKey(rname)) {
                         regions.remove(rname);
                         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed cached region: " + rname);

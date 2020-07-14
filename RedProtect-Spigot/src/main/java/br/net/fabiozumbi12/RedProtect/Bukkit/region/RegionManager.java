@@ -47,9 +47,10 @@ import java.util.*;
 public class RegionManager {
 
     private final HashMap<String, WorldRegionManager> regionManagers;
-    private final HashMap<Location, Region> bLoc = new HashMap<>();
+    private final HashMap<String, Region> bLoc;
 
     public RegionManager() {
+        this.bLoc = new HashMap<>();
         this.regionManagers = new HashMap<>();
     }
 
@@ -280,16 +281,7 @@ public class RegionManager {
     }
 
     private void removeCache(Region r) {
-        Set<Location> itloc = bLoc.keySet();
-        List<Location> toRemove = new ArrayList<>();
-        for (Location loc : itloc) {
-            if (bLoc.containsKey(loc) && bLoc.get(loc).getID().equals(r.getID())) {
-                toRemove.add(loc);
-            }
-        }
-        for (Location loc : toRemove) {
-            bLoc.remove(loc);
-        }
+        bLoc.entrySet().removeIf(e -> e.getValue().equals(r));
     }
 
     public int removeAll(String player) {
@@ -317,38 +309,40 @@ public class RegionManager {
     }
 
     /**
-     * Get the hight priority region in a group region. If no other regions, return the unique region on location.
+     * Get the high priority region in a group region. If no other regions, return the unique region on location.
      *
      * @param loc Location
      * @return {@code Region} - Or null if no regions on this location.
      */
     public
     Region getTopRegion(Location loc) {
-        if (bLoc.containsKey(loc.getBlock().getLocation())) {
+        Region region = bLoc.get(loc.getBlock().getLocation().toString());
+        if (region != null) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from cache");
-            return bLoc.get(loc.getBlock().getLocation());
+            return region;
         } else {
             if (!this.regionManagers.containsKey(loc.getWorld().getName())) {
                 return null;
             }
 
             WorldRegionManager rm = this.regionManagers.get(loc.getWorld().getName());
-            Region r = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            region = rm.getTopRegion(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
             try {
-                bLoc.entrySet().removeIf(k -> k.getValue().equals(r));
-
-                if (r != null) {
-                    bLoc.put(loc.getBlock().getLocation(), r);
+                if (region != null) {
+                    bLoc.put(loc.getBlock().getLocation().toString(), region);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(RedProtect.get(), () -> {
+                        bLoc.remove(loc.getBlock().getLocation().toString());
+                    }, 200/*10 seconds*/);
                     RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from DB");
                 }
             } catch (Exception ignored) {
             }
-            return r;
         }
+        return region;
     }
 
     /**
-     * Get the hight priority region in a group region. If no other regions, return the unique region on location.
+     * Get the high priority region in a group region. If no other regions, return the unique region on location.
      *
      * @param w World
      * @param x Location x

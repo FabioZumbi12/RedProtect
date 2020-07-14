@@ -753,11 +753,11 @@ public class GlobalListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient || e instanceof WaterMob) && blacklist.contains("PASSIVES")) {
+        if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && blacklist.contains("PASSIVES")) {
             event.setCancelled(true);
             return;
         }
-        if (blacklist.stream().anyMatch(e.getType().name()::matches)) {
+        if (blacklist.contains(e.getType().name())) {
             event.setCancelled(true);
             return;
         }
@@ -769,11 +769,11 @@ public class GlobalListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((e instanceof Animals || e instanceof Villager || e instanceof Golem || e instanceof Ambient || e instanceof WaterMob) && !wtl.contains("PASSIVES")) {
+            if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && !wtl.contains("PASSIVES")) {
                 event.setCancelled(true);
                 return;
             }
-            if (wtl.stream().noneMatch(e.getType().name()::matches)) {
+            if (!wtl.contains(e.getType().name())) {
                 event.setCancelled(true);
             }
         }
