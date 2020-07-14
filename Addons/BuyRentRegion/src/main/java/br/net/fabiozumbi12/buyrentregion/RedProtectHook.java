@@ -34,16 +34,13 @@ import org.bukkit.Location;
 public class RedProtectHook {
 
     public Region getRegion(String regionName, String world) {
-        if (Bukkit.getWorld(world) != null && RedProtect.get().getAPI().getRegion(regionName, Bukkit.getWorld(world)) != null) {
+        if (Bukkit.getWorld(world) != null) {
             return RedProtect.get().getAPI().getRegion(regionName, Bukkit.getWorld(world));
         }
         return null;
     }
 
     public Region getRegion(Location location) {
-        if (RedProtect.get().getAPI().getRegion(location) != null) {
-            return RedProtect.get().getAPI().getRegion(location);
-        }
-        return null;
+        return RedProtect.get().getAPI().getRegion(location);
     }
 }
