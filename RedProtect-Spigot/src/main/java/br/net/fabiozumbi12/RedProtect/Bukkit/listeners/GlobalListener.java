@@ -587,6 +587,10 @@ public class GlobalListener implements Listener {
             return;
         }
 
+        if (e1 instanceof Player && !RedProtect.get().getUtil().isRealPlayer((Player)e1)) {
+            return;
+        }
+
         if (e2 instanceof Creeper || e2.getType().equals(EntityType.PRIMED_TNT) || e2.getType().equals(EntityType.MINECART_TNT)) {
             if (e1 instanceof Player) {
                 if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).explosion_entity_damage) {
@@ -610,6 +614,9 @@ public class GlobalListener implements Listener {
 
         if (e2 instanceof Player) {
             Player p = (Player) e2;
+            if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+                return;
+            }
 
             if (e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
                 if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).entity_block_damage) {
@@ -651,6 +658,9 @@ public class GlobalListener implements Listener {
             Projectile proj = (Projectile) e2;
             if (proj.getShooter() instanceof Player) {
                 Player p = (Player) proj.getShooter();
+                if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+                    return;
+                }
 
                 if (e1 instanceof Player) {
                     if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).pvp && !p.hasPermission("redprotect.bypass.world")) {

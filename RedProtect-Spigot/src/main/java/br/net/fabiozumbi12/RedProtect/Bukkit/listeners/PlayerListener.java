@@ -84,7 +84,7 @@ public class PlayerListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Loaded PlayerListener...");
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBrewing(BrewEvent e) {
         ItemStack[] cont = e.getContents().getContents();
         for (int i = 0; i < cont.length; i++) {
@@ -94,7 +94,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCraftItem(PrepareItemCraftEvent e) {
         if (e.getView().getPlayer() instanceof Player) {
             Player p = (Player) e.getView().getPlayer();
@@ -107,7 +107,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {
         if (!(e.getEntity() instanceof Player)) {
             return;
@@ -120,7 +120,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
         //deny potion
@@ -435,10 +435,13 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         Entity e = event.getRightClicked();
         Player p = event.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is PlayerInteractEntityEvent event: " + e.getType().name());
         Location l = e.getLocation();
@@ -471,13 +474,16 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamageEvent(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player)) {
             return;
         }
 
         Player play = (Player) e.getEntity();
+        if (!RedProtect.get().getUtil().isRealPlayer(play)) {
+            return;
+        }
 
         if (RedProtect.get().tpWait.contains(play.getName())) {
             RedProtect.get().tpWait.remove(play.getName());
@@ -524,7 +530,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
         Player p = null;
 
@@ -543,6 +549,10 @@ public class PlayerListener implements Listener {
             RedProtect.get().logger.debug(LogLevel.PLAYER, "Player: " + p.getName());
         } else {
             RedProtect.get().logger.debug(LogLevel.PLAYER, "Player: is null");
+            return;
+        }
+
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
 
@@ -575,13 +585,12 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (e.isCancelled()) {
+        final Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
-
-        final Player p = e.getPlayer();
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
@@ -722,7 +731,7 @@ public class PlayerListener implements Listener {
         }, 20L);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
 
@@ -805,9 +814,12 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDie(PlayerDeathEvent e) {
         Player p = e.getEntity();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
 
         if (RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.remove(p.getName());
@@ -832,9 +844,12 @@ public class PlayerListener implements Listener {
         deathListener(p, 0);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
 
         //check for death listener
         deathListener(p, 1);
@@ -870,6 +885,10 @@ public class PlayerListener implements Listener {
         }
 
         Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
         Location lfrom = e.getFrom();
         Location lto = e.getTo();
 

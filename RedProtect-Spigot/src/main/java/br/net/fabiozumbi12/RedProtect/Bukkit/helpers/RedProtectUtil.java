@@ -133,6 +133,10 @@ public class RedProtectUtil extends CoreUtil {
         return false;
     }
 
+    public boolean isRealPlayer(Player p) {
+        return Bukkit.getOnlinePlayers().stream().anyMatch(play -> play.equals(p));
+    }
+
     private boolean isSecure(Location loc) {
         Block b = loc.add(0, -1, 0).getBlock();
         return (!b.isLiquid() && !b.isEmpty()) || b.getType().name().contains("LAVA");

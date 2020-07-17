@@ -92,6 +92,9 @@ public class BlockListener implements Listener {
 
         Block b = e.getBlock();
         Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
 
         Region signr = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
         if (signr != null && !signr.canSign(p)) {
@@ -220,6 +223,10 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPlaceEvent event!");
 
         Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
         Block b = e.getBlockPlaced();
         World w = p.getWorld();
         Material m = e.getItemInHand().getType();
@@ -307,6 +314,10 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockBreakEvent event!");
 
         Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
         Block b = e.getBlock();
 
         boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
@@ -348,6 +359,10 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is PlayerInteractEvent event!");
 
         Player p = e.getPlayer();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
         Location l = e.getClickedBlock().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
@@ -618,6 +633,10 @@ public class BlockListener implements Listener {
         }
         Vehicle cart = e.getVehicle();
         Player p = (Player) e.getAttacker();
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
         Region r = RedProtect.get().getRegionManager().getTopRegion(cart.getLocation());
 
         if (r != null && !r.canMinecart(p)) {
@@ -636,7 +655,7 @@ public class BlockListener implements Listener {
         Block piston = e.getBlock();
         List<Block> blocks = e.getBlocks();
         Region pr = RedProtect.get().getRegionManager().getTopRegion(piston.getLocation());
-        Boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
         World w = e.getBlock().getWorld();
         for (Block b : blocks) {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonExtendEvent event - Block: " + b.getType().name());
@@ -668,7 +687,7 @@ public class BlockListener implements Listener {
         }
 
         World w = e.getBlock().getWorld();
-        Boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
+        boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
         Block piston = e.getBlock();
         if (!Bukkit.getBukkitVersion().startsWith("1.8.") && !Bukkit.getBukkitVersion().startsWith("1.9.")) {
             Block b = e.getRetractLocation().getBlock();
