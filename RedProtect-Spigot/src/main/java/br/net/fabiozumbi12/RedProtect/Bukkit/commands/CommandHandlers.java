@@ -334,18 +334,7 @@ public class CommandHandlers {
             RedProtect.get().logger.addLog("(World " + w + ") Player " + p.getName() + " REMOVED region " + rname);
 
             // Handle money
-            if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
-                long reco = r.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
-
-                if (!RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.y_is_free) {
-                    reco = reco * Math.abs(r.getMaxY() - r.getMinY());
-                }
-
-                if (reco > 0) {
-                    RedProtect.get().economy.depositPlayer(p, reco);
-                    p.sendMessage(RedProtect.get().getLanguageManager().get("economy.region.deleted").replace("{price}", RedProtect.get().getConfigManager().ecoRoot().economy_symbol + reco + " " + RedProtect.get().getConfigManager().ecoRoot().economy_name));
-                }
-            }
+            handleDeleteRegionEconomy(r, p);
         } else {
             RedProtect.get().getLanguageManager().sendMessage(p, "no.permission");
         }
@@ -387,8 +376,27 @@ public class CommandHandlers {
             RedProtect.get().getRegionManager().remove(r, r.getWorld());
             RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.deleted") + " " + rname);
             RedProtect.get().logger.addLog("(World " + world + ") Player " + p.getName() + " REMOVED region " + rname);
+
+            // Handle money
+            handleDeleteRegionEconomy(r, p);
         } else {
             RedProtect.get().getLanguageManager().sendMessage(p, "no.permission");
+        }
+    }
+
+    private static void handleDeleteRegionEconomy(Region region, Player player) {
+        // Handle money
+        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !player.hasPermission("redprotect.eco.bypass")) {
+            long reco = region.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
+
+            if (!RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.y_is_free) {
+                reco = reco * Math.abs(region.getMaxY() - region.getMinY());
+            }
+
+            if (reco > 0) {
+                RedProtect.get().economy.depositPlayer(player, reco);
+                player.sendMessage(RedProtect.get().getLanguageManager().get("economy.region.deleted").replace("{price}", RedProtect.get().getConfigManager().ecoRoot().economy_symbol + reco + " " + RedProtect.get().getConfigManager().ecoRoot().economy_name));
+            }
         }
     }
 
