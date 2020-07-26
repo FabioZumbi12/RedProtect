@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.actions;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
@@ -51,6 +52,22 @@ public class DefineRegionBuilder extends RegionBuilder {
             return;
         }
 
+        if (loc1 == null || loc2 == null) {
+            if (RedProtect.get().hooks.worldEdit) {
+                Location[] pos = WEHook.getWESelection(p);
+                if (pos != null) {
+                    loc1 = pos[0];
+                    loc2 = pos[1];
+                } else {
+                    this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.selection.notset"));
+                    return;
+                }
+            } else {
+                this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.selection.notset"));
+                return;
+            }
+        }
+
         // filter name
         regionName = RedProtect.get().getUtil().fixRegionName(p, regionName);
         if (regionName == null) return;
@@ -58,11 +75,6 @@ public class DefineRegionBuilder extends RegionBuilder {
         String wmsg = "";
         if (leader.contains(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
             wmsg = "hide ";
-        }
-
-        if (loc1 == null || loc2 == null) {
-            RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.selection.notset");
-            return;
         }
 
         //check if distance allowed

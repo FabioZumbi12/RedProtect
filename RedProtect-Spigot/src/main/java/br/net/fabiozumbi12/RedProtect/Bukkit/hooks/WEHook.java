@@ -71,6 +71,21 @@ public class WEHook {
         return false;
     }
 
+    public static Location[] getWESelection(Player player) {
+        BukkitWorld bw = new BukkitWorld(player.getWorld());
+        WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        if (worldEdit.getSession(player) != null && worldEdit.getSession(player).isSelectionDefined(bw)) {
+            try {
+                com.sk89q.worldedit.regions.Region regs = worldEdit.getSession(player).getRegionSelector(bw).getRegion();
+                Location p1 = new Location(player.getWorld(), regs.getMinimumPoint().getX(), regs.getMinimumPoint().getY(), regs.getMinimumPoint().getZ());
+                Location p2 = new Location(player.getWorld(), regs.getMaximumPoint().getX(), regs.getMaximumPoint().getY(), regs.getMaximumPoint().getZ());
+
+                return new Location[] {p1, p2};
+            } catch (IncompleteRegionException ignored) {}
+        }
+        return null;
+    }
+
     private static void setSelection(BukkitWorld ws, Player p, Location pos1, Location pos2) {
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         RegionSelector regs = worldEdit.getSession(p).getRegionSelector(ws);

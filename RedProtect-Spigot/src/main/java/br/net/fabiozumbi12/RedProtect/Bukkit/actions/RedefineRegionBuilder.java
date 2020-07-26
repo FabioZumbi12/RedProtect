@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.CreateRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RedefineRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
@@ -48,8 +49,19 @@ public class RedefineRegionBuilder extends RegionBuilder {
 
     public RedefineRegionBuilder(Player p, Region old, Location loc1, Location loc2) {
         if (loc1 == null || loc2 == null) {
-            this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.selection.notset"));
-            return;
+            if (RedProtect.get().hooks.worldEdit) {
+                Location[] pos = WEHook.getWESelection(p);
+                if (pos != null) {
+                    loc1 = pos[0];
+                    loc2 = pos[1];
+                } else {
+                    this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.selection.notset"));
+                    return;
+                }
+            } else {
+                this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.selection.notset"));
+                return;
+            }
         }
 
         //check if distance allowed
