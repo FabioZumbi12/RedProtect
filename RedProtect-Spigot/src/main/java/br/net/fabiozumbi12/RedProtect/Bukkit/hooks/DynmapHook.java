@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -36,6 +37,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class DynmapHook implements Listener {
 
@@ -53,11 +59,7 @@ public class DynmapHook implements Listener {
         MSet.setLabelShow(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.show_label);
         MSet.setDefaultMarkerIcon(MApi.getMarkerIcon(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get("player").marker_icon));
         int minzoom = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.min_zoom;
-        if (minzoom > 0) {
-            MSet.setMinZoom(minzoom);
-        } else {
-            MSet.setMinZoom(0);
-        }
+        MSet.setMinZoom(Math.max(minzoom, 0));
 
         //start set markers
         for (World w : RedProtect.get().getServer().getWorlds()) {
@@ -141,9 +143,32 @@ public class DynmapHook implements Listener {
                 RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).border_weight,
                 RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).border_opacity,
                 Integer.decode(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).border_color.replace("#", "0x")));
+
+        String fillColor = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).fill_color.replace("#", "0x");
+
+        // Calculate region days
+        Date now = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat(RedProtect.get().getConfigManager().configRoot().region_settings.date_format);
+        try {
+            now = dateFormat.parse(RedProtect.get().getUtil().dateNow());
+        } catch (ParseException e1) {
+            RedProtect.get().logger.severe("The 'date-format' don't match with date 'now'!!");
+        }
+        Date regionDate = null;
+        try {
+            regionDate = dateFormat.parse(r.getDate());
+        } catch (ParseException e) {
+            RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
+            e.printStackTrace();
+        }
+        long days = TimeUnit.DAYS.convert(now.getTime() - regionDate.getTime(), TimeUnit.MILLISECONDS);
+        if (days > RedProtect.get().getConfigManager().configRoot().purge.remove_oldest && !r.isLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
+            fillColor = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).outdated_fill_color.replace("#", "0x");
+        }
+
         am.setFillStyle(
                 RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).fill_opacity,
-                Integer.decode(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).fill_color.replace("#", "0x")));
+                Integer.decode(fillColor));
 
 
         if (RedProtect.get().getConfigManager().configRoot().hooks.dynmap.show_icon) {

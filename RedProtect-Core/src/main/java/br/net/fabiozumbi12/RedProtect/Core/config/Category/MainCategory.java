@@ -571,6 +571,9 @@ public class MainCategory {
                 public String border_color;
                 @Setting(value = "border-weight")
                 public int border_weight;
+                @Setting(value = "outdated-fill-color", comment = "This color is used to identify region who members don't join the server higher the purge limit.\n" +
+                        "Pick a color: https://www.w3schools.com/colors/colors_picker.asp")
+                public String outdated_fill_color;
 
                 public iconCat() {
                 }
