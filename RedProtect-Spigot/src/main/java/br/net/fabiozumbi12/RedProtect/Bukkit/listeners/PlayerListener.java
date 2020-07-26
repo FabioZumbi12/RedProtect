@@ -922,7 +922,13 @@ public class PlayerListener implements Listener {
 
             //Enter flag
             if (!r.canEnter(p) && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.flag.admin.enter")) {
-                e.setTo(RedProtect.get().getUtil().DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
+                Location loc = RedProtect.get().getUtil().DenyEnterPlayer(w, lfrom, e.getTo(), r, false);
+                if (p.isInsideVehicle()) {
+                    Entity vehicle = p.getVehicle();
+                    vehicle.eject();
+                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () ->  vehicle.teleport(loc), 1);
+                }
+                e.setTo(loc);
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantregionenter");
                 return;
             }

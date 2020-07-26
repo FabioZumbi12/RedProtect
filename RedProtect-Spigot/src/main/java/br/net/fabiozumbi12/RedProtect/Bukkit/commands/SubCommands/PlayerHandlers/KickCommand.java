@@ -31,10 +31,12 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -66,17 +68,23 @@ public class KickCommand implements SubCommand {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.cantkick.member"));
                 return true;
             }
+
             Region rv = RedProtect.get().getRegionManager().getTopRegion(visit.getLocation());
             if (rv == null || !rv.getID().equals(r.getID())) {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.notonregion"));
                 return true;
             }
 
-            RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
+            Location to = RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true).add(0, 1, 0);
+            if (visit.isInsideVehicle()){
+                Entity vehicle = visit.getVehicle();
+                vehicle.eject();
+                Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> vehicle.teleport(to), 1);
+            }
+            visit.teleport(to);
 
             String sec = String.valueOf(RedProtect.get().getConfigManager().configRoot().region_settings.delay_after_kick_region);
             if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
-                RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.kicked").replace("{player}", visit.getName()).replace("{region}", r.getName()).replace("{time}", sec));
             } else {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.already.cantenter").replace("{time}", sec));
@@ -117,7 +125,11 @@ public class KickCommand implements SubCommand {
                     return true;
                 }
 
-                Region rv = RedProtect.get().getRegionManager().getTopRegion(visit.getLocation());
+                Entity vehicle = visit;
+                if (visit.getVehicle() != null)
+                    vehicle = visit.getVehicle();
+
+                Region rv = RedProtect.get().getRegionManager().getTopRegion(vehicle.getLocation());
                 if (rv == null || !rv.getID().equals(r.getID())) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.noplayer.thisregion");
                     return true;
@@ -130,7 +142,6 @@ public class KickCommand implements SubCommand {
 
                 String sec = String.valueOf(RedProtect.get().getConfigManager().configRoot().region_settings.delay_after_kick_region);
                 if (RedProtect.get().denyEnterRegion(r.getID(), visit.getName())) {
-                    RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true);
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.kicked").replace("{player}", args[0]).replace("{region}", r.getName()).replace("{time}", sec));
                 } else {
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.already.cantenter").replace("{time}", sec));
