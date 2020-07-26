@@ -281,7 +281,7 @@ public class RegionManager {
     }
 
     private void removeCache(Region r) {
-        bLoc.entrySet().removeIf(e -> e.getValue().equals(r));
+        bLoc.values().removeAll(Collections.singleton(r));
     }
 
     public int removeAll(String player) {
