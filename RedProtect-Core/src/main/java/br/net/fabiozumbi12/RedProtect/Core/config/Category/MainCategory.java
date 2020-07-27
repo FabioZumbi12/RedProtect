@@ -552,8 +552,8 @@ public class MainCategory {
 
             private Map<String, iconCat> createMap() {
                 Map<String, iconCat> myMap = new HashMap<>();
-                myMap.put("player", new iconCat("house", 0.35, "#00ff00", 0.8, "#00ff00", 1));
-                myMap.put("server", new iconCat("star", 0.35, "#ff0000", 0.8, "#ff0000", 1));
+                myMap.put("player", new iconCat("house", 0.35, "#00ff00", 0.8, "#00ff00", 1, "#F5A9F2"));
+                myMap.put("server", new iconCat("star", 0.35, "#ff0000", 0.8, "#ff0000", 1, "#F5A9F2"));
                 return myMap;
             }
 
@@ -578,13 +578,14 @@ public class MainCategory {
                 public iconCat() {
                 }
 
-                public iconCat(String marker, double fill_op, String fill_col, double bord_op, String bord_col, int bord_weight) {
+                public iconCat(String marker, double fill_op, String fill_col, double bord_op, String bord_col, int bord_weight, String out_fill_color) {
                     marker_icon = marker;
                     fill_color = fill_col;
                     fill_opacity = fill_op;
                     border_opacity = bord_op;
                     border_color = bord_col;
                     border_weight = bord_weight;
+                    outdated_fill_color = out_fill_color;
                 }
             }
 
