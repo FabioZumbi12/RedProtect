@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.killerprojectiles;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -102,6 +103,10 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
         if (event.getHitEntity() instanceof Player) {
 
             Player player = (Player) event.getHitEntity();
+            if (!player.getGameMode().equals(GameMode.SURVIVAL) && !player.getGameMode().equals(GameMode.ADVENTURE)) {
+                return;
+            }
+
             Projectile projectile = event.getEntity();
             Region r = RedProtect.get().getAPI().getRegion(projectile.getLocation());
 
@@ -112,7 +117,11 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
                 } else {
                     damage = getConfig().getInt("projectile-damage");
                 }
-                player.setHealth(damage);
+                double dmgPlayer = player.getHealth() - damage;
+                if (dmgPlayer < 0)
+                    dmgPlayer = 0;
+
+                player.setHealth(dmgPlayer);
             }
         }
     }
