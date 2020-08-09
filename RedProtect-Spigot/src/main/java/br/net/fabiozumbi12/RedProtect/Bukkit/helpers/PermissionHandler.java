@@ -168,6 +168,10 @@ public class PermissionHandler {
         if (limits.size() > 0) {
             limit = Collections.max(limits);
         }
+
+        // Add blocks given by time
+        limit += RedProtect.get().getBlockManager().getBlockLimit(player);
+
         return limit;
     }
 

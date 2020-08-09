@@ -1189,6 +1189,9 @@ public class PlayerListener implements Listener {
         if (r != null) {
             RegionFlags(r, null, p, true);
         }
+
+        // Add to block manager
+        RedProtect.get().getBlockManager().addPlayer(p);
     }
 
     @EventHandler

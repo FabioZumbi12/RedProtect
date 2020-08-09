@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandler;
+import br.net.fabiozumbi12.RedProtect.Bukkit.config.BlockConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
@@ -82,6 +83,7 @@ public class RedProtect extends JavaPlugin {
     private PermissionHandler ph;
     private LangManager lang;
     private ConfigManager config;
+    private BlockConfig blockConfig;
 
     public static RedProtect get() {
         return plugin;
@@ -101,6 +103,10 @@ public class RedProtect extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return this.config;
+    }
+
+    public BlockConfig getBlockManager() {
+        return this.blockConfig;
     }
 
     public VersionHelper getVersionHelper() {
@@ -185,6 +191,7 @@ public class RedProtect extends JavaPlugin {
         logger.info("Loading language files...");
         lang = new LangManager();
         guiLang = new LangGuiManager();
+        blockConfig = new BlockConfig();
 
         logger.info("Re-registering commands...");
         cmdHandler = new CommandHandler(this);
@@ -194,6 +201,7 @@ public class RedProtect extends JavaPlugin {
         redProtectUtil = new RedProtectUtil(this);
         config = new ConfigManager();
         lang = new LangManager();
+        blockConfig = new BlockConfig();
 
         if (config.configRoot().purge.regen.enable_whitelist_regen && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
