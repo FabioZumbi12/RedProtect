@@ -439,10 +439,9 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - HangingBreakByEntityEvent event");
 
         Entity remover = e.getRemover();
-        Entity ent = e.getEntity();
         Location l = e.getEntity().getLocation();
 
-        if ((ent instanceof ItemFrame || ent instanceof Painting) && remover instanceof Monster) {
+        if (remover instanceof Monster || remover instanceof Projectile) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
             if (r != null && !r.canMobLoot()) {
                 e.setCancelled(true);
