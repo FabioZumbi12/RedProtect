@@ -90,6 +90,11 @@
             <id>ultimatechat-repo</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url>
         </repository>
+
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -262,8 +267,8 @@
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>LATEST</version>
+            <artifactId>PlaceholderAPI</artifactId>
+            <version>2.10.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

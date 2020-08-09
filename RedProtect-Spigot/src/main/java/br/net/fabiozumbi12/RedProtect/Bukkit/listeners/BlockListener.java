@@ -580,6 +580,8 @@ public class BlockListener implements Listener {
                 e.getNewState().getType().name().contains("MUSHROOM") ||
                 e.getNewState().getType().name().contains("KELP") ||
                 e.getNewState().getType().name().contains("BAMBOO") ||
+                e.getNewState().getType().name().contains("WEEPING_VINES") ||
+                e.getNewState().getType().name().contains("TWISTING_VINES") ||
                 e.getNewState().getType().name().contains("SUGAR_CANE"))
                 && ((rfrom != null && !rfrom.canGrow()) || (rto != null && !rto.canGrow()))) {
             e.setCancelled(true);
