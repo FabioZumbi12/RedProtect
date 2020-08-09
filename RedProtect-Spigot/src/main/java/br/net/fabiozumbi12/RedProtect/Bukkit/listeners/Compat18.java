@@ -160,10 +160,14 @@ public class Compat18 implements Listener {
                 }
             }
         } else {
-            if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
+            if (e1 instanceof ArmorStand) {
+                if (e2 instanceof Player) {
+                    if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
+                        e.setCancelled(true);
+                        RedProtect.get().getLanguageManager().sendMessage(e2, "blocklistener.region.cantbreak");
+                    }
+                } else {
                     e.setCancelled(true);
-                    RedProtect.get().getLanguageManager().sendMessage(e2, "blocklistener.region.cantbreak");
                 }
             }
         }
