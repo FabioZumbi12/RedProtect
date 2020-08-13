@@ -73,6 +73,8 @@ public class BlockConfig {
     }
 
     public long getBlockLimit(Player player) {
+        if (!isEnabled()) return 0;
+
         if (this.blockCat.players.containsKey(player.getUniqueId().toString())){
             long time = this.blockCat.players.get(player.getUniqueId().toString()).time;
             long added_blocks = this.blockCat.players.get(player.getUniqueId().toString()).added_blocks;
@@ -127,6 +129,10 @@ public class BlockConfig {
         }
         this.blockCat.players.get(player.getUniqueId().toString()).added_blocks += amount;
         saveConfig();
+    }
+
+    public boolean isEnabled(){
+        return this.blockCat.enabled;
     }
 
     private void saveConfig() {

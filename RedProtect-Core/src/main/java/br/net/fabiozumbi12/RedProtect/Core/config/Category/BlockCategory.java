@@ -35,6 +35,8 @@ import java.util.Map;
 @ConfigSerializable
 public class BlockCategory {
 
+    @Setting(comment = "Enable timed given blocks?")
+    public boolean enabled = false;
     @Setting(comment = "Don't touch this.\n" +
             "This is the player times, to calculate the amount of blocks a player have\n" +
             "Values:\n" +
