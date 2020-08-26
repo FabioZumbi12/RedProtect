@@ -105,6 +105,8 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
     private BukkitTask taskInterval;
 
     private void startBackupScheduler() {
+        if (!getConfig().getBoolean("backup.enabled", false)) return;
+
         String mode = getConfig().getString("backup.mode", "server-start");
 
         if (mode.equals("server-start") && taskAfterStart == null) {
