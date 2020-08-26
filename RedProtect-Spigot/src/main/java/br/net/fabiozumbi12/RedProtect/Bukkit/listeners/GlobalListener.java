@@ -541,6 +541,7 @@ public class GlobalListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+
     public void onBucketUse(PlayerBucketEmptyEvent e) {
         Location l = e.getBlockClicked().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);

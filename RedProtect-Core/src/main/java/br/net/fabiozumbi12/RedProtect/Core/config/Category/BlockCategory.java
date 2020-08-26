@@ -35,7 +35,7 @@ import java.util.Map;
 @ConfigSerializable
 public class BlockCategory {
 
-    @Setting(comment = "Enable timed given blocks?")
+    @Setting(comment = "Enable timed given claim blocks?\nDefault: false")
     public boolean enabled = false;
     @Setting(comment = "Don't touch this.\n" +
             "This is the player times, to calculate the amount of blocks a player have\n" +
@@ -44,15 +44,21 @@ public class BlockCategory {
             "- added-blocks: 0 - Blocks added manually")
     public Map<String, PlayerCat> players = new HashMap<>();
 
-    @Setting(value = "unit-to-add", comment = "In what every unit add blocks to players?\n" +
+    @Setting(value = "unit-to-add", comment = "The unit type to give claim blocks to players?\n" +
             "Options:\n" +
-            "- d = add x blocks for every day\n" +
-            "- h = add x blocks for every hour\n" +
-            "- m = add x blocks for every minute\n" +
-            "- s = add x blocks for every second")
+            "- d = x blocks for every day\n" +
+            "- h = x blocks for every hour\n" +
+            "- m = x blocks for every minute\n" +
+            "- s = x blocks for every second")
     public String unit_to_add = "h";
-    @Setting(value = "blocks-to-value", comment = "Add this amount of blocks every time unit configured")
+    @Setting(value = "blocks-to-value", comment = "The amount of blocks to add on every time unit configured")
     public long blocks_to_add = 50;
+    @Setting(value = "time-type", comment = "The method to calculate the player time!\n" +
+            "Options:\n" +
+            "- first-join = Count the time since the first login on server (after ResProtect installation). This includes the time the player is offline.\n" +
+            "- online-time = Count only the online time. When the player is offline, the time pauses.\n" +
+            "Important: Using 'online-time', we will use a thread to count and add the time for all online players. Using 'first-join' use no new threads.")
+    public String time_type = "first-login";
 
     @ConfigSerializable
     public static class PlayerCat {

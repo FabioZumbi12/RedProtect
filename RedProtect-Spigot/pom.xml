@@ -157,6 +157,27 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>GriefPrevention</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/GriefPrevention.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>MyChunk</groupId>
@@ -233,11 +254,6 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
-            <groupId>com.github.TechFortress</groupId>
-            <artifactId>GriefPrevention</artifactId>
-            <version>LATEST</version>
-        </dependency>
-        <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
@@ -269,7 +285,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.16.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.16.2-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
