@@ -28,10 +28,7 @@ package br.net.fabiozumbi12.redbackups;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -54,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class RedBackups extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
 
@@ -79,6 +77,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         getCommand("redbackups").setExecutor(this);
 
         getConfig().addDefault("backup.enabled", false);
+        getConfig().addDefault("backup.worlds", Bukkit.getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList()));
         getConfig().addDefault("backup.mode", "server-start");
         getConfig().addDefault("backup.modes.server-start.delay-after-start", 10);
         getConfig().addDefault("backup.modes.interval.minutes", 120);
@@ -200,6 +199,8 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
 
     private final List<String> backupList = new ArrayList<>();
     private void createBackup(CommandSender sender, Location location) {
+        List<String> worlds = getConfig().getStringList("backup.worlds");
+
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup started..."));
 
@@ -207,11 +208,13 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             backupList.clear();
 
             if (location != null) {
+                if (!worlds.contains(location.getWorld().getName())) return;
+
                 String file = location.getWorld().getName() + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
                 backupList.add(file);
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
-                for (Region region:regionSet) {
+                for (Region region:regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
                     for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
                         for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
                             String file = region.getWorld() + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
