@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -122,16 +123,20 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             fixdbFlags(fileDB, rname);
             newr = new Region(name, admins, members, leaders, new int[]{minX, minX, maxX, maxX}, new int[]{minZ, minZ, maxZ, maxZ}, minY, maxY, prior, world, date, RedProtect.get().getConfigManager().getDefFlagsValues(), welcome, value, tppoint, candel, canPurge);
 
-            for (String flag : RedProtect.get().getConfigManager().getDefFlags()) {
-                if (fileDB.get(rname + ".flags." + flag) != null) {
-                    newr.getFlags().put(flag, fileDB.get(rname + ".flags." + flag));
+            Set<String> defaultFlags = RedProtect.get().getConfigManager().getDefFlags();
+            ConfigurationSection flagsSection = fileDB.getConfigurationSection(rname + ".flags");
+            for (String flag : defaultFlags) {
+                Object flagValue = flagsSection.get(flag);
+                if (flagValue != null) {
+                    newr.getFlags().put(flag, flagValue);
                 } else {
                     newr.getFlags().put(flag, RedProtect.get().getConfigManager().getDefFlagsValues().get(flag));
                 }
             }
-            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
-                if (fileDB.get(rname + ".flags." + flag) != null) {
-                    newr.getFlags().put(flag, fileDB.get(rname + ".flags." + flag));
+            Set<String> regionFlags = flagsSection.getKeys(false);
+            for (String flag : regionFlags) {
+                if (!defaultFlags.contains(flag)) {
+                    newr.getFlags().put(flag, flagsSection.get(flag));
                 }
             }
         } catch (Exception e) {
