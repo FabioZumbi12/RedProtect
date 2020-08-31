@@ -44,7 +44,7 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
 
-    public final List<String> AdminFlags = Arrays.asList(
+    public final List<String> AdminFlags = new ArrayList<>(Arrays.asList(
             "spawn-wither",
             "cropsfarm",
             "keep-inventory",
@@ -93,7 +93,7 @@ public class CoreConfigManager {
             "deny-exit-items",
             "spawn-animals",
             "spawn-monsters",
-            "can-move");
+            "can-move"));
     public HashMap<String, String> backupGuiName = new HashMap<>();
     public HashMap<String, String> backupGuiDescription = new HashMap<>();
     protected String headerCfg = ""
