@@ -113,11 +113,13 @@ public class RegionManager {
     public
     Region getRegionById(String rid) {
         if (rid == null) return null;
+        if (!regionManagers.containsKey(rid.split("@")[1])) return null;
         return this.regionManagers.get(rid.split("@")[1]).getRegion(rid.split("@")[0]);
     }
 
     public
     Region getRegion(String rname, String w) {
+        if (!regionManagers.containsKey(w)) return null;
         return this.regionManagers.get(w).getRegion(rname);
     }
 
