@@ -178,11 +178,6 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                 createBackup(sender,null);
                 return true;
             }
-
-            if (args[0].equals("teste")) {
-                Location loc = ((Player)sender).getLocation();
-                return true;
-            }
         }
 
         if (args.length == 2 && args[0].equals("backup") && args[1].equals("here") && sender.hasPermission("redbackups.cmd.backup")) {
@@ -217,7 +212,17 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                 for (Region region:regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
                     for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
                         for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
+
                             String file = region.getWorld() + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                            World world = Bukkit.getWorld(region.getWorld());
+                            if (world != null) {
+                                if (world.getEnvironment().equals(World.Environment.NETHER)) {
+                                    file = region.getWorld() + File.separator + "DIM-1" + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                                }
+                                if (world.getEnvironment().equals(World.Environment.THE_END)) {
+                                    file = region.getWorld() + File.separator + "DIM1" + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                                }
+                            }
                             if (!backupList.contains(file)) {
                                 backupList.add(file);
                             }
