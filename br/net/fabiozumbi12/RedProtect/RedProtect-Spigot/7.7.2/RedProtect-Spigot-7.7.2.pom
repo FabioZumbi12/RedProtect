@@ -1,6 +1,6 @@
 <!--
-  ~ Copyright (c) 2019 - @FabioZumbi12
-  ~ Last Modified: 25/04/19 07:02
+  ~ Copyright (c) 2020 - @FabioZumbi12
+  ~ Last Modified: 05/07/2020 23:20.
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -35,17 +35,6 @@
     <artifactId>RedProtect-Spigot</artifactId>
 
     <repositories>
-        <repository>
-            <id>general-maven-repo</id>
-            <url>https://jcenter.bintray.com/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-
         <repository>
             <id>vault-repo</id>
             <url>https://nexus.keyle.de/content/groups/public/</url>
@@ -89,6 +78,11 @@
         <repository>
             <id>ultimatechat-repo</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url>
+        </repository>
+
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
 
@@ -162,6 +156,27 @@
             <version>v1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>GriefPrevention</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>v1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/GriefPrevention.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -239,11 +254,6 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
-            <groupId>com.github.TechFortress</groupId>
-            <artifactId>GriefPrevention</artifactId>
-            <version>LATEST</version>
-        </dependency>
-        <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
@@ -263,7 +273,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>LATEST</version>
+            <version>2.10.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -271,17 +281,11 @@
             <artifactId>UltimateFancy</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-            <artifactId>UltimateFancy</artifactId>
-            <version>LATEST</version>
-            <classifier>javadoc</classifier>
         </dependency>
     </dependencies>
 
     <properties>
-        <mineVersion>1.16.1-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.16.2-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
