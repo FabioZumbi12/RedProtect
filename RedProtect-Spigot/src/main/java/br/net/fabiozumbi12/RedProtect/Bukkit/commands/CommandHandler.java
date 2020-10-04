@@ -312,7 +312,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                     cmdConfirm.put(p.getName(), commandArgs);
                     RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.confirm",
                             new Replacer[]{
-                                    new Replacer("{cmd}", args[0] + " " + cmd),
+                                    new Replacer("{cmd}", "/" + args[0] + " " + cmd),
                                     new Replacer("{cmd-yes}", getCmd("yes")),
                                     new Replacer("{cmd-no}", getCmd("no"))});
                     e.setCancelled(true);
