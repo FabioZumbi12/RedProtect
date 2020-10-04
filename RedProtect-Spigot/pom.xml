@@ -158,20 +158,6 @@
             <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>GriefPrevention</groupId>
             <artifactId>GriefPrevention</artifactId>
             <version>v1</version>

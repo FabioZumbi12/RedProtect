@@ -240,27 +240,22 @@ public class RegionManager {
         r.notifyRemove();
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
-        removeCache(r);
         if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
             try {
                 RedProtect.get().hooks.dynmapHook.removeMark(r);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Dynmap is updated?");
+                ex.printStackTrace();
             }
         }
+        removeCache(r);
     }
 
     private void removeCache(Region r) {
-        Set<Vector3i> itloc = bLoc.keySet();
-        List<Vector3i> toRemove = new ArrayList<>();
-        for (Vector3i loc : itloc) {
-            if (bLoc.containsKey(loc) && bLoc.get(loc).getID().equals(r.getID())) {
-                toRemove.add(loc);
-            }
-        }
-        for (Vector3i loc : toRemove) {
-            bLoc.remove(loc);
+        try {
+            bLoc.values().removeIf(v -> v == r);
+        } catch (Exception ex) {
+            RedProtect.get().logger.severe("Problems when remove cache for region " + r.getName() + ": " + ex.getLocalizedMessage());
         }
     }
 

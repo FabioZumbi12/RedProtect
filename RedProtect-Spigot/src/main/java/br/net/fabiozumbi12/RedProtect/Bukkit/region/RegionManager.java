@@ -263,15 +263,15 @@ public class RegionManager {
         r.notifyRemove();
         WorldRegionManager rms = this.regionManagers.get(w);
         rms.remove(r);
-        removeCache(r);
         if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
             try {
                 RedProtect.get().hooks.dynmapHook.removeMark(r);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 RedProtect.get().logger.severe("Problems when remove marks to Dynmap. Is Dynmap updated?");
+                ex.printStackTrace();
             }
         }
+        removeCache(r);
     }
 
     public Set<Region> getRegions(Player p, int x, int y, int z) {
@@ -283,7 +283,11 @@ public class RegionManager {
     }
 
     private void removeCache(Region r) {
-        bLoc.values().removeAll(Collections.singleton(r));
+        try {
+            bLoc.values().removeIf(v -> v == r);
+        } catch (Exception ex) {
+            RedProtect.get().logger.severe("Problems when remove cache for region " + r.getName() + ": " + ex.getLocalizedMessage());
+        }
     }
 
     public int removeAll(String player) {
