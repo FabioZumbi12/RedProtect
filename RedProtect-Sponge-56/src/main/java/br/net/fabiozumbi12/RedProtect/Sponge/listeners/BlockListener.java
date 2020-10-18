@@ -125,6 +125,17 @@ public class BlockListener {
             if (cont.validatePrivateSign(lines.get(0).toPlain())) {
                 if (out || r != null) {
                     if (cont.isContainer(b)) {
+                        // Check sides for other private signs
+                        for (Direction face:Direction.values()) {
+                            Location<World> faceBlock = e.getTargetTile().getLocation().getBlockRelative(face);
+                            if (cont.isSign(faceBlock.createSnapshot()) && cont.validatePrivateSign(faceBlock.createSnapshot())) {
+                                lines.set(1, RedProtect.get().getUtil().toText("Other Sign"));
+                                lines.set(2, RedProtect.get().getUtil().toText("NEAR"));
+                                e.getText().setElements(lines);
+                                return;
+                            }
+                        }
+
                         int length = p.getName().length();
                         if (length > 16) {
                             length = 16;

@@ -132,20 +132,30 @@ public class BlockListener implements Listener {
         if ((RedProtect.get().getConfigManager().configRoot().private_cat.use && b.getType().name().endsWith("WALL_SIGN"))) {
             boolean out = RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside;
             if (cont.validatePrivateSign(e.getLines())) {
+
                 if (out || signr != null) {
                     if (cont.isContainer(b)) {
+                        // Check sides for other private signs
+                        for (BlockFace face:BlockFace.values()) {
+                            Block faceBlock = e.getBlock().getRelative(face);
+                            if ((faceBlock.getState() instanceof Sign) && cont.validatePrivateSign(((Sign)faceBlock.getState()).getLines())) {
+                                e.setLine(0, "Other Sign");
+                                e.setLine(1, "NEAR");
+                                return;
+                            }
+                        }
+
                         int length = p.getName().length();
                         if (length > 16) {
                             length = 16;
                         }
                         e.setLine(1, p.getName().substring(0, length));
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.protected");
-                        return;
                     } else {
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notprotected");
                         b.breakNaturally();
-                        return;
                     }
+                    return;
                 } else {
                     RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notregion");
                     b.breakNaturally();
