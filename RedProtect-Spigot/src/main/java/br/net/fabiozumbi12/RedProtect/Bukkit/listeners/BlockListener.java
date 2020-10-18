@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -755,15 +756,31 @@ public class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is Blockform event!");
+        RedProtect.get().logger.severe("BlockListener - Is Blockform event! -  block: " + event.getBlock().getType().toString());
 
         BlockState b = event.getNewState();
+        Block oldState = event.getBlock();
         if (b == null) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is Blockform event: " + b.getType().name());
+
+        Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
+
+        if (r != null && !r.blockTransform() && (
+                oldState.getType().name().contains("SNOW") ||
+                        oldState.getType().name().contains("ICE") ||
+                        oldState.getType().name().contains("FIRE") ||
+                        oldState.getType().name().contains("CORAL") ||
+                        oldState.getType().name().contains("POWDER")
+        )) {
+            event.setCancelled(true);
+            // Force update block
+            oldState.getState().update(false, false);
+            return;
+        }
 
         if (b.getType().equals(Material.SNOW) || b.getType().equals(Material.ICE)) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
+            r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
             if (r != null && !r.canIceForm()) {
                 event.setCancelled(true);
             }
