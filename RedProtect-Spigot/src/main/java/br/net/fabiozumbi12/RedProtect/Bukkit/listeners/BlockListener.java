@@ -766,7 +766,6 @@ public class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is Blockform event!");
-        RedProtect.get().logger.severe("BlockListener - Is Blockform event! -  block: " + event.getBlock().getType().toString());
 
         BlockState b = event.getNewState();
         Block oldState = event.getBlock();
