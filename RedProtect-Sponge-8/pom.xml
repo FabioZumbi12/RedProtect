@@ -152,6 +152,12 @@
                                     <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
                                 </includes>
                             </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>br.net.fabiozumbi12.UltimateFancy</pattern>
+                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
