@@ -226,14 +226,16 @@ public class PlayerListener implements Listener {
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         //start player checks
         if (r == null) {
-            if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
-                    RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches))) {
-                boolean out = RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside;
-                if (out && !cont.canOpen(b, p)) {
-                    RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
-                    event.setCancelled(true);
+            try {
+                if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
+                        RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches))) {
+                    boolean out = RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside;
+                    if (out && !cont.canOpen(b, p)) {
+                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
+                        event.setCancelled(true);
+                    }
                 }
-            }
+            } catch (Exception ignored) {}
 
         } else { //if r != null >>
             //other blocks and interactions

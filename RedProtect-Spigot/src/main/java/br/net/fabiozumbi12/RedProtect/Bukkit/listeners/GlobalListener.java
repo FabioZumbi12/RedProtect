@@ -388,16 +388,18 @@ public class GlobalListener implements Listener {
             l = p.getLocation();
         }
 
-        if (b != null && b.getState() instanceof Sign) {
-            Sign s = (Sign) b.getState();
-            if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RedProtect.get().getLanguageManager().get("_redprotect.prefix")))) {
-                b.setType(Material.AIR);
-                e.setUseInteractedBlock(Result.DENY);
-                e.setUseItemInHand(Result.DENY);
-                e.setCancelled(true);
-                return;
+        try {
+            if (b != null && b.getState() instanceof Sign) {
+                Sign s = (Sign) b.getState();
+                if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RedProtect.get().getLanguageManager().get("_redprotect.prefix")))) {
+                    b.setType(Material.AIR);
+                    e.setUseInteractedBlock(Result.DENY);
+                    e.setUseItemInHand(Result.DENY);
+                    e.setCancelled(true);
+                    return;
+                }
             }
-        }
+        } catch (Exception ignored){}
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
