@@ -198,7 +198,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
 
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup started..."));
-
+            String mainWorld = Bukkit.getWorlds().get(0).getName();
             // Clear last backups
             backupList.clear();
 
@@ -209,20 +209,17 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                 backupList.add(file);
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
+
                 for (Region region:regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
                     for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
                         for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
 
-                            String file = region.getWorld() + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                            World world = Bukkit.getWorld(region.getWorld());
-                            if (world != null) {
-                                if (world.getEnvironment().equals(World.Environment.NETHER)) {
-                                    file = region.getWorld() + File.separator + "DIM-1" + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                                }
-                                if (world.getEnvironment().equals(World.Environment.THE_END)) {
-                                    file = region.getWorld() + File.separator + "DIM1" + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                                }
+                            String file = mainWorld + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                            if (!backupList.contains(file)) {
+                                backupList.add(file);
                             }
+
+                            file = mainWorld + File.separator + region.getWorld() + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
                             if (!backupList.contains(file)) {
                                 backupList.add(file);
                             }
@@ -234,8 +231,14 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             // Start backup files
             backupList.forEach(file -> {
                 try {
-                    File fileFromCopy = new File(getServer().getWorldContainer().getAbsolutePath() , file);
+
+                    File fileFromCopy = new File(getServer().getWorldContainer().getAbsolutePath() + "\\.." , file);
+                    Bukkit.getLogger().severe("file1: " + fileFromCopy);
                     if (!fileFromCopy.exists() || fileFromCopy.length() == 0) return;
+
+                    if (!new File(getDataFolder(), "backups").exists()) {
+                        new File(getDataFolder(), "backups").mkdir();
+                    }
 
                     File fileToCopy = new File(getDataFolder(), "backups" + File.separator + file);
 
