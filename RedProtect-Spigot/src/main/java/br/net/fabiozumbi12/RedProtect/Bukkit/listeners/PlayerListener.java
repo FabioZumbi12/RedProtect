@@ -265,162 +265,166 @@ public class PlayerListener implements Listener {
             }
 
             //if (r != null) && (b != null) >>
-            if (b != null) {
-                if (b.getType().name().endsWith("PRESSURE_PLATE")) {
-                    if (!r.canPressPlate(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantpressplate");
-                        event.setCancelled(true);
-                    }
-                } else if (b.getType().equals(Material.DRAGON_EGG) ||
-                        b.getType().name().equalsIgnoreCase("BED") ||
-                        b.getType().name().contains("NOTE_BLOCK") ||
-                        b.getType().name().contains("CAKE")) {
-
-                    if (!r.canBuild(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
-                        event.setCancelled(true);
-                    }
-                } else if (b.getState() instanceof Sign && RedProtect.get().getConfigManager().configRoot().region_settings.enable_flag_sign) {
-                    Sign s = (Sign) b.getState();
-                    String[] lines = s.getLines();
-                    if (lines[0].equalsIgnoreCase("[flag]") && r.getFlags().containsKey(lines[1])) {
-                        String flag = lines[1];
-                        if (!(r.getFlags().get(flag) instanceof Boolean)) {
-                            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.sign.cantflag"));
-                            return;
+            try {
+                if (b != null) {
+                    if (b.getType().name().endsWith("PRESSURE_PLATE")) {
+                        if (!r.canPressPlate(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantpressplate");
+                            event.setCancelled(true);
                         }
-                        if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) {
-                            if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag." + flag)) {
-                                if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.enable) {
-                                    if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
-                                        if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
-                                            RedProtect.get().getUtil().startFlagChanger(r.getName(), flag, p);
-                                            changeFlag(r, flag, p, s);
-                                            return;
-                                        } else {
-                                            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds));
-                                            return;
+                    } else if (b.getType().equals(Material.DRAGON_EGG) ||
+                            b.getType().name().equalsIgnoreCase("BED") ||
+                            b.getType().name().contains("NOTE_BLOCK") ||
+                            b.getType().name().contains("CAKE")) {
+
+                        if (!r.canBuild(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getState() instanceof Sign && RedProtect.get().getConfigManager().configRoot().region_settings.enable_flag_sign) {
+                        Sign s = (Sign) b.getState();
+                        String[] lines = s.getLines();
+                        if (lines[0].equalsIgnoreCase("[flag]") && r.getFlags().containsKey(lines[1])) {
+                            String flag = lines[1];
+                            if (!(r.getFlags().get(flag) instanceof Boolean)) {
+                                RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.sign.cantflag"));
+                                return;
+                            }
+                            if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) {
+                                if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag." + flag)) {
+                                    if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.enable) {
+                                        if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
+                                            if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
+                                                RedProtect.get().getUtil().startFlagChanger(r.getName(), flag, p);
+                                                changeFlag(r, flag, p, s);
+                                                return;
+                                            } else {
+                                                RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds));
+                                                return;
+                                            }
                                         }
                                     }
+                                    changeFlag(r, flag, p, s);
+                                    return;
                                 }
-                                changeFlag(r, flag, p, s);
+                            }
+                            RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.flag.nopermregion");
+                        }
+                    } else if (b.getType().name().contains("LEAVES") || b.getType().name().contains("LOG") || b.getType().name().contains("_WOOD")) {
+                        if (!r.canTree() && !r.canBuild(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().equals(Material.ENDER_CHEST)) {
+                        if (!r.canEnderChest(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().name().contains("SPAWNER")) {
+                        if (!r.canPlaceSpawner(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
+                            RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
+                        if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().name().contains("DAYLIGHT") || b.getType().name().contains("COMPARATOR") || b.getType().name().contains("REPEATER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
+                        if (!r.canRedstone(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().name().contains("LEVER")) {
+                        if (!r.canLever(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantlever");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().name().contains("LECTERN")) { // Do nothing to allow read books
+                    } else if (b.getType().name().contains("BUTTON")) {
+                        if (!r.canButton(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantbutton");
+                            event.setCancelled(true);
+                        }
+                    } else if (DoorManager.isOpenable(b) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                        if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantdoor");
+                            event.setCancelled(true);
+                        } else {
+                            DoorManager.ChangeDoor(b, r);
+                        }
+                    } else if (itemInHand != null && (itemInHand.getType().name().startsWith("BOAT") || itemInHand.getType().name().contains("MINECART"))) {
+                        if (!r.canMinecart(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantplace");
+                            event.setUseItemInHand(Event.Result.DENY);
+                            event.setCancelled(true);
+                        }
+                    } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
+                        if (!r.canFish(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                            event.setUseItemInHand(Event.Result.DENY);
+                            event.setCancelled(true);
+                        }
+                    } else if ((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) &&
+                            b.getType().name().contains("SIGN") && !r.canSign(p)) {
+                        Sign sign = (Sign) b.getState();
+                        for (String tag : RedProtect.get().getConfigManager().configRoot().region_settings.allow_sign_interact_tags) {
+                            //check first rule
+                            if (tag.equalsIgnoreCase(sign.getLine(0))) {
                                 return;
                             }
+
+                            //check if tag is owners or members names
+                            if (tag.equalsIgnoreCase("{membername}")) {
+                                for (PlayerRegion leader : r.getLeaders()) {
+                                    if (sign.getLine(0).equalsIgnoreCase(leader.getPlayerName())) {
+                                        return;
+                                    }
+                                }
+                                for (PlayerRegion admin : r.getAdmins()) {
+                                    if (sign.getLine(0).equalsIgnoreCase(admin.getPlayerName())) {
+                                        return;
+                                    }
+                                }
+                                for (PlayerRegion member : r.getMembers()) {
+                                    if (sign.getLine(0).equalsIgnoreCase(member.getPlayerName())) {
+                                        return;
+                                    }
+                                }
+                            }
+
+                            //check if tag is player name
+                            if (tag.equalsIgnoreCase("{playername}")) {
+                                if (sign.getLine(0).equalsIgnoreCase(p.getName())) {
+                                    return;
+                                }
+                            }
                         }
-                        RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.flag.nopermregion");
-                    }
-                } else if (b.getType().name().contains("LEAVES") || b.getType().name().contains("LOG") || b.getType().name().contains("_WOOD")) {
-                    if (!r.canTree() && !r.canBuild(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract.signs");
+                        event.setUseItemInHand(Event.Result.DENY);
                         event.setCancelled(true);
-                    }
-                } else if (b.getType().equals(Material.ENDER_CHEST)) {
-                    if (!r.canEnderChest(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
-                        event.setCancelled(true);
-                    }
-                } else if (b.getType().name().contains("SPAWNER")) {
-                    if (!r.canPlaceSpawner(p)) {
+                    } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) && !r.canBreak(itemInHand.getType()) &&
+                            (itemInHand.getType().equals(Material.FLINT_AND_STEEL) ||
+                                    itemInHand.getType().equals(Material.BUCKET) ||
+                                    itemInHand.getType().equals(Material.LAVA_BUCKET) ||
+                                    itemInHand.getType().equals(Material.ITEM_FRAME) ||
+                                    itemInHand.getType().name().equals("END_CRYSTAL") ||
+                                    (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
+                                    itemInHand.getType().equals(Material.PAINTING))) {
                         RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                         event.setCancelled(true);
-                    }
-                } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
-                        RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
-                    if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
-                        event.setCancelled(true);
-                    }
-                } else if (b.getType().name().contains("DAYLIGHT") || b.getType().name().contains("COMPARATOR") || b.getType().name().contains("REPEATER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
-                    if (!r.canRedstone(p)) {
+                        event.setUseItemInHand(Event.Result.DENY);
+                        event.setUseInteractedBlock(Event.Result.DENY);
+                    } else if (!r.allowMod(p) && !RedProtect.get().getUtil().isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
                         RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                         event.setCancelled(true);
-                    }
-                } else if (b.getType().name().contains("LEVER")) {
-                    if (!r.canLever(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantlever");
-                        event.setCancelled(true);
-                    }
-                } else if (b.getType().name().contains("LECTERN")) { // Do nothing to allow read books
-                } else if (b.getType().name().contains("BUTTON")) {
-                    if (!r.canButton(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantbutton");
-                        event.setCancelled(true);
-                    }
-                } else if (DoorManager.isOpenable(b) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    if (!r.canDoor(p)/* || (r.canDoor(p) && !cont.canOpen(b, p))*/) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantdoor");
-                        event.setCancelled(true);
-                    } else {
-                        DoorManager.ChangeDoor(b, r);
-                    }
-                } else if (itemInHand != null && (itemInHand.getType().name().startsWith("BOAT") || itemInHand.getType().name().contains("MINECART"))) {
-                    if (!r.canMinecart(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantplace");
                         event.setUseItemInHand(Event.Result.DENY);
-                        event.setCancelled(true);
+                        event.setUseInteractedBlock(Event.Result.DENY);
                     }
-                } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
-                    if (!r.canFish(p)) {
-                        RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
-                        event.setUseItemInHand(Event.Result.DENY);
-                        event.setCancelled(true);
-                    }
-                } else if ((event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) &&
-                        b.getType().name().contains("SIGN") && !r.canSign(p)) {
-                    Sign sign = (Sign) b.getState();
-                    for (String tag : RedProtect.get().getConfigManager().configRoot().region_settings.allow_sign_interact_tags) {
-                        //check first rule
-                        if (tag.equalsIgnoreCase(sign.getLine(0))) {
-                            return;
-                        }
-
-                        //check if tag is owners or members names
-                        if (tag.equalsIgnoreCase("{membername}")) {
-                            for (PlayerRegion leader : r.getLeaders()) {
-                                if (sign.getLine(0).equalsIgnoreCase(leader.getPlayerName())) {
-                                    return;
-                                }
-                            }
-                            for (PlayerRegion admin : r.getAdmins()) {
-                                if (sign.getLine(0).equalsIgnoreCase(admin.getPlayerName())) {
-                                    return;
-                                }
-                            }
-                            for (PlayerRegion member : r.getMembers()) {
-                                if (sign.getLine(0).equalsIgnoreCase(member.getPlayerName())) {
-                                    return;
-                                }
-                            }
-                        }
-
-                        //check if tag is player name
-                        if (tag.equalsIgnoreCase("{playername}")) {
-                            if (sign.getLine(0).equalsIgnoreCase(p.getName())) {
-                                return;
-                            }
-                        }
-                    }
-                    RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract.signs");
-                    event.setUseItemInHand(Event.Result.DENY);
-                    event.setCancelled(true);
-                } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) && !r.canBreak(itemInHand.getType()) &&
-                        (itemInHand.getType().equals(Material.FLINT_AND_STEEL) ||
-                                itemInHand.getType().equals(Material.BUCKET) ||
-                                itemInHand.getType().equals(Material.LAVA_BUCKET) ||
-                                itemInHand.getType().equals(Material.ITEM_FRAME) ||
-                                itemInHand.getType().name().equals("END_CRYSTAL") ||
-                                (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
-                                itemInHand.getType().equals(Material.PAINTING))) {
-                    RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
-                    event.setCancelled(true);
-                    event.setUseItemInHand(Event.Result.DENY);
-                    event.setUseInteractedBlock(Event.Result.DENY);
-                } else if (!r.allowMod(p) && !RedProtect.get().getUtil().isBukkitBlock(b) && !r.canBreak(b.getType()) && !r.canPlace(b.getType())) {
-                    RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
-                    event.setCancelled(true);
-                    event.setUseItemInHand(Event.Result.DENY);
-                    event.setUseInteractedBlock(Event.Result.DENY);
                 }
+            } catch (Exception ex) {
+                RedProtect.get().logger.warning("Theres an error on PlayerInteractEvent event: " + ex.getLocalizedMessage());
             }
         }
     }
