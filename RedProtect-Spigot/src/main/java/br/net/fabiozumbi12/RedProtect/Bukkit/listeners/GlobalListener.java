@@ -383,7 +383,6 @@ public class GlobalListener implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }

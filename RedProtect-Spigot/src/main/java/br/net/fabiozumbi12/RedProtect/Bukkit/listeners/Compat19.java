@@ -109,7 +109,6 @@ public class Compat19 implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "PlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }

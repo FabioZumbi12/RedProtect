@@ -270,9 +270,11 @@ public class BlockListener implements Listener {
                 return;
             }
 
-            if ((b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.canPlaceSpawner(p)) {
-                return;
-            }
+            try {
+                if ((b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.canPlaceSpawner(p)) {
+                    return;
+                }
+            } catch (Exception ignored) {}
 
             if ((m.name().contains("_HOE") || r.canCrops(b)) && r.canCrops()) {
                 return;

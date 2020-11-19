@@ -146,7 +146,6 @@ public class PlayerListener implements Listener {
 
         if (b != null) {
             l = b.getLocation();
-            RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - Is PlayerInteractEvent event. The block is " + b.getType().name());
         } else {
             l = p.getLocation();
         }
