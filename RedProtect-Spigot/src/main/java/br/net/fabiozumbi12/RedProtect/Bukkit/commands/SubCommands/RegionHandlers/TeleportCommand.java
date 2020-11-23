@@ -59,7 +59,7 @@ public class TeleportCommand implements SubCommand {
             if (play != null) {
                 handletp(sender, args[0], args[1], play);
             } else {
-                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.noplayer.thisname").replace("{player}", args[1]));
+                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.noplayer.thisname").replace("{player}", args[2]));
             }
             return true;
         }
