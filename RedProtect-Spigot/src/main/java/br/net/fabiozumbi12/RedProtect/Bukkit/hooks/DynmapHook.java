@@ -65,7 +65,12 @@ public class DynmapHook implements Listener {
         for (World w : RedProtect.get().getServer().getWorlds()) {
             for (Region r : RedProtect.get().getRegionManager().getRegionsByWorld(w.getName())) {
                 if (!r.allowDynmap()) continue;
-                addMark(r);
+                try {
+                    addMark(r);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
+                }
             }
         }
     }
@@ -75,7 +80,12 @@ public class DynmapHook implements Listener {
         if (event.getFlag().equalsIgnoreCase("dynmap")) {
             boolean value = (boolean) event.getFlagValue();
             if (value) {
-                addMark(event.getRegion());
+                try {
+                    addMark(event.getRegion());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    RedProtect.get().logger.severe("Problems when add marks to Dynmap. Dynmap is updated?");
+                }
             } else {
                 removeMark(event.getRegion());
             }
