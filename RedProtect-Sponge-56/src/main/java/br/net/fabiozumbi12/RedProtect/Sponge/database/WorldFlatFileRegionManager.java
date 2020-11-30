@@ -130,7 +130,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     newr.getFlags().put(flag, RedProtect.get().getConfigManager().getDefFlagsValues().get(flag));
                 }
             }
-            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+            for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
                 if (region.getNode(rname, "flags", flag).getString() != null) {
                     newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
                 }

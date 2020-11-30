@@ -628,7 +628,7 @@ public class Region extends CoreRegion {
                 continue;
             }
 
-            if (RedProtect.get().getConfigManager().AdminFlags.contains(flag)) {
+            if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
                 String flagValue = this.flags.get(flag).toString();
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
                     flaginfo.append(", &b").append(flag).append(": ").append(RedProtect.get().getLanguageManager().translBool(flagValue));

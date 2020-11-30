@@ -159,7 +159,7 @@ class FlagCommandElement extends CommandElement {
         String[] args = argss.getRaw().split(" ");
         if (args.length == 1) {
             SortedSet<String> tab = new TreeSet<>(RedProtect.get().getConfigManager().getDefFlags());
-            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+            for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
                 if (RedProtect.get().getPermissionHandler().hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
@@ -173,7 +173,7 @@ class FlagCommandElement extends CommandElement {
                     tab.add(flag);
                 }
             }
-            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+            for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
                 if (flag.startsWith(args[1]) && RedProtect.get().getPermissionHandler().hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
