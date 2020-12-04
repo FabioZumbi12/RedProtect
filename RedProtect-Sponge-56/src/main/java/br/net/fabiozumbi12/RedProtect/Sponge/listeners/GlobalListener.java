@@ -180,7 +180,7 @@ public class GlobalListener {
             }
 
             // Check Border
-            if (RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtect.get().getUtil().isBypassBorder(p)) {
+            if (RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtect.get().getUtil().isBypassBorder(p) && !p.hasPermission("redprotect.bypass.world-border")) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.border.cantbypass");
 
                 CommandResult result = Sponge.getCommandManager().process(Sponge.getServer().getConsole(), RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).border.execute_command
