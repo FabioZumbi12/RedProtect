@@ -135,8 +135,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     }
 
                     if (current.equals(first)) {
-                        Set<String> leaders = new HashSet<>();
-                        leaders.add(pName);
+                        Set<String> admins = new HashSet<>();
+                        //leaders.add(pName);
                         if (owner1 == null || owner1.isEmpty()) {
                             sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(2, RedProtect.get().getUtil().toText("--"))));
 
@@ -145,7 +145,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.sign.dontneed.name");
 
                         } else {
-                            leaders.add(owner1);
+                            admins.add(owner1);
                         }
 
 
@@ -157,7 +157,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                                     sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(3, RedProtect.get().getUtil().toText("--"))));
                                     RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.sign.dontneed.name");
                                 } else {
-                                    leaders.add(owner2);
+                                    admins.add(owner2);
                                 }
                             } else {
                                 sign.offer(e.getText().set(sign.getValue(Keys.SIGN_LINES).get().set(3, RedProtect.get().getUtil().toText("--"))));
@@ -187,8 +187,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         Region region = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
-
-                        leaders.forEach(region::addLeader);
+                        region.addLeader(pName);
+                        admins.forEach(region::addAdmin);
                         List<String> othersName = new ArrayList<>();
                         Region otherrg;
                         List<Location<World>> limitlocs = region.getLimitLocs(minby, maxby, false);

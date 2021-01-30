@@ -125,17 +125,16 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     }
 
                     if (current.equals(first)) {
-                        Set<String> leaders = new HashSet<>();
-                        leaders.add(pName);
+                        Set<String> admins = new HashSet<>();
+                        // admins.add(pName);
                         if (owner1 == null || owner1.isEmpty()) {
                             e.setLine(2, "--");
 
                         } else if (pName.equals(owner1)) {
                             e.setLine(2, "--");
                             RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.sign.dontneed.name");
-
                         } else {
-                            leaders.add(owner1);
+                            admins.add(owner1);
                         }
 
 
@@ -147,7 +146,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                                     e.setLine(3, "--");
                                     RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.sign.dontneed.name");
                                 } else {
-                                    leaders.add(owner2);
+                                    admins.add(owner2);
                                 }
                             } else {
                                 e.setLine(3, "--");
@@ -177,7 +176,8 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
-                        leaders.forEach(newRegion::addLeader);
+                        newRegion.addLeader(pName);
+                        admins.forEach(newRegion::addAdmin);
                         Set<String> othersName = new HashSet<>();
                         Region otherrg;
                         Set<Location> limitlocs = newRegion.getLimitLocs(minby, maxby, false);
@@ -249,7 +249,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         long reco = 0;
                         if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
                             double peco = RedProtect.get().economy.getBalance(p);
-                            reco = newRegion.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
+                            reco = (long) newRegion.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 
                             if (!RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.y_is_free) {
                                 reco = reco * Math.abs(newRegion.getMaxY() - newRegion.getMinY());
