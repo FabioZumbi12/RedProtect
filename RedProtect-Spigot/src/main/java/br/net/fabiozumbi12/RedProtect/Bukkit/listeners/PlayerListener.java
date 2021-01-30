@@ -65,10 +65,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.inventivetalent.bossbar.BossBarAPI;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class PlayerListener implements Listener {
@@ -664,11 +661,11 @@ public class PlayerListener implements Listener {
             }
 
             if (PlayerCmd.containsKey(p.getName())) {
-                if (!rto.canBack(p) && PlayerCmd.get(p.getName()).startsWith("/back")) {
+                if (!rto.canBack(p) && PlayerCmd.get(p.getName()).toLowerCase().contains("back")) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantback");
                     e.setCancelled(true);
                 }
-                if (!rto.isHomeAllowed(p) && PlayerCmd.get(p.getName()).startsWith("/home")) {
+                if (!rto.isHomeAllowed(p) && PlayerCmd.get(p.getName()).toLowerCase().contains("home")) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.canthome");
                     e.setCancelled(true);
                 }
@@ -769,7 +766,7 @@ public class PlayerListener implements Listener {
             }
         }
 
-        if (cmds.equalsIgnoreCase("back") || cmds.equalsIgnoreCase("home")) {
+        if (cmds.startsWith("/back") || cmds.startsWith("/home") || cmds.toLowerCase().contains(":back") || cmds.toLowerCase().contains(":home")) {
             PlayerCmd.put(p.getName(), msg);
         }
 

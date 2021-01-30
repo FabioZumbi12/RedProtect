@@ -946,11 +946,11 @@ public class PlayerListener {
             }
 
             if (PlayerCmd.containsKey(p)) {
-                if (!rto.canBack(p) && PlayerCmd.get(p).startsWith("back")) {
+                if (!rto.canBack(p) && PlayerCmd.get(p).toLowerCase().contains("back")) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantback");
                     e.setCancelled(true);
                 }
-                if (!rto.AllowHome(p) && PlayerCmd.get(p).startsWith("home")) {
+                if (!rto.AllowHome(p) && PlayerCmd.get(p).toLowerCase().contains("home")) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.canthome");
                     e.setCancelled(true);
                 }
