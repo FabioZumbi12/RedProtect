@@ -123,7 +123,14 @@ public class PlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
-        //deny potion
+
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+        if (r != null && !r.usePotions(p) && p.getItemInHand().getType().name().contains("POTION")) {
+            e.setCancelled(true);
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
+            return;
+        }
+
         if (RedProtect.get().getUtil().denyPotion(e.getItem(), p)) {
             e.setCancelled(true);
         }
@@ -1238,13 +1245,16 @@ public class PlayerListener implements Listener {
                 return;
             }
 
+            if (hand.getType().name().contains("POTION") && !r.usePotions(p)) {
+                e.setCancelled(true);
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
+            }
+
             if (!r.canProtectiles(p)) {
                 e.setCancelled(true);
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
             }
         }
-
-
     }
 
     @EventHandler
