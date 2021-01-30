@@ -275,7 +275,7 @@ public class BlockListener implements Listener {
                 }
             } catch (Exception ignored) {}
 
-            if ((m.name().contains("_HOE") || r.canCrops(b)) && r.canCrops()) {
+            if ((m.name().contains("_HOE") || r.canCrops(b, true)) && r.canCrops()) {
                 return;
             }
 
@@ -360,7 +360,7 @@ public class BlockListener implements Listener {
             }
         }
 
-        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b) && !r.canBreak(b.getType())) {
+        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b, true) && !r.canBreak(b.getType())) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         }
@@ -379,7 +379,7 @@ public class BlockListener implements Listener {
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
         Block b = p.getLocation().getBlock();
-        if (r != null && (RedProtect.get().getUtil().checkCrops(b)
+        if (r != null && (RedProtect.get().getUtil().checkCrops(b, false)
                 || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
@@ -402,7 +402,7 @@ public class BlockListener implements Listener {
         if (event.getEntity() instanceof Player) return;
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(event.getEntity().getLocation());
-        if (r != null && !r.canMobLoot() && RedProtect.get().getUtil().checkCrops(event.getBlock())) {
+        if (r != null && !r.canMobLoot() && RedProtect.get().getUtil().checkCrops(event.getBlock(), false)) {
             event.setCancelled(true);
         }
     }

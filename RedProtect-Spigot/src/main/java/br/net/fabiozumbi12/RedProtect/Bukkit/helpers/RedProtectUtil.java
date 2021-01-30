@@ -82,7 +82,7 @@ public class RedProtectUtil extends CoreUtil {
         return dateNow(RedProtect.get().getConfigManager().configRoot().region_settings.date_format);
     }
 
-    public boolean checkCrops(Block b) {
+    public boolean checkCrops(Block b, boolean breaking) {
         return (b instanceof Crops)
                 || b.getType().equals(Material.PUMPKIN_STEM)
                 || b.getType().equals(Material.MELON_STEM)
@@ -90,11 +90,12 @@ public class RedProtectUtil extends CoreUtil {
                 || b.getType().toString().contains("_BERRIES")
                 || b.getType().toString().contains("CROPS")
                 || b.getType().toString().contains("SOIL")
-                || b.getType().toString().contains("FARMLAND")
+                || (b.getType().toString().contains("FARMLAND") && !breaking)
                 || b.getType().toString().contains("CHORUS_")
                 || b.getType().toString().contains("BEETROOT_")
                 || b.getType().toString().contains("BEETROOTS")
-                || b.getType().toString().contains("SUGAR_CANE");
+                || b.getType().toString().contains("SUGAR_CANE")
+                || b.getType().toString().contains("WHEAT");
     }
 
     public void saveResource(String nameVersioned, String nameOri, File saveTo) {
