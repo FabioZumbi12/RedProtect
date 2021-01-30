@@ -310,7 +310,8 @@ public class GlobalListener implements Listener {
             }
         }
 
-        if (RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtect.get().getUtil().isBypassBorder(p)) {
+        // Check Border
+        if (RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).border.deny_bypass && RedProtect.get().getUtil().isBypassBorder(p) && !p.hasPermission("redprotect.bypass.world-border")) {
             RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.border.cantbypass");
 
             boolean result = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).border.execute_command
