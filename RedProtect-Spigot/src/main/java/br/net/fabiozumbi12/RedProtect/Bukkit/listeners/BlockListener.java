@@ -52,7 +52,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.material.Crops;
 
 import java.util.ArrayList;
 import java.util.List;
