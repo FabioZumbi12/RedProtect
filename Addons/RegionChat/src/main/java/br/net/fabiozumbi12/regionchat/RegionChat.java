@@ -91,7 +91,7 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
         }
 
         if (args.length >= 1 && sender instanceof Player) {
-            Player player = (Player)sender;
+            Player player = (Player) sender;
             Location loc = player.getLocation();
             List<String> worlds = getConfig().getStringList("config.allowed-worlds");
             if (!worlds.isEmpty() && !worlds.contains(player.getWorld().getName())) {
@@ -131,7 +131,7 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
 
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 
-            for (Player other: Bukkit.getOnlinePlayers()) {
+            for (Player other : Bukkit.getOnlinePlayers()) {
                 if (other.equals(player)) continue;
 
                 Location loc2 = other.getLocation();

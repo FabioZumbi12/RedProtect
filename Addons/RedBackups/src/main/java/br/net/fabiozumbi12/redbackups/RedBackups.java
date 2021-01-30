@@ -54,7 +54,10 @@ import java.util.stream.Collectors;
 
 public final class RedBackups extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
 
+    private final List<String> backupList = new ArrayList<>();
     private RedBackups plugin;
+    private BukkitTask taskAfterStart;
+    private BukkitTask taskInterval;
 
     @Override
     public void onDisable() {
@@ -99,16 +102,13 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         startBackupScheduler();
     }
 
-    private BukkitTask taskAfterStart;
-    private BukkitTask taskInterval;
-
     private void startBackupScheduler() {
         if (!getConfig().getBoolean("backup.enabled", false)) return;
 
         String mode = getConfig().getString("backup.mode", "server-start");
 
         if (mode.equals("server-start") && taskAfterStart == null) {
-            taskAfterStart = Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin,  () -> createBackup(Bukkit.getConsoleSender(), null), getConfig().getInt("backup.modes.server-start.delay-after-start") * 60 * 20);
+            taskAfterStart = Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> createBackup(Bukkit.getConsoleSender(), null), getConfig().getInt("backup.modes.server-start.delay-after-start") * 60 * 20);
         }
 
         if (mode.equals("interval")) {
@@ -131,7 +131,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args){
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
         List<String> tab = new ArrayList<>();
         if (args.length == 0) {
             if (sender.hasPermission("redbackups.cmd.reload")) {
@@ -174,14 +174,14 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             }
 
             if (args[0].equals("backup") && sender.hasPermission("redbackups.cmd.backup")) {
-                createBackup(sender,null);
+                createBackup(sender, null);
                 return true;
             }
         }
 
         if (args.length == 2 && args[0].equals("backup") && args[1].equals("here") && sender.hasPermission("redbackups.cmd.backup")) {
             if (sender instanceof Player) {
-                createBackup(sender, ((Player)sender).getLocation());
+                createBackup(sender, ((Player) sender).getLocation());
             } else {
                 sender.sendMessage(ChatColor.RED + "Only players can use this command with argument 'here'!");
             }
@@ -191,7 +191,6 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         return false;
     }
 
-    private final List<String> backupList = new ArrayList<>();
     private void createBackup(CommandSender sender, Location location) {
         List<String> worlds = getConfig().getStringList("backup.worlds");
 
@@ -209,7 +208,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
 
-                for (Region region:regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
+                for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
                     for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
                         for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
 
@@ -231,7 +230,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             backupList.forEach(file -> {
                 try {
 
-                    File fileFromCopy = new File(getServer().getWorldContainer().getAbsolutePath() + "\\.." , file);
+                    File fileFromCopy = new File(getServer().getWorldContainer().getAbsolutePath() + "\\..", file);
                     Bukkit.getLogger().severe("file1: " + fileFromCopy);
                     if (!fileFromCopy.exists() || fileFromCopy.length() == 0) return;
 

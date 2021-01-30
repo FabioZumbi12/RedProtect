@@ -113,15 +113,13 @@ public class RegionManager {
         return saved;
     }
 
-    public
-    Region getRegionById(String rid) {
+    public Region getRegionById(String rid) {
         if (rid == null) return null;
         if (!regionManagers.containsKey(rid.split("@")[1])) return null;
         return this.regionManagers.get(rid.split("@")[1]).getRegion(rid.split("@")[0]);
     }
 
-    public
-    Region getRegion(String rname, String w) {
+    public Region getRegion(String rname, String w) {
         if (!regionManagers.containsKey(w)) return null;
         return this.regionManagers.get(w).getRegion(rname);
     }
@@ -323,8 +321,7 @@ public class RegionManager {
      * @param loc Location
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public
-    Region getTopRegion(Location loc) {
+    public Region getTopRegion(Location loc) {
         Region region = bLoc.get(loc.getBlock().getLocation().toString());
         if (region != null) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from cache");
@@ -359,8 +356,7 @@ public class RegionManager {
      * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public
-    Region getTopRegion(String w, int x, int y, int z) {
+    public Region getTopRegion(String w, int x, int y, int z) {
         return getTopRegion(new Location(Bukkit.getWorld(w), x, y, z));
     }
 
@@ -373,8 +369,7 @@ public class RegionManager {
      * @param z Location z
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public
-    Region getLowRegion(String w, int x, int y, int z) {
+    public Region getLowRegion(String w, int x, int y, int z) {
         if (!this.regionManagers.containsKey(w)) {
             return null;
         }
@@ -388,8 +383,7 @@ public class RegionManager {
      * @param loc location to get region.
      * @return {@code Region} - Or null if no regions on this location.
      */
-    public
-    Region getLowRegion(Location loc) {
+    public Region getLowRegion(Location loc) {
         if (!this.regionManagers.containsKey(loc.getWorld().getName())) {
             return null;
         }

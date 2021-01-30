@@ -241,7 +241,8 @@ public class PlayerListener implements Listener {
                         event.setCancelled(true);
                     }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
         } else { //if r != null >>
             //other blocks and interactions
@@ -943,7 +944,7 @@ public class PlayerListener implements Listener {
                 if (p.isInsideVehicle()) {
                     Entity vehicle = p.getVehicle();
                     vehicle.eject();
-                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () ->  vehicle.teleport(loc), 1);
+                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> vehicle.teleport(loc), 1);
                 }
                 e.setTo(loc);
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantregionenter");
@@ -1491,7 +1492,7 @@ public class PlayerListener implements Listener {
                     String[] cmds = r.getFlagString("set-portal").split(" ");
                     RedProtect.get().teleportDelay.add(p.getName());
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), "rp teleport " + cmds[0] + " " + cmds[1] + " " + p.getName());
-                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().getConfigManager().configRoot().region_settings.portal_delay * 20);
+                    Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().getConfigManager().configRoot().region_settings.portal_delay * 20L);
                 }
             }
 

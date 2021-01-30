@@ -703,19 +703,19 @@ public class CommandHandlers {
                         }
                         last += lastLocal + 1;
                         fancy.textAndNext("\n" + RedProtect.get().getLanguageManager().get("general.color") + "-----");
-                        fancy.textAndNext("\n"+ RedProtect.get().getLanguageManager().get("general.color") + RedProtect.get().getLanguageManager().get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ":");
+                        fancy.textAndNext("\n" + RedProtect.get().getLanguageManager().get("general.color") + RedProtect.get().getLanguageManager().get("region.world").replace(":", "") + " " + colorChar + w.getName() + "[" + (min + 1) + "-" + (max + 1) + "/" + wregions.size() + "]" + ChatColor.RESET + ":");
                         fancy.appendFancy(tempFancy);
                         fancy.next();
                     }
                 }
-                fancy.textAndNext("\n"+ RedProtect.get().getLanguageManager().get("general.color") + "---------------- " + last + "/" + total + " -----------------");
+                fancy.textAndNext("\n" + RedProtect.get().getLanguageManager().get("general.color") + "---------------- " + last + "/" + total + " -----------------");
                 if (last < total) {
-                    fancy.text("\n"+ RedProtect.get().getLanguageManager().get("cmdmanager.region.listpage.more").replace("{player}", RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1)))
-                    .clickRunCmd("/rp list " + RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1))
-                    .hoverShowText(RedProtect.get().getLanguageManager().get("general.color") + "/rp list " + RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1));
+                    fancy.text("\n" + RedProtect.get().getLanguageManager().get("cmdmanager.region.listpage.more").replace("{player}", RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1)))
+                            .clickRunCmd("/rp list " + RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1))
+                            .hoverShowText(RedProtect.get().getLanguageManager().get("general.color") + "/rp list " + RedProtect.get().getUtil().UUIDtoPlayer(uuid) + " " + (Page + 1));
                 } else {
                     if (Page != 1) {
-                        fancy.textAndNext("\n"+ RedProtect.get().getLanguageManager().get("cmdmanager.region.listpage.nomore"));
+                        fancy.textAndNext("\n" + RedProtect.get().getLanguageManager().get("cmdmanager.region.listpage.nomore"));
                     }
                 }
                 fancy.send(sender);

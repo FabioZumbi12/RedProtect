@@ -266,7 +266,7 @@ public class RegionManager {
     /**
      * Get the high priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @param loc The location
+     * @param loc    The location
      * @param caller class calling this method
      * @return {@code Region} - Or null if no regions on this location.
      */
@@ -309,10 +309,10 @@ public class RegionManager {
     /**
      * Get the low priority region in a group region. If no other regions, return the unique region on location.
      *
-     * @param w      World
-     * @param x      X coordinate
-     * @param y      Y coordinate
-     * @param z      Z coordinate
+     * @param w World
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param z Z coordinate
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getLowRegion(String w, int x, int y, int z) {
@@ -364,10 +364,11 @@ public class RegionManager {
 
     /**
      * Get regions in a group region. If no other regions, return the unique region on location.
-     * @param w      World
-     * @param x      X coordinate
-     * @param y      Y coordinate
-     * @param z      Z coordinate
+     *
+     * @param w World
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param z Z coordinate
      * @return {@code Map<Integer,Region>} - Indexed by priority
      */
     public Map<Integer, Region> getGroupRegion(String w, int x, int y, int z) {

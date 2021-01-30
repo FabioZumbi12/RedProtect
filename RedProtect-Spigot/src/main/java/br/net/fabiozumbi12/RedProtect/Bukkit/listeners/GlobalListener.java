@@ -398,7 +398,8 @@ public class GlobalListener implements Listener {
                     return;
                 }
             }
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
@@ -589,7 +590,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (e1 instanceof Player && !RedProtect.get().getUtil().isRealPlayer((Player)e1)) {
+        if (e1 instanceof Player && !RedProtect.get().getUtil().isRealPlayer((Player) e1)) {
             return;
         }
 

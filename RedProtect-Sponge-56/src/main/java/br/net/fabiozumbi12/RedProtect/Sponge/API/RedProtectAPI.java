@@ -293,7 +293,6 @@ public class RedProtectAPI {
     }
 
     /**
-     *
      * @param flag    The name of flag.
      * @param isAdmin Is Admin flag?
      * @return true if the flag was found and has been removed, false otherwise.

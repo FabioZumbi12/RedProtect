@@ -2,12 +2,12 @@ name: KillerProjectiles
 version: ${project.version}
 main: br.net.fabiozumbi12.killerprojectiles.KillerProjectiles
 api-version: 1.13
-depend: [RedProtect]
-authors: [FabioZumbi12]
+depend: [ RedProtect ]
+authors: [ FabioZumbi12 ]
 description: Makes projectiles kill player with one hit
 commands:
   killerprojectiles:
     description: "Main command for KillerProjectiles"
     usage: "Use [kp reload] to reload the configurations"
-    aliases: ["kp"]
+    aliases: [ "kp" ]
     permission: "killerprojectiles.command.reload"

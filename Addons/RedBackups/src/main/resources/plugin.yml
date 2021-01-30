@@ -2,11 +2,11 @@ name: RedBackups
 version: ${project.version}
 main: br.net.fabiozumbi12.redbackups.RedBackups
 api-version: 1.13
-depend: [RedProtect]
-authors: [FabioZumbi12]
+depend: [ RedProtect ]
+authors: [ FabioZumbi12 ]
 description: ${project.description}
 commands:
   RedBackups:
     description: "Main command for RedBackups"
     usage: "Use [rbkp reload] to reload the configurations"
-    aliases: ["rbkp"]
+    aliases: [ "rbkp" ]

@@ -103,13 +103,6 @@ public class GlobalFlagsCategory {
                 "Sponge: https://jd.spongepowered.org/7.2.0/org/spongepowered/api/event/cause/entity/damage/DamageTypes.html\n" +
                 "Spigot: https://hub.spigotmc.org/javadocs/spigot/index.html?overview-summary.html")
         public Map<String, String> command_on_damage = createCmdMap();
-
-        private Map<String, String> createCmdMap() {
-            Map<String, String> map = new HashMap<>();
-            map.put("VOID", "spawn {player}");
-            return map;
-        }
-
         @Setting
         public weatherCat weather = new weatherCat();
         @Setting(value = "deny-item-usage", comment = "Control what items the player can use. Use '/rp debug-item' with the item in your hand to get the type.")
@@ -138,6 +131,12 @@ public class GlobalFlagsCategory {
         public playerVeloCat player_velocity = new playerVeloCat();
         @Setting(value = "player-glide")
         public playerGlide player_glide = new playerGlide();
+
+        private Map<String, String> createCmdMap() {
+            Map<String, String> map = new HashMap<>();
+            map.put("VOID", "spawn {player}");
+            return map;
+        }
 
         private Map<String, CommandRanges> createMap() {
             Map<String, CommandRanges> map = new HashMap<>();

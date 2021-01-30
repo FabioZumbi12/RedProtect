@@ -126,7 +126,7 @@ public class BlockListener {
                 if (out || r != null) {
                     if (cont.isContainer(b)) {
                         // Check sides for other private signs
-                        for (Direction face:Direction.values()) {
+                        for (Direction face : Direction.values()) {
                             Location<World> faceBlock = e.getTargetTile().getLocation().getBlockRelative(face);
                             if (cont.isSign(faceBlock.createSnapshot()) && cont.validatePrivateSign(faceBlock.createSnapshot())) {
                                 lines.set(1, RedProtect.get().getUtil().toText("Other Sign"));

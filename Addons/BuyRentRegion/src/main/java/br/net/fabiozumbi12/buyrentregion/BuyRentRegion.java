@@ -146,7 +146,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
             rentedRegionCounts.save();
             autoRenews.save();
             getServer().getScheduler().cancelTasks(this);
-        } catch(Exception e) {
+        } catch (Exception e) {
             getLogger().log(Level.SEVERE, "An error occurred during shutdown.", e);
         }
     }

@@ -76,7 +76,7 @@ public class KickCommand implements SubCommand {
             }
 
             Location to = RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true).add(0, 1, 0);
-            if (visit.isInsideVehicle()){
+            if (visit.isInsideVehicle()) {
                 Entity vehicle = visit.getVehicle();
                 vehicle.eject();
                 Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> vehicle.teleport(to), 1);

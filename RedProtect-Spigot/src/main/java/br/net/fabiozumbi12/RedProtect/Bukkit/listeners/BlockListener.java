@@ -135,9 +135,9 @@ public class BlockListener implements Listener {
                 if (out || signr != null) {
                     if (cont.isContainer(b)) {
                         // Check sides for other private signs
-                        for (BlockFace face:BlockFace.values()) {
+                        for (BlockFace face : BlockFace.values()) {
                             Block faceBlock = e.getBlock().getRelative(face);
-                            if ((faceBlock.getState() instanceof Sign) && cont.validatePrivateSign(((Sign)faceBlock.getState()).getLines())) {
+                            if ((faceBlock.getState() instanceof Sign) && cont.validatePrivateSign(((Sign) faceBlock.getState()).getLines())) {
                                 e.setLine(0, "Other Sign");
                                 e.setLine(1, "NEAR");
                                 return;
@@ -273,7 +273,8 @@ public class BlockListener implements Listener {
                 if ((b.getType().name().equals("MOB_SPAWNER") || b.getType().name().equals("SPAWNER")) && r.canPlaceSpawner(p)) {
                     return;
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             if ((m.name().contains("_HOE") || r.canCrops(b, true)) && r.canCrops()) {
                 return;

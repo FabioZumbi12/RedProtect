@@ -556,7 +556,8 @@ public class GlobalListener {
     public void onProjectileHit(CollideEntityEvent event, @Root Projectile proj) {
         RedProtect.get().logger.debug(LogLevel.ENTITY, "Is CollideEntityEvent(onProjectileHit) event.");
         RedProtect.get().logger.debug(LogLevel.ENTITY, "Projectile: " + proj.getType().getName());
-        if (RedProtect.get().getRegionManager().getTopRegion(proj.getLocation(), this.getClass().getName()) != null) return;
+        if (RedProtect.get().getRegionManager().getTopRegion(proj.getLocation(), this.getClass().getName()) != null)
+            return;
 
         for (Entity ent : event.getEntities()) {
             RedProtect.get().logger.debug(LogLevel.ENTITY, "Entity: " + ent.getType().getName());

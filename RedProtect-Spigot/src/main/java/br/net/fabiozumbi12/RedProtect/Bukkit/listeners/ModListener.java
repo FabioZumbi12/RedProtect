@@ -58,7 +58,8 @@ public class ModListener implements PluginMessageListener {
             SCHEMATICA = "dev:null";
             WDLINIT = "wdl:init";
             WDLCONTROL = "wdl:control";
-        } catch (ClassNotFoundException ignored) {}
+        } catch (ClassNotFoundException ignored) {
+        }
 
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, ZIG, this);
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, BSM, this);
@@ -71,26 +72,6 @@ public class ModListener implements PluginMessageListener {
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, WDLCONTROL);
 
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, "BungeeCord", this);
-    }
-
-    public void unload() {
-        plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin);
-        plugin.getServer().getMessenger().unregisterOutgoingPluginChannel(plugin);
-    }
-
-    @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] value) {
-        if (channel.equalsIgnoreCase(MCBRAND)) {
-            String brand = new String(value, StandardCharsets.UTF_8);
-            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("fabric").block) denyFabric(player, brand);
-            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("forge").block) denyForge(player, brand);
-            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("liteloader").block) denyLiteLoader(player, brand);
-            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("rift").block) denyRift(player, brand);
-        }
-        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("5zig").block) deny5Zig(player, channel);
-        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("bettersprinting").block) denyBSM(player, channel);
-        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("schematica").block) denySchematica(player);
-        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("worlddownloader").block) denyWDL(player, channel);
     }
 
     /* Packets */
@@ -123,6 +104,34 @@ public class ModListener implements PluginMessageListener {
         return output.toByteArray();
     }
 
+    public void unload() {
+        plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin);
+        plugin.getServer().getMessenger().unregisterOutgoingPluginChannel(plugin);
+    }
+
+    @Override
+    public void onPluginMessageReceived(String channel, Player player, byte[] value) {
+        if (channel.equalsIgnoreCase(MCBRAND)) {
+            String brand = new String(value, StandardCharsets.UTF_8);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("fabric").block)
+                denyFabric(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("forge").block)
+                denyForge(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("liteloader").block)
+                denyLiteLoader(player, brand);
+            if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("rift").block)
+                denyRift(player, brand);
+        }
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("5zig").block)
+            deny5Zig(player, channel);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("bettersprinting").block)
+            denyBSM(player, channel);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("schematica").block)
+            denySchematica(player);
+        if (plugin.getConfigManager().configRoot().server_protection.mods_permissions.get("worlddownloader").block)
+            denyWDL(player, channel);
+    }
+
     /* Actions */
     private void denySchematica(Player player) {
         if (!player.hasPermission("redprotect.mods.schematica.bypass")) {
@@ -147,7 +156,7 @@ public class ModListener implements PluginMessageListener {
              * 0x16 = Unused
              * 0x32 = Auto Reconnect
              */
-            player.sendPluginMessage(plugin, channel, new byte[] {0x1|0x2|0x4|0x8|0x16|0x32});
+            player.sendPluginMessage(plugin, channel, new byte[]{0x1 | 0x2 | 0x4 | 0x8 | 0x16 | 0x32});
 
             executeAction(player, "5zig");
         }
@@ -155,7 +164,7 @@ public class ModListener implements PluginMessageListener {
 
     private void denyBSM(Player player, String channel) {
         if (channel.equalsIgnoreCase(BSM) && !player.hasPermission("redprotect.mods.bettersprinting.bypass")) {
-            player.sendPluginMessage(plugin, channel, new byte[] {1});
+            player.sendPluginMessage(plugin, channel, new byte[]{1});
 
             executeAction(player, "bettersprinting");
         }

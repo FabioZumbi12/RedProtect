@@ -59,7 +59,7 @@ public class Compat19 implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onGliding(EntityToggleGlideEvent event) {
-        if(event.getEntity().hasMetadata("swimming") || event.getEntity().hasMetadata("falling")) return;
+        if (event.getEntity().hasMetadata("swimming") || event.getEntity().hasMetadata("falling")) return;
 
         if (event.getEntity() instanceof Player && event.isGliding()) {
             Player p = (Player) event.getEntity();
@@ -142,7 +142,7 @@ public class Compat19 implements Listener {
         Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
         if (r == null && e.getEntity() instanceof Player && e.getDamager() instanceof Arrow) {
             Player p = (Player) e.getEntity();
-            Arrow arrow = (Arrow)e.getDamager();
+            Arrow arrow = (Arrow) e.getDamager();
             if (arrow.getShooter() instanceof Player && p.isGliding()) {
                 if (arrow.getShooter().equals(p) && !p.hasPermission("redprotect.bypass.glide") &&
                         !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {

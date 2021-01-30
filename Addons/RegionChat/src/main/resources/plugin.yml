@@ -2,11 +2,11 @@ name: RegionChat
 version: ${project.version}
 main: br.net.fabiozumbi12.regionchat.RegionChat
 api-version: 1.13
-depend: [RedProtect]
-authors: [FabioZumbi12]
+depend: [ RedProtect ]
+authors: [ FabioZumbi12 ]
 description: ${project.description}
 commands:
   RegionChat:
     description: "Main command for RegionChat"
     usage: "Use [rpc reload] to reload the configurations"
-    aliases: ["rpc"]
+    aliases: [ "rpc" ]

@@ -63,18 +63,17 @@ public class BlockCategory {
     @ConfigSerializable
     public static class PlayerCat {
 
-        public PlayerCat(){}
-
-        public PlayerCat(long initialTime, String player) {
-            this.time = initialTime;
-            this.player = player;
-        }
-
         @Setting
         public long time = 0;
         @Setting(value = "added-blocks")
         public long added_blocks = 0;
         @Setting
         public String player;
+        public PlayerCat() {
+        }
+        public PlayerCat(long initialTime, String player) {
+            this.time = initialTime;
+            this.player = player;
+        }
     }
 }

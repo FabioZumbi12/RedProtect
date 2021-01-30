@@ -45,9 +45,9 @@ import java.util.Date;
 import static com.google.common.reflect.TypeToken.of;
 
 public class BlockConfig {
+    protected ConfigurationLoader<CommentedConfigurationNode> blockLoader;
     private ConfigurationNode blockRoot;
     private BlockCategory blockCat;
-    protected ConfigurationLoader<CommentedConfigurationNode> blockLoader;
 
     public BlockConfig() {
         String headerBlock = ""
@@ -75,14 +75,14 @@ public class BlockConfig {
     public long getBlockLimit(Player player) {
         if (!isEnabled()) return 0;
 
-        if (this.blockCat.players.containsKey(player.getUniqueId().toString())){
+        if (this.blockCat.players.containsKey(player.getUniqueId().toString())) {
             long time = this.blockCat.players.get(player.getUniqueId().toString()).time;
             long added_blocks = this.blockCat.players.get(player.getUniqueId().toString()).added_blocks;
 
             Date playerDate = new Date(time);
             Date nowDate = Calendar.getInstance().getTime();
 
-            long diff = nowDate.getTime() - playerDate.getTime() ;
+            long diff = nowDate.getTime() - playerDate.getTime();
 
             long diffSeconds = diff / 1000 % 60;
             long diffMinutes = diff / (60 * 1000) % 60;
@@ -131,7 +131,7 @@ public class BlockConfig {
         saveConfig();
     }
 
-    public boolean isEnabled(){
+    public boolean isEnabled() {
         return this.blockCat.enabled;
     }
 

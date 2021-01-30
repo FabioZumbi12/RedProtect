@@ -1,13 +1,17 @@
 ## RedProtect ADD-ON: Redbackups
+
 This plugin make backups of *.mca files for redprotect regions locations.
 
-### Commands: 
+### Commands:
+
 Reload command: `/redbackup reload` or the alias `/rbkp reload`  
-Manual backup: `/redbackup backup \[here\]` - Manual backup with option to back up the actual location.  
+Manual backup: `/redbackup backup \[here\]` - Manual backup with option to back up the actual location.
 
 ### Permissions:
+
 Reload command: `redbackup.cmd.reload`  
-Backup command: `redbackup.cmd.backup`  
+Backup command: `redbackup.cmd.backup`
 
 ### Download:
+
 Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons

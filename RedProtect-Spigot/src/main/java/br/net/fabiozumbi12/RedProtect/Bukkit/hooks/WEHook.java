@@ -80,8 +80,9 @@ public class WEHook {
                 Location p1 = new Location(player.getWorld(), regs.getMinimumPoint().getX(), regs.getMinimumPoint().getY(), regs.getMinimumPoint().getZ());
                 Location p2 = new Location(player.getWorld(), regs.getMaximumPoint().getX(), regs.getMaximumPoint().getY(), regs.getMaximumPoint().getZ());
 
-                return new Location[] {p1, p2};
-            } catch (IncompleteRegionException ignored) {}
+                return new Location[]{p1, p2};
+            } catch (IncompleteRegionException ignored) {
+            }
         }
         return null;
     }
