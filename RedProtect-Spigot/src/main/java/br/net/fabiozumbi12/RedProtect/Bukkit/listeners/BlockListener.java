@@ -32,7 +32,6 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -45,6 +44,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
@@ -380,18 +380,7 @@ public class BlockListener implements Listener {
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
         Block b = p.getLocation().getBlock();
-        if (r != null && (b instanceof Crops
-                || b.getType().equals(Material.PUMPKIN_STEM)
-                || b.getType().equals(Material.MELON_STEM)
-                || b.getType().toString().contains("CARROTS")
-                || b.getType().toString().contains("_BERRIES")
-                || b.getType().toString().contains("CROPS")
-                || b.getType().toString().contains("SOIL")
-                || b.getType().toString().contains("FARMLAND")
-                || b.getType().toString().contains("CHORUS_")
-                || b.getType().toString().contains("BEETROOT_")
-                || b.getType().toString().contains("BEETROOTS")
-                || b.getType().toString().contains("SUGAR_CANE")
+        if (r != null && (RedProtect.get().getUtil().checkCrops(b)
                 || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
@@ -406,6 +395,16 @@ public class BlockListener implements Listener {
                 e.setCancelled(true);
                 RedProtect.get().getLanguageManager().sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void EntityBreak(EntityInteractEvent event) {
+        if (event.getEntity() instanceof Player) return;
+
+        Region r = RedProtect.get().getRegionManager().getTopRegion(event.getEntity().getLocation());
+        if (r != null && !r.canMobLoot() && RedProtect.get().getUtil().checkCrops(event.getBlock())) {
+            event.setCancelled(true);
         }
     }
 

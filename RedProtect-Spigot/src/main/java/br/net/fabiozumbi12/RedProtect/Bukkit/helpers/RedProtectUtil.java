@@ -49,6 +49,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.material.Crops;
 import org.bukkit.potion.Potion;
 
 import javax.annotation.Nonnull;
@@ -79,6 +80,21 @@ public class RedProtectUtil extends CoreUtil {
 
     public String dateNow() {
         return dateNow(RedProtect.get().getConfigManager().configRoot().region_settings.date_format);
+    }
+
+    public boolean checkCrops(Block b) {
+        return (b instanceof Crops)
+                || b.getType().equals(Material.PUMPKIN_STEM)
+                || b.getType().equals(Material.MELON_STEM)
+                || b.getType().toString().contains("CARROTS")
+                || b.getType().toString().contains("_BERRIES")
+                || b.getType().toString().contains("CROPS")
+                || b.getType().toString().contains("SOIL")
+                || b.getType().toString().contains("FARMLAND")
+                || b.getType().toString().contains("CHORUS_")
+                || b.getType().toString().contains("BEETROOT_")
+                || b.getType().toString().contains("BEETROOTS")
+                || b.getType().toString().contains("SUGAR_CANE");
     }
 
     public void saveResource(String nameVersioned, String nameOri, File saveTo) {
