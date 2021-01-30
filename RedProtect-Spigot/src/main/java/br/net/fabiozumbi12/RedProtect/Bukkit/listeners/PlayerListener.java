@@ -1010,7 +1010,7 @@ public class PlayerListener implements Listener {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantfly");
             }
 
-            //update region admin or leander visit
+            //update region admin or leader visit
             if (RedProtect.get().getConfigManager().configRoot().region_settings.record_player_visit_method.equalsIgnoreCase("ON-REGION-ENTER")) {
                 if (r.isLeader(p) || r.isAdmin(p)) {
                     if (r.getDate() == null || (!r.getDate().equals(RedProtect.get().getUtil().dateNow()))) {
@@ -1477,7 +1477,7 @@ public class PlayerListener implements Listener {
                 }
             }
 
-            //enter Gamemode flag
+            //Enter Gamemode flag
             if (r.flagExists("gamemode") && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.admin.flag.gamemode")) {
                 p.setGameMode(GameMode.valueOf(r.getFlagString("gamemode").toUpperCase()));
             }
@@ -1494,6 +1494,9 @@ public class PlayerListener implements Listener {
                     Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> RedProtect.get().teleportDelay.remove(p.getName()), RedProtect.get().getConfigManager().configRoot().region_settings.portal_delay * 20);
                 }
             }
+
+            // Collision Flag
+            p.setCollidable(r.canCollide(p));
         }
 
         if (er != null && (er.canExit(p) || RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.admin.flag.exit"))) {
@@ -1629,7 +1632,7 @@ public class PlayerListener implements Listener {
                 }
             }
 
-            //enter fly flag
+            //Enter fly flag
             if (r.flagExists("forcefly") && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.admin.flag.forcefly") && (p.getGameMode().equals(GameMode.SURVIVAL) || p.getGameMode().equals(GameMode.ADVENTURE))) {
                 p.setAllowFlight(r.getFlagBool("forcefly"));
                 p.setFlying(r.getFlagBool("forcefly"));
@@ -1746,6 +1749,9 @@ public class PlayerListener implements Listener {
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), cmd.replace("{player}", p.getName()));
                 }
             }
+
+            // Set back to Collide
+            p.setCollidable(true);
         }
     }
 

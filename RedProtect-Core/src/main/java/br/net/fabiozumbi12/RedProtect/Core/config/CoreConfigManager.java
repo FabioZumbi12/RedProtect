@@ -93,7 +93,8 @@ public class CoreConfigManager {
             "deny-exit-items",
             "spawn-animals",
             "spawn-monsters",
-            "can-move"));
+            "can-move",
+            "can-collide"));
     public HashMap<String, String> backupGuiName = new HashMap<>();
     public HashMap<String, String> backupGuiDescription = new HashMap<>();
     protected String headerCfg = ""

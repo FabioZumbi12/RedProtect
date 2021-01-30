@@ -1176,6 +1176,10 @@ public class Region extends CoreRegion {
     public boolean canGrow() {
         return getFlagBool("can-grow");
     }
+
+    public boolean canCollide(Player p) {
+        return getFlagBool("can-collide");
+    }
     //--------------------------------------------------------------//
 
     public void setValue(long value) {
@@ -1242,4 +1246,5 @@ public class Region extends CoreRegion {
         }
         return "[" + leaderList.delete(0, 2).toString() + "]";
     }
+
 }
