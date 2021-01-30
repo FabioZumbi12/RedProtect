@@ -1394,6 +1394,7 @@ public class PlayerListener implements Listener {
         //Enter-Exit notifications
         if (r.getWelcome().equals("")) {
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")
+                    || RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")
                     || RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("CHAT")) {
                 StringBuilder leaderstringBuilder = new StringBuilder();
                 for (PlayerRegion leader : r.getLeaders()) {
