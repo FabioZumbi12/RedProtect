@@ -272,11 +272,15 @@ public class PlayerListener implements Listener {
                             event.setCancelled(true);
                         }
                     } else if (b.getType().equals(Material.DRAGON_EGG) ||
-                            b.getType().name().equalsIgnoreCase("BED") ||
                             b.getType().name().contains("NOTE_BLOCK") ||
                             b.getType().name().contains("CAKE")) {
 
                         if (!r.canBuild(p)) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                            event.setCancelled(true);
+                        }
+                    } else if (b.getType().name().equalsIgnoreCase("BED") || b.getType().name().contains("_BED")) {
+                        if (!r.isHomeAllowed(p) && !r.canBuild(p)) {
                             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                             event.setCancelled(true);
                         }

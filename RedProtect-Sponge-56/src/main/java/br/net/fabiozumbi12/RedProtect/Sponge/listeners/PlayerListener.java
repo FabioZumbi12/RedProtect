@@ -339,12 +339,16 @@ public class PlayerListener {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantpressplate");
                 }
             } else if (bstate.getType().equals(BlockTypes.DRAGON_EGG) ||
-                    bstate.getType().equals(BlockTypes.BED) ||
                     bstate.getType().equals(BlockTypes.NOTEBLOCK) ||
                     bstate.getType().getName().contains("repeater") ||
                     bstate.getType().getName().contains("comparator")) {
 
                 if (!r.canBuild(p)) {
+                    RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                    event.setCancelled(true);
+                }
+            } else if (bstate.getType().equals(BlockTypes.BED)) {
+                if (!r.isHomeAllowed(p) && !r.canBuild(p)) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                     event.setCancelled(true);
                 }

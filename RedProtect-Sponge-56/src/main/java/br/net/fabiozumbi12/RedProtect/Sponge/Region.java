@@ -896,6 +896,10 @@ public class Region extends CoreRegion {
         return false;
     }
 
+    public boolean isHomeAllowed(Player p) {
+        return getFlagBool("allow-home") || checkAllowedPlayer(p, "allow-home");
+    }
+
     public boolean canTree(BlockSnapshot b) {
         return flagExists("treefarm") && (b.getState().getType().getName().contains("log") || b.getState().getType().getName().contains("leaves")) && getFlagBool("treefarm");
     }
