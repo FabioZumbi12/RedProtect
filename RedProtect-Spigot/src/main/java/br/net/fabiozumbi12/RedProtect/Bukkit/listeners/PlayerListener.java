@@ -766,14 +766,15 @@ public class PlayerListener implements Listener {
             }
         }
 
-        if (cmds.startsWith("/back") || cmds.startsWith("/home") || cmds.toLowerCase().contains(":back") || cmds.toLowerCase().contains(":home")) {
+        if (cmds.startsWith("back") || cmds.startsWith("home") || cmds.contains(":back") || cmds.contains(":home")) {
             PlayerCmd.put(p.getName(), msg);
         }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r != null) {
 
-            if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall")) && RedProtect.get().hooks.myPet && !r.canPet(p)) {
+            if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall") || cmds.contains(":petc") || cmds.contains(":petcall"))
+                    && RedProtect.get().hooks.myPet && !r.canPet(p)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantpet");
                 e.setCancelled(true);
                 return;
@@ -800,14 +801,14 @@ public class PlayerListener implements Listener {
                 return;
             }
 
-            if (cmds.equalsIgnoreCase("sethome") && !r.isHomeAllowed(p)) {
+            if ((cmds.equalsIgnoreCase("sethome") || cmds.contains(":sethome")) && !r.isHomeAllowed(p)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.canthome");
                 e.setCancelled(true);
                 return;
             }
 
             //Pvp check
-            if (cmds.equalsIgnoreCase("pvp") && RedProtect.get().hooks.pvpm) {
+            if ((cmds.equalsIgnoreCase("pvp") || cmds.contains(":pvp")) && RedProtect.get().hooks.pvpm) {
                 if (r.isPvPArena() && !PvPlayer.get(p).hasPvPEnabled() && !r.canBuild(p)) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.pvpenabled");
                     RedProtect.get().getServer().dispatchCommand(RedProtect.get().getServer().getConsoleSender(), RedProtect.get().getConfigManager().configRoot().flags_configuration.pvparena_nopvp_kick_cmd.replace("{player}", p.getName()));
