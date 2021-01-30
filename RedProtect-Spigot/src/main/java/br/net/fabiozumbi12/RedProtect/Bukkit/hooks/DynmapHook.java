@@ -51,7 +51,7 @@ public class DynmapHook implements Listener {
         MApi = dyn.getMarkerAPI();
         MSet = MApi.getMarkerSet(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname);
         if (MSet == null) {
-            MSet = MApi.createMarkerSet("RedProtect", RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname, null, false);
+            MSet = MApi.createMarkerSet("redprotect.markerset", RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname, null, false);
         }
         MSet.setHideByDefault(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.hide_by_default);
         MSet.setLayerPriority(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.layer_priority);
