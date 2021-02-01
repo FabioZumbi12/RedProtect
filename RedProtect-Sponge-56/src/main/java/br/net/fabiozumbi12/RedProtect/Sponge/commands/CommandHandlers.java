@@ -729,7 +729,7 @@ public class CommandHandlers {
 
         Object objflag = RedProtect.get().getUtil().parseObject(value);
 
-        if ((RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) || flag.equalsIgnoreCase("info")) {
+        if ((RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) || flag.equalsIgnoreCase("info")) {
             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "------------[" + RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.values") + "]------------"));
@@ -739,7 +739,7 @@ public class CommandHandlers {
                 }
 
                 if (value.equalsIgnoreCase("remove")) {
-                    if (RedProtect.get().getConfigManager().AdminFlags.contains(flag) && r.getFlags().containsKey(flag)) {
+                    if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag) && r.getFlags().containsKey(flag)) {
                         r.removeFlag(flag);
                         RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", r.getName()));
                         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " REMOVED FLAG " + flag + " of region " + r.getName());
@@ -764,7 +764,7 @@ public class CommandHandlers {
                         }
                     }
 
-                    if (RedProtect.get().getConfigManager().AdminFlags.contains(flag)) {
+                    if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
                         if (!validate(flag, objflag)) {
                             SendFlagUsageMessage(p, flag);
                             return;
@@ -796,7 +796,7 @@ public class CommandHandlers {
                             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                         }
                     } else {
-                        if (RedProtect.get().getConfigManager().AdminFlags.contains(flag)) {
+                        if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
                             SendFlagUsageMessage(p, flag);
                         } else {
                             RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.usage") + " <true/false>");
@@ -842,7 +842,7 @@ public class CommandHandlers {
         p.sendMessage(RedProtect.get().getUtil().toText(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------"));
 
         StringBuilder sb = new StringBuilder();
-        for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+        for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
             if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag))
                 sb.append(flag).append(", ");
         }

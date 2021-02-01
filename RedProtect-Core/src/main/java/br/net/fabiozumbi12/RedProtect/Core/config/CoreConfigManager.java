@@ -44,7 +44,7 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
 
-    public final List<String> AdminFlags = new ArrayList<>(Arrays.asList(
+    public final static List<String> ADMIN_FLAGS = new ArrayList<>(Arrays.asList(
             "spawn-wither",
             "cropsfarm",
             "keep-inventory",
@@ -258,8 +258,8 @@ public class CoreConfigManager {
 
     public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
         if (isAdmin) {
-            if (!AdminFlags.contains(flag)) {
-                AdminFlags.add(flag);
+            if (!ADMIN_FLAGS.contains(flag)) {
+                ADMIN_FLAGS.add(flag);
                 return true;
             }
         } else {
@@ -274,7 +274,7 @@ public class CoreConfigManager {
 
     public boolean removeFlag(String flag, boolean isAdmin) {
         if (isAdmin) {
-            return AdminFlags.remove(flag);
+            return ADMIN_FLAGS.remove(flag);
         } else {
             return root.flags.remove(flag) != null;
         }

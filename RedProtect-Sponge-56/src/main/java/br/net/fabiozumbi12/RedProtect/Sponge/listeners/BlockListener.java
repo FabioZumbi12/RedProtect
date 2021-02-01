@@ -180,7 +180,7 @@ public class BlockListener {
                     RedProtect.get().getVersionHelper().digBlock(p, b.getPosition());
                     return;
                 }
-                if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag." + flag)) {
                         lines.set(1, RedProtect.get().getUtil().toText(flag));
                         lines.set(2, RedProtect.get().getUtil().toText("&3&l" + signr.getName()));
