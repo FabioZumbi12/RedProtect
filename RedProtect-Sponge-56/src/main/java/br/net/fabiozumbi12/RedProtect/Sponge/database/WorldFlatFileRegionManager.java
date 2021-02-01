@@ -26,11 +26,13 @@
 
 package br.net.fabiozumbi12.RedProtect.Sponge.database;
 
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import br.net.fabiozumbi12.RedProtect.Sponge.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Sponge.Region;
+import br.net.fabiozumbi12.RedProtect.Sponge.helpers.RedProtectLogger;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -130,7 +132,18 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     newr.getFlags().put(flag, RedProtect.get().getConfigManager().getDefFlagsValues().get(flag));
                 }
             }
-            for (String flag : RedProtect.get().getConfigManager().AdminFlags) {
+
+            // Next loop adds to ADMIN_FLAGS list all flags from config node except default ones
+            // this prevents admin flags from being erased after server restart
+            for(Object o : region.getNode(rname, "flags").getChildrenMap().keySet().stream()
+                    .filter(o -> !RedProtect.get().getConfigManager().getDefFlags().contains(o.toString()))
+                    .filter(o -> !CoreConfigManager.ADMIN_FLAGS.contains(o.toString()))
+                    .toArray()) {
+                RedProtect.get().logger.warning("Admin flag: " + o.toString());
+                CoreConfigManager.ADMIN_FLAGS.add(o.toString());
+            }
+
+            for (String flag : CoreConfigManager.ADMIN_FLAGS) {
                 if (region.getNode(rname, "flags", flag).getString() != null) {
                     newr.getFlags().put(flag, region.getNode(rname, "flags", flag).getValue());
                 }

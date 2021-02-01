@@ -251,7 +251,7 @@ public class RedProtectAPI {
      * @param flag Admin Flag to add
      */
     public void addAdminFlag(String flag) {
-        RedProtect.get().getConfigManager().AdminFlags.add(flag);
+        RedProtect.get().getConfigManager().ADMIN_FLAGS.add(flag);
     }
 
     /**
