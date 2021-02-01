@@ -171,10 +171,10 @@ public class RedProtect {
             if (v.startsWith("7")) {
                 rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.VersionHelper7").newInstance();
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener7").newInstance());
-            } else if (v.startsWith("8")) {
+            } /*else if (v.startsWith("8")) {
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.RPBlockListener8").newInstance());
                 rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.VersionHelper8").newInstance();
-            } else {
+            }*/ else {
                 Sponge.getGame().getEventManager().registerListeners(container, Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.listeners.BlockListenerCompat56").newInstance());
                 rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Sponge.helpers.VersionHelper56").newInstance();
             }

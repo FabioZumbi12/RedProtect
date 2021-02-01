@@ -97,7 +97,7 @@ public class FlagGui implements Listener {
                 if (!RedProtect.get().getConfigManager().guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
-                if (RedProtect.get().getPermissionHandler().hasFlagPerm(player, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().AdminFlags.contains(flag))) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm(player, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) {
                     if (flag.equals("pvp") && !RedProtect.get().getConfigManager().configRoot().flags.containsKey("pvp")) {
                         continue;
                     }

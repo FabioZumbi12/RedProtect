@@ -1,6 +1,6 @@
 <!--
   ~ Copyright (c) 2020 - @FabioZumbi12
-  ~ Last Modified: 02/07/2020 19:49.
+  ~ Last Modified: 05/07/2020 22:27.
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -40,13 +40,17 @@
         <repository>
             <id>sponge-maven-repo</id>
             <name>Sponge maven repo</name>
-            <url>https://repo.spongepowered.org/maven</url>
+            <url>https://repo.spongepowered.org/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>ultimatechat-repo</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo/</url>
         </repository>
     </repositories>
 
@@ -57,7 +61,6 @@
             <version>${spongeVersion}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
@@ -65,10 +68,56 @@
             <classifier>javadoc</classifier>
         </dependency>
 
+        <!-- shade all -->
+        <!-- RedProtect Core -->
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Core</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Spigot</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Spigot-1.8</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Spigot-1.12</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Spigot-1.13</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Sponge-56</artifactId>
             <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Sponge-7</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -78,6 +127,63 @@
 
     <build>
         <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Core</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.8</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.12</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.13</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-56</include>
+                                    <!--<include>br.net.fabiozumbi12.RedProtect:RedProtect-Sponge-7</include>-->
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
+                                </includes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>br.net.fabiozumbi12.UltimateFancy</pattern>
+                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>br.net.fabiozumbi12.UltimateChat:UltimateFancy</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <outputFile>
+                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Universal.jar
+                            </outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
+
+        </plugins>
     </build>
 
 </project>

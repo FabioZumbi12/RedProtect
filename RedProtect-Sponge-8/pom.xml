@@ -40,7 +40,7 @@
         <repository>
             <id>sponge-maven-repo</id>
             <name>Sponge maven repo</name>
-            <url>https://repo.spongepowered.org/maven</url>
+            <url>https://repo.spongepowered.org/repository/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

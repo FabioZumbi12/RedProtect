@@ -618,7 +618,7 @@ public class Region extends CoreRegion {
                 continue;
             }
 
-            if (RedProtect.get().getConfigManager().AdminFlags.contains(flag)) {
+            if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().translBool(flagValue)));
