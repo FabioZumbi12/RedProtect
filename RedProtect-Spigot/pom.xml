@@ -36,8 +36,11 @@
 
     <repositories>
         <repository>
-            <id>vault-repo</id>
-            <url>https://nexus.keyle.de/content/groups/public/</url>
+            <id>mypet-repo</id>
+            <url>http://repo.keyle.de/</url>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
 
         <repository>
@@ -196,8 +199,8 @@
         <!-- end of local repos -->
 
         <dependency>
-            <groupId>org.natrolite</groupId>
-            <artifactId>vault-api</artifactId>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
@@ -238,6 +241,12 @@
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
             <version>LATEST</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>co.aikar</groupId>
+                    <artifactId>minecraft-timings</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
@@ -254,7 +263,7 @@
         <dependency>
             <groupId>de.keyle</groupId>
             <artifactId>mypet</artifactId>
-            <version>3.5</version>
+            <version>3.10</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
