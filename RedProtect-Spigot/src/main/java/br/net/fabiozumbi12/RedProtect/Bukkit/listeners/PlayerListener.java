@@ -1497,7 +1497,7 @@ public class PlayerListener implements Listener {
             }
 
             // Collision Flag
-            p.setCollidable(r.canCollide(p));
+            p.setCollidable(r.canCollide());
         }
 
         if (er != null && (er.canExit(p) || RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.admin.flag.exit"))) {

@@ -1176,7 +1176,8 @@ public class Region extends CoreRegion {
         return getFlagBool("can-grow");
     }
 
-    public boolean canCollide(Player p) {
+    public boolean canCollide() {
+        if (!flagExists("can-collide")) return true;
         return getFlagBool("can-collide");
     }
     //--------------------------------------------------------------//
