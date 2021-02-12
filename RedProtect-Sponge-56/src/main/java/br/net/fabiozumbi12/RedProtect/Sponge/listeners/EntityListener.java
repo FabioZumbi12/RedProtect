@@ -51,6 +51,7 @@ import org.spongepowered.api.entity.projectile.source.ProjectileSource;
 import org.spongepowered.api.entity.weather.Lightning;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.action.FishingEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnType;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
@@ -125,6 +126,16 @@ public class EntityListener {
                 }
             }
             RedProtect.get().logger.debug(LogLevel.ENTITY, "EntityListener - Spawn mob " + e.getType().getName());
+        }
+    }
+
+    @Listener(order = Order.FIRST, beforeModifications = true)
+    public void onHookEntity(FishingEvent.HookEntity e, @First Player player) {
+        Entity ent = e.getTargetEntity();
+        Region r = RedProtect.get().getRegionManager().getTopRegion(ent.getLocation(), this.getClass().getName());
+        if (r != null && !r.canBuild(player)) {
+            e.setCancelled(true);
+            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
         }
     }
 
