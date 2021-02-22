@@ -370,6 +370,7 @@ public class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent e) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is PlayerInteractEvent event!");
+        if (e.getClickedBlock() == null) return;
 
         Player p = e.getPlayer();
         if (!RedProtect.get().getUtil().isRealPlayer(p)) {
