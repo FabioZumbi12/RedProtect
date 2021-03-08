@@ -173,10 +173,9 @@
         <!--<module>RedProtect-Sponge-8</module> -->
 
         <!-- Addons -->
-        <!--<module>Addons/KillerProjectiles</module>
         <module>Addons/RedBackups</module>
         <module>Addons/KillerProjectiles</module>
         <module>Addons/RegionChat</module>
-        <module>Addons/BuyRentRegion</module>-->
+        <module>Addons/BuyRentRegion</module>
     </modules>
 </project>
