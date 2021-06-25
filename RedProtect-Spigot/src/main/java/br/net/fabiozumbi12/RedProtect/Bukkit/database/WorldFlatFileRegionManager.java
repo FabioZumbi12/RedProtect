@@ -64,7 +64,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             int minX = fileDB.getInt(rname + ".minX");
             int minZ = fileDB.getInt(rname + ".minZ");
             int maxY = fileDB.getInt(rname + ".maxY", Bukkit.getWorld(world).getMaxHeight());
-            int minY = fileDB.getInt(rname + ".minY", 0);
+            int minY = fileDB.getInt(rname + ".minY", Bukkit.getWorld(world).getMaxHeight());
             String name = fileDB.getString(rname + ".name");
             String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
             Set<PlayerRegion> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().filter(s -> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {

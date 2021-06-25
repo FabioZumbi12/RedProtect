@@ -172,7 +172,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             maxy = w.getMaxHeight();
                         }
                         if (miny == -1) {
-                            miny = 0;
+                            miny = w.getMinHeight();
                         }
 
                         Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);

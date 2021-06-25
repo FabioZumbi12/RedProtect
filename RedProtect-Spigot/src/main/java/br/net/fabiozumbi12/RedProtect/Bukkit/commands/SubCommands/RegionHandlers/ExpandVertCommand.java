@@ -92,7 +92,7 @@ public class ExpandVertCommand implements SubCommand {
         }
 
         r.setMaxY(player.getWorld().getMaxHeight());
-        r.setMinY(0);
+        r.setMinY(player.getWorld().getMinHeight());
         RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.expandvert.success").replace("{region}", r.getName()).replace("{miny}", String.valueOf(r.getMinY())).replace("{maxy}", String.valueOf(r.getMaxY())));
         return true;
     }

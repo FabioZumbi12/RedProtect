@@ -75,7 +75,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
         if (RedProtect.get().getConfigManager().configRoot().region_settings.autoexpandvert_ondefine) {
-            miny = 0;
+            miny = w.getMinHeight();
             maxy = w.getMaxHeight();
             if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny != -1)
                 miny = RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny;

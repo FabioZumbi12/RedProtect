@@ -925,7 +925,7 @@ public class RedProtectUtil extends CoreUtil {
                 leaders.add(new PlayerRegion(claim.ownerID != null ? claim.ownerID.toString() : pname, pname));
                 Location newmin = claim.getGreaterBoundaryCorner();
                 Location newmax = claim.getLesserBoundaryCorner();
-                newmin.setY(0);
+                newmin.setY(w.getMinHeight());
                 newmax.setY(w.getMaxHeight());
 
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,

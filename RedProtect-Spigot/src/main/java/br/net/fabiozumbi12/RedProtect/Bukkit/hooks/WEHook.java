@@ -175,7 +175,7 @@ public class WEHook {
                 Location max = new Location(world, locMax.getX(), locMax.getY(), locMax.getZ());
 
                 if (RedProtect.get().getConfigManager().configRoot().region_settings.autoexpandvert_ondefine) {
-                    min.setY(0);
+                    min.setY(p.getWorld().getMinHeight());
                     max.setY(p.getWorld().getMaxHeight());
                     if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny != -1)
                         min.setY(RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny);

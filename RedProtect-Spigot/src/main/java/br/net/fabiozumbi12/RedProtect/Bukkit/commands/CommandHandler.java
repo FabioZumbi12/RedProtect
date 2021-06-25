@@ -237,7 +237,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, w.getMinHeight(), w.getMaxHeight(), 0, c.getWorldName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().getRegionManager().add(r, c.getWorldName());

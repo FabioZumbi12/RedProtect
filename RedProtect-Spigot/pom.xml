@@ -98,14 +98,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>${mineVersion}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>${mineVersion}</version>
             <classifier>javadoc</classifier>
         </dependency>
@@ -280,7 +281,7 @@
     </dependencies>
 
     <properties>
-        <mineVersion>1.16.5-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.17-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
