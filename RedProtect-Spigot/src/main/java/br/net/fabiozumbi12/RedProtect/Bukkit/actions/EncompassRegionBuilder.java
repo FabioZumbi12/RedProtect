@@ -363,17 +363,19 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 Block finalCurrent = current;
                 Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
                     Block newb = finalCurrent.getRelative(BlockFace.UP);
-                    if (Material.getMaterial("SIGN_POST") != null) {
-                        newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
-                    } else {
-                        newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m -> m.name().endsWith("_SIGN")).findFirst().get());
+                    if (newb.getType().isAir()) {
+                        if (Material.getMaterial("SIGN_POST") != null) {
+                            newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
+                        } else {
+                            newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m -> m.name().endsWith("_SIGN")).findFirst().get());
+                        }
+                        Sign s = (Sign) newb.getState();
+                        s.setLine(0, "§4xxxxxxxxxxxxxx");
+                        s.setLine(1, RedProtect.get().getLanguageManager().get("_redprotect.prefix"));
+                        s.setLine(2, RedProtect.get().getLanguageManager().get("blocklistener.postsign.error"));
+                        s.setLine(3, "§4xxxxxxxxxxxxxx");
+                        s.update();
                     }
-                    Sign s = (Sign) newb.getState();
-                    s.setLine(0, "§4xxxxxxxxxxxxxx");
-                    s.setLine(1, RedProtect.get().getLanguageManager().get("_redprotect.prefix"));
-                    s.setLine(2, RedProtect.get().getLanguageManager().get("blocklistener.postsign.error"));
-                    s.setLine(3, "§4xxxxxxxxxxxxxx");
-                    s.update();
                     return true;
                 });
                 return;
