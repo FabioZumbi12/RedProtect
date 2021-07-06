@@ -669,7 +669,7 @@ public class PlayerListener implements Listener {
 
             //enter max players flag
             if (rto.getMaxPlayers() != -1) {
-                if (!checkMaxPlayer(p, rto)) {
+                if (!checkMaxPlayer(p, rto) && rfrom != rto) {
                     RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(rto.getMaxPlayers())));
                     e.setCancelled(true);
                 }
@@ -960,7 +960,7 @@ public class PlayerListener implements Listener {
 
             //enter max players flag
             if (r.getMaxPlayers() != -1 && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.flag.admin.max-players")) {
-                if (!checkMaxPlayer(p, r)) {
+                if (!checkMaxPlayer(p, r) && rfrom != r) {
                     e.setTo(RedProtect.get().getUtil().DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                     RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.maxplayers").replace("{players}", String.valueOf(r.getMaxPlayers())));
                     return;
