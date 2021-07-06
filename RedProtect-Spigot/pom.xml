@@ -148,11 +148,11 @@
             <systemPath>${project.basedir}/libs/ActionBarAPI-1.5.4.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>dynmap-2.5</groupId>
-            <artifactId>dynmap-2.5</artifactId>
+            <groupId>dynmap-3</groupId>
+            <artifactId>dynmap-3</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Dynmap-3.2-beta-2-spigot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>mcMMO</groupId>
