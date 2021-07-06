@@ -123,12 +123,26 @@ public class BlockConfig {
         saveConfig();
     }
 
-    public void addBlock(long amount, Player player) {
+    public long delBlock(long amount, Player player) {
+        if (!this.blockCat.players.containsKey(player.getUniqueId().toString())) {
+            addPlayer(player);
+        }
+
+        long total = this.blockCat.players.get(player.getUniqueId().toString()).added_blocks;
+        if (total - amount >= 0)
+            this.blockCat.players.get(player.getUniqueId().toString()).added_blocks -= amount;
+
+        saveConfig();
+        return this.blockCat.players.get(player.getUniqueId().toString()).added_blocks;
+    }
+
+    public long addBlock(long amount, Player player) {
         if (!this.blockCat.players.containsKey(player.getUniqueId().toString())) {
             addPlayer(player);
         }
         this.blockCat.players.get(player.getUniqueId().toString()).added_blocks += amount;
         saveConfig();
+        return this.blockCat.players.get(player.getUniqueId().toString()).added_blocks;
     }
 
     public boolean isEnabled() {

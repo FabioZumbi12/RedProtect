@@ -49,7 +49,7 @@ public class KickCommand implements SubCommand {
         if (args.length == 3 && sender instanceof ConsoleCommandSender) {
             World w = RedProtect.get().getServer().getWorld(args[2]);
             if (w == null) {
-                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.invalidworld"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalidworld");
                 return true;
             }
             Region r = RedProtect.get().getRegionManager().getRegion(args[1], w.getName());
@@ -60,12 +60,12 @@ public class KickCommand implements SubCommand {
 
             Player visit = Bukkit.getPlayer(args[0]);
             if (visit == null) {
-                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.noplayer.online"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.noplayer.online");
                 return true;
             }
 
             if (r.canBuild(visit)) {
-                RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.cantkick.member"));
+                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.cantkick.member");
                 return true;
             }
 

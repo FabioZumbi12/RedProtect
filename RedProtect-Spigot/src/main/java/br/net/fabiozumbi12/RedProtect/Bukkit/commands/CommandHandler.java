@@ -96,12 +96,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         registerCommand(getCmdKeys("wand"), new WandCommand());
 
         //region handlers
+        registerCommand(getCmdKeys("addblock"), new AddBlockCommand());
         registerCommand(getCmdKeys("border"), new BorderCommand());
         registerCommand(getCmdKeys("claim"), new ClaimCommand());
         registerCommand(getCmdKeys("can-purge"), new CanPurgeCommand());
         registerCommand(getCmdKeys("copyflag"), new CopyFlagCommand());
         registerCommand(getCmdKeys("createportal"), new CreatePortalCommand());
         registerCommand(getCmdKeys("define"), new DefineCommand());
+        registerCommand(getCmdKeys("delblock"), new DelBlockCommand());
         registerCommand(getCmdKeys("delete"), new DeleteCommand());
         registerCommand(getCmdKeys("deltp"), new DelTpCommand());
         registerCommand(getCmdKeys("expand-vert"), new ExpandVertCommand());
