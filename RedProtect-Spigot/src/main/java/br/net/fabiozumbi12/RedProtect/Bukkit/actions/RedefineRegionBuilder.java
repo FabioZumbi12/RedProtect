@@ -63,6 +63,15 @@ public class RedefineRegionBuilder extends RegionBuilder {
             }
         }
 
+        // fix y inverted
+        Location tempLoc1 = loc1;
+        Location tempLoc2 = loc2;
+
+        if (loc1.getBlockY() > loc2.getBlockY()) {
+            loc1 = tempLoc2;
+            loc2 = tempLoc1;
+        }
+
         //check if distance allowed
         if (Objects.equals(loc1.getWorld(), loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().getConfigManager().configRoot().region_settings.max_scan && !RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
