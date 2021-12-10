@@ -36,14 +36,6 @@
 
     <repositories>
         <repository>
-            <id>mypet-repo</id>
-            <url>http://repo.keyle.de/</url>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-
-        <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
@@ -197,6 +189,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/InfernalMobs-5.7.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>MyPet310</groupId>
+            <artifactId>MyPet310</artifactId>
+            <version>3.10</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MyPet-3.10.jar</systemPath>
+        </dependency>
         <!-- end of local repos -->
 
         <dependency>
@@ -260,11 +259,6 @@
             <artifactId>TranslationAPI</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.keyle</groupId>
-            <artifactId>mypet</artifactId>
-            <version>3.10</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>

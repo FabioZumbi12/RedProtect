@@ -52,7 +52,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Crops;
 import org.bukkit.potion.Potion;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -442,7 +441,7 @@ public class RedProtectUtil extends CoreUtil {
         regions.clear();
     }
 
-    public String PlayerToUUID(@Nonnull String playerName) {
+    public String PlayerToUUID(String playerName) {
         if (playerName.isEmpty()) return null;
 
         //check if is already UUID
@@ -470,7 +469,7 @@ public class RedProtectUtil extends CoreUtil {
         return uuid;
     }
 
-    public String UUIDtoPlayer(@Nonnull String uuid) {
+    public String UUIDtoPlayer(String uuid) {
         if (uuid.isEmpty()) return null;
 
         //check if is UUID
