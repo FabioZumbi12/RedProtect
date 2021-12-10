@@ -226,6 +226,8 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                 }
             }
 
+            Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world files to backups...");
+
             // Start backup files
             backupList.forEach(file -> {
                 try {
