@@ -4,7 +4,7 @@ version: ${project.version}
 api-version: 1.13
 author: FabioZumbi12
 description: Allows players to define fields to protect their houses.
-softdepend: [ TranslationAPI, InfernalMobs, WorldEdit, WorldGuard, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, PvPManager, Essentials, dynmap, SimpleClans, Factions, PlaceholderAPI, GriefPrevention ]
+softdepend: [ Slimefun, TranslationAPI, InfernalMobs, WorldEdit, WorldGuard, BossbarAPI, MyChunk, MyPet, Multiverse-Core, mcMMO, SkillAPI, PvPManager, Essentials, dynmap, SimpleClans, Factions, PlaceholderAPI, GriefPrevention ]
 commands:
   RedProtect:
     description: "Main command for RedProtect."

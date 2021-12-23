@@ -27,14 +27,25 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import io.github.thebusybiscuit.slimefun4.api.events.ExplosiveToolBreakBlocksEvent;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class SlimefunHook implements Listener {
 
     @EventHandler
-    public void OnToolExplode(ExplosiveToolBreakBlocksEvent event){
-        RedProtect.get().logger.info("passou: " + event.getItemInHand().getType().name());
+    public void OnToolExplode(ExplosiveToolBreakBlocksEvent event) {
+        event.getAdditionalBlocks().removeIf(b -> {
+            if (!RedProtect.get().getUtil().canBuildNear(event.getPlayer(), b.getLocation())){
+                return true;
+            }
+            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
+            if (r != null && !r.canBuild(event.getPlayer())){
+                return true;
+            }
+            return false;
+        });
     }
 }
