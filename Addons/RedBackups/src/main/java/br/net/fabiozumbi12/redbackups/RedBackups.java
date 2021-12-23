@@ -227,15 +227,15 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
 
                 for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
-                    for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
-                        for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
+                    try {
+                        String worldName = region.getWorld();
+                        File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
+                        String[] dim = tempWorld.list((dir, name) -> name.startsWith("DIM"));
+                        if (dim != null && dim.length > 0)
+                            worldName += File.separator + dim[0];
 
-                            try {
-                                String worldName = region.getWorld();
-                                File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
-                                String[] dim = tempWorld.list((dir, name) -> name.startsWith("DIM"));
-                                if (dim != null && dim.length > 0)
-                                    worldName += File.separator + dim[0];
+                        for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
+                            for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
 
                                 String file = worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
                                 File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
@@ -248,14 +248,14 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                                         backupList.add(file);
                                     }
                                 }
-                            } catch (Exception ignored){}
+                            }
                         }
-                    }
+                    } catch (Exception ignored){}
                 }
             }
 
             if (backupList.size() > 0){
-                Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world files to backups...");
+                Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world chunk files to backups...");
 
                 // Start backup files
                 for (String file : backupList){
