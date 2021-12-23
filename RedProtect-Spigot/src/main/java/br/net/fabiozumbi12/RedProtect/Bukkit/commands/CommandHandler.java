@@ -145,7 +145,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     }
 
     private static boolean handleWGRegions() {
-        if (!RedProtect.get().hooks.worldguard) {
+        if (!RedProtect.get().hooks.checkWG()) {
             return false;
         }
 
@@ -203,7 +203,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     }
 
     private static boolean handleMyChunk() {
-        if (!RedProtect.get().hooks.myChunk) {
+        if (!RedProtect.get().hooks.checkMyChunk()) {
             return false;
         }
         Set<LiteChunk> allchunks = new HashSet<>();
@@ -516,7 +516,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 }
 
                 if (args[0].equalsIgnoreCase("gpTorp")) {
-                    if (!RedProtect.get().hooks.griefPrev) {
+                    if (!RedProtect.get().hooks.checkGriefPrev()) {
                         RedProtect.get().logger.success("The plugin GriefPrevention is not installed or is disabled");
                         return true;
                     }
@@ -611,7 +611,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
                 //rp regen stop
                 if (checkCmd(args[0], "regenall") && args[1].equalsIgnoreCase("stop")) {
-                    if (!RedProtect.get().hooks.worldEdit) {
+                    if (!RedProtect.get().hooks.checkWe()) {
                         return true;
                     }
                     RedProtect.get().getUtil().stopRegen = true;
@@ -655,7 +655,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             if (args.length == 3) {
                 //rp undo <region> <database>
                 if (args[0].equalsIgnoreCase("undo")) {
-                    if (!RedProtect.get().hooks.worldEdit) {
+                    if (!RedProtect.get().hooks.checkWe()) {
                         return true;
                     }
                     World w = RedProtect.get().getServer().getWorld(args[2]);

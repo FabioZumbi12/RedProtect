@@ -53,7 +53,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         if (loc1 == null || loc2 == null) {
-            if (RedProtect.get().hooks.worldEdit) {
+            if (RedProtect.get().hooks.checkWe()) {
                 Location[] pos = WEHook.getWESelection(p);
                 if (pos != null) {
                     loc1 = pos[0];
@@ -175,7 +175,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         long reco = 0;
-        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.checkVault() && !p.hasPermission("redprotect.eco.bypass")) {
             double peco = RedProtect.get().economy.getBalance(p);
             reco = newRegion.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 

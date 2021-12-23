@@ -411,7 +411,7 @@ public class Region extends CoreRegion {
             }
         }
 
-        if (RedProtect.get().hooks.Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
+        if (RedProtect.get().hooks.checkDyn() && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
             dynmapInfo = RedProtect.get().getLanguageManager().get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().getLanguageManager().get("region.dynmap-showing") : RedProtect.get().getLanguageManager().get("region.dynmap-hiding")) + ", " + RedProtect.get().getLanguageManager().get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
         }
 
@@ -460,7 +460,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean isMember(Player player) {
-        boolean cs = RedProtect.get().hooks.simpleClans && SimpleClansHook.getPlayerClan(this, player);
+        boolean cs = RedProtect.get().hooks.checkSC() && SimpleClansHook.getPlayerClan(this, player);
         if (cs) return true;
 
         return isMember(player.getUniqueId().toString()) || isMember(player.getName());
@@ -1074,7 +1074,7 @@ public class Region extends CoreRegion {
     }
 
     public boolean canPVP(Player attacker, Player defender) {
-        if (defender != null && RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(this, attacker, defender)) {
+        if (defender != null && RedProtect.get().hooks.checkSC() && SimpleClansHook.inWar(this, attacker, defender)) {
             return true;
         }
         return getFlagBool("pvp") || (attacker.hasPermission("redprotect.flag.pvp.bypass") || (defender != null && defender.hasPermission("redprotect.flag.pvp.bypass")));

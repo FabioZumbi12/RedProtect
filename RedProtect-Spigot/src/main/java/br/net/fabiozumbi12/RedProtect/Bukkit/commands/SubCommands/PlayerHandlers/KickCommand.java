@@ -135,7 +135,7 @@ public class KickCommand implements SubCommand {
                     return true;
                 }
 
-                if (RedProtect.get().hooks.simpleClans && SimpleClansHook.inWar(r, player, visit)) {
+                if (RedProtect.get().hooks.checkSC() && SimpleClansHook.inWar(r, player, visit)) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.cantkick.war");
                     return true;
                 }

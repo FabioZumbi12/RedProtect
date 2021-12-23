@@ -37,7 +37,7 @@
     <repositories>
         <repository>
             <id>sk89q-snapshots</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
 
         <repository>
@@ -52,7 +52,7 @@
 
         <repository>
             <id>dynmap</id>
-            <url>http://repo.mikeprimm.com/</url>
+            <url>https://repo.mikeprimm.com/</url>
         </repository>
 
         <repository>
@@ -78,6 +78,11 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+
+        <repository>
+            <id>mcmmo-repo</id>
+            <url>https://nexus.neetgames.com/repository/maven-public</url>
         </repository>
     </repositories>
 
@@ -147,13 +152,6 @@
             <systemPath>${project.basedir}/libs/Dynmap-3.2-beta-2-spigot.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>GriefPrevention</groupId>
             <artifactId>GriefPrevention</artifactId>
             <version>v1</version>
@@ -199,10 +197,21 @@
         <!-- end of local repos -->
 
         <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>2.1.206</version>
+            <exclusions>
+                <exclusion>
+                    <!-- We don't need any of the dependencies -->
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.ess3</groupId>
@@ -231,16 +240,19 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>co.aikar</groupId>
@@ -271,6 +283,11 @@
             <artifactId>UltimateFancy</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TheBusyBiscuit</groupId>
+            <artifactId>Slimefun4</artifactId>
+            <version>RC-29</version>
         </dependency>
     </dependencies>
 

@@ -386,7 +386,7 @@ public class CommandHandlers {
 
     private static void handleDeleteRegionEconomy(Region region, Player player) {
         // Handle money
-        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !player.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.checkVault() && !player.hasPermission("redprotect.eco.bypass")) {
             long reco = region.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 
             if (!RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.y_is_free) {
@@ -550,7 +550,7 @@ public class CommandHandlers {
 
         if (loc != null) {
             if (play != null) {
-                if (RedProtect.get().hooks.essentials && sender instanceof Player) {
+                if (RedProtect.get().hooks.checkEss() && sender instanceof Player) {
                     RedProtect.get().hooks.pless.getUser(sender).setLastLocation();
                 }
                 play.teleport(loc);
@@ -573,7 +573,7 @@ public class CommandHandlers {
             Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
                 if (RedProtect.get().tpWait.contains(p.getName())) {
                     RedProtect.get().tpWait.remove(p.getName());
-                    if (RedProtect.get().hooks.essentials) {
+                    if (RedProtect.get().hooks.checkEss()) {
                         RedProtect.get().hooks.pless.getUser(p).setLastLocation();
                     }
                     p.teleport(loc);
@@ -762,7 +762,7 @@ public class CommandHandlers {
 
                         //flag clan
                         if (flag.equalsIgnoreCase("clan")) {
-                            if (!RedProtect.get().hooks.simpleClans || !RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag.clan")) {
+                            if (!RedProtect.get().hooks.checkSC() || !RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag.clan")) {
                                 sendFlagHelp(p);
                                 return;
                             }
@@ -810,7 +810,7 @@ public class CommandHandlers {
 
                     // Flag clan
                     if (flag.equalsIgnoreCase("clan")) {
-                        if (RedProtect.get().hooks.simpleClans) {
+                        if (RedProtect.get().hooks.checkSC()) {
                             ClanPlayer clan = RedProtect.get().hooks.clanManager.getClanPlayer(p);
                             if (clan == null) {
                                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.flag.haveclan");
@@ -1057,7 +1057,7 @@ public class CommandHandlers {
             }
         }
 
-        if (flag.equalsIgnoreCase("setclan") && RedProtect.get().hooks.simpleClans) {
+        if (flag.equalsIgnoreCase("setclan") && RedProtect.get().hooks.checkSC()) {
             if (!(value instanceof String)) {
                 return false;
             }
