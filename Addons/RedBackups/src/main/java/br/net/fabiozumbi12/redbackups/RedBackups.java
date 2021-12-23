@@ -59,6 +59,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
     private RedBackups plugin;
     private BukkitTask taskAfterStart;
     private BukkitTask taskInterval;
+    private BukkitTask task;
 
     @Override
     public void onDisable() {
@@ -195,7 +196,12 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
     private void createBackup(CommandSender sender, Location location) {
         List<String> worlds = getConfig().getStringList("backup.worlds");
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+        if (task != null && Bukkit.getScheduler().getActiveWorkers().stream().anyMatch(t -> t.getOwner().equals(task.getOwner()))) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &eThere is already a backup operation in progress!"));
+            return;
+        }
+
+        task = Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup started..."));
             String mainWorld = Bukkit.getWorlds().get(0).getName();
             // Clear last backups
@@ -283,7 +289,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup of " + backupList.size() + " chunk files finished with success!"));
                 backupList.clear();
             } else {
-                Bukkit.getLogger().info("There no regions to backup!");
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Theres no regions to backup!"));
             }
         });
     }
