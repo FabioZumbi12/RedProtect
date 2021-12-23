@@ -42,6 +42,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -203,8 +204,25 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             if (location != null) {
                 if (!worlds.contains(location.getWorld().getName())) return;
 
-                String file = location.getWorld().getName() + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
-                backupList.add(file);
+                try {
+                    String worldName = location.getWorld().getName();
+                    File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
+                    String[] dim = tempWorld.list((dir, name) -> name.startsWith("DIM"));
+                    if (dim != null && dim.length > 0)
+                        worldName += File.separator + dim[0];
+
+                    String file = worldName + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
+                    File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                    if (worldFile.exists()){
+                        backupList.add(file);
+                    } else {
+                        file = mainWorld + File.separator + location.getWorld().getName() + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
+                        worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                        if (worldFile.exists()){
+                            backupList.add(file);
+                        }
+                    }
+                } catch (Exception ignored){}
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
 
@@ -212,48 +230,61 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                     for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
                         for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
 
-                            String file = mainWorld + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                            if (!backupList.contains(file)) {
-                                backupList.add(file);
-                            }
+                            try {
+                                String worldName = region.getWorld();
+                                File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
+                                String[] dim = tempWorld.list((dir, name) -> name.startsWith("DIM"));
+                                if (dim != null && dim.length > 0)
+                                    worldName += File.separator + dim[0];
 
-                            file = mainWorld + File.separator + region.getWorld() + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                            if (!backupList.contains(file)) {
-                                backupList.add(file);
-                            }
+                                String file = worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                                File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                                if (worldFile.exists() && !backupList.contains(file)){
+                                    backupList.add(file);
+                                } else {
+                                    file = mainWorld + File.separator + worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                                    worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                                    if (worldFile.exists() && !backupList.contains(file)){
+                                        backupList.add(file);
+                                    }
+                                }
+                            } catch (Exception ignored){}
                         }
                     }
                 }
             }
 
-            Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world files to backups...");
+            if (backupList.size() > 0){
+                Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world files to backups...");
 
-            // Start backup files
-            backupList.forEach(file -> {
-                try {
+                // Start backup files
+                for (String file : backupList){
+                    try {
+                        if (!new File(getDataFolder(), "backups").exists()) {
+                            new File(getDataFolder(), "backups").mkdir();
+                        }
 
-                    File fileFromCopy = new File(getServer().getWorldContainer().getAbsolutePath() + "\\..", file);
-                    Bukkit.getLogger().severe("file1: " + fileFromCopy);
-                    if (!fileFromCopy.exists() || fileFromCopy.length() == 0) return;
+                        File fileFromCopy = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                        File fileToCopy = new File(getDataFolder().getCanonicalPath(), "backups" + File.separator + file);
 
-                    if (!new File(getDataFolder(), "backups").exists()) {
-                        new File(getDataFolder(), "backups").mkdir();
+                        // Create child directories
+                        fileToCopy.getParentFile().mkdirs();
+
+                        /*Bukkit.getLogger().info("from: " + fileFromCopy.toPath());
+                        Bukkit.getLogger().info("to: " + fileToCopy.toPath());*/
+
+                        Files.copy(fileFromCopy.toPath(), fileToCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
-                    File fileToCopy = new File(getDataFolder(), "backups" + File.separator + file);
-
-                    // Create child directories
-                    fileToCopy.getParentFile().mkdirs();
-
-                    Files.copy(fileFromCopy.toPath(), fileToCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-            });
 
-            // Clear backups
-            backupList.clear();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup finished with success!"));
+                // Clear backups
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup of " + backupList.size() + " chunk files finished with success!"));
+                backupList.clear();
+            } else {
+                Bukkit.getLogger().info("There no regions to backup!");
+            }
         });
     }
 }
