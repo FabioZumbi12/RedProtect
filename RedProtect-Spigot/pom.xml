@@ -84,6 +84,11 @@
             <id>mcmmo-repo</id>
             <url>https://nexus.neetgames.com/repository/maven-public</url>
         </repository>
+
+        <repository>
+            <id>codemc-repo-simpleclans</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -109,13 +114,6 @@
         </dependency>
 
         <!-- start of local repos -->
-        <dependency>
-            <groupId>SimpleClans</groupId>
-            <artifactId>SimpleClans</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
-        </dependency>
         <dependency>
             <groupId>MassiveCore</groupId>
             <artifactId>MassiveCore</artifactId>
@@ -195,7 +193,12 @@
             <systemPath>${project.basedir}/libs/MyPet-3.10.jar</systemPath>
         </dependency>
         <!-- end of local repos -->
-
+        <dependency>
+            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>2.16.0</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
