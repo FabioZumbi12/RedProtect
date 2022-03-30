@@ -41,7 +41,7 @@ public class RegenAllCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            if (!RedProtect.get().hooks.worldEdit) {
+            if (!RedProtect.get().hooks.checkWe()) {
                 return true;
             }
             int regen = RedProtect.get().getRegionManager().regenAll(args[0]);

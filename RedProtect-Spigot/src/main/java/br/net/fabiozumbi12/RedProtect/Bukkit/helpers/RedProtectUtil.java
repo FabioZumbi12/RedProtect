@@ -52,7 +52,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Crops;
 import org.bukkit.potion.Potion;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -367,7 +366,7 @@ public class RedProtectUtil extends CoreUtil {
                     }
 
                     // Regen or Purge
-                    if (RedProtect.get().hooks.worldEdit && RedProtect.get().getConfigManager().configRoot().purge.regen.enabled) {
+                    if (RedProtect.get().hooks.checkWe() && RedProtect.get().getConfigManager().configRoot().purge.regen.enabled) {
                         if (region.getArea() <= RedProtect.get().getConfigManager().configRoot().purge.regen.max_area_regen) {
                             WEHook.regenRegion(region, Bukkit.getWorld(region.getWorld()), region.getMaxLocation(), region.getMinLocation(), delay, null, true);
                             delay = delay + 10;
@@ -412,7 +411,7 @@ public class RedProtectUtil extends CoreUtil {
                 }
             }
 
-            if (RedProtect.get().hooks.simpleClans) {
+            if (RedProtect.get().hooks.checkSC()) {
                 //remove deleted clans from regions
                 if (region.flagExists("clan") && !RedProtect.get().hooks.clanManager.isClan(region.getFlagString("clan"))) {
                     region.setFlag(Bukkit.getConsoleSender(), "clan", "");
@@ -442,7 +441,7 @@ public class RedProtectUtil extends CoreUtil {
         regions.clear();
     }
 
-    public String PlayerToUUID(@Nonnull String playerName) {
+    public String PlayerToUUID(String playerName) {
         if (playerName.isEmpty()) return null;
 
         //check if is already UUID
@@ -470,7 +469,7 @@ public class RedProtectUtil extends CoreUtil {
         return uuid;
     }
 
-    public String UUIDtoPlayer(@Nonnull String uuid) {
+    public String UUIDtoPlayer(String uuid) {
         if (uuid.isEmpty()) return null;
 
         //check if is UUID
@@ -925,7 +924,7 @@ public class RedProtectUtil extends CoreUtil {
                 leaders.add(new PlayerRegion(claim.ownerID != null ? claim.ownerID.toString() : pname, pname));
                 Location newmin = claim.getGreaterBoundaryCorner();
                 Location newmax = claim.getLesserBoundaryCorner();
-                newmin.setY(0);
+                newmin.setY(w.getMinHeight());
                 newmax.setY(w.getMaxHeight());
 
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,

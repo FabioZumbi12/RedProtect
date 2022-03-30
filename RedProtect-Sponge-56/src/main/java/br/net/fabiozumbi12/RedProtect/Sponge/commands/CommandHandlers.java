@@ -572,6 +572,15 @@ public class CommandHandlers {
             p.setLocation(loc);
             return;
         }
+
+        int delay = RedProtect.get().getConfigManager().configRoot().region_settings.teleport_time;
+
+        if(delay < 1) {
+            p.setLocation(loc);
+            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.teleport") + " " + rname);
+            return;
+        }
+
         if (!RedProtect.get().tpWait.contains(p.getName())) {
             RedProtect.get().tpWait.add(p.getName());
             RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.tpdontmove");
@@ -581,7 +590,7 @@ public class CommandHandlers {
                     p.setLocation(loc);
                     RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.teleport") + " " + rname);
                 }
-            }, RedProtect.get().getConfigManager().configRoot().region_settings.teleport_time, TimeUnit.SECONDS);
+            }, delay, TimeUnit.SECONDS);
         } else {
             RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.tpneedwait");
         }

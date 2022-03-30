@@ -96,12 +96,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         registerCommand(getCmdKeys("wand"), new WandCommand());
 
         //region handlers
+        registerCommand(getCmdKeys("addblock"), new AddBlockCommand());
         registerCommand(getCmdKeys("border"), new BorderCommand());
         registerCommand(getCmdKeys("claim"), new ClaimCommand());
         registerCommand(getCmdKeys("can-purge"), new CanPurgeCommand());
         registerCommand(getCmdKeys("copyflag"), new CopyFlagCommand());
         registerCommand(getCmdKeys("createportal"), new CreatePortalCommand());
         registerCommand(getCmdKeys("define"), new DefineCommand());
+        registerCommand(getCmdKeys("delblock"), new DelBlockCommand());
         registerCommand(getCmdKeys("delete"), new DeleteCommand());
         registerCommand(getCmdKeys("deltp"), new DelTpCommand());
         registerCommand(getCmdKeys("expand-vert"), new ExpandVertCommand());
@@ -143,7 +145,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     }
 
     private static boolean handleWGRegions() {
-        if (!RedProtect.get().hooks.worldguard) {
+        if (!RedProtect.get().hooks.checkWG()) {
             return false;
         }
 
@@ -201,7 +203,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     }
 
     private static boolean handleMyChunk() {
-        if (!RedProtect.get().hooks.myChunk) {
+        if (!RedProtect.get().hooks.checkMyChunk()) {
             return false;
         }
         Set<LiteChunk> allchunks = new HashSet<>();
@@ -237,7 +239,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                     ++in;
                 }
 
-                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, 0, w.getMaxHeight(), 0, c.getWorldName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
+                Region r = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), new int[]{x + 8, x + 8, x - 7, x - 7}, new int[]{z + 8, z + 8, z - 7, z - 7}, w.getMinHeight(), w.getMaxHeight(), 0, c.getWorldName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
                 leaders.forEach(r::addLeader);
                 MyChunkChunk.unclaim(chunk);
                 RedProtect.get().getRegionManager().add(r, c.getWorldName());
@@ -514,7 +516,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 }
 
                 if (args[0].equalsIgnoreCase("gpTorp")) {
-                    if (!RedProtect.get().hooks.griefPrev) {
+                    if (!RedProtect.get().hooks.checkGriefPrev()) {
                         RedProtect.get().logger.success("The plugin GriefPrevention is not installed or is disabled");
                         return true;
                     }
@@ -609,7 +611,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
                 //rp regen stop
                 if (checkCmd(args[0], "regenall") && args[1].equalsIgnoreCase("stop")) {
-                    if (!RedProtect.get().hooks.worldEdit) {
+                    if (!RedProtect.get().hooks.checkWe()) {
                         return true;
                     }
                     RedProtect.get().getUtil().stopRegen = true;
@@ -653,7 +655,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             if (args.length == 3) {
                 //rp undo <region> <database>
                 if (args[0].equalsIgnoreCase("undo")) {
-                    if (!RedProtect.get().hooks.worldEdit) {
+                    if (!RedProtect.get().hooks.checkWe()) {
                         return true;
                     }
                     World w = RedProtect.get().getServer().getWorld(args[2]);

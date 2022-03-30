@@ -36,16 +36,8 @@
 
     <repositories>
         <repository>
-            <id>mypet-repo</id>
-            <url>http://repo.keyle.de/</url>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-
-        <repository>
             <id>sk89q-snapshots</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
 
         <repository>
@@ -60,7 +52,7 @@
 
         <repository>
             <id>dynmap</id>
-            <url>http://repo.mikeprimm.com/</url>
+            <url>https://repo.mikeprimm.com/</url>
         </repository>
 
         <repository>
@@ -87,6 +79,16 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+
+        <repository>
+            <id>mcmmo-repo</id>
+            <url>https://nexus.neetgames.com/repository/maven-public</url>
+        </repository>
+
+        <repository>
+            <id>codemc-repo-simpleclans</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -98,26 +100,20 @@
         </dependency>
 
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>${mineVersion}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>${mineVersion}</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <!-- start of local repos -->
-        <dependency>
-            <groupId>SimpleClans</groupId>
-            <artifactId>SimpleClans</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/SimpleClans.jar</systemPath>
-        </dependency>
         <dependency>
             <groupId>MassiveCore</groupId>
             <artifactId>MassiveCore</artifactId>
@@ -147,18 +143,11 @@
             <systemPath>${project.basedir}/libs/ActionBarAPI-1.5.4.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>dynmap-2.5</groupId>
-            <artifactId>dynmap-2.5</artifactId>
+            <groupId>dynmap-3</groupId>
+            <artifactId>dynmap-3</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Dynmap-3.0-beta-10-spigot.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>v1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/mcMMO.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Dynmap-3.2-beta-2-spigot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>GriefPrevention</groupId>
@@ -196,13 +185,36 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/InfernalMobs-5.7.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>MyPet310</groupId>
+            <artifactId>MyPet310</artifactId>
+            <version>3.10</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MyPet-3.10.jar</systemPath>
+        </dependency>
         <!-- end of local repos -->
-
+        <dependency>
+            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>2.16.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>2.1.206</version>
+            <exclusions>
+                <exclusion>
+                    <!-- We don't need any of the dependencies -->
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.ess3</groupId>
@@ -231,16 +243,19 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>co.aikar</groupId>
@@ -261,11 +276,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.keyle</groupId>
-            <artifactId>mypet</artifactId>
-            <version>3.10</version>
-        </dependency>
-        <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.10.9</version>
@@ -277,13 +287,28 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.TheBusyBiscuit</groupId>
+            <artifactId>Slimefun4</artifactId>
+            <version>RC-29</version>
+        </dependency>
     </dependencies>
 
     <properties>
-        <mineVersion>1.16.5-R0.1-SNAPSHOT</mineVersion>
+        <mineVersion>1.18-R0.1-SNAPSHOT</mineVersion>
     </properties>
 
     <build>
         <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

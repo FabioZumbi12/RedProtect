@@ -40,39 +40,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.dynmap.DynmapAPI;
 
 public class HooksManager {
-    public boolean bossBar;
-    public boolean actionBar;
-    public boolean myChunk;
-    public boolean myPet;
-    public boolean magicCarpet;
-    public boolean vault;
-    public boolean pvpm;
-    public boolean essentials;
-    public boolean griefPrev;
-    public boolean worldEdit;
-    public boolean worldguard;
-    public boolean simpleClans;
     public ClanManager clanManager;
     public Essentials pless;
-    public boolean Dyn;
     public DynmapHook dynmapHook;
     public WorldGuardHelper worldGuardHelper;
     public TransAPI transAPI;
 
     public void registerHooksFirst() {
         try {
-            bossBar = checkBM();
-            actionBar = checkAB();
-            myChunk = checkMyChunk();
-            myPet = checkMyPet();
-            magicCarpet = checkMagicCarpet();
-            vault = checkVault();
-            pvpm = checkPvPm();
-            essentials = checkEss();
-            griefPrev = checkGriefPrev();
-            worldEdit = checkWe();
-            worldguard = checkWG();
-            simpleClans = checkSC();
             boolean translationApi = checkTAPI();
             boolean infernalMobs = checkIMobs();
             boolean fac = checkFac();
@@ -80,7 +55,12 @@ public class HooksManager {
             boolean mcMMO = checkMcMMo();
             boolean skillAPI = checkSkillAPI();
 
-            if (vault) {
+            if (checkSF4()){
+                RedProtect.get().getServer().getPluginManager().registerEvents(new SlimefunHook(), RedProtect.get());
+                RedProtect.get().logger.info("Slimefun found. Hooked.");
+            }
+
+            if (checkVault()) {
                 // Economy
                 RegisteredServiceProvider<Economy> rsp = RedProtect.get().getServer().getServicesManager().getRegistration(Economy.class);
                 if (rsp != null) {
@@ -107,17 +87,17 @@ public class HooksManager {
                     RedProtect.get().logger.warning("Your InfernalMobs version is NOT compatible and has no API. Look for FabioZumbi12's version on Github!");
                 }
             }
-            if (pvpm) {
+            if (checkPvPm()) {
                 RedProtect.get().logger.info("PvPManager found. Hooked.");
             }
-            if (essentials) {
+            if (checkEss()) {
                 pless = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
                 RedProtect.get().logger.info("Essentials found. Hooked.");
             }
-            if (worldEdit) {
+            if (checkWe()) {
                 RedProtect.get().logger.info("WorldEdit found. Hooked.");
             }
-            if (worldguard) {
+            if (checkWG()) {
                 RedProtect rp = RedProtect.get();
                 if (rp.bukkitVersion >= 1130) {
                     worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest").newInstance();
@@ -127,13 +107,13 @@ public class HooksManager {
 
                 rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
             }
-            if (actionBar) {
+            if (checkAB()) {
                 RedProtect.get().logger.info("ActionBarAPI found. Hooked.");
             }
-            if (bossBar) {
+            if (checkBM()) {
                 RedProtect.get().logger.info("BossbarAPI found. Hooked.");
             }
-            if (myPet) {
+            if (checkMyPet()) {
                 RedProtect.get().getServer().getPluginManager().registerEvents(new MyPetHook(), RedProtect.get());
                 RedProtect.get().logger.info("MyPet found. Hooked.");
             }
@@ -145,14 +125,14 @@ public class HooksManager {
                 RedProtect.get().getServer().getPluginManager().registerEvents(new SkillAPIHook(), RedProtect.get());
                 RedProtect.get().logger.info("SkillAPI found. Hooked.");
             }
-            if (myChunk) {
+            if (checkMyChunk()) {
                 RedProtect.get().logger.success("MyChunk found. Ready to convert!");
                 RedProtect.get().logger.warning("Use '/rp mychunkconvert' to start MyChunk conversion (This may cause lag during conversion)");
             }
-            if (magicCarpet) {
+            if (checkMagicCarpet()) {
                 RedProtect.get().logger.info("MagicCarpet found. Hooked.");
             }
-            if (simpleClans) {
+            if (checkSC()) {
                 clanManager = SimpleClans.getInstance().getClanManager();
                 RedProtect.get().logger.info("SimpleClans found. Hooked.");
             }
@@ -176,8 +156,7 @@ public class HooksManager {
 
     public void registerHooksLast() {
         try {
-            Dyn = checkDyn();
-            if (Dyn && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
+            if (checkDyn() && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
                 RedProtect.get().logger.info("Dynmap found. Hooked.");
                 RedProtect.get().logger.info("Loading dynmap markers...");
                 dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
@@ -190,12 +169,17 @@ public class HooksManager {
         }
     }
 
+    private boolean checkSF4() {
+        Plugin pSF = Bukkit.getPluginManager().getPlugin("Slimefun");
+        return pSF != null && pSF.isEnabled();
+    }
+
     private boolean checkTAPI() {
         Plugin pTAPI = Bukkit.getPluginManager().getPlugin("TranslationAPI");
         return pTAPI != null && pTAPI.isEnabled();
     }
 
-    private boolean checkWG() {
+    public boolean checkWG() {
         Plugin pWG = Bukkit.getPluginManager().getPlugin("WorldGuard");
         return pWG != null && pWG.isEnabled();
     }
@@ -205,22 +189,22 @@ public class HooksManager {
         return pIM != null && pIM.isEnabled();
     }
 
-    private boolean checkAB() {
+    public boolean checkAB() {
         Plugin pAB = Bukkit.getPluginManager().getPlugin("ActionBarAPI");
         return pAB != null && pAB.isEnabled();
     }
 
-    private boolean checkBM() {
+    public boolean checkBM() {
         Plugin pBM = Bukkit.getPluginManager().getPlugin("BossBarAPI");
         return pBM != null && pBM.isEnabled();
     }
 
-    private boolean checkDyn() {
+    public boolean checkDyn() {
         Plugin pDyn = Bukkit.getPluginManager().getPlugin("dynmap");
         return pDyn != null && pDyn.isEnabled();
     }
 
-    private boolean checkEss() {
+    public boolean checkEss() {
         Plugin pEss = Bukkit.getPluginManager().getPlugin("Essentials");
         return pEss != null && pEss.isEnabled();
     }
@@ -231,7 +215,7 @@ public class HooksManager {
     }
 
     //check if plugin GriefPrevention is installed
-    private boolean checkGriefPrev() {
+    public boolean checkGriefPrev() {
         Plugin pGP = Bukkit.getPluginManager().getPlugin("GriefPrevention");
         return pGP != null && pGP.isEnabled();
     }
@@ -249,13 +233,13 @@ public class HooksManager {
     }
 
     //check if plugin MyChunk is installed
-    private boolean checkMyChunk() {
+    public boolean checkMyChunk() {
         Plugin pMC = Bukkit.getPluginManager().getPlugin("MyChunk");
         return pMC != null && pMC.isEnabled();
     }
 
     //check if plugin MyPet is installed
-    private boolean checkMyPet() {
+    public boolean checkMyPet() {
         Plugin pMP = Bukkit.getPluginManager().getPlugin("MyPet");
         return pMP != null && pMP.isEnabled();
     }
@@ -266,12 +250,12 @@ public class HooksManager {
     }
 
     //check if plugin PvPManager is installed
-    private boolean checkPvPm() {
+    public boolean checkPvPm() {
         Plugin pPvp = Bukkit.getPluginManager().getPlugin("PvPManager");
         return pPvp != null && pPvp.isEnabled();
     }
 
-    private boolean checkSC() {
+    public boolean checkSC() {
         Plugin p = Bukkit.getPluginManager().getPlugin("SimpleClans");
         return p != null && p.isEnabled();
     }
@@ -283,12 +267,12 @@ public class HooksManager {
     }
 
     //check if plugin Vault is installed
-    private boolean checkVault() {
+    public boolean checkVault() {
         Plugin pVT = Bukkit.getPluginManager().getPlugin("Vault");
         return pVT != null && pVT.isEnabled();
     }
 
-    private boolean checkWe() {
+    public boolean checkWe() {
         Plugin pWe = Bukkit.getPluginManager().getPlugin("WorldEdit");
         if (pWe != null) {
             try {

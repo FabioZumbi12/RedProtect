@@ -172,7 +172,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                             maxy = w.getMaxHeight();
                         }
                         if (miny == -1) {
-                            miny = 0;
+                            miny = w.getMinHeight();
                         }
 
                         Region newRegion = new Region(regionName, new HashSet<>(), new HashSet<>(), new HashSet<>(), rx, rz, miny, maxy, 0, w.getName(), RedProtect.get().getUtil().dateNow(), RedProtect.get().getConfigManager().getDefFlagsValues(), "", 0, null, true, true);
@@ -247,7 +247,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         long reco = 0;
-                        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+                        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.checkVault() && !p.hasPermission("redprotect.eco.bypass")) {
                             double peco = RedProtect.get().economy.getBalance(p);
                             reco = (long) newRegion.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 
@@ -330,7 +330,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                         }
 
                         //wecui
-                        if (RedProtect.get().hooks.worldEdit && RedProtect.get().getConfigManager().configRoot().hooks.useWECUI) {
+                        if (RedProtect.get().hooks.checkWe() && RedProtect.get().getConfigManager().configRoot().hooks.useWECUI) {
                             WEHook.setSelectionRP(p, newRegion.getMinLocation(), newRegion.getMaxLocation());
                         }
 
@@ -363,17 +363,19 @@ public class EncompassRegionBuilder extends RegionBuilder {
                 Block finalCurrent = current;
                 Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
                     Block newb = finalCurrent.getRelative(BlockFace.UP);
-                    if (Material.getMaterial("SIGN_POST") != null) {
-                        newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
-                    } else {
-                        newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m -> m.name().endsWith("_SIGN")).findFirst().get());
+                    if (newb.getType().isAir()) {
+                        if (Material.getMaterial("SIGN_POST") != null) {
+                            newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
+                        } else {
+                            newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m -> m.name().endsWith("_SIGN")).findFirst().get());
+                        }
+                        Sign s = (Sign) newb.getState();
+                        s.setLine(0, "§4xxxxxxxxxxxxxx");
+                        s.setLine(1, RedProtect.get().getLanguageManager().get("_redprotect.prefix"));
+                        s.setLine(2, RedProtect.get().getLanguageManager().get("blocklistener.postsign.error"));
+                        s.setLine(3, "§4xxxxxxxxxxxxxx");
+                        s.update();
                     }
-                    Sign s = (Sign) newb.getState();
-                    s.setLine(0, "§4xxxxxxxxxxxxxx");
-                    s.setLine(1, RedProtect.get().getLanguageManager().get("_redprotect.prefix"));
-                    s.setLine(2, RedProtect.get().getLanguageManager().get("blocklistener.postsign.error"));
-                    s.setLine(3, "§4xxxxxxxxxxxxxx");
-                    s.update();
                     return true;
                 });
                 return;

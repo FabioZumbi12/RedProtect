@@ -51,7 +51,7 @@ public class SelectWECommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            if (RedProtect.get().hooks.worldEdit) {
+            if (RedProtect.get().hooks.checkWe()) {
                 Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");

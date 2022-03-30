@@ -81,10 +81,9 @@
             <id>redprotect-repo</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>
         </repository>
-
         <repository>
-            <id>vault-repo</id>
-            <url>https://nexus.keyle.de/content/groups/public/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -116,8 +115,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.natrolite</groupId>
-            <artifactId>vault-api</artifactId>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>

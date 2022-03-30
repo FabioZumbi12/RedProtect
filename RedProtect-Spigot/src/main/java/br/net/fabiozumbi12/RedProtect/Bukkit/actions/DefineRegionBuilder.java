@@ -53,7 +53,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         if (loc1 == null || loc2 == null) {
-            if (RedProtect.get().hooks.worldEdit) {
+            if (RedProtect.get().hooks.checkWe()) {
                 Location[] pos = WEHook.getWESelection(p);
                 if (pos != null) {
                     loc1 = pos[0];
@@ -77,6 +77,15 @@ public class DefineRegionBuilder extends RegionBuilder {
             wmsg = "hide ";
         }
 
+        // fix y inverted
+        Location tempLoc1 = loc1;
+        Location tempLoc2 = loc2;
+
+        if (loc1.getBlockY() > loc2.getBlockY()) {
+            loc1 = tempLoc2;
+            loc2 = tempLoc1;
+        }
+
         //check if distance allowed
         if (Objects.equals(loc1.getWorld(), loc2.getWorld()) && new Region(null, loc1, loc2, null).getArea() > RedProtect.get().getConfigManager().configRoot().region_settings.max_scan && !RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass.define-max-distance")) {
             double dist = new Region(null, loc1, loc2, null).getArea();
@@ -89,7 +98,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         int miny = loc1.getBlockY();
         int maxy = loc2.getBlockY();
         if (RedProtect.get().getConfigManager().configRoot().region_settings.autoexpandvert_ondefine) {
-            miny = 0;
+            miny = p.getWorld().getMinHeight();
             maxy = p.getWorld().getMaxHeight();
             if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny != -1)
                 miny = RedProtect.get().getConfigManager().configRoot().region_settings.claim.miny;
@@ -166,7 +175,7 @@ public class DefineRegionBuilder extends RegionBuilder {
         }
 
         long reco = 0;
-        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.vault && !p.hasPermission("redprotect.eco.bypass")) {
+        if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.checkVault() && !p.hasPermission("redprotect.eco.bypass")) {
             double peco = RedProtect.get().economy.getBalance(p);
             reco = newRegion.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 

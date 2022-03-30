@@ -42,6 +42,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -58,6 +59,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
     private RedBackups plugin;
     private BukkitTask taskAfterStart;
     private BukkitTask taskInterval;
+    private BukkitTask task;
 
     @Override
     public void onDisable() {
@@ -194,7 +196,12 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
     private void createBackup(CommandSender sender, Location location) {
         List<String> worlds = getConfig().getStringList("backup.worlds");
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+        if (task != null && Bukkit.getScheduler().getActiveWorkers().stream().anyMatch(t -> t.getOwner().equals(task.getOwner()))) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &eThere is already a backup operation in progress!"));
+            return;
+        }
+
+        task = Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup started..."));
             String mainWorld = Bukkit.getWorlds().get(0).getName();
             // Clear last backups
@@ -203,55 +210,87 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             if (location != null) {
                 if (!worlds.contains(location.getWorld().getName())) return;
 
-                String file = location.getWorld().getName() + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
-                backupList.add(file);
+                try {
+                    String worldName = location.getWorld().getName();
+                    File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
+                    String[] dim = tempWorld.list((dir, name) -> name.startsWith("DIM"));
+                    if (dim != null && dim.length > 0)
+                        worldName += File.separator + dim[0];
+
+                    String file = worldName + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
+                    File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                    if (worldFile.exists()){
+                        backupList.add(file);
+                    } else {
+                        file = mainWorld + File.separator + location.getWorld().getName() + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
+                        worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                        if (worldFile.exists()){
+                            backupList.add(file);
+                        }
+                    }
+                } catch (Exception ignored){}
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
 
                 for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
-                    for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
-                        for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
+                    try {
+                        String worldName = region.getWorld();
+                        File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
+                        String[] dim = tempWorld.list((dir, name) -> name.startsWith("DIM"));
+                        if (dim != null && dim.length > 0)
+                            worldName += File.separator + dim[0];
 
-                            String file = mainWorld + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                            if (!backupList.contains(file)) {
-                                backupList.add(file);
-                            }
+                        for (int x = region.getMinMbrX(); x <= region.getMaxMbrX(); x++) {
+                            for (int z = region.getMinMbrZ(); z <= region.getMaxMbrZ(); z++) {
 
-                            file = mainWorld + File.separator + region.getWorld() + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
-                            if (!backupList.contains(file)) {
-                                backupList.add(file);
+                                String file = worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                                File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                                if (worldFile.exists() && !backupList.contains(file)){
+                                    backupList.add(file);
+                                } else {
+                                    file = mainWorld + File.separator + worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
+                                    worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                                    if (worldFile.exists() && !backupList.contains(file)){
+                                        backupList.add(file);
+                                    }
+                                }
                             }
                         }
-                    }
+                    } catch (Exception ignored){}
                 }
             }
 
-            // Start backup files
-            backupList.forEach(file -> {
-                try {
+            if (backupList.size() > 0){
+                Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world chunk files to backups...");
 
-                    File fileFromCopy = new File(getServer().getWorldContainer().getAbsolutePath() + "\\..", file);
-                    Bukkit.getLogger().severe("file1: " + fileFromCopy);
-                    if (!fileFromCopy.exists() || fileFromCopy.length() == 0) return;
+                // Start backup files
+                for (String file : backupList){
+                    try {
+                        if (!new File(getDataFolder(), "backups").exists()) {
+                            new File(getDataFolder(), "backups").mkdir();
+                        }
 
-                    if (!new File(getDataFolder(), "backups").exists()) {
-                        new File(getDataFolder(), "backups").mkdir();
+                        File fileFromCopy = new File(getServer().getWorldContainer().getCanonicalPath(), file);
+                        File fileToCopy = new File(getDataFolder().getCanonicalPath(), "backups" + File.separator + file);
+
+                        // Create child directories
+                        fileToCopy.getParentFile().mkdirs();
+
+                        /*Bukkit.getLogger().info("from: " + fileFromCopy.toPath());
+                        Bukkit.getLogger().info("to: " + fileToCopy.toPath());*/
+
+                        Files.copy(fileFromCopy.toPath(), fileToCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
-                    File fileToCopy = new File(getDataFolder(), "backups" + File.separator + file);
-
-                    // Create child directories
-                    fileToCopy.getParentFile().mkdirs();
-
-                    Files.copy(fileFromCopy.toPath(), fileToCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-            });
 
-            // Clear backups
-            backupList.clear();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup finished with success!"));
+                // Clear backups
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Backup of " + backupList.size() + " chunk files finished with success!"));
+                backupList.clear();
+            } else {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&4Red&cBackups&7] &2Theres no regions to backup!"));
+            }
         });
     }
 }
