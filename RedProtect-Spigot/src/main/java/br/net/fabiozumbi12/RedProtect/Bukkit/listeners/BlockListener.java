@@ -48,6 +48,7 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
@@ -447,33 +448,38 @@ public class BlockListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onFrameBrake(HangingBreakByEntityEvent e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - HangingBreakByEntityEvent event");
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onItemFrameBreak(HangingBreakEvent e) {
+        RedProtect.get().logger.debug(LogLevel.BLOCKS,
+                "BlockListener - HangingBreakEvent - " + e.getCause().toString());
+        Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
+        if (r == null)
+            return;
 
-        Entity remover = e.getRemover();
-        Location l = e.getEntity().getLocation();
+        // the block supporting the itemframe/painting was removed
+        if (e.getCause() == RemoveCause.PHYSICS && (e.getEntity().getLocation().getBlock()
+                .getRelative(e.getEntity().getAttachedFace()).getLocation().getBlock().isEmpty()))
+            return;
 
-        if (remover instanceof Monster || remover instanceof Projectile) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r != null && !r.canMobLoot()) {
-                e.setCancelled(true);
-            }
+        // not a player
+        if (!(e instanceof HangingBreakByEntityEvent)) {
+            e.setCancelled(true);
+            return;
         }
-    }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onFrameBrake(HangingBreakEvent e) {
-        RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - HangingBreakEvent event");
+        HangingBreakByEntityEvent entityEvent = (HangingBreakByEntityEvent) e;
+        Entity remover = entityEvent.getRemover();
 
-        Entity ent = e.getEntity();
-        Location l = e.getEntity().getLocation();
+        // check if the remover is a player
+        if (!remover.getType().equals(EntityType.PLAYER)) {
+            e.setCancelled(true);
+            return;
+        }
 
-        if ((ent instanceof ItemFrame || ent instanceof Painting) && (e.getCause().toString().equals("EXPLOSION"))) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r != null && !r.canFire()) {
-                e.setCancelled(true);
-            }
+        Player p = (Player) remover;
+        if (!r.canBuild(p)) {
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+            e.setCancelled(true);
         }
     }
 
