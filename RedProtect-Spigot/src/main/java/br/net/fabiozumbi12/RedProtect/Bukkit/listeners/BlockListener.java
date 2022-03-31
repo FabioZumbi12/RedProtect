@@ -456,7 +456,20 @@ public class BlockListener implements Listener {
 
         if (remover instanceof Monster || remover instanceof Projectile) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r != null && !r.canMobLoot()) {
+
+            if (r != null) {
+                if (remover instanceof Projectile && ((Projectile)remover).getShooter() instanceof Player){
+                    Player player = (Player)((Projectile)remover).getShooter();
+                    if (!r.canBuild(player))
+                        e.setCancelled(true);
+                } else  if (!r.canMobLoot())
+                    e.setCancelled(true);
+            }
+        }
+
+        if (remover instanceof Player) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+            if (r != null && !r.canBuild((Player)remover)) {
                 e.setCancelled(true);
             }
         }
@@ -467,11 +480,17 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockListener - HangingBreakEvent event");
 
         Entity ent = e.getEntity();
-        Location l = e.getEntity().getLocation();
+        Location l = ent.getLocation();
 
-        if ((ent instanceof ItemFrame || ent instanceof Painting) && (e.getCause().toString().equals("EXPLOSION"))) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r != null && !r.canFire()) {
+        if (e.getCause().toString().equals("PHYSICS") && (l.getBlock()
+                .getRelative(e.getEntity().getAttachedFace()).getLocation().getBlock().isEmpty()))
+            return;
+
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+        if (r != null) {
+            if (e.getCause().toString().equals("EXPLOSION") && !r.canFire()) {
+                e.setCancelled(true);
+            } else if (e.getCause().toString().equals("PHYSICS")) {
                 e.setCancelled(true);
             }
         }
