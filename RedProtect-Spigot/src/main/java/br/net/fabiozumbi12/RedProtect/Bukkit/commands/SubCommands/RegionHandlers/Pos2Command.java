@@ -39,6 +39,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -69,7 +70,7 @@ public class Pos2Command implements SubCommand {
                     WEHook.setSelectionRP(player, loc1, loc2);
                 }
 
-                if (loc1.getWorld().equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().getConfigManager().configRoot().region_settings.max_scan && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.bypass.define-max-distance")) {
+                if (Objects.requireNonNull(loc1.getWorld()).equals(loc2.getWorld()) && loc1.distanceSquared(loc2) > RedProtect.get().getConfigManager().configRoot().region_settings.max_scan && !RedProtect.get().getPermissionHandler().hasPerm(player, "redprotect.bypass.define-max-distance")) {
                     double dist = loc1.distanceSquared(loc2);
                     RedProtect.get().getLanguageManager().sendMessage(player, String.format(RedProtect.get().getLanguageManager().get("regionbuilder.selection.maxdefine"), RedProtect.get().getConfigManager().configRoot().region_settings.max_scan, (int) dist));
                 } else {

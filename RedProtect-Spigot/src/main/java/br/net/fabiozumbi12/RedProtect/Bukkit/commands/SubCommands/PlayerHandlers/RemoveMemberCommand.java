@@ -58,8 +58,7 @@ public class RemoveMemberCommand implements SubCommand {
             }
             handleRemoveMember(sender, args[0], r);
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 1) {
                 handleRemoveMember(player, args[0], null);
@@ -79,7 +78,7 @@ public class RemoveMemberCommand implements SubCommand {
                 if (args[0].isEmpty())
                     return r.getMembers().stream().map(PlayerRegion::getPlayerName).collect(Collectors.toList());
                 else
-                    return r.getMembers().stream().filter(p -> p.getPlayerName().toLowerCase().startsWith(args[0].toLowerCase())).map(PlayerRegion::getPlayerName).collect(Collectors.toList());
+                    return r.getMembers().stream().map(PlayerRegion::getPlayerName).filter(playerName -> playerName.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
             }
         }
         return new ArrayList<>();

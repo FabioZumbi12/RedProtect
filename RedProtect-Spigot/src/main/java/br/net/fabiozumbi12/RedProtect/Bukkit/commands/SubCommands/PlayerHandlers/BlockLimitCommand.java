@@ -58,8 +58,7 @@ public class BlockLimitCommand implements SubCommand {
             ChatColor color = currentUsed >= limit ? ChatColor.RED : ChatColor.GOLD;
             RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.yourarea") + color + currentUsed + RedProtect.get().getLanguageManager().get("general.color") + "/" + color + limit + RedProtect.get().getLanguageManager().get("general.color"));
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 0) {
                 int limit = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(player);
@@ -86,7 +85,7 @@ public class BlockLimitCommand implements SubCommand {
             if (args[0].isEmpty())
                 return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
             else
-                return Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().toLowerCase().startsWith(args[0].toLowerCase())).map(Player::getName).collect(Collectors.toList());
+                return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
         return new ArrayList<>();
     }
 }

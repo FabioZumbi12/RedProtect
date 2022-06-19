@@ -49,6 +49,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("deprecation")
 public class Compat18 implements Listener {
@@ -65,8 +66,7 @@ public class Compat18 implements Listener {
         Entity e = event.getEntity();
 
         //spawn arms on armor stands
-        if (e instanceof ArmorStand && RedProtect.get().getConfigManager().configRoot().hooks.armor_stand_arms) {
-            ArmorStand as = (ArmorStand) e;
+        if (e instanceof ArmorStand as && RedProtect.get().getConfigManager().configRoot().hooks.armor_stand_arms) {
             as.setArms(true);
         }
     }
@@ -81,7 +81,7 @@ public class Compat18 implements Listener {
         if (r == null) {
             //global flags
             if (ent instanceof ArmorStand) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(l.getWorld().getName()).build) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(l.getWorld()).getName()).build) {
                     e.setCancelled(true);
                     return;
                 }
@@ -104,8 +104,7 @@ public class Compat18 implements Listener {
         Entity e2 = e.getCombuster();
         Location loc = e1.getLocation();
 
-        if (e2 instanceof Projectile) {
-            Projectile a = (Projectile) e2;
+        if (e2 instanceof Projectile a) {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
@@ -119,13 +118,13 @@ public class Compat18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).build) {
                     e.setCancelled(true);
                 }
             }
         } else {
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
+                if (!r1.canBuild(((Player) e2)) && r1.canBreak(e1.getType())) {
                     e.setCancelled(true);
                     RedProtect.get().getLanguageManager().sendMessage(e2, "blocklistener.region.cantbreak");
                 }
@@ -140,8 +139,7 @@ public class Compat18 implements Listener {
         Entity e2 = e.getDamager();
         Location loc = e1.getLocation();
 
-        if (e2 instanceof Projectile) {
-            Projectile a = (Projectile) e2;
+        if (e2 instanceof Projectile a) {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
@@ -155,14 +153,14 @@ public class Compat18 implements Listener {
         if (r1 == null) {
             //global flags
             if (e1 instanceof ArmorStand && e2 instanceof Player) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).build) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).build) {
                     e.setCancelled(true);
                 }
             }
         } else {
             if (e1 instanceof ArmorStand) {
                 if (e2 instanceof Player) {
-                    if (!r1.canBuild(((Player) e2)) && !r1.canBreak(e1.getType())) {
+                    if (!r1.canBuild(((Player) e2)) && r1.canBreak(e1.getType())) {
                         e.setCancelled(true);
                         RedProtect.get().getLanguageManager().sendMessage(e2, "blocklistener.region.cantbreak");
                     }
@@ -192,7 +190,7 @@ public class Compat18 implements Listener {
         }
 
         if (m.equals(Material.ARMOR_STAND) || m.equals(Material.END_CRYSTAL)) {
-            if (r != null && !r.canBuild(p) && !r.canPlace(m) && !r.canBreak(m)) {
+            if (r != null && !r.canBuild(p) && r.canPlace(m) && r.canBreak(m)) {
                 e.setCancelled(true);
                 RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
             }
@@ -205,11 +203,11 @@ public class Compat18 implements Listener {
         List<Block> toRemove = new ArrayList<>();
         for (Block b : e.blockList()) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-            if (!cont.canWorldBreak(b)) {
+            if (cont.canWorldBreak(b)) {
                 toRemove.add(b);
                 continue;
             }
-            if (r != null && !r.canFire()) {
+            if (r != null && r.canFire()) {
                 toRemove.add(b);
             }
         }

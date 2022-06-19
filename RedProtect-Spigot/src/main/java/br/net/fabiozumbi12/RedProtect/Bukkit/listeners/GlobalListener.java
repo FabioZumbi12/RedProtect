@@ -53,6 +53,7 @@ import org.bukkit.material.Crops;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("deprecation")
 public class GlobalListener implements Listener {
@@ -71,14 +72,14 @@ public class GlobalListener implements Listener {
      */
     private boolean bypassBuild(Player p, Block b, int fat) {
         if (p.hasPermission("redprotect.bypass.world"))
-            return true;
-
-        if (RedProtect.get().getConfigManager().needClaimToBuild(p, b))
             return false;
 
-        return (fat == 1 && canPlaceList(p.getWorld(), b.getType().name())) ||
-                (fat == 2 && canBreakList(p.getWorld(), b.getType().name())) ||
-                RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).build;
+        if (RedProtect.get().getConfigManager().needClaimToBuild(p, b))
+            return true;
+
+        return (fat != 1 || !canPlaceList(p.getWorld(), b.getType().name())) &&
+                (fat != 2 || !canBreakList(p.getWorld(), b.getType().name())) &&
+                !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).build;
     }
 
     private boolean canPlaceList(World w, String type) {
@@ -279,8 +280,7 @@ public class GlobalListener implements Listener {
             return;
         }
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - EntityBlockFormEvent canceled? ");
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player p) {
             if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).iceform_by.player && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
             }
@@ -334,7 +334,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtect.get().getUtil().canBuildNear(p, b.getLocation())) {
+        if (RedProtect.get().getUtil().canBuildNear(p, b.getLocation())) {
             e.setCancelled(true);
             return;
         }
@@ -345,7 +345,7 @@ public class GlobalListener implements Listener {
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Can't place minecart/boat!");
             }
         } else {
-            if (!bypassBuild(p, b, 1)) {
+            if (bypassBuild(p, b, 1)) {
                 e.setCancelled(true);
                 RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Can't Build!");
             }
@@ -362,12 +362,12 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtect.get().getUtil().canBuildNear(p, b.getLocation())) {
+        if (RedProtect.get().getUtil().canBuildNear(p, b.getLocation())) {
             e.setCancelled(true);
             return;
         }
 
-        if (!bypassBuild(p, b, 2)) {
+        if (bypassBuild(p, b, 2)) {
             e.setCancelled(true);
         }
     }
@@ -388,8 +388,7 @@ public class GlobalListener implements Listener {
         }
 
         try {
-            if (b != null && b.getState() instanceof Sign) {
-                Sign s = (Sign) b.getState();
+            if (b != null && b.getState() instanceof Sign s) {
                 if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RedProtect.get().getLanguageManager().get("_redprotect.prefix")))) {
                     b.setType(Material.AIR);
                     e.setUseInteractedBlock(Result.DENY);
@@ -447,7 +446,7 @@ public class GlobalListener implements Listener {
 
             if ((!canBreakList(p.getWorld(), b.getType().name())
                     || !canInteractBlocksList(p.getWorld(), b.getType().name())) &&
-                    !bypassBuild(p, null, 0)) {
+                    bypassBuild(p, null, 0)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                 e.setCancelled(true);
                 return;
@@ -463,14 +462,14 @@ public class GlobalListener implements Listener {
                 }
             }
             if (itemInHand.getType().equals(Material.PAINTING) || itemInHand.getType().equals(Material.ITEM_FRAME) || itemInHand.getType().name().equals("ARMOR_STAND")) {
-                if (canPlaceList(p.getWorld(), itemInHand.getType().name()) && !bypassBuild(p, null, 0)) {
+                if (canPlaceList(p.getWorld(), itemInHand.getType().name()) && bypassBuild(p, null, 0)) {
                     e.setUseItemInHand(Event.Result.DENY);
                     e.setCancelled(true);
                     return;
                 }
             }
             if (itemInHand.getType().name().contains("BONE_MEAL")) {
-                if (!bypassBuild(p, null, 0)) {
+                if (bypassBuild(p, null, 0)) {
                     e.setUseItemInHand(Event.Result.DENY);
                     e.setCancelled(true);
                     return;
@@ -504,20 +503,20 @@ public class GlobalListener implements Listener {
         }
 
         if (ent instanceof ItemFrame || ent instanceof Painting) {
-            if (!bypassBuild(p, null, 0)) {
+            if (bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
                 return;
             }
         }
 
         if (ent instanceof Minecart || ent instanceof Boat) {
-            if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(l.getWorld().getName()).use_minecart && !p.hasPermission("redprotect.bypass.world")) {
+            if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(l.getWorld()).getName()).use_minecart && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
                 return;
             }
         }
 
-        if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(l.getWorld().getName()).interact && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
+        if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(l.getWorld()).getName()).interact && !p.hasPermission("redprotect.bypass.world") && (!(ent instanceof Player))) {
             if (canInteractEntitiesList(p.getWorld(), ent.getType().name())) {
                 return;
             }
@@ -534,9 +533,8 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (ent instanceof Player) {
-            Player p = (Player) ent;
-            if (!bypassBuild(p, null, 0)) {
+        if (ent instanceof Player p) {
+            if (bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
             }
         }
@@ -551,12 +549,12 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
+        if (RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
             e.setCancelled(true);
             return;
         }
 
-        if (!bypassBuild(e.getPlayer(), null, 0)) {
+        if (bypassBuild(e.getPlayer(), null, 0)) {
             e.setCancelled(true);
         }
     }
@@ -569,12 +567,12 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
+        if (RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
             e.setCancelled(true);
             return;
         }
 
-        if (!bypassBuild(e.getPlayer(), null, 0)) {
+        if (bypassBuild(e.getPlayer(), null, 0)) {
             e.setCancelled(true);
         }
     }
@@ -590,101 +588,98 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (e1 instanceof Player && !RedProtect.get().getUtil().isRealPlayer((Player) e1)) {
+        if (e1 instanceof Player && RedProtect.get().getUtil().isRealPlayer((Player) e1)) {
             return;
         }
 
         if (e2 instanceof Creeper || e2.getType().equals(EntityType.PRIMED_TNT) || e2.getType().equals(EntityType.MINECART_TNT)) {
             if (e1 instanceof Player) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).explosion_entity_damage) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).explosion_entity_damage) {
                     e.setCancelled(true);
                     return;
                 }
             }
             if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).explosion_entity_damage) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).explosion_entity_damage) {
                     e.setCancelled(true);
                     return;
                 }
             }
             if (e1 instanceof Monster) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).explosion_entity_damage) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).explosion_entity_damage) {
                     e.setCancelled(true);
                     return;
                 }
             }
         }
 
-        if (e2 instanceof Player) {
-            Player p = (Player) e2;
-            if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (e2 instanceof Player p) {
+            if (RedProtect.get().getUtil().isRealPlayer(p)) {
                 return;
             }
 
             if (e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).entity_block_damage) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).entity_block_damage) {
                     e.setCancelled(true);
                     return;
                 }
             }
-            if ((e1 instanceof Minecart || e1 instanceof Boat) && !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).use_minecart && !p.hasPermission("redprotect.bypass.world")) {
+            if ((e1 instanceof Minecart || e1 instanceof Boat) && !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).use_minecart && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
                 return;
             }
             if (e1 instanceof Player) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).pvp && !p.hasPermission("redprotect.bypass.world")) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).pvp && !p.hasPermission("redprotect.bypass.world")) {
                     e.setCancelled(true);
                     return;
                 }
             }
             if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).player_hurt_passives && !p.hasPermission("redprotect.bypass.world")) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).player_hurt_passives && !p.hasPermission("redprotect.bypass.world")) {
                     e.setCancelled(true);
                     return;
                 }
             }
             if (e1 instanceof Monster) {
-                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).player_hurt_monsters && !p.hasPermission("redprotect.bypass.world")) {
+                if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).player_hurt_monsters && !p.hasPermission("redprotect.bypass.world")) {
                     e.setCancelled(true);
                     return;
                 }
             }
             if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1.getType().name().contains("ARMOR_STAND")) {
-                if (!canBreakList(p.getWorld(), e1.getType().name()) && !bypassBuild(p, null, 0)) {
+                if (!canBreakList(p.getWorld(), e1.getType().name()) && bypassBuild(p, null, 0)) {
                     e.setCancelled(true);
                     return;
                 }
             }
         }
 
-        if (e2 instanceof Projectile) {
-            Projectile proj = (Projectile) e2;
-            if (proj.getShooter() instanceof Player) {
-                Player p = (Player) proj.getShooter();
-                if (!RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (e2 instanceof Projectile proj) {
+            if (proj.getShooter() instanceof Player p) {
+                if (RedProtect.get().getUtil().isRealPlayer(p)) {
                     return;
                 }
 
                 if (e1 instanceof Player) {
-                    if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).pvp && !p.hasPermission("redprotect.bypass.world")) {
+                    if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).pvp && !p.hasPermission("redprotect.bypass.world")) {
                         e.setCancelled(true);
                         return;
                     }
                 }
                 if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem) {
-                    if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).player_hurt_passives && !p.hasPermission("redprotect.bypass.world")) {
+                    if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).player_hurt_passives && !p.hasPermission("redprotect.bypass.world")) {
                         e.setCancelled(true);
                         return;
                     }
                 }
                 if (e1 instanceof Monster) {
-                    if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).player_hurt_monsters && !p.hasPermission("redprotect.bypass.world")) {
+                    if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(loc.getWorld()).getName()).player_hurt_monsters && !p.hasPermission("redprotect.bypass.world")) {
                         e.setCancelled(true);
                         return;
                     }
                 }
                 if (e1 instanceof Hanging || e1 instanceof EnderCrystal || e1.getType().name().contains("ARMOR_STAND")) {
-                    if (!canBreakList(p.getWorld(), e1.getType().name()) && !bypassBuild(p, null, 0)) {
+                    if (!canBreakList(p.getWorld(), e1.getType().name()) && bypassBuild(p, null, 0)) {
                         e.setCancelled(true);
                     }
                 }
@@ -701,7 +696,7 @@ public class GlobalListener implements Listener {
         }
 
         if (e.getCause().toString().equals("EXPLOSION")) {
-            if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(l.getWorld().getName()).entity_block_damage) {
+            if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(l.getWorld()).getName()).entity_block_damage) {
                 e.setCancelled(true);
             }
         }
@@ -713,7 +708,7 @@ public class GlobalListener implements Listener {
         for (Block b : e.blockList()) {
             Location l = b.getLocation();
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r == null && !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(l.getWorld().getName()).entity_block_damage) {
+            if (r == null && !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(l.getWorld()).getName()).entity_block_damage) {
                 toRemove.add(b);
             }
         }
@@ -794,12 +789,11 @@ public class GlobalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onVehicleBreak(VehicleDestroyEvent e) {
-        if (!(e.getAttacker() instanceof Player)) {
+        if (!(e.getAttacker() instanceof Player p)) {
             return;
         }
 
         Vehicle cart = e.getVehicle();
-        Player p = (Player) e.getAttacker();
         Region r = RedProtect.get().getRegionManager().getTopRegion(cart.getLocation());
         if (r != null) {
             return;
@@ -814,7 +808,7 @@ public class GlobalListener implements Listener {
     public void onBlockStartBurn(BlockIgniteEvent e) {
         Block b = e.getBlock();
         Block bignit = e.getIgnitingBlock();
-        if (b == null || bignit == null) {
+        if (bignit == null) {
             return;
         }
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is BlockIgniteEvent event from global-listener");
@@ -836,18 +830,15 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (b != null) {
-            RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is EntityChangeBlockEvent event. Block: " + b.getType().name());
-        }
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - Is EntityChangeBlockEvent event. Block: " + b.getType().name());
 
         if (e instanceof Monster) {
             if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(e.getWorld().getName()).entity_block_damage) {
                 event.setCancelled(true);
             }
         }
-        if (e instanceof Player) {
-            Player p = (Player) e;
-            if (!bypassBuild(p, b, 2)) {
+        if (e instanceof Player p) {
+            if (bypassBuild(p, b, 2)) {
                 event.setCancelled(true);
             }
         }
@@ -855,9 +846,7 @@ public class GlobalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent e) {
-        if (e.getItem() == null) {
-            return;
-        }
+        e.getItem();
 
         Player p = e.getPlayer();
         Location l = p.getLocation();
@@ -866,7 +855,8 @@ public class GlobalListener implements Listener {
 
         //deny item usage
         List<String> items = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.items;
-        if (e.getItem() != null && items.stream().anyMatch(e.getItem().getType().name()::matches)) {
+        e.getItem();
+        if (items.stream().anyMatch(e.getItem().getType().name()::matches)) {
             if (r != null && ((!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps && r.canBuild(p)) ||
                     (RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_item_usage.allow_on_claimed_rps && !r.canBuild(p)))) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");

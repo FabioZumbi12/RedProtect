@@ -74,7 +74,7 @@ public class ItemFlagGui implements Listener {
                 .forEach(item -> str.append(item).append(","));
 
         if (str.length() > 0) {
-            region.setFlag(event.getPlayer(), flag, str.toString().substring(0, str.toString().length() - 1));
+            region.setFlag(event.getPlayer(), flag, str.substring(0, str.toString().length() - 1));
             RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + region.getFlagString(flag));
             RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
         } else {

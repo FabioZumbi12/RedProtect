@@ -30,10 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.TreeSet;
+import java.util.*;
 
 public class GuiLangCore {
 
@@ -55,7 +52,7 @@ public class GuiLangCore {
         baseLang.clear();
         try {
             InputStream fileInput = LangCore.class.getResourceAsStream("/assets/redprotect/guiEN-US.properties");
-            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(Objects.requireNonNull(fileInput), StandardCharsets.UTF_8);
             baseLang.load(reader);
         } catch (Exception e) {
             CoreUtil.printJarVersion();
@@ -86,10 +83,11 @@ public class GuiLangCore {
             loadedLang.put("_lang.version", pluginVersion);
 
         try {
-            String header = "===================================================\n" +
-                    "   You can translate this file to your language    \n" +
-                    "     from our github: https://bit.ly/2IUMc7X       \n" +
-                    "===================================================";
+            String header = """
+                    ===================================================
+                       You can translate this file to your language   \s
+                         from our github: https://bit.ly/2IUMc7X      \s
+                    ===================================================""";
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
             CoreUtil.printJarVersion();

@@ -39,6 +39,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.handleInfo;
@@ -49,7 +50,7 @@ public class InfoCommand implements SubCommand {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 2 && (sender instanceof ConsoleCommandSender || RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.info"))) {
             if (Bukkit.getWorld(args[1]) != null) {
-                Region r = RedProtect.get().getRegionManager().getRegion(args[0], Bukkit.getWorld(args[1]).getName());
+                Region r = RedProtect.get().getRegionManager().getRegion(args[0], Objects.requireNonNull(Bukkit.getWorld(args[1])).getName());
                 if (r != null) {
                     sender.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "-----------------------------------------");
                     sender.sendMessage(r.info());
@@ -61,8 +62,7 @@ public class InfoCommand implements SubCommand {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("correct.usage") + " " + ChatColor.YELLOW + "Invalid World: " + args[1]);
             }
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             //rp info [region] [world]
             if (args.length == 0) {
@@ -88,9 +88,9 @@ public class InfoCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 2) {
             if (args[1].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[1])).toList());
         }
         return tab;
     }

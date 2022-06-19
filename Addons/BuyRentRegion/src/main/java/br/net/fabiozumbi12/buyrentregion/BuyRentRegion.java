@@ -192,7 +192,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
 
                             Location signLoc = new Location(world, x, y, z, pitch, yaw);
 
-                            Block currentBlock = world.getBlockAt(signLoc);
+                            Block currentBlock = Objects.requireNonNull(world).getBlockAt(signLoc);
                             if (currentBlock.getType().name().endsWith("_SIGN") || currentBlock.getType().name().endsWith("WALL_SIGN")) {
                                 Sign theSign = (Sign) currentBlock.getState();
 
@@ -228,7 +228,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
             File file = new File(config.dataLoc + "RegionActivityLog.txt");
 
             FileWriter out = new FileWriter(file, true);
-            out.write(String.format("%s [%s] %s\r\n", tmp.toString(), player, action));
+            out.write(String.format("%s [%s] %s\r\n", tmp, player, action));
             out.flush();
             out.close();
         } catch (IOException e) {
@@ -250,11 +250,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                 if (amount > 0) {
                     amount--;
                 }
-                if (amount >= 0) {
-                    this.rentedRegionCounts.get().put(playerName, amount);
-                } else {
-                    this.rentedRegionCounts.get().put(playerName, 0);
-                }
+                this.rentedRegionCounts.get().put(playerName, Math.max(amount, 0));
                 rentedRegionCounts.save();
             }
         } catch (Exception e) {
@@ -381,7 +377,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
     public void onPunchSign(PlayerInteractEvent event) {
         try {
             if (event.getAction().name().equals("RIGHT_CLICK_BLOCK")) {
-                Material blockType = event.getClickedBlock().getType();
+                Material blockType = Objects.requireNonNull(event.getClickedBlock()).getType();
                 if (blockType.name().endsWith("_SIGN") || blockType.name().endsWith("WALL_SIGN")) {
                     Sign sign = (Sign) event.getClickedBlock().getState();
                     String topLine = sign.getLine(0);
@@ -483,7 +479,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                                     sign.setLine(2, "<price here>");
                                     sign.setLine(3, "<timespan>");
                                     sign.update();
-                                    getLogger().info("Invalid [RentRegion] sign cleared at " + sign.getLocation().toString());
+                                    getLogger().info("Invalid [RentRegion] sign cleared at " + sign.getLocation());
                                     return;
                                 }
                                 String[] expiration = sign.getLine(3).split("\\s");
@@ -502,7 +498,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                                     sign.setLine(2, "<price here>");
                                     sign.setLine(3, "<timespan>");
                                     sign.update();
-                                    getLogger().info("Invalid [RentRegion] sign cleared at " + sign.getLocation().toString());
+                                    getLogger().info("Invalid [RentRegion] sign cleared at " + sign.getLocation());
                                     return;
                                 }
 
@@ -584,13 +580,13 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                 return new DateResult(cal.getTime().getTime(), val + " days", false);
             }
             if (type.equalsIgnoreCase("h") || type.equalsIgnoreCase("hour") || (type.equalsIgnoreCase("hours"))) {
-                return new DateResult(tmp.getTime() + val * 60 * 60 * 1000, val + " hours", false);
+                return new DateResult(tmp.getTime() + (long) val * 60 * 60 * 1000, val + " hours", false);
             }
             if (type.equalsIgnoreCase("m") || type.equalsIgnoreCase("mins") || type.equalsIgnoreCase("min") || type.equalsIgnoreCase("minutes") || (type.equalsIgnoreCase("minute"))) {
-                return new DateResult(tmp.getTime() + val * 60 * 1000, val + " minutes", false);
+                return new DateResult(tmp.getTime() + (long) val * 60 * 1000, val + " minutes", false);
             }
             if (type.equalsIgnoreCase("s") || type.equalsIgnoreCase("sec") || type.equalsIgnoreCase("secs") || type.equalsIgnoreCase("seconds") || (type.equalsIgnoreCase("second"))) {
-                return new DateResult(tmp.getTime() + val * 1000, val + " seconds", false);
+                return new DateResult(tmp.getTime() + val * 1000L, val + " seconds", false);
             }
             return new DateResult(-1L, "ERROR", true);
         } catch (Exception ignored) {
@@ -609,13 +605,13 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                 return new DateResult(cal.getTime().getTime(), val + " days", false);
             }
             if (type.equalsIgnoreCase("h") || type.equalsIgnoreCase("hour") || (type.equalsIgnoreCase("hours"))) {
-                return new DateResult(tmp.getTime() + val * 60 * 60 * 1000, val + " hours", false);
+                return new DateResult(tmp.getTime() + (long) val * 60 * 60 * 1000, val + " hours", false);
             }
             if (type.equalsIgnoreCase("m") || type.equalsIgnoreCase("mins") || type.equalsIgnoreCase("min") || type.equalsIgnoreCase("minutes") || (type.equalsIgnoreCase("minute"))) {
-                return new DateResult(tmp.getTime() + val * 60 * 1000, val + " minutes", false);
+                return new DateResult(tmp.getTime() + (long) val * 60 * 1000, val + " minutes", false);
             }
             if (type.equalsIgnoreCase("s") || type.equalsIgnoreCase("sec") || type.equalsIgnoreCase("secs") || type.equalsIgnoreCase("seconds") || (type.equalsIgnoreCase("second"))) {
-                return new DateResult(tmp.getTime() + val * 1000, val + " seconds", false);
+                return new DateResult(tmp.getTime() + val * 1000L, val + " seconds", false);
             }
             return new DateResult(-1L, "ERROR", true);
         } catch (Exception ignored) {
@@ -904,7 +900,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
 
             Location signLoc = new Location(world, x, y, z, pitch, yaw);
 
-            Block currentBlock = world.getBlockAt(signLoc);
+            Block currentBlock = Objects.requireNonNull(world).getBlockAt(signLoc);
             if (currentBlock.getType().name().endsWith("_SIGN") || currentBlock.getType().name().endsWith("WALL_SIGN")) {
                 Sign theSign = (Sign) currentBlock.getState();
 
@@ -954,16 +950,16 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
     public void signChangeMonitor(SignChangeEvent event) {
         try {
             Player player = event.getPlayer();
-            if (event.getLine(0).equalsIgnoreCase(config.signHeaderBuy) || (event.getLine(0).equalsIgnoreCase(config.signHeaderRent))) {
+            if (Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(config.signHeaderBuy) || (Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(config.signHeaderRent))) {
                 if (!player.hasPermission("buyrentregion.command.create") && !player.isOp()) {
                     event.setLine(0, "-restricted-");
                 } else {
                     Region region = redProtectHook.getRegion(event.getBlock().getLocation());
                     String regionName = event.getLine(1);
 
-                    if (region != null && regionName.isEmpty()) {
+                    if (region != null && Objects.requireNonNull(regionName).isEmpty()) {
                         regionName = region.getName();
-                    } else if (!regionName.isEmpty()) {
+                    } else if (!Objects.requireNonNull(regionName).isEmpty()) {
                         World world = event.getBlock().getWorld();
                         region = redProtectHook.getRegion(regionName, world.getName());
                     }
@@ -985,12 +981,12 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                     try {
                         String dateString = event.getLine(3);
                         try {
-                            double regionPrice = Double.parseDouble(event.getLine(2));
+                            double regionPrice = Double.parseDouble(Objects.requireNonNull(event.getLine(2)));
                             if (regionPrice <= 0.0D) {
                                 throw new Exception();
                             }
-                            if (event.getLine(0).equalsIgnoreCase(config.signHeaderRent)) {
-                                String[] expiration = dateString.split("\\s");
+                            if (Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(config.signHeaderRent)) {
+                                String[] expiration = Objects.requireNonNull(dateString).split("\\s");
                                 int i = Integer.parseInt(expiration[0]);
                                 DateResult dateResult = parseDateString(i, expiration[1]);
                                 if (dateResult.IsError) {
@@ -1003,7 +999,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
 
                             return;
                         }
-                        if (!event.getLine(0).equalsIgnoreCase(config.signHeaderRent)) {
+                        if (!Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(config.signHeaderRent)) {
                             event.setLine(0, config.signHeaderBuy);
                         } else {
                             event.setLine(0, config.signHeaderRent);
@@ -1029,10 +1025,10 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
         }
     }
 
-    public class DateResult {
-        public long Time;
-        String Text;
-        boolean IsError;
+    public static class DateResult {
+        public final long Time;
+        final String Text;
+        final boolean IsError;
 
         DateResult(long time, String text, boolean isError) {
             this.Time = time;

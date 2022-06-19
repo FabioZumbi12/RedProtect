@@ -42,15 +42,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class RedBackups extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
@@ -78,7 +74,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         this.plugin = this;
 
         getServer().getPluginManager().registerEvents(this, this);
-        getCommand("redbackups").setExecutor(this);
+        Objects.requireNonNull(getCommand("redbackups")).setExecutor(this);
 
         getConfig().addDefault("backup.enabled", false);
         getConfig().addDefault("backup.worlds", Bukkit.getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList()));
@@ -87,15 +83,16 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         getConfig().addDefault("backup.modes.interval.minutes", 120);
         getConfig().addDefault("backup.modes.timed.time", "03:00");
 
-        getConfig().options().header("" +
-                "---- RedBackups Configuration ----\n" +
-                "Description: This plugin makes backups fo redprotect player regions\n" +
-                "Configurations:\n" +
-                "- backup-mode = Backup modes to use.\n" +
-                "- - Values: \n" +
-                "- - server-start = Backup on every server start with delay (in minutes).\n" +
-                "- - interval = Backup on every interval in minutes (start counting on server start/not persistent on server reboot).\n" +
-                "- - timed = Backup on exact time and minute.\n"
+        getConfig().options().header("""
+                ---- RedBackups Configuration ----
+                Description: This plugin makes backups fo redprotect player regions
+                Configurations:
+                - backup-mode = Backup modes to use.
+                - - Values:\s
+                - - server-start = Backup on every server start with delay (in minutes).
+                - - interval = Backup on every interval in minutes (start counting on server start/not persistent on server reboot).
+                - - timed = Backup on exact time and minute.
+                """
         );
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -110,7 +107,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         String mode = getConfig().getString("backup.mode", "server-start");
 
         if (mode.equals("server-start") && taskAfterStart == null) {
-            taskAfterStart = Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> createBackup(Bukkit.getConsoleSender(), null), getConfig().getInt("backup.modes.server-start.delay-after-start") * 60 * 20);
+            taskAfterStart = Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> createBackup(Bukkit.getConsoleSender(), null), (long) getConfig().getInt("backup.modes.server-start.delay-after-start") * 60 * 20);
         }
 
         if (mode.equals("interval")) {
@@ -208,7 +205,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             backupList.clear();
 
             if (location != null) {
-                if (!worlds.contains(location.getWorld().getName())) return;
+                if (!worlds.contains(Objects.requireNonNull(location.getWorld()).getName())) return;
 
                 try {
                     String worldName = location.getWorld().getName();
@@ -219,20 +216,21 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
 
                     String file = worldName + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
                     File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
-                    if (worldFile.exists()){
+                    if (worldFile.exists()) {
                         backupList.add(file);
                     } else {
                         file = mainWorld + File.separator + location.getWorld().getName() + File.separator + "region" + File.separator + "r." + (location.getBlockX() >> 4 >> 5) + "." + (location.getBlockZ() >> 4 >> 5) + ".mca";
                         worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
-                        if (worldFile.exists()){
+                        if (worldFile.exists()) {
                             backupList.add(file);
                         }
                     }
-                } catch (Exception ignored){}
+                } catch (Exception ignored) {
+                }
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
 
-                for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
+                for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).toList()) {
                     try {
                         String worldName = region.getWorld();
                         File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);
@@ -245,26 +243,27 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
 
                                 String file = worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
                                 File worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
-                                if (worldFile.exists() && !backupList.contains(file)){
+                                if (worldFile.exists() && !backupList.contains(file)) {
                                     backupList.add(file);
                                 } else {
                                     file = mainWorld + File.separator + worldName + File.separator + "region" + File.separator + "r." + (x >> 4 >> 5) + "." + (z >> 4 >> 5) + ".mca";
                                     worldFile = new File(getServer().getWorldContainer().getCanonicalPath(), file);
-                                    if (worldFile.exists() && !backupList.contains(file)){
+                                    if (worldFile.exists() && !backupList.contains(file)) {
                                         backupList.add(file);
                                     }
                                 }
                             }
                         }
-                    } catch (Exception ignored){}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
 
-            if (backupList.size() > 0){
+            if (backupList.size() > 0) {
                 Bukkit.getLogger().info("Starting copy of " + backupList.size() + " world chunk files to backups...");
 
                 // Start backup files
-                for (String file : backupList){
+                for (String file : backupList) {
                     try {
                         if (!new File(getDataFolder(), "backups").exists()) {
                             new File(getDataFolder(), "backups").mkdir();

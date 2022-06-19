@@ -55,23 +55,23 @@ public class SetMaxYCommand implements SubCommand {
         Region r;
         //rp setmaxy <size>
         switch (args.length) {
-            case 1:
+            case 1 -> {
                 r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                     return true;
                 }
-                break;
+            }
             //rp setmaxy <size> [region]
-            case 2:
+            case 2 -> {
                 r = RedProtect.get().getRegionManager().getRegion(args[1], player.getWorld().getName());
                 if (r == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return true;
                 }
-                break;
+            }
             //rp setmaxy <size> [region] [world]
-            case 3:
+            case 3 -> {
                 if (Bukkit.getWorld(args[2]) == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.invalidworld");
                     return true;
@@ -81,10 +81,11 @@ public class SetMaxYCommand implements SubCommand {
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[1]);
                     return true;
                 }
-                break;
-            default:
+            }
+            default -> {
                 RedProtect.get().getLanguageManager().sendCommandHelp(sender, "setmaxy", true);
                 return true;
+            }
         }
 
         String from = String.valueOf(r.getMaxY());
@@ -118,9 +119,9 @@ public class SetMaxYCommand implements SubCommand {
             tab.add(sender instanceof Player ? String.valueOf(((Player) sender).getLocation().getBlockY()) : "0");
         if (args.length == 3)
             if (args[2].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[1])).toList());
         return tab;
     }
 }

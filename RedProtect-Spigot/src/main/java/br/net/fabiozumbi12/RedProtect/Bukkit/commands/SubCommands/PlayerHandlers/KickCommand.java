@@ -41,6 +41,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class KickCommand implements SubCommand {
@@ -78,7 +79,7 @@ public class KickCommand implements SubCommand {
             Location to = RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true).add(0, 1, 0);
             if (visit.isInsideVehicle()) {
                 Entity vehicle = visit.getVehicle();
-                vehicle.eject();
+                Objects.requireNonNull(vehicle).eject();
                 Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> vehicle.teleport(to), 1);
             }
             visit.teleport(to);
@@ -90,8 +91,7 @@ public class KickCommand implements SubCommand {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.already.cantenter").replace("{time}", sec));
             }
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 1 || args.length == 3) {
                 Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
@@ -159,14 +159,14 @@ public class KickCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 1)
             if (args[0].isEmpty())
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.startsWith(args[0])).toList());
         if (args.length == 3)
             if (args[2].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[1])).toList());
         return tab;
     }
 }

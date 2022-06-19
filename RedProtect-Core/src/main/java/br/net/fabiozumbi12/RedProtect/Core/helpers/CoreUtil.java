@@ -40,8 +40,8 @@ import java.util.zip.ZipOutputStream;
 
 public class CoreUtil {
     public boolean stopRegen;
-    protected HashMap<String, Object> borderPlayers;
-    protected HashMap<String, String> cachedUUIDs;
+    protected final HashMap<String, Object> borderPlayers;
+    protected final HashMap<String, String> cachedUUIDs;
 
     public CoreUtil() {
         borderPlayers = new HashMap<>();

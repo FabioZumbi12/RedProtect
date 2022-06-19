@@ -39,6 +39,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -110,7 +111,7 @@ public class RenterTask {
 
                                         Location signLoc = new Location(world, x, y, z, pitch, yaw);
 
-                                        Block currentBlock = world.getBlockAt(signLoc);
+                                        Block currentBlock = Objects.requireNonNull(world).getBlockAt(signLoc);
                                         if (currentBlock.getType().name().endsWith("_SIGN") || currentBlock.getType().name().endsWith("WALL_SIGN")) {
                                             Sign theSign = (Sign) currentBlock.getState();
 
@@ -150,7 +151,7 @@ public class RenterTask {
 
                             Location signLoc = new Location(world, x, y, z, pitch, yaw);
 
-                            Block currentBlock = world.getBlockAt(signLoc);
+                            Block currentBlock = Objects.requireNonNull(world).getBlockAt(signLoc);
                             if (currentBlock.getType().name().endsWith("_SIGN") || currentBlock.getType().name().endsWith("WALL_SIGN")) {
                                 Sign theSign = (Sign) currentBlock.getState();
 

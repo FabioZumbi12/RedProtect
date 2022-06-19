@@ -63,8 +63,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             int maxZ = fileDB.getInt(rname + ".maxZ");
             int minX = fileDB.getInt(rname + ".minX");
             int minZ = fileDB.getInt(rname + ".minZ");
-            int maxY = fileDB.getInt(rname + ".maxY", Bukkit.getWorld(world).getMaxHeight());
-            int minY = fileDB.getInt(rname + ".minY", Bukkit.getWorld(world).getMaxHeight());
+            int maxY = fileDB.getInt(rname + ".maxY", Objects.requireNonNull(Bukkit.getWorld(world)).getMaxHeight());
+            int minY = fileDB.getInt(rname + ".minY", Objects.requireNonNull(Bukkit.getWorld(world)).getMaxHeight());
             String name = fileDB.getString(rname + ".name");
             String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
             Set<PlayerRegion> leaders = new HashSet<>(fileDB.getStringList(rname + ".leaders")).stream().filter(s -> s.split("@").length == 1 || (s.split("@").length == 2 && !s.split("@")[1].isEmpty())).map(s -> {
@@ -115,7 +115,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
             Location tppoint = null;
             if (!fileDB.getString(rname + ".tppoint", "").isEmpty()) {
-                String[] tpstring = fileDB.getString(rname + ".tppoint").split(",");
+                String[] tpstring = Objects.requireNonNull(fileDB.getString(rname + ".tppoint")).split(",");
                 tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
                         Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
             }
@@ -126,14 +126,14 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             Set<String> defaultFlags = RedProtect.get().getConfigManager().getDefFlags();
             ConfigurationSection flagsSection = fileDB.getConfigurationSection(rname + ".flags");
             for (String flag : defaultFlags) {
-                Object flagValue = flagsSection.get(flag);
+                Object flagValue = Objects.requireNonNull(flagsSection).get(flag);
                 if (flagValue != null) {
                     newr.getFlags().put(flag, flagValue);
                 } else {
                     newr.getFlags().put(flag, RedProtect.get().getConfigManager().getDefFlagsValues().get(flag));
                 }
             }
-            Set<String> regionFlags = flagsSection.getKeys(false);
+            Set<String> regionFlags = Objects.requireNonNull(flagsSection).getKeys(false);
             for (String flag : regionFlags) {
                 if (!defaultFlags.contains(flag)) {
                     newr.getFlags().put(flag, flagsSection.get(flag));
@@ -170,7 +170,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                         f.mkdir();
                     }
                     File[] listOfFiles = f.listFiles();
-                    for (File region : listOfFiles) {
+                    for (File region : Objects.requireNonNull(listOfFiles)) {
                         if (region.getName().endsWith(".yml")) {
                             this.load(region.getPath());
                         }
@@ -245,7 +245,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
                     }
 
                     if (RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
-                        if (!r.toSave() && !force) {
+                        if (r.toSave() && !force) {
                             continue;
                         }
                         fileDB = new YamlConfiguration();
@@ -344,7 +344,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public Region getRegion(String rname) {
-        Optional<Map.Entry<String, Region>> optional = regions.entrySet().stream().filter(r -> r.getKey().toLowerCase().equals(rname.toLowerCase())).findFirst();
+        Optional<Map.Entry<String, Region>> optional = regions.entrySet().stream().filter(r -> r.getKey().equalsIgnoreCase(rname)).findFirst();
         return optional.map(Map.Entry::getValue).orElse(null);
     }
 

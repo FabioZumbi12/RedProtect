@@ -61,8 +61,7 @@ public class ListCommand implements SubCommand {
                     return true;
                 }
             }
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             //rp list
             if (args.length == 0) {

@@ -69,12 +69,11 @@ public class LangGuiManager extends GuiLangCore {
         loadDefaultLang();
 
         if (loadedLang.get("_lang.version") != null) {
-            int langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", ""));
-            int rpv = Integer.parseInt(RedProtect.get().getDescription().getVersion().replace(".", ""));
-            if (RedProtect.get().getDescription().getVersion().length() > loadedLang.get("_lang.version").toString().length()) {
-                langv = Integer.parseInt(loadedLang.get("_lang.version").toString().replace(".", "") + 0);
-            }
-            if (langv < rpv || langv == 0) {
+            var pluginVersion = Integer.parseInt(RedProtect.get().getDescription().getVersion().split("-")[0].replace(".", ""));
+            int langVersion = Integer.parseInt(loadedLang.get("_lang.version").toString().split("-")[0].replace(".", ""));
+            if (pluginVersion > langVersion) {
+                RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
+                RedProtect.get().logger.warning("Lang file version: " + loadedLang.get("_lang.version"));
                 loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
             }
         }

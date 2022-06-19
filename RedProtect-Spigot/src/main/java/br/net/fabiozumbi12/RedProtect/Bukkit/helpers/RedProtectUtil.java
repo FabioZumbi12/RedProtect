@@ -103,7 +103,7 @@ public class RedProtectUtil extends CoreUtil {
             if (isReader == null) isReader = RedProtect.class.getResourceAsStream(nameOri);
 
             FileOutputStream fos = new FileOutputStream(saveTo);
-            while (isReader.available() > 0) {
+            while (Objects.requireNonNull(isReader).available() > 0) {
                 fos.write(isReader.read());
             }
             fos.close();
@@ -120,9 +120,10 @@ public class RedProtectUtil extends CoreUtil {
             String potname = "";
             if (RedProtect.get().bukkitVersion >= 190) {
                 PotionMeta pot = (PotionMeta) result.getItemMeta();
-                potname = pot.getBasePotionData().getType().name();
+                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
             }
-            if (RedProtect.get().bukkitVersion < 190 && Potion.fromItemStack(result) != null) {
+            if (RedProtect.get().bukkitVersion < 190) {
+                Potion.fromItemStack(result);
                 potname = Potion.fromItemStack(result).getType().name();
             }
             return Pots.contains(potname);
@@ -136,9 +137,10 @@ public class RedProtectUtil extends CoreUtil {
             String potname = "";
             if (RedProtect.get().bukkitVersion >= 190) {
                 PotionMeta pot = (PotionMeta) result.getItemMeta();
-                potname = pot.getBasePotionData().getType().name();
+                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
             }
-            if (RedProtect.get().bukkitVersion <= 180 && Potion.fromItemStack(result) != null) {
+            if (RedProtect.get().bukkitVersion <= 180) {
+                Potion.fromItemStack(result);
                 potname = Potion.fromItemStack(result).getType().name();
             }
             if (Pots.contains(potname)) {
@@ -150,7 +152,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public boolean isRealPlayer(Player p) {
-        return Bukkit.getOnlinePlayers().stream().anyMatch(play -> play.equals(p));
+        return Bukkit.getOnlinePlayers().stream().noneMatch(play -> play.equals(p));
     }
 
     private boolean isSecure(Location loc) {
@@ -317,7 +319,7 @@ public class RedProtectUtil extends CoreUtil {
                     printJarVersion();
                     e.printStackTrace();
                 }
-                long days = TimeUnit.DAYS.convert(now.getTime() - regionDate.getTime(), TimeUnit.MILLISECONDS);
+                long days = TimeUnit.DAYS.convert(Objects.requireNonNull(now).getTime() - Objects.requireNonNull(regionDate).getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().getConfigManager().configRoot().purge.ignore_regions_from_players) {
@@ -393,7 +395,7 @@ public class RedProtectUtil extends CoreUtil {
                     printJarVersion();
                     e.printStackTrace();
                 }
-                long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
+                long days = TimeUnit.DAYS.convert(Objects.requireNonNull(now).getTime() - Objects.requireNonNull(regiondate).getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().getConfigManager().configRoot().sell.ignore_regions_from_players) {
@@ -587,7 +589,7 @@ public class RedProtectUtil extends CoreUtil {
                     }
 
                     if (RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
-                        if (!r.toSave()) {
+                        if (r.toSave()) {
                             continue;
                         }
                         fileDB = new YamlConfiguration();
@@ -816,7 +818,7 @@ public class RedProtectUtil extends CoreUtil {
                     RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("gui.needwait.ready").replace("{flag}", flag));
                 }*/
             RedProtect.get().changeWait.remove(r + flag);
-        }, RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20);
+        }, RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20L);
     }
 
     public int getUpdatedPrior(Region region) {
@@ -832,9 +834,9 @@ public class RedProtectUtil extends CoreUtil {
         if (lowRegion != null) {
             if (regionarea > lowRegion.getArea()) {
                 prior = lowRegion.getPrior() - 1;
-            } else if (regionarea < lowRegion.getArea() && regionarea < topRegion.getArea()) {
+            } else if (regionarea < lowRegion.getArea() && regionarea < Objects.requireNonNull(topRegion).getArea()) {
                 prior = topRegion.getPrior() + 1;
-            } else if (regionarea < topRegion.getArea()) {
+            } else if (regionarea < Objects.requireNonNull(topRegion).getArea()) {
                 prior = topRegion.getPrior() + 1;
             }
         }
@@ -898,7 +900,7 @@ public class RedProtectUtil extends CoreUtil {
 
         final String finalParticleName = particleName;
         int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () ->
-                locations.forEach(l -> plugin.getVersionHelper().spawnParticle​(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500)), 10, 10);
+                locations.forEach(l -> plugin.getVersionHelper().spawnParticle(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500)), 10, 10);
         borderPlayers.put(player, task);
 
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
@@ -907,7 +909,7 @@ public class RedProtectUtil extends CoreUtil {
                 Bukkit.getScheduler().cancelTask(newTask);
                 borderPlayers.remove(player);
             }
-        }, RedProtect.get().getConfigManager().configRoot().region_settings.border.time_showing * 20);
+        }, RedProtect.get().getConfigManager().configRoot().region_settings.border.time_showing * 20L);
     }
 
     public int convertFromGP() {
@@ -924,7 +926,7 @@ public class RedProtectUtil extends CoreUtil {
                 leaders.add(new PlayerRegion(claim.ownerID != null ? claim.ownerID.toString() : pname, pname));
                 Location newmin = claim.getGreaterBoundaryCorner();
                 Location newmax = claim.getLesserBoundaryCorner();
-                newmin.setY(w.getMinHeight());
+                newmin.setY(Objects.requireNonNull(w).getMinHeight());
                 newmax.setY(w.getMaxHeight());
 
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
@@ -1054,7 +1056,7 @@ public class RedProtectUtil extends CoreUtil {
 
     public boolean canBuildNear(Player p, Location loc) {
         if (RedProtect.get().getConfigManager().configRoot().region_settings.deny_build_near <= 0) {
-            return true;
+            return false;
         }
         int x = loc.getBlockX();
         int y = loc.getBlockY();
@@ -1067,12 +1069,12 @@ public class RedProtectUtil extends CoreUtil {
                     Region reg = RedProtect.get().getRegionManager().getTopRegion(new Location(p.getWorld(), ix, iy, iz));
                     if (reg != null && !reg.canBuild(p)) {
                         RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
-                        return false;
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     public int simuleTotalRegionSize(String player, Region r2) {
@@ -1108,7 +1110,7 @@ public class RedProtectUtil extends CoreUtil {
         regionName = Normalizer.normalize(regionName.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .replaceAll("[ -]", "_")
-                .replaceAll("[^\\p{L}_0-9]", "");
+                .replaceAll("[^\\p{L}_\\d]", "");
 
         //region name conform
         if (regionName.length() < 3 || regionName.length() > 16) {
@@ -1155,7 +1157,7 @@ public class RedProtectUtil extends CoreUtil {
         if (mat != null) {
             s = new ItemStack(mat);
         } else {
-            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
+            s = new ItemStack(Objects.requireNonNull(Material.getMaterial("SKULL_ITEM")), 1, (short) 3);
         }
         SkullMeta sm = (SkullMeta) s.getItemMeta();
         GameProfile gm = new GameProfile(UUID.randomUUID(), null);
@@ -1163,11 +1165,11 @@ public class RedProtectUtil extends CoreUtil {
 
         Field profileField = null;
         try {
-            profileField = sm.getClass().getDeclaredField("profile");
+            profileField = Objects.requireNonNull(sm).getClass().getDeclaredField("profile");
         } catch (NoSuchFieldException | SecurityException e) {
             e.printStackTrace();
         }
-        profileField.setAccessible(true);
+        Objects.requireNonNull(profileField).setAccessible(true);
         try {
             profileField.set(sm, gm);
         } catch (IllegalArgumentException | IllegalAccessException e) {

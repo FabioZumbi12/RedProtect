@@ -62,11 +62,11 @@ public class McMMOHook implements Listener {
             return;
         }
 
-        if (!region.canSkill(player)) {
+        if (region.canSkill(player)) {
             event.setCancelled(true);
         }
 
-        if (RedProtect.get().getConfigManager().configRoot().hooks.mcmmo.fix_acrobatics_fire_leveling && event.getSkill().equals(PrimarySkillType.ACROBATICS) && (!region.canFire() || !region.canDeath())) {
+        if (RedProtect.get().getConfigManager().configRoot().hooks.mcmmo.fix_acrobatics_fire_leveling && event.getSkill().equals(PrimarySkillType.ACROBATICS) && (region.canFire() || region.canDeath())) {
             event.setCancelled(true);
         }
     }
@@ -96,11 +96,11 @@ public class McMMOHook implements Listener {
             return;
         }
 
-        if (!r.canSkill(p)) {
+        if (r.canSkill(p)) {
             p.sendMessage(RedProtect.get().getLanguageManager().get("mcmmolistener.notallowed"));
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED))) {
+        if (r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED))) {
             e.setCancelled(true);
         }
     }
@@ -115,10 +115,10 @@ public class McMMOHook implements Listener {
             return;
         }
 
-        if (!r.canSkill(p)) {
+        if (r.canSkill(p)) {
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
+        if (r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
             e.setCancelled(true);
         }
     }
@@ -133,10 +133,10 @@ public class McMMOHook implements Listener {
             return;
         }
 
-        if (!r.canSkill(p)) {
+        if (r.canSkill(p)) {
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, e.getDefender()) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
+        if (r.canPVP(p, e.getDefender()) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
             e.setCancelled(true);
         }
     }
@@ -150,10 +150,10 @@ public class McMMOHook implements Listener {
         if (r == null) {
             return;
         }
-        if (!r.canSkill(p)) {
+        if (r.canSkill(p)) {
             e.setCancelled(true);
         }
-        if (!r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
+        if (r.canPVP(p, null) && (e.getSkill().equals(PrimarySkillType.SWORDS) || e.getSkill().equals(PrimarySkillType.UNARMED) || e.getSkill().equals(PrimarySkillType.AXES))) {
             e.setCancelled(true);
         }
     }
@@ -162,19 +162,18 @@ public class McMMOHook implements Listener {
     public void onFakeEntityDamageByEntityEvent(FakeEntityDamageByEntityEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO FakeEntityDamageByEntityEvent event.");
 
-        if (e.getDamager() instanceof Player) {
-            Player p = (Player) e.getDamager();
+        if (e.getDamager() instanceof Player p) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
 
             if (e.getEntity() instanceof Animals) {
-                if (r != null && !r.canInteractPassives(p)) {
+                if (r != null && r.canInteractPassives(p)) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantpassive");
                     e.setCancelled(true);
                 }
             }
 
             if (e.getEntity() instanceof Player) {
-                if (r != null && !r.canPVP(p, (Player) e.getEntity())) {
+                if (r != null && r.canPVP(p, (Player) e.getEntity())) {
                     RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantpvp");
                     e.setCancelled(true);
                 }
@@ -194,9 +193,8 @@ public class McMMOHook implements Listener {
             }
         }
 
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
-            if (r != null && !r.canPVP(p, null)) {
+        if (e.getEntity() instanceof Player p) {
+            if (r != null && r.canPVP(p, null)) {
                 e.setCancelled(true);
             }
         }

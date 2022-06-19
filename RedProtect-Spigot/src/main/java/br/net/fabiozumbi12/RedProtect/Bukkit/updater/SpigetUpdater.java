@@ -41,7 +41,7 @@ import java.io.File;
 public class SpigetUpdater {
 
     private static SpigetUpdate spigetUpdate = null;
-    private RedProtect plugin;
+    private final RedProtect plugin;
     private UpdateStatus updateAvailable = UpdateStatus.UNKNOWN;
     private String currentJarFile = "";
     private String newDownloadVersion = "";
@@ -76,7 +76,7 @@ public class SpigetUpdater {
         }
     }
 
-    public boolean downloadAndUpdateJar(CommandSender sender) {
+    public void downloadAndUpdateJar(CommandSender sender) {
         final String OS = System.getProperty("os.name");
         boolean success = spigetUpdate.downloadUpdate();
 
@@ -127,7 +127,6 @@ public class SpigetUpdater {
                 }
             }
         }.runTaskTimer(plugin, 20L, 20L);
-        return true;
     }
 
     public void checkForUpdate(final CommandSender sender, final boolean silent) {
@@ -180,10 +179,10 @@ public class SpigetUpdater {
             try {
                 updateCheck = 0;
                 if (i < updateVer.length)
-                    updateCheck = Integer.valueOf(updateVer[i]);
+                    updateCheck = Integer.parseInt(updateVer[i]);
                 pluginCheck = 0;
                 if (i < pluginVer.length)
-                    pluginCheck = Integer.valueOf(pluginVer[i]);
+                    pluginCheck = Integer.parseInt(pluginVer[i]);
                 if (updateCheck > pluginCheck) {
                     return UpdateStatus.AVAILABLE;
                 } else if (updateCheck < pluginCheck)
@@ -195,10 +194,7 @@ public class SpigetUpdater {
                 return UpdateStatus.UNKNOWN;
             }
         }
-        if (updateCheck == pluginCheck)
-            return UpdateStatus.AVAILABLE;
-        else
-            return UpdateStatus.NOT_AVAILABLE;
+        return UpdateStatus.AVAILABLE;
     }
 
     public enum UpdateStatus {

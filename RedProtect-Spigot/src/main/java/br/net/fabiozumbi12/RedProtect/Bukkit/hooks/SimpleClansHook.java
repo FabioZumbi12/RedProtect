@@ -31,6 +31,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 public class SimpleClansHook {
     public static boolean getPlayerClan(Region r, Player p) {
         ClanPlayer clan = RedProtect.get().hooks.clanManager.getClanPlayer(p);
@@ -49,6 +51,6 @@ public class SimpleClansHook {
             return false;
         }
         ClanPlayer defCclan = RedProtect.get().hooks.clanManager.getClanPlayer(defend);
-        return defCclan != null && atClan.getClan().isWarring(defCclan.getClan());
+        return defCclan != null && Objects.requireNonNull(atClan.getClan()).isWarring(defCclan.getClan());
     }
 }

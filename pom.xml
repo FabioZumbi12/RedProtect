@@ -37,7 +37,7 @@
         <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
         <developerConnection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</developerConnection>
         <url>https://github.com/FabioZumbi12/RedProtect/tree/master</url>
-        <tag>${project.version}</tag>
+        <tag>8.0.0</tag><!-- Version to parse on jar -->
     </scm>
 
     <distributionManagement>
@@ -63,10 +63,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
-                        <id>spigot-plugins</id>
+                        <id>sign-artifacts</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
@@ -170,6 +170,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <versionJar>8.0.0</versionJar>
     </properties>
     <modules>
         <module>RedProtect-Core</module>

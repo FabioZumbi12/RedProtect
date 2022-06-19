@@ -170,7 +170,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         long reco = 0;
         if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.checkVault() && !p.hasPermission("redprotect.eco.bypass")) {
             double peco = RedProtect.get().economy.getBalance(p);
-            reco = (newRegion.getArea() - old.getArea()) * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
+            reco = (long) (newRegion.getArea() - old.getArea()) * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 
             if (!RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.y_is_free) {
                 reco = reco * Math.abs((newRegion.getMaxY() - newRegion.getMinY()) - (old.getMaxY() - old.getMinY()));

@@ -79,15 +79,15 @@ public class KillCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
             if (args[0].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[0])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[0])).toList());
         }
         if (args.length == 2) {
             if (args[1].isEmpty())
-                tab.addAll(Arrays.stream(EntityType.values()).map(EntityType::name).collect(Collectors.toList()));
+                tab.addAll(Arrays.stream(EntityType.values()).map(EntityType::name).toList());
             else
-                tab.addAll(Arrays.stream(EntityType.values()).filter(e -> e.name().startsWith(args[1].toUpperCase())).map(EntityType::name).collect(Collectors.toList()));
+                tab.addAll(Arrays.stream(EntityType.values()).map(EntityType::name).filter(name -> name.startsWith(args[1].toUpperCase())).toList());
         }
         return tab;
     }

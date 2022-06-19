@@ -27,8 +27,8 @@
 package br.net.fabiozumbi12.RedProtect.Core.helpers;
 
 public class Replacer {
-    private String placeholder;
-    private String value;
+    private final String placeholder;
+    private final String value;
 
     public Replacer(String placeholder, String value) {
         this.placeholder = placeholder;

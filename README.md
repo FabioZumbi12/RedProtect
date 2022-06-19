@@ -16,17 +16,17 @@ Sponge(legacy): https://ore.spongepowered.org/FabioZumbi12/RedProtect
 
 ## RedProtect Add-ons:
 
-This add-ons extends RedProtect flags, functions and more.
+These add-ons extends RedProtect flags, functions and more.
 
 ### Killer Projectiles:
 
 > How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/KillerProjectiles  
-> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons  
+> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
 
 ### BuyRent Regions:
 
 > How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/BuyRentRegion  
-> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons  
+> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
 
 ### RedBackups:
 
@@ -51,9 +51,10 @@ jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon
 
 **Repository:** RedProtect is hosted on Maven Central, no need to add repository url!
 
-**Dependency:**  
+**Dependency:**
 
 _*Core is needed_
+
 ```xml
 <dependencies>
     <dependency>

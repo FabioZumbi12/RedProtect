@@ -55,6 +55,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
@@ -122,9 +123,9 @@ public class FlagGui implements Listener {
                         }
                     }
 
-                    this.guiItems[i] = new ItemStack(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material));
+                    this.guiItems[i] = new ItemStack(Objects.requireNonNull(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material)));
                     ItemMeta guiMeta = this.guiItems[i].getItemMeta();
-                    guiMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
+                    Objects.requireNonNull(guiMeta).setDisplayName(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagName(flag)));
                     List<String> lore = new ArrayList<>(Arrays.asList(
                             translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + flagString),
                             "§0" + flag));
@@ -144,7 +145,7 @@ public class FlagGui implements Listener {
                             this.guiItems[i].setAmount(1);
                         }
                     }
-                    this.guiItems[i].setType(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material));
+                    this.guiItems[i].setType(Objects.requireNonNull(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material)));
                     this.guiItems[i].setItemMeta(guiMeta);
                 }
             } catch (Exception e) {
@@ -168,7 +169,7 @@ public class FlagGui implements Listener {
         if (this.editable) {
             for (int i = 0; i < this.size; i++) {
                 try {
-                    String flag = this.inv.getItem(i).getItemMeta().getLore().get(1).replace("§0", "");
+                    String flag = Objects.requireNonNull(this.inv.getItem(i).getItemMeta().getLore()).get(1).replace("§0", "");
                     if (RedProtect.get().getConfigManager().getDefFlags().contains(flag)) {
                         RedProtect.get().getConfigManager().setGuiSlot(/*this.inv.getItem(i).getType().name(),*/ flag, i);
                     }
@@ -221,7 +222,7 @@ public class FlagGui implements Listener {
                 ItemStack item = event.getCurrentItem();
                 if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
                     ItemMeta itemMeta = item.getItemMeta();
-                    String flag = itemMeta.getLore().get(1).replace("§0", "");
+                    String flag = Objects.requireNonNull(itemMeta.getLore()).get(1).replace("§0", "");
                     if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.enable) {
                         if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                             if (!RedProtect.get().changeWait.contains(this.region.getName() + flag)) {
@@ -247,8 +248,8 @@ public class FlagGui implements Listener {
         if (flag.equalsIgnoreCase("clan")) {
             ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(this.player);
             if (this.region.getFlagString(flag).equals("")) {
-                if (this.region.setFlag(this.player, flag, cp.getTag())) {
-                    RedProtect.get().getLanguageManager().sendMessage(this.player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
+                if (this.region.setFlag(this.player, flag, Objects.requireNonNull(cp).getTag())) {
+                    RedProtect.get().getLanguageManager().sendMessage(this.player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + Objects.requireNonNull(cp.getClan()).getColorTag() + "'"));
                 }
             } else {
                 RedProtect.get().getLanguageManager().sendMessage(this.player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + this.region.getFlagString(flag) + "'"));
@@ -286,9 +287,9 @@ public class FlagGui implements Listener {
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         } else {
             if (this.region.getFlagBool(flag)) {
-                event.getCurrentItem().setAmount(2);
+                Objects.requireNonNull(event.getCurrentItem()).setAmount(2);
             } else {
-                event.getCurrentItem().setAmount(1);
+                Objects.requireNonNull(event.getCurrentItem()).setAmount(1);
             }
         }
 
@@ -299,7 +300,7 @@ public class FlagGui implements Listener {
                 "§0" + flag));
         lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
         itemMeta.setLore(lore);
-        event.getCurrentItem().setItemMeta(itemMeta);
+        Objects.requireNonNull(event.getCurrentItem()).setItemMeta(itemMeta);
 
         RedProtect.get().logger.addLog("(World " + this.region.getWorld() + ") Player " + player.getName() + " CHANGED flag " + flag + " of region " + this.region.getName() + " to " + flagString);
     }

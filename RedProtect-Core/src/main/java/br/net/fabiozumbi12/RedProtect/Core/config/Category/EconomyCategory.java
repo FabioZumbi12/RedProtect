@@ -36,19 +36,19 @@ import java.util.Map;
 public class EconomyCategory {
 
     @Setting(value = "claim-cost-per-block")
-    public claimCostPerBlockCat claim_cost_per_block = new claimCostPerBlockCat();
+    public final claimCostPerBlockCat claim_cost_per_block = new claimCostPerBlockCat();
     @Setting(value = "economy-name")
-    public String economy_name = "Coins";
+    public final String economy_name = "Coins";
     @Setting(value = "economy-symbol")
-    public String economy_symbol = "$";
+    public final String economy_symbol = "$";
     @Setting(value = "max-area-toget-value")
-    public int max_area_toget_value = 100000;
+    public final int max_area_toget_value = 100000;
     @Setting(value = "rename-region")
-    public boolean rename_region = false;
+    public final boolean rename_region = false;
     @Setting
-    public enchantmentsCat enchantments = new enchantmentsCat();
+    public final enchantmentsCat enchantments = new enchantmentsCat();
     @Setting
-    public itemsCat items = new itemsCat();
+    public final itemsCat items = new itemsCat();
 
     public EconomyCategory() {
     }
@@ -57,24 +57,24 @@ public class EconomyCategory {
     public static class claimCostPerBlockCat {
 
         @Setting(value = "cost-per-block")
-        public int cost_per_block = 10;
+        public final int cost_per_block = 10;
         @Setting
-        public boolean enable = false;
+        public final boolean enable = false;
         @Setting(value = "y-is-free")
-        public boolean y_is_free = true;
+        public final boolean y_is_free = true;
     }
 
     @ConfigSerializable
     public static class enchantmentsCat {
 
         @Setting
-        public Map<String, Long> values = new HashMap<>();
+        public final Map<String, Long> values = new HashMap<>();
     }
 
     @ConfigSerializable
     public static class itemsCat {
 
         @Setting
-        public Map<String, Long> values = new HashMap<>();
+        public final Map<String, Long> values = new HashMap<>();
     }
 }

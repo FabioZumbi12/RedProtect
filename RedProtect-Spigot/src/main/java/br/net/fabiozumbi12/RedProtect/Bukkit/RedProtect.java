@@ -339,7 +339,7 @@ public class RedProtect extends JavaPlugin {
                     denyEnter.put(player, regs);
                 }
             }
-        }, config.configRoot().region_settings.delay_after_kick_region * 20);
+        }, config.configRoot().region_settings.delay_after_kick_region * 20L);
         return true;
     }
 
@@ -364,7 +364,7 @@ public class RedProtect extends JavaPlugin {
             autoSaveID = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                 logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + config.configRoot().file_type + " database!");
                 rm.saveAll(config.configRoot().flat_file.backup_on_save);
-            }, config.configRoot().flat_file.auto_save_interval_seconds * 20, config.configRoot().flat_file.auto_save_interval_seconds * 20).getTaskId();
+            }, config.configRoot().flat_file.auto_save_interval_seconds * 20L, config.configRoot().flat_file.auto_save_interval_seconds * 20L).getTaskId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");

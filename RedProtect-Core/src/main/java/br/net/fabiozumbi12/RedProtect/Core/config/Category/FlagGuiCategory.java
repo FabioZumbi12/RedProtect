@@ -36,9 +36,9 @@ import java.util.Map;
 public class FlagGuiCategory {
 
     @Setting(value = "gui-separator")
-    public guiSeparator gui_separator = new guiSeparator();
+    public final guiSeparator gui_separator = new guiSeparator();
     @Setting(value = "gui-flags")
-    public Map<String, GuiFlag> gui_flags = new HashMap<>();
+    public final Map<String, GuiFlag> gui_flags = new HashMap<>();
 
     public FlagGuiCategory() {
     }
@@ -46,7 +46,7 @@ public class FlagGuiCategory {
     @ConfigSerializable
     public static class guiSeparator {
         @Setting(comment = "Color? Wood type?")
-        public int data = 0;
+        public final int data = 0;
         @Setting(comment = "The item names is like you see holding \"F3\" and pressing \"H\".")
         public String material = "";
     }

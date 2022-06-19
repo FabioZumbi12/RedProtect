@@ -43,6 +43,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public final class KillerProjectiles extends JavaPlugin implements Listener, CommandExecutor {
 
@@ -52,16 +53,19 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
         RedProtect.get().getAPI().addFlag("killer-projectiles", false, false);
 
         getServer().getPluginManager().registerEvents(this, this);
-        getCommand("killerprojectiles").setExecutor(this);
+        Objects.requireNonNull(getCommand("killerprojectiles")).setExecutor(this);
 
         getConfig().addDefault("projectile-damage", 0);
         getConfig().addDefault("allowed-types", Arrays.asList("SNOWBALL", "ARROW"));
-        getConfig().options().header("" +
-                "---- Killer Projectiles Configuration ----\n" +
-                "Description: This plugin its a RedProtect extension to change/make projectiles do more damage on regions\n" +
-                "Configurations:\n" +
-                "- projectile-damage: 0 - The exact damage or percentage (add % after the number like 50%)\n" +
-                "- allowed-types:\n  - SNOWBALL\n  - ARROW\n"
+        getConfig().options().header("""
+                ---- Killer Projectiles Configuration ----
+                Description: This plugin its a RedProtect extension to change/make projectiles do more damage on regions
+                Configurations:
+                - projectile-damage: 0 - The exact damage or percentage (add % after the number like 50%)
+                - allowed-types:
+                  - SNOWBALL
+                  - ARROW
+                """
         );
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -85,9 +89,8 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
     // For damageable projectiles
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamagePlayer(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
+        if (event.getDamager() instanceof Projectile projectile && event.getEntity() instanceof Player) {
 
-            Projectile projectile = (Projectile) event.getDamager();
             Region r = RedProtect.get().getAPI().getRegion(projectile.getLocation());
 
             if (r != null && r.getFlagBool("killer-projectiles") && getConfig().getStringList("allowed-types").contains(projectile.getType().name())) {
@@ -100,9 +103,8 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
     // For non damageable projectiles
     @EventHandler(ignoreCancelled = true)
     public void onDamagePlayer(ProjectileHitEvent event) {
-        if (event.getHitEntity() instanceof Player) {
+        if (event.getHitEntity() instanceof Player player) {
 
-            Player player = (Player) event.getHitEntity();
             if (!player.getGameMode().equals(GameMode.SURVIVAL) && !player.getGameMode().equals(GameMode.ADVENTURE)) {
                 return;
             }
@@ -112,8 +114,8 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
 
             if (r != null && r.getFlagBool("killer-projectiles") && getConfig().getStringList("allowed-types").contains(projectile.getType().name())) {
                 double damage;
-                if (getConfig().getString("projectile-damage").endsWith("%")) {
-                    damage = (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() / 100) * Double.valueOf(getConfig().getString("projectile-damage", "100%").replace("%", ""));
+                if (Objects.requireNonNull(getConfig().getString("projectile-damage")).endsWith("%")) {
+                    damage = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue() / 100) * Double.parseDouble(getConfig().getString("projectile-damage", "100%").replace("%", ""));
                 } else {
                     damage = getConfig().getInt("projectile-damage");
                 }
