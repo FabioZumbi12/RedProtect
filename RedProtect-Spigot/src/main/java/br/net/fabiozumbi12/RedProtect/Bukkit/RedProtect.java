@@ -267,15 +267,6 @@ public class RedProtect extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new Compat114(), this);
         }
 
-        if (bukkitVersion <= 189) {
-            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper18").newInstance();
-        }
-        if (bukkitVersion >= 190) {
-            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
-        }
-        if (bukkitVersion >= 1130) {
-            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper113").newInstance();
-        }
         if (bukkitVersion >= 1140) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
         }
