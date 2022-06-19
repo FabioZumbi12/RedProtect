@@ -1067,11 +1067,7 @@ public class PlayerListener implements Listener {
                 } else {
                     noRegionFlags(er, p);
                     if (!er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.get().getConfigManager().configRoot().notify.region_exit) {
-                        if (RedProtect.get().bukkitVersion >= 1110) {
-                            SendNotifyMsg(p, RedProtect.get().getLanguageManager().get("playerlistener.region.wilderness"), "RED");
-                        } else {
-                            SendNotifyMsg(p, RedProtect.get().getLanguageManager().get("playerlistener.region.wilderness"), null);
-                        }
+                        SendNotifyMsg(p, RedProtect.get().getLanguageManager().get("playerlistener.region.wilderness"), "RED");
                     }
                 }
             }
@@ -1306,15 +1302,7 @@ public class PlayerListener implements Listener {
         }
         if (!notify.equals("")) {
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
-                if (RedProtect.get().bukkitVersion >= 1110) {
-                    Compat111.sendBarMsg(notify, color, p);
-                } else {
-                    if (RedProtect.get().hooks.checkBM()) {
-                        BossBarAPI.setMessage(p, notify);
-                    } else {
-                        p.sendMessage(notify);
-                    }
-                }
+                Compat111.sendBarMsg(notify, color, p);
             }
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
                 try {
@@ -1339,15 +1327,7 @@ public class PlayerListener implements Listener {
             return;
         }
         if (RedProtect.get().getConfigManager().configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
-            if (RedProtect.get().bukkitVersion >= 1110) {
-                Compat111.sendBarMsg(wel, "GREEN", p);
-            } else {
-                if (RedProtect.get().hooks.checkBM()) {
-                    BossBarAPI.setMessage(p, wel);
-                } else {
-                    p.sendMessage(wel);
-                }
-            }
+            Compat111.sendBarMsg(wel, "GREEN", p);
         }
         if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
             try {
@@ -1416,11 +1396,7 @@ public class PlayerListener implements Listener {
                 m = m.replace("{leaders}", leaderstring);
                 m = m.replace("{region}", r.getName());
             }
-            if (RedProtect.get().bukkitVersion >= 1110) {
-                SendNotifyMsg(p, m, "GREEN");
-            } else {
-                SendNotifyMsg(p, m, null);
-            }
+            SendNotifyMsg(p, m, "GREEN");
         } else {
             String wel = ChatColor.translateAlternateColorCodes('&',
                     r.getWelcome().replace("{r}", r.getName())

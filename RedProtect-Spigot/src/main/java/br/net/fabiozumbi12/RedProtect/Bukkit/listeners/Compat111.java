@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
@@ -39,6 +40,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 public class Compat111 implements Listener {
+
+    public Compat111() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded Compat111...");
+    }
 
     static void sendBarMsg(String msg, String color, Player p) {
         BossBar bar = Bukkit.createBossBar(msg, BarColor.valueOf(color), BarStyle.SEGMENTED_10);

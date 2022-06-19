@@ -997,7 +997,7 @@ public class CommandHandlers {
                     Class<? extends Entity> entityClass = entityType.getEntityClass();
                     if (!((!Monster.class.isAssignableFrom(Objects.requireNonNull(entityClass)) &&
                             !Player.class.isAssignableFrom(entityClass)) &&
-                            (RedProtect.get().bukkitVersion >= 180 && !ArmorStand.class.isAssignableFrom(entityClass)) &&
+                            !ArmorStand.class.isAssignableFrom(entityClass) &&
                             LivingEntity.class.isAssignableFrom(entityClass))) {
                         return false;
                     }

@@ -61,7 +61,6 @@ import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class FlagGui implements Listener {
 
-    private final boolean allowEnchant;
     private final boolean editable;
     private final int size;
     private final Player player;
@@ -91,8 +90,6 @@ public class FlagGui implements Listener {
             throw new IllegalArgumentException("Parameter size is exceeding size limit (54)");
         }
         this.guiItems = new ItemStack[this.size];
-
-        allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
         for (String flag : RedProtect.get().getConfigManager().getDefFlags()) {
             try {
@@ -131,20 +128,12 @@ public class FlagGui implements Listener {
                             "§0" + flag));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     guiMeta.setLore(lore);
-                    if (allowEnchant) {
-                        if (flagValue.toString().equalsIgnoreCase("true")) {
-                            guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-                        } else {
-                            guiMeta.removeEnchant(Enchantment.DURABILITY);
-                        }
-                        guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    if (flagValue.toString().equalsIgnoreCase("true")) {
+                        guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
                     } else {
-                        if (flagValue.toString().equalsIgnoreCase("true")) {
-                            this.guiItems[i].setAmount(2);
-                        } else {
-                            this.guiItems[i].setAmount(1);
-                        }
+                        guiMeta.removeEnchant(Enchantment.DURABILITY);
                     }
+                    guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     this.guiItems[i].setType(Objects.requireNonNull(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material)));
                     this.guiItems[i].setItemMeta(guiMeta);
                 }
@@ -278,21 +267,12 @@ public class FlagGui implements Listener {
             }
         }
 
-        if (allowEnchant) {
-            if (this.region.getFlagBool(flag)) {
-                itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-            } else {
-                itemMeta.removeEnchant(Enchantment.DURABILITY);
-            }
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (this.region.getFlagBool(flag)) {
+            itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
         } else {
-            if (this.region.getFlagBool(flag)) {
-                Objects.requireNonNull(event.getCurrentItem()).setAmount(2);
-            } else {
-                Objects.requireNonNull(event.getCurrentItem()).setAmount(1);
-            }
+            itemMeta.removeEnchant(Enchantment.DURABILITY);
         }
-
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         String flagString = RedProtect.get().guiLang.getFlagString(this.region.getFlagString(flag));
 
         List<String> lore = new ArrayList<>(Arrays.asList(

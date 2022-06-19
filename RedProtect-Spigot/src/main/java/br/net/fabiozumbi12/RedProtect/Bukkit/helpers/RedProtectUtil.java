@@ -117,15 +117,8 @@ public class RedProtectUtil extends CoreUtil {
     public boolean denyPotion(ItemStack result, World world) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(world.getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
-            String potname = "";
-            if (RedProtect.get().bukkitVersion >= 190) {
-                PotionMeta pot = (PotionMeta) result.getItemMeta();
-                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
-            }
-            if (RedProtect.get().bukkitVersion < 190) {
-                Potion.fromItemStack(result);
-                potname = Potion.fromItemStack(result).getType().name();
-            }
+            PotionMeta pot = (PotionMeta) result.getItemMeta();
+            String potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
             return Pots.contains(potname);
         }
         return false;
@@ -134,15 +127,8 @@ public class RedProtectUtil extends CoreUtil {
     public boolean denyPotion(ItemStack result, Player p) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
-            String potname = "";
-            if (RedProtect.get().bukkitVersion >= 190) {
-                PotionMeta pot = (PotionMeta) result.getItemMeta();
-                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
-            }
-            if (RedProtect.get().bukkitVersion <= 180) {
-                Potion.fromItemStack(result);
-                potname = Potion.fromItemStack(result).getType().name();
-            }
+            PotionMeta pot = (PotionMeta) result.getItemMeta();
+            String potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
             if (Pots.contains(potname)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.denypotion");
                 return true;

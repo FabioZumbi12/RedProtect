@@ -216,11 +216,7 @@ public class EntityListener implements Listener {
             if (e1 instanceof Player) {
                 if (e2 instanceof Player p2 && !e1.equals(e2)) {
                     if (r1 != null) {
-                        Material mp2 = p2.getItemInHand().getType();
-                        if (RedProtect.get().bukkitVersion >= 190) {
-                            p2.getInventory().getItemInMainHand();
-                            mp2 = p2.getInventory().getItemInMainHand().getType();
-                        }
+                        Material mp2 = p2.getInventory().getItemInMainHand().getType();
                         if (mp2.equals(Material.EGG) && r1.canProtectiles(p2)) {
                             e.setCancelled(true);
                             RedProtect.get().getLanguageManager().sendMessage(p2, "playerlistener.region.cantuse");

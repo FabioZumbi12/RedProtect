@@ -177,15 +177,12 @@ public class Compat18 implements Listener {
             return;
         }
 
-        if (RedProtect.get().bukkitVersion <= 180) {
-            return;
-        }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         Material m = p.getItemInHand().getType();
 
-        if (RedProtect.get().bukkitVersion >= 190 && e.getItem() != null) {
+        if (e.getItem() != null) {
             m = e.getItem().getType();
         }
 

@@ -101,13 +101,12 @@ public class HooksManager {
             }
             if (checkWG()) {
                 RedProtect rp = RedProtect.get();
-                if (rp.bukkitVersion >= 1130) {
+                if (rp.bukkitVersion >= 1.19) {
                     worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest").newInstance();
+                    rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
                 } else {
-                    worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper112").newInstance();
+                    rp.logger.warning("This version is only compatible with server version running on 1.19+. WorldGuard not hooked!");
                 }
-
-                rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
             }
             if (checkAB()) {
                 RedProtect.get().logger.info("ActionBarAPI found. Hooked.");

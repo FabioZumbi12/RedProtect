@@ -59,7 +59,6 @@ public class MobFlagGui implements Listener {
     private final String flag;
     private final Player player;
     private final int size;
-    private final boolean allowEnchant;
     private ItemStack[] guiItems = new ItemStack[0];
     private Region region;
     private String name;
@@ -68,8 +67,6 @@ public class MobFlagGui implements Listener {
         this.player = player;
         this.region = region;
         this.flag = flag;
-
-        allowEnchant = RedProtect.get().bukkitVersion >= 181;
 
         if (flag.equalsIgnoreCase("spawn-monsters")) {
             this.name = "Spawn Monsters Gui";
@@ -87,7 +84,7 @@ public class MobFlagGui implements Listener {
                         if (entityClass == null) return false;
                         return (!Monster.class.isAssignableFrom(entityClass) &&
                                 !Player.class.isAssignableFrom(entityClass) &&
-                                (RedProtect.get().bukkitVersion >= 180 && !ArmorStand.class.isAssignableFrom(entityClass)) &&
+                                !ArmorStand.class.isAssignableFrom(entityClass) &&
                                 LivingEntity.class.isAssignableFrom(entityClass));
                     })
                     .sorted(Comparator.comparing(EntityType::name)).collect(toList());
@@ -230,7 +227,7 @@ public class MobFlagGui implements Listener {
 
         ItemStack greenWool = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta greenMeta = greenWool.getItemMeta();
-        if (flagValue.equalsIgnoreCase("true") && allowEnchant) {
+        if (flagValue.equalsIgnoreCase("true")) {
             Objects.requireNonNull(greenMeta).addEnchant(Enchantment.DURABILITY, 0, true);
             greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
@@ -240,7 +237,7 @@ public class MobFlagGui implements Listener {
 
         ItemStack redWool = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta redMeta = redWool.getItemMeta();
-        if (flagValue.equalsIgnoreCase("false") && allowEnchant) {
+        if (flagValue.equalsIgnoreCase("false")) {
             Objects.requireNonNull(redMeta).addEnchant(Enchantment.DURABILITY, 0, true);
             redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }

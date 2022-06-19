@@ -761,7 +761,7 @@ public class GlobalListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && blacklist.contains("PASSIVES")) {
+        if ((!(e instanceof Monster) && !(e instanceof Player)) && !(e instanceof ArmorStand) && blacklist.contains("PASSIVES")) {
             event.setCancelled(true);
             return;
         }
@@ -777,7 +777,7 @@ public class GlobalListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && !wtl.contains("PASSIVES")) {
+            if ((!(e instanceof Monster) && !(e instanceof Player)) && !(e instanceof ArmorStand) && !wtl.contains("PASSIVES")) {
                 event.setCancelled(true);
                 return;
             }

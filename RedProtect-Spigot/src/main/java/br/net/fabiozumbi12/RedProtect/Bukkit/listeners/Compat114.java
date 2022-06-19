@@ -28,12 +28,17 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.listeners;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 
 public class Compat114 implements Listener {
+
+    public Compat114() {
+        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded Compat114...");
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onTakeBookLectern(PlayerTakeLecternBookEvent event) {
