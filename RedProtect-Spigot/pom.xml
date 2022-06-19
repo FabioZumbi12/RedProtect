@@ -28,9 +28,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+        <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>8.0.0</version>
+        <version>8.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>RedProtect-Spigot</artifactId>
 
@@ -94,22 +95,22 @@
     <dependencies>
 
         <dependency>
-            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
-            <version>LATEST</version>
+            <version>8.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
@@ -310,20 +311,20 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Core</include>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot</include>
+                                    <include>io.github.fabiozumbi12.RedProtect:RedProtect-Core</include>
+                                    <include>io.github.fabiozumbi12.RedProtect:RedProtect-Spigot</include>
                                     <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>br.net.fabiozumbi12.UltimateFancy</pattern>
-                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
+                                    <shadedPattern>io.github.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
                                 <filter>
-                                    <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
+                                    <artifact>io.github.fabiozumbi12.RedProtect:*</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>

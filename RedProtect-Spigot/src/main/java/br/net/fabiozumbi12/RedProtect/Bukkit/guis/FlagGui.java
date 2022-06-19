@@ -28,6 +28,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.guis;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -63,9 +64,9 @@ public class FlagGui implements Listener {
     private final boolean editable;
     private final int size;
     private final Player player;
-    private String name;
-    private ItemStack[] guiItems;
-    private Region region;
+    private final String name;
+    private final ItemStack[] guiItems;
+    private final Region region;
     private Inventory inv;
 
     public FlagGui(String name, Player player, Region region, boolean editable, int maxSlots) {
@@ -97,7 +98,7 @@ public class FlagGui implements Listener {
                 if (!RedProtect.get().getConfigManager().guiRoot().gui_flags.containsKey(flag)) {
                     continue;
                 }
-                if (RedProtect.get().getPermissionHandler().hasFlagPerm(player, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm(player, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || CoreConfigManager.ADMIN_FLAGS.contains(flag))) {
                     if (flag.equals("pvp") && !RedProtect.get().getConfigManager().configRoot().flags.containsKey("pvp")) {
                         continue;
                     }

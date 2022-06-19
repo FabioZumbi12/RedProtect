@@ -86,7 +86,7 @@ public class MobFlagGui implements Listener {
             this.name = "Spawn Animals Gui";
             List<EntityType> entities = Arrays.stream(EntityType.values())
                     .filter(ent -> {
-                        Class entityClass = ent.getEntityClass();
+                        Class<? extends Entity> entityClass = ent.getEntityClass();
                         if (entityClass == null) return false;
                         return (!Monster.class.isAssignableFrom(entityClass) &&
                                 !Player.class.isAssignableFrom(entityClass) &&
@@ -132,7 +132,7 @@ public class MobFlagGui implements Listener {
 
         String value = this.region.getFlagString(flag);
         if (str.length() > 0) {
-            value = str.toString().substring(0, str.toString().length() - 1);
+            value = str.substring(0, str.toString().length() - 1);
         }
 
         setFlagValue(value);
