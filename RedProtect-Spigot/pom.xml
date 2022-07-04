@@ -286,7 +286,6 @@
             <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
@@ -316,12 +315,6 @@
                                     <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
                                 </includes>
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>br.net.fabiozumbi12.UltimateFancy</pattern>
-                                    <shadedPattern>io.github.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>io.github.fabiozumbi12.RedProtect:*</artifact>
@@ -330,7 +323,7 @@
                                     </includes>
                                 </filter>
                                 <filter>
-                                    <artifact>br.net.fabiozumbi12.UltimateChat:UltimateFancy</artifact>
+                                    <artifact>br.net.fabiozumbi12.UltimateFancy:UltimateFancy</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>
