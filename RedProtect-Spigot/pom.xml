@@ -148,7 +148,7 @@
             <artifactId>dynmap-3</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Dynmap-3.2-beta-2-spigot.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Dynmap-3.5-beta-1-spigot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>GriefPrevention</groupId>
