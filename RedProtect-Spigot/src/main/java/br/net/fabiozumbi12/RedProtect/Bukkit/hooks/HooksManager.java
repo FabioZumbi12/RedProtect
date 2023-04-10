@@ -39,6 +39,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.dynmap.DynmapAPI;
 
+import java.util.Objects;
+
 public class HooksManager {
     public ClanManager clanManager;
     public Essentials pless;
@@ -158,7 +160,7 @@ public class HooksManager {
             if (checkDyn() && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
                 RedProtect.get().logger.info("Dynmap found. Hooked.");
                 RedProtect.get().logger.info("Loading dynmap markers...");
-                dynmapHook = new DynmapHook((DynmapAPI) Bukkit.getPluginManager().getPlugin("dynmap"));
+                dynmapHook = new DynmapHook((DynmapAPI) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("dynmap")));
                 RedProtect.get().getServer().getPluginManager().registerEvents(dynmapHook, RedProtect.get());
                 RedProtect.get().logger.info("Dynmap markers loaded!");
             }

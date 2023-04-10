@@ -37,6 +37,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -67,7 +68,7 @@ public class LAcceptCommand implements SubCommand {
                     }
 
                     r.addLeader(VictimUUID);
-                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + lsender.getName());
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youadded").replace("{region}", r.getName()) + " " + Objects.requireNonNull(lsender).getName());
                     if (lsender.isOnline()) {
                         RedProtect.get().getLanguageManager().sendMessage(lsender, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.accepted").replace("{region}", r.getName()).replace("{player}", player.getName()));
                     }

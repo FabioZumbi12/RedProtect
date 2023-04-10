@@ -31,11 +31,13 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import java.util.Objects;
+
 public class RedProtectHook {
 
     public Region getRegion(String regionName, String world) {
         if (Bukkit.getWorld(world) != null) {
-            return RedProtect.get().getAPI().getRegion(regionName, Bukkit.getWorld(world));
+            return RedProtect.get().getAPI().getRegion(regionName, Objects.requireNonNull(Bukkit.getWorld(world)));
         }
         return null;
     }

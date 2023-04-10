@@ -40,6 +40,7 @@ import org.dynmap.markers.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class DynmapHook implements Listener {
@@ -174,7 +175,7 @@ public class DynmapHook implements Listener {
             RedProtect.get().logger.severe("The 'date-format' don't match with region date!!");
             e.printStackTrace();
         }
-        long days = TimeUnit.DAYS.convert(now.getTime() - regionDate.getTime(), TimeUnit.MILLISECONDS);
+        long days = TimeUnit.DAYS.convert(Objects.requireNonNull(now).getTime() - Objects.requireNonNull(regionDate).getTime(), TimeUnit.MILLISECONDS);
         if (days > RedProtect.get().getConfigManager().configRoot().purge.remove_oldest && !r.isLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
             fillColor = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marker.get(type).outdated_fill_color.replace("#", "0x");
         }

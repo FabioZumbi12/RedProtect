@@ -75,7 +75,7 @@ public class MyPetHook implements Listener {
                 if (damager instanceof MyPetBukkitEntity mp2) {
                     Player p2 = mp2.getOwner().getPlayer();
                     LivingEntity liv = (LivingEntity) e1;
-                    if (!r1.canBuild(p2) || !r1.canInteractPassives(p2)) {
+                    if (!r1.canBuild(p2) || r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         mp2.getMyPet().removePet();
                         for (PotionEffect ef : liv.getActivePotionEffects()) {
@@ -94,7 +94,7 @@ public class MyPetHook implements Listener {
                 }
                 if (damager instanceof MyPetBukkitEntity mp2) {
                     Player p2 = mp2.getOwner().getPlayer();
-                    if (!r1.canPVP((Player) e1, p2)) {
+                    if (r1.canPVP((Player) e1, p2)) {
                         e.setCancelled(true);
                         mp2.getMyPet().removePet();
                         for (PotionEffect ef : p2.getActivePotionEffects()) {

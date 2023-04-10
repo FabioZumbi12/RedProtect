@@ -50,6 +50,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Compat19 implements Listener {
 
@@ -68,7 +69,7 @@ public class Compat19 implements Listener {
                     event.setCancelled(true);
                     RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantglide");
                 }
-            } else if (!r.canFly(p) && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
+            } else if (r.canFly(p) && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.flag.admin.allow-fly")) {
                 event.setCancelled(true);
             }
         }
@@ -120,7 +121,7 @@ public class Compat19 implements Listener {
             Material hand = itemInHand.getType();
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
             // Deny chorus teleport
-            if (r != null && hand.equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
+            if (r != null && hand.equals(Material.CHORUS_FRUIT) && r.canTeleport(p)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                 event.setCancelled(true);
                 event.setUseItemInHand(Event.Result.DENY);
@@ -160,13 +161,13 @@ public class Compat19 implements Listener {
 
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
             final Region rfrom = RedProtect.get().getRegionManager().getTopRegion(lfrom);
-            final Region rto = RedProtect.get().getRegionManager().getTopRegion(lto);
+            final Region rto = RedProtect.get().getRegionManager().getTopRegion(Objects.requireNonNull(lto));
 
-            if (rfrom != null && !rfrom.canTeleport(p)) {
+            if (rfrom != null && rfrom.canTeleport(p)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
-            if (rto != null && !rto.canTeleport(p)) {
+            if (rto != null && rto.canTeleport(p)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                 e.setCancelled(true);
             }
@@ -174,7 +175,7 @@ public class Compat19 implements Listener {
 
         if (p.getInventory().getChestplate() != null &&
                 p.getInventory().getChestplate().getType().equals(Material.ELYTRA) &&
-                !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(lto.getWorld().getName()).player_glide.allow_elytra) {
+                !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(Objects.requireNonNull(lto.getWorld()).getName()).player_glide.allow_elytra) {
             RedProtect.get().getLanguageManager().sendMessage(p, "globallistener.elytra.cantworld");
             e.setCancelled(true);
         }
@@ -208,7 +209,7 @@ public class Compat19 implements Listener {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is LingeringPotionSplashEvent event.");
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(ent.getLocation());
-        if (r != null && !r.canGetEffects(p)) {
+        if (r != null && r.canGetEffects(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
             return;
@@ -222,18 +223,13 @@ public class Compat19 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent e) {
-        if (e.getItem() == null) {
-            return;
-        }
+        e.getItem();
 
         Player p = e.getPlayer();
         //deny potion
-        if (p == null) {
-            return;
-        }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-        if (r != null && e.getItem().getType().equals(Material.CHORUS_FRUIT) && !r.canTeleport(p)) {
+        if (r != null && e.getItem().getType().equals(Material.CHORUS_FRUIT) && r.canTeleport(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
             e.setCancelled(true);
         }

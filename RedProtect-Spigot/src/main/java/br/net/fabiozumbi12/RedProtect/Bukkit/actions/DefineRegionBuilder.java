@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
 public class DefineRegionBuilder extends RegionBuilder {
 
     public DefineRegionBuilder(Player p, Location loc1, Location loc2, String regionName, PlayerRegion leader, Set<PlayerRegion> leaders, boolean admin) {
-        if (!RedProtect.get().getConfigManager().isAllowedWorld(p)) {
+        if (RedProtect.get().getConfigManager().isAllowedWorld(p)) {
             setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.region.worldnotallowed"));
             return;
         }

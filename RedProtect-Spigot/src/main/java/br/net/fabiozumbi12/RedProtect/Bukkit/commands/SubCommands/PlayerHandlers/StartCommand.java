@@ -50,7 +50,7 @@ public class StartCommand implements SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            if (!RedProtect.get().getConfigManager().isAllowedWorld(player)) {
+            if (RedProtect.get().getConfigManager().isAllowedWorld(player)) {
                 RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.region.worldnotallowed");
                 return true;
             }

@@ -51,7 +51,7 @@ epic_store
 ```
 
 _The previous would make a sign that would rent region 'epic_store' for '200' of your economy currency for 7 days. Once
-rented properties expire, the region is automatically put back up for rent. If the renter has auto-renew turned on, the
+rented properties expire, the region is automatically put back up for rent. If the renter has auto-renewed turned on, the
 property will be renewed to them if they have the available money. See notes for information about sign replacement._
 
 **Buy a Region**
@@ -160,7 +160,7 @@ Days: d, day, days
   recommend going less than 0.5 for that setting. With a lot of rented regions it could be a taxing operation. Best left
   to 5+ minutes for average servers that rent things for days, and not minutes or seconds.
 * I didn't bother making the signs indestructible as the idea is to place it inside the already defined protected
-  region... which would typically make it unbreakable anyways. Furthermore, for performance reasons I'm trying very hard
+  region... which would typically make it unbreakable anyway. Furthermore, for performance reasons I'm trying very hard
   to avoid hooking the block break event.
 
 ### License/About Dev:

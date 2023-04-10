@@ -70,7 +70,7 @@ public class CreatePortalCommand implements SubCommand {
             }
 
             PlayerRegion serverName = new PlayerRegion(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader, RedProtect.get().getConfigManager().configRoot().region_settings.default_leader);
-            String name = Normalizer.normalize(args[0].replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}0-9 ]", "");
+            String name = Normalizer.normalize(args[0].replace(" ", "_"), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\p{L}\\d ]", "");
 
             final Region[] r2 = {RedProtect.get().getRegionManager().getRegion(name, w.getName())};
             if (r == r2[0]) {
@@ -121,9 +121,9 @@ public class CreatePortalCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 3) {
             if (args[2].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[2])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[2])).toList());
         }
         return tab;
     }

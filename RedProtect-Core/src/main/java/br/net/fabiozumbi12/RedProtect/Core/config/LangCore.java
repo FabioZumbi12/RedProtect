@@ -62,7 +62,7 @@ public class LangCore {
         baseLang.clear();
         try {
             InputStream fileInput = LangCore.class.getResourceAsStream("/assets/redprotect/langEN-US.properties");
-            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(Objects.requireNonNull(fileInput), StandardCharsets.UTF_8);
             baseLang.load(reader);
         } catch (Exception e) {
             CoreUtil.printJarVersion();

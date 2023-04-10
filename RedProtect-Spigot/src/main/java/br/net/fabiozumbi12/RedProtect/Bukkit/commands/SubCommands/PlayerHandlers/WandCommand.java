@@ -38,6 +38,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -56,7 +57,7 @@ public class WandCommand implements SubCommand {
         if (args.length == 0) {
             Inventory inv = player.getInventory();
             Material mat = Material.getMaterial(RedProtect.get().getConfigManager().configRoot().wands.adminWandID);
-            ItemStack item = new ItemStack(mat);
+            ItemStack item = new ItemStack(Objects.requireNonNull(mat));
             if (!inv.contains(mat) && inv.firstEmpty() != -1) {
                 inv.addItem(item);
                 RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.wand.given").replace("{item}", item.getType().name()));

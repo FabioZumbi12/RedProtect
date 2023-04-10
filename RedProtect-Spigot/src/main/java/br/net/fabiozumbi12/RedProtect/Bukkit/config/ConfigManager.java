@@ -448,7 +448,8 @@ public class ConfigManager extends CoreConfigManager {
                 globalFlagsRoot.worlds.put(w.getName(), new GlobalFlagsCategory.WorldProperties());
             }
             //add worlds to color list
-            if (!root.region_settings.world_colors.containsKey(w.getName()) && w.getEnvironment() != null) {
+            if (!root.region_settings.world_colors.containsKey(w.getName())) {
+                w.getEnvironment();
                 switch (w.getEnvironment()) {
                     case NORMAL:
                         root.region_settings.world_colors.put(w.getName(), "&a&l");
@@ -476,21 +477,21 @@ public class ConfigManager extends CoreConfigManager {
     public ItemStack getGuiSeparator() {
         ItemStack separator;
         try {
-            separator = new ItemStack(Material.getMaterial(guiRoot.gui_separator.material), 1, (short) guiRoot.gui_separator.data);
+            separator = new ItemStack(Objects.requireNonNull(Material.getMaterial(guiRoot.gui_separator.material)), 1, (short) guiRoot.gui_separator.data);
         } catch (Exception ignored) {
             Optional<Material> optMat = Arrays.stream(Material.values()).filter(m -> m.name().contains("PANE") && !m.isBlock()).findFirst();
             separator = optMat.map(material -> new ItemStack(material, 1, (short) guiRoot.gui_separator.data)).orElseGet(() -> new ItemStack(Material.GLASS, 1, (short) guiRoot.gui_separator.data));
         }
 
         ItemMeta meta = separator.getItemMeta();
-        meta.setDisplayName(RedProtect.get().guiLang.getFlagString("separator"));
+        Objects.requireNonNull(meta).setDisplayName(RedProtect.get().guiLang.getFlagString("separator"));
         meta.setLore(Arrays.asList("", RedProtect.get().guiLang.getFlagString("separator")));
         separator.setItemMeta(meta);
         return separator;
     }
 
     public boolean isAllowedWorld(Player p) {
-        return root.allowed_claim_worlds.contains(p.getWorld().getName()) || p.hasPermission("redprotect.allowed-claim-world." + p.getWorld().getName()) || p.hasPermission("redprotect.bypass.world");
+        return !root.allowed_claim_worlds.contains(p.getWorld().getName()) && !p.hasPermission("redprotect.allowed-claim-world." + p.getWorld().getName()) && !p.hasPermission("redprotect.bypass.world");
     }
 
     public boolean needClaimToBuild(Player p, Block b) {
@@ -551,7 +552,7 @@ public class ConfigManager extends CoreConfigManager {
     public void putSign(String rid, Location loc) {
         try {
             List<String> lsigns = new ArrayList<>(signCfgs.getNode(rid).getList(of(String.class)));
-            String locs = loc.getWorld().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
+            String locs = Objects.requireNonNull(loc.getWorld()).getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
             if (!lsigns.contains(locs)) {
                 lsigns.add(locs);
                 saveSigns(rid, lsigns);
@@ -565,7 +566,7 @@ public class ConfigManager extends CoreConfigManager {
     public void removeSign(String rid, Location loc) {
         try {
             List<String> lsigns = new ArrayList<>(signCfgs.getNode(rid).getList(of(String.class)));
-            String locs = loc.getWorld().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
+            String locs = Objects.requireNonNull(loc.getWorld()).getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();
             if (lsigns.contains(locs)) {
                 lsigns.remove(locs);
                 saveSigns(rid, lsigns);

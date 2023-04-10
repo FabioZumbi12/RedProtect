@@ -118,9 +118,9 @@ public class SetMinYCommand implements SubCommand {
             tab.add(sender instanceof Player ? String.valueOf(((Player) sender).getLocation().getBlockY()) : "0");
         if (args.length == 3)
             if (args[2].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[1])).toList());
         return tab;
     }
 }

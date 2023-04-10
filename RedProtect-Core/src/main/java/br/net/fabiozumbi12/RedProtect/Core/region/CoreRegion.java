@@ -67,7 +67,7 @@ public class CoreRegion implements Serializable {
      * @param wMessage   Welcome message.
      * @param prior      Priority of region.
      * @param worldName  Name of world for this region.
-     * @param date       Date of latest visit of an admin or leader.
+     * @param date       Date of the latest visit of an admin or leader.
      * @param value      Last value of this region.
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
@@ -112,7 +112,7 @@ public class CoreRegion implements Serializable {
      * @param wMessage   Welcome message.
      * @param prior      Priority of region.
      * @param worldName  Name of world for this region.
-     * @param date       Date of latest visit of an admin or leader.
+     * @param date       Date of the latest visit of an admin or leader.
      * @param value      Last value of this region.
      * @param tppoint    Teleport Point
      * @param tppointYaw Teleport Pitch and Yam
@@ -155,7 +155,7 @@ public class CoreRegion implements Serializable {
      * @param maxy       Max coord y of this region.
      * @param prior      Location of x coords.
      * @param worldName  Name of world region.
-     * @param date       Date of latest visit of an admins or leader.
+     * @param date       Date of the latest visit of an admins or leader.
      * @param welcome    Set a welcome message.
      * @param value      A value in server economy.
      * @param tppoint    Teleport Point
@@ -261,7 +261,7 @@ public class CoreRegion implements Serializable {
     }
 
     public boolean toSave() {
-        return this.tosave;
+        return !this.tosave;
     }
 
     public void setToSave(boolean save) {
@@ -445,10 +445,10 @@ public class CoreRegion implements Serializable {
     public boolean sameLeaders(CoreRegion r) {
         for (PlayerRegion l : this.leaders) {
             if (r.leaders.contains(l)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public String getLeadersString() {

@@ -76,7 +76,7 @@ public class SpigetUpdater {
         }
     }
 
-    public boolean downloadAndUpdateJar(CommandSender sender) {
+    public void downloadAndUpdateJar(CommandSender sender) {
         final String OS = System.getProperty("os.name");
         boolean success = spigetUpdate.downloadUpdate();
 
@@ -127,7 +127,6 @@ public class SpigetUpdater {
                 }
             }
         }.runTaskTimer(plugin, 20L, 20L);
-        return true;
     }
 
     public void checkForUpdate(final CommandSender sender, final boolean silent) {
@@ -195,10 +194,7 @@ public class SpigetUpdater {
                 return UpdateStatus.UNKNOWN;
             }
         }
-        if (updateCheck == pluginCheck)
-            return UpdateStatus.AVAILABLE;
-        else
-            return UpdateStatus.NOT_AVAILABLE;
+        return UpdateStatus.AVAILABLE;
     }
 
     public enum UpdateStatus {
