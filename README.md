@@ -16,7 +16,7 @@ Sponge(legacy): https://ore.spongepowered.org/FabioZumbi12/RedProtect
 
 ## RedProtect Add-ons:
 
-These add-ons extends RedProtect flags, functions and more.
+This add-ons extends RedProtect flags, functions and more.
 
 ### Killer Projectiles:
 

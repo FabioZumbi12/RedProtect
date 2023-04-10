@@ -44,7 +44,6 @@ public class Compat111 implements Listener {
     public Compat111() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded Compat111...");
     }
-
     static void sendBarMsg(String msg, String color, Player p) {
         BossBar bar = Bukkit.createBossBar(msg, BarColor.valueOf(color), BarStyle.SEGMENTED_10);
         bar.addPlayer(p);

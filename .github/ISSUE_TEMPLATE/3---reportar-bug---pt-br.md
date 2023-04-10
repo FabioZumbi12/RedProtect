@@ -32,10 +32,9 @@ Uma descrição clara e concisa do que você esperava que acontecesse.
 Se aplicável, adicione capturas de tela para ajudar a explicar seu problema. Envie seus registros
 para https://gist.github.com/
 
-**Versões de servidor e plug-ins (preencha as seguintes informações):**
-- Servidor: [por exemplo Sponge 1.12.2, Spigot 1.13.2]
-- Versão do plug-in: [por exemplo RedProtect-7.5.6-b151-Universal.jar]
-- Versão do Java: [por exemplo Java 1.8]
+**Versões de servidor e plug-ins (preencha as seguintes informações):**-
+Servidor: [por exemplo Sponge 1.12.2, Spigot 1.13.2]- Versão do
+plug-in: [por exemplo RedProtect-7.5.6-b151-Universal.jar]- Versão do Java: [por exemplo Java 1.8]
 
 **Contexto adicional**
 Adicione qualquer outro contexto sobre o problema aqui.

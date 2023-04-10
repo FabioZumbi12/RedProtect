@@ -36,8 +36,8 @@ public class ChangeRegionFlagEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Region region;
     private final String flag;
-    private Object value;
     private final CommandSender cause;
+    private Object value;
     private boolean isCancelled = false;
 
     public ChangeRegionFlagEvent(CommandSender cause, Region region, String flag, Object value) {

@@ -146,9 +146,9 @@ public class RedProtect extends JavaPlugin {
             this.redProtectAPI = new RedProtectAPI();
             logger.info("API Loaded!");
 
-            logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  __");
-            logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |    /");
-            logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |   /");
+            logger.clear("&4 _   _  _  &c _   _   _  _ _  _  _ _ _  _");
+            logger.clear("&4|_| |_ | \\ &c|_| |_| | |  |  |_ |   |  |_|");
+            logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |  |_|");
             logger.clear("&a» " + getDescription().getFullName() + " enabled");
             logger.clear("");
 

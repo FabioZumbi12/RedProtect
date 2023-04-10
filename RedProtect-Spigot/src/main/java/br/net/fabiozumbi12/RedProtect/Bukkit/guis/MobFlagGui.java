@@ -49,7 +49,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
@@ -117,10 +120,10 @@ public class MobFlagGui implements Listener {
 
         StringBuilder str = new StringBuilder();
         Arrays.stream(event.getInventory().getContents())
-                .filter(item -> item != null && !item.getType().equals(Material.AIR) && Objects.requireNonNull(item.getItemMeta()).hasLore())
+                .filter(item -> item != null && !item.getType().equals(Material.AIR) && item.getItemMeta().hasLore())
                 .map(item -> item.getItemMeta().getLore())
                 .forEach(lore -> {
-                    if (Objects.requireNonNull(lore).get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true"))))
+                    if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true"))))
                         str.append(lore.get(1).replace("§0", "")).append(",");
                 });
 
@@ -156,8 +159,8 @@ public class MobFlagGui implements Listener {
                 ItemStack item = event.getCurrentItem();
                 if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
                     ItemMeta itemMeta = item.getItemMeta();
-                    List<String> lore = Objects.requireNonNull(itemMeta).getLore();
-                    if (Objects.requireNonNull(lore).get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
+                    List<String> lore = itemMeta.getLore();
+                    if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
                         lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("false")));
                         item.setAmount(1);
                     } else {
@@ -228,20 +231,20 @@ public class MobFlagGui implements Listener {
         ItemStack greenWool = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta greenMeta = greenWool.getItemMeta();
         if (flagValue.equalsIgnoreCase("true")) {
-            Objects.requireNonNull(greenMeta).addEnchant(Enchantment.DURABILITY, 0, true);
+            greenMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        Objects.requireNonNull(greenMeta).setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectall")));
+        greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectall")));
         greenWool.setItemMeta(greenMeta);
         items.add(greenWool);
 
         ItemStack redWool = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta redMeta = redWool.getItemMeta();
         if (flagValue.equalsIgnoreCase("false")) {
-            Objects.requireNonNull(redMeta).addEnchant(Enchantment.DURABILITY, 0, true);
+            redMeta.addEnchant(Enchantment.DURABILITY, 0, true);
             redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
-        Objects.requireNonNull(redMeta).setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectnone")));
+        redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectnone")));
         redWool.setItemMeta(redMeta);
         items.add(redWool);
 
@@ -265,7 +268,7 @@ public class MobFlagGui implements Listener {
             if (RedProtect.get().hooks.transAPI != null) {
                 display = translateAlternateColorCodes('&', "&6" + RedProtect.get().hooks.transAPI.getApi().translateEntity(ent, "en-us", true));
             }
-            Objects.requireNonNull(itemMeta).setDisplayName(display);
+            itemMeta.setDisplayName(display);
 
             List<String> lore = new ArrayList<>(Arrays.asList(
                     translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + valueStr),

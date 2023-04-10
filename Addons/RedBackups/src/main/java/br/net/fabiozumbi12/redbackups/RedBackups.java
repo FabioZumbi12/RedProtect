@@ -275,9 +275,6 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
                         // Create child directories
                         fileToCopy.getParentFile().mkdirs();
 
-                        /*Bukkit.getLogger().info("from: " + fileFromCopy.toPath());
-                        Bukkit.getLogger().info("to: " + fileToCopy.toPath());*/
-
                         Files.copy(fileFromCopy.toPath(), fileToCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         e.printStackTrace();

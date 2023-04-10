@@ -800,9 +800,6 @@ public class RedProtectUtil extends CoreUtil {
     public void startFlagChanger(final String r, final String flag, final Player p) {
         RedProtect.get().changeWait.add(r + flag);
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            /*if (p != null && p.isOnline()){
-                    RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("gui.needwait.ready").replace("{flag}", flag));
-                }*/
             RedProtect.get().changeWait.remove(r + flag);
         }, RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20L);
     }

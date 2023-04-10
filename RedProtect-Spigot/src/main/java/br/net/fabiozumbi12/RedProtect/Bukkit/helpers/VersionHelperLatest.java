@@ -144,13 +144,14 @@ public class VersionHelperLatest implements VersionHelper {
     }
 
     @Override
-    public void spawnParticle(World world, String particle, double x, double y, double z) {
+    public boolean spawnParticle(World world, String particle, double x, double y, double z) {
         Optional<Particle> optional = Arrays.stream(Particle.values())
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();
         if (optional.isPresent()) {
             world.spawnParticle(optional.get(), x, y, z, 1, 0, 0, 0, 0);
-        }
+            return true;
+        } else return false;
     }
 }
 

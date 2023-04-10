@@ -60,5 +60,5 @@ public interface VersionHelper extends Listener {
 
     boolean existParticle(String particle);
 
-    void spawnParticle(World world, String particle, double x, double y, double z);
+    boolean spawnParticle(World world, String particle, double x, double y, double z);
 }

@@ -86,16 +86,6 @@ public class CoreUtil {
         }
     }
 
-    /* public String setName(String name) {
-        if (name == null || name.isEmpty()) return name;
-
-        name = Normalizer.normalize(name.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .replaceAll("[ -]", "_")
-                .replaceAll("[^\\p{L}_0-9]", "");
-        return name;
-    } */
-
     protected File genFileName(String Path, Boolean isBackup, int maxbackups, String dateFormat) {
         int count = 1;
         String date = dateFormat.replace("/", "-");

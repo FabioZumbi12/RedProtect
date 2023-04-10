@@ -69,7 +69,7 @@ public class BlockListener implements Listener {
     public void onBlockFade(BlockFadeEvent e) {
         Region r = RedProtect.get().getRegionManager().getTopRegion(e.getBlock().getLocation());
         Material type = e.getBlock().getType();
-        if (r != null && r.blockTransform() && (
+        if (r != null && !r.blockTransform() && (
                 type.name().contains("SNOW") ||
                         type.name().contains("ICE") ||
                         type.name().contains("FIRE") ||
@@ -93,12 +93,12 @@ public class BlockListener implements Listener {
 
         Block b = e.getBlock();
         Player p = e.getPlayer();
-        if (RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
 
         Region signr = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-        if (signr != null && signr.canSign(p)) {
+        if (signr != null && !signr.canSign(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
             e.setCancelled(true);
             return;
@@ -233,7 +233,7 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPlaceEvent event!");
 
         Player p = e.getPlayer();
-        if (RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
 
@@ -250,7 +250,7 @@ public class BlockListener implements Listener {
             int y = b.getY();
             int z = b.getZ();
             Block ib = w.getBlockAt(x, y + 1, z);
-            if (cont.canBreak(p, ib) || cont.canBreak(p, b)) {
+            if (!cont.canBreak(p, ib) || !cont.canBreak(p, b)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.chestinside");
                 e.setCancelled(true);
                 return;
@@ -263,7 +263,7 @@ public class BlockListener implements Listener {
 
         if (r != null) {
 
-            if (r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))) {
+            if (!r.canMinecart(p) && (m.name().contains("MINECART") || m.name().contains("BOAT"))) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantplace");
                 e.setCancelled(true);
                 return;
@@ -281,7 +281,7 @@ public class BlockListener implements Listener {
             }
 
             Material type = b.getType();
-            if (r.blockTransform() && type.isBlock() && (
+            if (!r.blockTransform() && type.isBlock() && (
                     type.name().contains("SNOW") ||
                             type.name().contains("ICE") ||
                             type.name().contains("CORAL") ||
@@ -289,7 +289,7 @@ public class BlockListener implements Listener {
                 b.setType(m);
             }
 
-            if (!r.canBuild(p) && r.canPlace(b.getType())) {
+            if (!r.canBuild(p) && !r.canPlace(b.getType())) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
             }
@@ -327,7 +327,7 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockBreakEvent event!");
 
         Player p = e.getPlayer();
-        if (RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
 
@@ -338,7 +338,7 @@ public class BlockListener implements Listener {
 
         if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass")) {
             Block ib = b.getRelative(BlockFace.UP);
-            if ((antih && cont.canBreak(p, ib)) || cont.canBreak(p, b)) {
+            if ((antih && !cont.canBreak(p, ib)) || !cont.canBreak(p, b)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.breakinside");
                 e.setCancelled(true);
                 return;
@@ -361,7 +361,7 @@ public class BlockListener implements Listener {
             }
         }
 
-        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b, true) && r.canBreak(b.getType())) {
+        if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b, true) && !r.canBreak(b.getType())) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
             e.setCancelled(true);
         }
@@ -373,14 +373,14 @@ public class BlockListener implements Listener {
         if (e.getClickedBlock() == null) return;
 
         Player p = e.getPlayer();
-        if (RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
 
         Location l = e.getClickedBlock().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-        Block b = p.getLocation().getBlock();
 
+        Block b = p.getLocation().getBlock();
         if (r != null && (RedProtect.get().getUtil().checkCrops(b, false)
                 || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
@@ -404,7 +404,7 @@ public class BlockListener implements Listener {
         if (event.getEntity() instanceof Player) return;
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(event.getEntity().getLocation());
-        if (r != null && r.canMobLoot() && RedProtect.get().getUtil().checkCrops(event.getBlock(), false)) {
+        if (r != null && !r.canMobLoot() && RedProtect.get().getUtil().checkCrops(event.getBlock(), false)) {
             event.setCancelled(true);
         }
     }
@@ -422,7 +422,7 @@ public class BlockListener implements Listener {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "Blocks: " + b.getType().name());
             Location l = b.getLocation();
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r != null && r.canFire() || cont.canWorldBreak(b)) {
+            if (r != null && !r.canFire() || !cont.canWorldBreak(b)) {
                 RedProtect.get().logger.debug(LogLevel.BLOCKS, "canWorldBreak Called!");
                 //e.setCancelled(true);
                 toRemove.add(b);
@@ -438,7 +438,7 @@ public class BlockListener implements Listener {
                 continue;
             }
 
-            if (e.getEntity() instanceof LivingEntity && r.canMobLoot()) {
+            if (e.getEntity() instanceof LivingEntity && !r.canMobLoot()) {
                 toRemove.add(b);
             }
         }
@@ -461,7 +461,7 @@ public class BlockListener implements Listener {
                 if (remover instanceof Projectile && ((Projectile) remover).getShooter() instanceof Player player) {
                     if (!r.canBuild(player))
                         e.setCancelled(true);
-                } else if (r.canMobLoot())
+                } else if (!r.canMobLoot())
                     e.setCancelled(true);
             }
         }
@@ -487,7 +487,7 @@ public class BlockListener implements Listener {
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         if (r != null) {
-            if (e.getCause().toString().equals("EXPLOSION") && r.canFire()) {
+            if (e.getCause().toString().equals("EXPLOSION") && !r.canFire()) {
                 e.setCancelled(true);
             } else if (e.getCause().toString().equals("PHYSICS")) {
                 e.setCancelled(true);
@@ -506,7 +506,7 @@ public class BlockListener implements Listener {
         }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-        if (r != null && r.canFire()) {
+        if (r != null && !r.canFire()) {
             if (e.getIgnitingEntity() != null) {
                 if (e.getIgnitingEntity() instanceof Player p) {
                     if (!r.canBuild(p)) {
@@ -537,12 +537,12 @@ public class BlockListener implements Listener {
         Block b = e.getBlock();
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-        if (r != null && r.canFire()) {
+        if (r != null && !r.canFire()) {
             e.setCancelled(true);
             return;
         }
 
-        if (cont.canWorldBreak(b)) {
+        if (!cont.canWorldBreak(b)) {
             e.setCancelled(true);
         }
     }
@@ -557,21 +557,21 @@ public class BlockListener implements Listener {
         Region rto = RedProtect.get().getRegionManager().getTopRegion(bto.getLocation());
         Region rfrom = RedProtect.get().getRegionManager().getTopRegion(bfrom.getLocation());
         boolean isLiquid = bfrom.isLiquid() || bfrom.getType().name().contains("BUBBLE_COLUMN") || bfrom.getType().name().contains("KELP");
-        if (rto != null && isLiquid && rto.canFlow()) {
+        if (rto != null && isLiquid && !rto.canFlow()) {
             e.setCancelled(true);
             return;
         }
-        if (rfrom != null && isLiquid && rfrom.canFlow()) {
+        if (rfrom != null && isLiquid && !rfrom.canFlow()) {
             e.setCancelled(true);
             return;
         }
-        if (rto != null && !bto.isEmpty() && rto.canFlowDamage()) {
+        if (rto != null && !bto.isEmpty() && !rto.canFlowDamage()) {
             e.setCancelled(true);
             return;
         }
 
         //deny blocks spread in/out regions
-        if (rfrom != null && rto != null && rfrom != rto && rfrom.sameLeaders(rto)) {
+        if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)) {
             e.setCancelled(true);
             return;
         }
@@ -585,7 +585,7 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is LightningStrikeEvent event");
         Location l = e.getLightning().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-        if (r != null && r.canFire()) {
+        if (r != null && !r.canFire()) {
             e.setCancelled(true);
         }
     }
@@ -599,7 +599,7 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "Is BlockSpreadEvent event, source is " + bfrom.getType().name());
         Region rfrom = RedProtect.get().getRegionManager().getTopRegion(bfrom.getLocation());
         Region rto = RedProtect.get().getRegionManager().getTopRegion(bto.getLocation());
-        if ((e.getNewState().getType().equals(Material.FIRE) || e.getNewState().getType().name().contains("LAVA")) && rfrom != null && rfrom.canFire()) {
+        if ((e.getNewState().getType().equals(Material.FIRE) || e.getNewState().getType().name().contains("LAVA")) && rfrom != null && !rfrom.canFire()) {
             e.setCancelled(true);
             return;
         }
@@ -612,13 +612,13 @@ public class BlockListener implements Listener {
                 e.getNewState().getType().name().contains("WEEPING_VINES") ||
                 e.getNewState().getType().name().contains("TWISTING_VINES") ||
                 e.getNewState().getType().name().contains("SUGAR_CANE"))
-                && ((rfrom != null && rfrom.canGrow()) || (rto != null && rto.canGrow()))) {
+                && ((rfrom != null && !rfrom.canGrow()) || (rto != null && !rto.canGrow()))) {
             e.setCancelled(true);
             return;
         }
 
         //deny blocks spread in/out regions
-        if (rfrom != null && rto != null && rfrom != rto && rfrom.sameLeaders(rto)) {
+        if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)) {
             e.setCancelled(true);
             return;
         }
@@ -642,7 +642,7 @@ public class BlockListener implements Listener {
             Region rto = RedProtect.get().getRegionManager().getTopRegion(bstt.getLocation());
             Block bloc = bstt.getLocation().getBlock();
             //deny blocks spread in/out regions
-            if (rfrom != null && rto != null && rfrom != rto && rfrom.sameLeaders(rto)) {
+            if (rfrom != null && rto != null && rfrom != rto && !rfrom.sameLeaders(rto)) {
                 bstt.setType(bloc.getType());
             }
             if (rfrom == null && rto != null) {
@@ -663,13 +663,13 @@ public class BlockListener implements Listener {
             return;
         }
         Vehicle cart = e.getVehicle();
-        if (RedProtect.get().getUtil().isRealPlayer(p)) {
+        if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(cart.getLocation());
 
-        if (r != null && r.canMinecart(p)) {
+        if (r != null && !r.canMinecart(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
             e.setCancelled(true);
         }
@@ -691,7 +691,7 @@ public class BlockListener implements Listener {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonExtendEvent event - Block: " + b.getType().name());
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonExtendEvent event - Relative: " + b.getRelative(e.getDirection()).getType().name());
             Region br = RedProtect.get().getRegionManager().getTopRegion(b.getRelative(e.getDirection()).getLocation());
-            if (pr == null && br != null || (pr != null && br != null && pr != br && pr.sameLeaders(br))) {
+            if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                 e.setCancelled(true);
                 return;
             }
@@ -700,7 +700,7 @@ public class BlockListener implements Listener {
                 int y = b.getY();
                 int z = b.getZ();
                 Block ib = w.getBlockAt(x, y + 1, z);
-                if (cont.canWorldBreak(ib) || cont.canWorldBreak(b)) {
+                if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)) {
                     e.setCancelled(true);
                     return;
                 }
@@ -724,7 +724,7 @@ public class BlockListener implements Listener {
             RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent not 1.8 event - Block: " + b.getType().name());
             Region pr = RedProtect.get().getRegionManager().getTopRegion(piston.getLocation());
             Region br = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-            if (pr == null && br != null || (pr != null && br != null && pr != br && pr.sameLeaders(br))) {
+            if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                 e.setCancelled(true);
                 return;
             }
@@ -733,7 +733,7 @@ public class BlockListener implements Listener {
                 int y = b.getY();
                 int z = b.getZ();
                 Block ib = w.getBlockAt(x, y + 1, z);
-                if (cont.canWorldBreak(ib) || cont.canWorldBreak(b)) {
+                if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)) {
                     e.setCancelled(true);
                 }
             }
@@ -743,7 +743,7 @@ public class BlockListener implements Listener {
             for (Block b : blocks) {
                 RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent 1.8 event - Block: " + b.getType().name());
                 Region br = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-                if (pr == null && br != null || (pr != null && br != null && pr != br && pr.sameLeaders(br))) {
+                if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
                     e.setCancelled(true);
                     return;
                 }
@@ -752,7 +752,7 @@ public class BlockListener implements Listener {
                     int y = b.getY();
                     int z = b.getZ();
                     Block ib = w.getBlockAt(x, y + 1, z);
-                    if (cont.canWorldBreak(ib) || cont.canWorldBreak(b)) {
+                    if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)) {
                         e.setCancelled(true);
                         return;
                     }
@@ -776,7 +776,7 @@ public class BlockListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockGrowEvent event: " + event.getNewState().getType().name());
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(event.getBlock().getLocation());
-        if (r != null && r.canGrow()) {
+        if (r != null && !r.canGrow()) {
             event.setCancelled(true);
         }
     }
@@ -787,10 +787,13 @@ public class BlockListener implements Listener {
 
         BlockState b = event.getNewState();
         Block oldState = event.getBlock();
+        if (b == null) {
+            return;
+        }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
 
-        if (r != null && r.blockTransform() && (
+        if (r != null && !r.blockTransform() && (
                 oldState.getType().name().contains("SNOW") ||
                         oldState.getType().name().contains("ICE") ||
                         oldState.getType().name().contains("FIRE") ||
@@ -805,7 +808,7 @@ public class BlockListener implements Listener {
 
         if (b.getType().equals(Material.SNOW) || b.getType().equals(Material.ICE)) {
             r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-            if (r != null && r.canIceForm()) {
+            if (r != null && !r.canIceForm()) {
                 event.setCancelled(true);
             }
         }

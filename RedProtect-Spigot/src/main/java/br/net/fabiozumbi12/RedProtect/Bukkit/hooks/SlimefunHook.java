@@ -37,7 +37,7 @@ public class SlimefunHook implements Listener {
     @EventHandler
     public void OnToolExplode(ExplosiveToolBreakBlocksEvent event) {
         event.getAdditionalBlocks().removeIf(b -> {
-            if (RedProtect.get().getUtil().canBuildNear(event.getPlayer(), b.getLocation())) {
+            if (!RedProtect.get().getUtil().canBuildNear(event.getPlayer(), b.getLocation())) {
                 return true;
             }
             Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());

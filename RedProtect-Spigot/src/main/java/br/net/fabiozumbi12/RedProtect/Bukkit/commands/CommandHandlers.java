@@ -67,7 +67,8 @@ public class CommandHandlers {
 
             if (!src.hasPermission("redprotect.command.admin.addleader")) {
                 int claimLimit = RedProtect.get().getPermissionHandler().getPlayerClaimLimit(pVictim);
-                int claimused = RedProtect.get().getRegionManager().getPlayerRegions(Objects.requireNonNull(pVictim).getUniqueId().toString(), pVictim.getWorld().getName());
+                assert pVictim != null;
+                int claimused = RedProtect.get().getRegionManager().getPlayerRegions(pVictim.getUniqueId().toString(), pVictim.getWorld().getName());
                 boolean claimUnlimited = RedProtect.get().getPermissionHandler().hasPerm(src, "redprotect.limits.claim.unlimited");
                 if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
                     RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.addleader.limit").replace("{player}", pVictim.getName()));
@@ -87,7 +88,7 @@ public class CommandHandlers {
                     return;
                 }
 
-                RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.yousendrequest").replace("{player}", Objects.requireNonNull(pVictim).getName()));
+                RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.yousendrequest").replace("{player}", pVictim.getName()));
                 RedProtect.get().getLanguageManager().sendMessage(pVictim, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.sendrequestto").replace("{region}", r.getName()).replace("{player}", src.getName()));
 
                 RedProtect.get().alWait.put(pVictim, r.getID() + "@" + src.getName());
@@ -820,7 +821,7 @@ public class CommandHandlers {
                             }
                             if (r.getFlagString(flag).equalsIgnoreCase("")) {
                                 if (r.setFlag(p, flag, clan.getTag())) {
-                                    RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + Objects.requireNonNull(clan.getClan()).getColorTag() + "'"));
+                                    RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + clan.getClan().getColorTag() + "'"));
                                 }
                             } else {
                                 RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.denyclan").replace("{clan}", "'" + r.getFlagString(flag) + "'"));
@@ -973,7 +974,7 @@ public class CommandHandlers {
             for (String val : split) {
                 try {
                     EntityType entityType = EntityType.valueOf(val.toUpperCase());
-                    if (!Monster.class.isAssignableFrom(Objects.requireNonNull(entityType.getEntityClass()))) {
+                    if (!Monster.class.isAssignableFrom(entityType.getEntityClass())) {
                         return false;
                     }
                 } catch (Exception ignored) {
@@ -995,7 +996,7 @@ public class CommandHandlers {
                 try {
                     EntityType entityType = EntityType.valueOf(val.toUpperCase());
                     Class<? extends Entity> entityClass = entityType.getEntityClass();
-                    if (!((!Monster.class.isAssignableFrom(Objects.requireNonNull(entityClass)) &&
+                    if (!((!Monster.class.isAssignableFrom(entityClass) &&
                             !Player.class.isAssignableFrom(entityClass)) &&
                             !ArmorStand.class.isAssignableFrom(entityClass) &&
                             LivingEntity.class.isAssignableFrom(entityClass))) {
@@ -1167,7 +1168,7 @@ public class CommandHandlers {
         for (Entity e : world.getEntities().stream().filter(entity ->
                 !(entity instanceof Player) &&
                         ((entity instanceof LivingEntity && type == null) || entity.getType().equals(type))
-        ).toList()) {
+        ).collect(Collectors.toList())) {
             total++;
             if (RedProtect.get().getRegionManager().getTopRegion(e.getLocation()) == null) {
                 e.remove();

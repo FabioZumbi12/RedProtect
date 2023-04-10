@@ -44,7 +44,7 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
 
-    public final static List<String> ADMIN_FLAGS = new ArrayList<>(Arrays.asList(
+    public static List<String> ADMIN_FLAGS = new ArrayList<>(Arrays.asList(
             "spawn-wither",
             "cropsfarm",
             "keep-inventory",
@@ -95,9 +95,9 @@ public class CoreConfigManager {
             "spawn-monsters",
             "can-move",
             "can-collide"));
-    public final HashMap<String, String> backupGuiName = new HashMap<>();
-    public final HashMap<String, String> backupGuiDescription = new HashMap<>();
-    protected final String headerCfg = """
+    public HashMap<String, String> backupGuiName = new HashMap<>();
+    public HashMap<String, String> backupGuiDescription = new HashMap<>();
+    protected String headerCfg = """
             +--------------------------------------------------------------------+ #
             <               RedProtect World configuration File                  > #
             <--------------------------------------------------------------------> #
@@ -109,7 +109,7 @@ public class CoreConfigManager {
             Notes:
             Lists are [object1, object2, ...]
             Strings containing the char & always need to be quoted""";
-    protected final String headerGf = """
+    protected String headerGf = """
             +--------------------------------------------------------------------+ #
             <          RedProtect Global Flags configuration File                > #
             <--------------------------------------------------------------------> #
@@ -121,7 +121,7 @@ public class CoreConfigManager {
             Notes:
             Lists are [object1, object2, ...]
             Strings containing the char & always need to be quoted""";
-    protected final String headerGui = """
+    protected String headerGui = """
             +--------------------------------------------------------------------+ #
             <             RedProtect Gui Flags configuration File                > #
             <--------------------------------------------------------------------> #
@@ -130,7 +130,7 @@ public class CoreConfigManager {
             <  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #
             +--------------------------------------------------------------------+ #
             """;
-    protected final String headerEco = """
+    protected String headerEco = """
             +--------------------------------------------------------------------+ #
             <              RedProtect Economy configuration File                 > #
             <--------------------------------------------------------------------> #

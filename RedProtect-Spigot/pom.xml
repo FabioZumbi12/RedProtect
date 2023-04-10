@@ -30,7 +30,7 @@
     <parent>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>8.0.0-SNAPSHOT</version>
+        <version>8.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>RedProtect-Spigot</artifactId>
@@ -93,24 +93,23 @@
     </repositories>
 
     <dependencies>
-
         <dependency>
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
-            <version>8.0.0-SNAPSHOT</version>
+            <version>8.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
@@ -148,7 +147,7 @@
             <artifactId>dynmap-3</artifactId>
             <version>v1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Dynmap-3.5-beta-1-spigot.jar</systemPath>
+            <systemPath>${project.basedir}/libs/Dynmap-3.5-beta-3-spigot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>GriefPrevention</groupId>
@@ -215,7 +214,7 @@
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>LATEST</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>net.ess3</groupId>
@@ -273,7 +272,7 @@
         <dependency>
             <groupId>br.net.fabiozumbi12</groupId>
             <artifactId>TranslationAPI</artifactId>
-            <version>LATEST</version>
+            <version>1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -285,7 +284,7 @@
         <dependency>
             <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
-            <version>LATEST</version>
+            <version>1.9.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
@@ -293,6 +292,10 @@
             <version>RC-29</version>
         </dependency>
     </dependencies>
+
+    <properties>
+        <mineVersion>1.18-R0.1-SNAPSHOT</mineVersion>
+    </properties>
 
     <build>
         <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
@@ -330,7 +333,7 @@
                                 </filter>
                             </filters>
                             <outputFile>
-                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Universal.jar
+                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Spigot.jar
                             </outputFile>
                         </configuration>
                     </execution>

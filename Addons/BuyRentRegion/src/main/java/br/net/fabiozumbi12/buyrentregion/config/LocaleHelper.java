@@ -34,12 +34,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class LocaleHelper {
-    private YamlConfiguration bundle;
     private final File folder = new File(String.format("%s/locale", BuyRentRegion.get().getDataFolder()));
+    private YamlConfiguration bundle;
     private File file = new File(folder, String.format("%s.yml", Locale.getDefault().getLanguage()));
 
     public LocaleHelper() {
@@ -100,7 +99,7 @@ public class LocaleHelper {
 
                 InputStream stream = BuyRentRegion.class.getResourceAsStream("/locale/" + filename);
 
-                Files.copy(Objects.requireNonNull(stream), file.toPath());
+                Files.copy(stream, file.toPath());
             } catch (IOException e) {
                 BuyRentRegion.get().getLogger().log(Level.SEVERE, "Failed copying " + filename + " to the data folder", e);
             }

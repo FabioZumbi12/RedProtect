@@ -39,7 +39,6 @@ public class Compat114 implements Listener {
     public Compat114() {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Loaded Compat114...");
     }
-
     @EventHandler(ignoreCancelled = true)
     public void onTakeBookLectern(PlayerTakeLecternBookEvent event) {
         Player p = event.getPlayer();

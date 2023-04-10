@@ -72,8 +72,6 @@ public class LangGuiManager extends GuiLangCore {
             var pluginVersion = Integer.parseInt(RedProtect.get().getDescription().getVersion().split("-")[0].replace(".", ""));
             int langVersion = Integer.parseInt(loadedLang.get("_lang.version").toString().split("-")[0].replace(".", ""));
             if (pluginVersion > langVersion) {
-                RedProtect.get().logger.warning("Your lang file is outdated. Probably need strings updates!");
-                RedProtect.get().logger.warning("Lang file version: " + loadedLang.get("_lang.version"));
                 loadedLang.put("_lang.version", RedProtect.get().getDescription().getVersion());
             }
         }

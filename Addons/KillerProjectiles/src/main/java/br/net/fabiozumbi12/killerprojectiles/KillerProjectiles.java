@@ -43,7 +43,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public final class KillerProjectiles extends JavaPlugin implements Listener, CommandExecutor {
 
@@ -53,7 +52,7 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
         RedProtect.get().getAPI().addFlag("killer-projectiles", false, false);
 
         getServer().getPluginManager().registerEvents(this, this);
-        Objects.requireNonNull(getCommand("killerprojectiles")).setExecutor(this);
+        getCommand("killerprojectiles").setExecutor(this);
 
         getConfig().addDefault("projectile-damage", 0);
         getConfig().addDefault("allowed-types", Arrays.asList("SNOWBALL", "ARROW"));
@@ -114,8 +113,8 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
 
             if (r != null && r.getFlagBool("killer-projectiles") && getConfig().getStringList("allowed-types").contains(projectile.getType().name())) {
                 double damage;
-                if (Objects.requireNonNull(getConfig().getString("projectile-damage")).endsWith("%")) {
-                    damage = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue() / 100) * Double.parseDouble(getConfig().getString("projectile-damage", "100%").replace("%", ""));
+                if (getConfig().getString("projectile-damage").endsWith("%")) {
+                    damage = (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() / 100) * Double.parseDouble(getConfig().getString("projectile-damage", "100%").replace("%", ""));
                 } else {
                     damage = getConfig().getInt("projectile-damage");
                 }
