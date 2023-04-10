@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.FlagGui;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
@@ -70,15 +71,14 @@ public class FlagCommand implements SubCommand {
                 return true;
             }
             Region r = RedProtect.get().getRegionManager().getRegion(args[0], w.getName());
-            if (r != null && (RedProtect.get().getConfigManager().getDefFlags().contains(args[1]) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(args[1]))) {
+            if (r != null && (RedProtect.get().getConfigManager().getDefFlags().contains(args[1]) || CoreConfigManager.ADMIN_FLAGS.contains(args[1]))) {
                 Object objflag = RedProtect.get().getUtil().parseObject(args[2]);
                 r.setFlag(sender, args[1], objflag);
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + args[1] + "'") + " " + r.getFlagString(args[1]));
                 RedProtect.get().logger.addLog("Console changed flag " + args[1] + " to " + r.getFlagString(args[1]));
                 return true;
             }
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 0) {
                 Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
@@ -117,11 +117,10 @@ public class FlagCommand implements SubCommand {
                         if (!RedProtect.get().changeWait.contains(r.getName() + args[0])) {
                             RedProtect.get().getUtil().startFlagChanger(r.getName(), args[0], player);
                             handleFlag(player, args[0], "", r);
-                            return true;
                         } else {
                             RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds));
-                            return true;
                         }
+                        return true;
                     }
                 }
                 handleFlag(player, args[0], "", r);
@@ -165,11 +164,10 @@ public class FlagCommand implements SubCommand {
                     if (!RedProtect.get().changeWait.contains(r.getName() + args[1])) {
                         RedProtect.get().getUtil().startFlagChanger(r.getName(), args[1], player);
                         handleFlag(player, args[1], text.substring(1), r);
-                        return true;
                     } else {
                         RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds));
-                        return true;
                     }
+                    return true;
                 }
             }
             handleFlag(player, args[0], text.substring(1), r);
@@ -184,7 +182,7 @@ public class FlagCommand implements SubCommand {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 0) {
             SortedSet<String> tab = new TreeSet<>(RedProtect.get().getConfigManager().getDefFlags());
-            for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
+            for (String flag : CoreConfigManager.ADMIN_FLAGS) {
                 if (RedProtect.get().getPermissionHandler().hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }
@@ -198,7 +196,7 @@ public class FlagCommand implements SubCommand {
                     tab.add(flag);
                 }
             }
-            for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
+            for (String flag : CoreConfigManager.ADMIN_FLAGS) {
                 if (flag.startsWith(args[0]) && RedProtect.get().getPermissionHandler().hasFlagPerm((Player) sender, flag)) {
                     tab.add(flag);
                 }

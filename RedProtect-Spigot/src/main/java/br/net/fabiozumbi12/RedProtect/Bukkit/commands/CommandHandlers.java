@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ItemFlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.MobFlagGui;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import br.net.fabiozumbi12.UltimateFancy.UltimateFancy;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
@@ -48,8 +49,7 @@ public class CommandHandlers {
 
     // TODO Region handlers
     public static void handleAddLeader(CommandSender src, String sVictim, Region r) {
-        if (src instanceof Player) {
-            Player p = (Player) src;
+        if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.todo.that");
@@ -67,6 +67,7 @@ public class CommandHandlers {
 
             if (!src.hasPermission("redprotect.command.admin.addleader")) {
                 int claimLimit = RedProtect.get().getPermissionHandler().getPlayerClaimLimit(pVictim);
+                assert pVictim != null;
                 int claimused = RedProtect.get().getRegionManager().getPlayerRegions(pVictim.getUniqueId().toString(), pVictim.getWorld().getName());
                 boolean claimUnlimited = RedProtect.get().getPermissionHandler().hasPerm(src, "redprotect.limits.claim.unlimited");
                 if (claimused >= claimLimit && claimLimit >= 0 && !claimUnlimited) {
@@ -98,7 +99,7 @@ public class CommandHandlers {
                             RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.requestexpired").replace("{player}", pVictim.getName()));
                         }
                     }
-                }, RedProtect.get().getConfigManager().configRoot().region_settings.leadership_request_time * 20);
+                }, RedProtect.get().getConfigManager().configRoot().region_settings.leadership_request_time * 20L);
             } else {
                 RedProtect.get().getLanguageManager().sendMessage(src, ChatColor.RED + sVictim + " " + RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.already"));
             }
@@ -110,8 +111,7 @@ public class CommandHandlers {
     public static void handleRemoveLeader(CommandSender src, String sVictim, Region r) {
         Region rLow = null;
         Map<Integer, Region> regions = new HashMap<>();
-        if (src instanceof Player) {
-            Player p = (Player) src;
+        if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             rLow = RedProtect.get().getRegionManager().getLowRegion(p.getLocation());
             regions = RedProtect.get().getRegionManager().getGroupRegion(p.getLocation());
@@ -154,8 +154,7 @@ public class CommandHandlers {
     }
 
     public static void handleAddAdmin(CommandSender src, String sVictim, Region r) {
-        if (src instanceof Player) {
-            Player p = (Player) src;
+        if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.todo.that");
@@ -192,8 +191,7 @@ public class CommandHandlers {
     }
 
     public static void handleRemoveAdmin(CommandSender src, String sVictim, Region r) {
-        if (src instanceof Player) {
-            Player p = (Player) src;
+        if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.todo.that");
@@ -225,8 +223,7 @@ public class CommandHandlers {
     }
 
     public static void handleAddMember(CommandSender src, String sVictim, Region r) {
-        if (src instanceof Player) {
-            Player p = (Player) src;
+        if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.todo.that");
@@ -270,8 +267,7 @@ public class CommandHandlers {
     }
 
     public static void handleRemoveMember(CommandSender src, String sVictim, Region r) {
-        if (src instanceof Player) {
-            Player p = (Player) src;
+        if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.todo.that");
@@ -387,7 +383,7 @@ public class CommandHandlers {
     private static void handleDeleteRegionEconomy(Region region, Player player) {
         // Handle money
         if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable && RedProtect.get().hooks.checkVault() && !player.hasPermission("redprotect.eco.bypass")) {
-            long reco = region.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
+            long reco = (long) region.getArea() * RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.cost_per_block;
 
             if (!RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.y_is_free) {
                 reco = reco * Math.abs(region.getMaxY() - region.getMinY());
@@ -570,7 +566,7 @@ public class CommandHandlers {
 
         int delay = RedProtect.get().getConfigManager().configRoot().region_settings.teleport_time;
 
-        if(delay < 1) {
+        if (delay < 1) {
             p.teleport(loc);
             RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.teleport") + " " + rname);
             return;
@@ -599,23 +595,18 @@ public class CommandHandlers {
         if (RedProtect.get().getPermissionHandler().hasRegionPermAdmin(p, "welcome", r)) {
             if (r != null) {
                 switch (wMessage) {
-                    case "":
-                        RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.welcomeoff");
-                        break;
-                    case "hide ":
-                        RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.welcomehide");
-                        break;
-                    default:
-                        RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.welcomeset") + " " + ChatColor.translateAlternateColorCodes('&', wMessage));
-                        break;
+                    case "" -> RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.welcomeoff");
+                    case "hide " ->
+                            RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.welcomehide");
+                    default ->
+                            RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.welcomeset") + " " + ChatColor.translateAlternateColorCodes('&', wMessage));
                 }
                 r.setWelcome(wMessage);
                 RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET WELCOME of region " + r.getName() + " to " + wMessage);
-                return;
             } else {
                 RedProtect.get().getLanguageManager().sendMessage(p, "cmdmanager.region.todo.that");
-                return;
             }
+            return;
         }
         RedProtect.get().getLanguageManager().sendMessage(p, "no.permission");
     }
@@ -745,7 +736,7 @@ public class CommandHandlers {
 
         Object objflag = RedProtect.get().getUtil().parseObject(value);
 
-        if ((RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) || flag.equalsIgnoreCase("info")) {
+        if ((RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || CoreConfigManager.ADMIN_FLAGS.contains(flag))) || flag.equalsIgnoreCase("info")) {
             if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.command.admin.flag")) {
                 if (checkCmd(flag, "info")) {
                     p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------[" + RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.values") + "]------------");
@@ -755,19 +746,18 @@ public class CommandHandlers {
                 }
 
                 if (value.equalsIgnoreCase("remove")) {
-                    if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag) && r.getFlags().containsKey(flag)) {
+                    if (CoreConfigManager.ADMIN_FLAGS.contains(flag) && r.getFlags().containsKey(flag)) {
                         r.removeFlag(flag);
                         RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.removed").replace("{flag}", flag).replace("{region}", r.getName()));
                         RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " REMOVED FLAG " + flag + " of region " + r.getName());
-                        return;
                     } else {
                         RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.notset").replace("{flag}", flag));
-                        return;
                     }
+                    return;
                 }
 
                 if (!value.equals("")) {
-                    if (RedProtect.get().getConfigManager().getDefFlagsValues().containsKey(flag) && !RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
+                    if (RedProtect.get().getConfigManager().getDefFlagsValues().containsKey(flag) && !CoreConfigManager.ADMIN_FLAGS.contains(flag)) {
 
                         //flag clan
                         if (flag.equalsIgnoreCase("clan")) {
@@ -802,7 +792,7 @@ public class CommandHandlers {
                         return;
                     }
 
-                    if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
+                    if (CoreConfigManager.ADMIN_FLAGS.contains(flag)) {
                         if (!validate(flag, objflag)) {
                             SendFlagUsageMessage(p, flag);
                             return;
@@ -876,7 +866,7 @@ public class CommandHandlers {
                             RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                         }
                     } else {
-                        if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
+                        if (CoreConfigManager.ADMIN_FLAGS.contains(flag)) {
                             SendFlagUsageMessage(p, flag);
                         } else {
                             RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.usage") + " <true/false>");
@@ -922,12 +912,12 @@ public class CommandHandlers {
         p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
 
         StringBuilder sb = new StringBuilder();
-        for (String flag : RedProtect.get().getConfigManager().ADMIN_FLAGS) {
+        for (String flag : CoreConfigManager.ADMIN_FLAGS) {
             if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag))
                 sb.append(flag).append(", ");
         }
         if (sb.length() > 1) {
-            p.sendMessage(RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.admlist") + " [" + sb.toString().substring(0, sb.length() - 2) + "]");
+            p.sendMessage(RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.admlist") + " [" + sb.substring(0, sb.length() - 2) + "]");
             p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
         }
     }
@@ -1005,10 +995,10 @@ public class CommandHandlers {
             for (String val : split) {
                 try {
                     EntityType entityType = EntityType.valueOf(val.toUpperCase());
-                    Class entityClass = entityType.getEntityClass();
+                    Class<? extends Entity> entityClass = entityType.getEntityClass();
                     if (!((!Monster.class.isAssignableFrom(entityClass) &&
                             !Player.class.isAssignableFrom(entityClass)) &&
-                            (RedProtect.get().bukkitVersion >= 180 && !ArmorStand.class.isAssignableFrom(entityClass)) &&
+                            !ArmorStand.class.isAssignableFrom(entityClass) &&
                             LivingEntity.class.isAssignableFrom(entityClass))) {
                         return false;
                     }
@@ -1202,8 +1192,7 @@ public class CommandHandlers {
         sender.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
         sender.sendMessage(RedProtect.get().getLanguageManager().get("cmdmanager.helpheader.alias"));
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             int i = 0;
             for (String key : RedProtect.get().getLanguageManager().getHelpStrings()) {
                 if (RedProtect.get().getPermissionHandler().hasCommandPerm(player, key) || ((key.equals("pos1") || key.equals("pos2")) && RedProtect.get().getPermissionHandler().hasCommandPerm(player, "redefine"))) {

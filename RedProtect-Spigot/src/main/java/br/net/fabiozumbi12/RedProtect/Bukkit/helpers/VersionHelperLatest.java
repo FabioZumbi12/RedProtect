@@ -50,18 +50,6 @@ import java.util.stream.Collectors;
 
 public class VersionHelperLatest implements VersionHelper {
 
-    /*@EventHandler(ignoreCancelled = true)
-    public void onPhysics(BlockPhysicsEvent event) {
-        Block source = event.getSourceBlock();
-        Block b = event.getBlock();
-        if (source.equals(b)){
-            Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-            if (r != null && !r.blockTransform()){
-                event.setCancelled(true);
-            }
-        }
-    }*/
-
     @Override
     public String getVersion() {
         return "Latest";
@@ -92,8 +80,7 @@ public class VersionHelperLatest implements VersionHelper {
     }
 
     public void toggleDoor(Block b) {
-        if (b.getBlockData() instanceof Openable) {
-            Openable openable = (Openable) b.getBlockData();
+        if (b.getBlockData() instanceof Openable openable) {
             openable.setOpen(!openable.isOpen());
             b.setBlockData(openable);
         }
@@ -157,7 +144,7 @@ public class VersionHelperLatest implements VersionHelper {
     }
 
     @Override
-    public boolean spawnParticle​(World world, String particle, double x, double y, double z) {
+    public boolean spawnParticle(World world, String particle, double x, double y, double z) {
         Optional<Particle> optional = Arrays.stream(Particle.values())
                 .filter((it) -> it.name().equalsIgnoreCase(particle))
                 .findAny();

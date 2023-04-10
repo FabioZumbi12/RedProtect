@@ -39,7 +39,7 @@ public class CoreRegion implements Serializable {
     protected int minY;
     protected int maxY;
     protected int prior;
-    protected String name;
+    protected final String name;
     protected Set<PlayerRegion> leaders;
     protected Set<PlayerRegion> admins;
     protected Set<PlayerRegion> members;
@@ -50,7 +50,7 @@ public class CoreRegion implements Serializable {
     protected long value;
     protected int[] tppoint;
     protected float[] tppointYaw;
-    protected boolean canDelete;
+    protected final boolean canDelete;
     protected boolean canPurge;
     private boolean tosave = true;
 
@@ -92,17 +92,9 @@ public class CoreRegion implements Serializable {
         this.canPurge = canPurge;
         this.date = date;
 
-        if (worldName != null) {
-            this.world = worldName;
-        } else {
-            this.world = "";
-        }
+        this.world = Objects.requireNonNullElse(worldName, "");
 
-        if (wMessage != null) {
-            this.wMessage = wMessage;
-        } else {
-            this.wMessage = "";
-        }
+        this.wMessage = Objects.requireNonNullElse(wMessage, "");
     }
 
     /**
@@ -145,17 +137,9 @@ public class CoreRegion implements Serializable {
         this.date = date;
         this.prior = prior;
 
-        if (worldName != null) {
-            this.world = worldName;
-        } else {
-            this.world = "";
-        }
+        this.world = Objects.requireNonNullElse(worldName, "");
 
-        if (wMessage != null) {
-            this.wMessage = wMessage;
-        } else {
-            this.wMessage = "";
-        }
+        this.wMessage = Objects.requireNonNullElse(wMessage, "");
     }
 
     /**
@@ -289,7 +273,7 @@ public class CoreRegion implements Serializable {
         for (String flag : this.flags.keySet()) {
             flags.append(",").append(flag).append(":").append(this.flags.get(flag).toString());
         }
-        return flags.toString().substring(1);
+        return flags.substring(1);
     }
 
     public String getTPPointString() {
@@ -455,7 +439,7 @@ public class CoreRegion implements Serializable {
     protected String serializeMembers(Set<PlayerRegion> pairs) {
         StringBuilder list = new StringBuilder();
         pairs.forEach(l -> list.append(",").append(l.getUUID()).append("@").append(l.getPlayerName()));
-        return list.length() > 0 ? list.toString().substring(1) : "";
+        return list.length() > 0 ? list.substring(1) : "";
     }
 
     public boolean sameLeaders(CoreRegion r) {

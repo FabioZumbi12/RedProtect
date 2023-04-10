@@ -67,11 +67,10 @@ public class LDenyCommand implements SubCommand {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.doesexists");
                 }
                 RedProtect.get().alWait.remove(player);
-                return true;
             } else {
                 RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.norequests");
-                return true;
             }
+            return true;
         }
 
         RedProtect.get().getLanguageManager().sendCommandHelp(sender, "ldeny", true);

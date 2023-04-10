@@ -778,19 +778,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public void clearRegions() {
         regions.clear();
-		/*
-		try {
-            PreparedStatement st = this.dbcon.prepareStatement();
-            st.executeUpdate("DELETE FROM region_flags WHERE region = '*'");
-
-            st = this.dbcon.prepareStatement();
-            st.executeUpdate("DELETE FROM region WHERE name = '*'");
-            st.close();
-        }
-        catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }		*/
     }
 
     @Override

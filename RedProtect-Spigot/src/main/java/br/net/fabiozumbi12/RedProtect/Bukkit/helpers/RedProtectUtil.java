@@ -117,14 +117,8 @@ public class RedProtectUtil extends CoreUtil {
     public boolean denyPotion(ItemStack result, World world) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(world.getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
-            String potname = "";
-            if (RedProtect.get().bukkitVersion >= 190) {
-                PotionMeta pot = (PotionMeta) result.getItemMeta();
-                potname = pot.getBasePotionData().getType().name();
-            }
-            if (RedProtect.get().bukkitVersion < 190 && Potion.fromItemStack(result) != null) {
-                potname = Potion.fromItemStack(result).getType().name();
-            }
+            PotionMeta pot = (PotionMeta) result.getItemMeta();
+            String potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
             return Pots.contains(potname);
         }
         return false;
@@ -133,14 +127,8 @@ public class RedProtectUtil extends CoreUtil {
     public boolean denyPotion(ItemStack result, Player p) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
-            String potname = "";
-            if (RedProtect.get().bukkitVersion >= 190) {
-                PotionMeta pot = (PotionMeta) result.getItemMeta();
-                potname = pot.getBasePotionData().getType().name();
-            }
-            if (RedProtect.get().bukkitVersion <= 180 && Potion.fromItemStack(result) != null) {
-                potname = Potion.fromItemStack(result).getType().name();
-            }
+            PotionMeta pot = (PotionMeta) result.getItemMeta();
+            String potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
             if (Pots.contains(potname)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.denypotion");
                 return true;
@@ -812,11 +800,8 @@ public class RedProtectUtil extends CoreUtil {
     public void startFlagChanger(final String r, final String flag, final Player p) {
         RedProtect.get().changeWait.add(r + flag);
         Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            /*if (p != null && p.isOnline()){
-                    RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("gui.needwait.ready").replace("{flag}", flag));
-                }*/
             RedProtect.get().changeWait.remove(r + flag);
-        }, RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20);
+        }, RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20L);
     }
 
     public int getUpdatedPrior(Region region) {
@@ -898,7 +883,7 @@ public class RedProtectUtil extends CoreUtil {
 
         final String finalParticleName = particleName;
         int task = Bukkit.getScheduler().scheduleSyncRepeatingTask(RedProtect.get(), () ->
-                locations.forEach(l -> plugin.getVersionHelper().spawnParticle​(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500)), 10, 10);
+                locations.forEach(l -> plugin.getVersionHelper().spawnParticle(w, finalParticleName, l.getX() + 0.500, l.getY(), l.getZ() + 0.500)), 10, 10);
         borderPlayers.put(player, task);
 
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> {
@@ -907,7 +892,7 @@ public class RedProtectUtil extends CoreUtil {
                 Bukkit.getScheduler().cancelTask(newTask);
                 borderPlayers.remove(player);
             }
-        }, RedProtect.get().getConfigManager().configRoot().region_settings.border.time_showing * 20);
+        }, RedProtect.get().getConfigManager().configRoot().region_settings.border.time_showing * 20L);
     }
 
     public int convertFromGP() {

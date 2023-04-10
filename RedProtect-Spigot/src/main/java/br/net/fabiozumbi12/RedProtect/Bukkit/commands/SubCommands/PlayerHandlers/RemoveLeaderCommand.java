@@ -58,8 +58,7 @@ public class RemoveLeaderCommand implements SubCommand {
             }
             handleRemoveLeader(sender, args[0], r);
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 1) {
                 handleRemoveLeader(player, args[0], null);

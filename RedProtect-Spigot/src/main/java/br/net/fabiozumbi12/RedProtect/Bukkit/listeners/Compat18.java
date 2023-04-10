@@ -65,8 +65,7 @@ public class Compat18 implements Listener {
         Entity e = event.getEntity();
 
         //spawn arms on armor stands
-        if (e instanceof ArmorStand && RedProtect.get().getConfigManager().configRoot().hooks.armor_stand_arms) {
-            ArmorStand as = (ArmorStand) e;
+        if (e instanceof ArmorStand as && RedProtect.get().getConfigManager().configRoot().hooks.armor_stand_arms) {
             as.setArms(true);
         }
     }
@@ -104,8 +103,7 @@ public class Compat18 implements Listener {
         Entity e2 = e.getCombuster();
         Location loc = e1.getLocation();
 
-        if (e2 instanceof Projectile) {
-            Projectile a = (Projectile) e2;
+        if (e2 instanceof Projectile a) {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
@@ -140,8 +138,7 @@ public class Compat18 implements Listener {
         Entity e2 = e.getDamager();
         Location loc = e1.getLocation();
 
-        if (e2 instanceof Projectile) {
-            Projectile a = (Projectile) e2;
+        if (e2 instanceof Projectile a) {
             if (a.getShooter() instanceof Entity) {
                 e2 = (Entity) a.getShooter();
             }
@@ -179,15 +176,12 @@ public class Compat18 implements Listener {
             return;
         }
 
-        if (RedProtect.get().bukkitVersion <= 180) {
-            return;
-        }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
         Material m = p.getItemInHand().getType();
 
-        if (RedProtect.get().bukkitVersion >= 190 && e.getItem() != null) {
+        if (e.getItem() != null) {
             m = e.getItem().getType();
         }
 

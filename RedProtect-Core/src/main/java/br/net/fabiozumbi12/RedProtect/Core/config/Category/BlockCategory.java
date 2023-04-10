@@ -36,28 +36,31 @@ import java.util.Map;
 public class BlockCategory {
 
     @Setting(comment = "Enable timed given claim blocks?\nDefault: false")
-    public boolean enabled = false;
-    @Setting(comment = "Don't touch this.\n" +
-            "This is the player times, to calculate the amount of blocks a player have\n" +
-            "Values:\n" +
-            "- time: 0 - Time played on server\n" +
-            "- added-blocks: 0 - Blocks added manually")
-    public Map<String, PlayerCat> players = new HashMap<>();
+    public final boolean enabled = false;
+    @Setting(comment = """
+            Don't touch this.
+            This is the player times, to calculate the amount of blocks a player have
+            Values:
+            - time: 0 - Time played on server
+            - added-blocks: 0 - Blocks added manually""")
+    public final Map<String, PlayerCat> players = new HashMap<>();
 
-    @Setting(value = "unit-to-add", comment = "The unit type to give claim blocks to players?\n" +
-            "Options:\n" +
-            "- d = x blocks for every day\n" +
-            "- h = x blocks for every hour\n" +
-            "- m = x blocks for every minute\n" +
-            "- s = x blocks for every second")
-    public String unit_to_add = "h";
+    @Setting(value = "unit-to-add", comment = """
+            The unit type to give claim blocks to players?
+            Options:
+            - d = x blocks for every day
+            - h = x blocks for every hour
+            - m = x blocks for every minute
+            - s = x blocks for every second""")
+    public final String unit_to_add = "h";
     @Setting(value = "blocks-to-value", comment = "The amount of blocks to add on every time unit configured")
     public long blocks_to_add = 50;
-    @Setting(value = "time-type", comment = "The method to calculate the player time!\n" +
-            "Options:\n" +
-            "- first-join = Count the time since the first login on server (after ResProtect installation). This includes the time the player is offline.\n" +
-            "- online-time = Count only the online time. When the player is offline, the time pauses.\n" +
-            "Important: Using 'online-time', we will use a thread to count and add the time for all online players. Using 'first-join' use no new threads.")
+    @Setting(value = "time-type", comment = """
+            The method to calculate the player time!
+            Options:
+            - first-join = Count the time since the first login on server (after ResProtect installation). This includes the time the player is offline.
+            - online-time = Count only the online time. When the player is offline, the time pauses.
+            Important: Using 'online-time', we will use a thread to count and add the time for all online players. Using 'first-join' use no new threads.""")
     public String time_type = "first-login";
 
     @ConfigSerializable
@@ -69,8 +72,10 @@ public class BlockCategory {
         public long added_blocks = 0;
         @Setting
         public String player;
+
         public PlayerCat() {
         }
+
         public PlayerCat(long initialTime, String player) {
             this.time = initialTime;
             this.player = player;

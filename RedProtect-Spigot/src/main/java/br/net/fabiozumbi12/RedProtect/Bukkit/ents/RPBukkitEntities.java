@@ -97,5 +97,4 @@ public enum RPBukkitEntities {
     WITHER_SKULL,
     WOLF,
     ZOMBIE,
-    ;
 }

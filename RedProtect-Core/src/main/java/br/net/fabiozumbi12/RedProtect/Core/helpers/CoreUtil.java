@@ -40,8 +40,8 @@ import java.util.zip.ZipOutputStream;
 
 public class CoreUtil {
     public boolean stopRegen;
-    protected HashMap<String, Object> borderPlayers;
-    protected HashMap<String, String> cachedUUIDs;
+    protected final HashMap<String, Object> borderPlayers;
+    protected final HashMap<String, String> cachedUUIDs;
 
     public CoreUtil() {
         borderPlayers = new HashMap<>();
@@ -85,16 +85,6 @@ public class CoreUtil {
             e.printStackTrace();
         }
     }
-
-    /* public String setName(String name) {
-        if (name == null || name.isEmpty()) return name;
-
-        name = Normalizer.normalize(name.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .replaceAll("[ -]", "_")
-                .replaceAll("[^\\p{L}_0-9]", "");
-        return name;
-    } */
 
     protected File genFileName(String Path, Boolean isBackup, int maxbackups, String dateFormat) {
         int count = 1;

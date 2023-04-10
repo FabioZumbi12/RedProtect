@@ -107,13 +107,12 @@ public class LangManager extends LangCore {
         } else {
             String message = get(key);
             for (Replacer replacer : replaces) {
-                message = message.replace(replacer.getPlaceholder(), replacer.getValue());
+                message = message.replace(replacer.placeholder(), replacer.value());
             }
             sender.sendMessage(get("_redprotect.prefix") + " " + message);
         }
 
-        if (sender instanceof Player) {
-            final Player p = (Player) sender;
+        if (sender instanceof final Player p) {
             delayedMessage.put(p.getName(), key);
             Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> delayedMessage.remove(p.getName()), 20);
         }

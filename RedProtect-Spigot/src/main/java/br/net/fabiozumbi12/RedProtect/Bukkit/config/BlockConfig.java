@@ -45,23 +45,23 @@ import java.util.Date;
 import static com.google.common.reflect.TypeToken.of;
 
 public class BlockConfig {
-    protected ConfigurationLoader<CommentedConfigurationNode> blockLoader;
+    protected final ConfigurationLoader<CommentedConfigurationNode> blockLoader;
     private ConfigurationNode blockRoot;
     private BlockCategory blockCat;
 
     public BlockConfig() {
-        String headerBlock = ""
-                + "+--------------------------------------------------------------------+ #\n"
-                + "<               RedProtect Block configuration File                  > #\n"
-                + "<--------------------------------------------------------------------> #\n"
-                + "<       This is the configuration file, feel free to edit it.        > #\n"
-                + "<        For more info about cmds and flags, check our Wiki:         > #\n"
-                + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                + "+--------------------------------------------------------------------+ #\n"
-                + "\n"
-                + "Notes:\n"
-                + "Lists are [object1, object2, ...]\n"
-                + "Strings containing the char & always need to be quoted";
+        String headerBlock = """
+                +--------------------------------------------------------------------+ #
+                <               RedProtect Block configuration File                  > #
+                <--------------------------------------------------------------------> #
+                <       This is the configuration file, feel free to edit it.        > #
+                <        For more info about cmds and flags, check our Wiki:         > #
+                <         https://github.com/FabioZumbi12/RedProtect/wiki            > #
+                +--------------------------------------------------------------------+ #
+
+                Notes:
+                Lists are [object1, object2, ...]
+                Strings containing the char & always need to be quoted""";
         blockLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "blocks.conf")).build();
         try {
             blockRoot = blockLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerBlock));

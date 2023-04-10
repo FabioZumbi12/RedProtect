@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.BlockConfig;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -53,12 +52,12 @@ public class DelBlockCommand implements SubCommand {
             try {
                 blocks = Integer.getInteger(args[1]);
             } catch (Exception ex) {
-                RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.region.invalid.number");
+                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalid.number");
                 return true;
             }
 
             long total = RedProtect.get().getBlockManager().delBlock(blocks, player);
-            RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.region.totalblocks", new Replacer[]{
+            RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.totalblocks", new Replacer[]{
                     new Replacer("blocks", String.valueOf(total)),
                     new Replacer("player", player.getName())
             });

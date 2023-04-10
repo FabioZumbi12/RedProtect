@@ -95,52 +95,53 @@ public class CoreConfigManager {
             "spawn-monsters",
             "can-move",
             "can-collide"));
-    public HashMap<String, String> backupGuiName = new HashMap<>();
-    public HashMap<String, String> backupGuiDescription = new HashMap<>();
-    protected String headerCfg = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<               RedProtect World configuration File                  > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<       This is the configuration file, feel free to edit it.        > #\n"
-            + "<        For more info about cmds and flags, check our Wiki:         > #\n"
-            + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-            + "+--------------------------------------------------------------------+ #\n"
-            + "\n"
-            + "Notes:\n"
-            + "Lists are [object1, object2, ...]\n"
-            + "Strings containing the char & always need to be quoted";
-    protected String headerGf = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<          RedProtect Global Flags configuration File                > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<         This is the global flags configuration file.               > #\n"
-            + "<                       Feel free to edit it.                        > #\n"
-            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
-            + "+--------------------------------------------------------------------+ #\n"
-            + "\n"
-            + "Notes:\n"
-            + "Lists are [object1, object2, ...]\n"
-            + "Strings containing the char & always need to be quoted";
-    protected String headerGui = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<             RedProtect Gui Flags configuration File                > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<            This is the gui flags configuration file.               > #\n"
-            + "<                       Feel free to edit it.                        > #\n"
-            + "<  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #\n"
-            + "+--------------------------------------------------------------------+ #\n";
-    protected String headerEco = ""
-            + "+--------------------------------------------------------------------+ #\n"
-            + "<              RedProtect Economy configuration File                 > #\n"
-            + "<--------------------------------------------------------------------> #\n"
-            + "<               This is the economy file configuration               > #\n"
-            + "<  This file its for '/rp value' command as a reference values only  > #\n"
-            + "<   https://github.com/FabioZumbi12/RedProtect/wiki/(03)-Commands    > #\n"
-            + "+--------------------------------------------------------------------+ #\n"
-            + "\n"
-            + "Notes:\n"
-            + "Lists are [object1, object2, ...]\n"
-            + "Strings containing the char & always need to be quoted";
+    public final HashMap<String, String> backupGuiName = new HashMap<>();
+    public final HashMap<String, String> backupGuiDescription = new HashMap<>();
+    protected final String headerCfg = """
+            +--------------------------------------------------------------------+ #
+            <               RedProtect World configuration File                  > #
+            <--------------------------------------------------------------------> #
+            <       This is the configuration file, feel free to edit it.        > #
+            <        For more info about cmds and flags, check our Wiki:         > #
+            <         https://github.com/FabioZumbi12/RedProtect/wiki            > #
+            +--------------------------------------------------------------------+ #
+
+            Notes:
+            Lists are [object1, object2, ...]
+            Strings containing the char & always need to be quoted""";
+    protected final String headerGf = """
+            +--------------------------------------------------------------------+ #
+            <          RedProtect Global Flags configuration File                > #
+            <--------------------------------------------------------------------> #
+            <         This is the global flags configuration file.               > #
+            <                       Feel free to edit it.                        > #
+            <  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #
+            +--------------------------------------------------------------------+ #
+
+            Notes:
+            Lists are [object1, object2, ...]
+            Strings containing the char & always need to be quoted""";
+    protected final String headerGui = """
+            +--------------------------------------------------------------------+ #
+            <             RedProtect Gui Flags configuration File                > #
+            <--------------------------------------------------------------------> #
+            <            This is the gui flags configuration file.               > #
+            <                       Feel free to edit it.                        > #
+            <  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #
+            +--------------------------------------------------------------------+ #
+            """;
+    protected final String headerEco = """
+            +--------------------------------------------------------------------+ #
+            <              RedProtect Economy configuration File                 > #
+            <--------------------------------------------------------------------> #
+            <               This is the economy file configuration               > #
+            <  This file its for '/rp value' command as a reference values only  > #
+            <   https://github.com/FabioZumbi12/RedProtect/wiki/(03)-Commands    > #
+            +--------------------------------------------------------------------+ #
+
+            Notes:
+            Lists are [object1, object2, ...]
+            Strings containing the char & always need to be quoted""";
     protected ConfigurationNode ecoCfgRoot;
     protected ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
     protected EconomyCategory ecoRoot;

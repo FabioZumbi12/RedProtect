@@ -336,9 +336,7 @@ public class RegionManager {
             try {
                 if (region != null) {
                     bLoc.put(loc.getBlock().getLocation().toString(), region);
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(RedProtect.get(), () -> {
-                        bLoc.remove(loc.getBlock().getLocation().toString());
-                    }, 200/*10 seconds*/);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(RedProtect.get(), () -> bLoc.remove(loc.getBlock().getLocation().toString()), 200/*10 seconds*/);
                     RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from DB");
                 }
             } catch (Exception ignored) {

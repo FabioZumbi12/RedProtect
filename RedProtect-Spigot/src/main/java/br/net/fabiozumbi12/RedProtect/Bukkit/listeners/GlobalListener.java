@@ -279,8 +279,7 @@ public class GlobalListener implements Listener {
             return;
         }
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "GlobalListener - EntityBlockFormEvent canceled? ");
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player p) {
             if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).iceform_by.player && !p.hasPermission("redprotect.bypass.world")) {
                 e.setCancelled(true);
             }
@@ -388,8 +387,7 @@ public class GlobalListener implements Listener {
         }
 
         try {
-            if (b != null && b.getState() instanceof Sign) {
-                Sign s = (Sign) b.getState();
+            if (b != null && b.getState() instanceof Sign s) {
                 if (ChatColor.stripColor(s.getLine(1)).equals(ChatColor.stripColor(RedProtect.get().getLanguageManager().get("_redprotect.prefix")))) {
                     b.setType(Material.AIR);
                     e.setUseInteractedBlock(Result.DENY);
@@ -534,8 +532,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if (ent instanceof Player) {
-            Player p = (Player) ent;
+        if (ent instanceof Player p) {
             if (!bypassBuild(p, null, 0)) {
                 e.setCancelled(true);
             }
@@ -615,8 +612,7 @@ public class GlobalListener implements Listener {
             }
         }
 
-        if (e2 instanceof Player) {
-            Player p = (Player) e2;
+        if (e2 instanceof Player p) {
             if (!RedProtect.get().getUtil().isRealPlayer(p)) {
                 return;
             }
@@ -657,10 +653,8 @@ public class GlobalListener implements Listener {
             }
         }
 
-        if (e2 instanceof Projectile) {
-            Projectile proj = (Projectile) e2;
-            if (proj.getShooter() instanceof Player) {
-                Player p = (Player) proj.getShooter();
+        if (e2 instanceof Projectile proj) {
+            if (proj.getShooter() instanceof Player p) {
                 if (!RedProtect.get().getUtil().isRealPlayer(p)) {
                     return;
                 }
@@ -766,7 +760,7 @@ public class GlobalListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && blacklist.contains("PASSIVES")) {
+        if ((!(e instanceof Monster) && !(e instanceof Player)) && !(e instanceof ArmorStand) && blacklist.contains("PASSIVES")) {
             event.setCancelled(true);
             return;
         }
@@ -782,7 +776,7 @@ public class GlobalListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((!(e instanceof Monster) && !(e instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(e instanceof ArmorStand)) && !wtl.contains("PASSIVES")) {
+            if ((!(e instanceof Monster) && !(e instanceof Player)) && !(e instanceof ArmorStand) && !wtl.contains("PASSIVES")) {
                 event.setCancelled(true);
                 return;
             }
@@ -794,12 +788,11 @@ public class GlobalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onVehicleBreak(VehicleDestroyEvent e) {
-        if (!(e.getAttacker() instanceof Player)) {
+        if (!(e.getAttacker() instanceof Player p)) {
             return;
         }
 
         Vehicle cart = e.getVehicle();
-        Player p = (Player) e.getAttacker();
         Region r = RedProtect.get().getRegionManager().getTopRegion(cart.getLocation());
         if (r != null) {
             return;
@@ -845,8 +838,7 @@ public class GlobalListener implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (e instanceof Player) {
-            Player p = (Player) e;
+        if (e instanceof Player p) {
             if (!bypassBuild(p, b, 2)) {
                 event.setCancelled(true);
             }

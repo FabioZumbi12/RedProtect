@@ -162,8 +162,7 @@ public class McMMOHook implements Listener {
     public void onFakeEntityDamageByEntityEvent(FakeEntityDamageByEntityEvent e) {
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "McMMO FakeEntityDamageByEntityEvent event.");
 
-        if (e.getDamager() instanceof Player) {
-            Player p = (Player) e.getDamager();
+        if (e.getDamager() instanceof Player p) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
 
             if (e.getEntity() instanceof Animals) {
@@ -194,8 +193,7 @@ public class McMMOHook implements Listener {
             }
         }
 
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player p) {
             if (r != null && !r.canPVP(p, null)) {
                 e.setCancelled(true);
             }

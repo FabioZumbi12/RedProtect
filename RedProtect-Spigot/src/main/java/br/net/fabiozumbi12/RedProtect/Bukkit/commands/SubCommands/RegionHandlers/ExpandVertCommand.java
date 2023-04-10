@@ -54,23 +54,23 @@ public class ExpandVertCommand implements SubCommand {
 
         Region r;
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
                     return true;
                 }
-                break;
+            }
             //rp expand-vert [region]
-            case 1:
+            case 1 -> {
                 r = RedProtect.get().getRegionManager().getRegion(args[0], player.getWorld().getName());
                 if (r == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                     return true;
                 }
-                break;
+            }
             //rp expand-vert [region] [world]
-            case 2:
+            case 2 -> {
                 if (Bukkit.getWorld(args[1]) == null) {
                     RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.invalidworld");
                     return true;
@@ -80,10 +80,11 @@ public class ExpandVertCommand implements SubCommand {
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                     return true;
                 }
-                break;
-            default:
+            }
+            default -> {
                 RedProtect.get().getLanguageManager().sendCommandHelp(sender, "expand-vert", true);
                 return true;
+            }
         }
 
         if (!RedProtect.get().getPermissionHandler().hasRegionPermAdmin(player, "expand-vert", r)) {

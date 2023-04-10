@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.ChangeRegionFlagEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.EconomyManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.SimpleClansHook;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.*;
@@ -47,7 +48,7 @@ import java.util.*;
 public class Region extends CoreRegion {
 
 
-    private String dynmapSet = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname;
+    private final String dynmapSet = RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname;
     private int particleID = 0;
 
     /**
@@ -209,8 +210,7 @@ public class Region extends CoreRegion {
         List<Location> locs = RedProtect.get().getConfigManager().getSigns(this.getID());
         if (locs.size() > 0) {
             for (Location loc : locs) {
-                if (loc.getBlock().getState() instanceof Sign) {
-                    Sign s = (Sign) loc.getBlock().getState();
+                if (loc.getBlock().getState() instanceof Sign s) {
                     String[] lines = s.getLines();
                     if (lines[0].equalsIgnoreCase("[flag]")) {
                         if (lines[1].equalsIgnoreCase(fname) && this.name.equalsIgnoreCase(ChatColor.stripColor(lines[2]))) {
@@ -428,7 +428,7 @@ public class Region extends CoreRegion {
                 RedProtect.get().getLanguageManager().get("region.ysize") + " " + this.minY + " - " + this.maxY + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.area") + " " + this.getArea() + "\n" +
                 RedProtect.get().getLanguageManager().get("region.leaders") + " " + leaderString + "\n" +
                 RedProtect.get().getLanguageManager().get("region.admins") + " " + adminString + RedProtect.get().getLanguageManager().get("general.color") + " | " + RedProtect.get().getLanguageManager().get("region.members") + " " + memberString + "\n" +
-                RedProtect.get().getLanguageManager().get("region.date") + " " + today.toString() + purgeString + "\n" +
+                RedProtect.get().getLanguageManager().get("region.date") + " " + today + purgeString + "\n" +
                 dynmapInfo +
                 RedProtect.get().getLanguageManager().get("region.welcome.msg") + " " + (wMsgTemp.equals("hide ") ? RedProtect.get().getLanguageManager().get("region.hiding") : ChatColor.translateAlternateColorCodes('&', wMsgTemp));
     }
@@ -618,7 +618,7 @@ public class Region extends CoreRegion {
                 continue;
             }
 
-            if (RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag)) {
+            if (CoreConfigManager.ADMIN_FLAGS.contains(flag)) {
                 String flagValue = getFlagString(flag);
                 if (flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")) {
                     flaginfo.append(", ").append(ChatColor.AQUA).append(flag).append(": ").append(ChatColor.translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().translBool(flagValue)));
@@ -827,11 +827,11 @@ public class Region extends CoreRegion {
         String[] blocks = getFlagString("allow-break").replace(" ", "").split(",");
         for (String block : blocks) {
             try {
-                if (block.toUpperCase().equals(e.getKey().getKey().toUpperCase())) {
+                if (block.equalsIgnoreCase(e.getKey().getKey())) {
                     return true;
                 }
             } catch (Exception ignored) {
-                if (block.toUpperCase().equals(e.name().toUpperCase())) {
+                if (block.equalsIgnoreCase(e.name())) {
                     return true;
                 }
             }
@@ -1233,7 +1233,7 @@ public class Region extends CoreRegion {
         for (PlayerRegion admin : this.admins) {
             adminsList.append(", ").append(admin.getPlayerName());
         }
-        return "[" + adminsList.toString().substring(2) + "]";
+        return "[" + adminsList.substring(2) + "]";
     }
 
     public String getLeadersDesc() {
@@ -1244,7 +1244,7 @@ public class Region extends CoreRegion {
         for (PlayerRegion leader : this.leaders) {
             leaderList.append(", ").append(leader.getPlayerName());
         }
-        return "[" + leaderList.delete(0, 2).toString() + "]";
+        return "[" + leaderList.delete(0, 2) + "]";
     }
 
 }

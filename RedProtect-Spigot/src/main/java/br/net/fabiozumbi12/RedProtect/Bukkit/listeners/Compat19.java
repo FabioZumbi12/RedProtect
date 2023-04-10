@@ -61,8 +61,7 @@ public class Compat19 implements Listener {
     public void onGliding(EntityToggleGlideEvent event) {
         if (event.getEntity().hasMetadata("swimming") || event.getEntity().hasMetadata("falling")) return;
 
-        if (event.getEntity() instanceof Player && event.isGliding()) {
-            Player p = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player p && event.isGliding()) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
             if (r == null) {
                 if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_glide) {
@@ -140,9 +139,7 @@ public class Compat19 implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         // Deny arrow booster
         Region r = RedProtect.get().getRegionManager().getTopRegion(e.getEntity().getLocation());
-        if (r == null && e.getEntity() instanceof Player && e.getDamager() instanceof Arrow) {
-            Player p = (Player) e.getEntity();
-            Arrow arrow = (Arrow) e.getDamager();
+        if (r == null && e.getEntity() instanceof Player p && e.getDamager() instanceof Arrow arrow) {
             if (arrow.getShooter() instanceof Player && p.isGliding()) {
                 if (arrow.getShooter().equals(p) && !p.hasPermission("redprotect.bypass.glide") &&
                         !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_glide.allow_boost) {
@@ -185,16 +182,14 @@ public class Compat19 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onShootBow(EntityShootBowEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player p)) {
             return;
         }
 
-        Player p = (Player) e.getEntity();
         Entity proj = e.getProjectile();
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
 
-        if ((proj instanceof TippedArrow)) {
-            TippedArrow arr = (TippedArrow) proj;
+        if ((proj instanceof TippedArrow arr)) {
             if (Pots.contains(arr.getBasePotionData().getType().name())) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.denypotion");
                 e.setCancelled(true);
@@ -204,11 +199,10 @@ public class Compat19 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLingerPotion(LingeringPotionSplashEvent e) {
-        if (!(RedProtect.get().getVersionHelper().getPlayerLingPot(e) instanceof Player)) {
+        if (!(RedProtect.get().getVersionHelper().getPlayerLingPot(e) instanceof Player p)) {
             return;
         }
 
-        Player p = (Player) RedProtect.get().getVersionHelper().getPlayerLingPot(e);
         Entity ent = RedProtect.get().getVersionHelper().getEntLingPot(e);
 
         RedProtect.get().logger.debug(LogLevel.DEFAULT, "Is LingeringPotionSplashEvent event.");
@@ -248,8 +242,7 @@ public class Compat19 implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onChangeBlock(EntityChangeBlockEvent e) {
 
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player p) {
             Block b = e.getBlock();
             Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
             if (r != null && !r.canBuild(p)) {

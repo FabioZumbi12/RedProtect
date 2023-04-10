@@ -37,8 +37,8 @@ import java.util.Locale;
 import java.util.logging.Level;
 
 public class LocaleHelper {
+    private final File folder = new File(String.format("%s/locale", BuyRentRegion.get().getDataFolder()));
     private YamlConfiguration bundle;
-    private File folder = new File(String.format("%s/locale", BuyRentRegion.get().getDataFolder()));
     private File file = new File(folder, String.format("%s.yml", Locale.getDefault().getLanguage()));
 
     public LocaleHelper() {

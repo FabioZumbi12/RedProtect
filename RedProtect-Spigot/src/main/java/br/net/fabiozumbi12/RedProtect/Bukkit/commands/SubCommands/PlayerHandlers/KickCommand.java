@@ -90,8 +90,7 @@ public class KickCommand implements SubCommand {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("cmdmanager.already.cantenter").replace("{time}", sec));
             }
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 1 || args.length == 3) {
                 Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());

@@ -58,8 +58,7 @@ public class RemoveAdminCommand implements SubCommand {
             }
             handleRemoveAdmin(sender, args[0], r);
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             if (args.length == 1) {
                 handleRemoveAdmin(player, args[0], null);

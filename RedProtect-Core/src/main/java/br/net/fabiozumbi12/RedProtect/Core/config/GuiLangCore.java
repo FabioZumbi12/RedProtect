@@ -86,10 +86,11 @@ public class GuiLangCore {
             loadedLang.put("_lang.version", pluginVersion);
 
         try {
-            String header = "===================================================\n" +
-                    "   You can translate this file to your language    \n" +
-                    "     from our github: https://bit.ly/2IUMc7X       \n" +
-                    "===================================================";
+            String header = """
+                    ===================================================
+                       You can translate this file to your language   \s
+                         from our github: https://bit.ly/2IUMc7X      \s
+                    ===================================================""";
             loadedLang.store(new OutputStreamWriter(new FileOutputStream(pathLang), StandardCharsets.UTF_8), header);
         } catch (Exception e) {
             CoreUtil.printJarVersion();

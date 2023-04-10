@@ -27,22 +27,15 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
 public class AddBlockCommand implements SubCommand {
     @Override
@@ -59,12 +52,12 @@ public class AddBlockCommand implements SubCommand {
             try {
                 blocks = Integer.getInteger(args[1]);
             } catch (Exception ex) {
-                RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.region.invalid.number");
+                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalid.number");
                 return true;
             }
 
             long total = RedProtect.get().getBlockManager().addBlock(blocks, player);
-            RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.region.totalblocks", new Replacer[]{
+            RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.totalblocks", new Replacer[]{
                     new Replacer("blocks", String.valueOf(total)),
                     new Replacer("player", player.getName())
             });

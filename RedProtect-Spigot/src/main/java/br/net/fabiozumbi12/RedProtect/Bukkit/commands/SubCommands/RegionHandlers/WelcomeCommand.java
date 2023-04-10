@@ -51,16 +51,13 @@ public class WelcomeCommand implements SubCommand {
 
         if (args.length >= 1) {
             StringBuilder wMessage = new StringBuilder();
-            if (args[0].equals("off")) {
-                handleWelcome(player, wMessage.toString());
-                return true;
-            } else {
+            if (!args[0].equals("off")) {
                 for (String arg : args) {
                     wMessage.append(arg).append(" ");
                 }
-                handleWelcome(player, wMessage.toString());
-                return true;
             }
+            handleWelcome(player, wMessage.toString());
+            return true;
         }
 
         RedProtect.get().getLanguageManager().sendCommandHelp(sender, "welcome", true);

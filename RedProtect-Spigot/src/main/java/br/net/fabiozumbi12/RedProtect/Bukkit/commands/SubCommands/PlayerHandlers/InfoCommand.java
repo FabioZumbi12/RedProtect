@@ -61,8 +61,7 @@ public class InfoCommand implements SubCommand {
                 RedProtect.get().getLanguageManager().sendMessage(sender, RedProtect.get().getLanguageManager().get("correct.usage") + " " + ChatColor.YELLOW + "Invalid World: " + args[1]);
             }
             return true;
-        } else if (sender instanceof Player) {
-            Player player = (Player) sender;
+        } else if (sender instanceof Player player) {
 
             //rp info [region] [world]
             if (args.length == 0) {

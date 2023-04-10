@@ -64,19 +64,20 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
         getConfig().addDefault("messages.nopermchat", "&cYou don't have permission to chat in this region!");
         getConfig().addDefault("messages.worldnotallowed", "&cRegion chat is not allowed in this world!");
 
-        getConfig().options().header("" +
-                "---- Region Chat Configuration ----\n" +
-                "Description: This plugin its a RedProtect extension to change/make to allow player to chat with other players on same region\n" +
-                "Configurations:\n" +
-                "chat:\n" +
-                "- chat options: Placeholders to be used on chat\n" +
-                "\n" +
-                "config:\n" +
-                "- allow-nonmember-chat: false - Allow no members to chat on region chat\n" +
-                "- allowed-worlds: [] - Allowed worlds to use region chat\n" +
-                "\n" +
-                "messages:\n" +
-                "- messages: Messages to show on commands\n"
+        getConfig().options().header("""
+                ---- Region Chat Configuration ----
+                Description: This plugin its a RedProtect extension to change/make to allow player to chat with other players on same region
+                Configurations:
+                chat:
+                - chat options: Placeholders to be used on chat
+
+                config:
+                - allow-nonmember-chat: false - Allow no members to chat on region chat
+                - allowed-worlds: [] - Allowed worlds to use region chat
+
+                messages:
+                - messages: Messages to show on commands
+                """
         );
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -90,8 +91,7 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
             return true;
         }
 
-        if (args.length >= 1 && sender instanceof Player) {
-            Player player = (Player) sender;
+        if (args.length >= 1 && sender instanceof Player player) {
             Location loc = player.getLocation();
             List<String> worlds = getConfig().getStringList("config.allowed-worlds");
             if (!worlds.isEmpty() && !worlds.contains(player.getWorld().getName())) {

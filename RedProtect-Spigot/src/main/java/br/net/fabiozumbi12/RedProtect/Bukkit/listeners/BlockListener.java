@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.actions.EncompassRegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -154,12 +155,11 @@ public class BlockListener implements Listener {
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notprotected");
                         b.breakNaturally();
                     }
-                    return;
                 } else {
                     RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notregion");
                     b.breakNaturally();
-                    return;
                 }
+                return;
             }
         }
 
@@ -195,7 +195,7 @@ public class BlockListener implements Listener {
                     b.breakNaturally();
                     return;
                 }
-                if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) {
+                if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || CoreConfigManager.ADMIN_FLAGS.contains(flag))) {
                     if (signr.isAdmin(p) || signr.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag." + flag)) {
                         e.setLine(1, flag);
                         e.setLine(2, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + signr.getName());
@@ -458,18 +458,17 @@ public class BlockListener implements Listener {
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
             if (r != null) {
-                if (remover instanceof Projectile && ((Projectile)remover).getShooter() instanceof Player){
-                    Player player = (Player)((Projectile)remover).getShooter();
+                if (remover instanceof Projectile && ((Projectile) remover).getShooter() instanceof Player player) {
                     if (!r.canBuild(player))
                         e.setCancelled(true);
-                } else  if (!r.canMobLoot())
+                } else if (!r.canMobLoot())
                     e.setCancelled(true);
             }
         }
 
         if (remover instanceof Player) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-            if (r != null && !r.canBuild((Player)remover)) {
+            if (r != null && !r.canBuild((Player) remover)) {
                 e.setCancelled(true);
             }
         }
@@ -509,8 +508,7 @@ public class BlockListener implements Listener {
         Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
         if (r != null && !r.canFire()) {
             if (e.getIgnitingEntity() != null) {
-                if (e.getIgnitingEntity() instanceof Player) {
-                    Player p = (Player) e.getIgnitingEntity();
+                if (e.getIgnitingEntity() instanceof Player p) {
                     if (!r.canBuild(p)) {
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantplace");
                         e.setCancelled(true);
@@ -661,11 +659,10 @@ public class BlockListener implements Listener {
     public void onVehicleBreak(VehicleDestroyEvent e) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is VehicleDestroyEvent event");
 
-        if (!(e.getAttacker() instanceof Player)) {
+        if (!(e.getAttacker() instanceof Player p)) {
             return;
         }
         Vehicle cart = e.getVehicle();
-        Player p = (Player) e.getAttacker();
         if (!RedProtect.get().getUtil().isRealPlayer(p)) {
             return;
         }

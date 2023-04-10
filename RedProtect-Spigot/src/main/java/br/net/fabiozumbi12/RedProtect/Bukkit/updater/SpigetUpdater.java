@@ -41,7 +41,7 @@ import java.io.File;
 public class SpigetUpdater {
 
     private static SpigetUpdate spigetUpdate = null;
-    private RedProtect plugin;
+    private final RedProtect plugin;
     private UpdateStatus updateAvailable = UpdateStatus.UNKNOWN;
     private String currentJarFile = "";
     private String newDownloadVersion = "";
@@ -180,10 +180,10 @@ public class SpigetUpdater {
             try {
                 updateCheck = 0;
                 if (i < updateVer.length)
-                    updateCheck = Integer.valueOf(updateVer[i]);
+                    updateCheck = Integer.parseInt(updateVer[i]);
                 pluginCheck = 0;
                 if (i < pluginVer.length)
-                    pluginCheck = Integer.valueOf(pluginVer[i]);
+                    pluginCheck = Integer.parseInt(pluginVer[i]);
                 if (updateCheck > pluginCheck) {
                     return UpdateStatus.AVAILABLE;
                 } else if (updateCheck < pluginCheck)

@@ -539,7 +539,7 @@ public class ConfigManager extends CoreConfigManager {
                 if (Bukkit.getServer().getWorld(val[0]) == null) {
                     continue;
                 }
-                locs.add(new Location(Bukkit.getServer().getWorld(val[0]), Double.valueOf(val[1]), Double.valueOf(val[2]), Double.valueOf(val[3])));
+                locs.add(new Location(Bukkit.getServer().getWorld(val[0]), Double.parseDouble(val[1]), Double.parseDouble(val[2]), Double.parseDouble(val[3])));
             }
         } catch (ObjectMappingException e) {
             CoreUtil.printJarVersion();

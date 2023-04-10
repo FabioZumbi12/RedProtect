@@ -344,7 +344,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
 
     @Override
     public Region getRegion(String rname) {
-        Optional<Map.Entry<String, Region>> optional = regions.entrySet().stream().filter(r -> r.getKey().toLowerCase().equals(rname.toLowerCase())).findFirst();
+        Optional<Map.Entry<String, Region>> optional = regions.entrySet().stream().filter(r -> r.getKey().equalsIgnoreCase(rname)).findFirst();
         return optional.map(Map.Entry::getValue).orElse(null);
     }
 

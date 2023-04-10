@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.ContainerManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.DoorManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.SpigotHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
+import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import com.connorlinfoot.actionbarapi.ActionBarAPI;
@@ -96,8 +97,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCraftItem(PrepareItemCraftEvent e) {
-        if (e.getView().getPlayer() instanceof Player) {
-            Player p = (Player) e.getView().getPlayer();
+        if (e.getView().getPlayer() instanceof Player p) {
 
             ItemStack result = e.getInventory().getResult();
 
@@ -109,11 +109,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerFrostWalk(EntityBlockFormEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player p)) {
             return;
         }
         RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
-        Player p = (Player) e.getEntity();
         Region r = RedProtect.get().getRegionManager().getTopRegion(e.getBlock().getLocation());
         if (r != null && e.getNewState().getType().name().contains("FROSTED_ICE") && !r.canIceForm(p)) {
             e.setCancelled(true);
@@ -292,8 +291,7 @@ public class PlayerListener implements Listener {
                             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                             event.setCancelled(true);
                         }
-                    } else if (b.getState() instanceof Sign && RedProtect.get().getConfigManager().configRoot().region_settings.enable_flag_sign) {
-                        Sign s = (Sign) b.getState();
+                    } else if (b.getState() instanceof Sign s && RedProtect.get().getConfigManager().configRoot().region_settings.enable_flag_sign) {
                         String[] lines = s.getLines();
                         if (lines[0].equalsIgnoreCase("[flag]") && r.getFlags().containsKey(lines[1])) {
                             String flag = lines[1];
@@ -301,18 +299,17 @@ public class PlayerListener implements Listener {
                                 RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.sign.cantflag"));
                                 return;
                             }
-                            if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || RedProtect.get().getConfigManager().ADMIN_FLAGS.contains(flag))) {
+                            if (RedProtect.get().getPermissionHandler().hasFlagPerm(p, flag) && (RedProtect.get().getConfigManager().configRoot().flags.containsKey(flag) || CoreConfigManager.ADMIN_FLAGS.contains(flag))) {
                                 if (r.isAdmin(p) || r.isLeader(p) || RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.admin.flag." + flag)) {
                                     if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.enable) {
                                         if (RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.flags.contains(flag)) {
                                             if (!RedProtect.get().changeWait.contains(r.getName() + flag)) {
                                                 RedProtect.get().getUtil().startFlagChanger(r.getName(), flag, p);
                                                 changeFlag(r, flag, p, s);
-                                                return;
                                             } else {
                                                 RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("gui.needwait.tochange").replace("{seconds}", "" + RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds));
-                                                return;
                                             }
+                                            return;
                                         }
                                     }
                                     changeFlag(r, flag, p, s);
@@ -493,11 +490,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamageEvent(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player play)) {
             return;
         }
 
-        Player play = (Player) e.getEntity();
         if (!RedProtect.get().getUtil().isRealPlayer(play)) {
             return;
         }
@@ -555,8 +551,7 @@ public class PlayerListener implements Listener {
 
         if (e.getDamager() instanceof Player) {
             p = (Player) e.getDamager();
-        } else if (e.getDamager() instanceof Projectile) {
-            Projectile proj = (Projectile) e.getDamager();
+        } else if (e.getDamager() instanceof Projectile proj) {
             if (proj.getShooter() instanceof Player) {
                 p = (Player) proj.getShooter();
             }
@@ -619,7 +614,7 @@ public class PlayerListener implements Listener {
         final Region rfrom = RedProtect.get().getRegionManager().getTopRegion(lfrom);
         final Region rto = RedProtect.get().getRegionManager().getTopRegion(lto);
 
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - PlayerTeleportEvent from " + lfrom.toString() + " to " + lto.toString());
+        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - PlayerTeleportEvent from " + lfrom + " to " + lto);
 
         if (rfrom != null) {
 
@@ -1075,11 +1070,7 @@ public class PlayerListener implements Listener {
                 } else {
                     noRegionFlags(er, p);
                     if (!er.getWelcome().equalsIgnoreCase("hide ") && RedProtect.get().getConfigManager().configRoot().notify.region_exit) {
-                        if (RedProtect.get().bukkitVersion >= 1110) {
-                            SendNotifyMsg(p, RedProtect.get().getLanguageManager().get("playerlistener.region.wilderness"), "RED");
-                        } else {
-                            SendNotifyMsg(p, RedProtect.get().getLanguageManager().get("playerlistener.region.wilderness"), null);
-                        }
+                        SendNotifyMsg(p, RedProtect.get().getLanguageManager().get("playerlistener.region.wilderness"), "RED");
                     }
                 }
             }
@@ -1226,14 +1217,13 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void PlayerTrownArrow(ProjectileLaunchEvent e) {
-        if (!(e.getEntity().getShooter() instanceof Player)) {
+        if (!(e.getEntity().getShooter() instanceof Player p)) {
             return;
         }
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is ProjectileLaunchEvent event.");
 
         Location l = e.getEntity().getLocation();
-        Player p = (Player) e.getEntity().getShooter();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
 
         ItemStack hand = p.getItemInHand();
@@ -1288,11 +1278,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void PlayerTrownPotion(PotionSplashEvent e) {
-        if (!(e.getPotion().getShooter() instanceof Player)) {
+        if (!(e.getPotion().getShooter() instanceof Player p)) {
             return;
         }
 
-        Player p = (Player) e.getPotion().getShooter();
         Entity ent = e.getEntity();
 
         RedProtect.get().logger.debug(LogLevel.PLAYER, "Is PotionSplashEvent event.");
@@ -1316,15 +1305,7 @@ public class PlayerListener implements Listener {
         }
         if (!notify.equals("")) {
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
-                if (RedProtect.get().bukkitVersion >= 1110) {
-                    Compat111.sendBarMsg(notify, color, p);
-                } else {
-                    if (RedProtect.get().hooks.checkBM()) {
-                        BossBarAPI.setMessage(p, notify);
-                    } else {
-                        p.sendMessage(notify);
-                    }
-                }
+                Compat111.sendBarMsg(notify, color, p);
             }
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
                 try {
@@ -1349,15 +1330,7 @@ public class PlayerListener implements Listener {
             return;
         }
         if (RedProtect.get().getConfigManager().configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
-            if (RedProtect.get().bukkitVersion >= 1110) {
-                Compat111.sendBarMsg(wel, "GREEN", p);
-            } else {
-                if (RedProtect.get().hooks.checkBM()) {
-                    BossBarAPI.setMessage(p, wel);
-                } else {
-                    p.sendMessage(wel);
-                }
-            }
+            Compat111.sendBarMsg(wel, "GREEN", p);
         }
         if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
             try {
@@ -1426,11 +1399,7 @@ public class PlayerListener implements Listener {
                 m = m.replace("{leaders}", leaderstring);
                 m = m.replace("{region}", r.getName());
             }
-            if (RedProtect.get().bukkitVersion >= 1110) {
-                SendNotifyMsg(p, m, "GREEN");
-            } else {
-                SendNotifyMsg(p, m, null);
-            }
+            SendNotifyMsg(p, m, "GREEN");
         } else {
             String wel = ChatColor.translateAlternateColorCodes('&',
                     r.getWelcome().replace("{r}", r.getName())
@@ -1766,8 +1735,7 @@ public class PlayerListener implements Listener {
         Location loc = e.getEntity().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(loc);
 
-        if (ent instanceof Player) {
-            Player player = (Player) ent;
+        if (ent instanceof Player player) {
             if (r != null && !r.canBuild(player) && !r.canBreak(e.getEntity().getType())) {
                 RedProtect.get().getLanguageManager().sendMessage(player, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
@@ -1810,11 +1778,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onHunger(FoodLevelChangeEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player p)) {
             return;
         }
 
-        Player p = (Player) e.getEntity();
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r != null && !r.canHunger()) {
             e.setCancelled(true);

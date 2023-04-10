@@ -68,7 +68,7 @@ public class RedProtect extends JavaPlugin {
     public final RedProtectLogger logger = new RedProtectLogger();
     public final List<String> teleportDelay = new ArrayList<>();
     public RPSchematics schematic;
-    public int bukkitVersion;
+    public double bukkitVersion;
     public Economy economy;
     public Permission permission;
     public LangGuiManager guiLang;
@@ -203,7 +203,7 @@ public class RedProtect extends JavaPlugin {
         lang = new LangManager();
         blockConfig = new BlockConfig();
 
-        if (config.configRoot().purge.regen.enable_whitelist_regen && Bukkit.getServer().hasWhitelist()) {
+        if (config.configRoot().purge.regen.enabled && config.configRoot().purge.regen.enable_whitelist_regen && Bukkit.getServer().hasWhitelist()) {
             Bukkit.getServer().setWhitelist(false);
             RedProtect.get().logger.success("Whitelist disabled!");
         }
@@ -254,30 +254,18 @@ public class RedProtect extends JavaPlugin {
         bukkitVersion = getBukkitVersion();
         logger.debug(LogLevel.DEFAULT, "Version String: " + bukkitVersion);
 
-        if (bukkitVersion >= 180) {
-            getServer().getPluginManager().registerEvents(new Compat18(), this);
-        }
-        if (bukkitVersion >= 190) {
-            getServer().getPluginManager().registerEvents(new Compat19(), this);
-        }
-        if (bukkitVersion >= 1110) {
-            getServer().getPluginManager().registerEvents(new Compat111(), this);
-        }
-        if (bukkitVersion >= 1140) {
-            getServer().getPluginManager().registerEvents(new Compat114(), this);
-        }
+        // Load all version compats classes
+        getServer().getPluginManager().registerEvents(new Compat18(), this);
+        getServer().getPluginManager().registerEvents(new Compat19(), this);
+        getServer().getPluginManager().registerEvents(new Compat111(), this);
+        getServer().getPluginManager().registerEvents(new Compat114(), this);
 
-        if (bukkitVersion <= 189) {
-            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper18").newInstance();
-        }
-        if (bukkitVersion >= 190) {
-            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper112").newInstance();
-        }
-        if (bukkitVersion >= 1130) {
-            rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper113").newInstance();
-        }
-        if (bukkitVersion >= 1140) {
+        if (bukkitVersion >= 1.19) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
+        } else {
+            logger.severe("RedProtect 8.0.0+ is not compatible with version 1.18 or lower. Download the latest RedProtect 7 from spigot or dev builds.");
+            shutDown();
+            return;
         }
         // Register as listener
         getServer().getPluginManager().registerEvents(rpvHelper, this);
@@ -348,21 +336,16 @@ public class RedProtect extends JavaPlugin {
                     denyEnter.put(player, regs);
                 }
             }
-        }, config.configRoot().region_settings.delay_after_kick_region * 20);
+        }, config.configRoot().region_settings.delay_after_kick_region * 20L);
         return true;
     }
 
-    private int getBukkitVersion() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-        String v = name.substring(name.lastIndexOf('.') + 1) + ".";
-        String[] version = v.replace('_', '.').split("\\.");
-
-        int lesserVersion = 0;
-        try {
-            lesserVersion = Integer.parseInt(version[2]);
-        } catch (NumberFormatException ignored) {
-        }
-        return Integer.parseInt((version[0] + version[1]).substring(1) + lesserVersion);
+    private double getBukkitVersion() {
+        var name = Bukkit.getServer().getBukkitVersion().split("-")[0].split("\\.");
+        var version = name[0] + "." + name[1];
+        if (name.length == 3)
+            version += name[2];
+        return Double.parseDouble(version);
     }
 
     private void startAutoSave() {
@@ -373,7 +356,7 @@ public class RedProtect extends JavaPlugin {
             autoSaveID = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                 logger.debug(LogLevel.DEFAULT, "Auto-save Scheduler: Saving " + config.configRoot().file_type + " database!");
                 rm.saveAll(config.configRoot().flat_file.backup_on_save);
-            }, config.configRoot().flat_file.auto_save_interval_seconds * 20, config.configRoot().flat_file.auto_save_interval_seconds * 20).getTaskId();
+            }, config.configRoot().flat_file.auto_save_interval_seconds * 20L, config.configRoot().flat_file.auto_save_interval_seconds * 20L).getTaskId();
 
         } else {
             logger.info("Auto-save Scheduler: Disabled");
