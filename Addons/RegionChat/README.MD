@@ -5,7 +5,8 @@ This plugin adds the flag `chat` and allow player to chat with other players on 
 ### Commands:
 
 Reload command: `/regionchat reload` or the alias `/rpc reload`  
-Flag: `/rp flag chat true/false` - Allow or deny no region members to chat: `/rpc <message>`
+Flag: `/rp flag chat true/false` - Allow or deny no region members to chat  
+To chat: `/rpc <message>`
 
 ### Permissions:
 

@@ -37,7 +37,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.HandleHelpPage;
 
@@ -60,7 +59,7 @@ public class LDenyCommand implements SubCommand {
                 Region r = RedProtect.get().getRegionManager().getRegion(info.split("@")[0], info.split("@")[1]);
 
                 if (r != null) {
-                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", Objects.requireNonNull(lsender).getName()));
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.youdenied").replace("{region}", r.getName()).replace("{player}", lsender.getName()));
                     if (lsender.isOnline()) {
                         RedProtect.get().getLanguageManager().sendMessage(lsender, RedProtect.get().getLanguageManager().get("cmdmanager.region.leader.denied").replace("{region}", r.getName()).replace("{player}", player.getName()));
                     }

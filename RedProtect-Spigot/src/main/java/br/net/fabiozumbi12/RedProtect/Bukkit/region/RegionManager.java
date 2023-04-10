@@ -39,7 +39,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Get the region database from here. All functions for manage regions can be found in this class.
@@ -150,7 +153,7 @@ public class RegionManager {
     /**
      * Return a set of regions by player UUID or Name if this player is Leader;
      * <p>
-     * This will return player regions based on raw UUID or Player name, depending on if server is running in Online or Offline mode;
+     * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
      *
      * @param uuid the UUID of the player.
      * @return {@code Set<Region>} with regions
@@ -166,7 +169,7 @@ public class RegionManager {
     /**
      * Return a set of regions by player UUID or Name if this player is Admin or Leader;
      * <p>
-     * This will return player regions based on raw UUID or Player name, depending on if server is running in Online;
+     * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
      * @param uuid the UUID of the player.
      * @return {@code Set<Region>} with regions
@@ -182,7 +185,7 @@ public class RegionManager {
     /**
      * Return a set of regions by player UUID or Name if this player is Member, Admin or Leader;
      * <p>
-     * This will return player regions based on raw UUID or Player name, depending on if server is running in Online;
+     * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
      *
      * @param uuid the UUID of the player.
      * @return {@code Set<Region>} with regions
@@ -324,7 +327,7 @@ public class RegionManager {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Get from cache");
             return region;
         } else {
-            if (!this.regionManagers.containsKey(Objects.requireNonNull(loc.getWorld()).getName())) {
+            if (!this.regionManagers.containsKey(loc.getWorld().getName())) {
                 return null;
             }
 
@@ -379,7 +382,7 @@ public class RegionManager {
      * @return {@code Region} - Or null if no regions on this location.
      */
     public Region getLowRegion(Location loc) {
-        if (!this.regionManagers.containsKey(Objects.requireNonNull(loc.getWorld()).getName())) {
+        if (!this.regionManagers.containsKey(loc.getWorld().getName())) {
             return null;
         }
         WorldRegionManager rm = this.regionManagers.get(loc.getWorld().getName());
@@ -409,7 +412,7 @@ public class RegionManager {
      * @return {@code Map<Integer,Region>} - Indexed by priority
      */
     public Map<Integer, Region> getGroupRegion(Location loc) {
-        if (!this.regionManagers.containsKey(Objects.requireNonNull(loc.getWorld()).getName())) {
+        if (!this.regionManagers.containsKey(loc.getWorld().getName())) {
             return null;
         }
         WorldRegionManager rm = this.regionManagers.get(loc.getWorld().getName());

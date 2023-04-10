@@ -53,13 +53,15 @@ public class SpigetUpdate extends SpigetUpdateAbstract {
     }
 
     @Override
-    public void setUserAgent(String userAgent) {
+    public SpigetUpdate setUserAgent(String userAgent) {
         super.setUserAgent(userAgent);
+        return this;
     }
 
     @Override
-    public void setVersionComparator(VersionComparator comparator) {
+    public SpigetUpdate setVersionComparator(VersionComparator comparator) {
         super.setVersionComparator(comparator);
+        return this;
     }
 
     @Override

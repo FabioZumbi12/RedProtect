@@ -39,7 +39,7 @@ public abstract class VersionComparator {
     };
 
     /**
-     * Compares versions by their Semantic Version (<code>Major.Minor.Patch</code>, <a href="http://semver.org/">semver.org</a>). Removes dots and compares the resulting Integer values
+     * Compares versions by their Sematic Version (<code>Major.Minor.Patch</code>, <a href="http://semver.org/">semver.org</a>). Removes dots and compares the resulting Integer values
      */
     public static final VersionComparator SEM_VER = new VersionComparator() {
         @Override
