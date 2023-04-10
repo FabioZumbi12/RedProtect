@@ -52,7 +52,11 @@ public class DynmapHook implements Listener {
         MSet = MApi.getMarkerSet(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname);
         if (MSet == null) {
             MSet = MApi.createMarkerSet("redprotect.markerset", RedProtect.get().getConfigManager().configRoot().hooks.dynmap.marks_groupname, null, false);
+            if (MSet == null){
+                RedProtect.get().logger.severe("Problems on creating or changing MarkerSet name. If you changed the marks-groupname, probably you need to reload Dynmap too and then, reload RedProtect (with plugman or server reboot)");
+            }
         }
+
         MSet.setHideByDefault(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.hide_by_default);
         MSet.setLayerPriority(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.layer_priority);
         MSet.setLabelShow(RedProtect.get().getConfigManager().configRoot().hooks.dynmap.show_label);

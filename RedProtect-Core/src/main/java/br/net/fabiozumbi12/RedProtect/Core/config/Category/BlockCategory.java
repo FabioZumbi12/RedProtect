@@ -36,14 +36,14 @@ import java.util.Map;
 public class BlockCategory {
 
     @Setting(comment = "Enable timed given claim blocks?\nDefault: false")
-    public final boolean enabled = false;
+    public boolean enabled = false;
     @Setting(comment = """
             Don't touch this.
             This is the player times, to calculate the amount of blocks a player have
             Values:
             - time: 0 - Time played on server
             - added-blocks: 0 - Blocks added manually""")
-    public final Map<String, PlayerCat> players = new HashMap<>();
+    public Map<String, PlayerCat> players = new HashMap<>();
 
     @Setting(value = "unit-to-add", comment = """
             The unit type to give claim blocks to players?
@@ -52,7 +52,7 @@ public class BlockCategory {
             - h = x blocks for every hour
             - m = x blocks for every minute
             - s = x blocks for every second""")
-    public final String unit_to_add = "h";
+    public String unit_to_add = "h";
     @Setting(value = "blocks-to-value", comment = "The amount of blocks to add on every time unit configured")
     public long blocks_to_add = 50;
     @Setting(value = "time-type", comment = """

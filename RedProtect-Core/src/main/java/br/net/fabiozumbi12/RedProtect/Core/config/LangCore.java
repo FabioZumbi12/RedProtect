@@ -33,14 +33,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class LangCore {
-    protected final HashMap<String, String> delayedMessage = new HashMap<>();
-    protected final Properties loadedLang = new Properties() {
+    protected HashMap<String, String> delayedMessage = new HashMap<>();
+    protected Properties loadedLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    private final Properties baseLang = new Properties() {
+    private Properties baseLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));

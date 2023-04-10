@@ -37,13 +37,13 @@ import java.util.TreeSet;
 
 public class GuiLangCore {
 
-    protected final Properties loadedLang = new Properties() {
+    protected Properties loadedLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    private final Properties baseLang = new Properties() {
+    private Properties baseLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
