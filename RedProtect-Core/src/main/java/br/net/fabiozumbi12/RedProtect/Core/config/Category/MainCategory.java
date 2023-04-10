@@ -295,6 +295,8 @@ public class MainCategory {
 
     @ConfigSerializable
     public static class regionSettings {
+        @Setting(value = "convert-zeros-y", comment = "Convert all regions with minY = 0 to the world min y? Fix existing regions not protecting below 0 on 1.19+!")
+        public final boolean convert_zeros_y = true;
         @Setting(value = "portal-delay", comment = "The delay to teleport again form/to a redprotect portal.")
         public final int portal_delay = 5;
         @Setting(value = "allow-sign-interact-tags", comment = "Allow non meber of regions to interact with signs with this headers. (line 1 of the sign)")

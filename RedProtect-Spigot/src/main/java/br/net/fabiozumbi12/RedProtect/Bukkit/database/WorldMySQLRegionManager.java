@@ -33,6 +33,7 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandException;
 
 import java.sql.*;
@@ -314,6 +315,9 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                     long value = rs.getLong("value");
                     boolean candel = rs.getBoolean("candelete");
                     boolean canPurge = rs.getBoolean("canpurge");
+
+                    if (minY == 0 && RedProtect.get().getConfigManager().configRoot().region_settings.convert_zeros_y)
+                        minY = Bukkit.getWorld(this.world).getMinHeight();
 
                     Location tppoint = null;
                     if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
