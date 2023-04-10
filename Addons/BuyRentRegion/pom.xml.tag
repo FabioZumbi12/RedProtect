@@ -25,14 +25,12 @@
   ~ 3 - Este aviso não pode ser removido ou alterado de qualquer distribuição de origem.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>8.1.0-SNAPSHOT</version>
+        <version>8.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>BuyRentRegion</artifactId>
@@ -90,25 +88,25 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <dependency>
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
-            <version>8.1.0-SNAPSHOT</version>
+            <version>8.1.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Spigot</artifactId>
-            <version>8.1.0-SNAPSHOT</version>
+            <version>8.1.0</version>
         </dependency>
 
         <dependency>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2020 - @FabioZumbi12
-  ~ Last Modified: 12/07/2020 20:24.
+  ~ Last Modified: 12/07/2020 18:51.
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -35,10 +35,10 @@
         <version>8.1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>BuyRentRegion</artifactId>
-    <name>RPBuyRentRegion</name>
+    <artifactId>KillerProjectiles</artifactId>
+    <name>RPKillerProjectiles</name>
 
-    <description>Buy, rent or sell redprotect regions</description>
+    <description>Makes projectiles kill player with one hit</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -80,10 +80,6 @@
             <id>redprotect-repo</id>
             <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>
         </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -109,13 +105,6 @@
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Spigot</artifactId>
             <version>8.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
