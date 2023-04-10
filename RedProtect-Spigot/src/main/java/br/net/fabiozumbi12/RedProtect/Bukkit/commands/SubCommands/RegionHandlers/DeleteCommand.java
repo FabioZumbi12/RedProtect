@@ -73,9 +73,9 @@ public class DeleteCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 2)
             if (args[1].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase())).toList());
+                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().toLowerCase().startsWith(args[1].toLowerCase())).map(World::getName).collect(Collectors.toList()));
         return tab;
     }
 }

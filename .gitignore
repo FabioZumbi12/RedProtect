@@ -2,4 +2,3 @@
 *.iml
 */target/*
 /target/
-/release.properties

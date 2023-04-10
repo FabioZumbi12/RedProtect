@@ -73,14 +73,14 @@ public class TeleportCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 2)
             if (args[1].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[1])).toList());
+                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
         if (args.length == 3)
             if (args[2].isEmpty())
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.startsWith(args[2])).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[2])).map(Player::getName).collect(Collectors.toList()));
         return tab;
     }
 }

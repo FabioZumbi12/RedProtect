@@ -46,8 +46,8 @@ import java.util.concurrent.ExecutionException;
 public class EncompassRegionBuilder extends RegionBuilder {
 
     public EncompassRegionBuilder(SignChangeEvent e) {
-        String owner1 = RedProtect.get().getUtil().PlayerToUUID(Objects.requireNonNull(e.getLine(2)));
-        String owner2 = RedProtect.get().getUtil().PlayerToUUID(Objects.requireNonNull(e.getLine(3)));
+        String owner1 = RedProtect.get().getUtil().PlayerToUUID(e.getLine(2));
+        String owner2 = RedProtect.get().getUtil().PlayerToUUID(e.getLine(3));
         Block b = e.getBlock();
         World w = b.getWorld();
         Player p = e.getPlayer();
@@ -65,7 +65,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
         int oldFacing = 0;
         int curFacing = 0;
 
-        if (RedProtect.get().getConfigManager().isAllowedWorld(p)) {
+        if (!RedProtect.get().getConfigManager().isAllowedWorld(p)) {
             this.setErrorSign(e, RedProtect.get().getLanguageManager().get("regionbuilder.region.worldnotallowed"));
             return;
         }
@@ -365,7 +365,7 @@ public class EncompassRegionBuilder extends RegionBuilder {
                     Block newb = finalCurrent.getRelative(BlockFace.UP);
                     if (newb.getType().isAir()) {
                         if (Material.getMaterial("SIGN_POST") != null) {
-                            newb.getState().getBlock().setType(Objects.requireNonNull(Material.getMaterial("SIGN_POST")));
+                            newb.getState().getBlock().setType(Material.getMaterial("SIGN_POST"));
                         } else {
                             newb.getState().getBlock().setType(Arrays.stream(Material.values()).filter(m -> m.name().endsWith("_SIGN")).findFirst().get());
                         }
@@ -411,9 +411,9 @@ public class EncompassRegionBuilder extends RegionBuilder {
     }
 
     private void give(Block sign, Player p, List<Block> blocks) {
-        HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(Objects.requireNonNull(Material.getMaterial(RedProtect.get().getConfigManager().configRoot().region_settings.block_id)), blocks.size()));
+        HashMap<Integer, ItemStack> left = p.getInventory().addItem(new ItemStack(Material.getMaterial(RedProtect.get().getConfigManager().configRoot().region_settings.block_id), blocks.size()));
         if (!left.isEmpty()) {
-            p.getWorld().dropItem(p.getLocation(), new ItemStack(Objects.requireNonNull(Material.getMaterial(RedProtect.get().getConfigManager().configRoot().region_settings.block_id)), left.get(0).getAmount() - 1));
+            p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.getMaterial(RedProtect.get().getConfigManager().configRoot().region_settings.block_id), left.get(0).getAmount() - 1));
         }
         p.updateInventory();
         sign.breakNaturally();

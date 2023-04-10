@@ -36,7 +36,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class RedProtectAPI {
@@ -76,7 +75,7 @@ public class RedProtectAPI {
     /**
      * Return the Region on location.
      * <p>
-     * *Note: If there's more region in this same location this method will
+     * *Note: If theres more region in this same location this method will
      * return only the high priority region. To get all possible region in
      * one location use {@code getGroupRegions()}
      * <p>
@@ -85,7 +84,7 @@ public class RedProtectAPI {
      * @return {@code Region} of location or {@code null} if no regions on player location.
      */
     public Region getRegion(Location location) {
-        return getHighPriorityRegion(Objects.requireNonNull(location.getWorld()), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return getHighPriorityRegion(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     /**
@@ -240,16 +239,18 @@ public class RedProtectAPI {
      * @param flag         The name of flag.
      * @param defaultValue Default value if not admin flag.
      * @param isAdmin      Is flag admin? If admin, will require admin permission (redprotect.admin.flag.FlagName)
+     * @return true if added or false if the flag already exists.
      */
-    public void addFlag(String flag, boolean defaultValue, boolean isAdmin) {
-        RedProtect.get().getConfigManager().addFlag(flag, defaultValue, isAdmin);
+    public boolean addFlag(String flag, boolean defaultValue, boolean isAdmin) {
+        return RedProtect.get().getConfigManager().addFlag(flag, defaultValue, isAdmin);
     }
 
     /**
      * @param flag    The name of flag.
      * @param isAdmin Is Admin flag?
+     * @return true if the flag was found and has been removed, false otherwise.
      */
-    public void removeFlag(String flag, boolean isAdmin) {
-        RedProtect.get().getConfigManager().removeFlag(flag, isAdmin);
+    public boolean removeFlag(String flag, boolean isAdmin) {
+        return RedProtect.get().getConfigManager().removeFlag(flag, isAdmin);
     }
 }

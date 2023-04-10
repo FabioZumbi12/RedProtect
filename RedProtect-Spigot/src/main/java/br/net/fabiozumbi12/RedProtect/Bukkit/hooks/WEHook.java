@@ -58,7 +58,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class WEHook {
 
@@ -75,7 +74,7 @@ public class WEHook {
     public static Location[] getWESelection(Player player) {
         BukkitWorld bw = new BukkitWorld(player.getWorld());
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        if (Objects.requireNonNull(worldEdit).getSession(player) != null && worldEdit.getSession(player).isSelectionDefined(bw)) {
+        if (worldEdit.getSession(player) != null && worldEdit.getSession(player).isSelectionDefined(bw)) {
             try {
                 com.sk89q.worldedit.regions.Region regs = worldEdit.getSession(player).getRegionSelector(bw).getRegion();
                 Location p1 = new Location(player.getWorld(), regs.getMinimumPoint().getX(), regs.getMinimumPoint().getY(), regs.getMinimumPoint().getZ());
@@ -90,7 +89,7 @@ public class WEHook {
 
     private static void setSelection(BukkitWorld ws, Player p, Location pos1, Location pos2) {
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        RegionSelector regs = Objects.requireNonNull(worldEdit).getSession(p).getRegionSelector(ws);
+        RegionSelector regs = worldEdit.getSession(p).getRegionSelector(ws);
         regs.selectPrimary(BlockVector3.at(pos1.getX(), pos1.getY(), pos1.getZ()), null);
         regs.selectSecondary(BlockVector3.at(pos2.getX(), pos2.getY(), pos2.getZ()), null);
         worldEdit.getSession(p).setRegionSelector(ws, regs);
@@ -105,7 +104,7 @@ public class WEHook {
     public static void setSelectionFromRP(Player p, Location pos1, Location pos2) {
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         BukkitWorld ws = new BukkitWorld(p.getWorld());
-        if (Objects.requireNonNull(worldEdit).getSession(p) == null || !worldEdit.getSession(p).isSelectionDefined(ws)) {
+        if (worldEdit.getSession(p) == null || !worldEdit.getSession(p).isSelectionDefined(ws)) {
             setSelection(ws, p, pos1, pos2);
         } else {
             worldEdit.getSession(p).getRegionSelector(ws).clear();
@@ -153,6 +152,7 @@ public class WEHook {
                 } else if (yaw < 135) {
                     rotate = 270;
                 } else if (yaw < 225) {
+                    rotate = 0;
                 } else if (yaw < 315) {
                     rotate = 90;
                 }

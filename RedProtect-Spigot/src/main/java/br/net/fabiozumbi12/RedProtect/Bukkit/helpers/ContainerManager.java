@@ -89,11 +89,11 @@ public class ContainerManager {
 
     public boolean canBreak(Player p, Block b) {
         if (!RedProtect.get().getConfigManager().configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
-            return false;
+            return true;
         }
         Region reg = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
         if (reg == null && !RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside) {
-            return false;
+            return true;
         }
         int x = b.getX();
         int y = b.getY();
@@ -105,7 +105,7 @@ public class ContainerManager {
         if (isSign(b) && validatePrivateSign(b)) {
             deny = false;
             if (validateBreakSign(b, p)) {
-                return false;
+                return true;
             }
         }
 
@@ -120,7 +120,7 @@ public class ContainerManager {
                         if (isSign(bs) && (validatePrivateSign(bs))) {
                             deny = false;
                             if (validateBreakSign(bs, p)) {
-                                return false;
+                                return true;
                             }
                         }
 
@@ -138,7 +138,7 @@ public class ContainerManager {
                                         if (isSign(bu) && (validatePrivateSign(bu))) {
                                             deny = false;
                                             if (validateBreakSign(bu, p)) {
-                                                return false;
+                                                return true;
                                             }
                                         }
                                     }
@@ -149,16 +149,16 @@ public class ContainerManager {
                 }
             }
         }
-        return !deny;
+        return deny;
     }
 
     public boolean canWorldBreak(Block b) {
         if (!RedProtect.get().getConfigManager().configRoot().private_cat.use) {
-            return false;
+            return true;
         }
         Region reg = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
         if (reg == null && !RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside) {
-            return false;
+            return true;
         }
         int x = b.getX();
         int y = b.getY();
@@ -167,7 +167,7 @@ public class ContainerManager {
 
         if (isSign(b) && validWorldBreak(b)) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Valid Sign on canWorldBreak!");
-            return true;
+            return false;
         }
 
         String signbtype = b.getType().name();
@@ -178,7 +178,7 @@ public class ContainerManager {
                 for (int sz = -1; sz <= 1; sz++) {
                     Block bs = w.getBlockAt(x + sx, y, z + sz);
                     if (isSign(bs) && validWorldBreak(bs)) {
-                        return true;
+                        return false;
                     }
 
                     String blocktype2 = b.getType().name();
@@ -192,7 +192,7 @@ public class ContainerManager {
                             for (int uz = -1; uz <= 1; uz++) {
                                 Block bu = w.getBlockAt(x2 + ux, y2, z2 + uz);
                                 if (isSign(bu) && validWorldBreak(bu)) {
-                                    return true;
+                                    return false;
                                 }
                             }
                         }
@@ -200,7 +200,7 @@ public class ContainerManager {
                 }
             }
         }
-        return false;
+        return true;
     }
 
     private Block getBlockRelative(Block block) {

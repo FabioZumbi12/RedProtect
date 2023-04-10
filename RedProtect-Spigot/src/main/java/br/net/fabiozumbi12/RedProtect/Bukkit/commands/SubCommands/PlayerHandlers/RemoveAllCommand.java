@@ -59,9 +59,9 @@ public class RemoveAllCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 1)
             if (args[0].isEmpty())
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().toLowerCase().startsWith(args[0].toLowerCase())).map(Player::getName).collect(Collectors.toList()));
         return tab;
     }
 }

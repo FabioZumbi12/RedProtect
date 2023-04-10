@@ -40,7 +40,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public final class RegionChat extends JavaPlugin implements Listener, CommandExecutor {
 
@@ -50,7 +49,7 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
         RedProtect.get().getAPI().addFlag("chat", false, false);
 
         getServer().getPluginManager().registerEvents(this, this);
-        Objects.requireNonNull(getCommand("regionchat")).setExecutor(this);
+        getCommand("regionchat").setExecutor(this);
 
         getConfig().addDefault("chat.no-member", "&7[&8N&7]");
         getConfig().addDefault("chat.member", "&7[&aM&7]");
@@ -100,7 +99,7 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
                 return true;
             }
 
-            Region region = RedProtect.get().getAPI().getLowPriorityRegion(Objects.requireNonNull(loc.getWorld()), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            Region region = RedProtect.get().getAPI().getLowPriorityRegion(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
             if (region == null) {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c[&4RPChat&c] " + getConfig().getString("messages.noregion")));
                 return true;
@@ -115,19 +114,19 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
             for (String arg : args) {
                 msg.append(" ").append(arg);
             }
-            String message = Objects.requireNonNull(getConfig().getString("chat.message"))
+            String message = getConfig().getString("chat.message")
                     .replace("{region}", region.getName())
                     .replace("{player}", player.getName())
                     .replace("{message}", ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', msg.toString())));
 
             if (region.isMember(player)) {
-                message = message.replace("{member}", Objects.requireNonNull(getConfig().getString("chat.member")));
+                message = message.replace("{member}", getConfig().getString("chat.member"));
             } else if (region.isAdmin(player)) {
-                message = message.replace("{member}", Objects.requireNonNull(getConfig().getString("chat.admin")));
+                message = message.replace("{member}", getConfig().getString("chat.admin"));
             } else if (region.isLeader(player)) {
-                message = message.replace("{member}", Objects.requireNonNull(getConfig().getString("chat.leader")));
+                message = message.replace("{member}", getConfig().getString("chat.leader"));
             } else {
-                message = message.replace("{member}", Objects.requireNonNull(getConfig().getString("chat.no-member")));
+                message = message.replace("{member}", getConfig().getString("chat.no-member"));
             }
 
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
@@ -136,7 +135,7 @@ public final class RegionChat extends JavaPlugin implements Listener, CommandExe
                 if (other.equals(player)) continue;
 
                 Location loc2 = other.getLocation();
-                Region regionOther = RedProtect.get().getAPI().getLowPriorityRegion(Objects.requireNonNull(loc2.getWorld()), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ());
+                Region regionOther = RedProtect.get().getAPI().getLowPriorityRegion(loc2.getWorld(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ());
                 if (region.equals(regionOther) && (region.canBuild(other) || region.getFlagBool("chat"))) {
                     other.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
                 }

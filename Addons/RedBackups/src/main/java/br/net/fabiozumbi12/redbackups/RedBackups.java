@@ -46,7 +46,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class RedBackups extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
@@ -74,7 +77,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
         this.plugin = this;
 
         getServer().getPluginManager().registerEvents(this, this);
-        Objects.requireNonNull(getCommand("redbackups")).setExecutor(this);
+        getCommand("redbackups").setExecutor(this);
 
         getConfig().addDefault("backup.enabled", false);
         getConfig().addDefault("backup.worlds", Bukkit.getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList()));
@@ -205,7 +208,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             backupList.clear();
 
             if (location != null) {
-                if (!worlds.contains(Objects.requireNonNull(location.getWorld()).getName())) return;
+                if (!worlds.contains(location.getWorld().getName())) return;
 
                 try {
                     String worldName = location.getWorld().getName();
@@ -230,7 +233,7 @@ public final class RedBackups extends JavaPlugin implements Listener, CommandExe
             } else {
                 Set<Region> regionSet = RedProtect.get().getAPI().getAllRegions();
 
-                for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).toList()) {
+                for (Region region : regionSet.stream().filter(r -> worlds.contains(r.getWorld())).collect(Collectors.toList())) {
                     try {
                         String worldName = region.getWorld();
                         File tempWorld = new File(getServer().getWorldContainer().getCanonicalPath(), worldName);

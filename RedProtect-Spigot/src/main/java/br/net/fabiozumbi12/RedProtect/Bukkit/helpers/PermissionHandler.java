@@ -132,7 +132,7 @@ public class PermissionHandler {
         if (limit > 0) {
             for (PermissionAttachmentInfo perm : perms) {
                 if (perm.getPermission().startsWith("redprotect.canpurge-limit.")) {
-                    String pStr = perm.getPermission().replaceAll("[^-?\\d]+", "");
+                    String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
                     if (!pStr.isEmpty()) {
                         limits.add(Integer.parseInt(pStr));
                     }
@@ -155,7 +155,7 @@ public class PermissionHandler {
                     if (perm.getPermission().startsWith("redprotect.limits.blocks.")) {
                         if (RedProtect.get().getConfigManager().configRoot().region_settings.blocklimit_per_world && !hasVaultPerm(player, perm.getPermission()))
                             continue;
-                        String pStr = perm.getPermission().replaceAll("[^-?\\d]+", "");
+                        String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
                         if (!pStr.isEmpty()) {
                             limits.add(Integer.parseInt(pStr));
                         }
@@ -185,7 +185,7 @@ public class PermissionHandler {
                     if (perm.getPermission().startsWith("redprotect.limits.claim.")) {
                         if (RedProtect.get().getConfigManager().configRoot().region_settings.claim.claimlimit_per_world && !hasVaultPerm(player, perm.getPermission()))
                             continue;
-                        String pStr = perm.getPermission().replaceAll("[^-?\\d]+", "");
+                        String pStr = perm.getPermission().replaceAll("[^-?0-9]+", "");
                         if (!pStr.isEmpty()) {
                             limits.add(Integer.parseInt(pStr));
                         }

@@ -52,7 +52,7 @@ public class FlagCommand implements SubCommand {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.flag")) && args[2].equalsIgnoreCase("info")) {
             if (Bukkit.getWorld(args[2]) != null) {
-                Region r = RedProtect.get().getRegionManager().getRegion(args[1], Objects.requireNonNull(Bukkit.getWorld(args[2])).getName());
+                Region r = RedProtect.get().getRegionManager().getRegion(args[1], Bukkit.getWorld(args[2]).getName());
                 if (r != null) {
                     sender.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------[" + RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.values") + "]------------");
                     sender.sendMessage(r.getFlagInfo());
@@ -210,7 +210,7 @@ public class FlagCommand implements SubCommand {
                 if (args[1].isEmpty())
                     return Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).collect(Collectors.toList());
                 else
-                    return Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).filter(name -> name.startsWith(args[1].toUpperCase())).collect(Collectors.toList());
+                    return Arrays.stream(PotionEffectType.values()).filter(e -> e.getName().startsWith(args[1].toUpperCase())).map(PotionEffectType::getName).collect(Collectors.toList());
             }
             if (args.length == 3) {
                 return Collections.singletonList(String.valueOf(1));
@@ -221,7 +221,7 @@ public class FlagCommand implements SubCommand {
                 if (args[1].isEmpty())
                     return Arrays.stream(Particle.values()).map(Particle::name).collect(Collectors.toList());
                 else
-                    return Arrays.stream(Particle.values()).map(Particle::name).filter(name -> name.startsWith(args[1].toUpperCase())).collect(Collectors.toList());
+                    return Arrays.stream(Particle.values()).filter(p -> p.name().startsWith(args[1].toUpperCase())).map(Particle::name).collect(Collectors.toList());
             }
             if (args.length <= 6) {
                 return Collections.singletonList(String.valueOf(10));

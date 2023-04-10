@@ -103,7 +103,7 @@ public class RedProtectUtil extends CoreUtil {
             if (isReader == null) isReader = RedProtect.class.getResourceAsStream(nameOri);
 
             FileOutputStream fos = new FileOutputStream(saveTo);
-            while (Objects.requireNonNull(isReader).available() > 0) {
+            while (isReader.available() > 0) {
                 fos.write(isReader.read());
             }
             fos.close();
@@ -138,7 +138,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public boolean isRealPlayer(Player p) {
-        return Bukkit.getOnlinePlayers().stream().noneMatch(play -> play.equals(p));
+        return Bukkit.getOnlinePlayers().stream().anyMatch(play -> play.equals(p));
     }
 
     private boolean isSecure(Location loc) {
@@ -305,7 +305,7 @@ public class RedProtectUtil extends CoreUtil {
                     printJarVersion();
                     e.printStackTrace();
                 }
-                long days = TimeUnit.DAYS.convert(Objects.requireNonNull(now).getTime() - Objects.requireNonNull(regionDate).getTime(), TimeUnit.MILLISECONDS);
+                long days = TimeUnit.DAYS.convert(now.getTime() - regionDate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().getConfigManager().configRoot().purge.ignore_regions_from_players) {
@@ -381,7 +381,7 @@ public class RedProtectUtil extends CoreUtil {
                     printJarVersion();
                     e.printStackTrace();
                 }
-                long days = TimeUnit.DAYS.convert(Objects.requireNonNull(now).getTime() - Objects.requireNonNull(regiondate).getTime(), TimeUnit.MILLISECONDS);
+                long days = TimeUnit.DAYS.convert(now.getTime() - regiondate.getTime(), TimeUnit.MILLISECONDS);
 
                 boolean ignore = false;
                 for (String play : RedProtect.get().getConfigManager().configRoot().sell.ignore_regions_from_players) {
@@ -575,7 +575,7 @@ public class RedProtectUtil extends CoreUtil {
                     }
 
                     if (RedProtect.get().getConfigManager().configRoot().flat_file.region_per_file) {
-                        if (r.toSave()) {
+                        if (!r.toSave()) {
                             continue;
                         }
                         fileDB = new YamlConfiguration();
@@ -817,9 +817,9 @@ public class RedProtectUtil extends CoreUtil {
         if (lowRegion != null) {
             if (regionarea > lowRegion.getArea()) {
                 prior = lowRegion.getPrior() - 1;
-            } else if (regionarea < lowRegion.getArea() && regionarea < Objects.requireNonNull(topRegion).getArea()) {
+            } else if (regionarea < lowRegion.getArea() && regionarea < topRegion.getArea()) {
                 prior = topRegion.getPrior() + 1;
-            } else if (regionarea < Objects.requireNonNull(topRegion).getArea()) {
+            } else if (regionarea < topRegion.getArea()) {
                 prior = topRegion.getPrior() + 1;
             }
         }
@@ -909,7 +909,7 @@ public class RedProtectUtil extends CoreUtil {
                 leaders.add(new PlayerRegion(claim.ownerID != null ? claim.ownerID.toString() : pname, pname));
                 Location newmin = claim.getGreaterBoundaryCorner();
                 Location newmax = claim.getLesserBoundaryCorner();
-                newmin.setY(Objects.requireNonNull(w).getMinHeight());
+                newmin.setY(w.getMinHeight());
                 newmax.setY(w.getMaxHeight());
 
                 Region r = new Region(nameGen(claim.getOwnerName().replace(" ", "_").toLowerCase(), w.getName()), new HashSet<>(), new HashSet<>(), leaders,
@@ -1039,7 +1039,7 @@ public class RedProtectUtil extends CoreUtil {
 
     public boolean canBuildNear(Player p, Location loc) {
         if (RedProtect.get().getConfigManager().configRoot().region_settings.deny_build_near <= 0) {
-            return false;
+            return true;
         }
         int x = loc.getBlockX();
         int y = loc.getBlockY();
@@ -1052,12 +1052,12 @@ public class RedProtectUtil extends CoreUtil {
                     Region reg = RedProtect.get().getRegionManager().getTopRegion(new Location(p.getWorld(), ix, iy, iz));
                     if (reg != null && !reg.canBuild(p)) {
                         RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("blocklistener.cantbuild.nearrp").replace("{distance}", "" + radius));
-                        return true;
+                        return false;
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public int simuleTotalRegionSize(String player, Region r2) {
@@ -1093,7 +1093,7 @@ public class RedProtectUtil extends CoreUtil {
         regionName = Normalizer.normalize(regionName.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .replaceAll("[ -]", "_")
-                .replaceAll("[^\\p{L}_\\d]", "");
+                .replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
         if (regionName.length() < 3 || regionName.length() > 16) {
@@ -1140,7 +1140,7 @@ public class RedProtectUtil extends CoreUtil {
         if (mat != null) {
             s = new ItemStack(mat);
         } else {
-            s = new ItemStack(Objects.requireNonNull(Material.getMaterial("SKULL_ITEM")), 1, (short) 3);
+            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
         }
         SkullMeta sm = (SkullMeta) s.getItemMeta();
         GameProfile gm = new GameProfile(UUID.randomUUID(), null);
@@ -1148,11 +1148,11 @@ public class RedProtectUtil extends CoreUtil {
 
         Field profileField = null;
         try {
-            profileField = Objects.requireNonNull(sm).getClass().getDeclaredField("profile");
+            profileField = sm.getClass().getDeclaredField("profile");
         } catch (NoSuchFieldException | SecurityException e) {
             e.printStackTrace();
         }
-        Objects.requireNonNull(profileField).setAccessible(true);
+        profileField.setAccessible(true);
         try {
             profileField.set(sm, gm);
         } catch (IllegalArgumentException | IllegalAccessException e) {

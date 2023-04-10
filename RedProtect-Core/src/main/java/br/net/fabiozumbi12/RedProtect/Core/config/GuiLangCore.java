@@ -30,7 +30,10 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.TreeSet;
 
 public class GuiLangCore {
 
@@ -52,7 +55,7 @@ public class GuiLangCore {
         baseLang.clear();
         try {
             InputStream fileInput = LangCore.class.getResourceAsStream("/assets/redprotect/guiEN-US.properties");
-            Reader reader = new InputStreamReader(Objects.requireNonNull(fileInput), StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(fileInput, StandardCharsets.UTF_8);
             baseLang.load(reader);
         } catch (Exception e) {
             CoreUtil.printJarVersion();

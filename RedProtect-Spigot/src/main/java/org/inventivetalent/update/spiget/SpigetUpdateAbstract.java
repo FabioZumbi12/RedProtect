@@ -60,12 +60,14 @@ public abstract class SpigetUpdateAbstract {
         return userAgent;
     }
 
-    public void setUserAgent(String userAgent) {
+    public SpigetUpdateAbstract setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+        return this;
     }
 
-    public void setVersionComparator(VersionComparator comparator) {
+    public SpigetUpdateAbstract setVersionComparator(VersionComparator comparator) {
         this.versionComparator = comparator;
+        return this;
     }
 
     public ResourceInfo getLatestResourceInfo() {

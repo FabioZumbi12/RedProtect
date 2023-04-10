@@ -41,7 +41,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class KickCommand implements SubCommand {
@@ -79,7 +78,7 @@ public class KickCommand implements SubCommand {
             Location to = RedProtect.get().getUtil().DenyEnterPlayer(visit.getWorld(), visit.getLocation(), visit.getLocation(), r, true).add(0, 1, 0);
             if (visit.isInsideVehicle()) {
                 Entity vehicle = visit.getVehicle();
-                Objects.requireNonNull(vehicle).eject();
+                vehicle.eject();
                 Bukkit.getScheduler().runTaskLater(RedProtect.get(), () -> vehicle.teleport(to), 1);
             }
             visit.teleport(to);
@@ -159,14 +158,14 @@ public class KickCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 1)
             if (args[0].isEmpty())
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.startsWith(args[0])).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().startsWith(args[0])).map(Player::getName).collect(Collectors.toList()));
         if (args.length == 3)
             if (args[2].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[1])).toList());
+                tab.addAll(Bukkit.getWorlds().stream().filter(w -> w.getName().startsWith(args[1])).map(World::getName).collect(Collectors.toList()));
         return tab;
     }
 }

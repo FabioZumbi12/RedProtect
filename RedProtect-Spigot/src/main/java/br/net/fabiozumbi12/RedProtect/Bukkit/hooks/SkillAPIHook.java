@@ -49,7 +49,7 @@ public class SkillAPIHook implements Listener {
 
         Player p = e.getPlayerData().getPlayer();
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-        if (r != null && r.canSkill(p)) {
+        if (r != null && !r.canSkill(p)) {
             e.setCancelled(true);
         }
     }
@@ -65,7 +65,7 @@ public class SkillAPIHook implements Listener {
         Player p = e.getPlayerData().getPlayer();
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
 
-        if (r != null && r.canSkill(p)) {
+        if (r != null && !r.canSkill(p)) {
             e.setCancelled(true);
         }
     }
@@ -81,7 +81,7 @@ public class SkillAPIHook implements Listener {
         Player p = e.getPlayerData().getPlayer();
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
 
-        if (r != null && r.canSkill(p)) {
+        if (r != null && !r.canSkill(p)) {
             e.setCancelled(true);
         }
     }

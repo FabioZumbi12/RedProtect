@@ -139,9 +139,9 @@ public class ClaimCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 2)
             if (args[1].isEmpty())
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
             else
-                tab.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase())).toList());
+                tab.addAll(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().toLowerCase().startsWith(args[1].toLowerCase())).map(Player::getName).collect(Collectors.toList()));
         return tab;
     }
 }
