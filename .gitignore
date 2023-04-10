@@ -3,3 +3,6 @@
 */target/*
 /target/
 /release.properties
+*.tag
+*.next
+*.releaseBackup
