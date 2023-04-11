@@ -49,6 +49,7 @@ public class GlobalFlagsCategory {
         @Setting(value = "if-build-false", comment = "If build option is false, choose what blocks the player can place/break.\n" +
                 "The item names is like you see holding \"F3\" and pressing \"H\".")
         public buildFalse if_build_false = new buildFalse();
+
         @Setting(comment = "Allow pvp?")
         public boolean pvp = true;
         @Setting(comment = "Allow player interactions, with all entities or blocks?")
