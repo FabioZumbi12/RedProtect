@@ -149,6 +149,7 @@ public class BlockListener implements Listener {
                         if (length > 16) {
                             length = 16;
                         }
+                        e.setLine(0, RedProtect.get().getLanguageManager().get("blocklistener.container.signline"));
                         e.setLine(1, p.getName().substring(0, length));
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.protected");
                     } else {

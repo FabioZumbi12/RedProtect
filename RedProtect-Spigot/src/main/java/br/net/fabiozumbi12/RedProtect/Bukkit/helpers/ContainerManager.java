@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -213,7 +214,8 @@ public class ContainerManager {
 
     public boolean validatePrivateSign(String[] lines) {
         String priv = RedProtect.get().getLanguageManager().get("blocklistener.container.signline");
-        String line1 = lines[0];
+        priv = ChatColor.stripColor(priv).replaceAll("[^a-zA-Z]","");
+        String line1 = ChatColor.stripColor(lines[0]).replaceAll("[^a-zA-Z]","");
         return line1.equalsIgnoreCase("[private]") ||
                 line1.equalsIgnoreCase("private") ||
                 line1.equalsIgnoreCase(priv) ||
