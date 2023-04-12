@@ -74,10 +74,22 @@ public class CommandHandlers {
                     RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.addleader.limit").replace("{player}", pVictim.getName()));
                     return;
                 }
+
+                int pLimit = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(pVictim);
+                boolean areaUnlimited = RedProtect.get().getPermissionHandler().hasPerm(pVictim, "redprotect.limits.blocks.unlimited");
+                int totalArea = RedProtect.get().getRegionManager().getTotalRegionSize(pVictim.getName(), pVictim.getWorld().getName());
+                int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(pVictim.getUniqueId().toString(), r);
+                int actualArea = 0;
+                if (regionArea > 0) {
+                    actualArea = totalArea + regionArea;
+                }
+                if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
+                    RedProtect.get().getLanguageManager().sendMessage(src, RedProtect.get().getLanguageManager().get("cmdmanager.region.addleader.blocklimit").replace("{player}", pVictim.getName()));
+                    return;
+                }
             }
 
             if (!r.isLeader(sVictim)) {
-
                 if (src.hasPermission("redprotect.command.admin.addleader")) {
                     r.addLeader(sVictim);
                     RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + src.getName() + " ADDED LEADER " + sVictim + " to region " + r.getName());
