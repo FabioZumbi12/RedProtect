@@ -982,7 +982,7 @@ public class PlayerListener implements Listener {
                 }
             }
 
-            //Allow enter with items
+            //Allow to enter with items
             if (!r.canEnterWithItens(p) && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.flag.admin.allow-enter-items")) {
                 e.setTo(RedProtect.get().getUtil().DenyEnterPlayer(w, lfrom, e.getTo(), r, false));
                 RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("playerlistener.region.onlyenter.withitems").replace("{items}", r.getFlags().get("allow-enter-items").toString()));
@@ -1201,6 +1201,9 @@ public class PlayerListener implements Listener {
 
         // Add to block manager
         RedProtect.get().getBlockManager().addPlayer(p);
+
+        EnterExitRegionEvent event = new EnterExitRegionEvent(null, r, p);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     @EventHandler
