@@ -467,7 +467,7 @@ public class Region extends CoreRegion {
     }
 
     /**
-     * Add an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Add a leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
