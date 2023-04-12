@@ -384,8 +384,10 @@ public class BlockListener implements Listener {
         ItemStack i = p.getInventory().getItemInHand();
 
         Block b = p.getLocation().getBlock();
-        if (r != null && (RedProtect.get().getUtil().checkCrops(b, false)
-                || i.getType().name().contains("_HOE"))
+        if (r != null &&
+                ((RedProtect.get().getUtil().checkCrops(b, false) ||
+                        RedProtect.get().getUtil().checkCrops(l.getBlock(), false))
+                        || i.getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
             e.setCancelled(true);
