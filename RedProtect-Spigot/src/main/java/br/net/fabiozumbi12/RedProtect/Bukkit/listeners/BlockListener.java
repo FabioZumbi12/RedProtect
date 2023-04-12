@@ -53,6 +53,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +150,7 @@ public class BlockListener implements Listener {
                         if (length > 16) {
                             length = 16;
                         }
+                        e.setLine(0, RedProtect.get().getLanguageManager().get("blocklistener.container.signline"));
                         e.setLine(1, p.getName().substring(0, length));
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.protected");
                     } else {
@@ -379,12 +381,21 @@ public class BlockListener implements Listener {
 
         Location l = e.getClickedBlock().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+        ItemStack i = p.getInventory().getItemInHand();
 
         Block b = p.getLocation().getBlock();
-        if (r != null && (RedProtect.get().getUtil().checkCrops(b, false)
-                || p.getInventory().getItemInHand().getType().name().contains("_HOE"))
+        if (r != null &&
+                ((RedProtect.get().getUtil().checkCrops(b, false) ||
+                        RedProtect.get().getUtil().checkCrops(l.getBlock(), false))
+                        || i.getType().name().contains("_HOE"))
                 && !r.canCrops() && !r.canBuild(p)) {
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbreak");
+            e.setCancelled(true);
+            return;
+        }
+
+        if (r != null && (i.getType().name().endsWith("_DYE") || i.getType().name().endsWith("INK_SAC")) && !r.canBuild(p)) {
+            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
             e.setCancelled(true);
             return;
         }

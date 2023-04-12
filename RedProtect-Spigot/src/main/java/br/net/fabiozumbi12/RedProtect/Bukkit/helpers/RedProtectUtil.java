@@ -87,6 +87,7 @@ public class RedProtectUtil extends CoreUtil {
                 || b.getType().equals(Material.MELON_STEM)
                 || b.getType().toString().contains("CARROTS")
                 || b.getType().toString().contains("_BERRIES")
+                || b.getType().toString().contains("_BERRY")
                 || b.getType().toString().contains("CROPS")
                 || b.getType().toString().contains("SOIL")
                 || (b.getType().toString().contains("FARMLAND") && !breaking)

@@ -263,7 +263,7 @@ public class RedProtect extends JavaPlugin {
         if (bukkitVersion >= 1.19) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
         } else {
-            logger.severe("RedProtect 8.0.0+ is not compatible with version 1.18 or lower. Download the latest RedProtect 7 from spigot or dev builds.");
+            logger.severe("RedProtect 8+ is not compatible with version 1.18 or lower. Download the latest RedProtect 7 from spigot or dev builds.");
             shutDown();
             return;
         }

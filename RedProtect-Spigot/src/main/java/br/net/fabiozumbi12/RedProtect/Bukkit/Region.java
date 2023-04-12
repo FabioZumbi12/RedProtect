@@ -1133,7 +1133,7 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && (RedProtect.get().bukkitVersion >= 180 && !(entity instanceof ArmorStand)) && entity instanceof LivingEntity)) {
+        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && !(entity instanceof ArmorStand) && entity instanceof LivingEntity)) {
             return true;
         }
 

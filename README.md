@@ -2,7 +2,7 @@
 RedProtect World is an area protection plugin made for users. No longer do you need to have an admin worldguard a region
 for you. The user can take care of themselves now.
 
-Chat with the developer online on Discord: https://discord.gg/RyEVJC3
+Chat with the developer online on Discord: https://discord.gg/VHTwk53
 
 ## WIKI
 
