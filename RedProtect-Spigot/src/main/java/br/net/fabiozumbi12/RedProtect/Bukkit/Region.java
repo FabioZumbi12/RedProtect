@@ -70,7 +70,7 @@ public class Region extends CoreRegion {
      * @param candel    Can delete?
      * @param canPurge  Can be purged?
      */
-    public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, Location minLoc, Location maxLoc, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel, boolean canPurge) {
+    public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, Location minLoc, Location maxLoc, Map<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, new int[]{minLoc.getBlockX(), minLoc.getBlockY(), minLoc.getBlockZ()}, new int[]{maxLoc.getBlockX(), maxLoc.getBlockY(), maxLoc.getBlockZ()}, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{tppoint.getPitch(), tppoint.getYaw()}, candel, canPurge);
         checkParticle();
     }
@@ -98,7 +98,7 @@ public class Region extends CoreRegion {
      * @param candel    Can delete?
      * @param canPurge  Can br purged?
      */
-    public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, HashMap<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel, boolean canPurge) {
+    public Region(String name, Set<PlayerRegion> admins, Set<PlayerRegion> members, Set<PlayerRegion> leaders, int maxMbrX, int minMbrX, int maxMbrZ, int minMbrZ, int minY, int maxY, Map<String, Object> flags, String wMessage, int prior, String worldName, String date, long value, Location tppoint, boolean candel, boolean canPurge) {
         super(name, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wMessage, prior, worldName, date, value, tppoint == null ? null : new int[]{tppoint.getBlockX(), tppoint.getBlockY(), tppoint.getBlockZ()}, tppoint == null ? null : new float[]{tppoint.getPitch(), tppoint.getYaw()}, candel, canPurge);
         checkParticle();
     }
