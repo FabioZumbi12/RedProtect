@@ -50,7 +50,7 @@ public class AddBlockCommand implements SubCommand {
 
             int blocks;
             try {
-                blocks = Integer.getInteger(args[1]);
+                blocks = Integer.parseInt(args[1]);
             } catch (Exception ex) {
                 RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalid.number");
                 return true;
