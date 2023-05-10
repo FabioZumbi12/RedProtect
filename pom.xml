@@ -33,8 +33,25 @@
     <name>RedProtect</name>
     <version>8.1.0-SNAPSHOT</version>
 
+    <description>Spigot plugin to protect region and manage server security</description>
+    <url>https://github.com/FabioZumbi12/RedProtect</url>
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+            <distribution>repo</distribution>
+            <comments>Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Fabio F. Magalhães</name>
+            <url>https://github.com/FabioZumbi12</url>
+        </developer>
+    </developers>
     <scm>
         <connection>scm:git:git@github.com:FabioZumbi12/RedProtect.git</connection>
+        <url>https://github.com/FabioZumbi12/RedProtect/</url>
     </scm>
 
     <distributionManagement>
@@ -131,6 +148,7 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
                 </configuration>
             </plugin>
 
