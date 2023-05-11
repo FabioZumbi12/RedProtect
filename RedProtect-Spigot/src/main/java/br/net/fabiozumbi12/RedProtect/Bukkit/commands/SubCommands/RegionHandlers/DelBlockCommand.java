@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 11/05/2023 18:06
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -50,7 +50,7 @@ public class DelBlockCommand implements SubCommand {
 
             int blocks;
             try {
-                blocks = Integer.getInteger(args[1]);
+                blocks = Integer.parseInt(args[1]);
             } catch (Exception ex) {
                 RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalid.number");
                 return true;
