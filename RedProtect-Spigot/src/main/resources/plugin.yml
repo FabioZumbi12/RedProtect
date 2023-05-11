@@ -96,6 +96,8 @@ permissions:
       redprotect.command.admin.delete: true
       redprotect.command.admin.removeadmin: true
       redprotect.command.admin.addadmin: true
+      redprotect.command.admin.addblock: true
+      redprotect.command.admin.delblock: true
       redprotect.command.admin.removeleader: true
       redprotect.command.admin.addleader: true
       redprotect.command.admin.addmember: true
