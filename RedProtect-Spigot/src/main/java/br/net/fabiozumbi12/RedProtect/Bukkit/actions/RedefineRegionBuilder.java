@@ -114,7 +114,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         int regionArea = RedProtect.get().getUtil().simuleTotalRegionSize(p.getUniqueId().toString(), newRegion);
         int actualArea = 0;
         if (regionArea > 0) {
-            actualArea = totalArea + regionArea;
+            actualArea = totalArea - old.getArea() + regionArea;
         }
         if (pLimit >= 0 && actualArea > pLimit && !areaUnlimited) {
             this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.reach.limit"));

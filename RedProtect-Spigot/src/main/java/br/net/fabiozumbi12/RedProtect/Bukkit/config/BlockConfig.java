@@ -101,7 +101,7 @@ public class BlockConfig {
                 result = diffSeconds;
             }
 
-            return result + added_blocks;
+            return result * this.blockCat.blocks_to_add + added_blocks;
         } else {
             addPlayer(player);
         }
