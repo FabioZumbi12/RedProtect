@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 12/05/2023 03:12
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -621,7 +621,12 @@ public class BlockListener implements Listener {
                 e.getNewState().getType().name().contains("KELP") ||
                 e.getNewState().getType().name().contains("BAMBOO") ||
                 e.getNewState().getType().name().contains("WEEPING_VINES") ||
+                e.getNewState().getType().name().contains("GLOW_BERRIES") ||
                 e.getNewState().getType().name().contains("TWISTING_VINES") ||
+                e.getNewState().getType().name().contains("CAVE_VINES") ||
+                e.getNewState().getType().name().contains("_FUNGUS") ||
+                e.getNewState().getType().name().contains("SEA_PICKLE") ||
+                e.getNewState().getType().name().contains("SWEET_BERRIES") ||
                 e.getNewState().getType().name().contains("SUGAR_CANE"))
                 && ((rfrom != null && !rfrom.canGrow()) || (rto != null && !rto.canGrow()))) {
             e.setCancelled(true);
