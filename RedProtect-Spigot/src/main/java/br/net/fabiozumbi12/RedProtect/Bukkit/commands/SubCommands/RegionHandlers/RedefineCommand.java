@@ -51,39 +51,48 @@ public class RedefineCommand implements SubCommand {
         }
 
         Player player = (Player) sender;
+        Region oldRect = null;
 
-        if (args.length == 1) {
-            Region oldRect = RedProtect.get().getRegionManager().getRegion(args[0], player.getWorld().getName());
+        if (args.length == 0) {
+            oldRect = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
+            if (oldRect == null) {
+                RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.region.todo.that");
+                return true;
+            }
+        } else if (args.length == 1) {
+            oldRect = RedProtect.get().getRegionManager().getRegion(args[0], player.getWorld().getName());
             if (oldRect == null) {
                 RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.doesntexist") + ": " + args[0]);
                 return true;
             }
-
-            if (!RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "redefine", oldRect)) {
-                RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
-                return true;
-            }
-
-            RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
-
-            // Run claim async
-            Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
-                RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRect, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
-                if (rb.ready()) {
-                    Region r2 = rb.build();
-                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
-                    RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
-
-                    RedProtect.get().firstLocationSelections.remove(player);
-                    RedProtect.get().secondLocationSelections.remove(player);
-
-                    RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " REDEFINED region " + r2.getName());
-                }
-            });
+        } else {
+            RedProtect.get().getLanguageManager().sendCommandHelp(sender, "redefine", true);
             return true;
         }
 
-        RedProtect.get().getLanguageManager().sendCommandHelp(sender, "redefine", true);
+        if (!RedProtect.get().getPermissionHandler().hasRegionPermLeader(player, "redefine", oldRect)) {
+            RedProtect.get().getLanguageManager().sendMessage(player, "playerlistener.region.cantuse");
+            return true;
+        }
+
+        RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.creating");
+        final Region oldRegion = oldRect;
+        
+        // Run claim async
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            RedefineRegionBuilder rb = new RedefineRegionBuilder(player, oldRegion, RedProtect.get().firstLocationSelections.get(player), RedProtect.get().secondLocationSelections.get(player));
+            if (rb.ready()) {
+                Region r2 = rb.build();
+                RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.redefined") + " " + r2.getName() + ".");
+                RedProtect.get().getRegionManager().add(r2, player.getWorld().getName());
+
+                RedProtect.get().firstLocationSelections.remove(player);
+                RedProtect.get().secondLocationSelections.remove(player);
+
+                RedProtect.get().logger.addLog("(World " + r2.getWorld() + ") Player " + player.getName() + " REDEFINED region " + r2.getName());
+            }
+        });
+
         return true;
     }
 
