@@ -16,7 +16,7 @@ Sponge(legacy): https://ore.spongepowered.org/FabioZumbi12/RedProtect
 
 ## RedProtect Add-ons:
 
-This add-ons extends RedProtect flags, functions and more.
+These add-ons extend RedProtect flags, functions and more.
 
 ### Killer Projectiles:
 
@@ -49,7 +49,9 @@ jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon
 
 ## Maven repository (API):
 
-**Repository:** RedProtect is hosted on Maven Central, no need to add repository url!
+**Repository:**  
+RedProtect is hosted on Maven Central for releases, or for snapshots you can use the url:  
+Snapshot Repo: https://s01.oss.sonatype.org/content/repositories/snapshots/
 
 **Dependency:**
 
