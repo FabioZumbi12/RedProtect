@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 11/05/2023 22:29
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -54,8 +54,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
+import javax.print.DocFlavor;
+import java.io.*;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -257,6 +270,31 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         if (getCmd(cmd).equalsIgnoreCase(cmd))
             return Arrays.asList(getCmd(cmd), getCmdAlias(cmd));
         return Arrays.asList(cmd, getCmd(cmd), getCmdAlias(cmd));
+    }
+
+    private static boolean isRedirected( Map<String, List<String>> header ) {
+        for( String hv : header.get( null )) {
+            if(   hv.contains( " 301 " )
+                    || hv.contains( " 302 " )) return true;
+        }
+        return false;
+    }
+
+    private boolean DownloadAddOn(String name, CommandSender sender, String fileName) {
+        RedProtect.get().getLanguageManager().sendMessage(sender,
+                RedProtect.get().getLanguageManager().get("cmdmanager.addon.downloading").replace("{name}",name));
+
+        try {
+            URL website = new URL( "https://github.com/FabioZumbi12/RedProtect/raw/master/add-ons/" + fileName);
+            try (InputStream inputStream = website.openStream()) {
+                Files.copy(inputStream, Paths.get(RedProtect.get().getDataFolder().getPath(),"addons",fileName), StandardCopyOption.REPLACE_EXISTING);
+            }
+            return true;
+        } catch (IOException e) {
+            RedProtect.get().getLanguageManager().sendMessage(sender,
+                    RedProtect.get().getLanguageManager().get("cmdmanager.addon.error").replace("{name}",name) + "\n" + e.getMessage());
+            return false;
+        }
     }
 
     private void registerCommand(List<String> command, SubCommand commandExecutor) {
@@ -653,6 +691,54 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             }
 
             if (args.length == 3) {
+                //rp addon <addon-name> <download/enable/disable>
+                if (args[0].equalsIgnoreCase("addon")) {
+                    String fileName = args[1] + "-" + RedProtect.get().getDescription().getVersion() + ".jar";
+                    File addOnfolder = new File(Path.of(RedProtect.get().getDataFolder().getPath(),"AddOns").toUri());
+                    addOnfolder.mkdirs();
+                    File urlFilneName = new File(addOnfolder, fileName);
+                    Plugin addonPl = RedProtect.get().getServer().getPluginManager().getPlugin(args[1]);
+
+                    RedProtect.get().getLogger().severe("Version: " + urlFilneName);
+
+                    if (args[2].equalsIgnoreCase("download")){
+                        if (addonPl != null){
+                            RedProtect.get().getServer().getPluginManager().disablePlugin(addonPl);
+                        }
+                        if (DownloadAddOn(args[1], sender, fileName)){
+                            try {
+                                RedProtect.get().getPluginLoader().loadPlugin(urlFilneName);
+                                RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.addon.loaded", new Replacer[]{new Replacer("{name}",args[1])});
+
+                            } catch (InvalidPluginException e) {
+                                RedProtect.get().getLanguageManager().sendMessage(sender,
+                                        RedProtect.get().getLanguageManager().get("cmdmanager.addon.error").replace("{name}",args[1]) + "\n" + e.getMessage());
+                            }
+                        }
+                        return true;
+                    }
+
+                    if (addonPl != null){
+                        if (args[2].equalsIgnoreCase("enable")){
+                            if (!addonPl.isEnabled()){
+                                RedProtect.get().getServer().getPluginManager().enablePlugin(addonPl);
+                            }
+                            return true;
+                        }
+
+                        if (args[2].equalsIgnoreCase("disable")){
+                            if (addonPl.isEnabled()){
+                                RedProtect.get().getServer().getPluginManager().disablePlugin(addonPl);
+                            }
+                            return true;
+                        }
+                    } else {
+                        RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.addon.invalid", new Replacer[]{new Replacer("{name}",args[1])});
+                    }
+
+                    return true;
+                }
+
                 //rp undo <region> <database>
                 if (args[0].equalsIgnoreCase("undo")) {
                     if (!RedProtect.get().hooks.checkWe()) {
