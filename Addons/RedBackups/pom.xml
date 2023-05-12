@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2012-2023 - @FabioZumbi12
-  ~ Last Modified: 10/05/2023 14:49
+  ~ Last Modified: 12/05/2023 02:17
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -32,7 +32,7 @@
     <parent>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect</artifactId>
-        <version>8.1.0-SNAPSHOT</version>
+        <version>8.1.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>RedBackups</artifactId>
@@ -100,12 +100,12 @@
         <dependency>
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
-            <version>8.1.0-SNAPSHOT</version>
+            <version>8.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Spigot</artifactId>
-            <version>8.1.0-SNAPSHOT</version>
+            <version>8.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

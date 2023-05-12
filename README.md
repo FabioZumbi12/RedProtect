@@ -60,18 +60,18 @@ _*Core is needed_
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Core</artifactId>
-        <version>8.1.0-SNAPSHOT</version>
+        <version>8.1.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Spigot</artifactId>
-        <version>8.1.0-SNAPSHOT</version>
+        <version>8.1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Spigot</artifactId>
-        <version>8.1.0-SNAPSHOT</version>
+        <version>8.1.1-SNAPSHOT</version>
         <classifier>javadoc</classifier>
     </dependency> 
 </dependencies>  
