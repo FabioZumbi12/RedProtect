@@ -4,8 +4,8 @@ This plugin make backups of *.mca files for redprotect regions locations.
 
 ### Commands:
 
-Reload command: `/redbackup reload` or the alias `/rbkp reload`  
-Manual backup: `/redbackup backup \[here\]` - Manual backup with option to back up the actual location.
+Reload command: `/redbackups reload` or the alias `/rbkp reload`  
+Manual backup: `/redbackups backup \[here\]` - Manual backup with option to back up the actual location.
 
 ### Permissions:
 

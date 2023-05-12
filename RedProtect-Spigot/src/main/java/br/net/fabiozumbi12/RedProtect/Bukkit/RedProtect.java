@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 11/05/2023 18:42
+ * Last Modified: 12/05/2023 00:35
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -32,10 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.config.BlockConfig;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.ConfigManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangGuiManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.config.LangManager;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.PermissionHandler;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectLogger;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
-import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelper;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.HooksManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.listeners.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.metrics.Metrics;
@@ -51,9 +48,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RedProtect extends JavaPlugin {
     private static RedProtect plugin;
@@ -151,6 +155,10 @@ public class RedProtect extends JavaPlugin {
             logger.clear("&4| \\ |_ |_/ &c|   | \\ |_|  |  |_ |_  |  |_|");
             logger.clear("&a» " + getDescription().getFullName() + " enabled");
             logger.clear("");
+
+            if (config.configRoot().enable_addons){
+                AddonsManager.EnableAddons();
+            }
 
         } catch (Exception e) {
             CoreUtil.printJarVersion();

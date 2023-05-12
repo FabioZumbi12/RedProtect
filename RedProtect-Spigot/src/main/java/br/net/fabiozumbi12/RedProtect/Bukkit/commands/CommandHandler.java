@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 11/05/2023 22:29
+ * Last Modified: 12/05/2023 01:00
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.PlayerHandlers.*;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandlers.*;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.AddonsManager;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MojangUUIDs;
 import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelper;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
@@ -64,10 +65,7 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.nio.file.attribute.FileAttribute;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -272,30 +270,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         return Arrays.asList(cmd, getCmd(cmd), getCmdAlias(cmd));
     }
 
-    private static boolean isRedirected( Map<String, List<String>> header ) {
-        for( String hv : header.get( null )) {
-            if(   hv.contains( " 301 " )
-                    || hv.contains( " 302 " )) return true;
-        }
-        return false;
-    }
-
-    private boolean DownloadAddOn(String name, CommandSender sender, String fileName) {
-        RedProtect.get().getLanguageManager().sendMessage(sender,
-                RedProtect.get().getLanguageManager().get("cmdmanager.addon.downloading").replace("{name}",name));
-
-        try {
-            URL website = new URL( "https://github.com/FabioZumbi12/RedProtect/raw/master/add-ons/" + fileName);
-            try (InputStream inputStream = website.openStream()) {
-                Files.copy(inputStream, Paths.get(RedProtect.get().getDataFolder().getPath(),"addons",fileName), StandardCopyOption.REPLACE_EXISTING);
-            }
-            return true;
-        } catch (IOException e) {
-            RedProtect.get().getLanguageManager().sendMessage(sender,
-                    RedProtect.get().getLanguageManager().get("cmdmanager.addon.error").replace("{name}",name) + "\n" + e.getMessage());
-            return false;
-        }
-    }
 
     private void registerCommand(List<String> command, SubCommand commandExecutor) {
         this.commandMap.put(command, commandExecutor);
@@ -694,22 +668,21 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 //rp addon <addon-name> <download/enable/disable>
                 if (args[0].equalsIgnoreCase("addon")) {
                     String fileName = args[1] + "-" + RedProtect.get().getDescription().getVersion() + ".jar";
-                    File addOnfolder = new File(Path.of(RedProtect.get().getDataFolder().getPath(),"AddOns").toUri());
+                    File addOnfolder = new File(Path.of(RedProtect.get().getDataFolder().getPath(),"addons").toUri());
                     addOnfolder.mkdirs();
-                    File urlFilneName = new File(addOnfolder, fileName);
+                    File folderFilename = new File(addOnfolder, fileName);
                     Plugin addonPl = RedProtect.get().getServer().getPluginManager().getPlugin(args[1]);
 
-                    RedProtect.get().getLogger().severe("Version: " + urlFilneName);
-
                     if (args[2].equalsIgnoreCase("download")){
-                        if (addonPl != null){
-                            RedProtect.get().getServer().getPluginManager().disablePlugin(addonPl);
-                        }
-                        if (DownloadAddOn(args[1], sender, fileName)){
+                        if (AddonsManager.DownloadAddOn(args[1], sender, folderFilename)){
+                            boolean update = new File(addOnfolder, "new-" + fileName).exists();
                             try {
-                                RedProtect.get().getPluginLoader().loadPlugin(urlFilneName);
-                                RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.addon.loaded", new Replacer[]{new Replacer("{name}",args[1])});
-
+                                if (!update){
+                                    addonPl = RedProtect.get().getPluginLoader().loadPlugin(folderFilename);
+                                    RedProtect.get().getPluginLoader().enablePlugin(addonPl);
+                                }
+                                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.addon." + (update ? "updated":"loaded"), new Replacer[]{new Replacer("{name}", args[1])});
+                                return true;
                             } catch (InvalidPluginException e) {
                                 RedProtect.get().getLanguageManager().sendMessage(sender,
                                         RedProtect.get().getLanguageManager().get("cmdmanager.addon.error").replace("{name}",args[1]) + "\n" + e.getMessage());
@@ -723,19 +696,16 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                             if (!addonPl.isEnabled()){
                                 RedProtect.get().getServer().getPluginManager().enablePlugin(addonPl);
                             }
-                            return true;
                         }
-
                         if (args[2].equalsIgnoreCase("disable")){
                             if (addonPl.isEnabled()){
                                 RedProtect.get().getServer().getPluginManager().disablePlugin(addonPl);
                             }
-                            return true;
                         }
+                        RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.addon.status", new Replacer[]{new Replacer("{name}",args[1]), new Replacer("{status}", String.valueOf(addonPl.isEnabled()))});
                     } else {
                         RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.addon.invalid", new Replacer[]{new Replacer("{name}",args[1])});
                     }
-
                     return true;
                 }
 

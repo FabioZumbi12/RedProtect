@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 11/05/2023 23:15
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -33,6 +33,8 @@ import java.util.*;
 
 @ConfigSerializable
 public class MainCategory {
+    @Setting(value = "enable-addons", comment = "Enable addons on server start (and on plugin load). You can manually enable addons with \"/rp addon [name] [download/enable/disdable]\" command.")
+    public boolean enable_addons = true;
     @Setting(value = "online-mode", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions and in offline mode)")
     public boolean online_mode = false;
     @Setting(value = "config-version", comment = "Don't touch <3")
