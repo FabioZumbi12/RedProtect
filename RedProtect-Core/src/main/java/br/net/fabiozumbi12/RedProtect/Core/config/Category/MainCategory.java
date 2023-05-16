@@ -330,7 +330,7 @@ public class MainCategory {
         public String default_leader = "#server#";
         @Setting(value = "delay-after-kick-region", comment = "Time the player can back to region from where was kicked.")
         public int delay_after_kick_region = 60;
-        @Setting(value = "deny-build-near", comment = "Deny player to build/break blocks near x block of a region.")
+        @Setting(value = "deny-build-near", comment = "Deny player to build/break blocks near x block of a region (not a region x of other region).\nDON'T USE VALUES GREATER THAN 3, OR YOUR SERVER WILL LAG")
         public int deny_build_near = 2;
         @Setting(value = "can-delete-first-home-after-claim", comment = "The player can delete the first home after claim this amount of regions.")
         public int can_delete_first_home_after_claims = 10;
