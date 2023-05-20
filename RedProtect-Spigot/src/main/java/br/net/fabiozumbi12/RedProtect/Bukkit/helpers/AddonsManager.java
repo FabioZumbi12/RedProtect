@@ -39,44 +39,49 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class AddonsManager {
     public static void EnableAddons(){
-        RedProtect.get().logger.info("Updating Addons...");
-        try {
-            for (File p: Stream.of(new File(Paths.get(RedProtect.get().getDataFolder().getPath(), "addons").toUri()).listFiles())
-                    .filter(file -> !file.isDirectory() && file.getName().startsWith("new-"))
-                    .map(File::getAbsoluteFile).toList()){
-                File newFile = new File(Path.of(RedProtect.get().getDataFolder().getPath(),"addons", p.getName().replace("new-","")).toUri());
-                RedProtect.get().logger.info("Updating " + newFile.getName());
-                if (newFile.exists()){
-                    if (!newFile.delete()){
-                        RedProtect.get().logger.warning(newFile.getName() + " will be updated only on next reboot");
+        File[] filePaths = new File(Paths.get(RedProtect.get().getDataFolder().getPath(), "addons").toUri()).listFiles();
+        if (filePaths != null) {
+            try {
+                RedProtect.get().logger.info("Updating Addons...");
+                for (File p: Stream.of(filePaths)
+                        .filter(file -> !file.isDirectory() && file.getName().startsWith("new-"))
+                        .map(File::getAbsoluteFile).toList()){
+                    File newFile = new File(Path.of(RedProtect.get().getDataFolder().getPath(),"addons", p.getName().replace("new-","")).toUri());
+                    RedProtect.get().logger.info("Updating " + newFile.getName());
+                    if (newFile.exists()){
+                        if (!newFile.delete()){
+                            RedProtect.get().logger.warning(newFile.getName() + " will be updated only on next reboot");
+                        }
+                    }
+                    p.renameTo(newFile);
+                }
+            } catch (Exception e){
+                RedProtect.get().logger.warning("Error on update addons: " + e.getMessage());
+            }
+
+            try {
+                RedProtect.get().logger.info("Loading Addons...");
+                for (File p:Stream.of(filePaths)
+                        .filter(file -> !file.isDirectory() && !file.getName().contains("new-"))
+                        .map(File::getAbsoluteFile).toList()){
+                    RedProtect.get().logger.info("Loading " + p.getName());
+                    Plugin pl = RedProtect.get().getServer().getPluginManager().getPlugin(p.getName().split("-")[0]);
+                    if (pl == null) {
+                        pl = RedProtect.get().getPluginLoader().loadPlugin(p);
+                        if (!pl.isEnabled())
+                            RedProtect.get().getPluginLoader().enablePlugin(pl);
+                    } else {
+                        RedProtect.get().logger.warning(p.getName().split("-")[0] + " has been loaded before, ignoring");
                     }
                 }
-                p.renameTo(newFile);
+            } catch (Exception e){
+                RedProtect.get().logger.warning("Error on enable addons: " + e.getMessage());
             }
-        } catch (Exception e){
-            RedProtect.get().logger.warning("Error on update addons: " + e.getMessage());
-        }
-        try {
-            RedProtect.get().logger.info("Loading Addons...");
-            for (File p:Stream.of(new File(Paths.get(RedProtect.get().getDataFolder().getPath(), "addons").toUri()).listFiles())
-                    .filter(file -> !file.isDirectory() && !file.getName().contains("new-"))
-                    .map(File::getAbsoluteFile).toList()){
-                RedProtect.get().logger.info("Loading " + p.getName());
-                Plugin pl = RedProtect.get().getServer().getPluginManager().getPlugin(p.getName().split("-")[0]);
-                if (pl == null) {
-                    pl = RedProtect.get().getPluginLoader().loadPlugin(p);
-                    if (!pl.isEnabled())
-                        RedProtect.get().getPluginLoader().enablePlugin(pl);
-                } else {
-                    RedProtect.get().logger.warning(p.getName().split("-")[0] + " has been loaded before, ignoring");
-                }
-            }
-        } catch (Exception e){
-            RedProtect.get().logger.warning("Error on enable addons: " + e.getMessage());
         }
     }
 
