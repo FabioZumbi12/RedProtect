@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 29/05/2023 15:36
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -97,6 +97,9 @@ public class PermissionHandler {
         if (poly == null) {
             return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
         }
+        if (denyWorldPermission(p, userperm, poly.getWorld()) && denyWorldPermission(p, adminperm, poly.getWorld())){
+            return false;
+        }
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && poly.isLeader(p));
     }
 
@@ -105,6 +108,9 @@ public class PermissionHandler {
         String userperm = "redprotect.command." + s;
         if (poly == null) {
             return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
+        }
+        if (denyWorldPermission(p, userperm, poly.getWorld()) && denyWorldPermission(p, adminperm, poly.getWorld())){
+            return false;
         }
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p)));
     }
@@ -115,7 +121,15 @@ public class PermissionHandler {
         if (poly == null) {
             return this.hasPerm(p, adminperm) || this.hasPerm(p, userperm);
         }
+        if (denyWorldPermission(p, userperm, poly.getWorld()) && denyWorldPermission(p, adminperm, poly.getWorld())){
+            return false;
+        }
         return this.hasPerm(p, adminperm) || (this.hasPerm(p, userperm) && (poly.isLeader(p) || poly.isAdmin(p) || poly.isMember(p)));
+    }
+
+    private boolean denyWorldPermission(Player player, String perm, String world){
+        if (!RedProtect.get().getConfigManager().configRoot().region_settings.region_perm_per_world) return false;
+        return !this.hasPerm(player, perm + ".world." + world) && !this.hasPerm(player, perm + ".world.*");
     }
 
     private boolean hasVaultPerm(CommandSender player, String perm) {

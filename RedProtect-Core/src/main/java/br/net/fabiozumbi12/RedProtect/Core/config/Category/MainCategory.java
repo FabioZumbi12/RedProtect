@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 11/05/2023 23:15
+ * Last Modified: 29/05/2023 15:36
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -345,6 +345,9 @@ public class MainCategory {
         public String record_player_visit_method = "ON-LOGIN";
         @Setting(value = "teleport-time", comment = "Delay to teleport command.")
         public int teleport_time = 3;
+        @Setting(value = "region-perm-per-world", comment = "Allow more control over region permissions, but may require you to give more permissions to your player and groups. None of the world permissions is given by default.\n" +
+                "Check for \"redprotect.command.<command>.world.<worldname>\" or \"redprotect.command.<command>.world.*\"")
+        public boolean region_perm_per_world = false;
         @Setting(value = "world-colors", comment = "Sets the world colors for list command.")
         public Map<String, String> world_colors = new HashMap<>();
         @Setting(value = "deny-structure-bypass-regions")
