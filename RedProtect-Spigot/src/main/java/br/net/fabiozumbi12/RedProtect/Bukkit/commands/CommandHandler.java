@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 12/05/2023 01:00
+ * Last Modified: 29/05/2023 15:36
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -57,21 +57,16 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
-import javax.print.DocFlavor;
 import java.io.*;
 import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.*;
-import java.nio.file.attribute.FileAttribute;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.*;
 
@@ -892,7 +887,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> consoleCmds = Arrays.asList("debug-item", "update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "fileToMysql", "mysqlToFile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp");
+        List<String> consoleCmds = Stream.of("debug-item", "update", "reset-uuids", "list-areas", "clear-kicks", "kick", "files-to-single", "single-to-files", "flag", "list", "kill", "teleport", "fileToMysql", "mysqlToFile", "setconfig", "reload", "reload-config", "save-all", "load-all", "blocklimit", "claimlimit", "list-all", "wgtorp", "addon").sorted().toList();
         if (sender instanceof Player) {
             if (args.length > 0 && hasCommand(args[0])) {
                 TabCompleter tabCompleter = this.getCommandSubCommand(args[0]);
