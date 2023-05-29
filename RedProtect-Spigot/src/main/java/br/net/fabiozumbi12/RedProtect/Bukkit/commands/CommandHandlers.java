@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 29/05/2023 15:46
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -681,7 +681,7 @@ public class CommandHandlers {
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
-                                String area = RedProtect.get().getConfigManager().configRoot().region_settings.region_list.shpw_area ? "(" + RedProtect.get().getUtil().simuleTotalRegionSize(RedProtect.get().getUtil().PlayerToUUID(uuid), r) + ")" : "";
+                                String area = RedProtect.get().getConfigManager().configRoot().region_settings.region_list.show_area ? "(" + RedProtect.get().getUtil().simuleTotalRegionSize(RedProtect.get().getUtil().PlayerToUUID(uuid), r) + ")" : "";
                                 String rname = RedProtect.get().getLanguageManager().get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
                                 if (first) {
                                     rname = rname.substring(3);
@@ -700,7 +700,7 @@ public class CommandHandlers {
                             for (int i = min; i <= max; i++) {
                                 count = i;
                                 Region r = it.get(i);
-                                String area = RedProtect.get().getConfigManager().configRoot().region_settings.region_list.shpw_area ? "(" + RedProtect.get().getUtil().simuleTotalRegionSize(RedProtect.get().getUtil().PlayerToUUID(uuid), r) + ")" : "";
+                                String area = RedProtect.get().getConfigManager().configRoot().region_settings.region_list.show_area ? "(" + RedProtect.get().getUtil().simuleTotalRegionSize(RedProtect.get().getUtil().PlayerToUUID(uuid), r) + ")" : "";
                                 String rname = RedProtect.get().getLanguageManager().get("general.color") + ", " + ChatColor.GRAY + r.getName() + area;
                                 if (first) {
                                     rname = rname.substring(3);
