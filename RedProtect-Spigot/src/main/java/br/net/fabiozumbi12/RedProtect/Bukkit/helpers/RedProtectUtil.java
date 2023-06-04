@@ -1093,7 +1093,7 @@ public class RedProtectUtil extends CoreUtil {
 
         regionName = Normalizer.normalize(regionName.replaceAll("[().+=;:]", ""), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .replaceAll("[ -]", "_")
+                .replaceAll("[ ]", "_")
                 .replaceAll("[^\\p{L}_0-9]", "");
 
         //region name conform
