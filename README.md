@@ -47,34 +47,59 @@ The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
 Available on
 jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon?job=RedProtect)](http://host.areaz12server.net.br:8081/job/RedProtect/)
 
-## Maven repository (API):
+## API repository:
 
 **Repository:**  
-RedProtect is hosted on Maven Central for releases, or for snapshots you can use the url:  
-Snapshot Repo: https://s01.oss.sonatype.org/content/repositories/snapshots/
-
-**Dependency:**
-
-_*Core is needed_
-
+RedProtect is hosted on Maven Central
+## Maven
 ```xml
 <dependencies>
+    <!-- Core is not needed but allow access to all region methods -->
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Core</artifactId>
-        <version>8.1.1-SNAPSHOT</version>
+        <version>8.1.1</version>
+        <exclusions>
+            <exclusion>
+                <!-- We don't need any of the dependencies -->
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Spigot</artifactId>
-        <version>8.1.1-SNAPSHOT</version>
+        <version>8.1.1</version>
+        <exclusions>
+            <exclusion>
+                <!-- We don't need any of the dependencies -->
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
+
+    <!-- Import Javadocs -->
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Spigot</artifactId>
-        <version>8.1.1-SNAPSHOT</version>
+        <version>8.1.1</version>
         <classifier>javadoc</classifier>
     </dependency> 
 </dependencies>  
+```
+
+## Gradle:
+```
+repositories {
+    mavenCentral()
+    maven { url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/' } // Only for snapshots
+}
+
+dependencies {
+    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1"){  exclude(group: "*") } // Core is not needed but allow access to all region methods
+    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1"){ exclude(group: "*") }
+}
 ```

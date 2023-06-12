@@ -1,6 +1,6 @@
 <!--
   ~ Copyright (c) 2012-2023 - @FabioZumbi12
-  ~ Last Modified: 12/06/2023 11:25
+  ~ Last Modified: 12/06/2023 17:48
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -97,6 +97,7 @@
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
             <version>8.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -156,7 +157,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/GriefPrevention.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>MyChunk</groupId>
             <artifactId>MyChunk</artifactId>
@@ -203,6 +203,7 @@
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
             <version>2.1.206</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <!-- We don't need any of the dependencies -->
@@ -287,6 +288,7 @@
             <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
             <version>1.9.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
