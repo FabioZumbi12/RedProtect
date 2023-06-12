@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 12/06/2023 11:45
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -1200,7 +1200,8 @@ public class PlayerListener implements Listener {
         }
 
         // Add to block manager
-        RedProtect.get().getBlockManager().addPlayer(p);
+        if (RedProtect.get().getBlockManager().isEnabled())
+            RedProtect.get().getBlockManager().addPlayer(p);
 
         EnterExitRegionEvent event = new EnterExitRegionEvent(null, r, p);
         Bukkit.getPluginManager().callEvent(event);

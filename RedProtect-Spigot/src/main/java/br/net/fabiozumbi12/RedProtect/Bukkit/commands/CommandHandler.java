@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 29/05/2023 15:36
+ * Last Modified: 12/06/2023 11:39
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -123,6 +123,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         registerCommand(getCmdKeys("redefine"), new RedefineCommand());
         registerCommand(getCmdKeys("rename"), new RenameCommand());
         registerCommand(getCmdKeys("select-we"), new SelectWECommand());
+        registerCommand(getCmdKeys("setblock"), new SetBlockCommand());
         registerCommand(getCmdKeys("setmaxy"), new SetMaxYCommand());
         registerCommand(getCmdKeys("setminy"), new SetMinYCommand());
         registerCommand(getCmdKeys("settp"), new SetTpCommand());
