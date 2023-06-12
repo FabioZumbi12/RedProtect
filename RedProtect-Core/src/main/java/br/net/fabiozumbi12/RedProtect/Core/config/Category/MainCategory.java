@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 29/05/2023 15:51
+ * Last Modified: 12/06/2023 14:00
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -38,7 +38,7 @@ public class MainCategory {
     @Setting(value = "online-mode", comment = "Should fix players uuids on player login? (recommended if upgrading from old RP versions and in offline mode)")
     public boolean online_mode = false;
     @Setting(value = "config-version", comment = "Don't touch <3")
-    public double config_version = 8.7;
+    public double config_version = 8.8;
     @Setting(value = "command-confirm", comment = "Commands who will need to \"rp yes\" or \"rp no\" before use.\nThis will accept only the command name, not alias.")
     public List<String> command_confirm = new ArrayList<>(Arrays.asList("kill", "delete", "redefine", "regen", "undo", "rename", "fileToMysql", "mysqlToFile", "mychunktorp", "single-to-files", "files-to-single", "gpTorp"));
     @Setting(value = "allowed-claim-worlds", comment = "WorldProperties where players will be allowed to claim regions.")

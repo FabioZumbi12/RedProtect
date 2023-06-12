@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 12/06/2023 17:10
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -412,7 +412,7 @@ public class Region extends CoreRegion {
         }
 
         if (RedProtect.get().hooks.checkDyn() && RedProtect.get().getConfigManager().configRoot().hooks.dynmap.enable) {
-            dynmapInfo = RedProtect.get().getLanguageManager().get("region.dynmap") + " " + (this.getFlagBool("dynmap") ? RedProtect.get().getLanguageManager().get("region.dynmap-showing") : RedProtect.get().getLanguageManager().get("region.dynmap-hiding")) + ", " + RedProtect.get().getLanguageManager().get("region.dynmap-set") + " " + this.getDynmapSet() + "\n";
+            dynmapInfo = RedProtect.get().getLanguageManager().get("region.map") + " " + (this.getFlagBool("show-map") ? RedProtect.get().getLanguageManager().get("region.map-showing") : RedProtect.get().getLanguageManager().get("rregion.map-hiding")) + ", " + RedProtect.get().getLanguageManager().get("region.map-set") + " " + this.getDynmapSet() + "\n";
         }
 
         boolean purgeEnabled = RedProtect.get().getConfigManager().configRoot().purge.enabled;
@@ -685,8 +685,8 @@ public class Region extends CoreRegion {
         return run;
     }
 
-    public boolean allowDynmap() {
-        return !flagExists("dynmap") || getFlagBool("dynmap");
+    public boolean showMap() {
+        return !flagExists("show-map") || getFlagBool("show-map");
     }
 
     public boolean isKeepInventory() {
@@ -1245,6 +1245,17 @@ public class Region extends CoreRegion {
             leaderList.append(", ").append(leader.getPlayerName());
         }
         return "[" + leaderList.delete(0, 2) + "]";
+    }
+
+    public String getMembersDesc() {
+        if (this.members.size() == 0) {
+            return RedProtect.get().getLanguageManager().get("region.none");
+        }
+        StringBuilder memberList = new StringBuilder();
+        for (PlayerRegion member : this.members) {
+            memberList.append(", ").append(member.getPlayerName());
+        }
+        return "[" + memberList.delete(0, 2) + "]";
     }
 
 }

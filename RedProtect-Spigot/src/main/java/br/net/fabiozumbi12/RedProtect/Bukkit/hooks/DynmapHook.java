@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 12/06/2023 13:54
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -67,7 +67,7 @@ public class DynmapHook implements Listener {
         //start set markers
         for (World w : RedProtect.get().getServer().getWorlds()) {
             for (Region r : RedProtect.get().getRegionManager().getRegionsByWorld(w.getName())) {
-                if (!r.allowDynmap()) continue;
+                if (!r.showMap()) continue;
                 try {
                     addMark(r);
                 } catch (Exception ex) {
@@ -80,7 +80,7 @@ public class DynmapHook implements Listener {
 
     @EventHandler
     public void onChangeFlag(ChangeRegionFlagEvent event) {
-        if (event.getFlag().equalsIgnoreCase("dynmap")) {
+        if (event.getFlag().equalsIgnoreCase("show-map")) {
             boolean value = (boolean) event.getFlagValue();
             if (value) {
                 try {

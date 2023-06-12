@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 29/05/2023 15:46
+ * Last Modified: 12/06/2023 13:54
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -969,7 +969,7 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("allow-home") ||
                 flag.equalsIgnoreCase("minecart") ||
                 flag.equalsIgnoreCase("forcepvp") ||
-                flag.equalsIgnoreCase("dynmap") ||
+                flag.equalsIgnoreCase("show-map") ||
                 flag.equalsIgnoreCase("can-purge") ||
                 flag.equalsIgnoreCase("minefarm")) && !(value instanceof Boolean)) {
             return false;

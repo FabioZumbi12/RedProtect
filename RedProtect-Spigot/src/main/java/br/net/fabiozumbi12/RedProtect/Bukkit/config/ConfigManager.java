@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 12/06/2023 13:58
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -414,6 +414,14 @@ public class ConfigManager extends CoreConfigManager {
             root.config_version = 8.7D;
             if (!root.flags.containsKey("block-transform")) {
                 root.flags.put("block-transform", true);
+            }
+            update++;
+        }
+
+        if (root.config_version < 8.8D) {
+            root.config_version = 8.8D;
+            if (root.flags.containsKey("dynmap")) {
+                root.flags.put("show-map", true);
             }
             update++;
         }

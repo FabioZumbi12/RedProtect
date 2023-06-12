@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 12/06/2023 13:56
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -89,7 +89,7 @@ public class CoreConfigManager {
             "set-portal",
             "exit",
             "particles",
-            "dynmap",
+            "show-map",
             "deny-exit-items",
             "spawn-animals",
             "spawn-monsters",
