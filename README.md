@@ -50,8 +50,8 @@ jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon
 ## API repository:
 
 **Repository:**  
-RedProtect is hosted on Maven Central
-## Maven
+RedProtect is hosted on Maven Central  
+### Maven
 ```xml
 <dependencies>
     <!-- Core is not needed but allow access to all region methods -->
@@ -91,7 +91,7 @@ RedProtect is hosted on Maven Central
 </dependencies>  
 ```
 
-## Gradle:
+### Gradle:
 ```
 repositories {
     mavenCentral()
@@ -99,7 +99,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1"){  exclude(group: "*") } // Core is not needed but allow access to all region methods
+    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1"){ exclude(group: "*") } // Core is not needed but allow access to all region methods
     compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1"){ exclude(group: "*") }
 }
 ```
