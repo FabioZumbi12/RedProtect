@@ -399,7 +399,7 @@ public class Region extends CoreRegion {
         for (PlayerRegion pname : this.leaders) {
             Player play = RedProtect.get().getServer().getPlayer(pname.getPlayerName());
             if (play != null && play.isOnline() && pname.getPlayerName().equalsIgnoreCase(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader)) {
-                today.append(ChatColor.GREEN).append("Online!");
+                today.append(" ").append(ChatColor.GREEN).append("Online!");
                 break;
             }
         }
