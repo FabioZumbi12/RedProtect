@@ -50,7 +50,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Crops;
-import org.bukkit.potion.Potion;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -928,11 +927,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public String getTitleName(Region r) {
-        String name = RedProtect.get().getLanguageManager().get("gui.invflag").replace("{region}", r.getName());
-        if (name.length() > 16) {
-            name = name.substring(0, 16);
-        }
-        return name;
+        return RedProtect.get().getLanguageManager().get("gui.invflag").replace("{region}", r.getName());
     }
 
     private void saveYaml(YamlConfiguration fileDB, File file) {
