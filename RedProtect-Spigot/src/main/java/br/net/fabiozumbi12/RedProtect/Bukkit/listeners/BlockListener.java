@@ -34,10 +34,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.region.RegionBuilder;
 import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
+import org.bukkit.block.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -406,6 +403,24 @@ public class BlockListener implements Listener {
             if (r1 != null && !r1.canBuild(e.getPlayer())) {
                 e.setCancelled(true);
                 RedProtect.get().getLanguageManager().sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
+            }
+        }
+
+        Block clickBlock = e.getClickedBlock();
+        if (r != null && clickBlock != null && clickBlock.getType().name().endsWith("WALL_SIGN") && clickBlock.getState() instanceof Sign sign){
+            if (cont.validatePrivateSign(sign.getLines())){
+                Block chest = null;
+                for (BlockFace face : BlockFace.values()){
+                    if (clickBlock.getRelative(face).getState() instanceof Chest){
+                        chest = clickBlock.getRelative(face);
+                        break;
+                    }
+                }
+                if (chest != null)
+                    if ((r.canChest(p) && !cont.canOpen(chest, p) || (!r.canChest(p) && cont.canOpen(chest, p)) || (!r.canChest(p) && !cont.canOpen(chest, p)))){
+                        e.setCancelled(true);
+                        RedProtect.get().getLanguageManager().sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
+                    }
             }
         }
     }
