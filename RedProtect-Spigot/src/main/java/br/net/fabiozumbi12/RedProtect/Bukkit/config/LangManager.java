@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 07/08/2023 14:56
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -99,7 +99,7 @@ public class LangManager extends LangCore {
 
         if (loadedLang.get(key) == null) {
             sender.sendMessage(get("_redprotect.prefix") + " " + ChatColor.translateAlternateColorCodes('&', key));
-        } else if (get(key).equalsIgnoreCase("")) {
+        } else if (get(key).isEmpty()) {
             return;
         } else {
             String message = get(key);

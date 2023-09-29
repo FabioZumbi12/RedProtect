@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Last Modified: 29/09/2023 17:09
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -101,11 +101,11 @@ public class BlockConfig {
                 result = diffSeconds;
             }
 
-            return result * this.blockCat.blocks_to_add + added_blocks;
+            return (result * this.blockCat.blocks_to_add) + added_blocks;
         } else {
             addPlayer(player);
+            return 0;
         }
-        return 0;
     }
 
     public void addPlayer(Player player) {
