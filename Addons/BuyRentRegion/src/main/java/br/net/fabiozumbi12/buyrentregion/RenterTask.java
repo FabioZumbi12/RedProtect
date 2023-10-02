@@ -26,7 +26,7 @@
 
 package br.net.fabiozumbi12.buyrentregion;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import io.github.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.buyrentregion.config.ChatHelper;
 import br.net.fabiozumbi12.buyrentregion.region.RentableRegion;
 import net.milkbowl.vault.economy.EconomyResponse;

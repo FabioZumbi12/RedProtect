@@ -1,5 +1,5 @@
 name: RedProtect
-main: br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect
+main: io.github.fabiozumbi12.RedProtect.Bukkit.RedProtect
 version: ${project.version}
 api-version: 1.13
 author: FabioZumbi12

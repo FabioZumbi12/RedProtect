@@ -26,8 +26,8 @@
 
 package br.net.fabiozumbi12.regionchat;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import io.github.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import io.github.fabiozumbi12.RedProtect.Bukkit.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

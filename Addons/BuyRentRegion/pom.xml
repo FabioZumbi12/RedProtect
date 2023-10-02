@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2012-2023 - @FabioZumbi12
-  ~ Last Modified: 12/06/2023 17:33
+  ~ Last Modified: 02/10/2023 19:54
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -105,11 +105,13 @@
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
             <version>8.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Spigot</artifactId>
             <version>8.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
