@@ -1,6 +1,6 @@
 <!--
   ~ Copyright (c) 2012-2023 - @FabioZumbi12
-  ~ Last Modified: 03/10/2023 15:55
+  ~ Last Modified: 03/10/2023 17:14
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -285,74 +285,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
-            <artifactId>UltimateFancy</artifactId>
-            <version>1.9.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>Slimefun4</artifactId>
             <version>RC-29</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
+            <artifactId>UltimateFancy</artifactId>
+            <version>1.9.1</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
+        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Core</include>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot</include>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.8</include>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.12</include>
-                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.13</include>
-                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
-                                </includes>
-                            </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>br.net.fabiozumbi12.UltimateFancy</pattern>
-                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>br.net.fabiozumbi12.UltimateChat:UltimateFancy</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                            <outputFile>
-                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Bukkit-Legacy.jar
-                            </outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

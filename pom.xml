@@ -1,6 +1,6 @@
 ﻿<!--
   ~ Copyright (c) 2012-2023 - @FabioZumbi12
-  ~ Last Modified: 03/10/2023 15:54
+  ~ Last Modified: 03/10/2023 17:14
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -32,6 +32,16 @@
     <packaging>pom</packaging>
     <name>RedProtect</name>
     <version>7.7.3</version>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+                <artifactId>RedProtect-Spigot</artifactId>
+                <version>7.7.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
