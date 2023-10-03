@@ -1,6 +1,6 @@
 <!--
-  ~ Copyright (c) 2020 - @FabioZumbi12
-  ~ Last Modified: 05/07/2020 23:20.
+  ~ Copyright (c) 2012-2023 - @FabioZumbi12
+  ~ Last Modified: 03/10/2023 15:55
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -37,7 +37,7 @@
     <repositories>
         <repository>
             <id>sk89q-snapshots</id>
-            <url>https://maven.sk89q.com/repo/</url>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
 
         <repository>
@@ -96,20 +96,20 @@
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Core</artifactId>
-            <version>LATEST</version>
+            <version>7.7.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
@@ -203,6 +203,7 @@
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
             <version>2.1.206</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <!-- We don't need any of the dependencies -->
@@ -214,12 +215,14 @@
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>LATEST</version>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.17.2</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>BOSEconomy</groupId>
@@ -242,19 +245,19 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
-            <version>LATEST</version>
+            <version>7.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>LATEST</version>
+            <version>7.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>LATEST</version>
+            <version>7.1.0-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -272,7 +275,7 @@
         <dependency>
             <groupId>br.net.fabiozumbi12</groupId>
             <artifactId>TranslationAPI</artifactId>
-            <version>LATEST</version>
+            <version>1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -284,29 +287,79 @@
         <dependency>
             <groupId>br.net.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
-            <version>LATEST</version>
+            <version>1.9.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>Slimefun4</artifactId>
             <version>RC-29</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
-    <properties>
-        <mineVersion>1.18-R0.1-SNAPSHOT</mineVersion>
-    </properties>
-
     <build>
-        <finalName>DONT-DOWNLOAD-Spigot-Reference</finalName>
+        <finalName>DONT-DOWNLOAD-SpongeAPI7-Reference</finalName>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Core</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.8</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.12</include>
+                                    <include>br.net.fabiozumbi12.RedProtect:RedProtect-Spigot-1.13</include>
+                                    <include>br.net.fabiozumbi12.UltimateChat:UltimateFancy</include>
+                                </includes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>br.net.fabiozumbi12.UltimateFancy</pattern>
+                                    <shadedPattern>br.net.fabiozumbi12.RedProtect.UltimateFancy</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>br.net.fabiozumbi12.RedProtect:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>br.net.fabiozumbi12.UltimateChat:UltimateFancy</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <outputFile>
+                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Bukkit-Legacy.jar
+                            </outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
         </plugins>

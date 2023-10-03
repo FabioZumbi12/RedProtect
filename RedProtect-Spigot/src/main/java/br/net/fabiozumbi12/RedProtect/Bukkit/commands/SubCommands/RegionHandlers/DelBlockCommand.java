@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 - @FabioZumbi12
- * Last Modified: 02/07/2020 19:01.
+ * Copyright (c) 2012-2023 - @FabioZumbi12
+ * Last Modified: 03/10/2023 15:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommands.RegionHandler
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
-import br.net.fabiozumbi12.RedProtect.Bukkit.config.BlockConfig;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -51,14 +50,14 @@ public class DelBlockCommand implements SubCommand {
 
             int blocks;
             try {
-                blocks = Integer.getInteger(args[1]);
+                blocks = Integer.parseInt(args[1]);
             } catch (Exception ex) {
-                RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.region.invalid.number");
+                RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.invalid.number");
                 return true;
             }
 
             long total = RedProtect.get().getBlockManager().delBlock(blocks, player);
-            RedProtect.get().getLanguageManager().sendMessage(sender,"cmdmanager.region.totalblocks", new Replacer[]{
+            RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.region.totalblocks", new Replacer[]{
                     new Replacer("blocks", String.valueOf(total)),
                     new Replacer("player", player.getName())
             });

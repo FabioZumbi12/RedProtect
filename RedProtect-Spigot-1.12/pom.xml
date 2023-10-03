@@ -1,6 +1,6 @@
 <!--
-  ~ Copyright (c) 2020 - @FabioZumbi12
-  ~ Last Modified: 02/07/2020 19:49.
+  ~ Copyright (c) 2012-2023 - @FabioZumbi12
+  ~ Last Modified: 03/10/2023 15:28
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -41,7 +41,7 @@
         </repository>
         <repository>
             <id>sk89q-snapshots</id>
-            <url>https://maven.sk89q.com/repo/</url>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
     </repositories>
 
@@ -51,20 +51,21 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${mineVersion}</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect-Spigot</artifactId>
-            <version>LATEST</version>
+            <version>7.7.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.sk89q.worldedit</groupId>
@@ -105,10 +106,6 @@
             <version>6.1</version>
         </dependency>
     </dependencies>
-
-    <properties>
-        <mineVersion>1.12.2-R0.1-SNAPSHOT</mineVersion>
-    </properties>
 
     <build>
         <finalName>DONT-DOWNLOAD-Spigot-1.12-Reference</finalName>

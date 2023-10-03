@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 - @FabioZumbi12
- * Last Modified: 08/08/2020 23:40.
+ * Copyright (c) 2012-2023 - @FabioZumbi12
+ * Last Modified: 03/10/2023 15:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -45,23 +45,23 @@ import java.util.Date;
 import static com.google.common.reflect.TypeToken.of;
 
 public class BlockConfig {
-    protected ConfigurationLoader<CommentedConfigurationNode> blockLoader;
+    protected final ConfigurationLoader<CommentedConfigurationNode> blockLoader;
     private ConfigurationNode blockRoot;
     private BlockCategory blockCat;
 
     public BlockConfig() {
-        String headerBlock = ""
-                + "+--------------------------------------------------------------------+ #\n"
-                + "<               RedProtect Block configuration File                  > #\n"
-                + "<--------------------------------------------------------------------> #\n"
-                + "<       This is the configuration file, feel free to edit it.        > #\n"
-                + "<        For more info about cmds and flags, check our Wiki:         > #\n"
-                + "<         https://github.com/FabioZumbi12/RedProtect/wiki            > #\n"
-                + "+--------------------------------------------------------------------+ #\n"
-                + "\n"
-                + "Notes:\n"
-                + "Lists are [object1, object2, ...]\n"
-                + "Strings containing the char & always need to be quoted";
+        String headerBlock = """
+                +--------------------------------------------------------------------+ #
+                <               RedProtect Block configuration File                  > #
+                <--------------------------------------------------------------------> #
+                <       This is the configuration file, feel free to edit it.        > #
+                <        For more info about cmds and flags, check our Wiki:         > #
+                <         https://github.com/FabioZumbi12/RedProtect/wiki            > #
+                +--------------------------------------------------------------------+ #
+
+                Notes:
+                Lists are [object1, object2, ...]
+                Strings containing the char & always need to be quoted""";
         blockLoader = HoconConfigurationLoader.builder().setFile(new File(RedProtect.get().getDataFolder(), "blocks.conf")).build();
         try {
             blockRoot = blockLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerBlock));
@@ -101,11 +101,11 @@ public class BlockConfig {
                 result = diffSeconds;
             }
 
-            return result + added_blocks;
+            return (result * this.blockCat.blocks_to_add) + added_blocks;
         } else {
             addPlayer(player);
+            return 0;
         }
-        return 0;
     }
 
     public void addPlayer(Player player) {
