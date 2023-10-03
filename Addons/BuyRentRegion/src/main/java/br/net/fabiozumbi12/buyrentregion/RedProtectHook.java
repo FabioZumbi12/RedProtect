@@ -26,8 +26,8 @@
 
 package br.net.fabiozumbi12.buyrentregion;
 
-import io.github.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import io.github.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
