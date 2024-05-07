@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:14
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -103,7 +103,7 @@ public class VersionHelperLatest implements VersionHelper {
             guiRoot.gui_flags.put("allow-home", new FlagGuiCategory.GuiFlag(Material.COMPASS.name(), 2));
             guiRoot.gui_flags.put("allow-potions", new FlagGuiCategory.GuiFlag(Material.POTION.name(), 26));
             guiRoot.gui_flags.put("allow-spawner", new FlagGuiCategory.GuiFlag(Material.LEAD.name(), 10));
-            guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag(Material.GRASS.name(), 13));
+            guiRoot.gui_flags.put("build", new FlagGuiCategory.GuiFlag(Material.DIRT.name(), 13));
             guiRoot.gui_flags.put("button", new FlagGuiCategory.GuiFlag(Material.STONE_BUTTON.name(), 6));
             guiRoot.gui_flags.put("can-grow", new FlagGuiCategory.GuiFlag(Material.WHEAT.name(), 27));
             guiRoot.gui_flags.put("chest", new FlagGuiCategory.GuiFlag(Material.TRAPPED_CHEST.name(), 3));

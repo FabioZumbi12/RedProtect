@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:14
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -202,7 +202,7 @@ public class RedProtectUtil extends CoreUtil {
             }
         }
         if (checkSec && !isSecure(setTo)) {
-            wFrom.getBlockAt(setTo.clone().add(0, -1, 0)).setType(Material.GRASS);
+            wFrom.getBlockAt(setTo.clone().add(0, -1, 0)).setType(Material.DIRT);
         }
         return setTo;
     }

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:27
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -590,8 +590,9 @@ public class GlobalListener implements Listener {
         if (e1 instanceof Player && !RedProtect.get().getUtil().isRealPlayer((Player) e1)) {
             return;
         }
-
-        if (e2 instanceof Creeper || e2.getType().equals(EntityType.PRIMED_TNT) || e2.getType().equals(EntityType.MINECART_TNT)) {
+        EntityType entTnt = EntityType.fromName("PRIMED_TNT") == null ? EntityType.fromName("TNT") : EntityType.fromName("PRIMED_TNT");
+        EntityType entTntMinecart = EntityType.fromName("MINECART_TNT") == null ? EntityType.fromName("TNT_MINECART") : EntityType.fromName("MINECART_TNT");
+        if (e2 instanceof Creeper || e2.getType().equals(entTnt) || e2.getType().equals(entTntMinecart) || e2 instanceof TNTPrimed) {
             if (e1 instanceof Player) {
                 if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(loc.getWorld().getName()).explosion_entity_damage) {
                     e.setCancelled(true);

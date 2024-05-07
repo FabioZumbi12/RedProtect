@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:12
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -121,7 +121,7 @@ public class ConfigManager extends CoreConfigManager {
                         "STONECUTTER"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
-                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.GRASS.name(), Material.DIRT.name());
+                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.DIRT.name());
             }
             if (this.root.needed_claim_to_build.allow_interact_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_interact_blocks = Arrays.asList(

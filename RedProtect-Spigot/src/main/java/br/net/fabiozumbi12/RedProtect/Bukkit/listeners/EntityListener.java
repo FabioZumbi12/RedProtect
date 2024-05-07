@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:25
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -275,9 +275,10 @@ public class EntityListener implements Listener {
         RedProtect.get().logger.debug(LogLevel.ENTITY, "EntityListener - Is PotionSplashEvent");
 
         ProjectileSource thrower = event.getPotion().getShooter();
+
         for (PotionEffect e : event.getPotion().getEffects()) {
             PotionEffectType t = e.getType();
-            if (!t.equals(PotionEffectType.BLINDNESS) && !t.equals(PotionEffectType.CONFUSION) && !t.equals(PotionEffectType.HARM) && !t.equals(PotionEffectType.HUNGER) && !t.equals(PotionEffectType.POISON) && !t.equals(PotionEffectType.SLOW) && !t.equals(PotionEffectType.SLOW_DIGGING) && !t.equals(PotionEffectType.WEAKNESS) && !t.equals(PotionEffectType.WITHER)) {
+            if (!t.equals(PotionEffectType.BLINDNESS) && !t.equals(PotionEffectType.HUNGER) && !t.equals(PotionEffectType.POISON) && !t.equals(PotionEffectType.WEAKNESS) && !t.equals(PotionEffectType.WITHER)) {
                 return;
             }
         }

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:20
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -127,10 +127,11 @@ public class FlagGui implements Listener {
                             "§0" + flag));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     guiMeta.setLore(lore);
+                    Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
                     if (flagValue.toString().equalsIgnoreCase("true")) {
-                        guiMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+                        guiMeta.addEnchant(enchType, 0, true);
                     } else {
-                        guiMeta.removeEnchant(Enchantment.DURABILITY);
+                        guiMeta.removeEnchant(enchType);
                     }
                     guiMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     this.guiItems[i].setType(Material.getMaterial(RedProtect.get().getConfigManager().guiRoot().gui_flags.get(flag).material));
@@ -266,10 +267,11 @@ public class FlagGui implements Listener {
             }
         }
 
+        Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
         if (this.region.getFlagBool(flag)) {
-            itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+            itemMeta.addEnchant(enchType, 0, true);
         } else {
-            itemMeta.removeEnchant(Enchantment.DURABILITY);
+            itemMeta.removeEnchant(enchType);
         }
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 07/05/2024 20:21
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -230,8 +230,11 @@ public class MobFlagGui implements Listener {
 
         ItemStack greenWool = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta greenMeta = greenWool.getItemMeta();
+
+        Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
+
         if (flagValue.equalsIgnoreCase("true")) {
-            greenMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+            greenMeta.addEnchant(enchType, 0, true);
             greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
         greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectall")));
@@ -241,7 +244,7 @@ public class MobFlagGui implements Listener {
         ItemStack redWool = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta redMeta = redWool.getItemMeta();
         if (flagValue.equalsIgnoreCase("false")) {
-            redMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+            redMeta.addEnchant(enchType, 0, true);
             redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
         redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectnone")));
