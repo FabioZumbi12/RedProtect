@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 20:14
+ * Last Modified: 23/06/2024 00:53
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -56,6 +56,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.text.Normalizer;
 import java.text.ParseException;
@@ -1130,6 +1132,7 @@ public class RedProtectUtil extends CoreUtil {
         return rname;
     }
 
+    /* Skull texture example by https://github.com/RRS-9747/HeadDrop */
     public ItemStack createSkull(String texture) {
         Material mat = Material.getMaterial("PLAYER_HEAD");
         ItemStack s;
@@ -1139,22 +1142,41 @@ public class RedProtectUtil extends CoreUtil {
             s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
         }
         SkullMeta sm = (SkullMeta) s.getItemMeta();
-        GameProfile gm = new GameProfile(UUID.randomUUID(), null);
-        gm.getProperties().put("textures", new Property("texture", texture));
-
-        Field profileField = null;
-        try {
-            profileField = sm.getClass().getDeclaredField("profile");
-        } catch (NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
-        profileField.setAccessible(true);
-        try {
-            profileField.set(sm, gm);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        mutateItemMeta(sm, texture);
         s.setItemMeta(sm);
         return s;
+    }
+
+    private static GameProfile makeProfile(String b64) {
+        UUID id = new UUID(
+                b64.substring(b64.length() - 20).hashCode(),
+                b64.substring(b64.length() - 10).hashCode()
+        );
+        GameProfile profile = new GameProfile(id, "Player");
+        profile.getProperties().put("textures", new Property("textures", b64));
+        return profile;
+    }
+
+    private static Method metaSetProfileMethod;
+    private static Field metaProfileField;
+    private static void mutateItemMeta(SkullMeta meta, String b64) {
+        try {
+            if (metaSetProfileMethod == null) {
+                metaSetProfileMethod = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
+                metaSetProfileMethod.setAccessible(true);
+            }
+            metaSetProfileMethod.invoke(meta, makeProfile(b64));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+            try {
+                if (metaProfileField == null) {
+                    metaProfileField = meta.getClass().getDeclaredField("profile");
+                    metaProfileField.setAccessible(true);
+                }
+                metaProfileField.set(meta, makeProfile(b64));
+
+            } catch (NoSuchFieldException | IllegalAccessException ex2) {
+                ex2.printStackTrace();
+            }
+        }
     }
 }

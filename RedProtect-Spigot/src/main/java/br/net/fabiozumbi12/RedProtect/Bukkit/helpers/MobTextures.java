@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 21:08
+ * Last Modified: 23/06/2024 01:19
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -31,6 +31,14 @@ import org.bukkit.entity.EntityType;
 public class MobTextures {
     public static String getTexture(EntityType ent) {
         return switch (ent.name()) {
+            case "PIGLIN_BRUTE" ->
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2UzMDBlOTAyNzM0OWM0OTA3NDk3NDM4YmFjMjllM2E0Yzg3YTg0OGM1MGIzNGMyMTI0MjcyN2I1N2Y0ZTFjZiJ9fX0=";
+            case "BREEZE" ->
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTI3NTcyOGFmN2U2YTI5Yzg4MTI1YjY3NWEzOWQ4OGFlOTkxOWJiNjFmZGMyMDAzMzdmZWQ2YWIwYzQ5ZDY1YyJ9fX0=";
+            case "BOGGED" ->
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTNiOTAwM2JhMmQwNTU2MmM3NTExOWI4YTYyMTg1YzY3MTMwZTkyODJmN2FjYmFjNGJjMjgyNGMyMWViOTVkOSJ9fX0=";
+            case "ARMADILLO" ->
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTg1MmIzM2JhMjk0ZjU2MDA5MDc1MmQxMTNmZTcyOGNiYzdkZDA0MjAyOWEzOGQ1MzgyZDY1YTIxNDYwNjhiNyJ9fX0=";
             case "ELDER_GUARDIAN" ->
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM3OTc0ODJhMTRiZmNiODc3MjU3Y2IyY2ZmMWI2ZTZhOGI4NDEzMzM2ZmZiNGMyOWE2MTM5Mjc4YjQzNmIifX19";
             case "WITHER_SKELETON" ->

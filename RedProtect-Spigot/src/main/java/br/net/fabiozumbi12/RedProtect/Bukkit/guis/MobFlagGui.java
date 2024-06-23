@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 20:21
+ * Last Modified: 23/06/2024 00:41
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -255,8 +255,9 @@ public class MobFlagGui implements Listener {
             ItemStack head;
             try {
                 head = RedProtect.get().getUtil().createSkull(MobTextures.getTexture(ent));
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
                 head = new ItemStack(monster ? Material.MAGMA_CREAM : Material.BONE);
+                RedProtect.get().logger.log("Error on open GUI: " + ex.getMessage());
             }
 
             ItemMeta itemMeta = head.getItemMeta();
