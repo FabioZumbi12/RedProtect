@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 23/06/2024 00:41
+ * Last Modified: 24/06/2024 19:08
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MobTextures;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -49,6 +50,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -72,25 +74,40 @@ public class MobFlagGui implements Listener {
         this.flag = flag;
 
         if (flag.equalsIgnoreCase("spawn-monsters")) {
-            this.name = "Spawn Monsters Gui";
-            List<EntityType> entities = Arrays.stream(EntityType.values())
-                    .filter(ent -> ent.getEntityClass() != null && Monster.class.isAssignableFrom(ent.getEntityClass()))
+            this.name = "Spawn Monsters";
+            List<EntityType> entities = Registry.ENTITY_TYPE.stream()
+                    .filter(ent -> ent.getEntityClass() != null &&
+                            ent.getKey().getNamespace().startsWith("minecraft") &&
+                            Monster.class.isAssignableFrom(ent.getEntityClass()))
                     .sorted(Comparator.comparing(EntityType::name)).collect(toList());
+            List<EntityType> modEntities = Registry.ENTITY_TYPE.stream()
+                    .filter(ent ->
+                            !ent.getKey().getNamespace().startsWith("minecraft") &&
+                            RedProtect.get().getConfigManager().configRoot().flags_configuration.modEntities.monsters.contains(ent.name()))
+                    .sorted(Comparator.comparing(EntityType::name)).toList();
+            entities.addAll(modEntities);
             this.guiItems = getItemList(entities, region.getFlagString(flag), true);
         }
 
         if (flag.equalsIgnoreCase("spawn-animals")) {
-            this.name = "Spawn Animals Gui";
-            List<EntityType> entities = Arrays.stream(EntityType.values())
+            this.name = "Spawn Animals";
+            List<EntityType> entities = Registry.ENTITY_TYPE.stream()
                     .filter(ent -> {
                         Class<? extends Entity> entityClass = ent.getEntityClass();
                         if (entityClass == null) return false;
-                        return (!Monster.class.isAssignableFrom(entityClass) &&
+                        return (ent.getKey().getNamespace().startsWith("minecraft") &&
+                                !Monster.class.isAssignableFrom(entityClass) &&
                                 !Player.class.isAssignableFrom(entityClass) &&
                                 !ArmorStand.class.isAssignableFrom(entityClass) &&
                                 LivingEntity.class.isAssignableFrom(entityClass));
                     })
                     .sorted(Comparator.comparing(EntityType::name)).collect(toList());
+            List<EntityType> modEntities = Registry.ENTITY_TYPE.stream()
+                    .filter(ent ->
+                            !ent.getKey().getNamespace().startsWith("minecraft") &&
+                                    RedProtect.get().getConfigManager().configRoot().flags_configuration.modEntities.animals.contains(ent.name()))
+                    .sorted(Comparator.comparing(EntityType::name)).toList();
+            entities.addAll(modEntities);
             this.guiItems = getItemList(entities, region.getFlagString(flag), false);
         }
 
@@ -127,9 +144,11 @@ public class MobFlagGui implements Listener {
                         str.append(lore.get(1).replace("§0", "")).append(",");
                 });
 
-        String value = this.region.getFlagString(flag);
-        if (str.length() > 0) {
-            value = str.substring(0, str.toString().length() - 1);
+        String value = str.toString();
+        if (!value.isEmpty()) {
+            value = value.substring(0, str.toString().length() - 1);
+        } else {
+            value = "false";
         }
 
         setFlagValue(value);
@@ -254,7 +273,8 @@ public class MobFlagGui implements Listener {
         for (EntityType ent : entities) {
             ItemStack head;
             try {
-                head = RedProtect.get().getUtil().createSkull(MobTextures.getTexture(ent));
+                var texture = RedProtect.get().getConfigManager().headTextRoot().mobTextures.get(ent.name());
+                head = RedProtect.get().getUtil().createSkull(texture);// MobTextures.getTexture(ent);
             } catch (Exception ex) {
                 head = new ItemStack(monster ? Material.MAGMA_CREAM : Material.BONE);
                 RedProtect.get().logger.log("Error on open GUI: " + ex.getMessage());

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 20:12
+ * Last Modified: 24/06/2024 18:24
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -27,10 +27,8 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.config;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Core.config.Category.EconomyCategory;
-import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
-import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
-import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.MobTextures;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.*;
 import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
@@ -46,6 +44,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -234,7 +233,18 @@ public class ConfigManager extends CoreConfigManager {
                 }
             }
 
-            //Signs file
+            /* ----------------- Head textures config file -----------------*/
+            headTextLoader = HoconConfigurationLoader.builder().setPath(new File(RedProtect.get().getDataFolder(), "textures.conf").toPath()).build();
+            headTextCfgRoot = headTextLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerHeadtext));
+            this.headTextRoot = headTextCfgRoot.getValue(of(HeadTexturesCategory.class), new HeadTexturesCategory());
+
+            Arrays.stream(EntityType.values()).forEach(e -> {
+                if (!headTextRoot.mobTextures.containsKey(e.name()))
+                    headTextRoot.mobTextures.put(e.name(), MobTextures.getTexture(e));
+            });
+            saveHeadTextures();
+
+            /* ----------------- Signs file ----------------- */
             signsLoader = HoconConfigurationLoader.builder().setPath(new File(RedProtect.get().getDataFolder(), "signs.conf").toPath()).build();
             if (new File(RedProtect.get().getDataFolder(), "signs.yml").exists()) {
                 File signFile = new File(RedProtect.get().getDataFolder(), "signs.yml");

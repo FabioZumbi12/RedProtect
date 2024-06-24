@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:15
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 24/06/2024 18:40
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -156,6 +156,8 @@ public class MainCategory {
         public flagsDelay change_flag_delay = new flagsDelay();
         @Setting(value = "effects-duration", comment = "Delay for effects flags.")
         public int effects_duration = 5;
+        @Setting(value = "mod-entities", comment = "Add MOD entities names for Animal or Monster spawn flags.\nCheck \"textures.conf\" for entity names.")
+        public modEntities modEntities = new modEntities();
 
         @ConfigSerializable
         public static class flagsDelay {
@@ -165,6 +167,14 @@ public class MainCategory {
             public List<String> flags = Collections.singletonList("pvp");
             @Setting
             public int seconds = 10;
+        }
+
+        @ConfigSerializable
+        public static class modEntities {
+            @Setting
+            public List<String> animals = Collections.singletonList("EXAMPLE");
+            @Setting
+            public List<String> monsters = Collections.singletonList("EXAMPLE");
         }
     }
 

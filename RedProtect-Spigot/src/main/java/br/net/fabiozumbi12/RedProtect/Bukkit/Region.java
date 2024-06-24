@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 20:11
+ * Last Modified: 24/06/2024 18:53
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -1112,7 +1112,8 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (!(entity instanceof Monster)) {
+        if (!(entity instanceof Monster) &&
+                !RedProtect.get().getConfigManager().configRoot().flags_configuration.modEntities.monsters.contains(entity.getType().name())) {
             return true;
         }
 
@@ -1136,7 +1137,8 @@ public class Region extends CoreRegion {
             return true;
         }
 
-        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && !(entity instanceof ArmorStand) && entity instanceof LivingEntity)) {
+        if (!((!(entity instanceof Monster) && !(entity instanceof Player)) && !(entity instanceof ArmorStand) && entity instanceof LivingEntity) &&
+                !RedProtect.get().getConfigManager().configRoot().flags_configuration.modEntities.animals.contains(entity.getType().name())) {
             return true;
         }
 

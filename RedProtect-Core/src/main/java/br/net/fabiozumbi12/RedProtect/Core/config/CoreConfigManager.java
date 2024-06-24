@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:15
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 24/06/2024 17:15
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -29,6 +29,7 @@ package br.net.fabiozumbi12.RedProtect.Core.config;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.EconomyCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.FlagGuiCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.GlobalFlagsCategory;
+import br.net.fabiozumbi12.RedProtect.Core.config.Category.HeadTexturesCategory;
 import br.net.fabiozumbi12.RedProtect.Core.config.Category.MainCategory;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -142,9 +143,22 @@ public class CoreConfigManager {
             Notes:
             Lists are [object1, object2, ...]
             Strings containing the char & always need to be quoted""";
+    protected String headerHeadtext = """
+            +--------------------------------------------------------------------+ #
+            <              RedProtect Head Textures configuration File                 > #
+            <--------------------------------------------------------------------> #
+            <               This is the Head Textures file configuration         > #
+            +--------------------------------------------------------------------+ #
+
+            Notes:
+            Lists are [object1, object2, ...]
+            Strings containing the char & always need to be quoted""";
     protected ConfigurationNode ecoCfgRoot;
     protected ConfigurationLoader<CommentedConfigurationNode> ecoLoader;
     protected EconomyCategory ecoRoot;
+    protected ConfigurationNode headTextCfgRoot;
+    protected ConfigurationLoader<CommentedConfigurationNode> headTextLoader;
+    protected HeadTexturesCategory headTextRoot;
     protected ConfigurationNode signCfgs;
     protected ConfigurationLoader<CommentedConfigurationNode> signsLoader;
     protected ConfigurationNode guiCfgRoot;
@@ -173,7 +187,6 @@ public class CoreConfigManager {
     public SortedSet<String> getDefFlags() {
         return new TreeSet<>(getDefFlagsValues().keySet());
     }
-
     public FlagGuiCategory guiRoot() {
         return this.guiRoot;
     }
@@ -183,10 +196,13 @@ public class CoreConfigManager {
         saveGui();
     }
 
+    public HeadTexturesCategory headTextRoot() {
+        return this.headTextRoot;
+    }
+
     public GlobalFlagsCategory globalFlagsRoot() {
         return this.globalFlagsRoot;
     }
-
     public EconomyCategory ecoRoot() {
         return this.ecoRoot;
     }
@@ -240,8 +256,19 @@ public class CoreConfigManager {
 
             ecoLoader.save(ecoCfgRoot);
             signsLoader.save(signCfgs);
+            saveHeadTextures();
             saveGui();
         } catch (IOException e) {
+            CoreUtil.printJarVersion();
+            e.printStackTrace();
+        }
+    }
+
+    public void saveHeadTextures() {
+        try {
+            headTextCfgRoot.setValue(of(HeadTexturesCategory.class), headTextRoot);
+            headTextLoader.save(headTextCfgRoot);
+        } catch (IOException | ObjectMappingException e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
         }
