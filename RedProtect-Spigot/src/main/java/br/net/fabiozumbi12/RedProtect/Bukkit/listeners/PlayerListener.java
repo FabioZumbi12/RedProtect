@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 25/06/2024 02:01
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -234,7 +234,7 @@ public class PlayerListener implements Listener {
                 if (b != null && (b.getType().equals(Material.ANVIL) || b.getState() instanceof InventoryHolder ||
                         RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches))) {
                     boolean out = RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside;
-                    if (out && !cont.canOpen(b, p)) {
+                    if (out && !cont.canOpen(b, p, false)) {
                         RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
                         event.setCancelled(true);
                     }
@@ -334,9 +334,12 @@ public class PlayerListener implements Listener {
                         }
                     } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
                             RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
-                        if ((r.canChest(p) && !cont.canOpen(b, p) || (!r.canChest(p) && cont.canOpen(b, p)) || (!r.canChest(p) && !cont.canOpen(b, p)))) {
-                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
-                            event.setCancelled(true);
+                        var open = cont.canOpen(b, p, true);
+                        if (!open){
+                            if ((r.canChest(p) && !cont.canOpen(b, p, false)) || (!r.canChest(p) && cont.canOpen(b, p, false)) || (!r.canChest(p) && !cont.canOpen(b, p, false))) {
+                                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
+                                event.setCancelled(true);
+                            }
                         }
                     } else if (b.getType().name().contains("DAYLIGHT") || b.getType().name().contains("COMPARATOR") || b.getType().name().contains("REPEATER") || (b.getType().name().contains("REDSTONE") && !b.getType().equals(Material.REDSTONE_ORE))) {
                         if (!r.canRedstone(p)) {

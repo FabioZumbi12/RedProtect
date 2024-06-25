@@ -140,6 +140,7 @@ permissions:
       redprotect.command-range-bypass: true
       redprotect.bypass: true
       redprotect.bypass.world: true
+      redprotect.bypass.private: true
       redprotect.bypass.nether-roof: true
       redprotect.bypass.velocity: true
       redprotect.bypass.define-max-distance: true

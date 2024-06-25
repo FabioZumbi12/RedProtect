@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 25/06/2024 04:44
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -32,14 +32,18 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ContainerManager {
 
-    public boolean canOpen(Block b, Player p) {
+    public boolean canOpen(Block b, Player p, boolean pubOnly) {
         if (!RedProtect.get().getConfigManager().configRoot().private_cat.use || p.hasPermission("redprotect.bypass")) {
             return true;
         }
@@ -47,7 +51,7 @@ public class ContainerManager {
         String blocktype = b.getType().name();
         List<String> blocks = RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks;
 
-        boolean deny = true;
+        boolean deny = !pubOnly;
         if (blocks.stream().anyMatch(blocktype::matches)) {
             int x = b.getX();
             int y = b.getY();
@@ -57,31 +61,47 @@ public class ContainerManager {
             for (int sx = -1; sx <= 1; sx++) {
                 for (int sz = -1; sz <= 1; sz++) {
                     Block bs = w.getBlockAt(x + sx, y, z + sz);
-                    if (isSign(bs) && (validatePrivateSign(bs))) {
-                        deny = false;
-                        if (validateOpenBlock(bs, p)) {
-                            return true;
-                        }
-                    }
-
-                    int x2 = bs.getX();
-                    int y2 = bs.getY();
-                    int z2 = bs.getZ();
-
-                    String blocktype2 = b.getType().name();
-                    if (blocks.stream().anyMatch(blocktype2::matches)) {
-                        for (int ux = -1; ux <= 1; ux++) {
-                            for (int uz = -1; uz <= 1; uz++) {
-                                Block bu = w.getBlockAt(x2 + ux, y2, z2 + uz);
-                                if (isSign(bu) && (validatePrivateSign(bu))) {
+                    if (isSign(bs)){
+                        org.bukkit.block.data.type.WallSign sign = (org.bukkit.block.data.type.WallSign) bs.getBlockData();
+                        var backBlock = bs.getRelative(sign.getFacing().getOppositeFace());
+                        if (backBlock.getState() instanceof Container){
+                            if (Arrays.equals(((Container)b.getState()).getInventory().getContents(), ((Container)backBlock.getState()).getInventory().getContents())){
+                                if (validatePublicSign(bs)) return true;
+                                if (!pubOnly && validatePrivateSign(bs)) {
                                     deny = false;
-                                    if (validateOpenBlock(bu, p)) {
+                                    if (validateOpenBlock(bs, p)) {
                                         return true;
                                     }
                                 }
                             }
                         }
                     }
+
+                    /*int x2 = bs.getX();
+                    int y2 = bs.getY();
+                    int z2 = bs.getZ();
+
+                    String blocktype2 = b.getType().name();
+                    if (blocks.stream().anyMatch(blocktype2::matches)) {
+                        for (int ux = 0; ux <= 1; ux++) {
+                            for (int uz = 0; uz <= 1; uz++) {
+                                Block bu = w.getBlockAt(x2 + ux, y2, z2 + uz);
+                                if (isSign(bu)) {
+                                    org.bukkit.block.data.type.WallSign sign = (org.bukkit.block.data.type.WallSign) bu.getBlockData();
+                                    var backBlock2 = bu.getRelative(sign.getFacing().getOppositeFace());
+                                    if (backBlock2.getState() instanceof Container){
+                                        if (validatePublicSign(bu)) return true;
+                                        if (!pubOnly && validatePrivateSign(bu)) {
+                                            deny = false;
+                                            if (validateOpenBlock(bu, p)) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }*/
                 }
             }
         }
@@ -136,6 +156,7 @@ public class ContainerManager {
                                 for (int uy = -1; uy <= 1; uy++) {
                                     for (int uz = -1; uz <= 1; uz++) {
                                         Block bu = w.getBlockAt(x2 + ux, y2 + uy, z2 + uz);
+
                                         if (isSign(bu) && (validatePrivateSign(bu))) {
                                             deny = false;
                                             if (validateBreakSign(bu, p)) {
@@ -222,20 +243,35 @@ public class ContainerManager {
                 line1.equalsIgnoreCase("[" + priv + "]");
     }
 
+    public boolean validatePublicSign(String[] lines) {
+        String pub = RedProtect.get().getLanguageManager().get("blocklistener.container.signline.public");
+        pub = ChatColor.stripColor(pub).replaceAll("[^a-zA-Z]","");
+        String line1 = ChatColor.stripColor(lines[0]).replaceAll("[^a-zA-Z]","");
+        return line1.equalsIgnoreCase("[public]") ||
+                line1.equalsIgnoreCase("public") ||
+                line1.equalsIgnoreCase(pub) ||
+                line1.equalsIgnoreCase("[" + pub + "]");
+    }
+
+    private boolean validatePublicSign(Block b) {
+        Sign s = (Sign) b.getState();
+        return validatePublicSign(s.getSide(Side.FRONT).getLines());
+    }
+
     private boolean validatePrivateSign(Block b) {
         Sign s = (Sign) b.getState();
-        return validatePrivateSign(s.getLines());
+        return validatePrivateSign(s.getSide(Side.FRONT).getLines());
     }
 
     private boolean validateBreakSign(Block b, Player p) {
         Sign s = (Sign) b.getState();
-        return validatePrivateSign(b) && (s.getLine(1).isEmpty() || s.getLine(1).equals(p.getName()));
+        return validatePrivateSign(b) && (s.getSide(Side.FRONT).getLine(1).isEmpty() || s.getSide(Side.FRONT).getLine(1).equals(p.getName()));
     }
 
     private boolean testPrivate(Block b, Player p) {
         Sign s = (Sign) b.getState();
         return validatePrivateSign(b) &&
-                (s.getLine(1).equals(p.getName()) || s.getLine(2).equals(p.getName()) || s.getLine(3).equals(p.getName()));
+                (s.getSide(Side.FRONT).getLine(1).equals(p.getName()) || s.getSide(Side.FRONT).getLine(2).equals(p.getName()) || s.getSide(Side.FRONT).getLine(3).equals(p.getName()));
     }
 
     private boolean validateOpenBlock(Block b, Player p) {
