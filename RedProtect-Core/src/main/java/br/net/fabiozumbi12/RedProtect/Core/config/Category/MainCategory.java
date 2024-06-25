@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 24/06/2024 18:40
+ * Last Modified: 24/06/2024 22:56
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -26,9 +26,12 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.config.Category;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @ConfigSerializable
@@ -450,7 +453,8 @@ public class MainCategory {
         @Setting(value = "mods-permissions", comment = """
                 Deny players to join with one of this mods or use in your server.
                 The permission 'redprotect.mods.<mod-name>.bypass' bypass this configurations.
-                Some mods like World Downloader and Schematica have your actions blocked, others only execute the command.""")
+                Byte configuration may be hard to know and is represented as String, but instead to do actions, can disable specific menus in some mods.
+                You can set bytes as string. Will be converted internally as byte array with charset UTF-8.""")
         public Map<String, ModActions> mods_permissions = createModMap();
 
         // Create world map
@@ -462,17 +466,76 @@ public class MainCategory {
 
         // Create mods list config
         private Map<String, ModActions> createModMap() {
-            Map<String, ModActions> map = new HashMap<>();
-            map.put("5zig", new ModActions());
-            map.put("bettersprinting", new ModActions());
-            map.put("fabric", new ModActions());
-            map.put("forge", new ModActions());
-            map.put("liteloader", new ModActions());
-            map.put("rift", new ModActions());
-            map.put("schematica", new ModActions());
-            map.put("litematica", new ModActions());
-            map.put("worlddownloader", new ModActions());
-            return map;
+            Map<String, ModActions> list = new HashMap<>();
+            list.put("fabric", new ModActions("Fabric", List.of("fabric"), false, "kick {p} The mod {mod} is not allowed in this server!", new ArrayList<>(), true, false));
+            list.put("forge", new ModActions("Forge",List.of("fml", "forge"), false, "kick {p} The mod {mod} is not allowed in this server!", new ArrayList<>(), true, false));
+            list.put("liteloader", new ModActions("Lite Loader", List.of("LiteLoader", "Lite"), false, "kick {p} The mod {mod} is not allowed in this server!", new ArrayList<>(), true, false));
+            list.put("rift", new ModActions("Rift", List.of("rift"), false, "kick {p} The mod {mod} is not allowed in this server!", new ArrayList<>(), true, false));
+            list.put("5zigmod", new ModActions("5ZigMod", List.of("the5zigmod:5zig_set"), false, "kick {p} The mod {mod} is not allowed in this server!", List.of(new String(new byte[]{0x1,0x2,0x4,0x8,0x16,0x32}, StandardCharsets.UTF_8)), true, true));
+            list.put("bsm", new ModActions("BSM Settings", List.of("bsm:settings"), false, "kick {p} The mod {mod} is not allowed in this server!", List.of(new String(new byte[]{1}, StandardCharsets.UTF_8)), true, true));
+            list.put("wdl" ,new ModActions("World Downloader Init", List.of("wdl:init"), false, "kick {p} The mod {mod} is not allowed in this server!", List.of(new String(createWDLPacket0(), StandardCharsets.UTF_8), new String(createWDLPacket1(), StandardCharsets.UTF_8)), true, true));
+            list.put("schematica", new ModActions("Schematica", List.of("dev:null"), false, "", List.of(new String(getSchematicaPayload(), StandardCharsets.UTF_8)), false, true));
+            list.put("litematica", new ModActions("Litematica", List.of("litematica"), false, "", new ArrayList<>(), true, false));
+            return list;
+        }
+
+        private static byte[] getSchematicaPayload() {
+            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+            output.writeByte(0);
+            output.writeBoolean(false);
+            output.writeBoolean(false);
+            output.writeBoolean(false);
+            return output.toByteArray();
+        }
+
+        public static byte[] createWDLPacket0() {
+            ByteArrayDataOutput output = ByteStreams.newDataOutput();
+            output.writeInt(0);
+            output.writeBoolean(false);
+            return output.toByteArray();
+        }
+
+        public static byte[] createWDLPacket1() {
+            ByteArrayDataOutput output = ByteStreams.newDataOutput();
+            output.writeInt(1);
+
+            output.writeBoolean(false);
+            output.writeInt(0);
+            output.writeBoolean(false);
+            output.writeBoolean(false);
+            output.writeBoolean(false);
+            output.writeBoolean(false);
+            return output.toByteArray();
+        }
+
+        @ConfigSerializable
+        public static class ModActions {
+            public ModActions(){}
+
+            public ModActions(String _name, List<String> id, boolean _block, String _action, List<String> _bytes, boolean _validateChannel, boolean _registerPacket){
+                name = _name;
+                modId = id;
+                block = _block;
+                action = _action;
+                bytes = _bytes;
+                validateChannel = _validateChannel;
+                registerPacket = _registerPacket;
+            }
+
+            @Setting
+            public String name = "";
+            @Setting(value = "mod-id", comment = "MOD id must be as \"modid:modid\" format to listen for in/outcoming packets.")
+            public List<String> modId = new ArrayList<>();
+            @Setting(comment = "Block this mod on server?")
+            public boolean block = false;
+            @Setting(comment = "Use {p} for player name and {mod} for mod name.\nLeave blank to don't execute commands.")
+            public String action = "kick {p} The mod {mod} is not allowed in this server!";
+            @Setting(comment = "Byte array (as string) relative to the mod you is blocking, to send via packet to client")
+            public List<String> bytes = new ArrayList<>();
+            @Setting(value = "validate-channel", comment = "Check packet channel id?")
+            public boolean validateChannel = true;
+            @Setting(value = "register-packet", comment = "Register in/outcoming packets? Modid must be in the format \"modid:modid\".")
+            public boolean registerPacket = true;
         }
 
         @ConfigSerializable
@@ -481,14 +544,6 @@ public class MainCategory {
             public boolean enabled = true;
             @Setting(value = "only-console")
             public boolean only_console = true;
-        }
-
-        @ConfigSerializable
-        public static class ModActions {
-            @Setting(comment = "Block this mod on server?")
-            public boolean block = false;
-            @Setting(comment = "Use {p} for player name and {mod} for mod name.\nLeave blank to don't execute commands.")
-            public String action = "kick {p} The mod {mod} is not allowed in this server!";
         }
     }
 
