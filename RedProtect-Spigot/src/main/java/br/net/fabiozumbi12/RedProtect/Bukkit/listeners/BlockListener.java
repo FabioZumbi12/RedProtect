@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 25/06/2024 02:21
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -35,6 +35,7 @@ import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
 import org.bukkit.block.*;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,6 +54,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BlockListener implements Listener {
@@ -127,18 +129,20 @@ public class BlockListener implements Listener {
             }
         }
 
-        if ((RedProtect.get().getConfigManager().configRoot().private_cat.use && b.getType().name().endsWith("WALL_SIGN"))) {
+        if ((RedProtect.get().getConfigManager().configRoot().private_cat.use && b.getType().name().contains("WALL_SIGN"))) {
             boolean out = RedProtect.get().getConfigManager().configRoot().private_cat.allow_outside;
             if (cont.validatePrivateSign(e.getLines())) {
-
                 if (out || signr != null) {
                     if (cont.isContainer(b)) {
                         // Check sides for other private signs
-                        for (BlockFace face : BlockFace.values()) {
+                        for (BlockFace face : Arrays.stream(BlockFace.values()).filter(f -> f != BlockFace.DOWN && f != BlockFace.UP).toList()) {
                             Block faceBlock = e.getBlock().getRelative(face);
-                            if ((faceBlock.getState() instanceof Sign) && cont.validatePrivateSign(((Sign) faceBlock.getState()).getLines())) {
-                                e.setLine(0, "Other Sign");
-                                e.setLine(1, "NEAR");
+                            if ((faceBlock.getState() instanceof Sign) && cont.validatePrivateSign(((Sign) faceBlock.getState()).getSide(Side.FRONT).getLines())) {
+                                var sign = ((Sign) faceBlock.getState()).getSide(Side.FRONT);
+                                if (!cont.validatePrivateSign(sign.getLines())){
+                                    e.setLine(0, "Other Sign");
+                                    e.setLine(1, "NEAR");
+                                }
                                 return;
                             }
                         }
@@ -150,6 +154,38 @@ public class BlockListener implements Listener {
                         e.setLine(0, RedProtect.get().getLanguageManager().get("blocklistener.container.signline"));
                         e.setLine(1, p.getName().substring(0, length));
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.protected");
+                    } else {
+                        RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notprotected");
+                        b.breakNaturally();
+                    }
+                } else {
+                    RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notregion");
+                    b.breakNaturally();
+                }
+                return;
+            } else if (cont.validatePublicSign(e.getLines())){
+                if (out || signr != null) {
+                    if (cont.isContainer(b)) {
+                        // Check sides for other public signs
+                        for (BlockFace face : Arrays.stream(BlockFace.values()).filter(f -> f != BlockFace.DOWN && f != BlockFace.UP).toList()) {
+                            Block faceBlock = e.getBlock().getRelative(face);
+                            if ((faceBlock.getState() instanceof Sign) && cont.validatePublicSign(((Sign) faceBlock.getState()).getSide(Side.FRONT).getLines())) {
+                                var sign = ((Sign) faceBlock.getState()).getSide(Side.FRONT);
+                                if (!cont.validatePublicSign(sign.getLines())){
+                                    e.setLine(0, "Other Sign");
+                                    e.setLine(1, "NEAR");
+                                }
+                                return;
+                            }
+                        }
+
+                        int length = p.getName().length();
+                        if (length > 16) {
+                            length = 16;
+                        }
+                        e.setLine(0, RedProtect.get().getLanguageManager().get("blocklistener.container.signline.public"));
+                        e.setLine(1, p.getName().substring(0, length));
+                        RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.public");
                     } else {
                         RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.container.notprotected");
                         b.breakNaturally();
@@ -178,8 +214,8 @@ public class BlockListener implements Listener {
                 if (rb.ready()) {
                     Region r = rb.build();
                     Bukkit.getScheduler().callSyncMethod(RedProtect.get(), () -> {
-                        sign.setLine(0, RedProtect.get().getLanguageManager().get("blocklistener.region.signcreated"));
-                        sign.setLine(1, r.getName());
+                        sign.getSide(Side.FRONT).setLine(0, RedProtect.get().getLanguageManager().get("blocklistener.region.signcreated"));
+                        sign.getSide(Side.FRONT).setLine(1, r.getName());
                         sign.update();
                         return true;
                     });
@@ -354,7 +390,7 @@ public class BlockListener implements Listener {
 
         if (r != null && r.canBuild(p) && b.getType().name().endsWith("_SIGN")) {
             Sign s = (Sign) b.getState();
-            if (s.getLine(0).equalsIgnoreCase("[flag]")) {
+            if (s.getSide(Side.FRONT).getLine(0).equalsIgnoreCase("[flag]")) {
                 RedProtect.get().getConfigManager().removeSign(r.getID(), b.getLocation());
                 return;
             }
@@ -378,7 +414,7 @@ public class BlockListener implements Listener {
 
         Location l = e.getClickedBlock().getLocation();
         Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-        ItemStack i = p.getInventory().getItemInHand();
+        ItemStack i = p.getInventory().getItemInMainHand();
 
         Block b = p.getLocation().getBlock();
         if (r != null &&
@@ -407,20 +443,22 @@ public class BlockListener implements Listener {
         }
 
         Block clickBlock = e.getClickedBlock();
-        if (r != null && clickBlock != null && clickBlock.getType().name().endsWith("WALL_SIGN") && clickBlock.getState() instanceof Sign sign){
-            if (cont.validatePrivateSign(sign.getLines())){
+        if (r != null && clickBlock != null && cont.isSign(clickBlock) && clickBlock.getState() instanceof Sign sign
+        && !RedProtect.get().getPermissionHandler().hasPermOrBypass(p, "redprotect.bypass.private")){
+            if (cont.validatePrivateSign(sign.getSide(Side.FRONT).getLines()) || cont.validatePublicSign(sign.getSide(Side.FRONT).getLines())){
                 Block chest = null;
-                for (BlockFace face : BlockFace.values()){
+                for (BlockFace face : Arrays.stream(BlockFace.values()).filter(f -> f != BlockFace.DOWN && f != BlockFace.UP).toList()){
                     if (clickBlock.getRelative(face).getState() instanceof Chest){
                         chest = clickBlock.getRelative(face);
                         break;
                     }
                 }
-                if (chest != null)
-                    if ((r.canChest(p) && !cont.canOpen(chest, p) || (!r.canChest(p) && cont.canOpen(chest, p)) || (!r.canChest(p) && !cont.canOpen(chest, p)))){
+                if (chest != null){
+                    if (cont.canOpen(chest, p, true) || (r.canChest(p) && !cont.canOpen(chest, p, false)) || (!r.canChest(p) && cont.canOpen(chest, p, false)) || (!r.canChest(p) && !cont.canOpen(chest, p, false))){
                         e.setCancelled(true);
                         RedProtect.get().getLanguageManager().sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
                     }
+                }
             }
         }
     }
@@ -527,9 +565,6 @@ public class BlockListener implements Listener {
 
         Block b = e.getBlock();
         Block bignit = e.getIgnitingBlock();
-        if (b == null) {
-            return;
-        }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
         if (r != null && !r.canFire()) {
@@ -818,9 +853,6 @@ public class BlockListener implements Listener {
 
         BlockState b = event.getNewState();
         Block oldState = event.getBlock();
-        if (b == null) {
-            return;
-        }
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
 
