@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/06/2024 16:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -113,7 +113,7 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
             String welcome = fileDB.getString(rname + ".welcome", "");
             int prior = fileDB.getInt(rname + ".priority", 0);
             String date = fileDB.getString(rname + ".lastvisit", "");
-            long value = fileDB.getLong(rname + ".value", 0);
+            double value = fileDB.getDouble(rname + ".value", 0);
             boolean candel = fileDB.getBoolean(rname + ".candelete", true);
             boolean canPurge = fileDB.getBoolean(rname + ".canpurge", true);
 

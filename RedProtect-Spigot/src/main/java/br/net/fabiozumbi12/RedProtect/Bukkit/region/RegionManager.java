@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/06/2024 18:07
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -153,7 +153,46 @@ public class RegionManager {
     /**
      * Return a set of regions by player UUID or Name if this player is Leader;
      * <p>
-     * This will return player regions based on raw UUID or Player name, depending if server is running in Online or Offline mode;
+     * This will return player regions based on raw UUID or Player name, depending on server is running in Online or Offline mode;
+     *
+     * @param uuid the UUID of the player.
+     * @param world world name of region.
+     * @return {@code Set<Region>} with regions
+     */
+    public Set<Region> getLeaderRegions(String uuid, String world) {
+        return this.regionManagers.get(world).getLeaderRegions(uuid);
+    }
+
+    /**
+     * Return a set of regions by player UUID or Name if this player is Admin or Leader;
+     * <p>
+     * This will return player regions based on raw UUID or Player name, depending on server is running in Online;
+     *
+     * @param uuid the UUID of the player.
+     * @param world world name of region.
+     * @return {@code Set<Region>} with regions
+     */
+    public Set<Region> getAdminRegions(String uuid, String world) {
+        return this.regionManagers.get(world).getAdminRegions(uuid);
+    }
+
+    /**
+     * Return a set of regions by player UUID or Name if this player is Member, Admin or Leader;
+     * <p>
+     * This will return player regions based on raw UUID or Player name, depending on server is running in Online;
+     *
+     * @param uuid the UUID of the player.
+     * @param world world name of region.
+     * @return {@code Set<Region>} with regions
+     */
+    public Set<Region> getMemberRegions(String uuid, String world) {
+        return this.regionManagers.get(world).getMemberRegions(uuid);
+    }
+
+    /**
+     * Return a set of regions by player UUID or Name if this player is Leader;
+     * <p>
+     * This will return player regions based on raw UUID or Player name, depending on server is running in Online or Offline mode;
      *
      * @param uuid the UUID of the player.
      * @return {@code Set<Region>} with regions
@@ -169,7 +208,7 @@ public class RegionManager {
     /**
      * Return a set of regions by player UUID or Name if this player is Admin or Leader;
      * <p>
-     * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
+     * This will return player regions based on raw UUID or Player name, depending on server is running in Online;
      *
      * @param uuid the UUID of the player.
      * @return {@code Set<Region>} with regions
@@ -185,7 +224,7 @@ public class RegionManager {
     /**
      * Return a set of regions by player UUID or Name if this player is Member, Admin or Leader;
      * <p>
-     * This will return player regions based on raw UUID or Player name, depending if server is running in Online;
+     * This will return player regions based on raw UUID or Player name, depending on server is running in Online;
      *
      * @param uuid the UUID of the player.
      * @return {@code Set<Region>} with regions

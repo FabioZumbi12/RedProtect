@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 23/06/2024 00:53
+ * Last Modified: 26/06/2024 16:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -674,7 +674,7 @@ public class RedProtectUtil extends CoreUtil {
                         st.setString(14, r.getWelcome());
                         st.setInt(15, r.getPrior());
                         st.setString(16, r.getWorld());
-                        st.setLong(17, r.getValue());
+                        st.setDouble(17, r.getValue());
                         st.setString(18, r.getTPPointString());
                         st.setInt(19, r.canDelete() ? 1 : 0);
                         st.setString(20, r.getFlagStrings());
@@ -1043,6 +1043,8 @@ public class RedProtectUtil extends CoreUtil {
         int y = loc.getBlockY();
         int z = loc.getBlockZ();
         int radius = RedProtect.get().getConfigManager().configRoot().region_settings.deny_build_near;
+        if (radius > 4)
+            radius = 4;
 
         for (int ix = x - radius; ix <= x + radius; ++ix) {
             for (int iy = y - radius; iy <= y + radius; ++iy) {
@@ -1065,7 +1067,7 @@ public class RedProtectUtil extends CoreUtil {
             Map<Integer, Region> pregs = RedProtect.get().getRegionManager().getGroupRegion(loc);
             pregs.remove(r2.getPrior());
             Region other;
-            if (pregs.size() > 0) {
+            if (!pregs.isEmpty()) {
                 other = pregs.get(Collections.max(pregs.keySet()));
             } else {
                 continue;

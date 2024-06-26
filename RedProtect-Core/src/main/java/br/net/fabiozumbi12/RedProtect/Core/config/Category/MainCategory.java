@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 24/06/2024 22:56
+ * Last Modified: 26/06/2024 17:13
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -343,7 +343,8 @@ public class MainCategory {
         public String default_leader = "#server#";
         @Setting(value = "delay-after-kick-region", comment = "Time the player can back to region from where was kicked.")
         public int delay_after_kick_region = 60;
-        @Setting(value = "deny-build-near", comment = "Deny player to build/break blocks near x block of a region (not a region x of other region).\nDON'T USE VALUES GREATER THAN 3, OR YOUR SERVER WILL LAG")
+        @Setting(value = "deny-build-near", comment = "Deny player to build/break blocks near x block of a region (not a region x of other region)." +
+                "\nLimited from 0(disabled) to 4 to deny self destructive settings.")
         public int deny_build_near = 2;
         @Setting(value = "can-delete-first-home-after-claim", comment = "The player can delete the first home after claim this amount of regions.")
         public int can_delete_first_home_after_claims = 10;
@@ -353,7 +354,7 @@ public class MainCategory {
                 "The permission \"redprotect.limits.blocks.<amount>\" overrides this setting.")
         public int limit_amount = 8000;
         @Setting(value = "max-scan", comment = "If using blocks for claim, this is the max blocks the plugin will scan before claim a region.")
-        public int max_scan = 1000;
+        public int max_scan = 2000;
         @Setting(value = "record-player-visit-method", comment = "Method to record the player visit on regions. Available: \"ON-LOGIN\" or \"ON-REGION-ENTER\"")
         public String record_player_visit_method = "ON-LOGIN";
         @Setting(value = "teleport-time", comment = "Delay to teleport command.")

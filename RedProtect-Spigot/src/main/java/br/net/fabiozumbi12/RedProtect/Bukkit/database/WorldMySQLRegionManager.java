@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/06/2024 16:59
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -73,7 +73,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                         , RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
 
                 st = con.prepareStatement("CREATE TABLE `" + tableName + "` " +
-                        "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Long not null, tppoint varchar(100), flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
+                        "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Double not null, tppoint varchar(100), flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
                 st.executeUpdate();
                 st.close();
                 st = null;
@@ -191,7 +191,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setString(14, r.getWelcome());
                 st.setInt(15, r.getPrior());
                 st.setString(16, r.getWorld());
-                st.setLong(17, r.getValue());
+                st.setDouble(17, r.getValue());
                 st.setString(18, r.getTPPointString());
                 st.setInt(19, r.canDelete() ? 1 : 0);
                 st.setString(20, r.getFlagStrings());
