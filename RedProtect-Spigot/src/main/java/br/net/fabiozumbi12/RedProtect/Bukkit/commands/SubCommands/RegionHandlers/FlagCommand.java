@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 - @FabioZumbi12
- * Last Modified: 02/07/2020 19:01.
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/06/2024 21:12
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -49,7 +49,7 @@ import static br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers.han
 public class FlagCommand implements SubCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.flag")) && args[2].equalsIgnoreCase("info")) {
+        if (args.length == 3 && (sender instanceof ConsoleCommandSender || RedProtect.get().getPermissionHandler().hasPerm(sender, "redprotect.command.admin.flag")) && args[0].equalsIgnoreCase("info")) {
             if (Bukkit.getWorld(args[2]) != null) {
                 Region r = RedProtect.get().getRegionManager().getRegion(args[1], Bukkit.getWorld(args[2]).getName());
                 if (r != null) {
