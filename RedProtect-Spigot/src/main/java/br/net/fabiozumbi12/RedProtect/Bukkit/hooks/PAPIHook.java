@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 - @FabioZumbi12
- * Last Modified: 02/07/2020 18:59.
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/06/2024 18:09
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -28,8 +28,14 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.hooks;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PAPIHook extends PlaceholderExpansion {
 
@@ -62,6 +68,72 @@ public class PAPIHook extends PlaceholderExpansion {
             } else {
                 return "--";
             }
+        } else if (arg.equals("player_region_names_leader")) {
+            List<String> regions = RedProtect.get().getRegionManager().getLeaderRegions(p.getUniqueId().toString())
+                    .stream().map(CoreRegion::getName).toList();
+            return String.join(", ", regions);
+        } else if (arg.equals("player_region_names_admin")) {
+            List<String> regions = RedProtect.get().getRegionManager().getAdminRegions(p.getUniqueId().toString())
+                    .stream().map(CoreRegion::getName).toList();
+            return String.join(", ", regions);
+        } else if (arg.equals("player_region_names_member")) {
+            List<String> regions = RedProtect.get().getRegionManager().getMemberRegions(p.getUniqueId().toString())
+                    .stream().map(CoreRegion::getName).toList();
+            return String.join(", ", regions);
+        } else if (arg.startsWith("player_region_names_leader_")) {
+            List<String> regions = new ArrayList<>();
+            var worldName = Bukkit.getWorld(arg.replace("player_region_names_leader_", ""));
+            if (worldName != null){
+                regions = RedProtect.get().getRegionManager().getLeaderRegions(p.getUniqueId().toString(), worldName.getName())
+                        .stream().map(CoreRegion::getName).toList();
+            }
+            return String.join(", ", regions);
+        } else if (arg.startsWith("player_region_names_admin_")) {
+            List<String> regions = new ArrayList<>();
+            var worldName = Bukkit.getWorld(arg.replace("player_region_names_admin_", ""));
+            if (worldName != null){
+                regions = RedProtect.get().getRegionManager().getAdminRegions(p.getUniqueId().toString(), worldName.getName())
+                        .stream().map(CoreRegion::getName).toList();
+            }
+            return String.join(", ", regions);
+        } else if (arg.startsWith("player_region_names_member_")) {
+            List<String> regions = new ArrayList<>();
+            var worldName = Bukkit.getWorld(arg.replace("player_region_names_member_", ""));
+            if (worldName != null){
+                regions = RedProtect.get().getRegionManager().getMemberRegions(p.getUniqueId().toString(), worldName.getName())
+                        .stream().map(CoreRegion::getName).toList();
+            }
+            return String.join(", ", regions);
+        } else if (arg.equals("region_value")) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getValue());
+            return "0";
+        } else if (arg.equals("region_area")) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getArea());
+            return "0";
+        } else if (arg.equals("region_welcome")) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return r.getWelcome();
+            return "--";
+        } else if (arg.equals("region_center_x")) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getCenterX());
+            return "0";
+        } else if (arg.equals("region_center_y")) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getCenterY());
+            return "0";
+        } else if (arg.equals("region_center_z")) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getCenterZ());
+            return "0";
         } else {
             return null;
         }
@@ -74,7 +146,7 @@ public class PAPIHook extends PlaceholderExpansion {
 
     @Override
     public String getAuthor() {
-        return RedProtect.get().getDescription().getAuthors().toString();
+        return String.join(", ", RedProtect.get().getDescription().getAuthors());
     }
 
     @Override
