@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 25/06/2024 02:21
+ * Last Modified: 24/07/2024 10:58
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -388,8 +388,7 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if (r != null && r.canBuild(p) && b.getType().name().endsWith("_SIGN")) {
-            Sign s = (Sign) b.getState();
+        if (r != null && r.canBuild(p) && b.getState() instanceof Sign s) {
             if (s.getSide(Side.FRONT).getLine(0).equalsIgnoreCase("[flag]")) {
                 RedProtect.get().getConfigManager().removeSign(r.getID(), b.getLocation());
                 return;
