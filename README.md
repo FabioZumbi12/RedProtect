@@ -58,7 +58,7 @@ RedProtect is hosted on Maven Central
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Core</artifactId>
-        <version>8.1.1</version>
+        <version>8.1.2-SNAPSHOT</version>
         <exclusions>
             <exclusion>
                 <!-- We don't need any of the dependencies -->
@@ -71,7 +71,7 @@ RedProtect is hosted on Maven Central
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Spigot</artifactId>
-        <version>8.1.1</version>
+        <version>8.1.2-SNAPSHOT</version>
         <exclusions>
             <exclusion>
                 <!-- We don't need any of the dependencies -->
@@ -85,7 +85,7 @@ RedProtect is hosted on Maven Central
     <dependency>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
         <artifactId>RedProtect-Spigot</artifactId>
-        <version>8.1.1</version>
+        <version>8.1.2-SNAPSHOT</version>
         <classifier>javadoc</classifier>
     </dependency> 
 </dependencies>  
@@ -99,7 +99,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1"){ exclude(group: "*") } // Core is not needed but allow access to all region methods
-    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.1"){ exclude(group: "*") }
+    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.2-SNAPSHOT"){ exclude(group = "*")} // Core is not needed but allow access to all region methods
+    compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Spigot:8.1.2-SNAPSHOT"){ exclude(group = "*")}
 }
 ```
