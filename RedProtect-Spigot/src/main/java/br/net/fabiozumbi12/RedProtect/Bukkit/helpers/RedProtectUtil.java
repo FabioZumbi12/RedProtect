@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/06/2024 16:59
+ * Last Modified: 11/09/2024 16:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -120,7 +120,14 @@ public class RedProtectUtil extends CoreUtil {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(world.getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             PotionMeta pot = (PotionMeta) result.getItemMeta();
-            String potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
+            String potname = "";
+            try{
+                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
+            } catch (Exception ex){
+                try{
+                    potname = Objects.requireNonNull(pot).getBasePotionType().name();
+                } catch (Exception ignored){}
+            }
             return Pots.contains(potname);
         }
         return false;
@@ -130,7 +137,14 @@ public class RedProtectUtil extends CoreUtil {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
         if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             PotionMeta pot = (PotionMeta) result.getItemMeta();
-            String potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
+            String potname = "";
+            try{
+                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
+            } catch (Exception ex){
+                try{
+                    potname = Objects.requireNonNull(pot).getBasePotionType().name();
+                } catch (Exception ignored){}
+            }
             if (Pots.contains(potname)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.denypotion");
                 return true;
