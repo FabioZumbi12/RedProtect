@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 29/08/2024 16:46
+ * Last Modified: 19/09/2024 16:14
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -332,7 +332,7 @@ public class PlayerListener implements Listener {
                             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                             event.setCancelled(true);
                         }
-                    } else if (b.getType().equals(Material.ANVIL) || b.getState().getData() instanceof InventoryHolder ||
+                    } else if (b.getState().getData() instanceof InventoryHolder ||
                             RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
                         var open = cont.canOpen(b, p, true);
                         if (!open){
