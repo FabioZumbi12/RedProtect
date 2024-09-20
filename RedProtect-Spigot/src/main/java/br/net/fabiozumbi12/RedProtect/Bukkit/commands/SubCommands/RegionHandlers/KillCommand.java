@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 20/09/2024 16:13
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -78,15 +79,15 @@ public class KillCommand implements SubCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
             if (args[0].isEmpty())
-                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[0])).map(World::getName).collect(Collectors.toList()));
+                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[0])).map(World::getName).toList());
         }
         if (args.length == 2) {
             if (args[1].isEmpty())
-                tab.addAll(Arrays.stream(EntityType.values()).map(EntityType::name).collect(Collectors.toList()));
+                tab.addAll(Registry.ENTITY_TYPE.stream().map(EntityType::name).toList());
             else
-                tab.addAll(Arrays.stream(EntityType.values()).filter(e -> e.name().startsWith(args[1].toUpperCase())).map(EntityType::name).collect(Collectors.toList()));
+                tab.addAll(Registry.ENTITY_TYPE.stream().filter(e -> e.name().startsWith(args[1].toUpperCase())).map(EntityType::name).toList());
         }
         return tab;
     }

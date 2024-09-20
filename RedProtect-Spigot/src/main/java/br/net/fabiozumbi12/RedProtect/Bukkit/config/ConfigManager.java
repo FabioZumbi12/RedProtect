@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 24/06/2024 18:24
+ * Last Modified: 20/09/2024 16:14
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -38,10 +38,7 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -238,7 +235,7 @@ public class ConfigManager extends CoreConfigManager {
             headTextCfgRoot = headTextLoader.load(ConfigurationOptions.defaults().setShouldCopyDefaults(true).setHeader(headerHeadtext));
             this.headTextRoot = headTextCfgRoot.getValue(of(HeadTexturesCategory.class), new HeadTexturesCategory());
 
-            Arrays.stream(EntityType.values()).forEach(e -> {
+            Registry.ENTITY_TYPE.stream().forEach(e -> {
                 if (!headTextRoot.mobTextures.containsKey(e.name()))
                     headTextRoot.mobTextures.put(e.name(), MobTextures.getTexture(e));
             });
