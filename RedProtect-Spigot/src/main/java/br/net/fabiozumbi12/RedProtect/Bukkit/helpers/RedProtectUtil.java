@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 11/09/2024 16:51
+ * Last Modified: 29/10/2024 15:39
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -35,6 +35,8 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.ryanhamshire.GriefPrevention.Claim;
@@ -1157,9 +1159,22 @@ public class RedProtectUtil extends CoreUtil {
         } else {
             s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
         }
-        SkullMeta sm = (SkullMeta) s.getItemMeta();
-        mutateItemMeta(sm, texture);
-        s.setItemMeta(sm);
+
+        try {
+            // Only for paper servers
+            s.editMeta(SkullMeta.class, skullMeta -> {
+                final UUID uuid = UUID.randomUUID();
+                final PlayerProfile playerProfile = Bukkit.createProfile(uuid, uuid.toString().substring(0, 16));
+                playerProfile.setProperty(new ProfileProperty("textures", texture));
+
+                skullMeta.setPlayerProfile(playerProfile);
+            });
+        } catch (Exception ex){
+            // If not paper
+                SkullMeta sm = (SkullMeta) s.getItemMeta();
+                mutateItemMeta(sm, texture);
+                s.setItemMeta(sm);
+            }
         return s;
     }
 
