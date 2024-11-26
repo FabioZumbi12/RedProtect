@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 29/10/2024 15:39
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -43,6 +43,7 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,7 +52,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.material.Crops;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -85,7 +85,7 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public boolean checkCrops(Block b, boolean breaking) {
-        return (b instanceof Crops)
+        return (b.getBlockData() instanceof Ageable)
                 || b.getType().equals(Material.PUMPKIN_STEM)
                 || b.getType().equals(Material.MELON_STEM)
                 || b.getType().toString().contains("CARROTS")
@@ -120,11 +120,11 @@ public class RedProtectUtil extends CoreUtil {
 
     public boolean denyPotion(ItemStack result, World world) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(world.getName()).deny_potions;
-        if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
+        if (result != null && !Pots.isEmpty() && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             PotionMeta pot = (PotionMeta) result.getItemMeta();
             String potname = "";
             try{
-                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
+                potname = Objects.requireNonNull(pot).getBasePotionType().name();
             } catch (Exception ex){
                 try{
                     potname = Objects.requireNonNull(pot).getBasePotionType().name();
@@ -137,11 +137,11 @@ public class RedProtectUtil extends CoreUtil {
 
     public boolean denyPotion(ItemStack result, Player p) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
-        if (result != null && Pots.size() > 0 && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
+        if (result != null && !Pots.isEmpty() && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
             PotionMeta pot = (PotionMeta) result.getItemMeta();
             String potname = "";
             try{
-                potname = Objects.requireNonNull(pot).getBasePotionData().getType().name();
+                potname = Objects.requireNonNull(pot).getBasePotionType().name();
             } catch (Exception ex){
                 try{
                     potname = Objects.requireNonNull(pot).getBasePotionType().name();
@@ -553,19 +553,19 @@ public class RedProtectUtil extends CoreUtil {
                     }
 
                     for (String member : rs.getString("members").split(", ")) {
-                        if (member.length() > 0) {
+                        if (!member.isEmpty()) {
                             String[] p = member.split("@");
                             members.add(new PlayerRegion(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String admin : rs.getString("admins").split(", ")) {
-                        if (admin.length() > 0) {
+                        if (!admin.isEmpty()) {
                             String[] p = admin.split("@");
                             admins.add(new PlayerRegion(p[0], p.length == 2 ? p[1] : p[0]));
                         }
                     }
                     for (String leader : rs.getString("leaders").split(", ")) {
-                        if (leader.length() > 0) {
+                        if (!leader.isEmpty()) {
                             String[] p = leader.split("@");
                             leaders.add(new PlayerRegion(p[0], p.length == 2 ? p[1] : p[0]));
                         }
@@ -817,9 +817,7 @@ public class RedProtectUtil extends CoreUtil {
 
     public void startFlagChanger(final String r, final String flag, final Player p) {
         RedProtect.get().changeWait.add(r + flag);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> {
-            RedProtect.get().changeWait.remove(r + flag);
-        }, RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20L);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(RedProtect.get(), () -> RedProtect.get().changeWait.remove(r + flag), RedProtect.get().getConfigManager().configRoot().flags_configuration.change_flag_delay.seconds * 20L);
     }
 
     public int getUpdatedPrior(Region region) {

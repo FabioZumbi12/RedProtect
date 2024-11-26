@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 24/06/2024 19:47
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -208,7 +208,7 @@ public class FlagCommand implements SubCommand {
                 if (args[1].isEmpty())
                     return Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).collect(Collectors.toList());
                 else
-                    return Arrays.stream(PotionEffectType.values()).filter(e -> e.getName().startsWith(args[1].toUpperCase())).map(PotionEffectType::getName).collect(Collectors.toList());
+                    return Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).filter(name -> name.startsWith(args[1].toUpperCase())).collect(Collectors.toList());
             }
             if (args.length == 3) {
                 return Collections.singletonList(String.valueOf(1));
@@ -219,7 +219,7 @@ public class FlagCommand implements SubCommand {
                 if (args[1].isEmpty())
                     return Arrays.stream(Particle.values()).map(Particle::name).collect(Collectors.toList());
                 else
-                    return Arrays.stream(Particle.values()).filter(p -> p.name().startsWith(args[1].toUpperCase())).map(Particle::name).collect(Collectors.toList());
+                    return Arrays.stream(Particle.values()).map(Particle::name).filter(name -> name.startsWith(args[1].toUpperCase())).collect(Collectors.toList());
             }
             if (args.length <= 6) {
                 return Collections.singletonList(String.valueOf(10));

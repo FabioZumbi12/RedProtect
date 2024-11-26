@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/06/2024 16:48
+ * Last Modified: 26/11/2024 17:56
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -208,7 +208,7 @@ public class Region extends CoreRegion {
             return;
         }
         List<Location> locs = RedProtect.get().getConfigManager().getSigns(this.getID());
-        if (locs.size() > 0) {
+        if (!locs.isEmpty()) {
             for (Location loc : locs) {
                 if (loc.getBlock().getState() instanceof Sign s) {
                     String[] lines = s.getLines();
@@ -376,16 +376,16 @@ public class Region extends CoreRegion {
         members.removeIf(Objects::isNull);
         members.forEach(member -> memberStringBuilder.append(", ").append(member.getPlayerName()));
 
-        if (this.leaders.size() > 0) {
+        if (!this.leaders.isEmpty()) {
             leaderString = leaderStringBuilder.delete(0, 2).toString();
         }
-        if (this.admins.size() > 0) {
+        if (!this.admins.isEmpty()) {
             adminString = adminStringBuilder.delete(0, 2).toString();
         }
-        if (this.members.size() > 0) {
+        if (!this.members.isEmpty()) {
             memberString = memberStringBuilder.delete(0, 2).toString();
         }
-        if (this.wMessage == null || this.wMessage.equals("")) {
+        if (this.wMessage == null || this.wMessage.isEmpty()) {
             wMsgTemp = RedProtect.get().getLanguageManager().get("region.welcome.notset");
         } else {
             wMsgTemp = wMessage;
@@ -527,7 +527,7 @@ public class Region extends CoreRegion {
     }
 
     /**
-     * Remove an member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Remove a member to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -563,7 +563,7 @@ public class Region extends CoreRegion {
     }
 
     /**
-     * Remove an leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
+     * Remove a leader to the Region. The string need to be UUID if Online Mode, or Player Name if Offline Mode.
      *
      * @param uuid - UUID or Player Name.
      */
@@ -630,7 +630,7 @@ public class Region extends CoreRegion {
                 }
             }
         }
-        if (this.flags.keySet().size() > 0) {
+        if (!this.flags.keySet().isEmpty()) {
             flaginfo = new StringBuilder(flaginfo.substring(2));
         } else {
             flaginfo = new StringBuilder("Default");
@@ -1231,7 +1231,7 @@ public class Region extends CoreRegion {
     }
 
     public String getAdminDesc() {
-        if (this.admins.size() == 0) {
+        if (this.admins.isEmpty()) {
             return RedProtect.get().getLanguageManager().get("region.none");
         }
         StringBuilder adminsList = new StringBuilder();
@@ -1242,7 +1242,7 @@ public class Region extends CoreRegion {
     }
 
     public String getLeadersDesc() {
-        if (this.leaders.size() == 0) {
+        if (this.leaders.isEmpty()) {
             addLeader(RedProtect.get().getConfigManager().configRoot().region_settings.default_leader);
         }
         StringBuilder leaderList = new StringBuilder();
@@ -1253,7 +1253,7 @@ public class Region extends CoreRegion {
     }
 
     public String getMembersDesc() {
-        if (this.members.size() == 0) {
+        if (this.members.isEmpty()) {
             return RedProtect.get().getLanguageManager().get("region.none");
         }
         StringBuilder memberList = new StringBuilder();

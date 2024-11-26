@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 29/08/2024 16:46
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -350,7 +350,7 @@ public class CommandHandlers {
 
     public static void handleDeleteName(Player p, String rname, String world) {
         Region r = RedProtect.get().getRegionManager().getRegion(rname, p.getWorld().getName());
-        if (!world.equals("")) {
+        if (!world.isEmpty()) {
             if (Bukkit.getWorld(world) != null) {
                 r = RedProtect.get().getRegionManager().getRegion(rname, world);
             } else {
@@ -490,7 +490,7 @@ public class CommandHandlers {
 
     public static void handleInfo(Player p, String region, String world) {
         Region r = RedProtect.get().getRegionManager().getRegion(region, p.getWorld().getName());
-        if (!world.equals("")) {
+        if (!world.isEmpty()) {
             if (Bukkit.getWorld(world) != null) {
                 r = RedProtect.get().getRegionManager().getRegion(region, world);
             } else {
@@ -667,7 +667,7 @@ public class CommandHandlers {
 
                     int lastLocal = 0;
 
-                    if (wregions.size() > 0) {
+                    if (!wregions.isEmpty()) {
                         List<Region> it = new ArrayList<>(wregions);
                         if (min > totalLocal) {
                             int diff = (totalLocal / regionsPage);
@@ -768,7 +768,7 @@ public class CommandHandlers {
                     return;
                 }
 
-                if (!value.equals("")) {
+                if (!value.isEmpty()) {
                     if (RedProtect.get().getConfigManager().getDefFlagsValues().containsKey(flag) && !CoreConfigManager.ADMIN_FLAGS.contains(flag)) {
 
                         //flag clan
@@ -1132,12 +1132,12 @@ public class CommandHandlers {
                         String[] cmdargs = cmd.split(" ");
                         for (String cmd1 : cmdargs) {
                             if (cmd1.startsWith("cmd:")) {
-                                if (cmd1.split(":")[1].length() == 0) {
+                                if (cmd1.split(":")[1].isEmpty()) {
                                     return false;
                                 }
                             }
                             if (cmd1.startsWith("arg:")) {
-                                if (cmd1.split(":")[1].length() == 0) {
+                                if (cmd1.split(":")[1].isEmpty()) {
                                     return false;
                                 }
                             }
@@ -1180,7 +1180,7 @@ public class CommandHandlers {
         for (Entity e : world.getEntities().stream().filter(entity ->
                 !(entity instanceof Player) &&
                         ((entity instanceof LivingEntity && type == null) || entity.getType().equals(type))
-        ).collect(Collectors.toList())) {
+        ).toList()) {
             total++;
             if (RedProtect.get().getRegionManager().getTopRegion(e.getLocation()) == null) {
                 e.remove();

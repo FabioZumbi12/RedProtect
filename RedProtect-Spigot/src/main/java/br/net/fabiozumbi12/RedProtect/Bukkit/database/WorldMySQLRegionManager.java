@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/06/2024 16:59
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -708,7 +708,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             }
         }
 
-        if (regionlist.size() > 0) {
+        if (!regionlist.isEmpty()) {
             max = Collections.max(regionlist.keySet());
         }
         return regionlist.get(max);
@@ -734,7 +734,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             }
         }
 
-        if (regionlist.size() > 0) {
+        if (!regionlist.isEmpty()) {
             min = Collections.min(regionlist.keySet());
         }
         return regionlist.get(min);

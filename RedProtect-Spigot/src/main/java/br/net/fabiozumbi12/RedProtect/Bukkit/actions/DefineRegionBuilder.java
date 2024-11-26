@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -219,13 +219,13 @@ public class DefineRegionBuilder extends RegionBuilder {
         if (RedProtect.get().getConfigManager().ecoRoot().claim_cost_per_block.enable)
             p.sendMessage(RedProtect.get().getLanguageManager().get("regionbuilder.block.cost") + reco);
         p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
-        if (othersName.size() > 0) {
+        if (!othersName.isEmpty()) {
             p.sendMessage(RedProtect.get().getLanguageManager().get("regionbuilder.overlapping"));
             p.sendMessage(RedProtect.get().getLanguageManager().get("region.regions") + " " + othersName);
             p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
         }
 
-        if (RedProtect.get().getRegionManager().getRegions(p.getUniqueId().toString(), p.getWorld().getName()).size() == 0) {
+        if (RedProtect.get().getRegionManager().getRegions(p.getUniqueId().toString(), p.getWorld().getName()).isEmpty()) {
             p.sendMessage(RedProtect.get().getLanguageManager().get("cmdmanager.region.firstwarning"));
             p.sendMessage(RedProtect.get().getLanguageManager().get("general.color") + "------------------------------------");
         }

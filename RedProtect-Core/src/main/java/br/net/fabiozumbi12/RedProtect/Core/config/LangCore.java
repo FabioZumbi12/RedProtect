@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:15
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -33,14 +33,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class LangCore {
-    protected HashMap<String, String> delayedMessage = new HashMap<>();
-    protected Properties loadedLang = new Properties() {
+    protected final HashMap<String, String> delayedMessage = new HashMap<>();
+    protected final Properties loadedLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));
         }
     };
-    private Properties baseLang = new Properties() {
+    private final Properties baseLang = new Properties() {
         @Override
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration(new TreeSet<>(super.keySet()));

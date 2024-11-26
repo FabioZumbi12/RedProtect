@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -53,7 +53,7 @@ public class NearCommand implements SubCommand {
 
         if (args.length == 0) {
             Set<Region> regions = RedProtect.get().getRegionManager().getRegionsNear(player, 60);
-            if (regions.size() == 0) {
+            if (regions.isEmpty()) {
                 RedProtect.get().getLanguageManager().sendMessage(player, "cmdmanager.noregions.nearby");
             } else {
                 Iterator<Region> i = regions.iterator();

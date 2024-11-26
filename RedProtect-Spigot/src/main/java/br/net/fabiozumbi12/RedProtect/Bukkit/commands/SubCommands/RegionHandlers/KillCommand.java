@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 20/09/2024 16:13
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -38,9 +38,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class KillCommand implements SubCommand {
     @Override
@@ -81,13 +79,13 @@ public class KillCommand implements SubCommand {
             if (args[0].isEmpty())
                 tab.addAll(Bukkit.getWorlds().stream().map(World::getName).toList());
             else
-                tab.addAll(Bukkit.getWorlds().stream().filter(e -> e.getName().startsWith(args[0])).map(World::getName).toList());
+                tab.addAll(Bukkit.getWorlds().stream().map(World::getName).filter(name -> name.startsWith(args[0])).toList());
         }
         if (args.length == 2) {
             if (args[1].isEmpty())
                 tab.addAll(Registry.ENTITY_TYPE.stream().map(EntityType::name).toList());
             else
-                tab.addAll(Registry.ENTITY_TYPE.stream().filter(e -> e.name().startsWith(args[1].toUpperCase())).map(EntityType::name).toList());
+                tab.addAll(Registry.ENTITY_TYPE.stream().map(EntityType::name).filter(name -> name.startsWith(args[1].toUpperCase())).toList());
         }
         return tab;
     }

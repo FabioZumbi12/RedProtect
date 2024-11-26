@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 29/08/2024 16:46
+ * Last Modified: 26/11/2024 17:56
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -75,7 +75,7 @@ public class RedProtectAPI {
     /**
      * Return the Region on location.
      * <p>
-     * *Note: If theres more region in this same location this method will
+     * *Note: If there's more region in this same location this method will
      * return only the high priority region. To get all possible region in
      * one location use {@code getGroupRegions()}
      * <p>

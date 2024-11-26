@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/06/2024 16:43
+ * Last Modified: 26/11/2024 18:02
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -26,12 +26,14 @@
 
 package br.net.fabiozumbi12.RedProtect.Core.region;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 public class CoreRegion implements Serializable {
 
-    public static final long serialVersionUID = 2861198224185302015L;
+    @Serial
+    private static final long serialVersionUID = 2861198224185302015L;
     protected int minMbrX;
     protected int maxMbrX;
     protected int minMbrZ;
@@ -439,7 +441,7 @@ public class CoreRegion implements Serializable {
     protected String serializeMembers(Set<PlayerRegion> pairs) {
         StringBuilder list = new StringBuilder();
         pairs.forEach(l -> list.append(",").append(l.getUUID()).append("@").append(l.getPlayerName()));
-        return list.length() > 0 ? list.substring(1) : "";
+        return !list.isEmpty() ? list.substring(1) : "";
     }
 
     public boolean sameLeaders(CoreRegion r) {

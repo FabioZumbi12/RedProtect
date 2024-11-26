@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:37
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -80,32 +80,37 @@ public class BlockConfig {
             long added_blocks = this.blockCat.players.get(player.getUniqueId().toString()).added_blocks;
 
             Date playerDate = new Date(time);
-            Date nowDate = Calendar.getInstance().getTime();
-
-            long diff = nowDate.getTime() - playerDate.getTime();
-
-            long diffSeconds = diff / 1000 % 60;
-            long diffMinutes = diff / (60 * 1000) % 60;
-            long diffHours = diff / (60 * 60 * 1000) % 24;
-            long diffDays = diff / (24 * 60 * 60 * 1000);
-
-            long result = 0;
-
-            if ("d".equals(this.blockCat.unit_to_add)) {
-                result = diffDays;
-            } else if ("h".equals(this.blockCat.unit_to_add)) {
-                result = diffHours;
-            } else if ("m".equals(this.blockCat.unit_to_add)) {
-                result = diffMinutes;
-            } else if ("s".equals(this.blockCat.unit_to_add)) {
-                result = diffSeconds;
-            }
+            long result = getResult(playerDate);
 
             return (result * this.blockCat.blocks_to_add) + added_blocks;
         } else {
             addPlayer(player);
             return 0;
         }
+    }
+
+    private long getResult(Date playerDate) {
+        Date nowDate = Calendar.getInstance().getTime();
+
+        long diff = nowDate.getTime() - playerDate.getTime();
+
+        long diffSeconds = diff / 1000 % 60;
+        long diffMinutes = diff / (60 * 1000) % 60;
+        long diffHours = diff / (60 * 60 * 1000) % 24;
+        long diffDays = diff / (24 * 60 * 60 * 1000);
+
+        long result = 0;
+
+        if ("d".equals(this.blockCat.unit_to_add)) {
+            result = diffDays;
+        } else if ("h".equals(this.blockCat.unit_to_add)) {
+            result = diffHours;
+        } else if ("m".equals(this.blockCat.unit_to_add)) {
+            result = diffMinutes;
+        } else if ("s".equals(this.blockCat.unit_to_add)) {
+            result = diffSeconds;
+        }
+        return result;
     }
 
     public void addPlayer(Player player) {

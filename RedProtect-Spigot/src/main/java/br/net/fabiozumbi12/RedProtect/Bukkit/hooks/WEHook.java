@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -77,8 +77,8 @@ public class WEHook {
         if (worldEdit.getSession(player) != null && worldEdit.getSession(player).isSelectionDefined(bw)) {
             try {
                 com.sk89q.worldedit.regions.Region regs = worldEdit.getSession(player).getRegionSelector(bw).getRegion();
-                Location p1 = new Location(player.getWorld(), regs.getMinimumPoint().getX(), regs.getMinimumPoint().getY(), regs.getMinimumPoint().getZ());
-                Location p2 = new Location(player.getWorld(), regs.getMaximumPoint().getX(), regs.getMaximumPoint().getY(), regs.getMaximumPoint().getZ());
+                Location p1 = new Location(player.getWorld(), regs.getMinimumPoint().x(), regs.getMinimumPoint().y(), regs.getMinimumPoint().z());
+                Location p2 = new Location(player.getWorld(), regs.getMaximumPoint().x(), regs.getMaximumPoint().y(), regs.getMaximumPoint().z());
 
                 return new Location[]{p1, p2};
             } catch (IncompleteRegionException ignored) {
@@ -142,20 +142,7 @@ public class WEHook {
                 BlockVector3 to = BlockVector3.at(loc.getX(), loc.getY(), loc.getZ());
 
                 // Rotate to player looking direction
-                float yaw = loc.getYaw();
-                if (yaw < 0) {
-                    yaw += 360;
-                }
-                int rotate = 0;
-                if (yaw >= 315 || yaw < 45) {
-                    rotate = 180;
-                } else if (yaw < 135) {
-                    rotate = 270;
-                } else if (yaw < 225) {
-                    rotate = 0;
-                } else if (yaw < 315) {
-                    rotate = 90;
-                }
+                int rotate = getRotate(loc);
                 ClipboardHolder holder = new ClipboardHolder(clipboard);
                 AffineTransform transform = new AffineTransform();
                 transform = transform.rotateY(-rotate);
@@ -171,8 +158,8 @@ public class WEHook {
                 Vector3 realTo = to.toVector3().add(holder.getTransform().apply(clipboardOffset.toVector3()));
                 Vector3 locMax = realTo.add(holder.getTransform().apply(clipboard.getRegion().getMaximumPoint().subtract(clipboard.getRegion().getMinimumPoint()).toVector3()));
 
-                Location min = new Location(world, realTo.getX(), realTo.getY(), realTo.getZ());
-                Location max = new Location(world, locMax.getX(), locMax.getY(), locMax.getZ());
+                Location min = new Location(world, realTo.x(), realTo.y(), realTo.z());
+                Location max = new Location(world, locMax.x(), locMax.y(), locMax.z());
 
                 if (RedProtect.get().getConfigManager().configRoot().region_settings.autoexpandvert_ondefine) {
                     min.setY(p.getWorld().getMinHeight());
@@ -198,6 +185,24 @@ public class WEHook {
             }
         }
         return r[0];
+    }
+
+    private static int getRotate(Location loc) {
+        float yaw = loc.getYaw();
+        if (yaw < 0) {
+            yaw += 360;
+        }
+        int rotate = 0;
+        if (yaw >= 315 || yaw < 45) {
+            rotate = 180;
+        } else if (yaw < 135) {
+            rotate = 270;
+        } else if (yaw < 225) {
+            rotate = 0;
+        } else if (yaw < 315) {
+            rotate = 90;
+        }
+        return rotate;
     }
 
     public static void regenRegion(final Region region, final World world, final Location p1, final Location p2, final int delay, final CommandSender sender, final boolean remove) {

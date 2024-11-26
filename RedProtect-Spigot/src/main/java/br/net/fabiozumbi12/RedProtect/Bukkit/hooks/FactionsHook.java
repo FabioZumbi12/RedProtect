@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -47,7 +47,7 @@ public class FactionsHook implements Listener {
         for (PS chunk : event.getChunks()) {
             Player p = event.getMPlayer().getPlayer();
             Set<Region> regs = RedProtect.get().getRegionManager().getRegionsForChunk(chunk.asBukkitChunk());
-            if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
+            if (!regs.isEmpty() && !p.hasPermission("redprotect.bypass")) {
                 event.setCancelled(true);
                 RedProtect.get().getLanguageManager().sendMessage(p, "rpfactions.cantclaim");
             }
@@ -61,7 +61,7 @@ public class FactionsHook implements Listener {
         }
         Player p = event.getMPlayer().getPlayer();
         Set<Region> regs = RedProtect.get().getRegionManager().getRegionsForChunk(p.getLocation().getChunk());
-        if (regs.size() > 0 && !p.hasPermission("redprotect.bypass")) {
+        if (!regs.isEmpty() && !p.hasPermission("redprotect.bypass")) {
             RedProtect.get().getLanguageManager().sendMessage(p, "rpfactions.cantclaim");
             event.setCancelled(true);
         }

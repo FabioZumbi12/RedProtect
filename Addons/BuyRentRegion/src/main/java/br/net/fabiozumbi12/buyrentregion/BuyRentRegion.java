@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -250,11 +250,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                 if (amount > 0) {
                     amount--;
                 }
-                if (amount >= 0) {
-                    this.rentedRegionCounts.get().put(playerName, amount);
-                } else {
-                    this.rentedRegionCounts.get().put(playerName, 0);
-                }
+                this.rentedRegionCounts.get().put(playerName, Math.max(amount, 0));
                 rentedRegionCounts.save();
             }
         } catch (Exception e) {
@@ -385,7 +381,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                 if (blockType.name().endsWith("_SIGN") || blockType.name().endsWith("WALL_SIGN")) {
                     Sign sign = (Sign) event.getClickedBlock().getState();
                     String topLine = sign.getLine(0);
-                    if (topLine.length() > 0 && (topLine.equalsIgnoreCase(config.signHeaderBuy))) {
+                    if (!topLine.isEmpty() && (topLine.equalsIgnoreCase(config.signHeaderBuy))) {
                         Player sender = event.getPlayer();
                         String playerName = sender.getName();
                         if (topLine.equalsIgnoreCase("[WGRSA]")) {
@@ -450,7 +446,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                             sender.sendMessage(ChatHelper.warning("BuyModeBuy"));
                             sender.sendMessage(ChatHelper.warning("ToEnterBuyMode"));
                         }
-                    } else if (topLine.length() > 0 && (topLine.equalsIgnoreCase(config.signHeaderRent))) {
+                    } else if (!topLine.isEmpty() && (topLine.equalsIgnoreCase(config.signHeaderRent))) {
                         Player sender = event.getPlayer();
                         String regionName = sign.getLine(1);
                         String playerName = sender.getName();
@@ -463,7 +459,7 @@ public final class BuyRentRegion extends JavaPlugin implements Listener, Command
                             return;
                         }
                         if (this.BuyMode.containsKey(playerName) || (!config.requireBuyMode)) {
-                            if (regionName.length() > 0) {
+                            if (!regionName.isEmpty()) {
                                 String dateString = sign.getLine(3);
                                 double regionPrice;
 

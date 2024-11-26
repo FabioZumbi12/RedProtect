@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:37
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -34,6 +34,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -102,13 +103,7 @@ public class RenterTask {
                                         }
                                         World world = plugin.getServer().getWorld(rentedRegion.worldName);
 
-                                        double x = Double.parseDouble(rentedRegion.signLocationX);
-                                        double y = Double.parseDouble(rentedRegion.signLocationY);
-                                        double z = Double.parseDouble(rentedRegion.signLocationZ);
-                                        float pitch = Float.parseFloat(rentedRegion.signLocationPitch);
-                                        float yaw = Float.parseFloat(rentedRegion.signLocationYaw);
-
-                                        Location signLoc = new Location(world, x, y, z, pitch, yaw);
+                                        Location signLoc = getLocation(rentedRegion, world);
 
                                         Block currentBlock = world.getBlockAt(signLoc);
                                         if (currentBlock.getType().name().endsWith("_SIGN") || currentBlock.getType().name().endsWith("WALL_SIGN")) {
@@ -142,13 +137,7 @@ public class RenterTask {
 
                             plugin.removeRentedRegionFromCount(rentedRegion.renter);
 
-                            double x = Double.parseDouble(rentedRegion.signLocationX);
-                            double y = Double.parseDouble(rentedRegion.signLocationY);
-                            double z = Double.parseDouble(rentedRegion.signLocationZ);
-                            float pitch = Float.parseFloat(rentedRegion.signLocationPitch);
-                            float yaw = Float.parseFloat(rentedRegion.signLocationYaw);
-
-                            Location signLoc = new Location(world, x, y, z, pitch, yaw);
+                            Location signLoc = getLocation(rentedRegion, world);
 
                             Block currentBlock = world.getBlockAt(signLoc);
                             if (currentBlock.getType().name().endsWith("_SIGN") || currentBlock.getType().name().endsWith("WALL_SIGN")) {
@@ -195,6 +184,17 @@ public class RenterTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static @NotNull Location getLocation(RentableRegion rentedRegion, World world) {
+        double x = Double.parseDouble(rentedRegion.signLocationX);
+        double y = Double.parseDouble(rentedRegion.signLocationY);
+        double z = Double.parseDouble(rentedRegion.signLocationZ);
+        float pitch = Float.parseFloat(rentedRegion.signLocationPitch);
+        float yaw = Float.parseFloat(rentedRegion.signLocationYaw);
+
+        Location signLoc = new Location(world, x, y, z, pitch, yaw);
+        return signLoc;
     }
 }
 

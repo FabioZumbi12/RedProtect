@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 20:20
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -112,7 +112,7 @@ public class FlagGui implements Listener {
                     }
 
                     if (flag.equalsIgnoreCase("clan")) {
-                        if (flagValue.toString().equals("")) {
+                        if (flagValue.toString().isEmpty()) {
                             flagString = RedProtect.get().guiLang.getFlagString("false");
                         } else {
                             flagString = RedProtect.get().guiLang.getFlagString("true");
@@ -236,7 +236,7 @@ public class FlagGui implements Listener {
 
         if (flag.equalsIgnoreCase("clan")) {
             ClanPlayer cp = RedProtect.get().hooks.clanManager.getClanPlayer(this.player);
-            if (this.region.getFlagString(flag).equals("")) {
+            if (this.region.getFlagString(flag).isEmpty()) {
                 if (this.region.setFlag(this.player, flag, cp.getTag())) {
                     RedProtect.get().getLanguageManager().sendMessage(this.player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.setclan").replace("{clan}", "'" + cp.getClan().getColorTag() + "'"));
                 }

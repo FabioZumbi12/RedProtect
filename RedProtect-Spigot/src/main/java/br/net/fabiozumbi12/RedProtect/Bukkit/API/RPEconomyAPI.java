@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2024 - @FabioZumbi12
+ * Last Modified: 26/11/2024 17:56
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -38,14 +38,14 @@ public class RPEconomyAPI {
      * @param region - Region to sell.
      * @param owner  - Owner of the region;
      * @param value  - Value to sell this region;
-     * @return {@code true} if successfull sell flag. {@code false} if theres an error on sell the region and the money will return to player.
+     * @return {@code true} if successfully sell flag. {@code false} if there's an error on sell the region and the money will return to player.
      */
     public static boolean SellRegion(Region region, String owner, long value) {
         return EconomyManager.putToSell(region, owner, value);
     }
 
     /**
-     * Get the region value based on blocks, chests, itens inside chests and item enchantements inside chests too.
+     * Get the region value based on blocks, chests, items inside chests and item enchantments inside chests too.
      * <p>
      *
      * @param region - Region to get value.

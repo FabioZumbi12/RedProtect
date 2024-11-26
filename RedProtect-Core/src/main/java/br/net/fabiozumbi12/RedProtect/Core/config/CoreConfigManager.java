@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 24/06/2024 17:15
+ * Last Modified: 26/11/2024 18:02
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -45,7 +45,7 @@ import static com.google.common.reflect.TypeToken.of;
 
 public class CoreConfigManager {
 
-    public static List<String> ADMIN_FLAGS = new ArrayList<>(Arrays.asList(
+    public static final List<String> ADMIN_FLAGS = new ArrayList<>(Arrays.asList(
             "spawn-wither",
             "cropsfarm",
             "keep-inventory",
@@ -96,9 +96,9 @@ public class CoreConfigManager {
             "spawn-monsters",
             "can-move",
             "can-collide"));
-    public HashMap<String, String> backupGuiName = new HashMap<>();
-    public HashMap<String, String> backupGuiDescription = new HashMap<>();
-    protected String headerCfg = """
+    public final HashMap<String, String> backupGuiName = new HashMap<>();
+    public final HashMap<String, String> backupGuiDescription = new HashMap<>();
+    protected final String headerCfg = """
             +--------------------------------------------------------------------+ #
             <               RedProtect World configuration File                  > #
             <--------------------------------------------------------------------> #
@@ -110,7 +110,7 @@ public class CoreConfigManager {
             Notes:
             Lists are [object1, object2, ...]
             Strings containing the char & always need to be quoted""";
-    protected String headerGf = """
+    protected final String headerGf = """
             +--------------------------------------------------------------------+ #
             <          RedProtect Global Flags configuration File                > #
             <--------------------------------------------------------------------> #
@@ -122,7 +122,7 @@ public class CoreConfigManager {
             Notes:
             Lists are [object1, object2, ...]
             Strings containing the char & always need to be quoted""";
-    protected String headerGui = """
+    protected final String headerGui = """
             +--------------------------------------------------------------------+ #
             <             RedProtect Gui Flags configuration File                > #
             <--------------------------------------------------------------------> #
@@ -131,7 +131,7 @@ public class CoreConfigManager {
             <  https://github.com/FabioZumbi12/RedProtect/wiki/(05)-Region-Flags > #
             +--------------------------------------------------------------------+ #
             """;
-    protected String headerEco = """
+    protected final String headerEco = """
             +--------------------------------------------------------------------+ #
             <              RedProtect Economy configuration File                 > #
             <--------------------------------------------------------------------> #
@@ -143,7 +143,7 @@ public class CoreConfigManager {
             Notes:
             Lists are [object1, object2, ...]
             Strings containing the char & always need to be quoted""";
-    protected String headerHeadtext = """
+    protected final String headerHeadtext = """
             +--------------------------------------------------------------------+ #
             <              RedProtect Head Textures configuration File                 > #
             <--------------------------------------------------------------------> #

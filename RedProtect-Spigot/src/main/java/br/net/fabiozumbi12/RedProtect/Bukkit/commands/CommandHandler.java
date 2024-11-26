@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 29/10/2024 15:17
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -218,7 +218,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
             allchunks.addAll(chunks);
         }
 
-        if (allchunks.size() != 0) {
+        if (!allchunks.isEmpty()) {
             int i = 0;
             for (LiteChunk c : allchunks) {
                 Set<String> leaders = new HashSet<>();
@@ -803,7 +803,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                             wregions.add(r);
                         }
                     }
-                    if (wregions.size() == 0) {
+                    if (wregions.isEmpty()) {
                         continue;
                     }
 
@@ -814,7 +814,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
                     int lastLocal = 0;
 
-                    if (wregions.size() > 0) {
+                    if (!wregions.isEmpty()) {
                         List<Region> it = new ArrayList<>(wregions);
                         if (min > totalLocal) {
                             int diff = (totalLocal / regionsPage);

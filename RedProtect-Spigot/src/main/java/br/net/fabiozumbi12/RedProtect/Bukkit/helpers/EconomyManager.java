@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/06/2024 16:59
+ * Last Modified: 26/11/2024 17:37
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -69,7 +69,7 @@ public class EconomyManager {
                                 continue;
                             }
                             regionCost = regionCost + ((RedProtect.get().getConfigManager().ecoRoot().items.values.getOrDefault(item.getType().name(), 0L) * item.getAmount()) / factor);
-                            if (item.getEnchantments().size() > 0) {
+                            if (!item.getEnchantments().isEmpty()) {
                                 for (Enchantment enchant : item.getEnchantments().keySet()) {
                                     regionCost = regionCost + ((RedProtect.get().getConfigManager().ecoRoot().enchantments.values.getOrDefault(enchant.getName(), 0L) * item.getEnchantments().get(enchant)) / factor);
                                 }

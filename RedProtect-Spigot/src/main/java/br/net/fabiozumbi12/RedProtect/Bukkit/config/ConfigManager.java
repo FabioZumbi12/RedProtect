@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 20/09/2024 16:14
+ * Last Modified: 26/11/2024 17:51
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -41,7 +41,6 @@ import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -117,7 +116,7 @@ public class ConfigManager extends CoreConfigManager {
                         "STONECUTTER"));
             }
             if (this.root.needed_claim_to_build.allow_break_blocks.isEmpty()) {
-                this.root.needed_claim_to_build.allow_break_blocks = Arrays.asList(Material.DIRT.name());
+                this.root.needed_claim_to_build.allow_break_blocks = List.of(Material.DIRT.name());
             }
             if (this.root.needed_claim_to_build.allow_interact_blocks.isEmpty()) {
                 this.root.needed_claim_to_build.allow_interact_blocks = Arrays.asList(
@@ -194,7 +193,7 @@ public class ConfigManager extends CoreConfigManager {
                         description.append(key.getValue().getNode("description2").getString()).append("/n");
                         key.getValue().removeChild("description2");
                     }
-                    if (description.length() > 0) {
+                    if (!description.isEmpty()) {
                         backupGuiDescription.put(key.getKey().toString(), description.substring(0, description.length() - 2));
                     }
                 }

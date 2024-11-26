@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 07/05/2024 20:27
+ * Last Modified: 26/11/2024 17:42
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -32,6 +32,7 @@ import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
@@ -48,7 +49,6 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Crops;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -425,7 +425,7 @@ public class GlobalListener implements Listener {
             return;
         }
 
-        if ((b instanceof Crops
+        if ((b.getBlockData() instanceof Ageable
                 || b.getType().equals(Material.PUMPKIN_STEM)
                 || b.getType().equals(Material.MELON_STEM)
                 || b.getType().toString().contains("CROPS")
