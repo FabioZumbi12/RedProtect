@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 19/09/2024 16:14
+ * Last Modified: 26/11/2024 17:54
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -111,7 +111,7 @@ public class PlayerListener implements Listener {
         if (!(e.getEntity() instanceof Player p)) {
             return;
         }
-        RedProtect.get().logger.debug(LogLevel.PLAYER, "PlayerListener - EntityBlockFormEvent canceled? " + e.isCancelled());
+
         Region r = RedProtect.get().getRegionManager().getTopRegion(e.getBlock().getLocation());
         if (r != null && e.getNewState().getType().name().contains("FROSTED_ICE") && !r.canIceForm(p)) {
             e.setCancelled(true);
@@ -332,7 +332,7 @@ public class PlayerListener implements Listener {
                             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                             event.setCancelled(true);
                         }
-                    } else if (b.getState().getData() instanceof InventoryHolder ||
+                    } else if (b.getState() instanceof InventoryHolder ||
                             RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
                         var open = cont.canOpen(b, p, true);
                         if (!open){
@@ -507,7 +507,7 @@ public class PlayerListener implements Listener {
 
         //deny damagecauses
         List<String> Causes = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(play.getWorld().getName()).deny_death_by;
-        if (Causes.size() > 0) {
+        if (!Causes.isEmpty()) {
             for (String cause : Causes) {
                 cause = cause.toUpperCase();
                 try {
@@ -770,7 +770,7 @@ public class PlayerListener implements Listener {
             String mesg = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmds).message;
             double py = p.getLocation().getY();
             if (py < min || py > max) {
-                if (mesg != null && !mesg.equals("")) {
+                if (mesg != null && !mesg.isEmpty()) {
                     RedProtect.get().getLanguageManager().sendMessage(p, mesg);
                 }
                 e.setCancelled(true);
@@ -1309,7 +1309,7 @@ public class PlayerListener implements Listener {
         if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("OFF")) {
             return;
         }
-        if (!notify.equals("")) {
+        if (!notify.isEmpty()) {
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")) {
                 Compat111.sendBarMsg(notify, color, p);
             }
@@ -1386,7 +1386,7 @@ public class PlayerListener implements Listener {
         String leaderstring;
         String m = "";
         //Enter-Exit notifications
-        if (r.getWelcome().equals("")) {
+        if (r.getWelcome().isEmpty()) {
             if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("BOSSBAR")
                     || RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")
                     || RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("CHAT")) {
@@ -1396,7 +1396,7 @@ public class PlayerListener implements Listener {
                 }
                 leaderstring = leaderstringBuilder.toString();
 
-                if (r.getLeaders().size() > 0) {
+                if (!r.getLeaders().isEmpty()) {
                     leaderstring = leaderstring.substring(2);
                 } else {
                     leaderstring = "None";
