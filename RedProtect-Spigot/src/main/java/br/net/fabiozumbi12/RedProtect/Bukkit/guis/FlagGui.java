@@ -210,7 +210,21 @@ public class FlagGui implements Listener {
                 return;
             }
 
-            if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+            /**
+             * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract InventoryView to get the class,
+             * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
+             */
+            Inventory topInv;
+            try {
+                InventoryView inventoryView = this.player.getOpenInventory();
+                Method getTopInventory = inventoryView.getClass().getMethod("getTopInventory");
+                getTopInventory.setAccessible(true);
+                topInv = (Inventory) getTopInventory.invoke(inventoryView);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (event.getInventory().equals(topInv)) {
                 event.setCancelled(true);
                 ItemStack item = event.getCurrentItem();
                 if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
@@ -305,7 +319,7 @@ public class FlagGui implements Listener {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 
             /**
-             * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract getTopInventory to get the class,
+             * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract InventoryView to get the class,
              * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
              */
             Inventory topInv;

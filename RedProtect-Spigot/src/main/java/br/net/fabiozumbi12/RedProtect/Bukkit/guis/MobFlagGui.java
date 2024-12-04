@@ -45,10 +45,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -129,7 +132,23 @@ public class MobFlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getPlayer().equals(this.player)) {
+
+        
+        /**
+         * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract InventoryView to get the class,
+         * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
+         */
+        Player vPlayer;
+        try {
+            InventoryView inventoryView = this.player.getOpenInventory();
+            Method getTopInventory = inventoryView.getClass().getMethod("getPlayer");
+            getTopInventory.setAccessible(true);
+            vPlayer = (Player) getTopInventory.invoke(inventoryView);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        
+        if (!vPlayer.equals(this.player)) {
             return;
         }
 
@@ -158,7 +177,21 @@ public class MobFlagGui implements Listener {
         InventoryHolder holder = event.getInventory().getHolder();
         if (holder instanceof Player && holder.equals(this.player)) {
 
-            if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+            /**
+             * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract InventoryView to get the class,
+             * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
+             */
+            Inventory topInv;
+            try {
+                InventoryView inventoryView = this.player.getOpenInventory();
+                Method getTopInventory = inventoryView.getClass().getMethod("getTopInventory");
+                getTopInventory.setAccessible(true);
+                topInv = (Inventory) getTopInventory.invoke(inventoryView);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (event.getInventory().equals(topInv)) {
                 event.setCancelled(true);
 
                 if (event.getRawSlot() == 0) {
