@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.Replacer;
+import java.lang.reflect.Method;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,14 +45,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -299,7 +303,21 @@ public class FlagGui implements Listener {
 
     public void open() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            if (player.getOpenInventory().getTopInventory().equals(this.inv)) {
+
+            /**
+             * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract getTopInventory to get the class,
+             * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
+             */
+            Inventory topInv;
+            try {
+                InventoryView inventoryView = player.getOpenInventory();
+                Method getTopInventory = inventoryView.getClass().getMethod("getTopInventory");
+                topInv = (Inventory) getTopInventory.invoke(inventoryView);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (topInv.equals(this.inv)) {
                 Region r = RedProtect.get().getRegionManager().getTopRegion(player.getLocation());
                 if (r != null && r.equals(this.region) && !player.equals(this.player)) {
                     RedProtect.get().getLanguageManager().sendMessage(this.player, "cmdmanager.region.rpgui-other", new Replacer[]{new Replacer("{player}", player.getName())});
@@ -313,5 +331,16 @@ public class FlagGui implements Listener {
         this.inv = Bukkit.createInventory(player, this.size, this.name);
         inv.setContents(this.guiItems);
         player.openInventory(inv);
+    }
+
+    public static Inventory getTopInventory(InventoryEvent event) {
+        try {
+            Object view = event.getView();
+            Method getTopInventory = view.getClass().getMethod("getTopInventory");
+            getTopInventory.setAccessible(true);
+            return (Inventory) getTopInventory.invoke(view);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
