@@ -141,9 +141,9 @@ public class MobFlagGui implements Listener {
         Player vPlayer;
         try {
             InventoryView inventoryView = this.player.getOpenInventory();
-            Method getTopInventory = inventoryView.getClass().getMethod("getPlayer");
-            getTopInventory.setAccessible(true);
-            vPlayer = (Player) getTopInventory.invoke(inventoryView);
+            Method getPlayer = inventoryView.getClass().getMethod("getPlayer");
+            getPlayer.setAccessible(true);
+            vPlayer = (Player) getPlayer.invoke(inventoryView);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

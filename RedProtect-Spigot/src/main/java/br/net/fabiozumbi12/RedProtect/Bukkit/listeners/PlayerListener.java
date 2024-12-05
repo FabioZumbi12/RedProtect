@@ -61,10 +61,13 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +99,23 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCraftItem(PrepareItemCraftEvent e) {
-        if (e.getView().getPlayer() instanceof Player p) {
+
+         /**
+         * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract InventoryView to get the class,
+         * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
+         */
+        HumanEntity vHuman;
+        try {
+            
+            InventoryView inventoryView = e.getView();
+            Method getPlayer = inventoryView.getClass().getMethod("getPlayer");
+            getPlayer.setAccessible(true);
+            vHuman = (HumanEntity) getPlayer.invoke(inventoryView);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        
+        if (vHuman instanceof Player p) {
 
             ItemStack result = e.getInventory().getResult();
 

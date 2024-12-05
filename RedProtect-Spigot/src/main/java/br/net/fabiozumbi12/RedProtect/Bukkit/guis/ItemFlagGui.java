@@ -40,8 +40,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class ItemFlagGui implements Listener {
@@ -63,7 +66,22 @@ public class ItemFlagGui implements Listener {
 
     @EventHandler
     void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getPlayer().equals(this.player)) {
+
+        /**
+         * paper on 1.20.6 build 60+ changed the API to be a interface only, so we can abstract InventoryView to get the class,
+         * as describe by Rumsfield here https://www.spigotmc.org/threads/inventoryview-changed-to-interface-backwards-compatibility.651754/#post-4747875
+         */
+        Player vPlayer;
+        try {
+            InventoryView inventoryView = this.player.getOpenInventory();
+            Method getPlayer = inventoryView.getClass().getMethod("getPlayer");
+            getPlayer.setAccessible(true);
+            vPlayer = (Player) getPlayer.invoke(inventoryView);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (!event.getView().getPlayer().equals(vPlayer)) {
             return;
         }
 
