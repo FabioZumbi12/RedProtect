@@ -326,6 +326,7 @@ public class FlagGui implements Listener {
             try {
                 InventoryView inventoryView = player.getOpenInventory();
                 Method getTopInventory = inventoryView.getClass().getMethod("getTopInventory");
+                getTopInventory.setAccessible(true);
                 topInv = (Inventory) getTopInventory.invoke(inventoryView);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
