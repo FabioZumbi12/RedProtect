@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:14
+ * Copyright (c) 2012-2025 - @FabioZumbi12
+ * Last Modified: 24/06/2025 19:06
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -277,8 +277,9 @@ public class RedProtect extends JavaPlugin {
         // Load gui items for Minecraft version
         config.setGuiRoot(rpvHelper.setGuiItems(config.guiRoot()));
 
-        // Load mob permissions
-        modListener = new ModListener(this);
+        // Load mod permissions
+        if (config.configRoot().server_protection.modsPermissionsEnable)
+            modListener = new ModListener(this);
 
         // Metrics
         try {

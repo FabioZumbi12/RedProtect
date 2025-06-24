@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/06/2024 17:13
+ * Copyright (c) 2012-2025 - @FabioZumbi12
+ * Last Modified: 24/06/2025 19:07
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -457,6 +457,8 @@ public class MainCategory {
                 Byte configuration may be hard to know and is represented as String, but instead to do actions, can disable specific menus in some mods.
                 You can set bytes as string. Will be converted internally as byte array with charset UTF-8.""")
         public Map<String, ModActions> mods_permissions = createModMap();
+        @Setting(value = "mods-permissions-enable", comment = "Configuration for mods-permissions")
+        public boolean modsPermissionsEnable = false;
 
         // Create world map
         private Map<String, List<String>> createMapCmdWorld() {
