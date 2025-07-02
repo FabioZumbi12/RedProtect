@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 26/11/2024 17:54
+ * Copyright (c) 2012-2025 - @FabioZumbi12
+ * Last Modified: 02/07/2025 09:45
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -764,12 +764,15 @@ public class PlayerListener implements Listener {
             return;
         }
 
+        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+
         if (RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.containsKey(cmds.toLowerCase().replace("/", "")) && !cmds.equals(".")) {
             double min = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmds).min_range;
             double max = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmds).max_range;
             String mesg = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmds).message;
+            boolean allowInside = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).command_ranges.get(cmds).allowInsideRegion;
             double py = p.getLocation().getY();
-            if (py < min || py > max) {
+            if ((py < min || py > max) && (r == null || !allowInside)) {
                 if (mesg != null && !mesg.isEmpty()) {
                     RedProtect.get().getLanguageManager().sendMessage(p, mesg);
                 }
@@ -782,7 +785,6 @@ public class PlayerListener implements Listener {
             PlayerCmd.put(p.getName(), msg);
         }
 
-        Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
         if (r != null) {
 
             if ((cmds.equalsIgnoreCase("petc") || cmds.equalsIgnoreCase("petcall") || cmds.contains(":petc") || cmds.contains(":petcall"))

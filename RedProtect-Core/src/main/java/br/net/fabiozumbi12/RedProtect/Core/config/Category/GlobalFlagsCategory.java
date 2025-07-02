@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 02/10/2023 22:15
+ * Copyright (c) 2012-2025 - @FabioZumbi12
+ * Last Modified: 02/07/2025 09:46
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -128,7 +128,7 @@ public class GlobalFlagsCategory {
         public boolean player_canpickup = true;
         @Setting(value = "block-grow", comment = "Allow blocks to grow like wheat?")
         public boolean block_grow = true;
-        @Setting(value = "command-ranges", comment = "Execute commands in certain coordinate ranges.")
+        @Setting(value = "command-ranges", comment = "Deny specific commands execution in certain coordinate ranges.")
         public Map<String, CommandRanges> command_ranges = createMap();
         @Setting(value = "iceform-by")
         public iceFormCat iceform_by = new iceFormCat();
@@ -290,6 +290,9 @@ public class GlobalFlagsCategory {
 
         @ConfigSerializable
         public static class CommandRanges {
+            @Setting(value = "allow-inside-region")
+            public boolean allowInsideRegion = false;
+
             @Setting(value = "min-range")
             public double min_range = 0D;
 
