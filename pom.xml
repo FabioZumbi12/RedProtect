@@ -1,6 +1,6 @@
 ﻿<!--
-  ~ Copyright (c) 2012-2024 - @FabioZumbi12
-  ~ Last Modified: 07/08/2024 15:14
+  ~ Copyright (c) 2012-2025 - @FabioZumbi12
+  ~ Last Modified: 16/07/2025 17:34
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -57,7 +57,7 @@
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -105,8 +105,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
 
@@ -138,17 +138,15 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- Deploy to maven central for maven repo -->
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
+                    <publishingServerId>ossrh</publishingServerId>
                 </configuration>
             </plugin>
 
