@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2012-2023 - @FabioZumbi12
-  ~ Last Modified: 03/10/2023 16:11
+  ~ Copyright (c) 2012-2025 - @FabioZumbi12
+  ~ Last Modified: 17/07/2025 15:02
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -73,7 +73,7 @@
     <repositories>
         <repository>
             <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>redprotect-repo</id>
