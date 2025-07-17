@@ -60,7 +60,7 @@ public class LAcceptCommand implements SubCommand {
 
                 if (r != null) {
 
-                    if (RedProtect.get().getPermissionHandler().getPlayerClaimLimit(player) >= (RedProtect.get().getRegionManager().getRegions(VictimUUID, r.getWorld()).size() + 1)) {
+                    if ((RedProtect.get().getRegionManager().getRegions(VictimUUID, r.getWorld()).size() + 1) > RedProtect.get().getPermissionHandler().getPlayerClaimLimit(player)) {
                         RedProtect.get().getLanguageManager().sendMessage(player, "regionbuilder.claim.limit");
                         return true;
                     }
