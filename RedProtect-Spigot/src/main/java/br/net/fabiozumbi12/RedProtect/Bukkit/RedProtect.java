@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 24/06/2025 19:06
+ * Last Modified: 19/08/2025 15:34
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -294,7 +294,8 @@ public class RedProtect extends JavaPlugin {
 
     private void shutDown() {
         // Unload messages listener
-        modListener.unload();
+        if (modListener != null)
+            modListener.unload();
 
         // Unregister commands
         cmdHandler.unregisterAll();
