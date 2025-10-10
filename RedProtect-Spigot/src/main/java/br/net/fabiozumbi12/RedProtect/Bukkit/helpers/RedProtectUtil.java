@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 10/10/2025 12:42
+ * Last Modified: 10/10/2025 14:04
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -1158,14 +1158,14 @@ public class RedProtectUtil extends CoreUtil {
         }
 
         SkullMeta meta = (SkullMeta) s.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "");
-        profile.getProperties().put("textures", new Property("textures", texture));
-        Field profileField;
+
         try {
-            profileField = meta.getClass().getDeclaredField("profile");
+            GameProfile profile = new GameProfile(UUID.randomUUID(), "");
+            profile.getProperties().put("textures", new Property("textures", texture));
+            Field profileField = meta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(meta, profile);
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | NoSuchMethodError e) {
             throw new Exception(e.getMessage());
         }
         s.setItemMeta(meta);
