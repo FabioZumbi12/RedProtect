@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2024 - @FabioZumbi12
- * Last Modified: 23/06/2024 01:19
+ * Copyright (c) 2012-2025 - @FabioZumbi12
+ * Last Modified: 10/10/2025 12:39
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -201,6 +201,10 @@ public class MobTextures {
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzRiOGEzMzNkZmE5MmU3ZTVhOTVhZDRhZTJkODRiMWJhZmEzM2RjMjhjMDU0OTI1Mjc3ZjYwZTc5ZGFmYzhjNCJ9fX0=";
             case "SNIFFER" ->
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODdhZDkyMGE2NmUzOGNjMzQyNmE1YmZmMDg0NjY3ZTg3NzIxMTY5MTVlMjk4MDk4NTY3YzEzOWYyMjJlMmM0MiJ9fX0=";
+            case "CREAKING" ->
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWQyODk5OTA2NjJmNjAwYzllNmEyZmUyZjI5NmZlZmI2OTRmNmU2ZmRiNjZmOWMwZTE3NWEwZGRmMzgzY2NjNyJ9fX0=";
+            case "HAPPY_GHAST" ->
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTFhMzZjYjkzZDAxNjc1YzQ2MjJkZDVjOGQ4NzIxMTA5MTFlYzEyYzM3MmU4OWFmYThiYTAzODYyODY3ZjZmYiJ9fX0=";
             default ->
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWY2OTNlZDY0MjZlN2MxY2Y2Y2QyZTE5YWU5OTllYmE0NDE0YWRiN2EyZTc1MmQyOTYwODJiODZlNzE4ZCJ9fX0=";
         };

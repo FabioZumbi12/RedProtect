@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 18/01/2025 15:59
+ * Last Modified: 10/10/2025 12:42
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -1148,7 +1148,7 @@ public class RedProtectUtil extends CoreUtil {
         return rname;
     }
 
-    public ItemStack createSkullOld(String texture) {
+    public ItemStack createSkullOld(String texture) throws Exception {
         Material mat = Material.getMaterial("PLAYER_HEAD");
         ItemStack s;
         if (mat != null) {
@@ -1166,7 +1166,7 @@ public class RedProtectUtil extends CoreUtil {
             profileField.setAccessible(true);
             profileField.set(meta, profile);
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            Bukkit.getLogger().warning("Failed to set base64 skull value!");
+            throw new Exception(e.getMessage());
         }
         s.setItemMeta(meta);
         return s;
