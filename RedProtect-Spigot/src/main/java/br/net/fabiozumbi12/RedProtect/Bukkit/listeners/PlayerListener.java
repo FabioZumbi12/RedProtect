@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2025 - @FabioZumbi12
- * Last Modified: 02/07/2025 09:45
+ * Last Modified: 01/12/2025 22:36
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -96,13 +96,24 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCraftItem(PrepareItemCraftEvent e) {
-        if (e.getView().getPlayer() instanceof Player p) {
+        try {
+            // Avoid error "IncompatibleClassChangeError: Found class org.bukkit.inventory.InventoryView, but interface was expected"
+            Object view = e.getClass()
+                    .getMethod("getView")
+                    .invoke(e);
+            Object playerObj = view.getClass()
+                    .getMethod("getPlayer")
+                    .invoke(view);
 
-            ItemStack result = e.getInventory().getResult();
+            if (playerObj instanceof Player p) {
+                ItemStack result = e.getInventory().getResult();
 
-            if (RedProtect.get().getUtil().denyPotion(result, p)) {
-                e.getInventory().setResult(new ItemStack(Material.AIR));
+                if (RedProtect.get().getUtil().denyPotion(result, p)) {
+                    e.getInventory().setResult(new ItemStack(Material.AIR));
+                }
             }
+        } catch (Exception ex) {
+            // Avoid IncompatibleClassChangeError: Found class org.bukkit.inventory.InventoryView, but interface was expected
         }
     }
 
