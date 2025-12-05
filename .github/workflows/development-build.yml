@@ -32,10 +32,10 @@ jobs:
 
       - name: Build for Development
         run: |
-          # Try to get the latest tag. If the command fails, it will not stop the script.
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null) || true
+          # Try to get the latest tag starting with 'v'. If the command fails, it will not stop the script.
+          LATEST_TAG=$(git describe --tags --abbrev=0 --match="v*" 2>/dev/null) || true
           if [ -z "$LATEST_TAG" ]; then
-            echo "No tags found. Using default version v8.1.3 for the build."
+            echo "No version tags (v*) found. Using default version v8.1.3 for the build."
             LATEST_TAG="v8.1.3" # Default version if no tags exist
           fi
           TAG_VERSION=$(echo ${LATEST_TAG#v})
@@ -57,8 +57,9 @@ jobs:
           
           ---
           
-          **Download via SpigotMC:** https://www.spigotmc.org/resources/redprotect-anti-grief-server-protection-region-management-mod-mobs-flag-compat-1-7-1-21.15841/
-          **Wiki:** https://github.com/FabioZumbi12/RedProtect/wiki"
+          More about:
+          [**SpigotMC**](https://www.spigotmc.org/resources/redprotect-anti-grief-server-protection-region-management-mod-mobs-flag-compat-1-7-1-21.15841/)
+          [**RedProtect Wiki**](https://github.com/FabioZumbi12/RedProtect/wiki)
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "${BODY}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
