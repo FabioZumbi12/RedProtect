@@ -345,7 +345,7 @@
                                 </filter>
                             </filters>
                             <outputFile>
-                                ${project.basedir}/target/RedProtect-${project.version}-Spigot.jar
+                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Spigot.jar
                             </outputFile>
                         </configuration>
                     </execution>
