@@ -1,3 +1,6 @@
+#  For buils on github, push tags:
+#  - git tag v1.0.0
+#  - git push origin --tags
 name: Build and Release
 on:
   push:

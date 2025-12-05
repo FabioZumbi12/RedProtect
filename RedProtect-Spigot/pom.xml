@@ -37,6 +37,10 @@
 
     <repositories>
         <repository>
+            <id>maven-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </repository>
+        <repository>
             <id>sk89q-snapshots</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
