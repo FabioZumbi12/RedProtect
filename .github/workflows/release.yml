@@ -30,11 +30,17 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build for Release
+      - name: Set Release Version
         run: |
           TAG_VERSION=$(echo ${GITHUB_REF#refs/tags/v})
           echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
-          mvn -B clean install -Drevision=${TAG_VERSION} -DBUILD_NUMBER=${{ github.run_number }} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
+          # Use o versions-maven-plugin para definir a versão em todos os POMs
+          mvn -B versions:set -DnewVersion=${TAG_VERSION} -DprocessAllModules=true -DgenerateBackupPoms=false
+
+      - name: Build for Release
+        run: |
+          # Agora, apenas compile. A versão já está correta nos POMs.
+          mvn -B clean install -DBUILD_NUMBER=${{ github.run_number }} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
         env:
           BUILD_NUMBER: ${{ github.run_number }}
 
