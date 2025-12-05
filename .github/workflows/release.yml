@@ -104,9 +104,7 @@ jobs:
           message: |
             [**RedProtect Official Release v${{ env.TAG_VERSION }} - Build #${{ github.run_number }}**](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }}
             )
-            **Build:** [{{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }})
+            **Build:** [${{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }})
             **Status:** Success
             **Changes:**
-            ${{ steps.generate_dev_releasenotes.outputs.raw_changelog }}
-
-            Artifacts: https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }}
+            ${{ steps.generate_releasenotes.outputs.raw_changelog }}
