@@ -32,11 +32,11 @@ jobs:
 
       - name: Build for Development
         run: |
-          # Try to get the latest tag. If none exists, use a default.
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+          # Try to get the latest tag. If the command fails, it will not stop the script.
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null) || true
           if [ -z "$LATEST_TAG" ]; then
-            echo "No tags found. Using default version v0.1.0."
-            LATEST_TAG="v8.1.3"
+            echo "No tags found. Using default version v8.1.3 for the build."
+            LATEST_TAG="v8.1.3" # Default version if no tags exist
           fi
           TAG_VERSION=$(echo ${LATEST_TAG#v})
           echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
@@ -47,15 +47,9 @@ jobs:
       - name: Generate Dev Release Notes
         id: generate_dev_releasenotes
         run: |
-          # Try to get the latest tag. If it fails, use the first commit as the starting point.
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
-          if [ -z "$LATEST_TAG" ]; then
-            echo "No tags found. Generating changelog from the first commit."
-            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
-            CHANGELOG=$(git log ${FIRST_COMMIT}..HEAD --pretty=format:"- %s")
-          else
-            CHANGELOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s")
-          fi
+          # Generate a changelog based on the commits in the push
+          CHANGELOG=$(git log ${{ github.event.before }}..${{ github.event.after }} --pretty=format:"- %s")
+
           BODY="This is the latest development build from the main branch. Use with caution, it may contain bugs.
           
           ## Recent Changes
