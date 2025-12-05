@@ -100,14 +100,13 @@ jobs:
         uses: appleboy/discord-action@master
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: RedProtect Release
           message: |
-          
-            🚀 **New Release: RedProtect ${{ github.ref_name }}** (Build #${{ github.run_number }})
-            A new official version has been released!
-            
-            **What's New:**
-            ```markdown
-            ${{ steps.generate_releasenotes.outputs.raw_changelog }}
-            ```            
-            View Release: ${{ steps.create_release.outputs.html_url }}
-          username: RedProtect GitHub
+            [**RedProtect Official Release v${{ env.TAG_VERSION }} - Build #${{ github.run_number }}**](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }}
+            )
+            **Build:** [{{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }})
+            **Status:** Success
+            **Changes:**
+            ${{ steps.generate_dev_releasenotes.outputs.raw_changelog }}
+
+            Artifacts: https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }}
