@@ -59,7 +59,7 @@ jobs:
           
           More about:
           [**SpigotMC**](https://www.spigotmc.org/resources/redprotect-anti-grief-server-protection-region-management-mod-mobs-flag-compat-1-7-1-21.15841/)
-          [**RedProtect Wiki**](https://github.com/FabioZumbi12/RedProtect/wiki)
+          [**RedProtect Wiki**](https://github.com/FabioZumbi12/RedProtect/wiki)"
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "${BODY}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
