@@ -1,0 +1,64 @@
+# This workflow runs on every push to the main branch.
+# It builds a -SNAPSHOT version of the plugin and uploads it to a "dev-latest" pre-release.
+#  For buils on github, push tags:
+#  - git tag v1.0.0
+#  - git push origin --tags
+name: Development Build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed to get the full history for tags
+
+      - name: Set up JDK 22 and Maven Cache
+        uses: actions/setup-java@v4
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build for Development
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          TAG_VERSION=$(echo ${LATEST_TAG#v})
+          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
+          mvn -B clean install -Drevision=${TAG_VERSION}-SNAPSHOT -DBUILD_NUMBER=${{ github.run_number }} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+
+      - name: Generate Dev Release Notes
+        id: generate_dev_releasenotes
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          CHANGELOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s")
+          BODY="This is the latest development build from the main branch. Use with caution, it may contain bugs.
+          
+          ## Recent Changes
+          ${CHANGELOG}"
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "${BODY}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Upload to Development Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev-latest
+          name: "Development Build (main)"
+          body: ${{ steps.generate_dev_releasenotes.outputs.changelog }}
+          prerelease: true
+          files: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

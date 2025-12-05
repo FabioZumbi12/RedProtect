@@ -1,0 +1,77 @@
+# This workflow runs when a new tag starting with 'v' is pushed.
+# It builds the plugin with the tag version, creates a GitHub Release, and uploads the final JAR.
+#  For buils on github, push tags:
+#  - git tag v1.0.0
+#  - git push origin --tags
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 22 and Maven Cache
+        uses: actions/setup-java@v4
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build for Release
+        run: |
+          TAG_VERSION=$(echo ${GITHUB_REF#refs/tags/v})
+          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
+          mvn -B clean install -Drevision=${TAG_VERSION} -DBUILD_NUMBER=${{ github.run_number }} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+
+      - name: Generate Release Notes
+        id: generate_releasenotes
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1)
+          CHANGELOG=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s")
+          BODY="## What's New
+          ${CHANGELOG}
+          
+          ---
+          
+          **Download via SpigotMC:** https://www.spigotmc.org/resources/redprotect-anti-grief-server-protection-region-management-mod-mobs-flag-compat-1-7-1-21.15841/
+          **Wiki:** https://github.com/FabioZumbi12/RedProtect/wiki"
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "${BODY}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: RedProtect ${{ github.ref_name }} - Build ${{ github.run_number }}
+          body: ${{ steps.generate_releasenotes.outputs.changelog }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload JAR to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-b${{ github.run_number }}-Spigot.jar
+          asset_name: RedProtect-${{ env.TAG_VERSION }}-b${{ github.run_number }}-Spigot.jar
+          asset_content_type: application/java-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
