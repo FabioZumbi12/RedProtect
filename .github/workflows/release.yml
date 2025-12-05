@@ -56,7 +56,13 @@ jobs:
             CHANGELOG=$(git log ${{ github.event.before }}..${{ github.event.after }} --pretty=format:"- %s")
           fi
 
-          BODY="## What's New
+          # Save the raw changelog as one output
+          echo "raw_changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "${CHANGELOG}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          # Create the full release body and save as another output
+          FULL_BODY="## What's New
           ${CHANGELOG}
           
           ---
@@ -64,8 +70,8 @@ jobs:
           More about:
           [**SpigotMC**](https://www.spigotmc.org/resources/redprotect-anti-grief-server-protection-region-management-mod-mobs-flag-compat-1-7-1-21.15841/)
           [**RedProtect Wiki**](https://github.com/FabioZumbi12/RedProtect/wiki)"
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "${BODY}" >> $GITHUB_OUTPUT
+          echo "full_body<<EOF" >> $GITHUB_OUTPUT
+          echo "${FULL_BODY}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
@@ -74,7 +80,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: RedProtect v${{ env.TAG_VERSION }} - Build ${{ github.run_number }} - Official Release
-          body: ${{ steps.generate_releasenotes.outputs.changelog }}
+          body: ${{ steps.generate_releasenotes.outputs.full_body }}
           draft: false
           prerelease: false
         env:
@@ -95,11 +101,13 @@ jobs:
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
+          
             🚀 **New Release: RedProtect ${{ github.ref_name }}** (Build #${{ github.run_number }})
             A new official version has been released!
             
             **What's New:**
-            ${{ steps.generate_releasenotes.outputs.changelog }}
-            
+            ```markdown
+            ${{ steps.generate_releasenotes.outputs.raw_changelog }}
+            ```            
             View Release: ${{ steps.create_release.outputs.html_url }}
           username: RedProtect GitHub
