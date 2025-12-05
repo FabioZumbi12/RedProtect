@@ -38,7 +38,7 @@ jobs:
         run: |
           TAG_VERSION=$(echo ${GITHUB_REF#refs/tags/v})
           echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
-          mvn -B clean install -Drevision=${TAG_VERSION} -DBUILD_NUMBER=${{ github.run_number }} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
+          mvn -B clean install -Drevision=${TAG_VERSION} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
         env:
           BUILD_NUMBER: ${{ github.run_number }}
 
@@ -51,9 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: RedProtect-Spigot-Build
-          path: |
-            ./RedProtect-Spigot/target/*.jar
-            !./RedProtect-Spigot/target/*DONT-DOWNLOAD-*.jar
+          path: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
           retention-days: 7
 
       - name: Create GitHub Release
@@ -75,6 +73,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./RedProtect-Spigot/target/RedProtect-*.jar
-          asset_name: RedProtect-${{ github.ref_name }}-b${{ github.run_number }}-Spigot.jar
+          asset_path: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
+          asset_name: RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
           asset_content_type: application/java-archive
