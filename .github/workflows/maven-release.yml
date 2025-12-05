@@ -60,13 +60,39 @@ jobs:
           path: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
           retention-days: 7
 
+      - name: Generate Dev Release Notes
+        if: startsWith(github.ref, 'refs/heads/')
+        id: generate_dev_releasenotes
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          CHANGELOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s")
+          BODY="This is the latest development build from the main branch. Use with caution, it may contain bugs.
+          
+          ## Recent Changes
+          ${CHANGELOG}"
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "${BODY}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Upload to Development Release
+        if: startsWith(github.ref, 'refs/heads/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev-latest
+          name: "Development Build (main)"
+          body: ${{ steps.generate_dev_releasenotes.outputs.changelog }}
+          prerelease: true
+          files: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate Release Notes
         if: startsWith(github.ref, 'refs/tags/')
         id: generate_releasenotes
         run: |
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1)
           CHANGELOG=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s")
-          BODY="## Changelog
+          BODY="## What's New
           ${CHANGELOG}
           
           ---
