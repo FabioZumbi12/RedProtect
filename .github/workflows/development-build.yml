@@ -76,21 +76,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Send Discord Notification
-        uses: avaste/action-discord@v1
+        uses: appleboy/discord-action@master
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          embeds: |
-            [{
-              "title": "🛠️ New Development Build: v${{ env.TAG_VERSION }}-SNAPSHOT",
-              "description": "A new development build is available.\n\n${{ steps.generate_dev_releasenotes.outputs.changelog }}",
-              "url": "https://github.com/${{ github.repository }}/releases/tag/dev-latest",
-              "color": 15105570,
-              "author": {
-                "name": "${{ github.repository_owner }}",
-                "url": "https://github.com/${{ github.repository_owner }}",
-                "icon_url": "https://github.com/${{ github.repository_owner }}.png"
-              },
-              "footer": {
-                "text": "Build #${{ github.run_number }}"
-              }
-            }]
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          message: |
+            🛠️ **New Snapshot Build: v${{ env.TAG_VERSION }}-SNAPSHOT** (Build #${{ github.run_number }})
+            A new Snapshot build is available.
+            
+            **Recent Changes:**
+            ${{ steps.generate_dev_releasenotes.outputs.changelog }}
+            
+            View Snapshot Release: https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }}
+          username: RedProtect GitHub
+

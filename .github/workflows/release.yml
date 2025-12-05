@@ -91,21 +91,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Send Discord Notification
-        uses: avaste/action-discord@v1
+        uses: appleboy/discord-action@master
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          embeds: |
-            [{
-              "title": "🚀 New Release: RedProtect ${{ github.ref_name }}",
-              "description": "A new official version has been released!\n\n${{ steps.generate_releasenotes.outputs.changelog }}",
-              "url": "${{ steps.create_release.outputs.html_url }}",
-              "color": 3066993,
-              "author": {
-                "name": "${{ github.repository_owner }}",
-                "url": "https://github.com/${{ github.repository_owner }}",
-                "icon_url": "https://github.com/${{ github.repository_owner }}.png"
-              },
-              "footer": {
-                "text": "Build #${{ github.run_number }}"
-              }
-            }]
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          message: |
+            🚀 **New Release: RedProtect ${{ github.ref_name }}** (Build #${{ github.run_number }})
+            A new official version has been released!
+            
+            **What's New:**
+            ${{ steps.generate_releasenotes.outputs.changelog }}
+            
+            View Release: ${{ steps.create_release.outputs.html_url }}
+          username: RedProtect GitHub
