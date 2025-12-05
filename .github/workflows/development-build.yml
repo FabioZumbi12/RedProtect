@@ -87,9 +87,10 @@ jobs:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           username: RedProtect Snapshot
           message: |
+          
             [**RedProtect Snapshot #${{ github.run_number }}**](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }}
             )
-            **Build:** [${{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }})
+            **Build:** [#${{ github.run_number }}](https://github.com/${{ github.repository }}/releases/tag/snapshot-b${{ github.run_number }})
             **Status:** Success
             **Changes:**
             ${{ steps.generate_dev_releasenotes.outputs.raw_changelog }}
