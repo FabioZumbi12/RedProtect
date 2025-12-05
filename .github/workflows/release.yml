@@ -47,8 +47,15 @@ jobs:
       - name: Generate Release Notes
         id: generate_releasenotes
         run: |
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1)
-          CHANGELOG=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s")
+          # Try to get the previous tag. If it fails, use the first commit as the starting point.
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null)
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "No previous tag found. Generating changelog from the first commit."
+            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+            CHANGELOG=$(git log ${FIRST_COMMIT}..HEAD --pretty=format:"- %s")
+          else
+            CHANGELOG=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s")
+          fi
           BODY="## What's New
           ${CHANGELOG}
           

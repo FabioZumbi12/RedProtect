@@ -32,7 +32,12 @@ jobs:
 
       - name: Build for Development
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0)
+          # Try to get the latest tag. If none exists, use a default.
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No tags found. Using default version v0.1.0."
+            LATEST_TAG="v8.1.3"
+          fi
           TAG_VERSION=$(echo ${LATEST_TAG#v})
           echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
           mvn -B clean install -Drevision=${TAG_VERSION}-SNAPSHOT -DBUILD_NUMBER=${{ github.run_number }} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
@@ -42,8 +47,15 @@ jobs:
       - name: Generate Dev Release Notes
         id: generate_dev_releasenotes
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0)
-          CHANGELOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s")
+          # Try to get the latest tag. If it fails, use the first commit as the starting point.
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No tags found. Generating changelog from the first commit."
+            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+            CHANGELOG=$(git log ${FIRST_COMMIT}..HEAD --pretty=format:"- %s")
+          else
+            CHANGELOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s")
+          fi
           BODY="This is the latest development build from the main branch. Use with caution, it may contain bugs.
           
           ## Recent Changes
