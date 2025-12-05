@@ -50,10 +50,15 @@ jobs:
           # Generate a changelog based on the commits in the push
           CHANGELOG=$(git log ${{ github.event.before }}..${{ github.event.after }} --pretty=format:"- %s")
 
-          BODY="This is the latest development build from the main branch. Use with caution, it may contain bugs.
+          BODY="This is the latest development build from the master branch. Use with caution, it may contain bugs.
           
           ## Recent Changes
-          ${CHANGELOG}"
+          ${CHANGELOG}
+          
+          ---
+          
+          **Download via SpigotMC:** https://www.spigotmc.org/resources/redprotect-anti-grief-server-protection-region-management-mod-mobs-flag-compat-1-7-1-21.15841/
+          **Wiki:** https://github.com/FabioZumbi12/RedProtect/wiki"
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "${BODY}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -62,7 +67,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dev-latest
-          name: "Development Build (main)"
+          name: "RedProtect - v${{ env.TAG_VERSION }} - Build ${{ github.run_number }}"
           body: ${{ steps.generate_dev_releasenotes.outputs.changelog }}
           prerelease: true
           files: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
