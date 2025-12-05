@@ -1,6 +1,8 @@
-name: Create Release and Build JAR
+name: Build and Release
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
@@ -8,46 +10,64 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 22 and Maven Cache
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '22'
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Get tag name
-        id: get_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Build for Development
+        if: startsWith(github.ref, 'refs/heads/')
+        run: mvn -B clean install -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
         env:
           BUILD_NUMBER: ${{ github.run_number }}
 
-      - name: Create Release
-        id: create_release
+      - name: Build for Release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          # Extrai a versão da tag (ex: v8.1.4 -> 8.1.4) e a armazena
+          TAG_VERSION=$(echo ${GITHUB_REF#refs/tags/v})
+          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
+          # Executa o build do Maven usando a versão da tag
+          mvn -B clean install -Drevision=${TAG_VERSION} -Dmaven.javadoc.skip -Dmaven.source.skip -Dgpg.skip --file pom.xml
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+
+      - name: Upload Development Artifact
+        if: startsWith(github.ref, 'refs/heads/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: RedProtect-Spigot-Build
+          path: ./RedProtect-Spigot/target/RedProtect-*-b${{ github.run_number }}-Spigot.jar
+          retention-days: 7
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: actions/create-release@v1
+        id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          release_name: Release ${{ env.TAG_NAME }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
 
-      - name: Upload Spigot JAR to Release
+      - name: Upload JAR to Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_NAME }}-b${{ github.run_number }}-Spigot.jar
-          asset_name: RedProtect-${{ env.TAG_NAME }}-b${{ github.run_number }}-Spigot.jar
+          asset_path: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-b${{ github.run_number }}-Spigot.jar
+          asset_name: RedProtect-${{ github.ref_name }}-b${{ github.run_number }}-Spigot.jar
           asset_content_type: application/java-archive
