@@ -66,8 +66,8 @@ jobs:
       - name: Upload to Development Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: dev-latest
-          name: "RedProtect - v${{ env.TAG_VERSION }} - Build ${{ github.run_number }}"
+          tag_name: snapshot-build${{ github.run_number }}
+          name: "Snapshot - RedProtect - v${{ env.TAG_VERSION }} - Build ${{ github.run_number }}"
           body: ${{ steps.generate_dev_releasenotes.outputs.changelog }}
           prerelease: true
           files: ./RedProtect-Spigot/target/RedProtect-${{ env.TAG_VERSION }}-SNAPSHOT-b${{ github.run_number }}-Spigot.jar
