@@ -47,11 +47,12 @@ jobs:
       - name: Generate Release Notes
         id: generate_releasenotes
         run: |
-          # Check if this is the first push to a new branch
+          # Check if this is the first push (or tag on initial commit).
           if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
-            echo "First push to a new branch. Listing all pushed commits."
-            CHANGELOG=$(git log --pretty=format:"- %s" ${{ github.event.after }} -n ${{ github.event.commits_count }})
+            echo "First push (or tag on initial commit). Listing all commits in this push."
+            CHANGELOG=$(echo '${{ toJSON(github.event.commits) }}' | jq -r '.[].message' | sed 's/^/- /')
           else
+            # Generate a changelog based on the commits in the push
             CHANGELOG=$(git log ${{ github.event.before }}..${{ github.event.after }} --pretty=format:"- %s")
           fi
 
@@ -72,7 +73,7 @@ jobs:
         id: create_release
         with:
           tag_name: ${{ github.ref }}
-          release_name: RedProtect v${{ github.ref_name }} - Build ${{ github.run_number }} - Official Release
+          release_name: RedProtect v${{ env.TAG_VERSION }} - Build ${{ github.run_number }} - Official Release
           body: ${{ steps.generate_releasenotes.outputs.changelog }}
           draft: false
           prerelease: false
