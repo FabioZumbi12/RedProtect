@@ -91,14 +91,19 @@ jobs:
           mkdir -p "$DEST_DIR"
           cp "$SRC" "$DEST"
           shopt -s nullglob
-          ADDONS=(add-ons/*-"${SRC_VERSION}".jar)
-          if [ ${#ADDONS[@]} -eq 0 ]; then
-            echo "No add-ons found for version: ${SRC_VERSION}"
-            ls -la add-ons
-            exit 1
+          ADDON_SOURCES=()
+          if compgen -G "add-ons/*.jar" > /dev/null; then
+            ADDON_SOURCES+=(add-ons/*.jar)
           fi
-          for ADDON in "${ADDONS[@]}"; do
+          if compgen -G "Addons/*/target/*.jar" > /dev/null; then
+            ADDON_SOURCES+=(Addons/*/target/*.jar)
+          fi
+          ADDON_COUNT=0
+          for ADDON in "${ADDON_SOURCES[@]}"; do
             ADDON_BASE="$(basename "$ADDON")"
+            if [[ "${ADDON_BASE}" != *-"${SRC_VERSION}".jar ]]; then
+              continue
+            fi
             ADDON_BASE_NO_EXT="${ADDON_BASE%.jar}"
             ADDON_BASE_NO_VER="${ADDON_BASE_NO_EXT%-${SRC_VERSION}}"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
@@ -107,7 +112,14 @@ jobs:
               ADDON_NAME="${ADDON_BASE_NO_VER}-SNAPSHOT-b${BUILD_NUMBER}-addon.jar"
             fi
             cp "$ADDON" "${DEST_DIR}/${ADDON_NAME}"
+            ADDON_COUNT=$((ADDON_COUNT + 1))
           done
+          if [ "$ADDON_COUNT" -eq 0 ]; then
+            echo "No add-ons found for version: ${SRC_VERSION}"
+            ls -la add-ons || true
+            ls -la Addons || true
+            exit 1
+          fi
 
       - name: Generate release notes
         id: release
