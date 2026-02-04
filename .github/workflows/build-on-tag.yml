@@ -97,7 +97,10 @@ jobs:
             ls -la add-ons
             exit 1
           fi
-          cp "${ADDONS[@]}" "$DEST_DIR/"
+          for ADDON in "${ADDONS[@]}"; do
+            ADDON_BASE="$(basename "$ADDON")"
+            cp "$ADDON" "${DEST_DIR}/${ADDON_BASE}-addon"
+          done
 
       - name: Generate release notes
         id: release
