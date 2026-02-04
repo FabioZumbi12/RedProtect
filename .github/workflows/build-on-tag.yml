@@ -90,6 +90,14 @@ jobs:
           fi
           mkdir -p "$DEST_DIR"
           cp "$SRC" "$DEST"
+          shopt -s nullglob
+          ADDONS=(add-ons/*-"${SRC_VERSION}".jar)
+          if [ ${#ADDONS[@]} -eq 0 ]; then
+            echo "No add-ons found for version: ${SRC_VERSION}"
+            ls -la add-ons
+            exit 1
+          fi
+          cp "${ADDONS[@]}" "$DEST_DIR/"
 
       - name: Generate release notes
         id: release
@@ -138,4 +146,4 @@ jobs:
           body_path: ${{ steps.release.outputs.notes_file }}
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
           files: |
-            dist/RedProtect-${{ steps.meta.outputs.is_tag == 'true' && steps.meta.outputs.tag || 'SNAPSHOT' }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
+            dist/*.jar
