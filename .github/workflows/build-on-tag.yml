@@ -99,7 +99,13 @@ jobs:
           fi
           for ADDON in "${ADDONS[@]}"; do
             ADDON_BASE="$(basename "$ADDON")"
-            ADDON_NAME="${ADDON_BASE%.jar}-addon.jar"
+            ADDON_BASE_NO_EXT="${ADDON_BASE%.jar}"
+            ADDON_BASE_NO_VER="${ADDON_BASE_NO_EXT%-${SRC_VERSION}}"
+            if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+              ADDON_NAME="${ADDON_BASE_NO_VER}-${VERSION}-b${BUILD_NUMBER}-release-addon.jar"
+            else
+              ADDON_NAME="${ADDON_BASE_NO_VER}-SNAPSHOT-b${BUILD_NUMBER}-addon.jar"
+            fi
             cp "$ADDON" "${DEST_DIR}/${ADDON_NAME}"
           done
 
