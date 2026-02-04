@@ -121,6 +121,42 @@ jobs:
             exit 1
           fi
 
+      - name: Prepare artifact links
+        id: artifact_links
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUILD_NUMBER="${{ steps.meta.outputs.build_number }}"
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            TAG_NAME="${GITHUB_REF_NAME}"
+          else
+            TAG_NAME="SNAPSHOT-b${BUILD_NUMBER}"
+          fi
+          BASE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}"
+          PLUGIN_LINKS=""
+          ADDON_LINKS=""
+          for FILE in dist/*.jar; do
+            NAME="$(basename "$FILE")"
+            URL="${BASE_URL}/${NAME}"
+            if [[ "${NAME}" == *"-addon.jar" ]]; then
+              ADDON_LINKS="${ADDON_LINKS}- ${URL}\n"
+            else
+              PLUGIN_LINKS="${PLUGIN_LINKS}- ${URL}\n"
+            fi
+          done
+          if [[ -z "${PLUGIN_LINKS}" ]]; then
+            PLUGIN_LINKS="- (no plugin artifact found)\n"
+          fi
+          if [[ -z "${ADDON_LINKS}" ]]; then
+            ADDON_LINKS="- (no add-on artifacts found)\n"
+          fi
+          echo "plugin_links<<EOF" >> "$GITHUB_OUTPUT"
+          printf "%b" "${PLUGIN_LINKS}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "addon_links<<EOF" >> "$GITHUB_OUTPUT"
+          printf "%b" "${ADDON_LINKS}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Generate release notes
         id: release
         shell: bash
@@ -143,15 +179,16 @@ jobs:
           if [ -n "$PREV_TAG" ]; then
             echo "## Changes since ${PREV_TAG}:" > "$NOTES_FILE"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
-              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
+              CHANGELOG="$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${GITHUB_REF_NAME}")"
             else
-              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
+              CHANGELOG="$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD")"
             fi
           else
             YEAR="$(date +%Y)"
             echo "## Changes:" > "$NOTES_FILE"
-            git log --pretty=format:"- %s (%h)" --since="${YEAR}-01-01" "HEAD" >> "$NOTES_FILE"
+            CHANGELOG="$(git log --pretty=format:"- %s (%h)" --since="${YEAR}-01-01" "HEAD")"
           fi
+          echo "${CHANGELOG}" >> "$NOTES_FILE"
           echo "" >> "$NOTES_FILE"
           echo "## Hashes:" >> "$NOTES_FILE"
           echo "\`\`\`" >> "$NOTES_FILE"
@@ -159,6 +196,9 @@ jobs:
           echo "\`\`\`" >> "$NOTES_FILE"
           echo "notes_file=${NOTES_FILE}" >> "$GITHUB_OUTPUT"
           echo "release_name=$(cat release_name.txt)" >> "$GITHUB_OUTPUT"
+          echo "raw_changelog<<EOF" >> "$GITHUB_OUTPUT"
+          echo "${CHANGELOG}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
@@ -169,3 +209,20 @@ jobs:
           prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
           files: |
             dist/*.jar
+
+      - name: Send Discord Notification
+        uses: appleboy/discord-action@master
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: RedProtect Release
+          message: |
+            **[${{ steps.release.outputs.release_name }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})**
+            **Build:** ${{ steps.meta.outputs.build_number }}
+            **Status:** success
+            **Changes:**
+            ${{ steps.release.outputs.raw_changelog }}
+            **Artifacts:**
+            **Plugin**
+            ${{ steps.artifact_links.outputs.plugin_links }}
+            **Add-ons**
+            ${{ steps.artifact_links.outputs.addon_links }}
