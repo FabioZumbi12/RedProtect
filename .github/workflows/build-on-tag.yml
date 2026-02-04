@@ -180,14 +180,14 @@ jobs:
           if [ -n "$PREV_TAG" ]; then
             echo "## Changes since ${PREV_TAG}:" > "$NOTES_FILE"
             if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
-              CHANGELOG="$(git log --pretty=format:"- %s ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) - %an" "${PREV_TAG}..${GITHUB_REF_NAME}")"
+              CHANGELOG="$(git log --pretty=format:"- _%s_ ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) - %an" "${PREV_TAG}..${GITHUB_REF_NAME}")"
             else
-              CHANGELOG="$(git log --pretty=format:"- %s ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) - %an" "${PREV_TAG}..HEAD")"
+              CHANGELOG="$(git log --pretty=format:"- _%s_ ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) - %an" "${PREV_TAG}..HEAD")"
             fi
           else
             YEAR="$(date +%Y)"
             echo "## Changes:" > "$NOTES_FILE"
-            CHANGELOG="$(git log --pretty=format:"- %s ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) - %an" --since="${YEAR}-01-01" "HEAD")"
+            CHANGELOG="$(git log --pretty=format:"- _%s_ ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H)) - %an" --since="${YEAR}-01-01" "HEAD")"
           fi
           echo "${CHANGELOG}" >> "$NOTES_FILE"
           echo "" >> "$NOTES_FILE"
