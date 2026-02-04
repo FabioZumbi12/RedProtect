@@ -1,6 +1,6 @@
 <!--
-  ~ Copyright (c) 2012-2025 - @FabioZumbi12
-  ~ Last Modified: 02/12/2025 21:05
+  ~ Copyright (c) 2012-2026 - @FabioZumbi12
+  ~ Last Modified: 03/02/2026 21:47
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -345,7 +345,7 @@
                                 </filter>
                             </filters>
                             <outputFile>
-                                ${project.basedir}/target/RedProtect-${project.version}-b${BUILD_NUMBER}-Spigot.jar
+                                ${project.basedir}/target/RedProtect-${project.version}.jar
                             </outputFile>
                         </configuration>
                     </execution>

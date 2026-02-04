@@ -1,0 +1,141 @@
+# This workflow runs when a new tag starting with 'v' is pushed.
+# It builds the plugin with the tag version, creates a GitHub Release, and uploads the final JAR.
+#  For buils on github, push tags:
+#  - git tag v1.0.0
+#  - git push origin --tags
+name: Build on tag
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Prepare version and build number
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUILD_NUMBER="$(printf "%02d" "${GITHUB_RUN_NUMBER}")"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            TAG="${GITHUB_REF_NAME#v}"
+            echo "is_tag=true" >> "$GITHUB_OUTPUT"
+            echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+            echo "src_version=${TAG}" >> "$GITHUB_OUTPUT"
+          else
+            LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+            VERSION="$(mvn -B -DskipTests help:evaluate -Dexpression=project.version -q -DforceStdout)"
+            TAG="${LAST_TAG#v}"
+            if [[ -z "${TAG}" ]]; then
+              TAG="${VERSION#v}"
+            fi
+            echo "is_tag=false" >> "$GITHUB_OUTPUT"
+            echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+            echo "src_version=${VERSION}" >> "$GITHUB_OUTPUT"
+          fi
+          echo "build_number=${BUILD_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Set project version
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            mvn -B -DskipTests versions:set -DnewVersion="${{ steps.meta.outputs.tag }}" -DprocessAllModules=true -DgenerateBackupPoms=false
+          fi
+
+      - name: Build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mvn -B -DskipTests -Dgpg.skip -Dmaven.javadoc.skip -Dmaven.source.skip -DBUILD_NUMBER="${{ steps.meta.outputs.build_number }}" clean package
+
+      - name: Collect artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.meta.outputs.tag }}"
+          SRC_VERSION="${{ steps.meta.outputs.src_version }}"
+          BUILD_NUMBER="${{ steps.meta.outputs.build_number }}"
+          SRC="RedProtect-Spigot/target/RedProtect-${SRC_VERSION}.jar"
+          DEST_DIR="dist"
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            DEST="${DEST_DIR}/RedProtect-${VERSION}-b${BUILD_NUMBER}-release.jar"
+          else
+            DEST="${DEST_DIR}/RedProtect-SNAPSHOT-b${BUILD_NUMBER}.jar"
+          fi
+          if [ ! -f "$SRC" ]; then
+            echo "Expected jar not found: $SRC"
+            ls -la RedProtect-Spigot/target
+            exit 1
+          fi
+          mkdir -p "$DEST_DIR"
+          cp "$SRC" "$DEST"
+
+      - name: Generate release notes
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          BUILD_NUMBER="${{ steps.meta.outputs.build_number }}"
+          PREV_TAG=""
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            PREV_TAG="$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)"
+          else
+            PREV_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          fi
+          NOTES_FILE="release_notes.md"
+          if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+            echo "RedProtect-${TAG}-b${BUILD_NUMBER}" > release_name.txt
+          else
+            echo "RedProtect-SNAPSHOT-b${BUILD_NUMBER}" > release_name.txt
+          fi
+          if [ -n "$PREV_TAG" ]; then
+            echo "## Changes since ${PREV_TAG}:" > "$NOTES_FILE"
+            if [[ "${{ steps.meta.outputs.is_tag }}" == "true" ]]; then
+              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${GITHUB_REF_NAME}" >> "$NOTES_FILE"
+            else
+              git log --pretty=format:"- %s (%h)" "${PREV_TAG}..HEAD" >> "$NOTES_FILE"
+            fi
+          else
+            YEAR="$(date +%Y)"
+            echo "## Changes:" > "$NOTES_FILE"
+            git log --pretty=format:"- %s (%h)" --since="${YEAR}-01-01" "HEAD" >> "$NOTES_FILE"
+          fi
+          echo "" >> "$NOTES_FILE"
+          echo "## Hashes:" >> "$NOTES_FILE"
+          echo "\`\`\`" >> "$NOTES_FILE"
+          (cd dist && sha256sum *) >> "$NOTES_FILE"
+          echo "\`\`\`" >> "$NOTES_FILE"
+          echo "notes_file=${NOTES_FILE}" >> "$GITHUB_OUTPUT"
+          echo "release_name=$(cat release_name.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.is_tag == 'true' && github.ref_name || format('SNAPSHOT-b{0}', steps.meta.outputs.build_number) }}
+          name: ${{ steps.release.outputs.release_name }}
+          body_path: ${{ steps.release.outputs.notes_file }}
+          prerelease: ${{ steps.meta.outputs.is_tag != 'true' }}
+          files: |
+            dist/RedProtect-${{ steps.meta.outputs.is_tag == 'true' && steps.meta.outputs.tag || 'SNAPSHOT' }}-b${{ steps.meta.outputs.build_number }}${{ steps.meta.outputs.is_tag == 'true' && '-release' || '' }}.jar
