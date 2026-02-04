@@ -138,10 +138,11 @@ jobs:
           for FILE in dist/*.jar; do
             NAME="$(basename "$FILE")"
             URL="${BASE_URL}/${NAME}"
+            LINK="- [${NAME}](${URL})\n"
             if [[ "${NAME}" == *"-addon.jar" ]]; then
-              ADDON_LINKS="${ADDON_LINKS}- ${URL}\n"
+              ADDON_LINKS="${ADDON_LINKS}${LINK}"
             else
-              PLUGIN_LINKS="${PLUGIN_LINKS}- ${URL}\n"
+              PLUGIN_LINKS="${PLUGIN_LINKS}${LINK}"
             fi
           done
           if [[ -z "${PLUGIN_LINKS}" ]]; then
@@ -210,19 +211,65 @@ jobs:
           files: |
             dist/*.jar
 
-      - name: Send Discord Notification
-        uses: appleboy/discord-action@master
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          username: RedProtect Release
-          message: |
-            **[${{ steps.release.outputs.release_name }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})**
-            **Build:** ${{ steps.meta.outputs.build_number }}
-            **Status:** success
-            **Changes:**
-            ${{ steps.release.outputs.raw_changelog }}
-            **Artifacts:**
-            **Plugin**
-            ${{ steps.artifact_links.outputs.plugin_links }}
-            **Add-ons**
-            ${{ steps.artifact_links.outputs.addon_links }}
+      - name: Send Discord Embed
+        shell: bash
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WEBHOOK_USERNAME: Jenkins
+          WEBHOOK_AVATAR_URL: https://www.jenkins.io/images/logos/jenkins/jenkins.png
+          RELEASE_NAME: ${{ steps.release.outputs.release_name }}
+          BUILD_NUMBER: ${{ steps.meta.outputs.build_number }}
+          BUILD_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PLUGIN_LINKS: ${{ steps.artifact_links.outputs.plugin_links }}
+          ADDON_LINKS: ${{ steps.artifact_links.outputs.addon_links }}
+          RAW_CHANGELOG: ${{ steps.release.outputs.raw_changelog }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+
+          def truncate(text, limit=900):
+              text = text.strip()
+              if len(text) <= limit:
+                  return text
+              return text[:limit].rsplit("\n", 1)[0] + "\n- ... (truncated)"
+
+          release_name = os.environ.get("RELEASE_NAME", "RedProtect Build")
+          build_number = os.environ.get("BUILD_NUMBER", "")
+          build_url = os.environ.get("BUILD_URL", "")
+          plugin_links = os.environ.get("PLUGIN_LINKS", "").strip()
+          addon_links = os.environ.get("ADDON_LINKS", "").strip()
+          changelog = truncate(os.environ.get("RAW_CHANGELOG", ""))
+          username = os.environ.get("WEBHOOK_USERNAME", "Jenkins")
+          avatar_url = os.environ.get("WEBHOOK_AVATAR_URL", "")
+
+          title = f"RedProtect #{build_number}" if build_number else release_name
+          artifacts = ""
+          if plugin_links:
+              artifacts += plugin_links
+          if addon_links:
+              if artifacts:
+                  artifacts += "\n"
+              artifacts += addon_links
+
+          embed = {
+              "title": title,
+              "url": build_url,
+              "color": 0x2ecc71,
+              "fields": [
+                  {"name": "Build", "value": build_number or "-", "inline": True},
+                  {"name": "Status", "value": "success", "inline": True},
+                  {"name": "Changes", "value": changelog or "-"},
+                  {"name": "Artifacts", "value": artifacts or "-", "inline": False},
+              ],
+          }
+
+          payload = {
+              "username": username,
+              "avatar_url": avatar_url,
+              "embeds": [embed],
+          }
+          print(json.dumps(payload))
+          PY > payload.json
+
+          curl -sS -H "Content-Type: application/json" -d @payload.json "${DISCORD_WEBHOOK_URL}"
