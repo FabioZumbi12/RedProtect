@@ -225,7 +225,7 @@ jobs:
           RAW_CHANGELOG: ${{ steps.release.outputs.raw_changelog }}
         run: |
           set -euo pipefail
-          python - <<'PY'
+          python - <<'PY' > payload.json
           import json, os
 
           def truncate(text, limit=900):
@@ -270,6 +270,5 @@ jobs:
               "embeds": [embed],
           }
           print(json.dumps(payload))
-          PY > payload.json
 
           curl -sS -H "Content-Type: application/json" -d @payload.json "${DISCORD_WEBHOOK_URL}"
