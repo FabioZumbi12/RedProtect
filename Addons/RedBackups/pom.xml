@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2012-2025 - @FabioZumbi12
-  ~ Last Modified: 15/07/2025 19:28
+  ~ Copyright (c) 2012-2026 - @FabioZumbi12
+  ~ Last Modified: 03/02/2026 23:37
   ~
   ~ This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
   ~  damages arising from the use of this class.
@@ -86,14 +86,14 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 

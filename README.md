@@ -1,56 +1,44 @@
-![Logo](https://media.forgecdn.net/attachments/123/815/red-protect-plus1.png)  
-RedProtect World is an area protection plugin made for users. No longer do you need to have an admin worldguard a region
-for you. The user can take care of themselves now.
+![Logo](https://media.forgecdn.net/attachments/123/815/red-protect-plus1.png)
 
-Chat with the developer online on Discord: https://discord.gg/VHTwk53
+[![Build Status](https://github.com/FabioZumbi12/RedProtect/actions/workflows/build-on-tag.yml/badge.svg)](https://github.com/FabioZumbi12/RedProtect/releases)
 
-## WIKI
+RedProtect is an area protection plugin focused on player-managed regions, giving users control over claiming and managing
+their own protected areas without depending on staff to set them up.
 
-See the WIKI for Help with commands, permissions and all features: https://github.com/FabioZumbi12/RedProtect/wiki
+## Links
 
-## Available Versions:
+- Discord: https://discord.gg/VHTwk53
+- Wiki: https://github.com/FabioZumbi12/RedProtect/wiki
+- Source: https://github.com/FabioZumbi12/RedProtect
+- Releases (main plugin + add-ons): https://github.com/FabioZumbi12/RedProtect/releases/latest
 
-Spigot: https://www.spigotmc.org/resources/redprotect.15841/  
-Bukkit: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/  
-Sponge(legacy): https://ore.spongepowered.org/FabioZumbi12/RedProtect
+## Available Versions
 
-## RedProtect Add-ons:
+- Spigot: https://www.spigotmc.org/resources/redprotect.15841/
+- Bukkit: http://dev.bukkit.org/bukkit-plugins/region-protect-plus/
+- Sponge (legacy): https://ore.spongepowered.org/FabioZumbi12/RedProtect
 
-These add-ons extend RedProtect flags, functions and more.
+## Add-ons
 
-### Killer Projectiles:
+These add-ons extend RedProtect flags, functions and more. Downloads are available on the latest GitHub release.
 
-> How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/KillerProjectiles  
-> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+- Killer Projectiles
+  - How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/KillerProjectiles
+  - Download: https://github.com/FabioZumbi12/RedProtect/releases/latest
+- BuyRent Regions
+  - How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/BuyRentRegion
+  - Download: https://github.com/FabioZumbi12/RedProtect/releases/latest
+- RedBackups
+  - How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/RedBackups
+  - Download: https://github.com/FabioZumbi12/RedProtect/releases/latest
+- RegionChat
+  - How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/RegionChat
+  - Download: https://github.com/FabioZumbi12/RedProtect/releases/latest
 
-### BuyRent Regions:
+## API Repository
 
-> How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/BuyRentRegion  
-> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+RedProtect is hosted on Maven Central.
 
-### RedBackups:
-
-> How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/RedBackups  
-> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
-
-### RegionChat:
-
-> How to use: https://github.com/FabioZumbi12/RedProtect/tree/master/Addons/RegionChat  
-> Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
-
-## Source:
-
-The source is available on GitHub: https://github.com/FabioZumbi12/RedProtect
-
-## Dev builds:
-
-Available on
-jenkins: [![Build Status](http://host.areaz12server.net.br:8081/buildStatus/icon?job=RedProtect)](http://host.areaz12server.net.br:8081/job/RedProtect/)
-
-## API repository:
-
-**Repository:**  
-RedProtect is hosted on Maven Central  
 ### Maven
 ```xml
 <dependencies>
@@ -91,7 +79,7 @@ RedProtect is hosted on Maven Central
 </dependencies>  
 ```
 
-### Gradle:
+### Gradle
 ```
 repositories {
     mavenCentral()

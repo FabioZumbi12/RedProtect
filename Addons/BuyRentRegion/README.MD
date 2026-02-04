@@ -1,17 +1,17 @@
-## RedProtect ADD-ON: BuyRentRegions
+## RedProtect Add-on: BuyRentRegions
 
-This add-on allows you to create signs which can be used to buy or rent WorldGuard/RedProtect regions. The plugin works
-with all Vault supported economy systems as it requires Vault for economy support.
+This add-on allows you to create signs used to buy or rent WorldGuard/RedProtect regions. It works with all Vault-supported
+economy systems.
 
-### Permissions:
+### Permissions
 
-* buyrentregion.command.create - allows the creation of \[BuyRegion\] and \[RentRegion\] signs.
-* buyrentregion.command.admin - allows usage of admin commands.
-* buyrentregion.command.exempt - allows player to bypass BuyRegionMax
-* buyrentregion.command.buy - allows player to buy a region (if config requires)
-* buyrentregion.command.rent - allows player to rent a region (if config requires)
+- `buyrentregion.command.create` - create `[BuyRegion]` and `[RentRegion]` signs
+- `buyrentregion.command.admin` - use admin commands
+- `buyrentregion.command.exempt` - bypass BuyRegionMax
+- `buyrentregion.command.buy` - buy a region (if config requires)
+- `buyrentregion.command.rent` - rent a region (if config requires)
 
-### Signs:
+### Signs
 
 **Create a BuyRegion Sign**
 
@@ -65,7 +65,7 @@ If RequireBuyMode is set to false the player will not be required to enter buy m
 **Rent a Region**  
 Same as buying a region, see above.
 
-### Commands:
+### Commands
 
 **Player Commands**
 
@@ -123,16 +123,16 @@ Days: d, day, days
 
 ### Config Options
 
-* SignHeaderBuy - top line of signs for buy regions, default \[BuyRegion\]
-* SignHeaderRent - top line of signs for rent regions, default \[RentRegion\]
-* PayRentOwners - pays rent to owner of region
-* BuyRegionMax - max regions a player can buy with BuyRegion
-* RentRegionMax - max regions a player can rent with BuyRegion
-* CheckExpirationsInMins - how often to check for expired rented regions IN MINUTES
-* RequireBuyMode - is buy mode required to be on to use buy/rent signs? Recommended: true
-* RequireBuyPerms - require the player to have buyrentregion.command.buy to buy a region
-* RequireRentPerms - require the player to have buyrentregion.command.rent to rent a region
-* DateFormat - Sets the date format - Accepted Values: Default, US, EU
+- SignHeaderBuy - top line of signs for buy regions (default: `[BuyRegion]`)
+- SignHeaderRent - top line of signs for rent regions (default: `[RentRegion]`)
+- PayRentOwners - pays rent to owner of region
+- BuyRegionMax - max regions a player can buy with BuyRegion
+- RentRegionMax - max regions a player can rent with BuyRegion
+- CheckExpirationsInMins - how often to check for expired rented regions (minutes)
+- RequireBuyMode - is buy mode required? Recommended: true
+- RequireBuyPerms - require `buyrentregion.command.buy` to buy a region
+- RequireRentPerms - require `buyrentregion.command.rent` to rent a region
+- DateFormat - Accepted values: Default, US, EU
 
 **Date Formats**
 
@@ -163,13 +163,13 @@ Days: d, day, days
   region... which would typically make it unbreakable anyways. Furthermore, for performance reasons I'm trying very hard
   to avoid hooking the block break event.
 
-### License/About Dev:
+### License/About Dev
 
 This plugin was originally on Spigot in this link: https://www.spigotmc.org/resources/buyregion-1-13.60189/ by **
 Luke199** and **GentleGravel**.  
 People using the previous plugin w/ RedProtect can move all rentedRegions from ``plugins/BuyRegion`` folder to
 new ``plugins/BuyRentRegion`` of this add-on to migrate rents and configs.
 
-### Download:
+### Download
 
-Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+GitHub Releases: https://github.com/FabioZumbi12/RedProtect/releases/latest

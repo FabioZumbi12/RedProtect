@@ -1,19 +1,19 @@
-## RedProtect ADD-ON: Region Chat
+## RedProtect Add-on: RegionChat
 
-This plugin adds the flag `chat` and allow player to chat with other players on the same RedProtect region.
+Adds the `chat` flag and lets players chat with others inside the same RedProtect region.
 
-### Commands:
+### Commands
 
-Reload command: `/regionchat reload` or the alias `/rpc reload`  
-Flag: `/rp flag chat true/false` - Allow or deny no region members to chat  
-To chat: `/rpc <message>`
+- Reload: `/regionchat reload` or `/rpc reload`
+- Flag: `/rp flag chat true/false` (allow/deny non-members to chat)
+- Chat: `/rpc <message>`
 
-### Permissions:
+### Permissions
 
-Reload command: `regionchat.cmd.reload`  
-To use the flag: `redprotect.flag.chat`  
-To chat on regions: `Not needed (more options on config)`
+- Reload: `regionchat.cmd.reload`
+- Use the flag: `redprotect.flag.chat`
+- Chat in regions: `Not needed (more options in config)`
 
-### Download:
+### Download
 
-Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+GitHub Releases: https://github.com/FabioZumbi12/RedProtect/releases/latest

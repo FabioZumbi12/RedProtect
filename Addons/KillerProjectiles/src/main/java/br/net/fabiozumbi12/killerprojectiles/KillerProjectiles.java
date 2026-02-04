@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2012-2023 - @FabioZumbi12
- * Last Modified: 10/05/2023 14:49
+ * Copyright (c) 2012-2026 - @FabioZumbi12
+ * Last Modified: 03/02/2026 23:39
  *
  * This class is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any
  *  damages arising from the use of this class.
@@ -114,7 +114,7 @@ public final class KillerProjectiles extends JavaPlugin implements Listener, Com
             if (r != null && r.getFlagBool("killer-projectiles") && getConfig().getStringList("allowed-types").contains(projectile.getType().name())) {
                 double damage;
                 if (getConfig().getString("projectile-damage").endsWith("%")) {
-                    damage = (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() / 100) * Double.parseDouble(getConfig().getString("projectile-damage", "100%").replace("%", ""));
+                    damage = (player.getAttribute(Attribute.MAX_HEALTH).getBaseValue() / 100) * Double.parseDouble(getConfig().getString("projectile-damage", "100%").replace("%", ""));
                 } else {
                     damage = getConfig().getInt("projectile-damage");
                 }

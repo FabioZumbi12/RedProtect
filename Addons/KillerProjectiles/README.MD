@@ -1,18 +1,18 @@
-## RedProtect ADD-ON: Killer Projectiles
+## RedProtect Add-on: Killer Projectiles
 
-This plugin adds the flag `killer-projectiles` making any projectile launcher inside regions with this flag damage the
-amount set on the configuration.
+Adds the `killer-projectiles` flag. Any projectile launcher inside regions with this flag will deal the configured
+damage amount.
 
-### Commands:
+### Commands
 
-Reload command: `/killerprojectiles reload` or the alias `/kp reload`  
-Flag: `/rp flag killer-projectiles true/false`
+- Reload: `/killerprojectiles reload` or `/kp reload`
+- Flag: `/rp flag killer-projectiles true/false`
 
-### Permissions:
+### Permissions
 
-Reload command: `killerprojectiles.cmd.reload`  
-To use the flag: `redprotect.flag.killer-projectiles`
+- Reload: `killerprojectiles.cmd.reload`
+- Use the flag: `redprotect.flag.killer-projectiles`
 
-### Download:
+### Download
 
-Download: https://github.com/FabioZumbi12/RedProtect/tree/master/add-ons
+GitHub Releases: https://github.com/FabioZumbi12/RedProtect/releases/latest
