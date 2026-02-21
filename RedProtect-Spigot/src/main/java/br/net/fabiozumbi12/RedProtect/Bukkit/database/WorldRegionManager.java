@@ -79,4 +79,6 @@ public interface WorldRegionManager {
 
     long getCanPurgeCount(String uuid, boolean canpurge);
 
+    void updateLiveMembers(String rname, String leaders, String admins, String members);
+
 }
