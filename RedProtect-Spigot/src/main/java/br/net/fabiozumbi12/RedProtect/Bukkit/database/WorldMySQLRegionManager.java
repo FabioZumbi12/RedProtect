@@ -66,17 +66,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 return;
             }
         }
-        PreparedStatement st = null;
         try {
             if (!this.checkTableExists()) {
-                Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().getConfigManager().configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true" : "")
+                try (Connection con = DriverManager.getConnection(this.url + this.dbname + this.reconnect + (RedProtect.get().getConfigManager().configRoot().mysql.ssl ? "&useSSL=true&requireSSL=true" : "")
                         , RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
-
-                st = con.prepareStatement("CREATE TABLE `" + tableName + "` " +
-                        "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Double not null, tppoint varchar(100), flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci");
-                st.executeUpdate();
-                st.close();
-                st = null;
+                     PreparedStatement st = con.prepareStatement("CREATE TABLE `" + tableName + "` " +
+                             "(name varchar(20) PRIMARY KEY NOT NULL, leaders varchar(200) , admins varchar(200), members varchar(200), maxMbrX int, minMbrX int, maxMbrZ int, minMbrZ int, centerX int, centerZ int, minY int, maxY int, date varchar(10), wel varchar(200), prior int, world varchar(100), value Double not null, tppoint varchar(100), flags longtext, candelete tinyint(1), canpurge tinyint(1)) CHARACTER SET utf8 COLLATE utf8_general_ci")) {
+                    st.executeUpdate();
+                }
                 RedProtect.get().logger.info("Created table: " + tableName + "!");
 
             }
@@ -87,26 +84,18 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
-        } finally {
-            if (st != null) {
-                st.close();
-            }
         }
     }
 
     private boolean checkTableExists() {
-        try {
+        try (Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass)) {
             RedProtect.get().logger.debug(LogLevel.DEFAULT, "Checking if table exists... " + tableName);
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
             DatabaseMetaData meta = con.getMetaData();
-            ResultSet rs = meta.getTables(null, null, tableName, null);
-            if (rs.next()) {
-                con.close();
-                rs.close();
-                return true;
+            try (ResultSet rs = meta.getTables(null, null, tableName, null)) {
+                if (rs.next()) {
+                    return true;
+                }
             }
-            con.close();
-            rs.close();
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
@@ -115,28 +104,29 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     }
 
     private void addNewColumns() {
-        try {
-            Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
+        try (Connection con = DriverManager.getConnection(this.url + this.dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass)) {
             DatabaseMetaData md = con.getMetaData();
-            ResultSet rs = md.getColumns(null, null, tableName, "candelete");
-            if (!rs.next()) {
-                PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `candelete` tinyint(1) NOT NULL default '1'");
-                st.executeUpdate();
+            try (ResultSet rs = md.getColumns(null, null, tableName, "candelete")) {
+                if (!rs.next()) {
+                    try (PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `candelete` tinyint(1) NOT NULL default '1'")) {
+                        st.executeUpdate();
+                    }
+                }
             }
-            rs.close();
-            rs = md.getColumns(null, null, tableName, "value");
-            if (!rs.next()) {
-                PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `value` Long not null default '0'");
-                st.executeUpdate();
+            try (ResultSet rs = md.getColumns(null, null, tableName, "value")) {
+                if (!rs.next()) {
+                    try (PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `value` Long not null default '0'")) {
+                        st.executeUpdate();
+                    }
+                }
             }
-            rs.close();
-            rs = md.getColumns(null, null, tableName, "canpurge");
-            if (!rs.next()) {
-                PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `canpurge` tinyint(1) not null default '1'");
-                st.executeUpdate();
+            try (ResultSet rs = md.getColumns(null, null, tableName, "canpurge")) {
+                if (!rs.next()) {
+                    try (PreparedStatement st = this.dbcon.prepareStatement("ALTER TABLE `" + tableName + "` ADD `canpurge` tinyint(1) not null default '1'")) {
+                        st.executeUpdate();
+                    }
+                }
             }
-            rs.close();
-            con.close();
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
@@ -147,34 +137,24 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     /*-------------------------------------- Live Actions -------------------------------------------*/
     @Override
     public void remove(Region r) {
-        removeLiveRegion(r);
         this.regions.remove(r.getName());
-    }
-
-    private void removeLiveRegion(Region r) {
-        if (this.regionExists(r.getName())) {
-            try {
-                PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM `" + tableName + "` WHERE LOWER(name) = ?");
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            try (PreparedStatement st = this.dbcon.prepareStatement("DELETE FROM `" + tableName + "` WHERE LOWER(name) = ?")) {
                 st.setString(1, r.getName().toLowerCase());
                 st.executeUpdate();
-                st.close();
             } catch (SQLException e) {
                 CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
-        }
+        });
     }
 
     @Override
     public void add(Region r) {
-        addLiveRegion(r);
-    }
-
-    private void addLiveRegion(Region r) {
-        if (!this.regionExists(r.getName())) {
-            try {
-                PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        this.regions.put(r.getName(), r);
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            try (PreparedStatement st = dbcon.prepareStatement("INSERT INTO `" + tableName + "` (name,leaders,admins,members,maxMbrX,minMbrX,maxMbrZ,minMbrZ,minY,maxY,centerX,centerZ,date,wel,prior,world,value,tppoint,candelete,flags,canpurge) "
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
                 st.setString(1, r.getName());
                 st.setString(2, r.getLeadersString());
                 st.setString(3, r.getAdminString());
@@ -198,89 +178,79 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 st.setInt(21, r.canPurge() ? 1 : 0);
 
                 st.executeUpdate();
-                st.close();
             } catch (SQLException e) {
                 CoreUtil.printJarVersion();
                 e.printStackTrace();
             }
-        }
+        });
     }
 
     @Override
     public void removeLiveFlags(String rname, String flag) {
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE LOWER(name) = ? AND world = ?");
-            st.setString(1, rname.toLowerCase());
-            st.setString(2, this.world);
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                String flags = rs.getString("flags");
-                String flagsStrings = flags;
-                for (String flago : flags.split(",")) {
-                    String key = flago.split(":")[0];
-                    if (key.equals(flag)) {
-                        flagsStrings = flagsStrings.replace(flago, "").replace(",,", ",");
-                        st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?");
-                        st.setString(1, flagsStrings);
-                        st.setString(2, rname.toLowerCase());
-                        st.executeUpdate();
-                        break;
-                    }
-                }
+        Region region = getRegion(rname);
+        if (region == null) return;
+        String flagsStr = region.getFlagStrings();
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?")) {
+                st.setString(1, flagsStr);
+                st.setString(2, rname.toLowerCase());
+                st.executeUpdate();
+            } catch (SQLException e) {
+                RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
+                CoreUtil.printJarVersion();
+                e.printStackTrace();
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
+        });
     }
 
     @Override
     public void updateLiveRegion(String rname, String column, Object value) {
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE LOWER(name) = ? ");
-            st.setObject(1, value);
-            st.setString(2, rname.toLowerCase());
-            st.executeUpdate();
-            st.close();
-        } catch (SQLException e) {
-            RedProtect.get().logger.severe("RedProtect can't save the region " + rname + ", please verify the Mysql Connection and table structures.");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE LOWER(name) = ? ")) {
+                st.setObject(1, value);
+                st.setString(2, rname.toLowerCase());
+                st.executeUpdate();
+            } catch (SQLException e) {
+                RedProtect.get().logger.severe("RedProtect can't save the region " + rname + ", please verify the Mysql Connection and table structures.");
+                CoreUtil.printJarVersion();
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
     public void updateLiveFlags(String rname, String flag, String value) {
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT flags FROM `" + tableName + "` WHERE LOWER(name) = ? AND world = ?");
-            st.setString(1, rname.toLowerCase());
-            st.setString(2, this.world);
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                String flags = rs.getString("flags");
-                String flagsStrings = flags;
-                for (String flago : flags.split(",")) {
-                    String key = flago.split(":")[0];
-                    if (key.equals(flag)) {
-                        flagsStrings = flagsStrings.replace(flago, key + ":" + value);
-                        st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?");
-                        st.setString(1, flagsStrings);
-                        st.setString(2, rname.toLowerCase());
-                        st.executeUpdate();
-                        break;
-                    }
-                }
+        Region region = getRegion(rname);
+        if (region == null) return;
+        String flagsStr = region.getFlagStrings();
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?")) {
+                st.setString(1, flagsStr);
+                st.setString(2, rname.toLowerCase());
+                st.executeUpdate();
+            } catch (SQLException e) {
+                RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
+                CoreUtil.printJarVersion();
+                e.printStackTrace();
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
+        });
+    }
+
+    @Override
+    public void updateLiveMembers(String rname, String leaders, String admins, String members) {
+        Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
+            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET leaders = ?, admins = ?, members = ? WHERE LOWER(name) = ?")) {
+                st.setString(1, leaders);
+                st.setString(2, admins);
+                st.setString(3, members);
+                st.setString(4, rname.toLowerCase());
+                st.executeUpdate();
+            } catch (SQLException e) {
+                RedProtect.get().logger.severe("RedProtect can't save members for region " + rname + ", please verify the Mysql Connection and table structures.");
+                CoreUtil.printJarVersion();
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -288,115 +258,113 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         if (this.dbcon == null) {
             ConnectDB();
         }
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE world = ?");
+        try (PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE world = ?")) {
             st.setString(1, this.world);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                String finalName = "";
-                try {
-                    RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world);
-                    HashMap<String, Object> flags = new HashMap<>();
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    String finalName = "";
+                    try {
+                        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Load Region: " + rs.getString("name") + ", World: " + this.world);
+                        HashMap<String, Object> flags = new HashMap<>();
 
-                    String rname = rs.getString("name");
-                    finalName = rname;
+                        String rname = rs.getString("name");
+                        finalName = rname;
 
-                    int maxMbrX = rs.getInt("maxMbrX");
-                    int minMbrX = rs.getInt("minMbrX");
-                    int maxMbrZ = rs.getInt("maxMbrZ");
-                    int minMbrZ = rs.getInt("minMbrZ");
-                    int maxY = rs.getInt("maxY");
-                    int minY = rs.getInt("minY");
-                    int prior = rs.getInt("prior");
-                    String world = rs.getString("world");
-                    String date = rs.getString("date");
-                    String wel = rs.getString("wel");
-                    long value = rs.getLong("value");
-                    boolean candel = rs.getBoolean("candelete");
-                    boolean canPurge = rs.getBoolean("canpurge");
+                        int maxMbrX = rs.getInt("maxMbrX");
+                        int minMbrX = rs.getInt("minMbrX");
+                        int maxMbrZ = rs.getInt("maxMbrZ");
+                        int minMbrZ = rs.getInt("minMbrZ");
+                        int maxY = rs.getInt("maxY");
+                        int minY = rs.getInt("minY");
+                        int prior = rs.getInt("prior");
+                        String world = rs.getString("world");
+                        String date = rs.getString("date");
+                        String wel = rs.getString("wel");
+                        long value = rs.getLong("value");
+                        boolean candel = rs.getBoolean("candelete");
+                        boolean canPurge = rs.getBoolean("canpurge");
 
-                    if (minY == 0 && RedProtect.get().getConfigManager().configRoot().region_settings.convert_zeros_y)
-                        minY = Bukkit.getWorld(this.world).getMinHeight();
+                        if (minY == 0 && RedProtect.get().getConfigManager().configRoot().region_settings.convert_zeros_y)
+                            minY = Bukkit.getWorld(this.world).getMinHeight();
 
-                    Location tppoint = null;
-                    if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                        String[] tpstring = rs.getString("tppoint").split(",");
-                        tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
-                                Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
-                    }
-
-                    String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
-                    Set<PlayerRegion> leaders;
-                    if (!rs.getString("leaders").isEmpty()) {
-                        leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(","))).stream().map(s -> {
-                            String[] pi = s.split("@");
-                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                    String before = p[1];
-                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                                }
-                            }
-                            return new PlayerRegion(p[0], p[1]);
-                        }).collect(Collectors.toSet());
-                    } else {
-                        leaders = new HashSet<>();
-                    }
-
-                    Set<PlayerRegion> admins;
-                    if (!rs.getString("admins").isEmpty()) {
-                        admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(","))).stream().map(s -> {
-                            String[] pi = s.split("@");
-                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                    String before = p[1];
-                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                                }
-                            }
-                            return new PlayerRegion(p[0], p[1]);
-                        }).collect(Collectors.toSet());
-                    } else {
-                        admins = new HashSet<>();
-                    }
-
-                    Set<PlayerRegion> members;
-                    if (!rs.getString("members").isEmpty()) {
-                        members = new HashSet<>(Arrays.asList(rs.getString("members").split(","))).stream().map(s -> {
-                            String[] pi = s.split("@");
-                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                    String before = p[1];
-                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                                }
-                            }
-                            return new PlayerRegion(p[0], p[1]);
-                        }).collect(Collectors.toSet());
-                    } else {
-                        members = new HashSet<>();
-                    }
-
-                    for (String flag : rs.getString("flags").split(",")) {
-                        String key = flag.split(":")[0];
-                        String replace = key + ":";
-                        if (replace.length() <= flag.length()) {
-                            flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring(replace.length())));
+                        Location tppoint = null;
+                        if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
+                            String[] tpstring = rs.getString("tppoint").split(",");
+                            tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
+                                    Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
                         }
+
+                        String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
+                        Set<PlayerRegion> leaders;
+                        if (!rs.getString("leaders").isEmpty()) {
+                            leaders = new HashSet<>(Arrays.asList(rs.getString("leaders").split(","))).stream().map(s -> {
+                                String[] pi = s.split("@");
+                                String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                                if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                    if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                        String before = p[1];
+                                        p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                    }
+                                }
+                                return new PlayerRegion(p[0], p[1]);
+                            }).collect(Collectors.toSet());
+                        } else {
+                            leaders = new HashSet<>();
+                        }
+
+                        Set<PlayerRegion> admins;
+                        if (!rs.getString("admins").isEmpty()) {
+                            admins = new HashSet<>(Arrays.asList(rs.getString("admins").split(","))).stream().map(s -> {
+                                String[] pi = s.split("@");
+                                String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                                if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                    if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                        String before = p[1];
+                                        p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                    }
+                                }
+                                return new PlayerRegion(p[0], p[1]);
+                            }).collect(Collectors.toSet());
+                        } else {
+                            admins = new HashSet<>();
+                        }
+
+                        Set<PlayerRegion> members;
+                        if (!rs.getString("members").isEmpty()) {
+                            members = new HashSet<>(Arrays.asList(rs.getString("members").split(","))).stream().map(s -> {
+                                String[] pi = s.split("@");
+                                String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
+                                if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
+                                    if (RedProtect.get().getUtil().isUUIDs(p[1])) {
+                                        String before = p[1];
+                                        p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
+                                        RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
+                                    }
+                                }
+                                return new PlayerRegion(p[0], p[1]);
+                            }).collect(Collectors.toSet());
+                        } else {
+                            members = new HashSet<>();
+                        }
+
+                        for (String flag : rs.getString("flags").split(",")) {
+                            String key = flag.split(":")[0];
+                            String replace = key + ":";
+                            if (replace.length() <= flag.length()) {
+                                flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring(replace.length())));
+                            }
+                        }
+                        Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel, canPurge);
+                        regions.put(newr.getName(), newr);
+                    } catch (Exception e) {
+                        RedProtect.get().logger.severe("Error on load region " + finalName);
+                        CoreUtil.printJarVersion();
+                        e.printStackTrace();
                     }
-                    Region newr = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel, canPurge);
-                    regions.put(newr.getName(), newr);
-                } catch (Exception e) {
-                    RedProtect.get().logger.severe("Error on load region " + finalName);
-                    CoreUtil.printJarVersion();
-                    e.printStackTrace();
                 }
             }
-            st.close();
-            rs.close();
         } catch (SQLException e) {
             CoreUtil.printJarVersion();
             e.printStackTrace();
@@ -408,178 +376,43 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getLeaderRegions(String uuid) {
         SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders LIKE ?");
-            st.setString(1, "%" + uuid + "%");
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                regionsp.add(this.getRegion(rs.getString("name")));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid)) {
+                regionsp.add(r);
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
         }
         return regionsp;
     }
 
     @Override
     public Set<Region> getAdminRegions(String uuid) {
-        Set<Region> regionsp = new HashSet<>();
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders LIKE ? OR admins LIKE ?");
-            st.setString(1, "%" + uuid + "%");
-            st.setString(2, "%" + uuid + "%");
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                regionsp.add(this.getRegion(rs.getString("name")));
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid) || r.isAdmin(uuid)) {
+                regionsp.add(r);
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
         }
         return regionsp;
     }
 
     @Override
     public Set<Region> getMemberRegions(String uuid) {
-        Set<Region> regionsp = new HashSet<>();
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE leaders LIKE ? OR admins LIKE ? OR members LIKE ?");
-            st.setString(1, "%" + uuid + "%");
-            st.setString(2, "%" + uuid + "%");
-            st.setString(3, "%" + uuid + "%");
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                regionsp.add(this.getRegion(rs.getString("name")));
+        SortedSet<Region> regionsp = new TreeSet<>(Comparator.comparing(Region::getName));
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid) || r.isAdmin(uuid) || r.isMember(uuid)) {
+                regionsp.add(r);
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
         }
         return regionsp;
     }
 
     @Override
     public Region getRegion(final String rname) {
-        if (this.dbcon == null) {
-            ConnectDB();
+        if (rname == null) {
+            return null;
         }
-        if (!regions.containsKey(rname)) {
-            if (rname == null) {
-                return null;
-            }
-            try {
-                PreparedStatement st = this.dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE LOWER(name) = ? AND world=?");
-                st.setString(1, rname.toLowerCase());
-                st.setString(2, this.world);
-                ResultSet rs = st.executeQuery();
-                if (rs.next()) {
-                    Set<PlayerRegion> leaders = new HashSet<>();
-                    Set<PlayerRegion> admins = new HashSet<>();
-                    Set<PlayerRegion> members = new HashSet<>();
-                    HashMap<String, Object> flags = new HashMap<>();
-
-                    int maxMbrX = rs.getInt("maxMbrX");
-                    int minMbrX = rs.getInt("minMbrX");
-                    int maxMbrZ = rs.getInt("maxMbrZ");
-                    int minMbrZ = rs.getInt("minMbrZ");
-                    int maxY = rs.getInt("maxY");
-                    int minY = rs.getInt("minY");
-                    int prior = rs.getInt("prior");
-                    String world = rs.getString("world");
-                    String date = rs.getString("date");
-                    String wel = rs.getString("wel");
-                    long value = rs.getLong("value");
-                    boolean candel = rs.getBoolean("candelete");
-                    boolean canPurge = rs.getBoolean("canpurge");
-                    Location tppoint = null;
-                    if (rs.getString("tppoint") != null && !rs.getString("tppoint").equalsIgnoreCase("")) {
-                        String[] tpstring = rs.getString("tppoint").split(",");
-                        tppoint = new Location(Bukkit.getWorld(world), Double.parseDouble(tpstring[0]), Double.parseDouble(tpstring[1]), Double.parseDouble(tpstring[2]),
-                                Float.parseFloat(tpstring[3]), Float.parseFloat(tpstring[4]));
-                    }
-
-                    String serverName = RedProtect.get().getConfigManager().configRoot().region_settings.default_leader;
-
-                    if (!rs.getString("members").isEmpty()) {
-                        for (String member : rs.getString("members").split(",")) {
-                            String[] pi = member.split("@");
-                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                            if (p[1].isEmpty()) continue;
-                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                    String before = p[1];
-                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                                }
-                            }
-                            members.add(new PlayerRegion(p[0], p[1]));
-                        }
-                    }
-
-                    if (!rs.getString("admins").isEmpty()) {
-                        for (String admin : rs.getString("admins").split(",")) {
-                            String[] pi = admin.split("@");
-                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                            if (p[1].isEmpty()) continue;
-                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                    String before = p[1];
-                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                                }
-                            }
-                            admins.add(new PlayerRegion(p[0], p[1]));
-                        }
-                    }
-
-                    if (!rs.getString("leaders").isEmpty()) {
-                        for (String leader : rs.getString("leaders").split(",")) {
-                            String[] pi = leader.split("@");
-                            String[] p = new String[]{pi[0], pi.length == 2 ? pi[1] : pi[0]};
-                            if (p[1].isEmpty()) continue;
-                            if (!p[0].equalsIgnoreCase(serverName) && !p[1].equalsIgnoreCase(serverName)) {
-                                if (RedProtect.get().getUtil().isUUIDs(p[1])) {
-                                    String before = p[1];
-                                    p[1] = RedProtect.get().getUtil().UUIDtoPlayer(p[1]) == null ? p[1] : RedProtect.get().getUtil().UUIDtoPlayer(p[1]).toLowerCase();
-                                    RedProtect.get().logger.success("Updated region " + rname + ", player &6" + before + " &ato &6" + p[1]);
-                                }
-                            }
-                            leaders.add(new PlayerRegion(p[0], p[1]));
-                        }
-                    }
-
-                    for (String flag : rs.getString("flags").split(",")) {
-                        String key = flag.split(":")[0];
-                        flags.put(key, RedProtect.get().getUtil().parseObject(flag.substring((key + ":").length())));
-                    }
-
-                    Region reg = new Region(rname, admins, members, leaders, maxMbrX, minMbrX, maxMbrZ, minMbrZ, minY, maxY, flags, wel, prior, world, date, value, tppoint, candel, canPurge);
-                    regions.put(rname, reg);
-                } else {
-                    return null;
-                }
-                st.close();
-                rs.close();
-                RedProtect.get().logger.debug(LogLevel.DEFAULT, "Adding region to cache: " + rname);
-                Bukkit.getScheduler().runTaskLaterAsynchronously(RedProtect.get(), () -> {
-                    if (regions.containsKey(rname)) {
-                        regions.remove(rname);
-                        RedProtect.get().logger.debug(LogLevel.DEFAULT, "Removed cached region: " + rname);
-                    }
-                }, (20 * 60) * RedProtect.get().getConfigManager().configRoot().mysql.region_cache_minutes);
-            } catch (SQLException e) {
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
-            }
-        }
-        return regions.get(rname);
+        Optional<Map.Entry<String, Region>> optional = regions.entrySet().stream().filter(r -> r.getKey().equalsIgnoreCase(rname)).findFirst();
+        return optional.map(Map.Entry::getValue).orElse(null);
     }
 
     @Override
@@ -589,8 +422,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     @Override
     public int getTotalRegionSize(String uuid) {
+        Set<Region> regionslist = new HashSet<>();
+        for (Region r : regions.values()) {
+            if (r.isLeader(uuid)) {
+                regionslist.add(r);
+            }
+        }
         int total = 0;
-        for (Region r2 : this.getLeaderRegions(uuid)) {
+        for (Region r2 : regionslist) {
             total += RedProtect.get().getUtil().simuleTotalRegionSize(uuid, r2);
         }
         return total;
@@ -599,41 +438,14 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getRegionsNear(int px, int pz, int radius) {
         SortedSet<Region> ret = new TreeSet<>(Comparator.comparing(Region::getName));
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE ABS(centerX-?)<=? AND ABS(centerZ-?)<=?");
-            st.setInt(1, px);
-            st.setInt(2, radius);
-            st.setInt(3, pz);
-            st.setInt(4, radius);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                ret.add(this.getRegion(rs.getString("name")));
+        for (Region r : regions.values()) {
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "Radius: " + radius);
+            RedProtect.get().logger.debug(LogLevel.DEFAULT, "X radius: " + Math.abs(r.getCenterX() - px) + " - Z radius: " + Math.abs(r.getCenterZ() - pz));
+            if (Math.abs(r.getCenterX() - px) <= radius && Math.abs(r.getCenterZ() - pz) <= radius) {
+                ret.add(r);
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
         }
         return ret;
-    }
-
-    private boolean regionExists(String name) {
-        int total = 0;
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE LOWER(name) = ?");
-            st.setString(1, name.toLowerCase());
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                total = rs.getInt("COUNT(*)");
-            }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-        return total > 0;
     }
 
     public String getWorld() {
@@ -643,48 +455,32 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public Set<Region> getInnerRegions(Region region) {
         Set<Region> regionl = new HashSet<>();
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE maxMbrX<=? AND maxY<=? AND maxMbrZ<=? AND minMbrX>=? AND minY>=? AND minMbrZ>=?");
-            st.setInt(1, region.getMaxMbrX());
-            st.setInt(2, region.getMaxY());
-            st.setInt(3, region.getMaxMbrZ());
-            st.setInt(4, region.getMinMbrX());
-            st.setInt(5, region.getMinY());
-            st.setInt(6, region.getMinMbrZ());
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                regionl.add(this.getRegion(rs.getString("name")));
+        regions.values().forEach(r -> {
+            if (r.getMaxMbrX() <= region.getMaxMbrX() &&
+                    r.getMaxY() <= region.getMaxY() &&
+                    r.getMaxMbrZ() <= region.getMaxMbrZ() &&
+                    r.getMinMbrX() >= region.getMinMbrX() &&
+                    r.getMinY() >= region.getMinY() &&
+                    r.getMinMbrZ() >= region.getMinMbrZ()) {
+                regionl.add(r);
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
+        });
         return regionl;
     }
 
     @Override
     public Set<Region> getRegions(int x, int y, int z) {
         Set<Region> regionl = new HashSet<>();
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "` WHERE ?<=maxMbrX AND ?>=minMbrX AND ?<=maxMbrZ AND ?>=minMbrZ AND ?<=maxY AND ?>=minY");
-            st.setInt(1, x);
-            st.setInt(2, x);
-            st.setInt(3, z);
-            st.setInt(4, z);
-            st.setInt(5, y);
-            st.setInt(6, y);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                regionl.add(this.getRegion(rs.getString("name")));
+        regions.values().forEach(r -> {
+            if (x <= r.getMaxMbrX() &&
+                    x >= r.getMinMbrX() &&
+                    y <= r.getMaxY() &&
+                    y >= r.getMinY() &&
+                    z <= r.getMaxMbrZ() &&
+                    z >= r.getMinMbrZ()) {
+                regionl.add(r);
             }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
+        });
         return regionl;
     }
 
@@ -692,8 +488,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     public Region getTopRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
         int max = 0;
-
-        for (Region r : this.getRegions(x, y, z)) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -707,7 +502,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 regionlist.put(r.getPrior(), r);
             }
         }
-
         if (!regionlist.isEmpty()) {
             max = Collections.max(regionlist.keySet());
         }
@@ -718,8 +512,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     public Region getLowRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
         int min = 0;
-
-        for (Region r : this.getRegions(x, y, z)) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -733,7 +526,6 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
                 regionlist.put(r.getPrior(), r);
             }
         }
-
         if (!regionlist.isEmpty()) {
             min = Collections.min(regionlist.keySet());
         }
@@ -742,8 +534,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     public Map<Integer, Region> getGroupRegion(int x, int y, int z) {
         Map<Integer, Region> regionlist = new HashMap<>();
-
-        for (Region r : this.getRegions(x, y, z)) {
+        for (Region r : regions.values()) {
             if (x <= r.getMaxMbrX() && x >= r.getMinMbrX() && y <= r.getMaxY() && y >= r.getMinY() && z <= r.getMaxMbrZ() && z >= r.getMinMbrZ()) {
                 if (regionlist.containsKey(r.getPrior())) {
                     Region reg1 = regionlist.get(r.getPrior());
@@ -762,19 +553,8 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     @Override
     public Set<Region> getAllRegions() {
-        Set<Region> allregions = new HashSet<>();
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT name FROM `" + tableName + "`");
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                allregions.add(getRegion(rs.getString("name")));
-            }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
+        SortedSet<Region> allregions = new TreeSet<>(Comparator.comparing(Region::getName));
+        allregions.addAll(regions.values());
         return allregions;
     }
 
@@ -808,43 +588,12 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     @Override
     public int getTotalRegionNum() {
-        int total = 0;
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "`");
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                total = rs.getInt("COUNT(*)");
-            }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            RedProtect.get().logger.severe("Error on get total of regions for " + tableName + "!");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-        return total;
+        return regions.size();
     }
 
 
     @Override
     public long getCanPurgeCount(String uuid, boolean canpurge) {
-        long total = 0;
-        try {
-            PreparedStatement st = this.dbcon.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "` WHERE leader LIKE ? AND canpurge = ?");
-            st.setString(1, "%" + uuid + "%");
-            st.setBoolean(2, canpurge);
-
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                total = rs.getInt("COUNT(*)");
-            }
-            st.close();
-            rs.close();
-        } catch (SQLException e) {
-            RedProtect.get().logger.severe("Error on get total of regions for " + tableName + "!");
-            CoreUtil.printJarVersion();
-            e.printStackTrace();
-        }
-        return total;
+        return regions.values().stream().filter(r -> r.canPurge() == canpurge && r.isLeader(uuid)).count();
     }
 }

@@ -483,9 +483,7 @@ public class Region extends CoreRegion {
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.add(pInfo);
 
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveMembers(this);
     }
 
     /**
@@ -502,9 +500,7 @@ public class Region extends CoreRegion {
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.members.add(pInfo);
 
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveMembers(this);
     }
 
     /**
@@ -521,9 +517,7 @@ public class Region extends CoreRegion {
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.add(pInfo);
 
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveMembers(this);
     }
 
     /**
@@ -538,9 +532,7 @@ public class Region extends CoreRegion {
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
 
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveMembers(this);
     }
 
     /**
@@ -557,9 +549,7 @@ public class Region extends CoreRegion {
         this.admins.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.members.add(pInfo);
 
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveMembers(this);
     }
 
     /**
@@ -576,9 +566,7 @@ public class Region extends CoreRegion {
         this.leaders.removeIf(m -> m.getUUID().equalsIgnoreCase(uuid) || m.getPlayerName().equalsIgnoreCase(uuid));
         this.admins.add(pInfo);
 
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "leaders", serializeMembers(leaders));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "admins", serializeMembers(admins));
-        RedProtect.get().getRegionManager().updateLiveRegion(this, "members", serializeMembers(members));
+        RedProtect.get().getRegionManager().updateLiveMembers(this);
     }
 
     public boolean getFlagBool(String key) {

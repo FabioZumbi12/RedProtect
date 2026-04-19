@@ -495,6 +495,11 @@ public class RegionManager {
         rm.removeLiveFlags(r.getName(), flag);
     }
 
+    public void updateLiveMembers(Region r) {
+        WorldRegionManager rm = this.regionManagers.get(r.getWorld());
+        rm.updateLiveMembers(r.getName(), r.getLeadersString(), r.getAdminString(), r.getMembersString());
+    }
+
     public int getTotalRegionsNum() {
         int total = 0;
         for (World w : RedProtect.get().getServer().getWorlds()) {

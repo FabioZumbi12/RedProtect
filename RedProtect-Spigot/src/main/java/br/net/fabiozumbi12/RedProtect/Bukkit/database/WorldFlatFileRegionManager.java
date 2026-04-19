@@ -523,4 +523,8 @@ public class WorldFlatFileRegionManager implements WorldRegionManager {
     public long getCanPurgeCount(String uuid, boolean canpurge) {
         return regions.values().stream().filter(r -> r.canPurge() == canpurge && r.isLeader(uuid)).count();
     }
+
+    @Override
+    public void updateLiveMembers(String rname, String leaders, String admins, String members) {
+    }
 }
