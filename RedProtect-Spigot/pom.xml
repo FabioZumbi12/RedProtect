@@ -305,7 +305,7 @@
         <dependency>
             <groupId>io.github.fabiozumbi12.UltimateChat</groupId>
             <artifactId>UltimateFancy</artifactId>
-            <version>1.9.4-SNAPSHOT</version>
+            <version>1.9.3</version>
         </dependency>
     </dependencies>
 
