@@ -99,7 +99,7 @@ public class HooksManager {
             }
             if (checkWG()) {
                 RedProtect rp = RedProtect.get();
-                if (rp.bukkitVersion >= 1.19) {
+                if (rp.isBukkitVersionAtLeast(1, 19)) {
                     worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest").newInstance();
                     rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
                 } else {

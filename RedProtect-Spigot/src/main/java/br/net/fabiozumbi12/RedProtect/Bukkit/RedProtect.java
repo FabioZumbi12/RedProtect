@@ -65,7 +65,7 @@ public class RedProtect extends JavaPlugin {
     public final RedProtectLogger logger = new RedProtectLogger();
     public final List<String> teleportDelay = new ArrayList<>();
     public RPSchematics schematic;
-    public double bukkitVersion;
+    public String bukkitVersion;
     public Economy economy;
     public Permission permission;
     public LangGuiManager guiLang;
@@ -261,7 +261,7 @@ public class RedProtect extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Compat111(), this);
         getServer().getPluginManager().registerEvents(new Compat114(), this);
 
-        if (bukkitVersion >= 1.19) {
+        if (isBukkitVersionAtLeast(1, 19)) {
             rpvHelper = (VersionHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.VersionHelperLatest").newInstance();
         } else {
             logger.severe("RedProtect 8+ is not compatible with version 1.18 or lower. Download the latest RedProtect 7 from spigot or dev builds.");
@@ -343,12 +343,18 @@ public class RedProtect extends JavaPlugin {
         return true;
     }
 
-    private double getBukkitVersion() {
-        var name = Bukkit.getServer().getBukkitVersion().split("-")[0].split("\\.");
-        var version = name[0] + "." + name[1];
-        if (name.length == 3)
-            version += name[2];
-        return Double.parseDouble(version);
+    private String getBukkitVersion() {
+        String raw = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        String[] parts = raw.split("\\.");
+        int len = Math.min(parts.length, 3);
+        return String.join(".", java.util.Arrays.copyOf(parts, len));
+    }
+
+    public boolean isBukkitVersionAtLeast(int major, int minor) {
+        String[] parts = bukkitVersion.split("\\.");
+        int m = Integer.parseInt(parts[0]);
+        int n = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+        return m > major || (m == major && n >= minor);
     }
 
     private void startAutoSave() {

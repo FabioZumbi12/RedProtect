@@ -45,6 +45,11 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     private final String reconnect = "?autoReconnect=true";
     private final String dbname = RedProtect.get().getConfigManager().configRoot().mysql.db_name;
     private final String tableName;
+    private static final Set<String> VALID_COLUMNS = Set.of(
+            "tppoint", "canpurge", "date", "maxy", "miny",
+            "world", "prior", "wel", "admins", "members",
+            "leaders", "value"
+    );
     private final HashMap<String, Region> regions;
     private final String world;
     private Connection dbcon;
@@ -205,6 +210,10 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
 
     @Override
     public void updateLiveRegion(String rname, String column, Object value) {
+        if (!VALID_COLUMNS.contains(column)) {
+            RedProtect.get().logger.severe("Invalid column name rejected: " + column + " for region " + rname);
+            return;
+        }
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
             try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE LOWER(name) = ? ")) {
                 st.setObject(1, value);
