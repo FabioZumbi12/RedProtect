@@ -48,7 +48,7 @@ public class TaskChain {
     boolean async;
 
     public TaskChain() {
-        this.plugin = RedProtect.get(); // TODO: Change to get an instance to your plugin!
+        this.plugin = RedProtect.get();
         this.async = !Bukkit.isPrimaryThread();
     }
     /*

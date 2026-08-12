@@ -196,14 +196,16 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         if (region == null) return;
         String flagsStr = region.getFlagStrings();
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
-            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?")) {
-                st.setString(1, flagsStr);
-                st.setString(2, rname.toLowerCase());
-                st.executeUpdate();
-            } catch (SQLException e) {
-                RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
+            synchronized (this.dbcon) {
+                try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?")) {
+                    st.setString(1, flagsStr);
+                    st.setString(2, rname.toLowerCase());
+                    st.executeUpdate();
+                } catch (SQLException e) {
+                    RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
+                    CoreUtil.printJarVersion();
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -215,14 +217,16 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
-            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE LOWER(name) = ? ")) {
-                st.setObject(1, value);
-                st.setString(2, rname.toLowerCase());
-                st.executeUpdate();
-            } catch (SQLException e) {
-                RedProtect.get().logger.severe("RedProtect can't save the region " + rname + ", please verify the Mysql Connection and table structures.");
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
+            synchronized (this.dbcon) {
+                try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET " + column + " = ? WHERE LOWER(name) = ? ")) {
+                    st.setObject(1, value);
+                    st.setString(2, rname.toLowerCase());
+                    st.executeUpdate();
+                } catch (SQLException e) {
+                    RedProtect.get().logger.severe("RedProtect can't save the region " + rname + ", please verify the Mysql Connection and table structures.");
+                    CoreUtil.printJarVersion();
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -233,14 +237,16 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         if (region == null) return;
         String flagsStr = region.getFlagStrings();
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
-            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?")) {
-                st.setString(1, flagsStr);
-                st.setString(2, rname.toLowerCase());
-                st.executeUpdate();
-            } catch (SQLException e) {
-                RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
+            synchronized (this.dbcon) {
+                try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET flags = ? WHERE LOWER(name) = ?")) {
+                    st.setString(1, flagsStr);
+                    st.setString(2, rname.toLowerCase());
+                    st.executeUpdate();
+                } catch (SQLException e) {
+                    RedProtect.get().logger.severe("RedProtect can't save flag for region " + rname + ", please verify the Mysql Connection and table structures.");
+                    CoreUtil.printJarVersion();
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -248,16 +254,18 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
     @Override
     public void updateLiveMembers(String rname, String leaders, String admins, String members) {
         Bukkit.getScheduler().runTaskAsynchronously(RedProtect.get(), () -> {
-            try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET leaders = ?, admins = ?, members = ? WHERE LOWER(name) = ?")) {
-                st.setString(1, leaders);
-                st.setString(2, admins);
-                st.setString(3, members);
-                st.setString(4, rname.toLowerCase());
-                st.executeUpdate();
-            } catch (SQLException e) {
-                RedProtect.get().logger.severe("RedProtect can't save members for region " + rname + ", please verify the Mysql Connection and table structures.");
-                CoreUtil.printJarVersion();
-                e.printStackTrace();
+            synchronized (this.dbcon) {
+                try (PreparedStatement st = this.dbcon.prepareStatement("UPDATE `" + tableName + "` SET leaders = ?, admins = ?, members = ? WHERE LOWER(name) = ?")) {
+                    st.setString(1, leaders);
+                    st.setString(2, admins);
+                    st.setString(3, members);
+                    st.setString(4, rname.toLowerCase());
+                    st.executeUpdate();
+                } catch (SQLException e) {
+                    RedProtect.get().logger.severe("RedProtect can't save members for region " + rname + ", please verify the Mysql Connection and table structures.");
+                    CoreUtil.printJarVersion();
+                    e.printStackTrace();
+                }
             }
         });
     }

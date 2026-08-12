@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 
 public class CommandHandlers {
 
-    // TODO Region handlers
     public static void handleAddLeader(CommandSender src, String sVictim, Region r) {
         if (src instanceof Player p) {
             r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());

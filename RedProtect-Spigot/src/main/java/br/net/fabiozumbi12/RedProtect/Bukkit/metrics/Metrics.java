@@ -392,18 +392,16 @@ public class Metrics {
 
         data.add("plugins", pluginData);
 
-        // Create a new thread for the connection to the bStats server
-        new Thread(() -> {
+        // Send the data asynchronously via Bukkit scheduler
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                // Send the data
                 sendData(plugin, data);
             } catch (Exception e) {
-                // Something went wrong! :(
                 if (logFailedRequests) {
                     plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
                 }
             }
-        }).start();
+        });
     }
 
     /**

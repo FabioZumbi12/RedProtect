@@ -289,7 +289,6 @@ public class RedProtectUtil extends CoreUtil {
         return genFileName(Path, isBackup, RedProtect.get().getConfigManager().configRoot().flat_file.max_backups, dateNow());
     }
 
-    //TODO read all db
     public void ReadAllDB(Set<Region> regions) {
         int purged = 0;
         int sell = 0;

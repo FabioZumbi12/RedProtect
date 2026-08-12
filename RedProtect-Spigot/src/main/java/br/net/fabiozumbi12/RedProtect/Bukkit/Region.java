@@ -41,6 +41,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Represents a 3D Bukkit region created by players.
@@ -157,7 +158,7 @@ public class Region extends CoreRegion {
                                 int dx = max.getBlockX() - min.getBlockX();
                                 int dy = max.getBlockY() - min.getBlockY();
                                 int dz = max.getBlockZ() - min.getBlockZ();
-                                Random random = new Random();
+                                ThreadLocalRandom random = ThreadLocalRandom.current();
                                 int x = random.nextInt(Math.abs(dx) + 1) + min.getBlockX();
                                 int y = random.nextInt(Math.abs(dy) + 1) + min.getBlockY();
                                 int z = random.nextInt(Math.abs(dz) + 1) + min.getBlockZ();
@@ -166,7 +167,7 @@ public class Region extends CoreRegion {
                                 Particle p = Particle.valueOf(part[0].toUpperCase());
                                 World w = Bukkit.getServer().getWorld(world);
 
-                                Location loc = new Location(w, x + new Random().nextDouble(), y + new Random().nextDouble(), z + new Random().nextDouble());
+                                Location loc = new Location(w, x + random.nextDouble(), y + random.nextDouble(), z + random.nextDouble());
                                 if (w.getNearbyEntities(loc, 30, 30, 30).stream().anyMatch(ent -> ent instanceof Player)) {
                                     if (loc.getBlock().isEmpty()) {
                                         if (part.length == 2) {
