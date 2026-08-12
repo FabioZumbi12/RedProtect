@@ -53,6 +53,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 @SuppressWarnings("deprecation")
 public class GlobalListener implements Listener {
@@ -81,62 +82,40 @@ public class GlobalListener implements Listener {
                 RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).build;
     }
 
+    private boolean checkConfigList(List<String> blt, List<String> wlt, String type, boolean defaultIfDisabled) {
+        if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
+        if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
+        return defaultIfDisabled;
+    }
+
     private boolean canPlaceList(World w, String type) {
-        if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).build) {
-            //blacklist
-            List<String> blt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.blacklist;
-            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
-
-            //whitelist
-            List<String> wlt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.place_blocks.whitelist;
-            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
-
-            return false;
+        var cfg = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName());
+        if (!cfg.build) {
+            return checkConfigList(cfg.if_build_false.place_blocks.blacklist, cfg.if_build_false.place_blocks.whitelist, type, false);
         }
         return true;
     }
 
     private boolean canBreakList(World w, String type) {
-        if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).build) {
-            //blacklist
-            List<String> blt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.blacklist;
-            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
-
-            //whitelist
-            List<String> wlt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_build_false.break_blocks.whitelist;
-            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
-
-            return false;
+        var cfg = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName());
+        if (!cfg.build) {
+            return checkConfigList(cfg.if_build_false.break_blocks.blacklist, cfg.if_build_false.break_blocks.whitelist, type, false);
         }
         return true;
     }
 
     private boolean canInteractBlocksList(World w, String type) {
-        if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).interact) {
-            //blacklist
-            List<String> blt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_interact_false.interact_blocks.blacklist;
-            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
-
-            //whitelist
-            List<String> wlt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_interact_false.interact_blocks.whitelist;
-            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
-
-            return false;
+        var cfg = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName());
+        if (!cfg.interact) {
+            return checkConfigList(cfg.if_interact_false.interact_blocks.blacklist, cfg.if_interact_false.interact_blocks.whitelist, type, false);
         }
         return true;
     }
 
     private boolean canInteractEntitiesList(World w, String type) {
-        if (!RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).interact) {
-            //blacklist
-            List<String> blt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_interact_false.interact_entities.blacklist;
-            if (!blt.isEmpty()) return blt.stream().noneMatch(type::matches);
-
-            //whitelist
-            List<String> wlt = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName()).if_interact_false.interact_entities.whitelist;
-            if (!wlt.isEmpty()) return wlt.stream().anyMatch(type::matches);
-
-            return false;
+        var cfg = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(w.getName());
+        if (!cfg.interact) {
+            return checkConfigList(cfg.if_interact_false.interact_entities.blacklist, cfg.if_interact_false.interact_entities.whitelist, type, false);
         }
         return true;
     }
